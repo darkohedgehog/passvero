@@ -160,3 +160,15 @@ Test at minimum:
 - 1440 px.
 
 Do not implement desktop-only layouts that collapse poorly.
+
+## Design authority
+
+The official design source for the marketing website consists of the approved desktop and mobile mockups.
+
+When implementing or modifying the landing page:
+
+- follow the approved mockups as closely as practical;
+- do not redesign sections unless explicitly requested;
+- preserve spacing, hierarchy and visual balance;
+- use the brand guide for colors, typography and iconography;
+- do not invent additional sections or remove existing ones without approval.

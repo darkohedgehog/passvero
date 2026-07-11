@@ -1,0 +1,34 @@
+{
+  "Metadata": {
+    "title": "Passvero — Digitale Produktpässe",
+    "description": "Erstellen, verwalten und teilen Sie vertrauenswürdige digitale Produktpässe."
+  },
+  "Navigation": {
+    "home": "Startseite",
+    "product": "Produkt",
+    "solutions": "Lösungen",
+    "pricing": "Preise",
+    "resources": "Ressourcen",
+    "about": "Über uns",
+    "signIn": "Anmelden",
+    "bookDemo": "Demo vereinbaren"
+  },
+  "Common": {
+    "language": "Sprache",
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten.",
+    "notFound": "Seite nicht gefunden.",
+    "languages": {
+      "hr": "Hrvatski",
+      "sr": "Srpski",
+      "en": "English",
+      "de": "Deutsch",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  },
+  "Home": {
+    "title": "Verifizierte Produktpässe.",
+    "description": "Eine einfache Plattform zum Erstellen und Verwalten digitaler Produktpässe."
+  }
+}

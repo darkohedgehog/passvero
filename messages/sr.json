@@ -1,0 +1,34 @@
+{
+  "Metadata": {
+    "title": "Passvero — Digitalni pasoši proizvoda",
+    "description": "Kreirajte, upravljajte i delite pouzdane digitalne pasoše proizvoda."
+  },
+  "Navigation": {
+    "home": "Početna",
+    "product": "Proizvod",
+    "solutions": "Rešenja",
+    "pricing": "Cene",
+    "resources": "Resursi",
+    "about": "O nama",
+    "signIn": "Prijava",
+    "bookDemo": "Zakažite prezentaciju"
+  },
+  "Common": {
+    "language": "Jezik",
+    "loading": "Učitavanje...",
+    "error": "Došlo je do greške.",
+    "notFound": "Stranica nije pronađena.",
+    "languages": {
+      "hr": "Hrvatski",
+      "sr": "Srpski",
+      "en": "English",
+      "de": "Deutsch",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  },
+  "Home": {
+    "title": "Provereni pasoši proizvoda.",
+    "description": "Jednostavna platforma za kreiranje i upravljanje digitalnim pasošima proizvoda."
+  }
+}

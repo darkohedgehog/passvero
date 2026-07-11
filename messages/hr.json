@@ -1,0 +1,34 @@
+{
+  "Metadata": {
+    "title": "Passvero — Digitalne putovnice proizvoda",
+    "description": "Izradite, upravljajte i dijelite pouzdane digitalne putovnice proizvoda."
+  },
+  "Navigation": {
+    "home": "Početna",
+    "product": "Proizvod",
+    "solutions": "Rješenja",
+    "pricing": "Cijene",
+    "resources": "Resursi",
+    "about": "O nama",
+    "signIn": "Prijava",
+    "bookDemo": "Dogovorite prezentaciju"
+  },
+  "Common": {
+    "language": "Jezik",
+    "loading": "Učitavanje...",
+    "error": "Dogodila se pogreška.",
+    "notFound": "Stranica nije pronađena.",
+    "languages": {
+      "hr": "Hrvatski",
+      "sr": "Srpski",
+      "en": "English",
+      "de": "Deutsch",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  },
+  "Home": {
+    "title": "Provjerene putovnice proizvoda.",
+    "description": "Jednostavna platforma za izradu i upravljanje digitalnim putovnicama proizvoda."
+  }
+}

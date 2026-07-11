@@ -1,0 +1,34 @@
+{
+  "Metadata": {
+    "title": "Passvero — Digitalni potni listi izdelkov",
+    "description": "Ustvarjajte, upravljajte in delite zaupanja vredne digitalne potne liste izdelkov."
+  },
+  "Navigation": {
+    "home": "Domov",
+    "product": "Izdelek",
+    "solutions": "Rešitve",
+    "pricing": "Cene",
+    "resources": "Viri",
+    "about": "O nas",
+    "signIn": "Prijava",
+    "bookDemo": "Rezervirajte predstavitev"
+  },
+  "Common": {
+    "language": "Jezik",
+    "loading": "Nalaganje...",
+    "error": "Prišlo je do napake.",
+    "notFound": "Strani ni bilo mogoče najti.",
+    "languages": {
+      "hr": "Hrvatski",
+      "sr": "Srpski",
+      "en": "English",
+      "de": "Deutsch",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  },
+  "Home": {
+    "title": "Preverjeni potni listi izdelkov.",
+    "description": "Preprosta platforma za ustvarjanje in upravljanje digitalnih potnih listov izdelkov."
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "Metadata": {
+    "title": "Passvero — Digital Product Passports",
+    "description": "Create, manage and share trusted digital product passports."
+  },
+  "Navigation": {
+    "home": "Home",
+    "product": "Product",
+    "solutions": "Solutions",
+    "pricing": "Pricing",
+    "resources": "Resources",
+    "about": "About",
+    "signIn": "Sign in",
+    "bookDemo": "Book a demo"
+  },
+  "Common": {
+    "language": "Language",
+    "loading": "Loading...",
+    "error": "Something went wrong.",
+    "notFound": "Page not found.",
+    "languages": {
+      "hr": "Hrvatski",
+      "sr": "Srpski",
+      "en": "English",
+      "de": "Deutsch",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  },
+  "Home": {
+    "title": "Verified product passports.",
+    "description": "A simple platform for creating and managing digital product passports."
+  }
+}

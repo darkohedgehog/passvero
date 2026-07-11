@@ -1,0 +1,34 @@
+{
+  "Metadata": {
+    "title": "Passvero — Cyfrowe paszporty produktów",
+    "description": "Twórz, zarządzaj i udostępniaj wiarygodne cyfrowe paszporty produktów."
+  },
+  "Navigation": {
+    "home": "Strona główna",
+    "product": "Produkt",
+    "solutions": "Rozwiązania",
+    "pricing": "Cennik",
+    "resources": "Materiały",
+    "about": "O nas",
+    "signIn": "Zaloguj się",
+    "bookDemo": "Umów prezentację"
+  },
+  "Common": {
+    "language": "Język",
+    "loading": "Ładowanie...",
+    "error": "Wystąpił błąd.",
+    "notFound": "Nie znaleziono strony.",
+    "languages": {
+      "hr": "Hrvatski",
+      "sr": "Srpski",
+      "en": "English",
+      "de": "Deutsch",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  },
+  "Home": {
+    "title": "Zweryfikowane paszporty produktów.",
+    "description": "Prosta platforma do tworzenia cyfrowych paszportów produktów i zarządzania nimi."
+  }
+}
