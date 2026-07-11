@@ -2,7 +2,14 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { LanguageSwitcher } from "@/src/components/language-switcher";
+import { ComplianceSection } from "@/src/components/marketing/compliance-section";
+import { DashboardPreviewSection } from "@/src/components/marketing/dashboard-preview-section";
+import { FinalCtaSection } from "@/src/components/marketing/final-cta-section";
+import { HeroSection } from "@/src/components/marketing/hero-section";
+import { HowItWorksSection } from "@/src/components/marketing/how-it-works-section";
+import { IndustriesSection } from "@/src/components/marketing/industries-section";
+import { SiteFooter } from "@/src/components/marketing/site-footer";
+import { SiteHeader } from "@/src/components/marketing/site-header";
 import { isAppLocale } from "@/src/i18n/routing";
 
 type HomePageProps = Readonly<{
@@ -35,21 +42,18 @@ export default async function Home({ params }: HomePageProps) {
 
   setRequestLocale(locale);
 
-  const t = await getTranslations({ locale, namespace: "Home" });
-
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-8 bg-white px-8 py-24 text-center dark:bg-black sm:items-start sm:px-16 sm:text-left">
-        <LanguageSwitcher />
-        <div className="flex flex-col gap-6">
-          <h1 className="max-w-xl text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            {t("title")}
-          </h1>
-          <p className="max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            {t("description")}
-          </p>
-        </div>
+    <div className="marketing-shell min-h-screen font-sans">
+      <SiteHeader />
+      <main>
+        <HeroSection />
+        <ComplianceSection />
+        <HowItWorksSection />
+        <DashboardPreviewSection />
+        <IndustriesSection />
+        <FinalCtaSection />
       </main>
+      <SiteFooter />
     </div>
   );
 }

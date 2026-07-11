@@ -26,11 +26,11 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <label className="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-      <span>{t("language")}</span>
+    <label className="inline-flex items-center text-sm font-medium text-slate-700">
+      <span className="sr-only">{t("language")}</span>
       <select
         aria-label={t("language")}
-        className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 disabled:cursor-wait disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-50"
+        className="min-h-10 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-800 shadow-sm disabled:cursor-wait disabled:opacity-60"
         disabled={isPending}
         onChange={handleLocaleChange}
         value={locale}

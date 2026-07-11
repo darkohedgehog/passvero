@@ -30,5 +30,94 @@
   "Home": {
     "title": "Provjerene putovnice proizvoda.",
     "description": "Jednostavna platforma za izradu i upravljanje digitalnim putovnicama proizvoda."
+  },
+  "MarketingNavigation": {
+    "brand": "Passvero",
+    "product": "Proizvod",
+    "solutions": "Rješenja",
+    "pricing": "Cijene",
+    "resources": "Resursi",
+    "about": "O nama",
+    "signIn": "Prijava",
+    "bookDemo": "Dogovorite prezentaciju",
+    "menu": "Otvori izbornik",
+    "closeMenu": "Zatvori izbornik"
+  },
+  "Hero": {
+    "badge": "DPP spremno",
+    "title": "Provjerene putovnice proizvoda.",
+    "highlight": "putovnice proizvoda.",
+    "description": "Cjelovita platforma za digitalne putovnice proizvoda. Strukturirajte podatke, gradite povjerenje i svakom proizvodu dajte transparentan digitalni identitet.",
+    "primaryAction": "Dogovorite prezentaciju",
+    "secondaryAction": "Pogledajte pregled",
+    "visualAlt": "Digitalna putovnica proizvoda prikazana uz mobilni prikaz i QR karticu",
+    "features": {
+      "ready": {"title": "DPP spremno", "description": "Za transparentne podatke o proizvodu"},
+      "secure": {"title": "Sigurno i pouzdano", "description": "Zaštićeni poslovni podaci"},
+      "interoperable": {"title": "Interoperabilno", "description": "GS1, EPCIS i API podrška"},
+      "scalable": {"title": "Skalabilno", "description": "Za svaku industriju"}
+    }
+  },
+  "Compliance": {
+    "title": "Stvoreno za usklađenost. Dizajnirano za poslovanje.",
+    "items": {
+      "ready": {"title": "DPP spremno", "description": "Podržava strukturirane podatke i buduće EU zahtjeve."},
+      "secure": {"title": "Sigurnost u osnovi", "description": "Vaši podaci ostaju zaštićeni i pod vašom kontrolom."},
+      "interoperable": {"title": "Interoperabilno", "description": "Povežite GS1, EPCIS, API-je i druge sustave."},
+      "scalable": {"title": "Skalabilno", "description": "Od malih proizvođača do složenih opskrbnih lanaca."}
+    }
+  },
+  "HowItWorks": {
+    "label": "Kako funkcionira",
+    "title": "Od proizvoda do putovnice u 4 jednostavna koraka",
+    "steps": {
+      "create": {"title": "Izradite", "description": "Izradite digitalnu putovnicu za svoj proizvod."},
+      "generate": {"title": "Generirajte", "description": "Generirajte jedinstveni QR kod ili nosač podataka."},
+      "share": {"title": "Podijelite", "description": "Povežite ga s proizvodom ili ambalažom."},
+      "verify": {"title": "Provjerite", "description": "Omogućite pristup vjerodostojnim informacijama."}
+    }
+  },
+  "DashboardPreview": {
+    "label": "Jedna platforma, sve što trebate",
+    "title": "Upravljajte. Pratite. Uskladite.",
+    "description": "Passvero objedinjuje alate za upravljanje podacima o proizvodima, podršku procesima usklađenosti i izgradnju povjerenja u cijelom opskrbnom lancu.",
+    "features": ["Centralizirano upravljanje proizvodima i putovnicama", "Praćenje podataka i događaja u stvarnom vremenu", "Dokumenti i certifikati na jednom mjestu", "Analitika i uvidi u performanse", "Pristup temeljen na ulogama i timska suradnja"],
+    "action": "Istražite sve mogućnosti",
+    "visualAlt": "Passvero nadzorna ploča za upravljanje digitalnim putovnicama proizvoda"
+  },
+  "Industries": {
+    "title": "Stvoreno za proizvođače diljem Europe",
+    "items": {"furniture": "Namještaj", "textiles": "Tekstil", "packaging": "Ambalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Roba široke potrošnje"}
+  },
+  "Benefits": {
+    "label": "Prednosti",
+    "title": "Izgradite povjerenje. Smanjite rizik. Otključajte vrijednost.",
+    "items": {
+      "trust": {"title": "Izgradite povjerenje", "description": "Dokažite autentičnost i transparentnost proizvoda."},
+      "risk": {"title": "Smanjite rizik", "description": "Izbjegnite kazne i podržite regulatorne procese."},
+      "efficiency": {"title": "Povećajte učinkovitost", "description": "Automatizirajte prikupljanje i provjeru podataka."},
+      "value": {"title": "Otključajte vrijednost", "description": "Pretvorite kvalitetnije podatke u pametnije odluke."}
+    }
+  },
+  "CTA": {
+    "title": "Spremni za početak?",
+    "description": "Pridružite se budućnosti transparentnosti proizvoda.",
+    "primaryAction": "Dogovorite prezentaciju",
+    "secondaryAction": "Kontaktirajte prodaju",
+    "noteOne": "Bez obveze",
+    "noteTwo": "Postavljanje u nekoliko minuta",
+    "visualAlt": "Tirkizni štit s kvačicom koji predstavlja provjerene podatke"
+  },
+  "Footer": {
+    "summary": "Vodeća platforma za digitalne putovnice proizvoda. Usklađenost, sigurnost i transparentnost podataka.",
+    "copyright": "© 2026 Passvero. Sva prava pridržana.",
+    "socialLabel": "Društvene mreže",
+    "groups": {
+      "product": {"title": "Proizvod", "items": ["Mogućnosti", "Integracije", "Sigurnost", "API"]},
+      "solutions": {"title": "Rješenja", "items": ["Proizvodnja", "Tekstil i moda", "Elektronika", "Ambalaža"]},
+      "resources": {"title": "Resursi", "items": ["Dokumentacija", "Vodiči", "Blog", "Webinari"]},
+      "company": {"title": "Tvrtka", "items": ["O nama", "Karijere", "Partneri", "Kontakt"]},
+      "compliance": {"title": "Usklađenost", "items": ["DPP", "ESPR", "Uvjeti korištenja", "Pravila privatnosti"]}
+    }
   }
 }
