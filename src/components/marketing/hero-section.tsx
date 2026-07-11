@@ -49,11 +49,17 @@ export async function HeroSection() {
             <Image
               src="/marketing/hero-passport.png"
               alt={t("visualAlt")}
-              width={1023}
-              height={1537}
+              width={1012}
+              height={1536}
               priority
               sizes="(max-width: 1023px) 90vw, 52vw"
               className="mx-auto h-auto w-[min(100%,30rem)] object-contain mix-blend-multiply lg:w-xl"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent 0, black 5%)",
+                maskImage:
+                  "linear-gradient(to right, transparent 0, black 5%)",
+              }}
             />
           </div>
         </div>
