@@ -16,14 +16,14 @@ export async function IndustriesSection() {
   const t = await getTranslations("Industries");
 
   return (
-    <section className="border-y border-slate-100 bg-slate-50/80 py-14 md:py-16">
+    <section className="border-y border-slate-100 bg-slate-50/70 py-11 md:py-12">
       <MarketingContainer>
-        <h2 className="text-center text-2xl font-bold tracking-[-0.03em] text-navy-950 md:text-3xl">{t("title")}</h2>
-        <ul className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
+        <h2 className="text-center text-xl font-bold tracking-[-0.03em] text-navy-950 md:text-2xl">{t("title")}</h2>
+        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-6">
           {industries.map((industry) => (
             <li key={industry.key} className="flex flex-col items-center gap-3 text-center text-slate-600">
-              <MarketingIcon name={industry.icon} className="size-8 text-slate-500" />
-              <span className="text-sm font-semibold">{t(`items.${industry.key}`)}</span>
+              <MarketingIcon name={industry.icon} className="size-7 text-slate-400" />
+              <span className="text-xs font-semibold text-slate-500">{t(`items.${industry.key}`)}</span>
             </li>
           ))}
         </ul>

@@ -49,7 +49,7 @@ export function MobileNavigation({
         type="button"
         aria-expanded={isOpen}
         aria-label={isOpen ? closeLabel : menuLabel}
-        className="grid size-11 place-items-center rounded-lg border border-slate-200 bg-white text-navy-950 shadow-sm"
+        className="grid size-10 place-items-center rounded-lg border border-slate-200 bg-white text-navy-950"
         onClick={() => setIsOpen((current) => !current)}
       >
         <span aria-hidden="true" className="relative block h-4 w-5">

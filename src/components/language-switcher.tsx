@@ -30,7 +30,7 @@ export function LanguageSwitcher() {
       <span className="sr-only">{t("language")}</span>
       <select
         aria-label={t("language")}
-        className="min-h-10 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-800 shadow-sm disabled:cursor-wait disabled:opacity-60"
+        className="min-h-9 max-w-24 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs text-slate-600 disabled:cursor-wait disabled:opacity-60"
         disabled={isPending}
         onChange={handleLocaleChange}
         value={locale}

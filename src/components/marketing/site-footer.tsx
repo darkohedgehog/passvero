@@ -21,29 +21,24 @@ export async function SiteFooter() {
 
   return (
     <footer id="about" className="marketing-dark-grid text-white">
-      <MarketingContainer className="py-14 md:py-16">
+      <MarketingContainer className="py-11 md:py-12">
         <div className="grid gap-10 lg:grid-cols-[1.25fr_repeat(5,0.75fr)] lg:gap-7">
           <div>
             <BrandLogo label={navigation("brand")} inverse />
-            <p className="mt-5 max-w-[15rem] text-sm leading-6 text-slate-300">{t("summary")}</p>
-            <div className="mt-6 flex gap-3" aria-label={t("socialLabel")}>
-              {["in", "x", "▶", "◎"].map((symbol) => (
-                <span key={symbol} aria-hidden="true" className="grid size-8 place-items-center rounded-full border border-slate-600 text-xs text-slate-300">{symbol}</span>
-              ))}
-            </div>
+            <p className="mt-4 max-w-[15rem] text-xs leading-5 text-slate-300">{t("summary")}</p>
           </div>
 
           {groups.map((group) => (
             <div key={group.key} className="hidden lg:block">
               <h2 className="text-sm font-semibold">{group.title}</h2>
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-3 space-y-2.5">
                 {group.items.map((item) => <li key={item}><a href="#product" className="text-xs text-slate-300 transition-colors hover:text-white">{item}</a></li>)}
               </ul>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 divide-y divide-slate-700 border-y border-slate-700 lg:hidden">
+        <div className="mt-8 divide-y divide-slate-700 border-y border-slate-700 lg:hidden">
           {groups.map((group) => (
             <details key={group.key} className="group py-1">
               <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between py-3 font-semibold marker:hidden">
@@ -55,7 +50,7 @@ export async function SiteFooter() {
             </details>
           ))}
         </div>
-        <p className="mt-12 text-center text-xs text-slate-400">{t("copyright")}</p>
+        <p className="mt-9 text-center text-[0.6875rem] text-slate-400">{t("copyright")}</p>
       </MarketingContainer>
     </footer>
   );

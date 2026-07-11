@@ -10,11 +10,11 @@ export async function FinalCtaSection() {
   const t = await getTranslations("CTA");
 
   return (
-    <section id="demo" className="bg-slate-50 py-14 md:py-20">
+    <section id="demo" className="bg-slate-50 py-12 md:py-16">
       <MarketingContainer>
-        <div className="overflow-hidden rounded-[20px] border border-slate-100 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)] lg:grid lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="overflow-hidden rounded-[20px] border border-slate-100 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)] lg:grid lg:grid-cols-[0.82fr_1.18fr]">
           <BenefitsSection />
-          <div className="relative m-3 overflow-hidden rounded-2xl bg-[linear-gradient(120deg,#eff6ff_0%,#f8fafc_48%,#e6fffb_100%)] px-7 py-10 sm:px-10 lg:m-5 lg:px-12 lg:py-12">
+          <div className="relative m-3 min-h-[27rem] overflow-hidden rounded-2xl bg-[linear-gradient(120deg,#eff6ff_0%,#f8fafc_48%,#e6fffb_100%)] px-7 py-9 sm:min-h-[22rem] sm:px-10 lg:m-4 lg:min-h-0 lg:px-10 lg:py-10">
             <div className="relative z-10 max-w-md">
               <h2 className="text-3xl font-bold tracking-[-0.035em] text-navy-950 md:text-4xl">{t("title")}</h2>
               <p className="mt-4 text-base text-slate-600">{t("description")}</p>
@@ -33,7 +33,7 @@ export async function FinalCtaSection() {
               width={1254}
               height={1254}
               sizes="(max-width: 639px) 45vw, 290px"
-              className="relative -bottom-9 left-1/2 h-auto w-[62%] max-w-[18rem] -translate-x-1/2 sm:absolute sm:-bottom-8 sm:left-auto sm:right-[-1rem] sm:w-[44%] sm:translate-x-0 lg:right-[-0.5rem]"
+              className="absolute -bottom-4 left-1/2 h-auto w-[58%] max-w-[16rem] -translate-x-1/2 sm:-bottom-7 sm:left-auto sm:right-[-0.5rem] sm:w-[42%] sm:translate-x-0 lg:-bottom-5 lg:right-[-0.75rem] lg:w-[43%]"
             />
           </div>
         </div>

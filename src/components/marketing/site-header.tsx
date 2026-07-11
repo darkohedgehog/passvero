@@ -17,29 +17,29 @@ export async function SiteHeader() {
   ];
 
   return (
-    <header className="relative z-30 py-5 lg:py-7">
-      <MarketingContainer className="flex items-center justify-between gap-6">
+    <header className="relative z-30 py-4 lg:py-5">
+      <MarketingContainer className="flex items-center justify-between gap-5">
         <a href="#product" className="rounded-lg" aria-label={t("brand")}>
           <BrandLogo label={t("brand")} />
         </a>
 
-        <nav className="hidden items-center gap-8 lg:flex" aria-label={t("menu")}>
+        <nav className="hidden items-center gap-7 lg:flex" aria-label={t("menu")}>
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="rounded-md text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              className="rounded-md text-[0.8125rem] font-medium text-slate-700 transition-colors hover:text-blue-600"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher />
           <a
             href="#demo"
-            className="rounded-md text-sm font-semibold text-blue-600 hover:text-blue-700"
+            className="rounded-md text-[0.8125rem] font-semibold text-blue-600 hover:text-blue-700"
           >
             {t("signIn")}
           </a>

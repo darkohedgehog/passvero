@@ -13,10 +13,10 @@ export async function BenefitsSection() {
   const t = await getTranslations("Benefits");
 
   return (
-    <div className="p-7 sm:p-9 lg:p-10">
+    <div className="p-7 sm:p-8 lg:p-9">
       <p className="marketing-section-label">{t("label")}</p>
-      <h2 className="mt-3 max-w-lg text-3xl font-bold leading-[1.12] tracking-[-0.035em] text-navy-950 md:text-4xl">{t("title")}</h2>
-      <div className="mt-9 grid gap-7 sm:grid-cols-2">
+      <h2 className="mt-3 max-w-lg text-3xl font-bold leading-[1.12] tracking-[-0.035em] text-navy-950 lg:text-[2rem]">{t("title")}</h2>
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
         {benefits.map((benefit) => (
           <article key={benefit.key} className="flex gap-4">
             <MarketingIcon name={benefit.icon} className="size-8 shrink-0 text-teal-500" />
