@@ -11,6 +11,7 @@ import { IndustriesSection } from "@/src/components/marketing/industries-section
 import { SiteFooter } from "@/src/components/marketing/site-footer";
 import { SiteHeader } from "@/src/components/marketing/site-header";
 import { isAppLocale } from "@/src/i18n/routing";
+import { createLocalizedMetadata } from "@/src/lib/seo";
 
 type HomePageProps = Readonly<{
   params: Promise<{ locale: string }>;
@@ -28,8 +29,12 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "Metadata" });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    ...createLocalizedMetadata({
+      locale,
+      title: t("title"),
+      description: t("description"),
+      imageAlt: t("openGraphImageAlt"),
+    }),
   };
 }
 

@@ -5,9 +5,12 @@ import { BrandLogo } from "@/src/components/marketing/brand-logo";
 import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { MobileNavigation } from "@/src/components/marketing/mobile-navigation";
+import { createMailtoHref } from "@/src/lib/site";
 
 export async function SiteHeader() {
   const t = await getTranslations("MarketingNavigation");
+  const contact = await getTranslations("Contact");
+  const demoHref = createMailtoHref(contact("demoSubject"));
   const links = [
     { href: "#product", label: t("product") },
     { href: "#solutions", label: t("solutions") },
@@ -43,13 +46,14 @@ export async function SiteHeader() {
           >
             {t("signIn")}
           </a>
-          <MarketingButton href="#demo">{t("bookDemo")}</MarketingButton>
+          <MarketingButton href={demoHref}>{t("bookDemo")}</MarketingButton>
         </div>
 
         <MobileNavigation
           brand={t("brand")}
           closeLabel={t("closeMenu")}
           ctaLabel={t("bookDemo")}
+          ctaHref={demoHref}
           links={links}
           menuLabel={t("menu")}
           signInLabel={t("signIn")}

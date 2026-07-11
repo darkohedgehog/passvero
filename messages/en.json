@@ -1,7 +1,8 @@
 {
   "Metadata": {
     "title": "Passvero — Digital Product Passports",
-    "description": "Create, manage and share trusted digital product passports."
+    "description": "Create, manage and share trusted digital product passports.",
+    "openGraphImageAlt": "Passvero platform for making digital product passports simple"
   },
   "Navigation": {
     "home": "Home",
@@ -44,5 +45,36 @@
   "Industries": {"title": "Built for manufacturers across Europe", "items": {"furniture": "Furniture", "textiles": "Textiles", "packaging": "Packaging", "electronics": "Electronics", "manufacturing": "Manufacturing", "consumer": "Consumer Goods"}},
   "Benefits": {"label": "The benefits", "title": "Build trust. Reduce risk. Unlock value.", "items": {"trust": {"title": "Build trust", "description": "Prove product authenticity and transparency."}, "risk": {"title": "Reduce risk", "description": "Avoid fines and support regulatory processes."}, "efficiency": {"title": "Improve efficiency", "description": "Automate data collection and verification."}, "value": {"title": "Unlock value", "description": "Turn better data into smarter decisions."}}},
   "CTA": {"title": "Ready to get started?", "description": "Join the future of product transparency.", "primaryAction": "Book a demo", "secondaryAction": "Contact sales", "noteOne": "No commitment required", "noteTwo": "Set up in minutes", "visualAlt": "Teal shield with a checkmark representing verified data"},
-  "Footer": {"summary": "The leading platform for Digital Product Passports. Compliant, secure, and built for the future.", "copyright": "© 2026 Passvero. All rights reserved.", "socialLabel": "Social media", "groups": {"product": {"title": "Product", "items": ["Features", "Integrations", "Security", "API"]}, "solutions": {"title": "Solutions", "items": ["Manufacturing", "Textile & Fashion", "Electronics", "Packaging"]}, "resources": {"title": "Resources", "items": ["Documentation", "Guides", "Blog", "Webinars"]}, "company": {"title": "Company", "items": ["About us", "Careers", "Partners", "Contact"]}, "compliance": {"title": "Compliance", "items": ["DPP", "ESPR", "Terms of Service", "Privacy Policy"]}}}
+  "Contact": {"emailLabel": "Email", "demoSubject": "Passvero demo request", "salesSubject": "Passvero sales enquiry", "generalSubject": "Passvero enquiry", "privacySubject": "Passvero privacy enquiry"},
+  "Legal": {
+    "Common": {"backHome": "Back to home", "lastUpdatedLabel": "Last updated", "lastUpdated": "11 July 2026"},
+    "Privacy": {
+      "metadata": {"title": "Privacy Policy | Passvero", "description": "Information about how Passvero handles personal data on its marketing website."},
+      "title": "Privacy Policy",
+      "intro": "This policy describes the current handling of personal data on the public Passvero marketing website.",
+      "sections": {
+        "scope": {"title": "Scope", "body": "This policy applies to the public pages at passvero.eu. The current website does not provide user accounts, a contact form or embedded analytics."},
+        "data": {"title": "Data we may process", "body": "When you contact us by email, we process your email address, message content and any information you choose to provide. Server and security infrastructure may process technical request logs, such as IP address, browser type and access time, to deliver and protect the service."},
+        "use": {"title": "How we use data", "body": "We use data to respond to enquiries, arrange demonstrations, maintain website security and reliability, and meet applicable legal obligations."},
+        "sharing": {"title": "Data sharing", "body": "We do not sell personal data. Data may be processed by hosting, infrastructure and email providers only as needed to provide those services or where required by law."},
+        "retention": {"title": "Data retention", "body": "We retain correspondence for as long as reasonably needed to respond and maintain business records. Technical logs are subject to infrastructure-provider retention periods and security needs."},
+        "rights": {"title": "Your rights", "body": "Depending on applicable law, you may request access, correction, deletion or restriction of your personal data, and object to certain processing."},
+        "security": {"title": "Security and contact", "body": "We apply reasonable technical and organisational safeguards. To ask a question or exercise your rights, contact us using the public email address below."}
+      }
+    },
+    "Cookies": {
+      "metadata": {"title": "Cookie Policy | Passvero", "description": "Information about the current use of cookies and browser storage on the Passvero website."},
+      "title": "Cookie Policy",
+      "intro": "This policy describes the current use of cookies and similar technologies at passvero.eu.",
+      "sections": {
+        "overview": {"title": "Current status", "body": "The marketing application code currently does not set cookies or use localStorage or sessionStorage."},
+        "necessary": {"title": "Strictly necessary technologies", "body": "Passvero currently has no first-party necessary cookies. A hosting or security infrastructure provider may use strictly necessary technical mechanisms to deliver the site, prevent abuse and maintain reliability."},
+        "locale": {"title": "Language selection", "body": "The language is determined from the URL. Automatic locale detection is disabled, and Passvero does not set a cookie to remember language selection."},
+        "analytics": {"title": "Analytics and advertising", "body": "We currently do not use analytics, advertising or marketing cookies, tracking pixels or tracking scripts. Therefore, no non-essential cookie-consent banner is displayed."},
+        "control": {"title": "Browser controls", "body": "Your browser settings let you inspect, block and delete cookies. Blocking necessary infrastructure technologies may affect site availability or security."},
+        "changes": {"title": "Changes and contact", "body": "If we introduce analytics or other non-essential technologies, we will update this policy and request consent before loading them where required. Contact us by email with questions."}
+      }
+    }
+  },
+  "Footer": {"summary": "A platform for creating and managing Digital Product Passports with clear, structured product information.", "copyright": "© 2026 Passvero. All rights reserved.", "socialLabel": "Social media", "legalLabel": "Legal information and contact", "privacy": "Privacy Policy", "cookies": "Cookie Policy", "email": "Contact", "groups": {"product": {"title": "Product", "items": ["Features", "Integrations", "Security", "API"]}, "solutions": {"title": "Solutions", "items": ["Manufacturing", "Textile & Fashion", "Electronics", "Packaging"]}, "resources": {"title": "Resources", "items": ["Documentation", "Guides", "Blog", "Webinars"]}, "company": {"title": "Company", "items": ["About us", "Careers", "Partners", "Contact"]}, "compliance": {"title": "Compliance", "items": ["DPP", "ESPR", "Terms of Service", "Privacy Policy"]}}}
 }

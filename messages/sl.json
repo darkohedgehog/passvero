@@ -1,7 +1,8 @@
 {
   "Metadata": {
     "title": "Passvero — Digitalni potni listi izdelkov",
-    "description": "Ustvarjajte, upravljajte in delite zaupanja vredne digitalne potne liste izdelkov."
+    "description": "Ustvarjajte, upravljajte in delite zaupanja vredne digitalne potne liste izdelkov.",
+    "openGraphImageAlt": "Platforma Passvero za preprosto upravljanje digitalnih potnih listov izdelkov"
   },
   "Navigation": {
     "home": "Domov",
@@ -39,5 +40,34 @@
   "Industries": {"title": "Ustvarjeno za proizvajalce po vsej Evropi", "items": {"furniture": "Pohištvo", "textiles": "Tekstil", "packaging": "Embalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Izdelki široke porabe"}},
   "Benefits": {"label": "Prednosti", "title": "Gradite zaupanje. Zmanjšajte tveganje. Odklenite vrednost.", "items": {"trust": {"title": "Gradite zaupanje", "description": "Dokažite pristnost in preglednost izdelkov."}, "risk": {"title": "Zmanjšajte tveganje", "description": "Izognite se kaznim in podprite regulativne postopke."}, "efficiency": {"title": "Izboljšajte učinkovitost", "description": "Avtomatizirajte zbiranje in preverjanje podatkov."}, "value": {"title": "Odklenite vrednost", "description": "Boljše podatke spremenite v pametnejše odločitve."}}},
   "CTA": {"title": "Ste pripravljeni začeti?", "description": "Pridružite se prihodnosti preglednosti izdelkov.", "primaryAction": "Rezervirajte predstavitev", "secondaryAction": "Kontaktirajte prodajo", "noteOne": "Brez obveznosti", "noteTwo": "Vzpostavitev v nekaj minutah", "visualAlt": "Turkizen ščit s kljukico, ki predstavlja preverjene podatke"},
-  "Footer": {"summary": "Vodilna platforma za digitalne potne liste izdelkov. Varna, pregledna in pripravljena na prihodnost.", "copyright": "© 2026 Passvero. Vse pravice pridržane.", "socialLabel": "Družbena omrežja", "groups": {"product": {"title": "Izdelek", "items": ["Možnosti", "Integracije", "Varnost", "API"]}, "solutions": {"title": "Rešitve", "items": ["Proizvodnja", "Tekstil in moda", "Elektronika", "Embalaža"]}, "resources": {"title": "Viri", "items": ["Dokumentacija", "Vodniki", "Blog", "Spletni seminarji"]}, "company": {"title": "Podjetje", "items": ["O nas", "Kariera", "Partnerji", "Kontakt"]}, "compliance": {"title": "Skladnost", "items": ["DPP", "ESPR", "Pogoji uporabe", "Pravilnik o zasebnosti"]}}}
+  "Contact": {"emailLabel": "E-pošta", "demoSubject": "Zahteva za predstavitev Passvero", "salesSubject": "Prodajno povpraševanje za Passvero", "generalSubject": "Povpraševanje za Passvero", "privacySubject": "Vprašanje o zasebnosti za Passvero"},
+  "Legal": {
+    "Common": {"backHome": "Nazaj na domačo stran", "lastUpdatedLabel": "Nazadnje posodobljeno", "lastUpdated": "11. julij 2026"},
+    "Privacy": {
+      "metadata": {"title": "Pravilnik o zasebnosti | Passvero", "description": "Informacije o obdelavi osebnih podatkov na trženjskem spletnem mestu Passvero."},
+      "title": "Pravilnik o zasebnosti", "intro": "Ta pravilnik opisuje trenutno ravnanje z osebnimi podatki na javnem trženjskem spletnem mestu Passvero.",
+      "sections": {
+        "scope": {"title": "Področje uporabe", "body": "Pravilnik velja za javne strani na passvero.eu. Trenutno spletno mesto nima uporabniških računov, kontaktnega obrazca ali vgrajene analitike."},
+        "data": {"title": "Podatki, ki jih lahko obdelujemo", "body": "Ko nam pišete po e-pošti, obdelujemo vaš naslov, vsebino sporočila in prostovoljno posredovane podatke. Strežniška in varnostna infrastruktura lahko za dostavo in zaščito storitve obdeluje tehnične dnevnike zahtev, kot so naslov IP, vrsta brskalnika in čas dostopa."},
+        "use": {"title": "Nameni obdelave", "body": "Podatke uporabljamo za odgovore na vprašanja, dogovor predstavitev, varnost in zanesljivost spletnega mesta ter izpolnjevanje veljavnih zakonskih obveznosti."},
+        "sharing": {"title": "Posredovanje podatkov", "body": "Osebnih podatkov ne prodajamo. Ponudniki gostovanja, infrastrukture in e-pošte jih lahko obdelujejo le v obsegu, potrebnem za njihove storitve ali po zakonu."},
+        "retention": {"title": "Hramba podatkov", "body": "Korespondenco hranimo toliko časa, kolikor je razumno potrebno za odgovor in poslovne evidence. Za tehnične dnevnike veljajo roki ponudnikov infrastrukture in varnostne potrebe."},
+        "rights": {"title": "Vaše pravice", "body": "Glede na veljavno pravo lahko zahtevate dostop, popravek, izbris ali omejitev obdelave ter ugovarjate določeni obdelavi."},
+        "security": {"title": "Varnost in stik", "body": "Uporabljamo razumne tehnične in organizacijske zaščitne ukrepe. Za vprašanja ali uveljavljanje pravic pišite na spodnji javni e-poštni naslov."}
+      }
+    },
+    "Cookies": {
+      "metadata": {"title": "Pravilnik o piškotkih | Passvero", "description": "Informacije o trenutni uporabi piškotkov in shrambe brskalnika na spletnem mestu Passvero."},
+      "title": "Pravilnik o piškotkih", "intro": "Ta pravilnik opisuje trenutno uporabo piškotkov in podobnih tehnologij na passvero.eu.",
+      "sections": {
+        "overview": {"title": "Trenutno stanje", "body": "Aplikacijska koda trženjskega spletnega mesta trenutno ne nastavlja piškotkov ter ne uporablja localStorage ali sessionStorage."},
+        "necessary": {"title": "Nujno potrebne tehnologije", "body": "Passvero trenutno nima lastnih nujnih piškotkov. Ponudnik gostovanja ali varnostne infrastrukture lahko uporablja strogo nujne tehnične mehanizme za dostavo, preprečevanje zlorab in zanesljivost."},
+        "locale": {"title": "Izbira jezika", "body": "Jezik je določen iz URL-ja. Samodejno zaznavanje jezika je izključeno in Passvero ne nastavlja piškotka za pomnjenje izbire jezika."},
+        "analytics": {"title": "Analitika in oglaševanje", "body": "Trenutno ne uporabljamo analitičnih, oglaševalskih ali trženjskih piškotkov, sledilnih pik ali skript. Zato pasica za soglasje za nenujne piškotke ni prikazana."},
+        "control": {"title": "Nastavitve brskalnika", "body": "V brskalniku lahko piškotke pregledate, blokirate in izbrišete. Blokiranje nujnih infrastrukturnih tehnologij lahko vpliva na dostopnost ali varnost spletnega mesta."},
+        "changes": {"title": "Spremembe in stik", "body": "Če uvedemo analitiko ali druge nenujne tehnologije, bomo pravilnik posodobili in po potrebi pred nalaganjem pridobili soglasje. Za vprašanja nam pišite po e-pošti."}
+      }
+    }
+  },
+  "Footer": {"summary": "Platforma za ustvarjanje in upravljanje digitalnih potnih listov z jasnimi, strukturiranimi podatki o izdelkih.", "copyright": "© 2026 Passvero. Vse pravice pridržane.", "socialLabel": "Družbena omrežja", "legalLabel": "Pravne informacije in stik", "privacy": "Pravilnik o zasebnosti", "cookies": "Pravilnik o piškotkih", "email": "Stik", "groups": {"product": {"title": "Izdelek", "items": ["Možnosti", "Integracije", "Varnost", "API"]}, "solutions": {"title": "Rešitve", "items": ["Proizvodnja", "Tekstil in moda", "Elektronika", "Embalaža"]}, "resources": {"title": "Viri", "items": ["Dokumentacija", "Vodniki", "Blog", "Spletni seminarji"]}, "company": {"title": "Podjetje", "items": ["O nas", "Kariera", "Partnerji", "Kontakt"]}, "compliance": {"title": "Skladnost", "items": ["DPP", "ESPR", "Pogoji uporabe", "Pravilnik o zasebnosti"]}}}
 }

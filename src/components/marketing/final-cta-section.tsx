@@ -5,9 +5,11 @@ import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
 import { BenefitsSection } from "@/src/components/marketing/benefits-section";
+import { createMailtoHref } from "@/src/lib/site";
 
 export async function FinalCtaSection() {
   const t = await getTranslations("CTA");
+  const contact = await getTranslations("Contact");
 
   return (
     <section id="demo" className="bg-slate-50 py-12 md:py-16">
@@ -19,8 +21,8 @@ export async function FinalCtaSection() {
               <h2 className="text-3xl font-bold tracking-[-0.035em] text-navy-950 md:text-4xl">{t("title")}</h2>
               <p className="mt-4 text-base text-slate-600">{t("description")}</p>
               <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-                <MarketingButton href="#product" variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
-                <MarketingButton href="#resources" variant="secondary" className="w-full sm:w-auto">{t("secondaryAction")}</MarketingButton>
+                <MarketingButton href={createMailtoHref(contact("demoSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
+                <MarketingButton href={createMailtoHref(contact("salesSubject"))} variant="secondary" className="w-full sm:w-auto">{t("secondaryAction")}</MarketingButton>
               </div>
               <div className="mt-6 flex flex-col gap-3 text-xs text-slate-600 sm:flex-row sm:gap-7">
                 <span className="flex items-center gap-2"><MarketingIcon name="check" className="size-4 text-teal-500" />{t("noteOne")}</span>

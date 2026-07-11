@@ -1,7 +1,8 @@
 {
   "Metadata": {
     "title": "Passvero — Digitale Produktpässe",
-    "description": "Erstellen, verwalten und teilen Sie vertrauenswürdige digitale Produktpässe."
+    "description": "Erstellen, verwalten und teilen Sie vertrauenswürdige digitale Produktpässe.",
+    "openGraphImageAlt": "Passvero-Plattform für einfaches Management digitaler Produktpässe"
   },
   "Navigation": {
     "home": "Startseite",
@@ -39,5 +40,34 @@
   "Industries": {"title": "Für Hersteller in ganz Europa entwickelt", "items": {"furniture": "Möbel", "textiles": "Textilien", "packaging": "Verpackungen", "electronics": "Elektronik", "manufacturing": "Fertigung", "consumer": "Konsumgüter"}},
   "Benefits": {"label": "Die Vorteile", "title": "Vertrauen schaffen. Risiken senken. Mehrwert erschließen.", "items": {"trust": {"title": "Vertrauen schaffen", "description": "Belegen Sie Authentizität und Transparenz."}, "risk": {"title": "Risiken senken", "description": "Vermeiden Sie Bußgelder und unterstützen Sie regulatorische Prozesse."}, "efficiency": {"title": "Effizienz steigern", "description": "Automatisieren Sie Datenerfassung und Prüfung."}, "value": {"title": "Mehrwert erschließen", "description": "Machen Sie aus besseren Daten klügere Entscheidungen."}}},
   "CTA": {"title": "Bereit für den Start?", "description": "Gestalten Sie die Zukunft der Produkttransparenz mit.", "primaryAction": "Demo vereinbaren", "secondaryAction": "Vertrieb kontaktieren", "noteOne": "Unverbindlich", "noteTwo": "In wenigen Minuten eingerichtet", "visualAlt": "Türkiser Schild mit Häkchen als Symbol für geprüfte Daten"},
-  "Footer": {"summary": "Die führende Plattform für digitale Produktpässe. Sicher, transparent und für die Zukunft gebaut.", "copyright": "© 2026 Passvero. Alle Rechte vorbehalten.", "socialLabel": "Soziale Medien", "groups": {"product": {"title": "Produkt", "items": ["Funktionen", "Integrationen", "Sicherheit", "API"]}, "solutions": {"title": "Lösungen", "items": ["Fertigung", "Textilien & Mode", "Elektronik", "Verpackungen"]}, "resources": {"title": "Ressourcen", "items": ["Dokumentation", "Leitfäden", "Blog", "Webinare"]}, "company": {"title": "Unternehmen", "items": ["Über uns", "Karriere", "Partner", "Kontakt"]}, "compliance": {"title": "Compliance", "items": ["DPP", "ESPR", "Nutzungsbedingungen", "Datenschutz"]}}}
+  "Contact": {"emailLabel": "E-Mail", "demoSubject": "Anfrage für eine Passvero-Demo", "salesSubject": "Vertriebsanfrage zu Passvero", "generalSubject": "Anfrage zu Passvero", "privacySubject": "Datenschutzanfrage zu Passvero"},
+  "Legal": {
+    "Common": {"backHome": "Zur Startseite", "lastUpdatedLabel": "Zuletzt aktualisiert", "lastUpdated": "11. Juli 2026"},
+    "Privacy": {
+      "metadata": {"title": "Datenschutzerklärung | Passvero", "description": "Informationen zur Verarbeitung personenbezogener Daten auf der Passvero-Marketingwebsite."},
+      "title": "Datenschutzerklärung", "intro": "Diese Erklärung beschreibt den derzeitigen Umgang mit personenbezogenen Daten auf der öffentlichen Passvero-Marketingwebsite.",
+      "sections": {
+        "scope": {"title": "Geltungsbereich", "body": "Diese Erklärung gilt für die öffentlichen Seiten auf passvero.eu. Die aktuelle Website bietet keine Benutzerkonten, kein Kontaktformular und keine eingebettete Analyse."},
+        "data": {"title": "Daten, die wir verarbeiten können", "body": "Wenn Sie uns per E-Mail kontaktieren, verarbeiten wir Ihre E-Mail-Adresse, den Nachrichteninhalt und freiwillig mitgeteilte Informationen. Server- und Sicherheitsinfrastruktur kann technische Anfrageprotokolle wie IP-Adresse, Browsertyp und Zugriffszeit zur Bereitstellung und zum Schutz des Dienstes verarbeiten."},
+        "use": {"title": "Verwendungszwecke", "body": "Wir nutzen Daten zur Beantwortung von Anfragen, zur Vereinbarung von Demonstrationen, zur Sicherheit und Zuverlässigkeit der Website sowie zur Erfüllung anwendbarer gesetzlicher Pflichten."},
+        "sharing": {"title": "Weitergabe", "body": "Wir verkaufen keine personenbezogenen Daten. Hosting-, Infrastruktur- und E-Mail-Anbieter verarbeiten Daten nur, soweit dies für ihre Leistungen oder gesetzlich erforderlich ist."},
+        "retention": {"title": "Speicherdauer", "body": "Korrespondenz wird so lange aufbewahrt, wie dies für Antworten und Geschäftsunterlagen angemessen erforderlich ist. Für technische Protokolle gelten die Fristen der Infrastrukturanbieter und Sicherheitsanforderungen."},
+        "rights": {"title": "Ihre Rechte", "body": "Je nach anwendbarem Recht können Sie Auskunft, Berichtigung, Löschung oder Einschränkung Ihrer Daten verlangen und bestimmten Verarbeitungen widersprechen."},
+        "security": {"title": "Sicherheit und Kontakt", "body": "Wir setzen angemessene technische und organisatorische Schutzmaßnahmen ein. Fragen und Anträge richten Sie bitte an die unten angegebene öffentliche E-Mail-Adresse."}
+      }
+    },
+    "Cookies": {
+      "metadata": {"title": "Cookie-Richtlinie | Passvero", "description": "Informationen zur derzeitigen Verwendung von Cookies und Browserspeicher bei Passvero."},
+      "title": "Cookie-Richtlinie", "intro": "Diese Richtlinie beschreibt die derzeitige Verwendung von Cookies und ähnlichen Technologien auf passvero.eu.",
+      "sections": {
+        "overview": {"title": "Aktueller Stand", "body": "Der Anwendungscode der Marketingwebsite setzt derzeit keine Cookies und verwendet weder localStorage noch sessionStorage."},
+        "necessary": {"title": "Technisch notwendige Technologien", "body": "Passvero verwendet derzeit keine eigenen notwendigen Cookies. Hosting- oder Sicherheitsanbieter können streng notwendige technische Mechanismen zur Bereitstellung, Missbrauchsabwehr und Zuverlässigkeit einsetzen."},
+        "locale": {"title": "Sprachauswahl", "body": "Die Sprache wird aus der URL bestimmt. Die automatische Spracherkennung ist deaktiviert; Passvero setzt keinen Cookie zur Speicherung der Sprachauswahl."},
+        "analytics": {"title": "Analyse und Werbung", "body": "Wir verwenden derzeit keine Analyse-, Werbe- oder Marketing-Cookies, Tracking-Pixel oder Tracking-Skripte. Daher wird kein Einwilligungsbanner für nicht notwendige Cookies angezeigt."},
+        "control": {"title": "Browser-Einstellungen", "body": "Über Ihren Browser können Sie Cookies prüfen, blockieren und löschen. Das Blockieren notwendiger Infrastrukturtechnologien kann Verfügbarkeit oder Sicherheit beeinträchtigen."},
+        "changes": {"title": "Änderungen und Kontakt", "body": "Wenn wir Analyse oder andere nicht notwendige Technologien einführen, aktualisieren wir diese Richtlinie und holen erforderliche Einwilligungen vor dem Laden ein. Fragen beantworten wir per E-Mail."}
+      }
+    }
+  },
+  "Footer": {"summary": "Eine Plattform zum Erstellen und Verwalten digitaler Produktpässe mit klaren, strukturierten Produktinformationen.", "copyright": "© 2026 Passvero. Alle Rechte vorbehalten.", "socialLabel": "Soziale Medien", "legalLabel": "Rechtliche Informationen und Kontakt", "privacy": "Datenschutzerklärung", "cookies": "Cookie-Richtlinie", "email": "Kontakt", "groups": {"product": {"title": "Produkt", "items": ["Funktionen", "Integrationen", "Sicherheit", "API"]}, "solutions": {"title": "Lösungen", "items": ["Fertigung", "Textilien & Mode", "Elektronik", "Verpackungen"]}, "resources": {"title": "Ressourcen", "items": ["Dokumentation", "Leitfäden", "Blog", "Webinare"]}, "company": {"title": "Unternehmen", "items": ["Über uns", "Karriere", "Partner", "Kontakt"]}, "compliance": {"title": "Compliance", "items": ["DPP", "ESPR", "Nutzungsbedingungen", "Datenschutz"]}}}
 }

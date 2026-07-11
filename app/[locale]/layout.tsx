@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { isAppLocale, routing } from "@/src/i18n/routing";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "@/src/lib/site";
 
 import "../globals.css";
 
@@ -39,6 +40,27 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages({ locale });
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        email: CONTACT_EMAIL,
+        logo: `${SITE_URL}/marketing/passvero-logo.png`,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        inLanguage: [...routing.locales],
+      },
+    ],
+  };
 
   return (
     <html
@@ -46,6 +68,12 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replaceAll("<", "\\u003c"),
+          }}
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
