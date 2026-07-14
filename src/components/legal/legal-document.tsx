@@ -13,6 +13,7 @@ type LegalDocumentProps = {
   lastUpdatedLabel: string;
   sections: readonly LegalSection[];
   backLabel: string;
+  pricingLabel: string;
   emailLabel: string;
   emailSubject: string;
 };
@@ -24,18 +25,27 @@ export function LegalDocument({
   lastUpdatedLabel,
   sections,
   backLabel,
+  pricingLabel,
   emailLabel,
   emailSubject,
 }: LegalDocumentProps) {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-700 sm:px-6 md:py-20">
       <article className="mx-auto max-w-3xl rounded-[20px] border border-slate-200 bg-white px-6 py-8 shadow-sm sm:px-10 md:px-14 md:py-12">
-        <Link
-          href="/"
-          className="inline-flex rounded-md text-sm font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
-        >
-          ← {backLabel}
-        </Link>
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-3" aria-label={backLabel}>
+          <Link
+            href="/"
+            className="inline-flex rounded-md text-sm font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+          >
+            ← {backLabel}
+          </Link>
+          <Link
+            href="/#pricing"
+            className="inline-flex rounded-md text-sm font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+          >
+            {pricingLabel}
+          </Link>
+        </nav>
         <h1 className="mt-8 text-3xl font-bold tracking-[-0.035em] text-navy-950 sm:text-4xl">
           {title}
         </h1>

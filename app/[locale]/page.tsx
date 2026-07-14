@@ -8,6 +8,7 @@ import { FinalCtaSection } from "@/src/components/marketing/final-cta-section";
 import { HeroSection } from "@/src/components/marketing/hero-section";
 import { HowItWorksSection } from "@/src/components/marketing/how-it-works-section";
 import { IndustriesSection } from "@/src/components/marketing/industries-section";
+import { PricingSection } from "@/src/components/marketing/pricing-section";
 import { SiteFooter } from "@/src/components/marketing/site-footer";
 import { SiteHeader } from "@/src/components/marketing/site-header";
 import { isAppLocale } from "@/src/i18n/routing";
@@ -56,6 +57,7 @@ export default async function Home({ params }: HomePageProps) {
         <HowItWorksSection />
         <DashboardPreviewSection />
         <IndustriesSection />
+        <PricingSection />
         <FinalCtaSection />
       </main>
       <SiteFooter />

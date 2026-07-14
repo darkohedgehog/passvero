@@ -20,6 +20,14 @@ const earlyAccessSubjects = {
   sl: "Zahteva za zgodnji dostop do Passvera",
   pl: "Prośba o wczesny dostęp do Passvero",
 };
+const pricingFeaturedLabels = {
+  hr: "Stiže pri lansiranju",
+  sr: "Stiže pri lansiranju",
+  en: "Coming at launch",
+  de: "Zum Marktstart verfügbar",
+  sl: "Na voljo ob zagonu",
+  pl: "Dostępne w dniu premiery",
+};
 
 async function read(path) {
   return readFile(new URL(path, root), "utf8");
@@ -217,7 +225,7 @@ test("public navigation and footer use localized About and Contact routes", asyn
   assert.match(header, /import \{ Link \} from "@\/src\/i18n\/navigation"/);
   assert.match(mobile, /import \{ Link \} from "@\/src\/i18n\/navigation"/);
   assert.match(footer, /kind: "route"/);
-  assert.doesNotMatch(header, /#pricing|#resources|#about/);
+  assert.doesNotMatch(header, /#resources|#about/);
   assert.doesNotMatch(footer, /href: "#about"/);
 });
 
@@ -232,4 +240,60 @@ test("sitemap and structured data include public company pages and supplied owne
   assert.match(site, /https:\/\/www\.zivic-elektro\.com/);
   assert.match(layout, /"@type": "Brand"/);
   assert.match(layout, /publisher: \{ "@id": `\$\{SITE_URL\}\/\#organization` \}/);
+});
+
+test("Pricing preview is localized and avoids unvalidated commercial claims", async () => {
+  const messages = await Promise.all(
+    locales.map(async (locale) => JSON.parse(await read(`messages/${locale}.json`))),
+  );
+
+  for (const [index, locale] of locales.entries()) {
+    const pricing = messages[index].Pricing;
+    assert.ok(pricing?.label, `${locale} pricing label`);
+    assert.ok(pricing?.title, `${locale} pricing title`);
+    assert.ok(pricing?.description, `${locale} pricing description`);
+    assert.equal(pricing?.plans?.starter?.name, "Starter", `${locale} Starter preview`);
+    assert.equal(pricing?.plans?.growth?.name, "Professional", `${locale} Professional preview`);
+    assert.equal(pricing?.plans?.business?.name, "Enterprise", `${locale} Enterprise preview`);
+    assert.ok(pricing?.status, `${locale} coming-soon status`);
+    assert.equal(pricing?.featured, pricingFeaturedLabels[locale], `${locale} launch badge`);
+    assert.equal(pricing?.action, earlyAccessLabels[locale]);
+    assert.ok(pricing?.note, `${locale} no-payment note`);
+    assert.equal(messages[index].Footer.groups.product.pricing, messages[index].MarketingNavigation.pricing);
+  }
+
+  const publicCopy = JSON.stringify(messages.map((messages) => messages.Pricing));
+  assert.doesNotMatch(publicCopy, /free trial|no credit card|besplatno probno|kostenlos testen|bezpłatny okres|storage limit|user limit|api access|priority support/i);
+  assert.doesNotMatch(publicCopy, /€|\$|£|\b\d+[.,]?\d*\s*(eur|usd|gbp|mjesečno|mesečno|monat|miesiąc)/i);
+});
+
+test("Pricing section has one stable anchor and locale-aware public links", async () => {
+  const pricing = await read("src/components/marketing/pricing-section.tsx");
+  const homepage = await read("app/[locale]/page.tsx");
+  const header = await read("src/components/marketing/site-header.tsx");
+  const footer = await read("src/components/marketing/site-footer.tsx");
+  const packageJson = await read("package.json");
+
+  assert.equal(pricing.match(/id="pricing"/g)?.length, 1);
+  assert.match(pricing, /createMailtoHref\(contact\("earlyAccessSubject"\)\)/);
+  assert.doesNotMatch(pricing, /<form\b|\/api\/|checkout|stripe/i);
+  assert.match(homepage, /<PricingSection \/>/);
+  assert.ok(homepage.indexOf("<PricingSection />") < homepage.indexOf("<FinalCtaSection />"));
+  assert.match(header, /href: "\/#pricing"/);
+  assert.match(footer, /href: "\/#pricing"/);
+  assert.doesNotMatch(header, /href: "#pricing"/);
+  assert.doesNotMatch(footer, /href: "#pricing"/);
+  assert.doesNotMatch(packageJson, /stripe/i);
+});
+
+test("legal routes expose a localized link back to homepage Pricing", async () => {
+  const legalDocument = await read("src/components/legal/legal-document.tsx");
+  assert.match(legalDocument, /href="\/#pricing"/);
+  assert.match(legalDocument, /pricingLabel/);
+
+  for (const route of ["privacy", "cookies", "terms"]) {
+    const source = await read(`app/[locale]/${route}/page.tsx`);
+    assert.match(source, /namespace: "MarketingNavigation"/);
+    assert.match(source, /pricingLabel=\{navigation\("pricing"\)\}/);
+  }
 });

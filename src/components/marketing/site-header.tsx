@@ -15,6 +15,7 @@ export async function SiteHeader() {
   const links = [
     { href: "/#product", label: t("product") },
     { href: "/#solutions", label: t("solutions") },
+    { href: "/#pricing", label: t("pricing") },
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
   ];

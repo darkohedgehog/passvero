@@ -46,6 +46,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
   const t = await getTranslations({ locale, namespace: "Legal.Terms" });
   const common = await getTranslations({ locale, namespace: "Legal.Common" });
   const contact = await getTranslations({ locale, namespace: "Contact" });
+  const navigation = await getTranslations({ locale, namespace: "MarketingNavigation" });
 
   return (
     <LegalDocument
@@ -54,6 +55,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
       lastUpdated={common("lastUpdated")}
       lastUpdatedLabel={common("lastUpdatedLabel")}
       backLabel={common("backHome")}
+      pricingLabel={navigation("pricing")}
       emailLabel={contact("emailLabel")}
       emailSubject={contact("generalSubject")}
       sections={sectionKeys.map((key) => ({

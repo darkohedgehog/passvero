@@ -31,6 +31,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
   const t = await getTranslations({ locale, namespace: "Legal.Privacy" });
   const common = await getTranslations({ locale, namespace: "Legal.Common" });
   const contact = await getTranslations({ locale, namespace: "Contact" });
+  const navigation = await getTranslations({ locale, namespace: "MarketingNavigation" });
 
   return (
     <LegalDocument
@@ -39,6 +40,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
       lastUpdated={common("lastUpdated")}
       lastUpdatedLabel={common("lastUpdatedLabel")}
       backLabel={common("backHome")}
+      pricingLabel={navigation("pricing")}
       emailLabel={contact("emailLabel")}
       emailSubject={contact("privacySubject")}
       sections={sectionKeys.map((key) => ({

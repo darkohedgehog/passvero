@@ -50,6 +50,7 @@ export async function SiteFooter() {
         { key: "features", label: t("groups.product.features"), href: "/#features", kind: "route" },
         { key: "howItWorks", label: t("groups.product.howItWorks"), href: "/#how-it-works", kind: "route" },
         { key: "industries", label: t("groups.product.industries"), href: "/#industries", kind: "route" },
+        { key: "pricing", label: t("groups.product.pricing"), href: "/#pricing", kind: "route" },
       ],
     },
     {

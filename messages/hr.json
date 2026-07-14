@@ -90,6 +90,20 @@
     "title": "Stvoreno za proizvođače diljem Europe",
     "items": {"furniture": "Namještaj", "textiles": "Tekstil", "packaging": "Ambalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Roba široke potrošnje"}
   },
+  "Pricing": {
+    "label": "Cijene",
+    "title": "Jednostavne cijene stižu uskoro.",
+    "description": "Cijene Passvera bit će objavljene prije javnog lansiranja. Zatražite rani pristup kako biste primali novosti o proizvodu i informacije o cijenama pri lansiranju.",
+    "plans": {
+      "starter": {"name": "Starter", "description": "Za prve korake s digitalnim putovnicama proizvoda."},
+      "growth": {"name": "Professional", "description": "Za rastuće kataloge proizvoda."},
+      "business": {"name": "Enterprise", "description": "Za veće organizacije i složenije potrebe."}
+    },
+    "status": "Detalji stižu uskoro",
+    "featured": "Stiže pri lansiranju",
+    "action": "Zatražite rani pristup",
+    "note": "Za slanje zahtjeva za pristup nije potrebno plaćanje."
+  },
   "Benefits": {
     "label": "Prednosti",
     "title": "Izgradite povjerenje. Smanjite rizik. Otključajte vrijednost.",
@@ -198,7 +212,7 @@
     "copyright": "© {year} Passvero. Sva prava pridržana.",
     "legalLabel": "Pravne informacije",
     "groups": {
-      "product": {"title": "Proizvod", "features": "Mogućnosti", "howItWorks": "Kako funkcionira", "industries": "Industrije"},
+      "product": {"title": "Proizvod", "features": "Mogućnosti", "howItWorks": "Kako funkcionira", "industries": "Industrije", "pricing": "Cijene"},
       "company": {"title": "Tvrtka", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatražite rani pristup"},
       "legal": {"title": "Pravno", "privacy": "Pravila privatnosti", "cookies": "Pravila o kolačićima", "terms": "Uvjeti korištenja"}
     }
