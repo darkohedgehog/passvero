@@ -10,7 +10,7 @@ import { createMailtoHref } from "@/src/lib/site";
 export async function SiteHeader() {
   const t = await getTranslations("MarketingNavigation");
   const contact = await getTranslations("Contact");
-  const demoHref = createMailtoHref(contact("demoSubject"));
+  const earlyAccessHref = createMailtoHref(contact("earlyAccessSubject"));
   const links = [
     { href: "#product", label: t("product") },
     { href: "#solutions", label: t("solutions") },
@@ -40,23 +40,16 @@ export async function SiteHeader() {
 
         <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher />
-          <a
-            href="#demo"
-            className="rounded-md text-[0.8125rem] font-semibold text-blue-600 hover:text-blue-700"
-          >
-            {t("signIn")}
-          </a>
-          <MarketingButton href={demoHref}>{t("bookDemo")}</MarketingButton>
+          <MarketingButton href={earlyAccessHref}>{t("earlyAccess")}</MarketingButton>
         </div>
 
         <MobileNavigation
           brand={t("brand")}
           closeLabel={t("closeMenu")}
-          ctaLabel={t("bookDemo")}
-          ctaHref={demoHref}
+          ctaLabel={t("earlyAccess")}
+          ctaHref={earlyAccessHref}
           links={links}
           menuLabel={t("menu")}
-          signInLabel={t("signIn")}
         />
       </MarketingContainer>
     </header>

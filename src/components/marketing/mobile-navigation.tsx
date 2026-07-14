@@ -12,7 +12,6 @@ type MobileNavigationProps = {
   ctaHref: string;
   links: ReadonlyArray<{ href: string; label: string }>;
   menuLabel: string;
-  signInLabel: string;
 };
 
 export function MobileNavigation({
@@ -22,7 +21,6 @@ export function MobileNavigation({
   ctaHref,
   links,
   menuLabel,
-  signInLabel,
 }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +91,6 @@ export function MobileNavigation({
             </div>
             <div className="mt-auto grid gap-4 border-t border-slate-200 pt-6">
               <LanguageSwitcher />
-              <a className="text-center font-semibold text-blue-600" href="#demo" onClick={() => setIsOpen(false)}>{signInLabel}</a>
               <a className="flex min-h-12 items-center justify-center rounded-[10px] bg-teal-600 px-6 font-semibold text-white" href={ctaHref} onClick={() => setIsOpen(false)}>{ctaLabel}</a>
             </div>
           </nav>

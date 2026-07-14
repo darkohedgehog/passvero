@@ -12,7 +12,7 @@
     "resources": "Resursi",
     "about": "O nama",
     "signIn": "Prijava",
-    "bookDemo": "Zakažite prezentaciju"
+    "earlyAccess": "Zatražite rani pristup"
   },
   "Common": {
     "language": "Jezik",
@@ -32,15 +32,15 @@
     "title": "Provereni pasoši proizvoda.",
     "description": "Jednostavna platforma za kreiranje i upravljanje digitalnim pasošima proizvoda."
   },
-  "MarketingNavigation": {"brand": "Passvero", "product": "Proizvod", "solutions": "Rešenja", "pricing": "Cene", "resources": "Resursi", "about": "O nama", "signIn": "Prijava", "bookDemo": "Zakažite prezentaciju", "menu": "Otvori meni", "closeMenu": "Zatvori meni"},
-  "Hero": {"badge": "DPP spremno", "title": "Provereni pasoši proizvoda.", "highlight": "pasoši proizvoda.", "description": "Kompletna platforma za digitalne pasoše proizvoda. Strukturirajte podatke, izgradite poverenje i svakom proizvodu dajte transparentan digitalni identitet.", "primaryAction": "Zakažite prezentaciju", "secondaryAction": "Pogledajte pregled", "visualAlt": "Digitalni pasoš proizvoda prikazan uz mobilni prikaz i QR karticu", "features": {"ready": {"title": "DPP spremno", "description": "Za transparentne podatke"}, "secure": {"title": "Sigurno i pouzdano", "description": "Zaštićeni poslovni podaci"}, "interoperable": {"title": "Interoperabilno", "description": "GS1, EPCIS i API podrška"}, "scalable": {"title": "Skalabilno", "description": "Za svaku industriju"}}},
+  "MarketingNavigation": {"brand": "Passvero", "product": "Proizvod", "solutions": "Rešenja", "pricing": "Cene", "resources": "Resursi", "about": "O nama", "earlyAccess": "Zatražite rani pristup", "menu": "Otvori meni", "closeMenu": "Zatvori meni"},
+  "Hero": {"badge": "DPP spremno", "title": "Provereni pasoši proizvoda.", "highlight": "pasoši proizvoda.", "description": "Kompletna platforma za digitalne pasoše proizvoda. Strukturirajte podatke, izgradite poverenje i svakom proizvodu dajte transparentan digitalni identitet.", "primaryAction": "Zatražite rani pristup", "secondaryAction": "Pogledajte pregled", "visualAlt": "Digitalni pasoš proizvoda prikazan uz mobilni prikaz i QR karticu", "features": {"ready": {"title": "DPP spremno", "description": "Za transparentne podatke"}, "secure": {"title": "Sigurno i pouzdano", "description": "Zaštićeni poslovni podaci"}, "interoperable": {"title": "Interoperabilno", "description": "GS1, EPCIS i API podrška"}, "scalable": {"title": "Skalabilno", "description": "Za svaku industriju"}}},
   "Compliance": {"title": "Napravljeno za usklađenost. Dizajnirano za poslovanje.", "items": {"ready": {"title": "DPP spremno", "description": "Podržava strukturirane podatke i buduće EU zahteve."}, "secure": {"title": "Sigurnost u osnovi", "description": "Vaši podaci ostaju zaštićeni i pod vašom kontrolom."}, "interoperable": {"title": "Interoperabilno", "description": "Povežite GS1, EPCIS, API-je i druge sisteme."}, "scalable": {"title": "Skalabilno", "description": "Od malih proizvođača do složenih lanaca snabdevanja."}}},
   "HowItWorks": {"label": "Kako funkcioniše", "title": "Od proizvoda do pasoša u 4 jednostavna koraka", "steps": {"create": {"title": "Kreirajte", "description": "Kreirajte digitalni pasoš za svoj proizvod."}, "generate": {"title": "Generišite", "description": "Generišite jedinstveni QR kod ili nosač podataka."}, "share": {"title": "Podelite", "description": "Povežite ga sa proizvodom ili ambalažom."}, "verify": {"title": "Proverite", "description": "Omogućite pristup pouzdanim informacijama."}}},
   "DashboardPreview": {"label": "Jedna platforma, sve što vam treba", "title": "Upravljajte. Pratite. Uskladite.", "description": "Passvero objedinjuje alate za upravljanje podacima o proizvodima, podršku procesima usklađenosti i izgradnju poverenja u lancu snabdevanja.", "features": ["Centralizovano upravljanje proizvodima i pasošima", "Praćenje podataka i događaja u realnom vremenu", "Dokumenti i sertifikati na jednom mestu", "Analitika i uvidi u performanse", "Pristup zasnovan na ulogama i timski rad"], "action": "Istražite sve mogućnosti", "visualAlt": "Passvero kontrolna tabla za upravljanje digitalnim pasošima proizvoda"},
   "Industries": {"title": "Napravljeno za proizvođače širom Evrope", "items": {"furniture": "Nameštaj", "textiles": "Tekstil", "packaging": "Ambalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Roba široke potrošnje"}},
   "Benefits": {"label": "Prednosti", "title": "Izgradite poverenje. Smanjite rizik. Otključajte vrednost.", "items": {"trust": {"title": "Izgradite poverenje", "description": "Dokažite autentičnost i transparentnost proizvoda."}, "risk": {"title": "Smanjite rizik", "description": "Izbegnite kazne i podržite regulatorne procese."}, "efficiency": {"title": "Povećajte efikasnost", "description": "Automatizujte prikupljanje i proveru podataka."}, "value": {"title": "Otključajte vrednost", "description": "Pretvorite kvalitetnije podatke u pametnije odluke."}}},
-  "CTA": {"title": "Spremni za početak?", "description": "Pridružite se budućnosti transparentnosti proizvoda.", "primaryAction": "Zakažite prezentaciju", "secondaryAction": "Kontaktirajte prodaju", "noteOne": "Bez obaveze", "noteTwo": "Podešavanje za nekoliko minuta", "visualAlt": "Tirkizni štit sa kvačicom koji predstavlja proverene podatke"},
-  "Contact": {"emailLabel": "E-pošta", "demoSubject": "Zahtev za Passvero demo", "salesSubject": "Upit za Passvero prodaju", "generalSubject": "Upit za Passvero", "privacySubject": "Upit o privatnosti za Passvero"},
+  "CTA": {"title": "Spremni za početak?", "description": "Pridružite se budućnosti transparentnosti proizvoda.", "primaryAction": "Zatražite rani pristup", "noteOne": "Bez obaveze", "noteTwo": "Podešavanje za nekoliko minuta", "visualAlt": "Tirkizni štit sa kvačicom koji predstavlja proverene podatke"},
+  "Contact": {"emailLabel": "E-pošta", "earlyAccessSubject": "Zahtev za rani pristup Passveru", "generalSubject": "Upit za Passvero", "privacySubject": "Upit o privatnosti za Passvero"},
   "Legal": {
     "Common": {"backHome": "Nazad na početnu stranicu", "lastUpdatedLabel": "Poslednje ažuriranje", "lastUpdated": "11. jul 2026."},
     "Privacy": {
@@ -49,7 +49,7 @@
       "sections": {
         "scope": {"title": "Obim", "body": "Ova politika se odnosi na javne stranice na passvero.eu. Trenutni sajt nema korisničke naloge, kontakt obrazac niti ugrađenu analitiku."},
         "data": {"title": "Podaci koje možemo obrađivati", "body": "Kada nam pišete e-poštom, obrađujemo vašu adresu, sadržaj poruke i podatke koje dobrovoljno navedete. Serverska i bezbednosna infrastruktura može obrađivati tehničke zapise zahteva, poput IP adrese, vrste pregledača i vremena pristupa, radi isporuke i zaštite usluge."},
-        "use": {"title": "Svrhe obrade", "body": "Podatke koristimo za odgovore na upite, organizovanje prezentacija, održavanje bezbednosti i pouzdanosti sajta i ispunjavanje primenjivih zakonskih obaveza."},
+        "use": {"title": "Svrhe obrade", "body": "Podatke koristimo za odgovore na upite i zahteve za rani pristup, održavanje bezbednosti i pouzdanosti sajta i ispunjavanje primenjivih zakonskih obaveza."},
         "sharing": {"title": "Deljenje podataka", "body": "Ne prodajemo lične podatke. Pružaoci hostinga, infrastrukture i e-pošte mogu obrađivati podatke samo koliko je potrebno za njihove usluge ili kada zakon to zahteva."},
         "retention": {"title": "Čuvanje podataka", "body": "Prepisku čuvamo koliko je razumno potrebno za odgovor i poslovnu evidenciju. Tehnički zapisi podležu rokovima pružalaca infrastrukture i bezbednosnim potrebama."},
         "rights": {"title": "Vaša prava", "body": "U zavisnosti od primenjivog prava, možete tražiti pristup, ispravku, brisanje ili ograničenje obrade i uložiti prigovor na određenu obradu."},
@@ -69,9 +69,9 @@
       }
     },
     "Terms": {
-      "metadata": {"title": "Uslovi korišćenja | Passvero", "description": "Početni uslovi za pristup Passvero platformi i korišćenje njenih usluga."},
+      "metadata": {"title": "Uslovi korišćenja | Passvero", "description": "Uslovi za pristup Passvero platformi i korišćenje njenih usluga."},
       "title": "Uslovi korišćenja",
-      "intro": "Ovo su početni uslovi proizvoda za Passvero. Pre produkcijskog pokretanja usluge moraju ih pregledati i po potrebi prilagoditi kvalifikovani pravni stručnjaci.",
+      "intro": "Ovi uslovi opisuju pravila koja se primenjuju pri pristupu Passvero usluzi i njenom korišćenju.",
       "sections": {
         "introduction": {"title": "1. Uvod", "body": "Ovi uslovi uređuju pristup sajtu https://passvero.eu i korišćenje Passvero usluge. Pristupanjem usluzi prihvatate ove uslove. Ako ih ne prihvatate, nemojte koristiti uslugu."},
         "service": {"title": "2. Opis usluge", "body": "Passvero pruža alate za upravljanje, strukturiranje i objavljivanje podataka o proizvodima, uključujući radne procese za digitalne pasoše proizvoda. Passvero nije pravna sertifikacija i ne garantuje regulatornu usklađenost proizvoda ili objavljenih podataka."},
@@ -84,11 +84,11 @@
         "disclaimer": {"title": "9. Odricanje od garancija", "body": "Usluga se pruža u trenutno dostupnom stanju i, u meri dozvoljenoj primenjivim pravom, bez izričitih ili prećutnih garancija. Informacije dostupne putem usluge nisu pravni savet niti zamena za stručnu proveru."},
         "liability": {"title": "10. Ograničenje odgovornosti", "body": "U meri dozvoljenoj primenjivim pravom, Passvero ne odgovara za posredne, slučajne, posebne ili posledične gubitke, niti za izgubljenu dobit, podatke ili poslovne prilike nastale korišćenjem usluge. Obavezna prava i odgovornosti koje se zakonom ne mogu ograničiti ostaju nepromenjeni."},
         "termination": {"title": "11. Prestanak korišćenja", "body": "Uslugu možete prestati da koristite u bilo kom trenutku. Pristup možemo ograničiti ili ukinuti zbog bitne povrede ovih uslova, bezbednosnog rizika, protivzakonite upotrebe ili kada je to potrebno radi zaštite usluge i drugih korisnika."},
-        "governingLaw": {"title": "12. Merodavno pravo", "body": "Merodavno pravo i nadležni sudovi biće navedeni u konačnim uslovima pre produkcijskog pokretanja ili u odgovarajućem ugovoru sa korisnikom. Ova početna formulacija ne određuje jurisdikciju niti isključuje obavezna prava koja se primenjuju."},
+        "governingLaw": {"title": "12. Merodavno pravo", "body": "Merodavno pravo i nadležnost određuju se prema primenjivim obaveznim pravilima i, kada je relevantno, ugovoru sa korisnikom. Ovi uslovi ne isključuju obavezna prava koja se primenjuju."},
         "contact": {"title": "13. Kontakt", "body": "Za pitanja o ovim uslovima obratite se Passveru na contact@passvero.eu. Informacije o usluzi dostupne su na https://passvero.eu."},
         "changes": {"title": "14. Promene uslova", "body": "Ove uslove možemo ažurirati kako se proizvod, poslovni model ili zakonski zahtevi razvijaju. Objavićemo ažuriranu verziju i datum poslednje izmene, uz dodatno obaveštenje o značajnim promenama kada je to primereno."}
       }
     }
   },
-  "Footer": {"summary": "Platforma za kreiranje i upravljanje digitalnim pasošima sa jasnim, strukturiranim informacijama o proizvodima.", "badge": "Napravljeno za proizvođače širom Evrope.", "copyright": "© {year} Passvero. Sva prava zadržana.", "legalLabel": "Pravne informacije", "groups": {"product": {"title": "Proizvod", "features": "Mogućnosti", "howItWorks": "Kako funkcioniše", "industries": "Industrije"}, "company": {"title": "Kompanija", "about": "O nama", "contact": "Kontakt", "bookDemo": "Zakažite prezentaciju"}, "legal": {"title": "Pravno", "privacy": "Politika privatnosti", "cookies": "Politika kolačića", "terms": "Uslovi korišćenja"}}}
+  "Footer": {"summary": "Platforma za kreiranje i upravljanje digitalnim pasošima sa jasnim, strukturiranim informacijama o proizvodima.", "badge": "Napravljeno za proizvođače širom Evrope.", "copyright": "© {year} Passvero. Sva prava zadržana.", "legalLabel": "Pravne informacije", "groups": {"product": {"title": "Proizvod", "features": "Mogućnosti", "howItWorks": "Kako funkcioniše", "industries": "Industrije"}, "company": {"title": "Kompanija", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatražite rani pristup"}, "legal": {"title": "Pravno", "privacy": "Politika privatnosti", "cookies": "Politika kolačića", "terms": "Uslovi korišćenja"}}}
 }

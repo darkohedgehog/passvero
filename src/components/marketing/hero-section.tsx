@@ -37,7 +37,7 @@ export async function HeroSection() {
               {t("description")}
             </p>
             <div className="mt-7 grid gap-3 sm:flex sm:flex-wrap">
-              <MarketingButton href={createMailtoHref(contact("demoSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
+              <MarketingButton href={createMailtoHref(contact("earlyAccessSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
               <MarketingButton href="#solutions" variant="secondary" className="w-full gap-2 sm:w-auto">
                 <MarketingIcon name="play" className="size-4" />
                 {t("secondaryAction")}

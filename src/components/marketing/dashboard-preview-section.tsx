@@ -29,7 +29,7 @@ export async function DashboardPreviewSection() {
               </li>
             ))}
           </ul>
-          <MarketingButton href="#demo" variant="secondary" className="mt-8">{t("action")}</MarketingButton>
+          <MarketingButton href="#early-access" variant="secondary" className="mt-8">{t("action")}</MarketingButton>
         </div>
         <div className="relative -mx-3 overflow-hidden rounded-[20px] bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.1)] sm:mx-0">
           <div className="absolute inset-x-[8%] bottom-[2%] h-1/3 rounded-full bg-blue-100/60 blur-3xl" aria-hidden="true" />

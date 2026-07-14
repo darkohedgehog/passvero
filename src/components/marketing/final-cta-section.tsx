@@ -12,7 +12,7 @@ export async function FinalCtaSection() {
   const contact = await getTranslations("Contact");
 
   return (
-    <section id="demo" className="bg-slate-50 py-12 md:py-16">
+    <section id="early-access" className="bg-slate-50 py-12 md:py-16">
       <MarketingContainer>
         <div className="overflow-hidden rounded-[20px] border border-slate-100 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)] lg:grid lg:grid-cols-[0.82fr_1.18fr]">
           <BenefitsSection />
@@ -21,8 +21,7 @@ export async function FinalCtaSection() {
               <h2 className="text-3xl font-bold tracking-[-0.035em] text-navy-950 md:text-4xl">{t("title")}</h2>
               <p className="mt-4 text-base text-slate-600">{t("description")}</p>
               <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-                <MarketingButton href={createMailtoHref(contact("demoSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
-                <MarketingButton href={createMailtoHref(contact("salesSubject"))} variant="secondary" className="w-full sm:w-auto">{t("secondaryAction")}</MarketingButton>
+                <MarketingButton href={createMailtoHref(contact("earlyAccessSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
               </div>
               <div className="mt-6 flex flex-col gap-3 text-xs text-slate-600 sm:flex-row sm:gap-7">
                 <span className="flex items-center gap-2"><MarketingIcon name="check" className="size-4 text-teal-500" />{t("noteOne")}</span>

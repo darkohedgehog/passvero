@@ -58,7 +58,7 @@ export async function SiteFooter() {
       links: [
         { key: "about", label: t("groups.company.about"), href: "#about", kind: "anchor" },
         { key: "contact", label: t("groups.company.contact"), href: `mailto:${CONTACT_EMAIL}`, kind: "mailto" },
-        { key: "bookDemo", label: t("groups.company.bookDemo"), href: createMailtoHref(contact("demoSubject")), kind: "mailto" },
+        { key: "earlyAccess", label: t("groups.company.earlyAccess"), href: createMailtoHref(contact("earlyAccessSubject")), kind: "mailto" },
       ],
     },
     {

@@ -12,7 +12,7 @@
     "resources": "Resources",
     "about": "About",
     "signIn": "Sign in",
-    "bookDemo": "Book a demo"
+    "earlyAccess": "Request Early Access"
   },
   "Common": {
     "language": "Language",
@@ -32,11 +32,11 @@
     "title": "Verified product passports.",
     "description": "A simple platform for creating and managing digital product passports."
   },
-  "MarketingNavigation": {"brand": "Passvero", "product": "Product", "solutions": "Solutions", "pricing": "Pricing", "resources": "Resources", "about": "About", "signIn": "Log in", "bookDemo": "Book a demo", "menu": "Open menu", "closeMenu": "Close menu"},
+  "MarketingNavigation": {"brand": "Passvero", "product": "Product", "solutions": "Solutions", "pricing": "Pricing", "resources": "Resources", "about": "About", "earlyAccess": "Request Early Access", "menu": "Open menu", "closeMenu": "Close menu"},
   "Hero": {
     "badge": "DPP ready", "title": "Verified product passports.", "highlight": "product passports.",
     "description": "The complete platform for Digital Product Passports. Structure product data, build trust, and give every product a transparent digital identity.",
-    "primaryAction": "Book a demo", "secondaryAction": "Watch overview", "visualAlt": "Digital product passport shown with a mobile passport view and QR card",
+    "primaryAction": "Request Early Access", "secondaryAction": "Watch overview", "visualAlt": "Digital product passport shown with a mobile passport view and QR card",
     "features": {"ready": {"title": "DPP ready", "description": "For transparent product data"}, "secure": {"title": "Secure & trusted", "description": "Protected business data"}, "interoperable": {"title": "Interoperable", "description": "GS1, EPCIS and API support"}, "scalable": {"title": "Scalable", "description": "For every industry"}}
   },
   "Compliance": {"title": "Built for compliance. Designed for businesses.", "items": {"ready": {"title": "DPP ready", "description": "Supports structured data and future EU requirements."}, "secure": {"title": "Secure by design", "description": "Your data stays protected and under your control."}, "interoperable": {"title": "Interoperable", "description": "Connect GS1, EPCIS, APIs and other systems."}, "scalable": {"title": "Scalable", "description": "From small manufacturers to complex supply chains."}}},
@@ -44,8 +44,8 @@
   "DashboardPreview": {"label": "One platform, everything you need", "title": "Manage. Track. Comply.", "description": "Passvero brings together the tools you need to manage product data, support compliance processes, and build trust across your supply chain.", "features": ["Centralized product and passport management", "Real-time data and event tracking", "Documents and certificates in one place", "Analytics and performance insights", "Role-based access and team collaboration"], "action": "Explore all features", "visualAlt": "Passvero dashboard for managing digital product passports"},
   "Industries": {"title": "Built for manufacturers across Europe", "items": {"furniture": "Furniture", "textiles": "Textiles", "packaging": "Packaging", "electronics": "Electronics", "manufacturing": "Manufacturing", "consumer": "Consumer Goods"}},
   "Benefits": {"label": "The benefits", "title": "Build trust. Reduce risk. Unlock value.", "items": {"trust": {"title": "Build trust", "description": "Prove product authenticity and transparency."}, "risk": {"title": "Reduce risk", "description": "Avoid fines and support regulatory processes."}, "efficiency": {"title": "Improve efficiency", "description": "Automate data collection and verification."}, "value": {"title": "Unlock value", "description": "Turn better data into smarter decisions."}}},
-  "CTA": {"title": "Ready to get started?", "description": "Join the future of product transparency.", "primaryAction": "Book a demo", "secondaryAction": "Contact sales", "noteOne": "No commitment required", "noteTwo": "Set up in minutes", "visualAlt": "Teal shield with a checkmark representing verified data"},
-  "Contact": {"emailLabel": "Email", "demoSubject": "Passvero demo request", "salesSubject": "Passvero sales enquiry", "generalSubject": "Passvero enquiry", "privacySubject": "Passvero privacy enquiry"},
+  "CTA": {"title": "Ready to get started?", "description": "Join the future of product transparency.", "primaryAction": "Request Early Access", "noteOne": "No commitment required", "noteTwo": "Set up in minutes", "visualAlt": "Teal shield with a checkmark representing verified data"},
+  "Contact": {"emailLabel": "Email", "earlyAccessSubject": "Passvero early access request", "generalSubject": "Passvero enquiry", "privacySubject": "Passvero privacy enquiry"},
   "Legal": {
     "Common": {"backHome": "Back to home", "lastUpdatedLabel": "Last updated", "lastUpdated": "11 July 2026"},
     "Privacy": {
@@ -55,7 +55,7 @@
       "sections": {
         "scope": {"title": "Scope", "body": "This policy applies to the public pages at passvero.eu. The current website does not provide user accounts, a contact form or embedded analytics."},
         "data": {"title": "Data we may process", "body": "When you contact us by email, we process your email address, message content and any information you choose to provide. Server and security infrastructure may process technical request logs, such as IP address, browser type and access time, to deliver and protect the service."},
-        "use": {"title": "How we use data", "body": "We use data to respond to enquiries, arrange demonstrations, maintain website security and reliability, and meet applicable legal obligations."},
+        "use": {"title": "How we use data", "body": "We use data to respond to enquiries and Early Access requests, maintain website security and reliability, and meet applicable legal obligations."},
         "sharing": {"title": "Data sharing", "body": "We do not sell personal data. Data may be processed by hosting, infrastructure and email providers only as needed to provide those services or where required by law."},
         "retention": {"title": "Data retention", "body": "We retain correspondence for as long as reasonably needed to respond and maintain business records. Technical logs are subject to infrastructure-provider retention periods and security needs."},
         "rights": {"title": "Your rights", "body": "Depending on applicable law, you may request access, correction, deletion or restriction of your personal data, and object to certain processing."},
@@ -76,9 +76,9 @@
       }
     },
     "Terms": {
-      "metadata": {"title": "Terms of Service | Passvero", "description": "Initial terms governing access to and use of the Passvero platform and services."},
+      "metadata": {"title": "Terms of Service | Passvero", "description": "Terms governing access to and use of the Passvero platform and services."},
       "title": "Terms of Service",
-      "intro": "These are initial product terms for Passvero. They require review and, where necessary, revision by qualified legal counsel before the service launches in production.",
+      "intro": "These terms describe the rules that apply when accessing and using the Passvero service.",
       "sections": {
         "introduction": {"title": "1. Introduction", "body": "These terms govern access to https://passvero.eu and use of the Passvero service. By accessing the service, you agree to these terms. If you do not agree, do not use the service."},
         "service": {"title": "2. Service description", "body": "Passvero provides tools for managing, structuring and publishing product information, including Digital Product Passport workflows. Passvero is not legal certification and does not guarantee regulatory compliance for any product or published data."},
@@ -91,11 +91,11 @@
         "disclaimer": {"title": "9. Disclaimer", "body": "The service is provided as available and, to the extent permitted by applicable law, without express or implied warranties. Information made available through the service is not legal advice or a substitute for professional review."},
         "liability": {"title": "10. Limitation of liability", "body": "To the extent permitted by applicable law, Passvero is not liable for indirect, incidental, special or consequential losses, or for lost profits, data or business opportunities arising from use of the service. Mandatory rights and liabilities that cannot lawfully be limited remain unaffected."},
         "termination": {"title": "11. Termination", "body": "You may stop using the service at any time. We may restrict or terminate access for a material breach of these terms, a security risk, unlawful use, or where needed to protect the service and other users."},
-        "governingLaw": {"title": "12. Governing law", "body": "The governing law and competent courts will be specified in the final terms before production launch or in the relevant customer agreement. This initial wording does not select a jurisdiction or exclude any mandatory rights that apply."},
+        "governingLaw": {"title": "12. Governing law", "body": "Governing law and jurisdiction are determined by applicable mandatory rules and, where relevant, the customer agreement. These terms do not exclude any mandatory rights that apply."},
         "contact": {"title": "13. Contact", "body": "For questions about these terms, contact Passvero at contact@passvero.eu. Service information is available at https://passvero.eu."},
         "changes": {"title": "14. Changes to these terms", "body": "We may update these terms as the product, business model or legal requirements evolve. We will publish the updated version and identify its last-updated date, with additional notice for material changes where appropriate."}
       }
     }
   },
-  "Footer": {"summary": "A platform for creating and managing Digital Product Passports with clear, structured product information.", "badge": "Built for manufacturers across Europe.", "copyright": "© {year} Passvero. All rights reserved.", "legalLabel": "Legal information", "groups": {"product": {"title": "Product", "features": "Features", "howItWorks": "How it works", "industries": "Industries"}, "company": {"title": "Company", "about": "About", "contact": "Contact", "bookDemo": "Book a demo"}, "legal": {"title": "Legal", "privacy": "Privacy Policy", "cookies": "Cookie Policy", "terms": "Terms of Service"}}}
+  "Footer": {"summary": "A platform for creating and managing Digital Product Passports with clear, structured product information.", "badge": "Built for manufacturers across Europe.", "copyright": "© {year} Passvero. All rights reserved.", "legalLabel": "Legal information", "groups": {"product": {"title": "Product", "features": "Features", "howItWorks": "How it works", "industries": "Industries"}, "company": {"title": "Company", "about": "About", "contact": "Contact", "earlyAccess": "Request Early Access"}, "legal": {"title": "Legal", "privacy": "Privacy Policy", "cookies": "Cookie Policy", "terms": "Terms of Service"}}}
 }
