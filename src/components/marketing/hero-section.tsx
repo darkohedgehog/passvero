@@ -64,7 +64,7 @@ export async function HeroSection() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-6 border-t border-slate-100 pt-7 lg:-mt-28 lg:w-[53%] lg:grid-cols-4 lg:gap-x-7 lg:border-0 lg:pt-0">
+        <div id="features" className="mt-8 scroll-mt-6 grid grid-cols-2 gap-x-5 gap-y-6 border-t border-slate-100 pt-7 lg:-mt-28 lg:w-[53%] lg:grid-cols-4 lg:gap-x-7 lg:border-0 lg:pt-0">
           {featureItems.map((item) => (
             <div key={item.key} className="flex gap-3 lg:flex lg:items-start">
               <MarketingIcon name={item.icon} className="size-6 shrink-0 text-navy-800" />

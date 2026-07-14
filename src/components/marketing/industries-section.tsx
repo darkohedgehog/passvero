@@ -16,7 +16,7 @@ export async function IndustriesSection() {
   const t = await getTranslations("Industries");
 
   return (
-    <section className="border-y border-slate-100 bg-slate-50/70 py-11 md:py-12">
+    <section id="industries" className="scroll-mt-6 border-y border-slate-100 bg-slate-50/70 py-11 md:py-12">
       <MarketingContainer>
         <h2 className="text-center text-xl font-bold tracking-[-0.03em] text-navy-950 md:text-2xl">{t("title")}</h2>
         <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-6">

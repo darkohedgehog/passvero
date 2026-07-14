@@ -14,7 +14,7 @@ export async function HowItWorksSection() {
   const t = await getTranslations("HowItWorks");
 
   return (
-    <section className="py-16 md:py-20">
+    <section id="how-it-works" className="scroll-mt-6 py-16 md:py-20">
       <MarketingContainer>
         <div className="text-center">
           <p className="marketing-section-label">{t("label")}</p>

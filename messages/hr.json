@@ -148,22 +148,38 @@
         "control": {"title": "Kontrola u pregledniku", "body": "Postavke preglednika omogućuju pregled, blokiranje i brisanje kolačića. Blokiranje nužnih tehnologija pružatelja infrastrukture može utjecati na dostupnost ili sigurnost web-stranice."},
         "changes": {"title": "Promjene i kontakt", "body": "Ako uvedemo analitiku ili druge neobavezne tehnologije, ažurirat ćemo ova pravila i, kada je potrebno, zatražiti privolu prije njihova učitavanja. Za pitanja nam se obratite e-poštom."}
       }
+    },
+    "Terms": {
+      "metadata": {"title": "Uvjeti korištenja | Passvero", "description": "Početni uvjeti za korištenje Passvero platforme i usluga."},
+      "title": "Uvjeti korištenja",
+      "intro": "Ovo su početni uvjeti proizvoda za Passvero. Moraju ih pregledati i po potrebi prilagoditi kvalificirani pravni stručnjaci prije produkcijskog pokretanja usluge.",
+      "sections": {
+        "introduction": {"title": "1. Uvod", "body": "Ovi uvjeti uređuju pristup web-stranici https://passvero.eu i korištenje Passvero usluge. Pristupom usluzi prihvaćate ove uvjete. Ako ih ne prihvaćate, nemojte koristiti uslugu."},
+        "service": {"title": "2. Opis usluge", "body": "Passvero pruža alate za upravljanje, strukturiranje i objavljivanje podataka o proizvodima, uključujući radne procese za digitalne putovnice proizvoda. Passvero nije pravna certifikacija i ne jamči regulatornu usklađenost proizvoda ili objavljenih podataka."},
+        "eligibility": {"title": "3. Uvjeti pristupa i odgovornost za račun", "body": "Uslugu smiju koristiti osobe koje mogu sklopiti obvezujući ugovor u svoje ime ili u ime organizacije koju zastupaju. Odgovorni ste za točnost podataka o računu, povjerljivost pristupnih podataka i sve aktivnosti na svojem računu."},
+        "acceptableUse": {"title": "4. Prihvatljiva uporaba", "body": "Uslugu ne smijete koristiti protuzakonito, za povredu tuđih prava, širenje zlonamjernog sadržaja, ometanje sigurnosti ili rada usluge, neovlašten pristup sustavima ili objavu obmanjujućih podataka."},
+        "productData": {"title": "5. Podaci o proizvodima i odgovornost korisnika", "body": "Vi zadržavate odgovornost za točnost, potpunost, zakonitost i prava na podatke, dokumente i druge sadržaje koje unosite ili objavljujete. Prije objave morate provjeriti podatke i osigurati da ispunjavaju primjenjive zakonske i ugovorne obveze."},
+        "intellectualProperty": {"title": "6. Intelektualno vlasništvo", "body": "Passvero i povezani softver, dizajn i sadržaj zaštićeni su primjenjivim pravima intelektualnog vlasništva. Ne stječemo vlasništvo nad vašim podacima; dajete nam samo prava potrebna za hostiranje, obradu i prikaz tih podataka radi pružanja usluge."},
+        "thirdPartyServices": {"title": "7. Usluge trećih strana", "body": "Usluga se može oslanjati na pružatelje hostinga, e-pošte, pohrane ili druge treće strane. Njihove usluge mogu podlijegati zasebnim uvjetima i pravilima, a Passvero ne upravlja njihovom dostupnošću."},
+        "availability": {"title": "8. Dostupnost i promjene usluge", "body": "Nastojimo održavati uslugu dostupnom i pouzdanom, ali ne jamčimo neprekidan ili bezgrešan rad. Uslugu možemo mijenjati, ograničiti ili obustaviti radi održavanja, sigurnosti, zakonskih zahtjeva ili razvoja proizvoda."},
+        "disclaimer": {"title": "9. Odricanje od jamstava", "body": "Usluga se pruža u trenutačno dostupnom stanju i u mjeri dopuštenoj primjenjivim pravom, bez izričitih ili prešutnih jamstava. Informacije dostupne putem usluge nisu pravni savjet niti zamjena za stručnu provjeru."},
+        "liability": {"title": "10. Ograničenje odgovornosti", "body": "U mjeri dopuštenoj primjenjivim pravom, Passvero ne odgovara za neizravne, slučajne, posebne ili posljedične štete, gubitak dobiti, podataka ili poslovnih prilika povezanih s korištenjem usluge. Obvezna prava i odgovornosti koje zakon ne dopušta ograničiti ostaju nepromijenjeni."},
+        "termination": {"title": "11. Prestanak korištenja", "body": "Uslugu možete prestati koristiti u bilo kojem trenutku. Pristup možemo ograničiti ili ukinuti zbog bitne povrede ovih uvjeta, sigurnosnog rizika, protuzakonite uporabe ili ako je to potrebno radi zaštite usluge i drugih korisnika."},
+        "governingLaw": {"title": "12. Mjerodavno pravo", "body": "Mjerodavno pravo i nadležni sud bit će određeni u konačnim uvjetima prije produkcijskog pokretanja ili u odgovarajućem ugovoru s korisnikom. Ova početna formulacija ne određuje jurisdikciju niti isključuje obvezna prava koja se primjenjuju."},
+        "contact": {"title": "13. Kontakt", "body": "Za pitanja o ovim uvjetima obratite se Passveru na contact@passvero.eu. Informacije o usluzi dostupne su na https://passvero.eu."},
+        "changes": {"title": "14. Promjene uvjeta", "body": "Ove uvjete možemo ažurirati kako se proizvod, poslovni model ili zakonski zahtjevi razvijaju. Objavit ćemo ažuriranu verziju i navesti datum posljednje izmjene; za značajne promjene pružit ćemo dodatnu obavijest kada je to primjereno."}
+      }
     }
   },
   "Footer": {
     "summary": "Platforma za izradu i upravljanje digitalnim putovnicama s jasnim, strukturiranim podacima o proizvodima.",
-    "copyright": "© 2026 Passvero. Sva prava pridržana.",
-    "socialLabel": "Društvene mreže",
-    "legalLabel": "Pravne informacije i kontakt",
-    "privacy": "Pravila privatnosti",
-    "cookies": "Pravila o kolačićima",
-    "email": "Kontakt",
+    "badge": "Stvoreno za proizvođače diljem Europe.",
+    "copyright": "© {year} Passvero. Sva prava pridržana.",
+    "legalLabel": "Pravne informacije",
     "groups": {
-      "product": {"title": "Proizvod", "items": ["Mogućnosti", "Integracije", "Sigurnost", "API"]},
-      "solutions": {"title": "Rješenja", "items": ["Proizvodnja", "Tekstil i moda", "Elektronika", "Ambalaža"]},
-      "resources": {"title": "Resursi", "items": ["Dokumentacija", "Vodiči", "Blog", "Webinari"]},
-      "company": {"title": "Tvrtka", "items": ["O nama", "Karijere", "Partneri", "Kontakt"]},
-      "compliance": {"title": "Usklađenost", "items": ["DPP", "ESPR", "Uvjeti korištenja", "Pravila privatnosti"]}
+      "product": {"title": "Proizvod", "features": "Mogućnosti", "howItWorks": "Kako funkcionira", "industries": "Industrije"},
+      "company": {"title": "Tvrtka", "about": "O nama", "contact": "Kontakt", "bookDemo": "Dogovorite prezentaciju"},
+      "legal": {"title": "Pravno", "privacy": "Pravila privatnosti", "cookies": "Pravila o kolačićima", "terms": "Uvjeti korištenja"}
     }
   }
 }

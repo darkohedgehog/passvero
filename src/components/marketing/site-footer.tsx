@@ -5,38 +5,93 @@ import { MarketingContainer } from "@/src/components/marketing/marketing-contain
 import { Link } from "@/src/i18n/navigation";
 import { CONTACT_EMAIL, createMailtoHref } from "@/src/lib/site";
 
-type FooterGroupKey = "product" | "solutions" | "resources" | "company" | "compliance";
+type FooterLink =
+  | { key: string; href: string; kind: "anchor" | "mailto" }
+  | { key: string; href: "/privacy" | "/cookies" | "/terms"; kind: "route" };
 
-const groupKeys: readonly FooterGroupKey[] = ["product", "solutions", "resources", "company", "compliance"];
+type FooterGroup = {
+  key: "product" | "company" | "legal";
+  title: string;
+  links: readonly (FooterLink & { label: string })[];
+};
 
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+const linkClassName =
+  "rounded-sm text-slate-300 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400";
+
+function FooterLinkItem({ link }: Readonly<{ link: FooterLink & { label: string } }>) {
+  if (link.kind === "route") {
+    return <Link href={link.href} className={linkClassName}>{link.label}</Link>;
+  }
+
+  return <a href={link.href} className={linkClassName}>{link.label}</a>;
+}
+
+function FooterLinkList({ links, mobile = false }: Readonly<{ links: FooterGroup["links"]; mobile?: boolean }>) {
+  return (
+    <ul className={mobile ? "space-y-3 pb-5" : "mt-4 space-y-3"}>
+      {links.map((link) => (
+        <li key={link.key} className={mobile ? "text-sm" : "text-xs"}>
+          <FooterLinkItem link={link} />
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 export async function SiteFooter() {
   const t = await getTranslations("Footer");
   const navigation = await getTranslations("MarketingNavigation");
   const contact = await getTranslations("Contact");
-  const groups = groupKeys.map((key) => {
-    const rawItems: unknown = t.raw(`groups.${key}.items`);
-    return { key, title: t(`groups.${key}.title`), items: isStringArray(rawItems) ? rawItems : [] };
-  });
+  const groups: readonly FooterGroup[] = [
+    {
+      key: "product",
+      title: t("groups.product.title"),
+      links: [
+        { key: "features", label: t("groups.product.features"), href: "#features", kind: "anchor" },
+        { key: "howItWorks", label: t("groups.product.howItWorks"), href: "#how-it-works", kind: "anchor" },
+        { key: "industries", label: t("groups.product.industries"), href: "#industries", kind: "anchor" },
+      ],
+    },
+    {
+      key: "company",
+      title: t("groups.company.title"),
+      links: [
+        { key: "about", label: t("groups.company.about"), href: "#about", kind: "anchor" },
+        { key: "contact", label: t("groups.company.contact"), href: `mailto:${CONTACT_EMAIL}`, kind: "mailto" },
+        { key: "bookDemo", label: t("groups.company.bookDemo"), href: createMailtoHref(contact("demoSubject")), kind: "mailto" },
+      ],
+    },
+    {
+      key: "legal",
+      title: t("groups.legal.title"),
+      links: [
+        { key: "privacy", label: t("groups.legal.privacy"), href: "/privacy", kind: "route" },
+        { key: "cookies", label: t("groups.legal.cookies"), href: "/cookies", kind: "route" },
+        { key: "terms", label: t("groups.legal.terms"), href: "/terms", kind: "route" },
+      ],
+    },
+  ];
+  const legalLinks = groups[2].links;
 
   return (
     <footer id="about" className="marketing-dark-grid text-white">
       <MarketingContainer className="py-11 md:py-12">
-        <div className="grid gap-10 lg:grid-cols-[1.25fr_repeat(5,0.75fr)] lg:gap-7">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))] lg:gap-10">
           <div>
             <BrandLogo label={navigation("brand")} inverse />
-            <p className="mt-4 max-w-[15rem] text-xs leading-5 text-slate-300">{t("summary")}</p>
+            <p className="mt-4 max-w-sm text-sm leading-6 text-slate-300">{t("summary")}</p>
+            <a href={`mailto:${CONTACT_EMAIL}`} className={`mt-4 inline-flex text-sm ${linkClassName}`}>
+              {CONTACT_EMAIL}
+            </a>
+            <p className="mt-5 inline-flex max-w-full rounded-full border border-teal-400/35 bg-teal-400/10 px-3 py-1.5 text-xs font-medium leading-5 text-teal-100">
+              {t("badge")}
+            </p>
           </div>
 
           {groups.map((group) => (
             <div key={group.key} className="hidden lg:block">
               <h2 className="text-sm font-semibold">{group.title}</h2>
-              <ul className="mt-3 space-y-2.5">
-                {group.items.map((item) => <li key={item} className="text-xs text-slate-300">{item}</li>)}
-              </ul>
+              <FooterLinkList links={group.links} />
             </div>
           ))}
         </div>
@@ -45,22 +100,24 @@ export async function SiteFooter() {
           {groups.map((group) => (
             <details key={group.key} className="group py-1">
               <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between py-3 font-semibold marker:hidden">
-                {group.title}<span aria-hidden="true" className="text-xl transition-transform group-open:rotate-45">+</span>
+                {group.title}
+                <span aria-hidden="true" className="text-xl transition-transform group-open:rotate-45">+</span>
               </summary>
-              <ul className="pb-5 space-y-3">
-                {group.items.map((item) => <li key={item} className="text-sm text-slate-300">{item}</li>)}
-              </ul>
+              <FooterLinkList links={group.links} mobile />
             </details>
           ))}
         </div>
-        <nav aria-label={t("legalLabel")} className="mt-8 flex flex-col items-center justify-center gap-3 border-t border-slate-700 pt-7 text-xs text-slate-300 sm:flex-row sm:gap-6">
-          <Link href="/privacy" className="rounded-sm hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">{t("privacy")}</Link>
-          <Link href="/cookies" className="rounded-sm hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">{t("cookies")}</Link>
-          <a href={createMailtoHref(contact("generalSubject"))} className="rounded-sm hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">
-            {t("email")}: {CONTACT_EMAIL}
-          </a>
-        </nav>
-        <p className="mt-9 text-center text-[0.6875rem] text-slate-400">{t("copyright")}</p>
+
+        <div className="mt-8 flex flex-col gap-5 border-t border-slate-700 pt-7 text-xs text-slate-300 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <nav aria-label={t("legalLabel")}>
+            <ul className="flex flex-wrap gap-x-6 gap-y-3">
+              {legalLinks.map((link) => (
+                <li key={link.key}><FooterLinkItem link={link} /></li>
+              ))}
+            </ul>
+          </nav>
+          <p className="text-slate-400">{t("copyright", { year: new Date().getFullYear() })}</p>
+        </div>
       </MarketingContainer>
     </footer>
   );
