@@ -6,8 +6,8 @@ import { Link } from "@/src/i18n/navigation";
 import { CONTACT_EMAIL, createMailtoHref } from "@/src/lib/site";
 
 type FooterLink =
-  | { key: string; href: string; kind: "anchor" | "mailto" }
-  | { key: string; href: "/privacy" | "/cookies" | "/terms"; kind: "route" };
+  | { key: string; href: string; kind: "mailto" }
+  | { key: string; href: string; kind: "route" };
 
 type FooterGroup = {
   key: "product" | "company" | "legal";
@@ -47,17 +47,17 @@ export async function SiteFooter() {
       key: "product",
       title: t("groups.product.title"),
       links: [
-        { key: "features", label: t("groups.product.features"), href: "#features", kind: "anchor" },
-        { key: "howItWorks", label: t("groups.product.howItWorks"), href: "#how-it-works", kind: "anchor" },
-        { key: "industries", label: t("groups.product.industries"), href: "#industries", kind: "anchor" },
+        { key: "features", label: t("groups.product.features"), href: "/#features", kind: "route" },
+        { key: "howItWorks", label: t("groups.product.howItWorks"), href: "/#how-it-works", kind: "route" },
+        { key: "industries", label: t("groups.product.industries"), href: "/#industries", kind: "route" },
       ],
     },
     {
       key: "company",
       title: t("groups.company.title"),
       links: [
-        { key: "about", label: t("groups.company.about"), href: "#about", kind: "anchor" },
-        { key: "contact", label: t("groups.company.contact"), href: `mailto:${CONTACT_EMAIL}`, kind: "mailto" },
+        { key: "about", label: t("groups.company.about"), href: "/about", kind: "route" },
+        { key: "contact", label: t("groups.company.contact"), href: "/contact", kind: "route" },
         { key: "earlyAccess", label: t("groups.company.earlyAccess"), href: createMailtoHref(contact("earlyAccessSubject")), kind: "mailto" },
       ],
     },
@@ -74,7 +74,7 @@ export async function SiteFooter() {
   const legalLinks = groups[2].links;
 
   return (
-    <footer id="about" className="marketing-dark-grid text-white">
+    <footer className="marketing-dark-grid text-white">
       <MarketingContainer className="py-11 md:py-12">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))] lg:gap-10">
           <div>

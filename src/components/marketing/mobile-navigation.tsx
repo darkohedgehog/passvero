@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { LanguageSwitcher } from "@/src/components/language-switcher";
 import { BrandLogo } from "@/src/components/marketing/brand-logo";
+import { Link } from "@/src/i18n/navigation";
 
 type MobileNavigationProps = {
   brand: string;
@@ -79,14 +80,14 @@ export function MobileNavigation({
             </div>
             <div className="flex flex-col gap-1">
               {links.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   className="rounded-lg px-3 py-3 text-lg font-semibold text-slate-800 hover:bg-slate-50"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
             <div className="mt-auto grid gap-4 border-t border-slate-200 pt-6">

@@ -39,6 +39,7 @@
     "pricing": "Cijene",
     "resources": "Resursi",
     "about": "O nama",
+    "contact": "Kontakt",
     "earlyAccess": "Zatražite rani pristup",
     "menu": "Otvori izbornik",
     "closeMenu": "Zatvori izbornik"
@@ -110,8 +111,31 @@
   "Contact": {
     "emailLabel": "E-pošta",
     "earlyAccessSubject": "Zahtjev za rani pristup Passveru",
-    "generalSubject": "Upit za Passvero",
+    "generalSubject": "Opći upit za Passvero",
     "privacySubject": "Upit o privatnosti za Passvero"
+  },
+  "AboutPage": {
+    "metadata": {"title": "O nama | Passvero", "description": "Saznajte zašto gradimo Passvero i kako pomažemo europskim poduzećima jednostavnije upravljati podacima o proizvodima."},
+    "hero": {"eyebrow": "O Passveru", "title": "Gradimo jednostavnije alate za digitalne putovnice proizvoda za europska poduzeća.", "description": "Passvero nastaje kako bi malim i srednjim proizvođačima, uvoznicima i distributerima pomogao organizirati, upravljati i objavljivati strukturirane podatke o proizvodima."},
+    "why": {
+      "eyebrow": "Zašto Passvero", "title": "Podaci o proizvodima trebaju biti jasni, povezani i dostupni.", "description": "Manjim poduzećima treba praktičan put od nepovezanih datoteka do strukturiranih podataka koje mogu pouzdano održavati i dijeliti.",
+      "items": {
+        "scattered": {"title": "Raspršene informacije", "body": "Važni podaci često su raspoređeni po proračunskim tablicama, PDF dokumentima i internim sustavima."},
+        "complexity": {"title": "Previše složeni alati", "body": "Enterprise rješenja mogu biti presložena za svakodnevne potrebe manjih timova."},
+        "accessibility": {"title": "Pristupačniji radni procesi", "body": "Passvero želi učiniti transparentnost proizvoda i DPP radne procese jednostavnijima za uvođenje i održavanje."}
+      }
+    },
+    "audience": {"eyebrow": "Za koga gradimo", "title": "Za poduzeća koja proizvode, uvoze i distribuiraju proizvode diljem Europe.", "description": "Passvero je usmjeren na timove kojima treba jasan sustav za podatke o proizvodima, bez nepotrebne složenosti.", "items": {"manufacturers": "Proizvođači", "importers": "Uvoznici", "distributors": "Distributeri", "privateLabel": "Robne marke privatne etikete", "smallBusiness": "Mala i srednja poduzeća"}},
+    "company": {"eyebrow": "Vlasništvo i povjerenje", "title": "Razvijen uz praktično poslovno iskustvo.", "body": "Passvero razvija i njime upravlja {company}, etablirana hrvatska tvrtka s praktičnim iskustvom u radu s tehničkim proizvodima i poslovnim korisnicima.", "linkLabel": "Posjetite web-stranicu Živić-elektro"},
+    "cta": {"eyebrow": "Rani pristup", "title": "Želite jednostavnije upravljati podacima o proizvodima?", "description": "Javite nam što vašem timu treba i zatražite rani pristup Passveru.", "action": "Zatražite rani pristup"}
+  },
+  "ContactPage": {
+    "metadata": {"title": "Kontakt | Passvero", "description": "Kontaktirajte Passvero za pitanja o podacima o proizvodima, digitalnim putovnicama proizvoda i ranom pristupu."},
+    "hero": {"eyebrow": "Kontakt", "title": "Razgovarajmo o vašim podacima o proizvodima.", "description": "Imate pitanje o Passveru, digitalnim putovnicama proizvoda ili ranom pristupu? Obratite nam se izravno i rado ćemo pomoći."},
+    "email": {"eyebrow": "Izravan kontakt", "title": "Pošaljite nam e-poruku", "description": "Za opća pitanja i razgovor o vašim potrebama javite nam se na:"},
+    "company": {"eyebrow": "Tvrtka", "title": "Tko stoji iza Passvera", "body": "Passvero razvija i njime upravlja {company}.", "linkLabel": "Posjetite web-stranicu Živić-elektro"},
+    "earlyAccess": {"eyebrow": "Rani pristup", "title": "Zainteresirani ste za Passvero?", "description": "Pošaljite nam zahtjev za rani pristup i ukratko opišite potrebe svojeg tima.", "action": "Zatražite rani pristup"},
+    "responseNote": "Odgovorit ćemo u najkraćem mogućem roku."
   },
   "Legal": {
     "Common": {

@@ -4,7 +4,13 @@ import { notFound } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { isAppLocale, routing } from "@/src/i18n/routing";
-import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "@/src/lib/site";
+import {
+  COMPANY_NAME,
+  COMPANY_URL,
+  CONTACT_EMAIL,
+  SITE_NAME,
+  SITE_URL,
+} from "@/src/lib/site";
 
 import "../globals.css";
 
@@ -46,16 +52,22 @@ export default async function LocaleLayout({
       {
         "@type": "Organization",
         "@id": `${SITE_URL}/#organization`,
+        name: COMPANY_NAME,
+        url: COMPANY_URL,
+        email: CONTACT_EMAIL,
+      },
+      {
+        "@type": "Brand",
+        "@id": `${SITE_URL}/#brand`,
         name: SITE_NAME,
         url: SITE_URL,
-        email: CONTACT_EMAIL,
-        logo: `${SITE_URL}/marketing/passvero-logo.png`,
       },
       {
         "@type": "WebSite",
         "@id": `${SITE_URL}/#website`,
         name: SITE_NAME,
         url: SITE_URL,
+        brand: { "@id": `${SITE_URL}/#brand` },
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: [...routing.locales],
       },

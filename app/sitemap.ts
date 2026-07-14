@@ -4,7 +4,7 @@ import { routing } from "@/src/i18n/routing";
 import { getAbsoluteUrl } from "@/src/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ["/", "/privacy", "/cookies", "/terms"] as const;
+  const routes = ["/", "/about", "/contact", "/privacy", "/cookies", "/terms"] as const;
 
   return routes.flatMap((pathname) =>
     routing.locales.map((locale) => ({

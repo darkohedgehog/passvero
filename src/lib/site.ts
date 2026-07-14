@@ -3,6 +3,8 @@ import type { AppLocale } from "@/src/i18n/routing";
 export const SITE_NAME = "Passvero";
 export const SITE_URL = "https://passvero.eu";
 export const CONTACT_EMAIL = "contact@passvero.eu";
+export const COMPANY_NAME = "Živić-elektro j.d.o.o.";
+export const COMPANY_URL = "https://www.zivic-elektro.com";
 export const OG_IMAGE_PATH = "/og/passvero-og.png";
 
 export const openGraphLocales: Record<AppLocale, string> = {

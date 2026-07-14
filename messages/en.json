@@ -32,7 +32,7 @@
     "title": "Verified product passports.",
     "description": "A simple platform for creating and managing digital product passports."
   },
-  "MarketingNavigation": {"brand": "Passvero", "product": "Product", "solutions": "Solutions", "pricing": "Pricing", "resources": "Resources", "about": "About", "earlyAccess": "Request Early Access", "menu": "Open menu", "closeMenu": "Close menu"},
+  "MarketingNavigation": {"brand": "Passvero", "product": "Product", "solutions": "Solutions", "pricing": "Pricing", "resources": "Resources", "about": "About", "contact": "Contact", "earlyAccess": "Request Early Access", "menu": "Open menu", "closeMenu": "Close menu"},
   "Hero": {
     "badge": "DPP ready", "title": "Verified product passports.", "highlight": "product passports.",
     "description": "The complete platform for Digital Product Passports. Structure product data, build trust, and give every product a transparent digital identity.",
@@ -45,7 +45,23 @@
   "Industries": {"title": "Built for manufacturers across Europe", "items": {"furniture": "Furniture", "textiles": "Textiles", "packaging": "Packaging", "electronics": "Electronics", "manufacturing": "Manufacturing", "consumer": "Consumer Goods"}},
   "Benefits": {"label": "The benefits", "title": "Build trust. Reduce risk. Unlock value.", "items": {"trust": {"title": "Build trust", "description": "Prove product authenticity and transparency."}, "risk": {"title": "Reduce risk", "description": "Avoid fines and support regulatory processes."}, "efficiency": {"title": "Improve efficiency", "description": "Automate data collection and verification."}, "value": {"title": "Unlock value", "description": "Turn better data into smarter decisions."}}},
   "CTA": {"title": "Ready to get started?", "description": "Join the future of product transparency.", "primaryAction": "Request Early Access", "noteOne": "No commitment required", "noteTwo": "Set up in minutes", "visualAlt": "Teal shield with a checkmark representing verified data"},
-  "Contact": {"emailLabel": "Email", "earlyAccessSubject": "Passvero early access request", "generalSubject": "Passvero enquiry", "privacySubject": "Passvero privacy enquiry"},
+  "Contact": {"emailLabel": "Email", "earlyAccessSubject": "Passvero early access request", "generalSubject": "General Passvero inquiry", "privacySubject": "Passvero privacy enquiry"},
+  "AboutPage": {
+    "metadata": {"title": "About | Passvero", "description": "Learn why we are building Passvero and how we help European businesses manage product information more simply."},
+    "hero": {"eyebrow": "About Passvero", "title": "Building simpler Digital Product Passport tools for European businesses.", "description": "Passvero is being created to help small and medium-sized manufacturers, importers and distributors organise, manage and publish structured product information."},
+    "why": {"eyebrow": "Why Passvero", "title": "Product information should be clear, connected and accessible.", "description": "Smaller businesses need a practical path from disconnected files to structured product information they can maintain and share with confidence.", "items": {"scattered": {"title": "Scattered information", "body": "Important product data is often spread across spreadsheets, PDFs and internal systems."}, "complexity": {"title": "Overly complex tools", "body": "Enterprise software can be more complex than smaller teams need for their everyday work."}, "accessibility": {"title": "More accessible workflows", "body": "Passvero aims to make product transparency and Digital Product Passport workflows easier to adopt and maintain."}}},
+    "audience": {"eyebrow": "Who it is for", "title": "For businesses that make, import and distribute products across Europe.", "description": "Passvero is designed for teams that need a clear system for product information without unnecessary complexity.", "items": {"manufacturers": "Manufacturers", "importers": "Importers", "distributors": "Distributors", "privateLabel": "Private-label brands", "smallBusiness": "Small and medium-sized businesses"}},
+    "company": {"eyebrow": "Ownership and trust", "title": "Developed with practical business experience.", "body": "Passvero is developed and operated by {company}, an established Croatian company with practical experience working with technical products and business customers.", "linkLabel": "Visit the Živić-elektro website"},
+    "cta": {"eyebrow": "Early Access", "title": "Want a simpler way to manage your product information?", "description": "Tell us what your team needs and request early access to Passvero.", "action": "Request Early Access"}
+  },
+  "ContactPage": {
+    "metadata": {"title": "Contact | Passvero", "description": "Contact Passvero with questions about product information, Digital Product Passports and early access."},
+    "hero": {"eyebrow": "Contact", "title": "Let’s talk about your product data.", "description": "Have a question about Passvero, Digital Product Passports or early access? Contact us directly and we will be happy to help."},
+    "email": {"eyebrow": "Direct contact", "title": "Send us an email", "description": "For general questions or to discuss what your team needs, email us at:"},
+    "company": {"eyebrow": "Company", "title": "Who operates Passvero", "body": "Passvero is developed and operated by {company}.", "linkLabel": "Visit the Živić-elektro website"},
+    "earlyAccess": {"eyebrow": "Early Access", "title": "Interested in Passvero?", "description": "Send us an early access request and tell us briefly what your team needs.", "action": "Request Early Access"},
+    "responseNote": "We will respond as soon as possible."
+  },
   "Legal": {
     "Common": {"backHome": "Back to home", "lastUpdatedLabel": "Last updated", "lastUpdated": "11 July 2026"},
     "Privacy": {

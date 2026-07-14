@@ -157,3 +157,79 @@ test("footer anchors and Terms sitemap entries resolve", async () => {
   assert.match(industries, /id="industries"/);
   assert.match(sitemap, /"\/terms"/);
 });
+
+test("About and Contact messages exist in every locale", async () => {
+  const messages = await Promise.all(
+    locales.map(async (locale) => JSON.parse(await read(`messages/${locale}.json`))),
+  );
+
+  for (const [index, locale] of locales.entries()) {
+    const about = messages[index].AboutPage;
+    const contact = messages[index].ContactPage;
+
+    assert.ok(about?.metadata?.title, `${locale} About metadata`);
+    assert.ok(about?.hero?.title, `${locale} About hero`);
+    assert.ok(about?.why?.title, `${locale} About rationale`);
+    assert.ok(about?.audience?.items?.privateLabel, `${locale} About audience`);
+    assert.ok(about?.company?.body, `${locale} About company`);
+    assert.ok(about?.cta?.action, `${locale} About CTA`);
+    assert.ok(contact?.metadata?.title, `${locale} Contact metadata`);
+    assert.ok(contact?.hero?.title, `${locale} Contact hero`);
+    assert.ok(contact?.email?.title, `${locale} Contact email`);
+    assert.ok(contact?.company?.body, `${locale} Contact company`);
+    assert.ok(contact?.earlyAccess?.action, `${locale} Contact CTA`);
+    assert.ok(contact?.responseNote, `${locale} response note`);
+  }
+});
+
+test("About and Contact routes use localized metadata and the shared marketing shell", async () => {
+  const about = await read("app/[locale]/about/page.tsx");
+  const contact = await read("app/[locale]/contact/page.tsx");
+
+  for (const [source, pathname] of [[about, "/about"], [contact, "/contact"]]) {
+    assert.match(source, /SiteHeader/);
+    assert.match(source, /SiteFooter/);
+    assert.match(source, /createLocalizedMetadata/);
+    assert.match(source, new RegExp(`pathname: "${pathname}"`));
+    assert.doesNotMatch(source, /<form\b|\/api\//);
+  }
+
+  assert.match(about, /createMailtoHref\(contact\("earlyAccessSubject"\)\)/);
+  assert.match(contact, /createMailtoHref\(contact\("generalSubject"\)\)/);
+  assert.match(contact, /createMailtoHref\(contact\("earlyAccessSubject"\)\)/);
+
+  for (const source of [about, contact]) {
+    assert.match(source, /target="_blank"/);
+    assert.match(source, /rel="noopener noreferrer"/);
+  }
+});
+
+test("public navigation and footer use localized About and Contact routes", async () => {
+  const header = await read("src/components/marketing/site-header.tsx");
+  const mobile = await read("src/components/marketing/mobile-navigation.tsx");
+  const footer = await read("src/components/marketing/site-footer.tsx");
+
+  for (const route of ["/about", "/contact"]) {
+    assert.match(header, new RegExp(route));
+    assert.match(footer, new RegExp(route));
+  }
+
+  assert.match(header, /import \{ Link \} from "@\/src\/i18n\/navigation"/);
+  assert.match(mobile, /import \{ Link \} from "@\/src\/i18n\/navigation"/);
+  assert.match(footer, /kind: "route"/);
+  assert.doesNotMatch(header, /#pricing|#resources|#about/);
+  assert.doesNotMatch(footer, /href: "#about"/);
+});
+
+test("sitemap and structured data include public company pages and supplied ownership", async () => {
+  const sitemap = await read("app/sitemap.ts");
+  const layout = await read("app/[locale]/layout.tsx");
+  const site = await read("src/lib/site.ts");
+
+  assert.match(sitemap, /"\/about"/);
+  assert.match(sitemap, /"\/contact"/);
+  assert.match(site, /Živić-elektro j\.d\.o\.o\./);
+  assert.match(site, /https:\/\/www\.zivic-elektro\.com/);
+  assert.match(layout, /"@type": "Brand"/);
+  assert.match(layout, /publisher: \{ "@id": `\$\{SITE_URL\}\/\#organization` \}/);
+});
