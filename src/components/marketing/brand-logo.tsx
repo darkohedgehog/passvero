@@ -21,7 +21,7 @@ export function BrandLogo({ label, inverse = false }: BrandLogoProps) {
   }
 
   return (
-    <span className="inline-flex items-center gap-2.5" aria-label={label}>
+    <span className="inline-flex items-center gap-2.5">
       <span
         aria-hidden="true"
         className="grid size-8 place-items-center rounded-lg border-2 border-teal-400"
@@ -41,7 +41,6 @@ export function BrandLogo({ label, inverse = false }: BrandLogoProps) {
         </svg>
       </span>
       <span
-        aria-hidden="true"
         className="text-2xl font-bold tracking-[-0.045em] text-white"
       >
         {label}

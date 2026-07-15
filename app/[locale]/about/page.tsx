@@ -109,7 +109,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
                   key={key}
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-6"
                 >
-                  <span className="text-sm font-bold text-teal-600">
+                  <span className="text-sm font-bold text-teal-700">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="mt-4 text-xl font-bold text-navy-950">
@@ -127,7 +127,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         <section className="marketing-dark-grid py-16 text-white md:py-20">
           <MarketingContainer className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center">
             <div>
-              <p className="marketing-section-label text-teal-300">
+              <p className="marketing-section-label marketing-section-label-on-dark">
                 {t("audience.eyebrow")}
               </p>
               <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] md:text-4xl">
@@ -180,7 +180,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         <section className="bg-slate-50 py-14 md:py-20">
           <MarketingContainer>
             <div className="rounded-[24px] bg-navy-950 px-6 py-10 text-center text-white shadow-[var(--shadow-marketing)] sm:px-10 md:py-14">
-              <p className="marketing-section-label text-teal-300">{t("cta.eyebrow")}</p>
+              <p className="marketing-section-label marketing-section-label-on-dark">{t("cta.eyebrow")}</p>
               <h2 className="mx-auto mt-3 max-w-3xl text-3xl font-bold tracking-[-0.035em] md:text-4xl">
                 {t("cta.title")}
               </h2>

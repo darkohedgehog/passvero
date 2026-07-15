@@ -12,7 +12,7 @@ const variantClasses = {
     "border-blue-600 bg-blue-600 text-white hover:border-blue-700 hover:bg-blue-700",
   secondary:
     "border-slate-300 bg-white text-slate-950 hover:border-slate-400 hover:bg-slate-50",
-  teal: "border-teal-600 bg-teal-600 text-white hover:border-teal-700 hover:bg-teal-700",
+  teal: "border-teal-700 bg-teal-700 text-white hover:border-teal-800 hover:bg-teal-800",
 } as const;
 
 export function MarketingButton({

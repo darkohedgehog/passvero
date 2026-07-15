@@ -31,7 +31,7 @@ export async function HeroSection() {
             </span>
             <h1 className="mt-4 text-[2.375rem] font-bold leading-[1.06] tracking-[-0.045em] text-navy-950 sm:text-5xl lg:text-[3.5rem] lg:leading-[1.04]">
               {titleStart}
-              {highlightIndex >= 0 ? <span className="block text-teal-500">{highlight}</span> : null}
+              {highlightIndex >= 0 ? <span className="block text-teal-600">{highlight}</span> : null}
             </h1>
             <p className="mt-5 max-w-lg text-base leading-7 text-slate-600 lg:text-[1.0625rem] lg:leading-8">
               {t("description")}

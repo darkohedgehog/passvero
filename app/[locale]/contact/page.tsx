@@ -119,7 +119,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
           <MarketingContainer>
             <div className="grid items-center gap-7 rounded-[24px] bg-navy-950 px-6 py-10 text-white shadow-[var(--shadow-marketing)] sm:px-10 md:grid-cols-[minmax(0,1fr)_auto] md:px-12 md:py-12">
               <div>
-                <p className="marketing-section-label text-teal-300">
+                <p className="marketing-section-label marketing-section-label-on-dark">
                   {t("earlyAccess.eyebrow")}
                 </p>
                 <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em]">

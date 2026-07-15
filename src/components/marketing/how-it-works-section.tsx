@@ -27,7 +27,7 @@ export async function HowItWorksSection() {
             <li key={step.key} className="relative grid grid-cols-[4rem_1fr] items-start gap-5 md:block md:text-center">
               <div className="relative z-10 grid size-16 place-items-center rounded-full bg-teal-50 text-teal-600 shadow-[0_8px_24px_rgba(15,159,145,0.08)] md:mx-auto md:size-20">
                 <MarketingIcon name={step.icon} className="size-7 md:size-9" />
-                <span className="absolute -bottom-2 grid size-6 place-items-center rounded-full bg-teal-500 text-xs font-bold text-white">{index + 1}</span>
+                <span className="absolute -bottom-2 grid size-6 place-items-center rounded-full bg-teal-700 text-xs font-bold text-white">{index + 1}</span>
               </div>
               <div className="pt-1 md:pt-5">
                 <h3 className="font-bold text-navy-950">{t(`steps.${step.key}.title`)}</h3>
