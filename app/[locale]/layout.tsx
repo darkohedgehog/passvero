@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -13,6 +14,12 @@ import {
 } from "@/src/lib/site";
 
 import "../globals.css";
+
+export const metadata: Metadata = {
+  verification: {
+    google: "7UgejaCfY0FRiWXwHGtXauzg-KaiJQ0wsZ0miT9Khbs",
+  },
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
