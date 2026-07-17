@@ -11,3 +11,120 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+  PENDING_DELETION
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum MembershipStatus {
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+model User {
+  id              String   @id @default(uuid()) @db.Uuid
+  /// Application services must normalize email before persistence.
+  email           String   @unique
+  displayName     String?
+  avatarUrl       String?
+  preferredLocale String?
+  timezone        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  memberships         Membership[] @relation("UserMemberships")
+  membershipsInvited  Membership[] @relation("MembershipsInvitedByUser")
+  invitationsCreated  Invitation[] @relation("OrganizationInvitationsCreated")
+  invitationsAccepted Invitation[] @relation("OrganizationInvitationsAccepted")
+}
+
+model Organization {
+  id            String             @id @default(uuid()) @db.Uuid
+  displayName   String
+  legalName     String?
+  slug          String?            @unique
+  logoUrl       String?
+  websiteUrl    String?
+  countryCode   String?
+  vatNumber     String?
+  publicEmail   String?
+  billingEmail  String?
+  timezone      String?
+  defaultLocale String?
+  status        OrganizationStatus @default(ACTIVE)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  archivedAt    DateTime?
+
+  memberships Membership[] @relation("OrganizationMemberships")
+  invitations Invitation[] @relation("OrganizationInvitations")
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Membership {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  userId         String           @db.Uuid
+  role           MembershipRole
+  status         MembershipStatus @default(ACTIVE)
+  invitedById    String?          @db.Uuid
+  joinedAt       DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization @relation("OrganizationMemberships", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user         User         @relation("UserMemberships", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  invitedBy    User?        @relation("MembershipsInvitedByUser", fields: [invitedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@index([invitedById])
+  @@index([organizationId, status])
+}
+
+model Invitation {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  /// Application services must normalize email before persistence and comparison.
+  email          String
+  role           MembershipRole
+  status         InvitationStatus @default(PENDING)
+  tokenHash      String           @unique
+  expiresAt      DateTime
+  /// Required when creating an invitation in application services; nullable for historical retention.
+  invitedById    String?          @db.Uuid
+  acceptedAt     DateTime?
+  acceptedById   String?          @db.Uuid
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization @relation("OrganizationInvitations", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  invitedBy    User?        @relation("OrganizationInvitationsCreated", fields: [invitedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  acceptedBy   User?        @relation("OrganizationInvitationsAccepted", fields: [acceptedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([email])
+  @@index([expiresAt])
+  @@index([organizationId, status])
+  @@index([invitedById])
+  @@index([acceptedById])
+}
