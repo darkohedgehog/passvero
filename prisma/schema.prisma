@@ -39,6 +39,25 @@ enum InvitationStatus {
   REVOKED
 }
 
+enum ProductLifecycleStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductVersionStatus {
+  DRAFT
+  READY_FOR_REVIEW
+  PUBLISHED
+  SUPERSEDED
+  DISCARDED
+}
+
+enum PassportStatus {
+  ACTIVE
+  WITHDRAWN
+  ARCHIVED
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -50,10 +69,17 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  memberships         Membership[] @relation("UserMemberships")
-  membershipsInvited  Membership[] @relation("MembershipsInvitedByUser")
-  invitationsCreated  Invitation[] @relation("OrganizationInvitationsCreated")
-  invitationsAccepted Invitation[] @relation("OrganizationInvitationsAccepted")
+  memberships              Membership[]     @relation("UserMemberships")
+  membershipsInvited       Membership[]     @relation("MembershipsInvitedByUser")
+  invitationsCreated       Invitation[]     @relation("OrganizationInvitationsCreated")
+  invitationsAccepted      Invitation[]     @relation("OrganizationInvitationsAccepted")
+  productsCreated          Product[]        @relation("ProductCreatedBy")
+  productsUpdated          Product[]        @relation("ProductUpdatedBy")
+  productsArchived         Product[]        @relation("ProductArchivedBy")
+  productVersionsCreated   ProductVersion[] @relation("ProductVersionCreatedBy")
+  productVersionsUpdated   ProductVersion[] @relation("ProductVersionUpdatedBy")
+  productVersionsPublished ProductVersion[] @relation("ProductVersionPublishedBy")
+  passportsWithdrawn       Passport[]       @relation("PassportWithdrawnBy")
 }
 
 model Organization {
@@ -74,8 +100,11 @@ model Organization {
   updatedAt     DateTime           @updatedAt
   archivedAt    DateTime?
 
-  memberships Membership[] @relation("OrganizationMemberships")
-  invitations Invitation[] @relation("OrganizationInvitations")
+  memberships     Membership[]     @relation("OrganizationMemberships")
+  invitations     Invitation[]     @relation("OrganizationInvitations")
+  products        Product[]        @relation("OrganizationProducts")
+  productVersions ProductVersion[] @relation("OrganizationProductVersions")
+  passports       Passport[]       @relation("OrganizationPassports")
 
   @@index([status])
   @@index([createdAt])
@@ -127,4 +156,110 @@ model Invitation {
   @@index([organizationId, status])
   @@index([invitedById])
   @@index([acceptedById])
+}
+
+model Product {
+  id                        String                 @id @default(uuid()) @db.Uuid
+  organizationId            String                 @db.Uuid
+  internalName              String
+  sku                       String?
+  normalizedSku             String?
+  publicCode                String                 @unique
+  lifecycleStatus           ProductLifecycleStatus @default(ACTIVE)
+  /// Application services must ensure each pointer references a version belonging to this Product.
+  currentDraftVersionId     String?                @unique @db.Uuid
+  currentPublishedVersionId String?                @unique @db.Uuid
+  createdById               String?                @db.Uuid
+  updatedById               String?                @db.Uuid
+  archivedById              String?                @db.Uuid
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+  archivedAt                DateTime?
+  lastPublishedAt           DateTime?
+
+  organization            Organization     @relation("OrganizationProducts", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  versions                ProductVersion[] @relation("ProductVersions")
+  currentDraftVersion     ProductVersion?  @relation("CurrentDraftVersion", fields: [currentDraftVersionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  currentPublishedVersion ProductVersion?  @relation("CurrentPublishedVersion", fields: [currentPublishedVersionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  passport                Passport?        @relation("ProductPassport")
+  createdBy               User?            @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  updatedBy               User?            @relation("ProductUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  archivedBy              User?            @relation("ProductArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@unique([organizationId, normalizedSku])
+  @@index([organizationId, lifecycleStatus])
+  @@index([organizationId, updatedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([archivedById])
+}
+
+model ProductVersion {
+  id                  String               @id @default(uuid()) @db.Uuid
+  productId           String               @db.Uuid
+  /// Application services must keep this value equal to Product.organizationId.
+  organizationId      String               @db.Uuid
+  status              ProductVersionStatus @default(DRAFT)
+  sourceLocale        String
+  versionNumber       Int?
+  versionLabel        String?
+  changeSummary       String?
+  clonedFromVersionId String?              @db.Uuid
+  /// Required by application services at creation; nullable for historical retention.
+  createdById         String?              @db.Uuid
+  updatedById         String?              @db.Uuid
+  publishedById       String?              @db.Uuid
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  reviewReadyAt       DateTime?
+  publishedAt         DateTime?
+  supersededAt        DateTime?
+  discardedAt         DateTime?
+
+  product                    Product          @relation("ProductVersions", fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  organization               Organization     @relation("OrganizationProductVersions", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  clonedFromVersion          ProductVersion?  @relation("ClonedProductVersions", fields: [clonedFromVersionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  clonedVersions             ProductVersion[] @relation("ClonedProductVersions")
+  createdBy                  User?            @relation("ProductVersionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  updatedBy                  User?            @relation("ProductVersionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  publishedBy                User?            @relation("ProductVersionPublishedBy", fields: [publishedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  currentDraftForProduct     Product?         @relation("CurrentDraftVersion")
+  currentPublishedForProduct Product?         @relation("CurrentPublishedVersion")
+
+  @@unique([productId, versionNumber])
+  @@index([productId, status])
+  @@index([organizationId, status])
+  @@index([organizationId, updatedAt])
+  @@index([publishedAt])
+  @@index([clonedFromVersionId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([publishedById])
+}
+
+model Passport {
+  id                      String         @id @default(uuid()) @db.Uuid
+  productId               String         @unique @db.Uuid
+  /// Application services must keep this value equal to Product.organizationId.
+  organizationId          String         @db.Uuid
+  status                  PassportStatus @default(ACTIVE)
+  defaultLocale           String?
+  firstPublishedAt        DateTime
+  lastPublishedAt         DateTime?
+  withdrawnAt             DateTime?
+  withdrawnById           String?        @db.Uuid
+  withdrawalReasonCode    String?
+  publicWithdrawalMessage String?
+  archivedAt              DateTime?
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  product      Product      @relation("ProductPassport", fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  organization Organization @relation("OrganizationPassports", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  withdrawnBy  User?        @relation("PassportWithdrawnBy", fields: [withdrawnById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([organizationId, status])
+  @@index([firstPublishedAt])
+  @@index([lastPublishedAt])
+  @@index([withdrawnById])
 }
