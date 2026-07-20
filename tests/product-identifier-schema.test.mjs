@@ -47,6 +47,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "ProductMaterial",
     "Document",
     "ProductDocument",
+    "ProductImage",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [

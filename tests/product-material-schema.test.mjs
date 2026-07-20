@@ -47,6 +47,7 @@ test("Phase 2B.3 retains ProductMaterial without a ProductMaterial enum", async 
     "ProductMaterial",
     "Document",
     "ProductDocument",
+    "ProductImage",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [

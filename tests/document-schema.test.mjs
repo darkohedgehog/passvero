@@ -48,6 +48,7 @@ test("Phase 2C.1 retains Document and DocumentStatus", async () => {
     "ProductMaterial",
     "Document",
     "ProductDocument",
+    "ProductImage",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [

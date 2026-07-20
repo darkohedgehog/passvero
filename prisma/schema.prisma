@@ -249,6 +249,7 @@ model ProductVersion {
   identifiers                ProductIdentifier[]  @relation("ProductVersionIdentifiers")
   materials                  ProductMaterial[]    @relation("ProductVersionMaterials")
   productDocuments           ProductDocument[]    @relation("ProductVersionDocuments")
+  images                     ProductImage[]       @relation("ProductVersionImages")
 
   @@unique([productId, versionNumber])
   @@index([productId, status])
@@ -386,6 +387,39 @@ model ProductDocument {
   @@index([productVersionId, category])
   @@index([productVersionId, locale])
   @@index([productVersionId, isPublic, sortOrder])
+}
+
+model ProductImage {
+  id               String    @id @default(uuid()) @db.Uuid
+  productVersionId String    @db.Uuid
+  originalFilename String
+  fileExtension    String?
+  storageProvider  String
+  storageBucket    String
+  storageKey       String
+  mimeType         String
+  sizeBytes        BigInt
+  /// SHA-256 format, file size, dimensions, MIME allowlist, and non-negative
+  /// sort order are enforced by manual PostgreSQL CHECK constraints.
+  checksumSha256   String
+  width            Int
+  height           Int
+  altText          String?
+  caption          String?
+  isPublic         Boolean   @default(true)
+  isPrimary        Boolean   @default(false)
+  sortOrder        Int       @default(0)
+  uploadedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  productVersion ProductVersion @relation("ProductVersionImages", fields: [productVersionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([storageProvider, storageBucket, storageKey])
+  @@index([productVersionId])
+  @@index([productVersionId, isPublic, sortOrder])
+  @@index([productVersionId, isPrimary])
+  @@index([checksumSha256])
 }
 
 model Passport {

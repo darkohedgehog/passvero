@@ -48,6 +48,7 @@ test("Phase 2C.2 adds only ProductDocument and no enum", async () => {
     "ProductMaterial",
     "Document",
     "ProductDocument",
+    "ProductImage",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [
