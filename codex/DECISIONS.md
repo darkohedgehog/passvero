@@ -80,3 +80,8 @@ Preferred positioning:
 - DPP-ready;
 - structured product transparency;
 - support for compliance workflows.
+
+## ADR-008
+
+ProductVersion is the Aggregate Root
+for all versioned product content.
