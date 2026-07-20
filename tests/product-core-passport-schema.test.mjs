@@ -22,12 +22,11 @@ async function readPhaseMigration() {
   return readFile(new URL(`${directories[0]}/migration.sql`, migrationsPath), "utf8");
 }
 
-test("Phase 2A adds only the approved models and enums", async () => {
+test("Phase 2A retains the approved models and enums", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
-
-  assert.deepEqual(modelNames, [
+  const phaseModelNames = [
     "User",
     "Organization",
     "Membership",
@@ -35,7 +34,9 @@ test("Phase 2A adds only the approved models and enums", async () => {
     "Product",
     "ProductVersion",
     "Passport",
-  ]);
+  ];
+
+  assert.deepEqual(modelNames.filter((name) => phaseModelNames.includes(name)), phaseModelNames);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
     "MembershipRole",
@@ -194,7 +195,7 @@ test("Organization and User expose only Phase 2A inverse relations", async () =>
   }
 });
 
-test("ProductVersion retains tenant ownership without later content models", async () => {
+test("ProductVersion retains tenant ownership without later Phase 2 child models", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const version = block(schema, "model", "ProductVersion");
 
@@ -207,7 +208,7 @@ test("ProductVersion retains tenant ownership without later content models", asy
   assert.match(version, /@@index\(\[organizationId, status\]\)/);
   assert.match(version, /@@index\(\[organizationId, updatedAt\]\)/);
 
-  for (const futureRelation of ["translations", "identifiers", "materials", "documents", "images"]) {
+  for (const futureRelation of ["identifiers", "materials", "documents", "images"]) {
     assert.doesNotMatch(version, new RegExp(`^\\s*${futureRelation}\\b`, "m"));
   }
 });

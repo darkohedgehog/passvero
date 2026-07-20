@@ -216,15 +216,16 @@ model ProductVersion {
   supersededAt        DateTime?
   discardedAt         DateTime?
 
-  product                    Product          @relation("ProductVersions", fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  organization               Organization     @relation("OrganizationProductVersions", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  clonedFromVersion          ProductVersion?  @relation("ClonedProductVersions", fields: [clonedFromVersionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  clonedVersions             ProductVersion[] @relation("ClonedProductVersions")
-  createdBy                  User?            @relation("ProductVersionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  updatedBy                  User?            @relation("ProductVersionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  publishedBy                User?            @relation("ProductVersionPublishedBy", fields: [publishedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  currentDraftForProduct     Product?         @relation("CurrentDraftVersion")
-  currentPublishedForProduct Product?         @relation("CurrentPublishedVersion")
+  product                    Product              @relation("ProductVersions", fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  organization               Organization         @relation("OrganizationProductVersions", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  clonedFromVersion          ProductVersion?      @relation("ClonedProductVersions", fields: [clonedFromVersionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  clonedVersions             ProductVersion[]     @relation("ClonedProductVersions")
+  createdBy                  User?                @relation("ProductVersionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  updatedBy                  User?                @relation("ProductVersionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  publishedBy                User?                @relation("ProductVersionPublishedBy", fields: [publishedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  currentDraftForProduct     Product?             @relation("CurrentDraftVersion")
+  currentPublishedForProduct Product?             @relation("CurrentPublishedVersion")
+  translations               ProductTranslation[] @relation("ProductVersionTranslations")
 
   @@unique([productId, versionNumber])
   @@index([productId, status])
@@ -235,6 +236,31 @@ model ProductVersion {
   @@index([createdById])
   @@index([updatedById])
   @@index([publishedById])
+}
+
+model ProductTranslation {
+  id                    String   @id @default(uuid()) @db.Uuid
+  productVersionId      String   @db.Uuid
+  locale                String
+  productName           String
+  shortDescription      String?
+  description           String?
+  technicalDescription  String?
+  repairInstructions    String?
+  sparePartsInformation String?
+  recyclingInstructions String?
+  disposalInstructions  String?
+  packagingInformation  String?
+  safetyInformation     String?
+  warrantyInformation   String?
+  publicNotes           String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  productVersion ProductVersion @relation("ProductVersionTranslations", fields: [productVersionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([productVersionId, locale])
+  @@index([productVersionId])
 }
 
 model Passport {
