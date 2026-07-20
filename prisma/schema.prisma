@@ -248,6 +248,7 @@ model ProductVersion {
   translations               ProductTranslation[] @relation("ProductVersionTranslations")
   identifiers                ProductIdentifier[]  @relation("ProductVersionIdentifiers")
   materials                  ProductMaterial[]    @relation("ProductVersionMaterials")
+  productDocuments           ProductDocument[]    @relation("ProductVersionDocuments")
 
   @@unique([productId, versionNumber])
   @@index([productId, status])
@@ -344,10 +345,11 @@ model Document {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
-  organization Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  createdBy    User?        @relation("DocumentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  updatedBy    User?        @relation("DocumentUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  archivedBy   User?        @relation("DocumentArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  organization     Organization      @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy        User?             @relation("DocumentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  updatedBy        User?             @relation("DocumentUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  archivedBy       User?             @relation("DocumentArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  productDocuments ProductDocument[] @relation("DocumentProductVersions")
 
   @@unique([storageProvider, storageBucket, storageKey])
   @@index([organizationId, status])
@@ -357,6 +359,33 @@ model Document {
   @@index([createdById])
   @@index([updatedById])
   @@index([archivedById])
+}
+
+model ProductDocument {
+  id               String   @id @default(uuid()) @db.Uuid
+  productVersionId String   @db.Uuid
+  documentId       String   @db.Uuid
+  category         String
+  locale           String?
+  displayLabel     String?
+  description      String?
+  isPublic         Boolean  @default(true)
+  isPrimary        Boolean  @default(false)
+  /// Non-negative ordering is enforced by a manual PostgreSQL CHECK constraint in the migration.
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  /// Application services must verify that Document.organizationId equals
+  /// ProductVersion.organizationId before creating the association.
+  productVersion ProductVersion @relation("ProductVersionDocuments", fields: [productVersionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  document       Document       @relation("DocumentProductVersions", fields: [documentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([productVersionId])
+  @@index([documentId])
+  @@index([productVersionId, category])
+  @@index([productVersionId, locale])
+  @@index([productVersionId, isPublic, sortOrder])
 }
 
 model Passport {

@@ -31,7 +31,7 @@ async function readPhaseMigration() {
   return readFile(new URL(`${directories[0]}/migration.sql`, migrationsPath), "utf8");
 }
 
-test("Phase 2C.1 adds only Document and DocumentStatus", async () => {
+test("Phase 2C.1 retains Document and DocumentStatus", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
@@ -47,6 +47,7 @@ test("Phase 2C.1 adds only Document and DocumentStatus", async () => {
     "ProductIdentifier",
     "ProductMaterial",
     "Document",
+    "ProductDocument",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [
@@ -101,6 +102,7 @@ test("Document contains exactly the approved fields and scalar types", async () 
     "createdBy",
     "updatedBy",
     "archivedBy",
+    "productDocuments",
   ]);
 
   assert.match(document, /id\s+String\s+@id\s+@default\(uuid\(\)\)\s+@db\.Uuid/);
@@ -243,7 +245,7 @@ test("Document excludes ProductDocument metadata and future processing fields", 
     assert.doesNotMatch(document, new RegExp(`^\\s*${field}\\b`, "m"));
   }
   assert.doesNotMatch(document, /\bJson\b/);
-  assert.doesNotMatch(document, /^\s*(product|productVersion|passport|productDocuments)\b/m);
+  assert.doesNotMatch(document, /^\s*(product|productVersion|passport)\b/m);
 });
 
 test("Document migration creates only the approved enum, table, indexes, and foreign keys", async () => {
