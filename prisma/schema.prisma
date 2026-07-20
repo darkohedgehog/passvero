@@ -61,6 +61,13 @@ enum ProductIdentifierType {
   CUSTOM
 }
 
+enum DocumentStatus {
+  PENDING_UPLOAD
+  AVAILABLE
+  FAILED
+  ARCHIVED
+}
+
 enum PassportStatus {
   ACTIVE
   WITHDRAWN
@@ -88,6 +95,9 @@ model User {
   productVersionsCreated   ProductVersion[] @relation("ProductVersionCreatedBy")
   productVersionsUpdated   ProductVersion[] @relation("ProductVersionUpdatedBy")
   productVersionsPublished ProductVersion[] @relation("ProductVersionPublishedBy")
+  documentsCreated         Document[]       @relation("DocumentCreatedBy")
+  documentsUpdated         Document[]       @relation("DocumentUpdatedBy")
+  documentsArchived        Document[]       @relation("DocumentArchivedBy")
   passportsWithdrawn       Passport[]       @relation("PassportWithdrawnBy")
 }
 
@@ -113,6 +123,7 @@ model Organization {
   invitations     Invitation[]     @relation("OrganizationInvitations")
   products        Product[]        @relation("OrganizationProducts")
   productVersions ProductVersion[] @relation("OrganizationProductVersions")
+  documents       Document[]       @relation("OrganizationDocuments")
   passports       Passport[]       @relation("OrganizationPassports")
 
   @@index([status])
@@ -307,6 +318,45 @@ model ProductMaterial {
   productVersion ProductVersion @relation("ProductVersionMaterials", fields: [productVersionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([productVersionId])
+}
+
+model Document {
+  id               String         @id @default(uuid()) @db.Uuid
+  organizationId   String         @db.Uuid
+  originalFilename String
+  displayName      String?
+  fileExtension    String?
+  storageProvider  String
+  storageBucket    String
+  storageKey       String
+  mimeType         String
+  sizeBytes        BigInt
+  /// SHA-256 format, positive file size, and lifecycle consistency are enforced by manual PostgreSQL CHECK constraints.
+  checksumSha256   String
+  status           DocumentStatus @default(PENDING_UPLOAD)
+  uploadedAt       DateTime?
+  failedAt         DateTime?
+  failureCode      String?
+  archivedAt       DateTime?
+  createdById      String?        @db.Uuid
+  updatedById      String?        @db.Uuid
+  archivedById     String?        @db.Uuid
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  organization Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy    User?        @relation("DocumentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  updatedBy    User?        @relation("DocumentUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  archivedBy   User?        @relation("DocumentArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@unique([storageProvider, storageBucket, storageKey])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, updatedAt])
+  @@index([checksumSha256])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([archivedById])
 }
 
 model Passport {

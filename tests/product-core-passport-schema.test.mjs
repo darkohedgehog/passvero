@@ -167,7 +167,7 @@ test("Passport is one-to-one with Product and does not duplicate publication con
   }
 });
 
-test("Organization and User expose only Phase 2A inverse relations", async () => {
+test("Organization and User retain the approved Phase 2A inverse relations", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const organization = block(schema, "model", "Organization");
   const user = block(schema, "model", "User");
@@ -191,7 +191,7 @@ test("Organization and User expose only Phase 2A inverse relations", async () =>
     assert.match(user, new RegExp(`${field}\\s+${model}\\[\\]\\s+@relation\\("${relationName}"\\)`));
   }
 
-  for (const future of ["documents", "scanEvents", "auditLogs", "subscriptions"]) {
+  for (const future of ["scanEvents", "auditLogs", "subscriptions"]) {
     assert.doesNotMatch(organization, new RegExp(`^\\s*${future}\\b`, "m"));
   }
 });

@@ -45,6 +45,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "ProductTranslation",
     "ProductIdentifier",
     "ProductMaterial",
+    "Document",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [
@@ -55,6 +56,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "ProductLifecycleStatus",
     "ProductVersionStatus",
     "ProductIdentifierType",
+    "DocumentStatus",
     "PassportStatus",
   ]);
 });

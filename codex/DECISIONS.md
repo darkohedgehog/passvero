@@ -85,3 +85,11 @@ Preferred positioning:
 
 ProductVersion is the Aggregate Root
 for all versioned product content.
+
+## ADR-009
+
+Document represents
+a reusable physical asset.
+
+ProductDocument represents
+a version-specific business relationship.
