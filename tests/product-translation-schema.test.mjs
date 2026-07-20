@@ -34,8 +34,7 @@ test("Phase 2B.1 adds only ProductTranslation and no enum", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
-
-  assert.deepEqual(modelNames, [
+  const phaseModelNames = [
     "User",
     "Organization",
     "Membership",
@@ -44,8 +43,8 @@ test("Phase 2B.1 adds only ProductTranslation and no enum", async () => {
     "ProductVersion",
     "ProductTranslation",
     "Passport",
-  ]);
-  assert.deepEqual(enumNames, [
+  ];
+  const phaseEnumNames = [
     "OrganizationStatus",
     "MembershipRole",
     "MembershipStatus",
@@ -53,7 +52,10 @@ test("Phase 2B.1 adds only ProductTranslation and no enum", async () => {
     "ProductLifecycleStatus",
     "ProductVersionStatus",
     "PassportStatus",
-  ]);
+  ];
+
+  assert.deepEqual(modelNames.filter((name) => phaseModelNames.includes(name)), phaseModelNames);
+  assert.deepEqual(enumNames.filter((name) => phaseEnumNames.includes(name)), phaseEnumNames);
   assert.doesNotMatch(schema, /^enum ProductTranslationStatus \{/m);
 });
 

@@ -52,6 +52,15 @@ enum ProductVersionStatus {
   DISCARDED
 }
 
+enum ProductIdentifierType {
+  GTIN
+  EAN
+  UPC
+  MPN
+  SKU
+  CUSTOM
+}
+
 enum PassportStatus {
   ACTIVE
   WITHDRAWN
@@ -226,6 +235,7 @@ model ProductVersion {
   currentDraftForProduct     Product?             @relation("CurrentDraftVersion")
   currentPublishedForProduct Product?             @relation("CurrentPublishedVersion")
   translations               ProductTranslation[] @relation("ProductVersionTranslations")
+  identifiers                ProductIdentifier[]  @relation("ProductVersionIdentifiers")
 
   @@unique([productId, versionNumber])
   @@index([productId, status])
@@ -260,6 +270,22 @@ model ProductTranslation {
   productVersion ProductVersion @relation("ProductVersionTranslations", fields: [productVersionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([productVersionId, locale])
+  @@index([productVersionId])
+}
+
+model ProductIdentifier {
+  id               String                @id @default(uuid()) @db.Uuid
+  productVersionId String                @db.Uuid
+  type             ProductIdentifierType
+  value            String
+  issuingAuthority String?
+  notes            String?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  productVersion ProductVersion @relation("ProductVersionIdentifiers", fields: [productVersionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([productVersionId, type, value])
   @@index([productVersionId])
 }
 

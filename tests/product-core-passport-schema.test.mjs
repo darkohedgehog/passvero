@@ -35,9 +35,7 @@ test("Phase 2A retains the approved models and enums", async () => {
     "ProductVersion",
     "Passport",
   ];
-
-  assert.deepEqual(modelNames.filter((name) => phaseModelNames.includes(name)), phaseModelNames);
-  assert.deepEqual(enumNames, [
+  const phaseEnumNames = [
     "OrganizationStatus",
     "MembershipRole",
     "MembershipStatus",
@@ -45,7 +43,10 @@ test("Phase 2A retains the approved models and enums", async () => {
     "ProductLifecycleStatus",
     "ProductVersionStatus",
     "PassportStatus",
-  ]);
+  ];
+
+  assert.deepEqual(modelNames.filter((name) => phaseModelNames.includes(name)), phaseModelNames);
+  assert.deepEqual(enumNames.filter((name) => phaseEnumNames.includes(name)), phaseEnumNames);
 
   assert.match(block(schema, "enum", "ProductLifecycleStatus"), /^\s*ACTIVE\s+ARCHIVED\s*$/);
   assert.match(
@@ -208,7 +209,7 @@ test("ProductVersion retains tenant ownership without later Phase 2 child models
   assert.match(version, /@@index\(\[organizationId, status\]\)/);
   assert.match(version, /@@index\(\[organizationId, updatedAt\]\)/);
 
-  for (const futureRelation of ["identifiers", "materials", "documents", "images"]) {
+  for (const futureRelation of ["materials", "documents", "images"]) {
     assert.doesNotMatch(version, new RegExp(`^\\s*${futureRelation}\\b`, "m"));
   }
 });
