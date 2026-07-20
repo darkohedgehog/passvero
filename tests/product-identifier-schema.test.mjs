@@ -30,7 +30,7 @@ async function readPhaseMigration() {
   return readFile(new URL(`${directories[0]}/migration.sql`, migrationsPath), "utf8");
 }
 
-test("Phase 2B.2 adds only ProductIdentifier and ProductIdentifierType", async () => {
+test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
@@ -44,6 +44,7 @@ test("Phase 2B.2 adds only ProductIdentifier and ProductIdentifierType", async (
     "ProductVersion",
     "ProductTranslation",
     "ProductIdentifier",
+    "ProductMaterial",
     "Passport",
   ]);
   assert.deepEqual(enumNames, [

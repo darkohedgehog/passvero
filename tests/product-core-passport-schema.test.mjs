@@ -196,7 +196,7 @@ test("Organization and User expose only Phase 2A inverse relations", async () =>
   }
 });
 
-test("ProductVersion retains tenant ownership without later Phase 2 child models", async () => {
+test("ProductVersion retains tenant ownership without unapproved Phase 2 child models", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const version = block(schema, "model", "ProductVersion");
 
@@ -209,7 +209,7 @@ test("ProductVersion retains tenant ownership without later Phase 2 child models
   assert.match(version, /@@index\(\[organizationId, status\]\)/);
   assert.match(version, /@@index\(\[organizationId, updatedAt\]\)/);
 
-  for (const futureRelation of ["materials", "documents", "images"]) {
+  for (const futureRelation of ["documents", "images"]) {
     assert.doesNotMatch(version, new RegExp(`^\\s*${futureRelation}\\b`, "m"));
   }
 });
