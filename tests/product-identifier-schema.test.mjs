@@ -53,6 +53,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "ScanEvent",
     "AuditLog",
     "Plan",
+    "Subscription",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -68,6 +69,8 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "ScanDeviceType",
     "ScanReferrerType",
     "PlanStatus",
+    "SubscriptionStatus",
+    "BillingProvider",
   ]);
 });
 

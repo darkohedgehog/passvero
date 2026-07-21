@@ -54,6 +54,7 @@ test("Phase 2D adds only QRCode and QRCodeStatus", async () => {
     "ScanEvent",
     "AuditLog",
     "Plan",
+    "Subscription",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -69,6 +70,8 @@ test("Phase 2D adds only QRCode and QRCodeStatus", async () => {
     "ScanDeviceType",
     "ScanReferrerType",
     "PlanStatus",
+    "SubscriptionStatus",
+    "BillingProvider",
   ]);
   assert.match(block(schema, "enum", "QRCodeStatus"), /^\s*PENDING\s+ACTIVE\s+REVOKED\s*$/);
 });

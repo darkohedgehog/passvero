@@ -31,7 +31,7 @@ async function readPhaseMigration() {
   return readFile(new URL(`${directories[0]}/migration.sql`, migrationsPath), "utf8");
 }
 
-test("Phase 5A adds only Plan and PlanStatus", async () => {
+test("Phase 5A retains Plan and PlanStatus", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
@@ -54,6 +54,7 @@ test("Phase 5A adds only Plan and PlanStatus", async () => {
     "ScanEvent",
     "AuditLog",
     "Plan",
+    "Subscription",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -69,9 +70,10 @@ test("Phase 5A adds only Plan and PlanStatus", async () => {
     "ScanDeviceType",
     "ScanReferrerType",
     "PlanStatus",
+    "SubscriptionStatus",
+    "BillingProvider",
   ]);
   assert.match(block(schema, "enum", "PlanStatus"), /^\s*DRAFT\s+ACTIVE\s+ARCHIVED\s*$/);
-  assert.doesNotMatch(schema, /^model Subscription\b/m);
 });
 
 test("Plan contains exactly the approved fields, scalar types, and defaults", async () => {
@@ -98,6 +100,7 @@ test("Plan contains exactly the approved fields, scalar types, and defaults", as
     "archivedAt",
     "createdAt",
     "updatedAt",
+    "subscriptions",
   ]);
   assert.match(plan, /id\s+String\s+@id\s+@default\(uuid\(\)\)\s+@db\.Uuid/);
   assert.match(plan, /^\s*name\s+String\s*$/m);
@@ -131,7 +134,7 @@ test("Plan limits and features use the approved nullable and JSON types", async 
   assert.match(plan, /usage counters, or organization-specific overrides/);
 });
 
-test("Plan is platform-owned, relationless, and excludes future billing fields", async () => {
+test("Plan is platform-owned and excludes subscription-specific billing fields", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const plan = block(schema, "model", "Plan");
   const forbiddenFields = [
@@ -142,13 +145,14 @@ test("Plan is platform-owned, relationless, and excludes future billing fields",
     "maxImages", "maxTranslations", "maxApiCalls", "scanRetentionDays",
     "storageGigabytes", "storageMegabytes", "customDomain", "metadata",
     "limits", "entitlements", "createdById", "updatedById", "archivedById",
-    "deletedAt", "subscriptions",
+    "deletedAt",
   ];
 
   for (const field of forbiddenFields) {
     assert.doesNotMatch(plan, new RegExp(`^\\s*${field}\\b`, "m"));
   }
-  assert.doesNotMatch(plan, /@relation\(/);
+  assert.match(plan, /subscriptions\s+Subscription\[\]\s+@relation\("PlanSubscriptions"\)/);
+  assert.equal([...plan.matchAll(/@relation\(/g)].length, 1);
   assert.doesNotMatch(plan, /^\s*(organization|user|subscription|product|passport|qrCode|auditLog)\b/m);
 });
 

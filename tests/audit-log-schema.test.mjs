@@ -54,6 +54,7 @@ test("Phase 4 adds only AuditLog and no enum", async () => {
     "ScanEvent",
     "AuditLog",
     "Plan",
+    "Subscription",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -69,6 +70,8 @@ test("Phase 4 adds only AuditLog and no enum", async () => {
     "ScanDeviceType",
     "ScanReferrerType",
     "PlanStatus",
+    "SubscriptionStatus",
+    "BillingProvider",
   ]);
   assert.doesNotMatch(schema, /^enum Audit(?:Action|EntityType|Category|Severity|ActorType)\b/m);
 });

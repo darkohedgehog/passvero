@@ -191,7 +191,7 @@ test("Organization and User retain the approved Phase 2A inverse relations", asy
     assert.match(user, new RegExp(`${field}\\s+${model}\\[\\]\\s+@relation\\("${relationName}"\\)`));
   }
 
-  for (const future of ["scanEvents", "subscriptions"]) {
+  for (const future of ["scanEvents"]) {
     assert.doesNotMatch(organization, new RegExp(`^\\s*${future}\\b`, "m"));
   }
 });

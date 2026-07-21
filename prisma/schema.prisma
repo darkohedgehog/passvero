@@ -104,6 +104,19 @@ enum PlanStatus {
   ARCHIVED
 }
 
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+enum BillingProvider {
+  STRIPE
+  MANUAL
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -157,6 +170,7 @@ model Organization {
   documents       Document[]       @relation("OrganizationDocuments")
   passports       Passport[]       @relation("OrganizationPassports")
   auditLogs       AuditLog[]       @relation("OrganizationAuditLogs")
+  subscription    Subscription?    @relation("OrganizationSubscription")
 
   @@index([status])
   @@index([createdAt])
@@ -595,8 +609,37 @@ model Plan {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
 
+  subscriptions Subscription[] @relation("PlanSubscriptions")
+
   @@index([status, sortOrder])
   @@index([isPublic, status, sortOrder])
   @@index([createdAt])
   @@index([archivedAt])
+}
+
+model Subscription {
+  id                       String             @id @default(uuid()) @db.Uuid
+  organizationId           String             @unique @db.Uuid
+  planId                   String             @db.Uuid
+  status                   SubscriptionStatus @default(TRIAL)
+  billingProvider          BillingProvider
+  /// Billing-period order and lifecycle consistency are enforced by manual
+  /// PostgreSQL CHECK constraints in the migration.
+  currentPeriodStart       DateTime
+  currentPeriodEnd         DateTime
+  cancelAtPeriodEnd        Boolean            @default(false)
+  canceledAt               DateTime?
+  externalCustomerId       String?
+  externalSubscriptionId   String?
+  providerConfigurationKey String?
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  organization Organization @relation("OrganizationSubscription", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  plan         Plan         @relation("PlanSubscriptions", fields: [planId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([status])
+  @@index([planId, status])
+  @@index([billingProvider])
+  @@index([currentPeriodEnd])
 }
