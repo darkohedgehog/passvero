@@ -51,6 +51,7 @@ test("Phase 2C.2 adds only ProductDocument and no enum", async () => {
     "ProductImage",
     "Passport",
     "QRCode",
+    "ScanEvent",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -63,6 +64,8 @@ test("Phase 2C.2 adds only ProductDocument and no enum", async () => {
     "DocumentStatus",
     "PassportStatus",
     "QRCodeStatus",
+    "ScanDeviceType",
+    "ScanReferrerType",
   ]);
   assert.doesNotMatch(schema, /^enum ProductDocument\w* \{/m);
   assert.doesNotMatch(schema, /^enum DocumentVisibility \{/m);

@@ -51,6 +51,7 @@ test("Phase 2D adds only QRCode and QRCodeStatus", async () => {
     "ProductImage",
     "Passport",
     "QRCode",
+    "ScanEvent",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -63,6 +64,8 @@ test("Phase 2D adds only QRCode and QRCodeStatus", async () => {
     "DocumentStatus",
     "PassportStatus",
     "QRCodeStatus",
+    "ScanDeviceType",
+    "ScanReferrerType",
   ]);
   assert.match(block(schema, "enum", "QRCodeStatus"), /^\s*PENDING\s+ACTIVE\s+REVOKED\s*$/);
 });
@@ -83,6 +86,7 @@ test("QRCode contains exactly the approved fields, types, and defaults", async (
     "createdAt",
     "updatedAt",
     "passport",
+    "scanEvents",
   ]);
   assert.match(qrCode, /id\s+String\s+@id\s+@default\(uuid\(\)\)\s+@db\.Uuid/);
   assert.match(qrCode, /passportId\s+String\s+@unique\s+@db\.Uuid/);
@@ -98,7 +102,7 @@ test("QRCode contains exactly the approved fields, types, and defaults", async (
   assert.match(qrCode, /manual PostgreSQL CHECK constraints/);
 });
 
-test("QRCode belongs only to Passport through an optional singular inverse", async () => {
+test("QRCode belongs to Passport and exposes the approved ScanEvent inverse", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const passport = block(schema, "model", "Passport");
   const qrCode = block(schema, "model", "QRCode");
@@ -123,7 +127,7 @@ test("QRCode belongs only to Passport through an optional singular inverse", asy
         "updatedAt",
       ].includes(field)
     ),
-    ["passport"],
+    ["passport", "scanEvents"],
   );
   assert.doesNotMatch(passport, /^\s*qrCodes\b/m);
 });

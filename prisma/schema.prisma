@@ -80,6 +80,24 @@ enum QRCodeStatus {
   REVOKED
 }
 
+enum ScanDeviceType {
+  UNKNOWN
+  DESKTOP
+  MOBILE
+  TABLET
+  BOT
+}
+
+enum ScanReferrerType {
+  DIRECT
+  SEARCH
+  SOCIAL
+  EMAIL
+  MESSAGING
+  OTHER
+  UNKNOWN
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -472,10 +490,39 @@ model QRCode {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  passport Passport @relation("PassportQRCode", fields: [passportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  passport   Passport    @relation("PassportQRCode", fields: [passportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  scanEvents ScanEvent[] @relation("QRCodeScanEvents")
 
   @@index([status])
   @@index([generatedAt])
   @@index([activatedAt])
   @@index([revokedAt])
+}
+
+model ScanEvent {
+  id              String           @id @default(uuid()) @db.Uuid
+  qrCodeId        String           @db.Uuid
+  scannedAt       DateTime         @default(now())
+  deviceType      ScanDeviceType   @default(UNKNOWN)
+  referrerType    ScanReferrerType @default(UNKNOWN)
+  isBot           Boolean          @default(false)
+  countryCode     String?
+  region          String?
+  browser         String?
+  operatingSystem String?
+  language        String?
+  referrerHost    String?
+  /// Append-only privacy-minimized analytics event. Normal application
+  /// workflows must not update it. Retention is handled separately through
+  /// configurable, reviewed aggregation and retention workflows.
+  createdAt       DateTime         @default(now())
+
+  qrCode QRCode @relation("QRCodeScanEvents", fields: [qrCodeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([qrCodeId, scannedAt])
+  @@index([scannedAt])
+  @@index([qrCodeId, isBot, scannedAt])
+  @@index([qrCodeId, countryCode, scannedAt])
+  @@index([qrCodeId, deviceType, scannedAt])
+  @@index([qrCodeId, referrerType, scannedAt])
 }
