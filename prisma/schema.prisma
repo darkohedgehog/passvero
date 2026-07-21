@@ -74,6 +74,12 @@ enum PassportStatus {
   ARCHIVED
 }
 
+enum QRCodeStatus {
+  PENDING
+  ACTIVE
+  REVOKED
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -442,9 +448,34 @@ model Passport {
   product      Product      @relation("ProductPassport", fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   organization Organization @relation("OrganizationPassports", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   withdrawnBy  User?        @relation("PassportWithdrawnBy", fields: [withdrawnById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  qrCode       QRCode?      @relation("PassportQRCode")
 
   @@index([organizationId, status])
   @@index([firstPublishedAt])
   @@index([lastPublishedAt])
   @@index([withdrawnById])
+}
+
+model QRCode {
+  id          String       @id @default(uuid()) @db.Uuid
+  /// Intentionally one QRCode per Passport for MVP. A future QR-history
+  /// migration may relax this uniqueness.
+  passportId  String       @unique @db.Uuid
+  /// Code format, HTTPS target URL, and lifecycle timestamp consistency are
+  /// enforced by manual PostgreSQL CHECK constraints in the migration.
+  code        String       @unique
+  targetUrl   String       @unique
+  status      QRCodeStatus @default(PENDING)
+  generatedAt DateTime     @default(now())
+  activatedAt DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  passport Passport @relation("PassportQRCode", fields: [passportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([status])
+  @@index([generatedAt])
+  @@index([activatedAt])
+  @@index([revokedAt])
 }

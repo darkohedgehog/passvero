@@ -118,3 +118,8 @@ Consequences
 * Multiple access technologies can coexist.
 * Public URLs remain attached to Passport rather than Product.
 * Future QR history can evolve without redesigning Product.
+
+## ADR-011
+
+ScanEvent never belongs to Product.
+ScanEvent belongs to QRCode.
