@@ -123,6 +123,7 @@ model User {
   documentsUpdated         Document[]       @relation("DocumentUpdatedBy")
   documentsArchived        Document[]       @relation("DocumentArchivedBy")
   passportsWithdrawn       Passport[]       @relation("PassportWithdrawnBy")
+  auditLogs                AuditLog[]       @relation("UserAuditLogs")
 }
 
 model Organization {
@@ -149,6 +150,7 @@ model Organization {
   productVersions ProductVersion[] @relation("OrganizationProductVersions")
   documents       Document[]       @relation("OrganizationDocuments")
   passports       Passport[]       @relation("OrganizationPassports")
+  auditLogs       AuditLog[]       @relation("OrganizationAuditLogs")
 
   @@index([status])
   @@index([createdAt])
@@ -525,4 +527,36 @@ model ScanEvent {
   @@index([qrCodeId, countryCode, scannedAt])
   @@index([qrCodeId, deviceType, scannedAt])
   @@index([qrCodeId, referrerType, scannedAt])
+}
+
+model AuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  actorId        String?  @db.Uuid
+  /// Stable uppercase snake-case application event name. Format is enforced
+  /// by a manual PostgreSQL CHECK constraint.
+  action         String
+  /// Logical polymorphic entity type. It is not a database foreign key.
+  entityType     String
+  /// Logical entity identifier. It may be a UUID or another stable identifier.
+  entityId       String
+  summary        String?
+  /// Small action-specific allowlisted metadata. Never store secrets, complete
+  /// payloads, raw request data, or file contents.
+  metadata       Json?
+  correlationId  String?
+  occurredAt     DateTime @default(now())
+  /// Append-only audit record. Normal application workflows must not update or
+  /// delete it. Retention is handled separately.
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation("OrganizationAuditLogs", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  actor        User?        @relation("UserAuditLogs", fields: [actorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([organizationId, occurredAt])
+  @@index([organizationId, entityType, entityId, occurredAt])
+  @@index([organizationId, action, occurredAt])
+  @@index([actorId, occurredAt])
+  @@index([correlationId])
+  @@index([occurredAt])
 }

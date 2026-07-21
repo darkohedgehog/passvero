@@ -52,6 +52,7 @@ test("Phase 2D adds only QRCode and QRCodeStatus", async () => {
     "Passport",
     "QRCode",
     "ScanEvent",
+    "AuditLog",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",

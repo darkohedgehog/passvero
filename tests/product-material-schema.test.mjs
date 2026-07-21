@@ -51,6 +51,7 @@ test("Phase 2B.3 retains ProductMaterial without a ProductMaterial enum", async 
     "Passport",
     "QRCode",
     "ScanEvent",
+    "AuditLog",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",

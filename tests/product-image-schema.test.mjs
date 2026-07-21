@@ -52,6 +52,7 @@ test("Phase 2C.3 adds only ProductImage and no enum", async () => {
     "Passport",
     "QRCode",
     "ScanEvent",
+    "AuditLog",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
