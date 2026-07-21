@@ -53,6 +53,7 @@ test("Phase 2C.3 adds only ProductImage and no enum", async () => {
     "QRCode",
     "ScanEvent",
     "AuditLog",
+    "Plan",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -67,6 +68,7 @@ test("Phase 2C.3 adds only ProductImage and no enum", async () => {
     "QRCodeStatus",
     "ScanDeviceType",
     "ScanReferrerType",
+    "PlanStatus",
   ]);
   assert.doesNotMatch(schema, /^enum ProductImage\w* \{/m);
   assert.doesNotMatch(schema, /^enum Image\w*Status \{/m);

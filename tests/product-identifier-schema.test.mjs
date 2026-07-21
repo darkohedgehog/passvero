@@ -52,6 +52,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "QRCode",
     "ScanEvent",
     "AuditLog",
+    "Plan",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -66,6 +67,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "QRCodeStatus",
     "ScanDeviceType",
     "ScanReferrerType",
+    "PlanStatus",
   ]);
 });
 

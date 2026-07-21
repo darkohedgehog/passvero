@@ -52,6 +52,7 @@ test("Phase 2B.3 retains ProductMaterial without a ProductMaterial enum", async 
     "QRCode",
     "ScanEvent",
     "AuditLog",
+    "Plan",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -66,6 +67,7 @@ test("Phase 2B.3 retains ProductMaterial without a ProductMaterial enum", async 
     "QRCodeStatus",
     "ScanDeviceType",
     "ScanReferrerType",
+    "PlanStatus",
   ]);
   assert.doesNotMatch(schema, /^enum ProductMaterial\w* \{/m);
 });

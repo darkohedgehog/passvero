@@ -98,6 +98,12 @@ enum ScanReferrerType {
   UNKNOWN
 }
 
+enum PlanStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -559,4 +565,38 @@ model AuditLog {
   @@index([actorId, occurredAt])
   @@index([correlationId])
   @@index([occurredAt])
+}
+
+model Plan {
+  id                 String     @id @default(uuid()) @db.Uuid
+  name               String
+  slug               String     @unique
+  description        String?
+  status             PlanStatus @default(DRAFT)
+  currencyCode       String     @default("EUR")
+  /// Non-negative commercial prices are enforced by manual PostgreSQL CHECK
+  /// constraints in the migration.
+  monthlyPrice       Decimal    @db.Decimal(12, 2)
+  yearlyPrice        Decimal    @db.Decimal(12, 2)
+  /// Nullable means unlimited or not enforced by this limit.
+  maxProducts        Int?
+  maxActivePassports Int?
+  maxMembers         Int?
+  maxStorageBytes    BigInt?
+  maxMonthlyScans    BigInt?
+  /// Explicit allowlisted capability object. Never store secrets, provider IDs,
+  /// usage counters, or organization-specific overrides.
+  features           Json
+  isPublic           Boolean    @default(true)
+  /// Non-negative display ordering is enforced through a manual PostgreSQL
+  /// CHECK constraint in the migration.
+  sortOrder          Int        @default(0)
+  archivedAt         DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@index([status, sortOrder])
+  @@index([isPublic, status, sortOrder])
+  @@index([createdAt])
+  @@index([archivedAt])
 }

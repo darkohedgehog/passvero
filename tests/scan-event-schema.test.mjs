@@ -53,6 +53,7 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "QRCode",
     "ScanEvent",
     "AuditLog",
+    "Plan",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -67,6 +68,7 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "QRCodeStatus",
     "ScanDeviceType",
     "ScanReferrerType",
+    "PlanStatus",
   ]);
   assert.match(
     block(schema, "enum", "ScanDeviceType"),

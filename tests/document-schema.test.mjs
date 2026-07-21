@@ -53,6 +53,7 @@ test("Phase 2C.1 retains Document and DocumentStatus", async () => {
     "QRCode",
     "ScanEvent",
     "AuditLog",
+    "Plan",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -67,6 +68,7 @@ test("Phase 2C.1 retains Document and DocumentStatus", async () => {
     "QRCodeStatus",
     "ScanDeviceType",
     "ScanReferrerType",
+    "PlanStatus",
   ]);
 });
 
