@@ -93,3 +93,28 @@ a reusable physical asset.
 
 ProductDocument represents
 a version-specific business relationship.
+
+## ADR-010
+
+QRCode represents a public access point to a Passport, not to a Product.
+
+Decision
+
+QRCode belongs directly to Passport.
+
+Product remains the internal business identity.
+
+Passport remains the public representation.
+
+QRCode represents a physical or digital access point that resolves to a Passport.
+
+Future public entry technologies (QR, NFC, GS1 Digital Link, DataMatrix, etc.) should follow the same architectural boundary.
+
+Consequences
+
+* Product stays independent from public access mechanisms.
+* Passport becomes the single public entry object.
+* QR regeneration is simplified.
+* Multiple access technologies can coexist.
+* Public URLs remain attached to Passport rather than Product.
+* Future QR history can evolve without redesigning Product.
