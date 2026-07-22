@@ -57,6 +57,7 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "Subscription",
     "Notification",
     "IntegrationMapping",
+    "BackgroundJob",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -77,6 +78,8 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "NotificationType",
     "NotificationStatus",
     "IntegrationMappingStatus",
+    "BackgroundJobScope",
+    "BackgroundJobStatus",
   ]);
   assert.match(
     block(schema, "enum", "ScanDeviceType"),

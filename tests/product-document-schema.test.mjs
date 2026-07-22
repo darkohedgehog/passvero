@@ -57,6 +57,7 @@ test("Phase 2C.2 adds only ProductDocument and no enum", async () => {
     "Subscription",
     "Notification",
     "IntegrationMapping",
+    "BackgroundJob",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -77,6 +78,8 @@ test("Phase 2C.2 adds only ProductDocument and no enum", async () => {
     "NotificationType",
     "NotificationStatus",
     "IntegrationMappingStatus",
+    "BackgroundJobScope",
+    "BackgroundJobStatus",
   ]);
   assert.doesNotMatch(schema, /^enum ProductDocument\w* \{/m);
   assert.doesNotMatch(schema, /^enum DocumentVisibility \{/m);

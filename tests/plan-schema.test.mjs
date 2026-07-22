@@ -57,6 +57,7 @@ test("Phase 5A retains Plan and PlanStatus", async () => {
     "Subscription",
     "Notification",
     "IntegrationMapping",
+    "BackgroundJob",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -77,6 +78,8 @@ test("Phase 5A retains Plan and PlanStatus", async () => {
     "NotificationType",
     "NotificationStatus",
     "IntegrationMappingStatus",
+    "BackgroundJobScope",
+    "BackgroundJobStatus",
   ]);
   assert.match(block(schema, "enum", "PlanStatus"), /^\s*DRAFT\s+ACTIVE\s+ARCHIVED\s*$/);
 });

@@ -36,8 +36,8 @@ test("Phase 6B adds exactly IntegrationMapping and its approved status enum", as
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
 
-  assert.deepEqual(modelNames.slice(-1), ["IntegrationMapping"]);
-  assert.deepEqual(enumNames.slice(-1), ["IntegrationMappingStatus"]);
+  assert.deepEqual(modelNames.slice(-2, -1), ["IntegrationMapping"]);
+  assert.deepEqual(enumNames.slice(-3, -2), ["IntegrationMappingStatus"]);
   assert.match(
     block(schema, "enum", "IntegrationMappingStatus"),
     /^\s*ACTIVE\s+DISABLED\s+ERROR\s+ARCHIVED\s*$/,
@@ -101,7 +101,7 @@ test("IntegrationMapping excludes credentials, provider configuration, jobs, and
   for (const field of forbiddenFields) {
     assert.doesNotMatch(mapping, new RegExp(`^\\s*${field}\\b`, "m"));
   }
-  assert.doesNotMatch(schema, /^model (?:BackgroundJob|IntegrationCredential|IntegrationProviderConfiguration)\b/m);
+  assert.doesNotMatch(schema, /^model (?:IntegrationCredential|IntegrationProviderConfiguration)\b/m);
 });
 
 test("IntegrationMapping has exactly the approved uniqueness and indexes", async () => {

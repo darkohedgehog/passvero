@@ -139,6 +139,19 @@ enum IntegrationMappingStatus {
   ARCHIVED
 }
 
+enum BackgroundJobScope {
+  PLATFORM
+  ORGANIZATION
+}
+
+enum BackgroundJobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -196,6 +209,7 @@ model Organization {
   subscription        Subscription?        @relation("OrganizationSubscription")
   notifications       Notification[]       @relation("OrganizationNotifications")
   integrationMappings IntegrationMapping[] @relation("OrganizationIntegrationMappings")
+  backgroundJobs      BackgroundJob[]      @relation("OrganizationBackgroundJobs")
 
   @@index([status])
   @@index([createdAt])
@@ -742,4 +756,54 @@ model IntegrationMapping {
   @@index([lastSyncedAt])
   @@index([lastErrorAt])
   @@index([archivedAt])
+}
+
+model BackgroundJob {
+  id             String              @id @default(uuid()) @db.Uuid
+  scope          BackgroundJobScope
+  organizationId String?             @db.Uuid
+  queue          String
+  jobType        String
+  status         BackgroundJobStatus @default(QUEUED)
+  priority       Int                 @default(0)
+  attemptCount   Int                 @default(0)
+  maxAttempts    Int
+  scheduledAt    DateTime
+
+  /// Small allowlisted execution input and normalized outcome. Never store
+  /// credentials, tokens, secrets, authorization headers, cookies, stack
+  /// traces, or binary content in payload/result.
+  payload Json?
+  result  Json?
+
+  /// Optional logical entity context. Both fields must be null or populated
+  /// together; neither field is a database foreign key.
+  entityType String?
+  entityId   String?
+
+  deduplicationKey String?
+  correlationId    String?
+
+  lockedAt  DateTime?
+  lockOwner String?
+
+  startedAt   DateTime?
+  completedAt DateTime?
+  failedAt    DateTime?
+  canceledAt  DateTime?
+
+  lastErrorCode    String?
+  lastErrorSummary String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization? @relation("OrganizationBackgroundJobs", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([status, scheduledAt])
+  @@index([queue, status, scheduledAt])
+  @@index([organizationId, status])
+  @@index([entityType, entityId])
+  @@index([lockedAt])
+  @@index([createdAt])
 }
