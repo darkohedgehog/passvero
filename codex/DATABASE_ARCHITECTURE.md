@@ -1,1473 +1,351 @@
 # Passvero Database Architecture
 
-## 1. Purpose
-
-This document provides a concise architectural overview of the Passvero
-database.
-
-It explains:
-
-- the primary domain boundaries;
-- aggregate roots;
-- ownership and multi-tenancy;
-- product versioning;
-- reusable assets;
-- public Digital Product Passport access;
-- database-enforced integrity;
-- service-level invariants;
-- planned analytics, audit, billing, and integration layers.
+## Purpose
 
-This document is not a replacement for:
+This document is the concise architectural overview of the implemented
+Passvero PostgreSQL database. Detailed fields, relations, constraints, and
+indexes are recorded in `PRISMA_DOMAIN_MODEL.md` and
+`SCHEMA_NAMING_REFERENCE.md`.
 
-- `DOMAIN_RULES.md`
-- `PRISMA_DOMAIN_MODEL.md`
-- `SCHEMA_IMPLEMENTATION_GUIDE.md`
-- `DATABASE_CONVENTIONS.md`
-- `SCHEMA_NAMING_REFERENCE.md`
-- `DECISIONS.md`
+Authoritative precedence is:
 
-Those documents remain authoritative for detailed business rules,
-implementation contracts, naming, and migration behavior.
+1. `prisma/schema.prisma`
+2. applied migrations
+3. `codex/DECISIONS.md`
+4. `codex/ARCHITECTURE_DECISIONS_FROM_AUDIT.md`
+5. remaining documentation
 
-This document is the shortest path to understanding the overall database
-architecture.
+## Current structural status
 
----
+- Structural implementation: **complete**
+- Implemented models: **21**
+- Applied migrations: **16**
+- Structural Integrity Review: **complete**
+- Architecture Decision Review: **complete**
+- Mandatory schema blockers: **none**
+- Documentation synchronization: **complete**
+- Database Production Audit: **pending**
+- Database Architecture Freeze v1.0: **pending**
 
-## 2. Architectural Goals
+This status does not approve Architecture Freeze. Accepted Service Invariants
+remain mandatory production obligations.
 
-The Passvero database is designed to support a multi-tenant Digital Product
-Passport SaaS platform.
+## Implemented domain map
 
-Its primary goals are:
+```txt
+Identity and tenancy
+User ── Membership ── Organization ── Invitation
 
-1. strict organization-level data isolation;
-2. immutable published product history;
-3. clear separation between internal product identity and public passport state;
-4. reusable document assets without duplicating stored files;
-5. version-specific product content;
-6. stable public QR access;
-7. privacy-conscious scan analytics;
-8. durable audit history;
-9. subscription-aware platform behavior;
-10. safe future extension without redesigning the Product domain.
+Product and versioned content
+Organization ── Product ── ProductVersion
+                               ├── ProductTranslation
+                               ├── ProductIdentifier
+                               ├── ProductMaterial
+                               ├── ProductDocument ── Document
+                               └── ProductImage
 
-The architecture favors explicit ownership, versioned content, narrow models,
-small migrations, and service-enforced cross-aggregate workflows.
+Public access and analytics
+Product ── Passport ── QRCode ── ScanEvent
 
----
+Infrastructure and billing
+Organization ── AuditLog
+Plan ── Subscription ── Organization
 
-## 3. High-Level Domain Map
+Platform services
+Organization ── Notification ── User (optional target)
+Organization ── IntegrationMapping
+Organization ── BackgroundJob (only ORGANIZATION scope)
+BackgroundJob (PLATFORM scope has no Organization)
+```
 
-```text
-Identity and Tenancy
-────────────────────────────────────────
+## Implemented inventory
 
-User
-  │
-  └── Membership ───────── Organization
-                              │
-                              ├── Invitation
-                              ├── Product
-                              ├── ProductVersion
-                              ├── Passport
-                              └── Document
+Identity: User, Organization, Membership, Invitation.
 
+Product core: Product, ProductVersion, Passport.
 
-Product Domain
-────────────────────────────────────────
+Version content: ProductTranslation, ProductIdentifier, ProductMaterial.
 
-Organization
-  │
-  └── Product
-        │
-        ├── ProductVersion
-        │     │
-        │     ├── ProductTranslation
-        │     ├── ProductIdentifier
-        │     ├── ProductMaterial
-        │     ├── ProductDocument ─── Document
-        │     └── ProductImage
-        │
-        └── Passport
-              │
-              └── QRCode
+Documents and media: Document, ProductDocument, ProductImage.
 
+Public access and analytics: QRCode, ScanEvent.
 
-Planned Operational Domains
-────────────────────────────────────────
+Infrastructure: AuditLog.
 
-QRCode
-  └── ScanEvent
+Billing: Plan, Subscription.
 
-Organization / User / Domain Entities
-  └── AuditLog
+Platform services: Notification, IntegrationMapping, BackgroundJob.
 
-Organization
-  ├── Subscription
-  ├── Notification
-  ├── IntegrationMapping
-  └── BackgroundJob
+## Tenant and ownership architecture
 
-Plan
-  └── Subscription
+Organization is the tenant boundary. Private service operations derive tenant
+context from authenticated membership and never trust a client-supplied
+organization identifier.
 
----
+Direct `organizationId` ownership exists on Membership, Invitation, Product,
+ProductVersion, Passport, Document, AuditLog, Subscription, Notification,
+IntegrationMapping, and ORGANIZATION-scoped BackgroundJob.
 
-# 4. Domain Layers
+Derived ownership paths are:
 
+```txt
+ProductTranslation  ─┐
+ProductIdentifier   ─┤
+ProductMaterial     ─┤── ProductVersion ── Organization
+ProductDocument     ─┤
+ProductImage        ─┘
 
-The database is divided conceptually into five layers.
+QRCode ── Passport ── Organization
+ScanEvent ── QRCode ── Passport ── Organization
+```
 
-# 4.1 Identity and Tenancy
+User and Plan are platform-global. PLATFORM BackgroundJob rows deliberately
+have `organizationId = NULL`; ORGANIZATION rows require a non-null Organization
+through a database CHECK constraint.
 
-Models:
+## Aggregate roots and boundaries
 
-* User
-* Organization
-* Membership
-* Invitation
+### Organization
 
-Responsibilities:
+Organization is the tenant aggregate root. Retained organization-owned roots
+use restrictive deletion. An Organization cannot be silently deleted while
+Products, ProductVersions, Passports, Documents, AuditLogs, Subscription,
+Notifications, IntegrationMappings, or BackgroundJobs depend on it.
 
-* user identity;
-* organization ownership;
-* role assignment;
-* organization membership;
-* invitation lifecycle;
-* tenant authorization context.
+### Product
 
-Organization is the tenant boundary.
+Product is stable business identity. It owns `publicCode`, internal naming,
+organization-scoped normalized SKU, lifecycle state, and nullable current draft
+and published pointers.
 
-Most business data is either directly owned by an Organization or inherits
-organization ownership through another domain entity.
+The nullable Product/ProductVersion pointer cycle is intentional. Services
+create Product, create ProductVersion, then set the pointer inside one
+transaction. Pointer foreign keys use SetNull, so there is no destructive
+cascade cycle.
 
----
+### ProductVersion
 
+ProductVersion is the aggregate root for ProductTranslation,
+ProductIdentifier, ProductMaterial, ProductDocument, and ProductImage. These
+children cascade only with their ProductVersion. ProductVersion itself is
+protected from Product deletion by Restrict.
 
-# 4.2 Product Core
+### Document
 
-Models:
+Document is a reusable organization-owned physical asset. ProductDocument is
+the version-specific business relationship. Removing ProductDocument never
+deletes Document.
 
-* Product
-* ProductVersion
-* Passport
+### Passport and QRCode
 
-Responsibilities:
+Passport is one-to-one with Product and stores public publication state.
+QRCode is one-to-one with Passport for the implemented MVP and stores the exact
+public HTTPS target. ScanEvent belongs only to QRCode.
 
-* stable internal product identity;
-* immutable version history;
-* draft and published version pointers;
-* public passport lifecycle;
-* publication timestamps;
-* archive and withdrawal behavior.
+### Platform services
 
-This layer is the center of the Passvero business domain.
+AuditLog, Notification, IntegrationMapping, and BackgroundJob each have one
+narrow purpose. They do not own Product data and do not replace one another.
 
-⸻
+## Product lifecycle and publication
 
-# 4.3 Versioned Product Content
+Product lifecycle uses ACTIVE and ARCHIVED. ProductVersion lifecycle uses
+DRAFT, READY_FOR_REVIEW, PUBLISHED, SUPERSEDED, and DISCARDED. Passport uses
+ACTIVE, WITHDRAWN, and ARCHIVED. QRCode uses PENDING, ACTIVE, and REVOKED.
 
-Models:
+One Product may simultaneously have one published version and one active
+draft-like version. The manual partial index
+`ux_product_version_one_active_draft` permits only one DRAFT or
+READY_FOR_REVIEW row per Product.
 
-* ProductTranslation
-* ProductIdentifier
-* ProductMaterial
-* ProductDocument
-* ProductImage
+Publication is a transactional service workflow. It validates ownership and
+readiness, assigns the product-scoped version number, publishes the draft,
+supersedes the previous version, updates Product pointers and timestamps,
+maintains Passport and QR state, and writes audit history. A failed transaction
+must leave the previous public version current.
 
-Responsibilities:
+Published and superseded ProductVersion aggregates are immutable. PostgreSQL
+does not use status-aware triggers for this rule. Guarded services,
+repositories, negative tests, and runtime permissions enforce it.
 
-* localized public product text;
-* product identifiers;
-* material composition;
-* version-specific document associations;
-* version-specific product images.
+## Documents and media
 
-All versioned product content belongs to ProductVersion.
+Document stores reusable file identity and upload lifecycle. Its storage tuple
+is unique, and CHECK constraints enforce SHA-256, positive size, and lifecycle
+timestamps.
 
-This rule is formalized by ADR-008.
+ProductDocument stores category, optional locale, label, description, public
+visibility, primary hint, and ordering for one ProductVersion. Services must
+verify Document and ProductVersion tenant equality transactionally. They also
+define allowed contextual multiplicity and primary selection.
 
-⸻
+ProductImage is specialized version-owned media with its own storage metadata,
+dimensions, checksum, MIME allowlist, visibility, primary hint, and ordering.
+It is not a Document association. One-primary behavior is a mandatory service
+invariant.
 
-# 4.4 Public Access and Analytics
+## Public analytics and audit
 
-Implemented:
+ScanEvent is privacy-minimized, append-only analytics attributed to QRCode. It
+stores coarse device, referrer, country, region, browser, operating-system,
+language, and host data. It has no raw IP, User relation, direct Product or
+Passport relation, direct `organizationId`, or `updatedAt`.
 
-* QRCode
+AuditLog is append-only organization history with an optional User actor and a
+logical `(entityType, entityId)` reference. `action` and `entityType` are
+normalized Strings rather than closed enums. AuditLog contains no update
+timestamp and is never public.
 
-Planned:
+Append-only behavior is enforced through restricted repository APIs, runtime
+database roles where practical, tests, and controlled maintenance procedures.
+No mechanism can make history immutable to the database owner or superuser.
 
-* ScanEvent
+## Billing architecture
 
-Responsibilities:
+Plan is a global commercial configuration record with status, prices, limits,
+allowlisted feature JSON, visibility, ordering, and archive state.
 
-* public access to a Passport;
-* stable QR payload identity;
-* activation and revocation lifecycle;
-* privacy-conscious scan analytics;
-* public usage reporting.
+Subscription is the single current commercial-state row for an Organization.
+It references Plan, records billing provider, current period,
+`cancelAtPeriodEnd`, terminal `canceledAt`, and limited external identifiers.
 
-QRCode belongs to Passport, not directly to Product.
+Subscription is not a ledger. Invoices, payments, provider events,
+idempotency, and historical commercial evidence require future reviewed
+billing infrastructure. IntegrationMapping does not replace that future
+infrastructure.
 
-This rule is formalized by ADR-010.
+## Notification boundary
 
-ScanEvent will belong to QRCode, not directly to Product.
+Notification is an organization-owned application message and may target one
+User. `NotificationType` expresses presentation style;
+`NotificationStatus` expresses inbox lifecycle; `eventType` carries business
+context. Logical entity fields are not foreign keys.
 
-This rule is formalized by ADR-011.
+Notification is not email, push, SMS, webhook, provider delivery, AuditLog,
+BackgroundJob, or domain lifecycle state. Services validate target-User tenant
+eligibility and safe internal/HTTPS navigation.
 
-⸻
+## IntegrationMapping boundary
 
-# 4.5 Platform Services
+IntegrationMapping is retained organization-owned mapping between a Passvero
+logical entity and an external resource. Provider and resource/entity types are
+normalized Strings. The model stores no credentials, OAuth tokens, provider
+configuration, jobs, or provider payloads.
 
-Planned models:
+Uniqueness intentionally spans lifecycle states, including ARCHIVED. Partial
+indexes compensate for PostgreSQL null semantics when `externalAccountId` is
+null. Replacing archived rows is not an approved architecture requirement.
 
-* AuditLog
-* Plan
-* Subscription
-* Notification
-* IntegrationMapping
-* BackgroundJob
+## BackgroundJob boundary
 
-Responsibilities:
+BackgroundJob persists requested asynchronous work and execution state. It
+supports PLATFORM and ORGANIZATION scope, normalized queue/job type, scheduling,
+attempt limits, optional allowlisted payload/result, logical entity context,
+active locks, lifecycle timestamps, normalized errors, correlation, and active
+deduplication.
 
-* durable audit history;
-* billing and plan limits;
-* user and organization notifications;
-* external-system identity mapping;
-* asynchronous processing state.
+It does not implement a queue provider, worker, scheduler, cron, automatic
+retry, webhook processor, notification delivery, integration connection,
+AuditLog, or domain lifecycle. Those are application or future infrastructure.
 
-These models remain loosely coupled from the Product aggregate.
+## Database-enforced integrity
 
-⸻
+The database uses UUID primary keys, foreign keys with explicit referential
+actions, unique constraints, exact query indexes, partial unique indexes, and
+manual PostgreSQL CHECK constraints.
 
-## 5. Aggregate Roots
+Implemented partial unique indexes cover:
 
-An aggregate root defines the primary consistency boundary through which related
-domain content is managed.
+- one pending Invitation per Organization and normalized email comparison;
+- one active draft-like ProductVersion per Product;
+- IntegrationMapping null-account external and internal identities;
+- PLATFORM and ORGANIZATION active BackgroundJob deduplication.
 
-#5.1 Organization
+Terminal invitation, mapping, and job history remains permitted according to
+the corresponding predicate and uniqueness contract.
 
-Organization is the tenant aggregate root.
+## Approved Service Invariants
 
-Directly organization-owned entities include:
+The decision register assigns the following mandatory obligations to
+authenticated transactional services rather than treating them as schema
+defects:
 
-* Membership
-* Invitation
-* Product
-* ProductVersion
-* Passport
-* Document
-* future Subscription
-* future Notification
-* future IntegrationMapping
-* future BackgroundJob
+1. ProductVersion and Passport organization ownership equals Product ownership.
+2. Product current pointers belong to the same Product and correct lifecycle.
+3. ProductDocument parents belong to the same Organization, and public
+   delivery reauthorizes publication and visibility.
+4. Lifecycle transitions and chronology not fully covered by CHECK constraints
+   remain valid.
+5. ProductImage primary selection and ProductDocument primary/contextual
+   multiplicity remain consistent.
+6. Notification User targeting and URL consumption are tenant-safe.
+7. BackgroundJob logical references, deduplication keys, worker identifiers,
+   and execution chronology are normalized and valid.
+8. Published ProductVersion aggregates remain immutable.
+9. AuditLog and ScanEvent remain append-only.
+10. Email, identifier, locale, country, and similar strings use the approved
+    field-specific canonical form across every writer.
 
-Organization ownership must always be included in service authorization and
-tenant-scoped queries.
+These obligations apply equally to repositories, imports, background
+processes, administration tools, and maintenance scripts. Mandatory service
+and integration tests are production-release gates.
 
-⸻
+## Delete and retention strategy
 
-# 5.2 Product
+Restrict is used for independent and retained business roots. SetNull preserves
+history after deletion of optional actors or provenance. Cascade is reserved
+for true aggregate children: version-owned content, Passport-owned QRCode, and
+QRCode-owned ScanEvent.
 
-Product is the stable product identity.
+Cascade configuration does not grant service authorization to delete published
+or retained history. Future destructive workflows require authorization,
+affected-row preview, audit, retention review, and recovery planning.
 
-It owns lifecycle-level concerns such as:
+Retention automation, partitions, TTL, archive tables, and scheduled cleanup
+are not implemented. RLS is also not implemented; it requires a separate
+reviewed phase.
 
-* organization ownership;
-* internal name;
-* SKU;
-* normalized SKU;
-* public code;
-* product lifecycle;
-* current draft pointer;
-* current published pointer;
-* product creation, update, archive, and publication timestamps.
+## JSON and sensitive-data boundary
 
-Product does not contain public product descriptions, materials, documents, or
-images.
+Implemented JSON fields are `AuditLog.metadata`, `Plan.features`,
+`Notification.metadata`, `IntegrationMapping.metadata`,
+`BackgroundJob.payload`, and `BackgroundJob.result`. They contain only small
+allowlisted values appropriate to the owning model. No JSON GIN index is
+implemented.
 
-Those belong to ProductVersion.
+Passwords, hashes, access or refresh tokens, API keys, provider secrets,
+authorization headers, cookies, signed URLs, complete provider/request/response
+payloads, files, binary content, sensitive personal data, and stack traces do
+not belong in these JSON fields.
 
-⸻
+## Transaction boundaries
 
-# 5.3 ProductVersion
+Transactions are mandatory for organization onboarding, invitation acceptance,
+ownership transfer, Product create-then-point sequencing, draft cloning,
+publication, Passport withdrawal/reactivation, Document association,
+Subscription updates, Notification lifecycle changes that touch related state,
+IntegrationMapping transitions, and BackgroundJob claim/transition handling.
 
-ProductVersion is the aggregate root for all versioned product content.
+Do not hold a database transaction open across slow external network calls.
 
-This rule is formalized by ADR-008.
+## DTO and public boundaries
 
-Owned content includes:
+Prisma records are persistence objects, not API responses. Public Passport and
+Document responses use explicit allowlists. Draft content, private Documents,
+storage identity, actor IDs, token hashes, billing identifiers, provider data,
+audit metadata, and platform-service payloads must not leak publicly.
 
-* ProductTranslation
-* ProductIdentifier
-* ProductMaterial
-* ProductDocument
-* ProductImage
+## Architecture review outcome
 
-Future version-specific product data must also attach to ProductVersion unless a
-new architectural decision explicitly states otherwise.
+Structural Integrity Review and all HIGH, MEDIUM, LOW, and Observation decision
+reviews are complete. No reviewed structural finding requires a database schema
+change before Freeze. Rejected audit conclusions are not architecture:
 
-Services must not attach versioned public content directly to Product.
+- Subscription is not a financial ledger.
+- Billing history is future infrastructure.
+- IntegrationMapping archive uniqueness is intentional.
+- Documentation drift was governance work, not a runtime schema defect.
 
-⸻
-
-# 5.4 Passport
-
-Passport is the public-state aggregate for a Product.
-
-It represents:
-
-* whether a public Digital Product Passport exists;
-* first and last publication timestamps;
-* public default locale;
-* withdrawal state;
-* public withdrawal messaging;
-* archive state.
-
-Passport does not duplicate ProductVersion content.
-
-The currently published ProductVersion remains the source of published product
-content.
-
-⸻
-
-# 5.5 QRCode
-
-QRCode is the current public QR access point for one Passport.
-
-It stores:
-
-* opaque public code;
-* exact HTTPS target URL;
-* activation state;
-* generation, activation, and revocation timestamps.
-
-QRCode does not contain:
-
-* QR image data;
-* Passport content;
-* Product content;
-* scan counters;
-* analytics aggregates.
-
-Generated QR images are derived artifacts.
-
-⸻
-
-## 6. Multi-Tenancy and Ownership
-
-# 6.1 Tenant Boundary
-
-Organization is the canonical tenant boundary.
-
-A User may belong to multiple organizations through Membership.
-
-A User does not directly own Products or Documents.
-
-Users act on organization-owned data through Membership permissions.
-
-⸻
-
-# 6.2 Direct Ownership
-
-The following models contain organizationId directly:
-
-* Product
-* ProductVersion
-* Passport
-* Document
-* Membership
-* Invitation
-
-Direct organization ownership is used when:
-
-* tenant-scoped queries are frequent;
-* the entity has an independent lifecycle;
-* the entity is operationally useful without loading another parent;
-* future RLS policies benefit from direct organization ownership.
-
-⸻
-
-# 6.3 Inherited Ownership
-
-The following models inherit ownership:
-ProductTranslation
-  → ProductVersion
-  → Organization
-
-ProductIdentifier
-  → ProductVersion
-  → Organization
-
-ProductMaterial
-  → ProductVersion
-  → Organization
-
-ProductDocument
-  → ProductVersion
-  → Organization
-
-ProductImage
-  → ProductVersion
-  → Organization
-
-QRCode
-  → Passport
-  → Product
-  → Organization
-
-Future ScanEvent
-  → QRCode
-  → Passport
-  → Product
-  → Organization
-
-Inherited models must not receive redundant organizationId fields without a
-new reviewed architectural decision.
-
-# 6.4 Cross-Organization Invariants
-
-Some organization-consistency rules span multiple tables and cannot be expressed
-cleanly through basic Prisma relations.
-
-Services must enforce:
-ProductVersion.organizationId
-=
-Product.organizationId
-
-Passport.organizationId
-=
-Product.organizationId
-
-Product.currentDraftVersion.productId
-=
-Product.id
-
-Product.currentPublishedVersion.productId
-=
-Product.id
-
-ProductDocument.document.organizationId
-=
-ProductDocument.productVersion.organizationId
-
-These rules must be validated inside transactional application services.
-
-Future RLS policies should reinforce tenant isolation but must not replace
-service validation.
-
-
-## 7. Product Versioning Architecture
-
-# 7.1 Stable Identity vs Versioned Content
-
-Passvero separates:
-Product
-= stable internal identity
-
-from:
-ProductVersion
-= one immutable content snapshot
-
-This prevents published content from being overwritten.
-
-# 7.2 Draft Pointer
-
-Product contains:
-currentDraftVersionId
-
-
-This points to the ProductVersion currently being edited or reviewed.
-
-The database includes a partial unique index preventing more than one active
-draft-like version per Product.
-
-Active draft-like statuses are:
-
-* DRAFT
-* READY_FOR_REVIEW
-
-⸻
-
-# 7.3 Published Pointer
-
-Product contains:
-currentPublishedVersionId
-
-This points to the ProductVersion currently presented through the public
-Passport.
-
-Older published versions remain preserved as historical records.
-
-⸻
-
-# 7.4 Version Lifecycle
-DRAFT
-  │
-  ▼
-READY_FOR_REVIEW
-  │
-  ▼
-PUBLISHED
-  │
-  ▼
-SUPERSEDED
-
-A draft may also transition to:
-DISCARDED
-
-Transition enforcement belongs to application services.
-
-Database constraints protect structural consistency but do not implement the
-complete workflow as triggers.
-
-⸻
-
-# 7.5 Immutable Publication
-
-Once a ProductVersion becomes PUBLISHED:
-
-* its public content must no longer be edited;
-* its translations must not be edited;
-* its identifiers must not be edited;
-* its material records must not be edited;
-* its ProductDocument associations must not be edited;
-* its ProductImage records must not be edited.
-
-Corrections require a new ProductVersion.
-
-This is primarily a domain-service rule.
-
-⸻
-
-# 7.6 Version Cloning
-
-ProductVersion.clonedFromVersionId records the source version used to create a
-new draft.
-
-Cloning may copy:
-
-* translations;
-* identifiers;
-* materials;
-* ProductDocument associations;
-* ProductImage metadata.
-
-Cloning does not make the new version published.
-
-Storage reuse and file-copy behavior remain application-service concerns.
-
-⸻
-
-## 8. Product Content Models
-
-# 8.1 ProductTranslation
-
-Purpose:
-
-Stores localized public product text for one ProductVersion.
-
-Cardinality:
-ProductVersion 1 ──── N ProductTranslation
-
-Uniqueness:
-productVersionId + locale
-
-Only productName is required.
-
-Other translated sections remain optional.
-
-Application-interface translations are not stored here; those remain in
-next-intl message files.
-
-⸻
-
-# 8.2 ProductIdentifier
-
-Purpose:
-
-Stores standardized or custom product identifiers for one ProductVersion.
-
-Supported MVP types:
-
-* GTIN
-* EAN
-* UPC
-* MPN
-* SKU
-* CUSTOM
-
-Uniqueness:
-productVersionId + type + value
-
-The same identifier value may exist in historical versions.
-
-Checksum and format validation belong to services.
-
-⸻
-
-# 8.3 ProductMaterial
-
-Purpose:
-
-Stores material composition entries for one ProductVersion.
-
-Fields include:
-
-* material name;
-* optional category;
-* optional percentage;
-* recycled-content indicator;
-* optional recycled percentage;
-* optional supplier;
-* notes.
-
-Database checks enforce:
-
-* percentage between 0 and 100;
-* recycledPercentage between 0 and 100;
-* recycledPercentage cannot exist when isRecycled is false.
-
-The database does not require all material percentages to sum to 100 because
-partial disclosure may be valid.
-
-Aggregate composition validation belongs to services.
-
-⸻
-
-## 9. Document and Media Architecture
-
-# 9.1 Document
-
-Document represents a reusable organization-owned physical file asset.
-
-This is formalized by ADR-009.
-
-Document stores:
-
-* original filename;
-* optional display name;
-* storage provider;
-* storage bucket;
-* storage key;
-* MIME type;
-* file size;
-* SHA-256 checksum;
-* upload lifecycle;
-* actor history.
-
-Document does not contain product-specific category, locale, visibility, label,
-or ordering.
-
-⸻
-
-# 9.2 ProductDocument
-
-ProductDocument represents the business relationship between a reusable
-Document and one ProductVersion.
-
-It stores association-specific metadata:
-
-* category;
-* locale;
-* display label;
-* description;
-* public visibility;
-* primary hint;
-* sort order.
-
-This allows one physical file to be reused in different business contexts.
-
-Example:
-Document
-  originalFilename: technical-file-2026.pdf
-
-ProductDocument A
-  category: USER_MANUAL
-  locale: en
-  displayLabel: User manual
-
-ProductDocument B
-  category: INSTALLATION_GUIDE
-  locale: de
-  displayLabel: Installationsanleitung
-
-ProductDocument does not duplicate storage metadata.
-
-⸻
-
-# 9.3 ProductImage
-
-ProductImage is different from Document.
-
-It belongs directly to ProductVersion and stores both:
-
-* image storage metadata;
-* version-specific presentation metadata.
-
-Fields include:
-
-* storage identity;
-* MIME type;
-* file size;
-* checksum;
-* width;
-* height;
-* alt text;
-* caption;
-* public visibility;
-* primary hint;
-* sort order.
-
-Supported image MIME types are currently:
-
-* image/jpeg
-* image/png
-* image/webp
-* image/avif
-
-SVG and GIF are excluded from the MVP.
-
-ProductImage does not use the reusable Document association architecture.
-
-⸻
-
-## 10. Public Passport Architecture
-
-# 10.1 Product Public Code
-
-Product.publicCode is the stable public product-facing identifier.
-
-It does not directly represent QR lifecycle or the exact QR payload.
-
-⸻
-
-# 10.2 Passport
-
-Passport represents the public publication state of Product.
-
-The Passport public page should resolve published data from:
-Passport
-  → Product
-  → currentPublishedVersion
-The Passport must never silently expose current draft content.
-
-# 10.3 QRCode
-
-QRCode represents a public access point to Passport.
-
-This is formalized by ADR-010.
-QRCode
-  → Passport
-  → Product
-  → currentPublishedVersion
-For MVP:
-Passport 1 ──── 0..1 QRCode
-
-QRCode stores the exact target URL encoded in the physical QR payload.
-
-QRCode lifecycle:
-PENDING
-  │
-  ▼
-ACTIVE
-  │
-  ▼
-REVOKED
-
-The database enforces timestamp consistency for each state.
-
-Transition permissions remain service-controlled.
-
-⸻
-
-## 11. Planned Scan Analytics Architecture
-
-ScanEvent is not yet implemented.
-
-Its planned ownership is:
-QRCode
-  └── ScanEvent
-
-This is formalized by ADR-011.
-
-ScanEvent must not belong directly to Product.
-
-This allows analytics to remain accurate if:
-
-* QR codes are regenerated;
-* multiple QR access points are introduced later;
-* a QR is revoked;
-* future access technologies coexist.
-
-Planned ScanEvent principles include:
-
-* append-only event records;
-* privacy-minimized data;
-* no raw long-lived IP storage;
-* coarse location only;
-* coarse device and user-agent classification;
-* tenant ownership inherited through QRCode;
-* analytics indexes optimized for QR and time-based queries.
-
-Aggregated analytics may later be materialized separately if event volume
-requires it.
-
-⸻
-
-## 12. Audit Architecture
-
-AuditLog is planned but not yet implemented.
-
-AuditLog will record durable domain actions such as:
-
-* Product creation;
-* draft creation;
-* version review readiness;
-* publication;
-* Product archive;
-* Passport withdrawal;
-* QR activation;
-* QR revocation;
-* Membership changes;
-* Invitation changes;
-* Document archive;
-* billing-plan changes.
-
-AuditLog should be append-only.
-
-AuditLog should not store sensitive secrets, complete request bodies, file
-contents, or access tokens.
-
-Actor foreign keys may be nullable to preserve history after user deletion.
-
-Audit logging should be written transactionally with the domain operation where
-practical.
-
-⸻
-
-## 13. Platform and Billing Architecture
-
-# 13.1 Plan
-
-Plan will define commercial capability limits such as:
-
-* number of Products;
-* active Passports;
-* organization members;
-* document storage;
-* scan analytics retention;
-* API access;
-* integrations.
-
-Plan is platform-owned, not organization-owned.
-
-⸻
-
-# 13.2 Subscription
-
-Subscription will belong to Organization and reference Plan.
-
-Subscription records should describe billing state but must not become the
-authoritative financial ledger.
-
-External billing providers remain authoritative for payment settlement.
-
-IntegrationMapping may store external subscription and customer identifiers.
-
-⸻
-
-# 13.3 Notification
-
-Notification will represent application-level messages for users or
-organizations.
-
-It should remain separate from email delivery logs unless a future requirement
-requires a dedicated delivery model.
-
-⸻
-
-# 13.4 IntegrationMapping
-
-IntegrationMapping will connect Passvero entities to external provider
-identifiers.
-
-Examples:
-
-* Stripe customer;
-* Stripe subscription;
-* ERP product;
-* PIM product;
-* external document;
-* GS1 resource.
-
-External identifiers must not be placed directly across unrelated domain
-models.
-
-⸻
-
-# 13.5 BackgroundJob
-
-BackgroundJob will represent durable asynchronous work such as:
-
-* document processing;
-* image optimization;
-* QR artifact generation;
-* export generation;
-* notification delivery;
-* integration synchronization;
-* analytics aggregation.
-
-BackgroundJob state must not replace the business lifecycle state of Product,
-Passport, Document, or QRCode.
-
-⸻
-
-## 14. Delete Strategy
-
-Passvero avoids indiscriminate cascade deletion.
-
-# 14.1 Restrict
-
-Use Restrict where dependent business history must be protected.
-
-Examples:
-Organization → Product
-Organization → ProductVersion
-Organization → Passport
-Organization → Document
-Product → ProductVersion
-Product → Passport
-Document → ProductDocument
-
-# 14.2 Cascade
-
-Use Cascade for content that has no independent meaning without its parent.
-
-Examples:
-ProductVersion → ProductTranslation
-ProductVersion → ProductIdentifier
-ProductVersion → ProductMaterial
-ProductVersion → ProductDocument
-ProductVersion → ProductImage
-Passport → QRCode
-QRCode → future ScanEvent
-
-Application rules still prevent deletion of published historical content.
-
-Database cascade behavior does not imply that every parent is freely deletable.
-
-⸻
-
-# 14.3 SetNull
-
-Use SetNull for historical actor references and optional provenance.
-
-Examples:
-
-* createdBy;
-* updatedBy;
-* publishedBy;
-* archivedBy;
-* withdrawnBy;
-* invitedBy;
-* acceptedBy;
-* clonedFromVersion.
-
-Removing a User must not destroy historical business records.
-
-⸻
-
-## 15. Archive and Withdrawal Strategy
-
-Passvero distinguishes between:
-
-* archive;
-* withdrawal;
-* deletion.
-
-# 15.1 Archive
-
-Archive means the entity is retained but removed from normal active workflows.
-
-Examples:
-
-* Product lifecycle ARCHIVED;
-* Document status ARCHIVED;
-* Passport status ARCHIVED.
-
-⸻
-
-# 15.2 Withdrawal
-
-Passport withdrawal represents a public compliance event.
-
-A withdrawn Passport may display a public withdrawal message.
-
-Withdrawal history must be retained.
-
-Withdrawal is not equivalent to deleting the Product.
-
-⸻
-
-# 15.3 Deletion
-
-Hard deletion is reserved primarily for:
-
-* unpublished drafts;
-* dependent draft content;
-* legally permitted account cleanup;
-* test or development environments;
-* explicitly reviewed retention workflows.
-
-Published product history should normally remain preserved.
-
-⸻
-
-## 16. Database-Enforced Integrity
-
-The database currently protects important invariants using:
-
-* primary keys;
-* foreign keys;
-* unique constraints;
-* partial unique indexes;
-* composite indexes;
-* PostgreSQL CHECK constraints.
-
-Examples include:
-
-ProductVersion
-
-* one active draft-like version per Product;
-* unique version number per Product.
-
-ProductTranslation
-
-* one locale per ProductVersion.
-
-ProductIdentifier
-
-* unique type/value combination per ProductVersion.
-
-ProductMaterial
-
-* percentage range;
-* recycled-percentage range;
-* recycled flag consistency.
-
-Document
-
-* durable storage identity uniqueness;
-* valid SHA-256 format;
-* positive file size;
-* lifecycle timestamp consistency.
-
-ProductDocument
-
-* non-negative sort order.
-
-ProductImage
-
-* storage identity uniqueness;
-* valid SHA-256 format;
-* positive size;
-* positive dimensions;
-* allowed MIME types;
-* non-negative sort order.
-
-QRCode
-
-* one QR per Passport for MVP;
-* unique public code;
-* unique target URL;
-* controlled code format;
-* HTTPS-only target URL;
-* lifecycle timestamp consistency.
-
-⸻
-
-## 17. Service-Level Invariants
-
-Not every business rule belongs in PostgreSQL.
-
-Application services must enforce:
-
-* tenant authorization;
-* Membership permissions;
-* cross-organization relation consistency;
-* ProductVersion ownership consistency;
-* current-version pointers referencing the same Product;
-* ProductVersion lifecycle transitions;
-* immutable published versions;
-* publication completeness;
-* required translations before publication;
-* normalized identifier validation;
-* ProductMaterial aggregate rules;
-* Document availability before association;
-* ProductDocument primary selection;
-* ProductImage primary selection;
-* QR lifecycle transitions;
-* cryptographically secure QR code generation;
-* valid canonical public URLs;
-* Passport withdrawal authorization;
-* plan limits;
-* billing entitlement checks.
-
-Cross-aggregate operations should run inside transactions.
-
-⸻
-
-## 18. Transaction Boundaries
-
-The following operations should normally be transactional.
-
-Organization onboarding
-
-* create Organization;
-* create OWNER Membership;
-* write AuditLog later.
-
-Product creation
-
-* create Product;
-* create initial ProductVersion;
-* set currentDraftVersionId;
-* write AuditLog later.
-
-Draft creation from published version
-
-* create ProductVersion;
-* clone versioned children;
-* update currentDraftVersionId;
-* write AuditLog later.
-
-Publication
-
-* validate ProductVersion;
-* mark previous published version SUPERSEDED;
-* mark new version PUBLISHED;
-* update Product.currentPublishedVersionId;
-* clear or replace currentDraftVersionId;
-* create or update Passport;
-* create or activate QRCode if required;
-* write AuditLog later.
-
-Passport withdrawal
-
-* update Passport status and timestamps;
-* revoke QRCode if required by the chosen policy;
-* write AuditLog later.
-
-Document association
-
-* verify Document availability;
-* verify organization consistency;
-* create ProductDocument;
-* write AuditLog later.
-
-⸻
-
-## 19. Query Architecture
-
-# 19.1 Organization Product List
-
-Query Product by:
-
-* organizationId;
-* lifecycleStatus;
-* updatedAt;
-* search filters handled by services.
-
-Do not load complete ProductVersion content for list views unless required.
-
-⸻
-
-# 19.2 Product Workspace
-
-Load:
-Product
-├── currentDraftVersion
-│   ├── translations
-│   ├── identifiers
-│   ├── materials
-│   ├── productDocuments
-│   │   └── document
-│   └── images
-├── currentPublishedVersion
-└── passport
-    └── qrCode
-
-The exact selection should remain DTO-driven.
-
-Avoid returning raw Prisma records directly to UI or public APIs.
-
-⸻
-
-# 19.3 Public Passport
-
-Resolve:
-QRCode code or Product publicCode
-  → Passport
-  → Product
-  → currentPublishedVersion
-      ├── requested translation
-      ├── fallback translation
-      ├── identifiers
-      ├── materials
-      ├── public ProductDocuments
-      └── public ProductImages
-
-Public queries must explicitly select allowlisted fields.
-
-Internal notes, actor IDs, storage keys, and unpublished content must not leak.
-
-⸻
-
-# 19.4 Analytics
-
-Future analytics queries should be based on:
-QRCode + timestamp range
-
-and then aggregate by:
-
-* day;
-* country or region;
-* device class;
-* referrer category;
-* campaign context if introduced.
-
-Product-level analytics can be derived through QRCode → Passport → Product.
-
-⸻
-
-## 20. DTO and API Boundaries
-
-Prisma models are persistence models.
-
-They are not automatically safe public response objects.
-
-The application must use explicit DTOs for:
-
-* dashboard lists;
-* product workspace;
-* public passport;
-* document access;
-* QR export;
-* scan analytics;
-* audit views;
-* billing status.
-
-Public DTOs must never expose:
-
-* storage bucket;
-* storage key;
-* internal actor IDs;
-* internal notes;
-* unpublished ProductVersions;
-* token hashes;
-* invitation token material;
-* billing-provider secrets;
-* integration credentials;
-* raw audit metadata;
-* future raw scan-network data.
-
-⸻
-
-## 21. RLS Compatibility
-
-Row Level Security is not yet enabled.
-
-The schema is designed to remain compatible with future PostgreSQL RLS.
-
-Directly organization-owned tables can use organizationId policies.
-
-Inherited tables may require policies using parent relations.
-
-Examples:
-ProductTranslation
-  → ProductVersion.organizationId
-
-ProductDocument
-  → ProductVersion.organizationId
-
-QRCode
-  → Passport.organizationId
-
-ScanEvent
-  → QRCode
-  → Passport.organizationId
-
-RLS must be introduced through separate reviewed migrations.
-
-RLS must not be enabled without corresponding service, connection, migration,
-and operational testing.
-
-⸻
-
-## 22. Migration Strategy
-
-Passvero uses small, reviewable migrations.
-
-Each domain addition should normally follow:
-
-1. inspect authoritative documentation;
-2. verify current migration state;
-3. modify Prisma schema;
-4. generate one focused migration without applying it;
-5. manually add PostgreSQL constraints if required;
-6. run focused tests;
-7. run the complete suite;
-8. run Prisma validation and generation;
-9. run typecheck, lint, and production build;
-10. review migration SQL;
-11. deploy in a separate explicitly approved task;
-12. verify database status;
-13. commit the reviewed change.
-
-Never modify an applied migration.
-
-Never use db push as a production migration substitute.
-
-Never reset a shared or production database to resolve migration problems.
-
-⸻
-
-## 23. Current Implemented Model Inventory
-
-Identity
-
-* User
-* Organization
-* Membership
-* Invitation
-
-Product Core
-
-* Product
-* ProductVersion
-* Passport
-
-Product Content
-
-* ProductTranslation
-* ProductIdentifier
-* ProductMaterial
-
-Documents and Media
-
-* Document
-* ProductDocument
-* ProductImage
-
-Public Access
-
-* QRCode
-
-⸻
-
-## 24. Planned Model Inventory
-
-Analytics
-
-* ScanEvent
-
-Audit
-
-* AuditLog
-
-Billing
-
-* Plan
-* Subscription
-
-Platform Services
-
-* Notification
-* IntegrationMapping
-* BackgroundJob
-
-These models must be implemented through separate reviewed phases.
-
-⸻
-
-## 25. Architectural Decisions Summary
-
-The current architecture relies on these core decisions:
-
-ADR-008
-
-ProductVersion is the aggregate root for all versioned product content.
-
-ADR-009
-
-Document represents a reusable physical asset.
-
-ProductDocument represents the version-specific business relationship.
-
-ADR-010
-
-QRCode represents a public access point to Passport, not to Product.
-
-ADR-011
-
-ScanEvent belongs to QRCode, not directly to Product.
-
-Future architectural decisions must remain consistent with these boundaries or
-explicitly supersede them through a new ADR.
-
-⸻
-
-## 26. Architecture Freeze
-
-The following implemented Product Domain models are considered architecturally
-frozen:
-
-* Product
-* ProductVersion
-* Passport
-* ProductTranslation
-* ProductIdentifier
-* ProductMaterial
-* Document
-* ProductDocument
-* ProductImage
-* QRCode
-
-They should not be changed merely for convenience during API or UI
-implementation.
-
-Changes require at least one of:
-
-* a validated business requirement;
-* a regulatory requirement;
-* an identified data-integrity defect;
-* a demonstrated performance problem;
-* a reviewed architectural decision.
-
-Convenience alone is not sufficient reason to change the database model.
-
-⸻
-
-## 27. Final Architecture Principles
-
-1. Organization is the tenant boundary.
-2. Product is stable identity.
-3. ProductVersion owns versioned content.
-4. Published versions are immutable.
-5. Passport owns public publication state.
-6. QRCode is a Passport access point.
-7. ScanEvent belongs to QRCode.
-8. Document is a reusable asset.
-9. ProductDocument stores version-specific document meaning.
-10. ProductImage is independent versioned media.
-11. Actor deletion must not erase history.
-12. Public APIs use explicit DTO allowlists.
-13. Cross-aggregate invariants belong to transactional services.
-14. PostgreSQL protects structural integrity.
-15. Application services protect business workflows.
-16. Small reviewed migrations are preferred over broad schema changes.
-17. Future platform services remain loosely coupled from the Product aggregate.
-18. Existing Product Domain models remain frozen unless a real requirement
-    justifies change.
+Database Production Audit is the current next task. Database Architecture
+Freeze v1.0 remains pending and must not be declared complete before that audit,
+the final Freeze record, and explicit approval.

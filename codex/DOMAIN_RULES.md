@@ -31,9 +31,11 @@ This document supplements:
 
 This document defines business meaning and invariants.
 
-It does not define the final Prisma schema.
+It does not replace the implemented Prisma schema.
 
-The future `codex/PRISMA_DOMAIN_MODEL.md` must translate these rules into entities, relations, constraints, indexes and delete behavior.
+`codex/PRISMA_DOMAIN_MODEL.md` records how these rules are implemented through
+entities, relations, constraints, indexes, delete behavior, and approved
+service invariants.
 
 ---
 
@@ -72,17 +74,11 @@ An organization represents a company or business entity using Passvero.
 
 All organization-owned records must include an organization relationship.
 
-Examples:
-
-- memberships;
-- products;
-- product versions;
-- documents;
-- invitations;
-- scan analytics;
-- QR records;
-- audit events;
-- subscription data.
+Directly owned examples include Membership, Invitation, Product,
+ProductVersion, Passport, Document, AuditLog, Subscription, Notification,
+IntegrationMapping, and ORGANIZATION-scoped BackgroundJob. Version content,
+QRCode, and ScanEvent inherit Organization ownership through their implemented
+parent relations. PLATFORM BackgroundJob intentionally has no Organization.
 
 ## 2.2 Organization isolation
 
@@ -147,15 +143,14 @@ A User represents a human account.
 
 A user may belong to one or more organizations through Membership records.
 
-User identity data may include:
+Implemented User identity data includes:
 
 - email;
 - display name;
-- authentication provider identifiers;
 - profile preferences;
 - preferred locale;
-- created date;
-- last active date.
+- timezone;
+- created and updated dates.
 
 ## 3.2 User email
 
@@ -169,14 +164,10 @@ Do not expose user email publicly through product passports.
 
 Deleting a user account must not destroy published product history.
 
-Important historical references should be preserved through one of:
-
-- nullable actor relation;
-- immutable actor display snapshot;
-- system audit record;
-- anonymized user reference.
-
-The final approach must be defined in the Prisma model.
+Implemented historical User actor and Notification target relations are
+nullable and use `onDelete: SetNull`. User deletion therefore preserves
+Product, ProductVersion, Document, Passport, AuditLog, Invitation, Membership
+provenance, and Notification history.
 
 ## 3.4 Personal preferences
 
@@ -308,7 +299,7 @@ Detailed permissions are defined in `codex/PERMISSIONS.md`.
 
 ## 5.4 Membership status
 
-Potential states:
+Implemented states:
 
 ```txt
 ACTIVE
@@ -531,9 +522,9 @@ It may represent:
 
 ## 8.2 Version ownership
 
-A ProductVersion belongs to exactly one Product.
-
-Organization ownership is inherited through the Product, but may also be denormalized where needed for query safety or performance.
+A ProductVersion belongs to exactly one Product and stores direct
+`organizationId` ownership for tenant-safe queries. Services must keep it equal
+to `Product.organizationId`.
 
 ## 8.3 Version numbering
 
@@ -634,7 +625,8 @@ Versioned content may include:
 - regulatory notes;
 - publication readiness data.
 
-The exact structure will be defined in the Prisma domain model.
+The implemented structure uses ProductTranslation, ProductIdentifier,
+ProductMaterial, ProductDocument, and ProductImage child records.
 
 ---
 
@@ -661,24 +653,11 @@ The source language:
 
 ## 9.3 Product translation
 
-Localized product content may include:
-
-- product name;
-- description;
-- repair instructions;
-- recycling information;
-- document display titles;
-- public warnings.
-
-Translations should be stored as structured records or a carefully designed JSON model.
-
-The final approach must preserve:
-
-- per-language completeness;
-- version history;
-- validation;
-- indexing needs;
-- type safety.
+Localized product content is stored in structured ProductTranslation rows, one
+per `(productVersionId, locale)`. Implemented fields cover product name, short
+and full descriptions, technical description, repair and spare-parts
+information, recycling, disposal, packaging, safety, warranty, and public
+notes. Product content is not stored as JSON.
 
 ## 9.4 Translation completeness
 
@@ -710,22 +689,18 @@ Translation corrections create a new product version.
 
 ## 10.1 Identifier types
 
-Potential identifier types:
+Implemented identifier types:
 
 ```txt
-SKU
 GTIN
 EAN
 UPC
-MODEL_NUMBER
 MPN
-BATCH
-LOT
-SERIAL_PATTERN
+SKU
 CUSTOM
 ```
 
-Only approved identifiers should be implemented initially.
+Batch, lot, serial, and other identifier vocabularies remain future scope.
 
 ## 10.2 Identifier ownership
 
@@ -757,33 +732,26 @@ Do not prematurely model every physical unit unless explicitly requested.
 
 ---
 
-# 11. Material
+# 11. ProductMaterial
 
 ## 11.1 Material meaning
 
-A Material entry represents one material or composition component included in a ProductVersion.
+A ProductMaterial represents one material or composition component included in
+a ProductVersion.
 
 A material is versioned content.
 
 ## 11.2 Material ownership
 
-A Material belongs to one ProductVersion.
+A ProductMaterial belongs to one ProductVersion.
 
 Published material records are immutable with their published version.
 
 ## 11.3 Material fields
 
-Potential fields:
-
-- material name;
-- standardized material code later;
-- percentage;
-- country of origin;
-- recycled content percentage;
-- renewable content;
-- hazardous-substance notes;
-- free-form notes;
-- sort order.
+ProductMaterial implements `materialName`, optional `category`, optional exact
+`percentage`, `isRecycled`, optional `recycledPercentage`, optional `supplier`,
+optional `notes`, and common timestamps.
 
 ## 11.4 Percentage rules
 
@@ -831,26 +799,17 @@ Cross-organization reuse is not allowed.
 
 ## 12.3 Document metadata
 
-Potential fields:
+Implemented Document data includes Organization ownership, original filename,
+optional display name and extension, storage provider/bucket/key, MIME type,
+byte size, SHA-256 checksum, upload lifecycle timestamps and failure code,
+archive timestamp, created/updated/archived actors, and common timestamps.
 
-- organization;
-- storage key;
-- original filename;
-- safe display filename;
-- title;
-- type;
-- MIME type;
-- size;
-- checksum;
-- upload status;
-- uploaded-by actor;
-- created date;
-- archived date;
-- virus-scan state later.
+Virus scanning and revisions remain future infrastructure.
 
 ## 12.4 Document categories
 
-Initial categories:
+Document category is version-specific `ProductDocument.category`, stored as a
+String and validated through application constants. Example values may include:
 
 ```txt
 MANUAL
@@ -933,16 +892,15 @@ Avoid database records pointing to missing files without a recoverable status.
 
 A ProductDocument association connects a Document to a ProductVersion.
 
-It may include:
+It includes:
 
 - document;
 - product version;
-- display title;
-- public visibility;
-- sort order;
-- category override if needed;
-- locale applicability;
-- added date.
+- `category`;
+- optional `locale`, `displayLabel`, and `description`;
+- `isPublic` and `isPrimary` hints;
+- non-negative `sortOrder`;
+- created and updated timestamps.
 
 ## 13.2 Versioned association
 
@@ -958,13 +916,9 @@ Do not duplicate physical storage unnecessarily.
 
 ## 13.4 Localized documents
 
-A document may apply to:
-
-- all languages;
-- one language;
-- multiple specific languages.
-
-The final model must avoid ambiguous language ownership.
+`ProductDocument.locale` is nullable: null means general applicability and a
+value means one canonical locale. Multiple contextual associations may be used
+only when the guarded service defines them unambiguously.
 
 ---
 
@@ -972,9 +926,11 @@ The final model must avoid ambiguous language ownership.
 
 ## 14.1 Image meaning
 
-Product images are organization-owned media assets.
-
-They may be modeled as a specialized Asset entity or document/media model.
+ProductImage is implemented as specialized media owned by ProductVersion. It
+stores its own storage provider, bucket, key, filename, MIME type, size,
+checksum, dimensions, presentation fields, visibility, primary hint, ordering,
+and timestamps. It is not a Document association and has no separate asset
+relation.
 
 ## 14.2 Image versioning
 
@@ -984,13 +940,15 @@ Replacing a product image should not silently alter previous published versions.
 
 ## 14.3 Primary image
 
-A ProductVersion may have at most one primary image.
-
-Additional gallery images may be supported later.
+A ProductVersion may have at most one primary image. This is a mandatory
+transactional service invariant; the database indexes primary selection but
+does not enforce it with a partial unique index.
 
 ## 14.4 Image deletion
 
-Images used by published versions should be archived rather than physically removed.
+ProductImage rows belong to the ProductVersion aggregate and cascade only when
+that parent is validly deleted. Services forbid mutation or deletion through a
+PUBLISHED or SUPERSEDED version.
 
 ---
 
@@ -998,17 +956,10 @@ Images used by published versions should be archived rather than physically remo
 
 ## 15.1 Passport meaning
 
-A Digital Product Passport is the public representation of the current published ProductVersion.
-
-It is not necessarily a separate independent content entity.
-
-The final model may use:
-
-- Product as stable public identity;
-- ProductVersion as immutable published data;
-- optional Passport entity for publication metadata.
-
-The exact choice belongs in the Prisma domain model.
+A Digital Product Passport is the public representation of the current
+published ProductVersion. The implemented Passport model stores publication
+state and metadata, while Product owns stable identity and ProductVersion owns
+published content.
 
 ## 15.2 Public availability
 
@@ -1046,7 +997,7 @@ Never expose:
 
 There must be a controlled way to stop ordinary public display when necessary.
 
-Potential states:
+Implemented states:
 
 ```txt
 ACTIVE
@@ -1182,21 +1133,21 @@ It does not contain full passport data.
 
 ## 18.2 QR ownership
 
-A QR record belongs to one Product and organization.
-
-The Product public code is the source of the QR URL.
+QRCode belongs directly to one Passport through `passportId`. Organization
+ownership is inherited through Passport. The implemented relation name is
+`PassportQRCode`, and Passport deletion cascades to QRCode.
 
 ## 18.3 One stable QR identity
 
-A product should normally have one stable active QR identity.
+The implemented MVP permits one QRCode per Passport.
 
 New published versions do not require a new QR code because the stable URL remains unchanged.
 
 ## 18.4 QR generation
 
-QR images may be generated on demand rather than permanently stored.
-
-If stored, the database should store configuration and asset references, not duplicate unnecessary data.
+QRCode stores `code`, exact HTTPS `targetUrl`, status, and generation,
+activation, and revocation timestamps. QR image bytes are derived outside the
+database.
 
 ## 18.5 QR formats
 
@@ -1238,16 +1189,13 @@ Exact attribution may be approximate.
 
 Do not store raw IP addresses unless a documented requirement exists.
 
-Preferred stored data:
+ScanEvent belongs directly to QRCode and inherits Product and Organization
+context through QRCode and Passport. It stores timestamp, coarse country and
+region, device and referrer categories, bot classification, summarized browser
+and operating system, language, and a sanitized referrer host.
 
-- product;
-- organization;
-- timestamp;
-- coarse country;
-- device category;
-- referrer category where safe;
-- privacy-preserving IP hash if needed;
-- user-agent-derived summary.
+The implemented model stores no raw IP, IP hash, raw User-Agent, User relation,
+direct Product relation, direct Passport relation, or direct organizationId.
 
 ## 19.3 No user identity
 
@@ -1313,11 +1261,10 @@ Audit events belong to one organization.
 
 ## 20.3 Actor
 
-Audit records should retain:
-
-- actor user reference when available;
-- actor display snapshot or email snapshot where safe;
-- system actor for automated operations.
+AuditLog retains an optional `actorId` User reference. User deletion sets the
+reference to null so the organization-owned event survives. Automated actions
+use normalized `action`, `entityType`, `entityId`, summary, metadata, and
+correlation context rather than an arbitrary User attribution.
 
 ## 20.4 Audit immutability
 
@@ -1355,51 +1302,47 @@ Do not expose raw internal audit metadata directly in the UI.
 
 Subscription represents the organization's commercial plan state.
 
-Initial plan labels:
-
-```txt
-STARTER
-PROFESSIONAL
-ENTERPRISE
-```
-
-Final pricing and limits are not yet approved.
+Subscription references an implemented Plan record. Plan names and slugs are
+data, not enum values.
 
 ## 22.2 Subscription ownership
 
-One active commercial subscription belongs to one organization.
-
-Historical billing records may require separate entities.
+At most one current Subscription row belongs to an Organization. Subscription
+is current commercial state, not a ledger. Invoices, payments, provider event
+history, idempotency, and historical commercial evidence require separately
+reviewed future billing infrastructure.
 
 ## 22.3 Plan enforcement
 
 Plan limits are enforced server-side.
 
-Examples later:
+Implemented nullable Plan limits:
 
 - active product count;
+- active Passport count;
 - team member count;
 - storage;
-- API access;
-- branding options;
-- support level.
+- monthly scan count.
 
-## 22.4 Grace periods
+Additional entitlements such as API access, branding, or support level may be
+represented through the allowlisted `features` object.
+
+## 22.4 Billing failure continuity
 
 If billing fails, product passports should not disappear immediately without a defined policy.
 
-Potential states:
+Implemented states:
 
 ```txt
 TRIAL
 ACTIVE
 PAST_DUE
-GRACE_PERIOD
 CANCELED
-SUSPENDED
+EXPIRED
 ```
 
-Final billing rules must be defined before implementation.
+`cancelAtPeriodEnd` represents scheduled cancellation separately from terminal
+`canceledAt`.
 
 ## 22.5 Public passport continuity
 
@@ -1411,15 +1354,13 @@ This requires explicit future decision.
 
 # 23. Plan
 
-Plan configuration may be stored:
+Plan is an implemented platform-global commercial configuration model. It
+stores name, slug, description, lifecycle status, currency, monthly and yearly
+prices, nullable positive limits, allowlisted feature JSON, public visibility,
+sort order, archive state, and timestamps.
 
-- in code;
-- in database;
-- in billing provider metadata.
-
-Do not create a complex editable Plan database model before pricing is finalized.
-
-The Prisma domain model should keep billing architecture minimal and replaceable.
+Plan does not store provider credentials, organization overrides, usage
+counters, invoices, or payment history.
 
 ---
 
@@ -1783,7 +1724,19 @@ Future integrations may include:
 - GS1 services;
 - public APIs.
 
-External source identifiers should be stored in a separate integration mapping model rather than overloading core Product IDs.
+External source identifiers are stored in the implemented IntegrationMapping
+model rather than overloading core Product IDs.
+
+IntegrationMapping is organization-owned retained mapping data with normalized
+String `provider`, external account/resource identity, logical `entityType` and
+`entityId`, `IntegrationMappingStatus`, synchronization/error timestamps,
+allowlisted metadata, archive state, and common timestamps.
+
+It has no domain foreign keys and stores no credentials, OAuth tokens,
+provider configuration, synchronization jobs, webhook data, or complete
+provider payloads. Its stable uniqueness intentionally includes archived rows;
+services may reactivate or explicitly remove a mapping through a reviewed
+workflow.
 
 Do not add integration-specific columns to Product prematurely.
 
@@ -1806,7 +1759,11 @@ Webhook architecture is future scope.
 
 # 42. Notifications
 
-Potential notifications:
+Notification is an implemented organization-owned application message. It may
+optionally target one User through `userId`; a null target is organization-wide
+according to application visibility rules.
+
+Examples:
 
 - invitation received;
 - product ready for review;
@@ -1815,9 +1772,10 @@ Potential notifications:
 - subscription issue;
 - update required.
 
-Notification records must not become authorization sources.
-
-Do not implement notification tables before approved need.
+Notification records must not become authorization sources, delivery logs,
+AuditLog rows, BackgroundJob rows, or domain lifecycle state. NotificationType
+controls presentation; NotificationStatus controls inbox lifecycle; business
+context belongs in normalized String `eventType`.
 
 ---
 
@@ -2381,24 +2339,19 @@ When implementation requires changing a rule in this document:
 
 ---
 
-# 75. Initial MVP domain boundary
+# 75. Implemented database boundary
 
-The initial MVP includes:
+The implemented structural database contains exactly:
 
-- users;
-- organizations;
-- memberships;
-- invitations;
-- products;
-- one active draft per product;
-- immutable published versions;
-- materials;
-- documents and version associations;
-- stable public passport;
-- QR generation;
-- privacy-aware scan events;
-- audit events;
-- basic plan state later.
+- User, Organization, Membership, Invitation;
+- Product, ProductVersion, Passport;
+- ProductTranslation, ProductIdentifier, ProductMaterial;
+- Document, ProductDocument, ProductImage;
+- QRCode, ScanEvent, AuditLog;
+- Plan, Subscription;
+- Notification, IntegrationMapping, BackgroundJob.
+
+All 21 models are implemented. None is merely planned.
 
 The initial MVP excludes:
 
@@ -2406,7 +2359,7 @@ The initial MVP excludes:
 - batch-level passports;
 - cross-organization sharing;
 - regulatory rules engine;
-- external integrations;
+- integration connections, OAuth credentials, and provider execution;
 - advanced approval chains;
 - official certification;
 - blockchain;
@@ -2416,6 +2369,30 @@ The initial MVP excludes:
 ---
 
 # 76. Final invariant summary
+
+The architecture decision register classifies the following as Approved
+Service Invariants. They are mandatory and are not missing-schema defects:
+
+- ProductVersion and Passport Organization ownership must match Product;
+- Product current draft and published pointers must reference the same Product
+  and approved lifecycle states;
+- ProductDocument may associate only same-Organization parents, and public
+  delivery must independently authorize publication and visibility;
+- lifecycle transitions and chronology beyond existing CHECK constraints must
+  be validated transactionally;
+- ProductImage primary selection and ProductDocument contextual
+  multiplicity/primary rules must be deterministic;
+- Notification User targeting and navigation must be tenant-safe;
+- BackgroundJob logical references, deduplication inputs, worker identifiers,
+  and chronology must be normalized and validated;
+- published ProductVersion aggregates are immutable;
+- AuditLog and ScanEvent are append-only in normal operation;
+- emails, identifiers, locales, countries, and similar strings use the
+  approved field-specific canonical form through every writer.
+
+Repositories, imports, workers, administration tools, and maintenance scripts
+must not bypass these services. Tests and least-privilege runtime permissions
+reinforce the obligations before production release.
 
 The following rules are non-negotiable unless explicitly changed by an architectural decision:
 

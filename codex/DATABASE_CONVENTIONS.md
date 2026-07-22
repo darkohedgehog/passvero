@@ -1,704 +1,210 @@
-# Database Conventions
+# Passvero Database Conventions
 
-This document defines the database implementation standards for Passvero.
+## Purpose and precedence
 
-Unlike `PRISMA_DOMAIN_MODEL.md`, this document does not define business entities.
+This document defines how the implemented Passvero PostgreSQL/Prisma database
+is maintained. It does not redesign business entities. The committed schema,
+applied migrations, ADRs, and architecture decision register override generic
+examples.
 
-Instead, it defines **how the database should be designed and implemented**.
+## Naming
 
-Every Prisma model should follow these conventions.
+- Models: singular PascalCase.
+- Fields and relation fields: camelCase.
+- Foreign keys: semantic name ending in `Id`.
+- Enums: specific PascalCase names.
+- Enum values: UPPER_SNAKE_CASE.
+- Public identifiers remain separate from primary keys.
+- Multiple relations between the same models always use explicit names.
 
-Whenever implementation details conflict with this document, the implementation should be updated unless a documented architectural decision exists.
+Canonical names are listed in `SCHEMA_NAMING_REFERENCE.md`.
 
----
+## Primary keys and identifiers
 
-# Goals
+All 21 implemented models use UUID primary keys named `id`. Business
+identifiers such as SKU, GTIN, EAN, public code, external resource IDs, and
+logical entity IDs are Strings. Leading zeros must be preserved.
 
-The database should be:
+Public APIs do not expose internal UUIDs unless explicitly required by an
+authenticated contract. Public Passport routing uses stable opaque public
+identity rather than sequential database identity.
 
-- readable
-- predictable
-- explicit
-- migration-safe
-- scalable
-- testable
+## Ownership
 
-Consistency is more important than personal preference.
+Organization is the tenant boundary. Services derive organization context from
+the authenticated session and Membership and never trust ownership from a
+request body.
 
----
+An organization-owned model contains `organizationId` only when the implemented
+schema defines direct ownership. ProductVersion content, QRCode, and ScanEvent
+use approved inherited ownership paths. PLATFORM BackgroundJob deliberately has
+no Organization.
 
-# General Principles
+## Timestamps
 
-The database should express the domain.
+Mutable major entities use `createdAt` and `updatedAt`. AuditLog and ScanEvent
+are append-only records and intentionally omit `updatedAt`.
 
-It should not merely store data.
+Domain timestamps describe actual events: `publishedAt`, `archivedAt`,
+`withdrawnAt`, `occurredAt`, `scannedAt`, `scheduledAt`, `completedAt`, and
+other implemented lifecycle names. They are not replaced by `updatedAt`.
+Timestamps are stored as absolute instants and displayed in the selected user
+or Organization timezone.
 
-Schema readability is a feature.
+## Decimal and numeric types
 
-Future developers should understand the schema without reading application code.
+Use Decimal for exact percentages and commercial prices. ProductMaterial uses
+`Decimal(5,2)`; Plan prices use `Decimal(12,2)`. Use BigInt for byte/usage
+limits where implemented. Never use Float for these values.
 
----
+Numeric limits and ordering fields use database CHECK constraints when the
+invariant is universal: positive sizes/dimensions, non-negative prices and sort
+orders, positive optional Plan limits, and valid BackgroundJob attempts.
 
-# Naming Conventions
+## Enum strategy
 
-## Models
+Enums are used for stable lifecycle, role, presentation, device, scope, and
+provider vocabularies already implemented in the schema. Changing an enum
+requires a reviewed migration.
 
-Use:
+Frequently extensible identifiers remain normalized Strings. Current examples
+include AuditLog action/entity type, Notification event/entity type,
+IntegrationMapping provider/resource/entity type, and BackgroundJob queue/job
+type/entity type. Countries, locales, categories, and material names also
+remain Strings unless a future decision changes them.
 
-PascalCase
+## JSON strategy
 
-Examples:
+JSON is limited to:
 
-Product
+- `AuditLog.metadata`
+- `Plan.features`
+- `Notification.metadata`
+- `IntegrationMapping.metadata`
+- `BackgroundJob.payload`
+- `BackgroundJob.result`
 
-Organization
+Core Product data remains relational. JSON values are small and allowlisted.
+Never store credentials, tokens, authorization headers, cookies, signed URLs,
+raw provider/request/response payloads, complete entity snapshots, file or
+document contents, binary/base64 data, or stack traces. No JSON GIN index is
+implemented.
 
-Passport
+## Relations and referential actions
 
-Never:
+Every implemented foreign key has explicit update and delete behavior.
 
-Products
+- Restrict protects independent or retained roots and cross-aggregate assets.
+- SetNull preserves history when optional User actors, targets, or clone
+  provenance are removed.
+- Cascade applies to ProductVersion-owned content, Passport-owned QRCode, and
+  QRCode-owned ScanEvent.
+- All implemented foreign-key updates cascade.
 
-Organizations
+Database cascade behavior is structural cleanup, not service authorization to
+delete published or retained history.
 
-tblProduct
+## Uniqueness and indexes
 
----
+Unique constraints model approved business identity only. Ordinary indexes
+match actual tenant, lifecycle, lookup, ordering, analytics, and operational
+queries in the committed schema.
 
-## Fields
+Partial unique indexes live in migration SQL because Prisma cannot express
+them. Implemented partial indexes cover pending Invitation uniqueness, one
+active ProductVersion draft, IntegrationMapping null-account uniqueness, and
+active BackgroundJob deduplication by scope.
 
-Use:
+Do not document or add speculative indexes. In particular, there is no
+primary-image partial unique index and no JSON GIN index.
 
-camelCase
+## Manual CHECK constraints
 
-Examples:
+Manual migration CHECK constraints enforce storage-level universal rules that
+Prisma cannot express, including formats, bounds, paired optional fields,
+lifecycle timestamp combinations, timestamp ordering, scope ownership, locks,
+and attempt limits.
 
-createdAt
+Cross-row or cross-table workflows that require business context remain
+Approved Service Invariants. Do not duplicate them with triggers without a new
+reviewed architecture decision.
 
-updatedAt
+## Approved Service Invariants
 
-organizationId
+Mandatory application services enforce:
 
-publicCode
+- tenant authorization and cross-table tenant equality;
+- Product current-pointer ownership and lifecycle;
+- ProductDocument tenant safety and public delivery eligibility;
+- valid lifecycle transitions and chronology beyond database CHECKs;
+- primary media and contextual association multiplicity;
+- Notification targeting and safe URL use;
+- BackgroundJob normalization and execution chronology;
+- published aggregate immutability;
+- AuditLog and ScanEvent append-only behavior;
+- canonical email and type-specific identifier/locale/country storage.
 
-Never:
+Repositories remain thin but must not expose generic mutation paths that bypass
+these services. Imports, workers, administrative tools, and maintenance scripts
+are subject to the same rules.
 
-created_at
+## Transactions and concurrency
 
-OrgID
+Use transactions for multi-row invariants, including onboarding, invitation
+acceptance, Product create-then-point, draft cloning, publication, Passport
+withdrawal, Document association, Subscription updates, IntegrationMapping
+transitions, and BackgroundJob claiming/transitions.
 
-product_id
+Use database uniqueness and appropriate locking/concurrency checks. Do not keep
+transactions open during slow external network calls.
 
----
+## Archive, retention, and deletion
 
-## Relations
+Soft delete is not a universal convention. Archive is used only on models that
+implement an archive lifecycle. Hard deletion requires authorization and must
+respect published history, retained operational records, and foreign-key
+restrictions.
 
-Relation fields describe the relationship.
+No blanket retention automation, TTL, partitions, scheduled cleanup, or
+archive tables are implemented. Future destructive workflows require explicit
+retention policy, impact preview, audit, and recovery planning.
 
-Examples:
+## Migrations
 
-organization
+- Use one small reviewed migration per approved concern.
+- Never edit an applied migration.
+- Prisma-declarative objects stay in the schema; unsupported CHECK and partial
+  index objects are reviewed in migration SQL and tests.
+- Migration generation and deployment are separate approval steps.
+- Never use `db push`, `db pull`, reset, resolve, or manual mutation SQL as a
+  workaround.
+- Seed data is never part of a production structural migration.
 
-product
+The current implemented history contains 16 applied migrations.
 
-versions
+## RLS
 
-documents
+RLS is not currently implemented. Direct and inherited ownership paths remain
+compatible with a future separately reviewed RLS phase. RLS must not be
+presented as a substitute for authenticated service authorization.
 
-Avoid abbreviations.
+## Serialization and security
 
----
+Prisma records are persistence objects. Services map them to explicit private
+or public DTOs. Public responses use allowlists and never expose draft data,
+private Documents, token hashes, storage identity, actor IDs, billing/provider
+identifiers, audit metadata, or platform-service payloads.
 
-## Foreign Keys
+## Verification
 
-Always end with:
+Future schema changes require focused schema/migration tests and full Prisma,
+test, typecheck, lint, build, and diff verification appropriate to the task.
+Applied migration hashes must remain unchanged. Deployment requires separate
+approval and post-deployment status verification.
 
-Id
+## Final principle
 
-Examples:
-
-organizationId
-
-productId
-
-userId
-
-Never:
-
-organization
-
-owner
-
-organizationID
-
----
-
-## Relation Names
-
-Whenever multiple relations exist between the same models:
-
-Always specify explicit Prisma relation names.
-
-Never rely on generated relation names.
-
----
-
-# Primary Keys
-
-Every entity uses:
-
-UUID
-
-Never integer IDs.
-
-UUID generation should be centralized.
-
----
-
-# Public Identifiers
-
-Public identifiers are separate from primary keys.
-
-Examples:
-
-publicCode
-
-slug
-
-Never expose UUIDs publicly unless explicitly intended.
-
----
-
-# Timestamps
-
-Every major entity contains:
-
-createdAt
-
-updatedAt
-
-Additional timestamps only when meaningful.
-
-Examples:
-
-publishedAt
-
-archivedAt
-
-acceptedAt
-
-withdrawnAt
-
-Do not add timestamps "just in case."
-
----
-
-# Soft Delete
-
-Soft delete is not the default.
-
-Use soft delete only when:
-
-business recovery is required.
-
-Otherwise:
-
-Archive
-
-or
-
-Hard Delete
-
-depending on business rules.
-
----
-
-# Archive
-
-Archive is preferred over soft delete for historical entities.
-
-Examples:
-
-Product
-
-Document
-
-Organization
-
-Archive preserves business history.
-
----
-
-# Hard Delete
-
-Allowed only when:
-
-No published history exists.
-
-No protected relations exist.
-
-User has permission.
-
-Operation is confirmed.
-
----
-
-# Decimal
-
-Always use Decimal for:
-
-percentages
-
-currency
-
-measurements requiring precision
-
-Never Float.
-
----
-
-# String
-
-Business identifiers remain String.
-
-Examples:
-
-GTIN
-
-EAN
-
-SKU
-
-Passport Code
-
-Leading zeros must be preserved.
-
----
-
-# Boolean
-
-Use booleans only for true binary state.
-
-Examples:
-
-isPrimary
-
-isArchived
-
-Avoid many boolean flags representing workflow.
-
-Workflow belongs to enums.
-
----
-
-# Enum Usage
-
-Use enums for:
-
-Status
-
-Role
-
-Visibility
-
-Lifecycle
-
-DocumentType
-
-Avoid enums for:
-
-Countries
-
-Materials
-
-Categories
-
-These may evolve.
-
----
-
-# JSON Usage
-
-JSON is allowed only when:
-
-the structure is intentionally flexible.
-
-Examples:
-
-Audit metadata
-
-Notification metadata
-
-BackgroundJob payload
-
-Avoid JSON for relational business data.
-
----
-
-# Arrays
-
-Avoid PostgreSQL arrays for business relationships.
-
-Prefer relational tables.
-
----
-
-# Relation Design
-
-Every relation must answer:
-
-Who owns it?
-
-Can it exist alone?
-
-Can it be deleted?
-
-Should it cascade?
-
----
-
-# Cascade Rules
-
-Cascade only for dependent child entities.
-
-Examples:
-
-Draft Materials
-
-Draft Translations
-
-Draft ProductDocuments
-
-Avoid cascade for aggregate roots.
-
----
-
-# Restrict Rules
-
-Prefer Restrict over Cascade.
-
-Historical data should survive.
-
----
-
-# Set Null
-
-Use SetNull when:
-
-actor deletion
-
-optional ownership
-
-historical references
-
-Examples:
-
-publishedBy
-
-updatedBy
-
-archivedBy
-
----
-
-# Index Strategy
-
-Every index must have a reason.
-
-Questions:
-
-What query uses it?
-
-How often?
-
-Does it improve filtering?
-
-Avoid speculative indexes.
-
----
-
-# Composite Indexes
-
-Design according to query patterns.
-
-Not according to table structure.
-
----
-
-# Unique Constraints
-
-Prefer business uniqueness.
-
-Examples:
-
-publicCode
-
-slug
-
-organizationId + sku
-
-Avoid artificial uniqueness.
-
----
-
-# Partial Indexes
-
-Partial indexes belong in SQL migrations.
-
-Not Prisma schema.
-
-Document every manual migration.
-
----
-
-# Migrations
-
-One concern.
-
-One migration.
-
-Examples:
-
-Create Product
-
-Create Version
-
-Create Documents
-
-Avoid huge migrations.
-
----
-
-# Seed Data
-
-Seed only development data.
-
-Never seed production examples.
-
-Never seed fake compliance data.
-
----
-
-# Row Level Security
-
-Every tenant table must support:
-
-organizationId
-
-RLS should filter by organization.
-
-Never by UUID alone.
-
----
-
-# Serialization
-
-Prisma models are persistence objects.
-
-Never return Prisma models directly.
-
-Always map:
-
-Entity
-
-↓
-
-DTO
-
-↓
-
-API
-
----
-
-# DTO Naming
-
-Examples:
-
-ProductDto
-
-PassportDto
-
-OrganizationDto
-
-Avoid:
-
-ProductResponse2
-
-DataObject
-
----
-
-# Repository Rules
-
-Repositories:
-
-Persistence only.
-
-No validation.
-
-No permissions.
-
-No business logic.
-
----
-
-# Service Rules
-
-Services enforce:
-
-Permissions
-
-Transactions
-
-Business rules
-
-Versioning
-
-Publication
-
-Repositories do not.
-
----
-
-# Transaction Rules
-
-Use transactions for:
-
-Publish
-
-Invite
-
-Archive
-
-Ownership transfer
-
-Subscription updates
-
-Avoid long-running transactions.
-
----
-
-# Background Processing
-
-Long-running work belongs to jobs.
-
-Examples:
-
-QR generation
-
-Imports
-
-Exports
-
-Image processing
-
-Analytics aggregation
-
----
-
-# Testing
-
-Every schema change should verify:
-
-Migration
-
-Rollback
-
-Seed
-
-Prisma Generate
-
-Application Build
-
----
-
-# Performance
-
-Optimize after measuring.
-
-Never before.
-
-Readability is preferred until profiling indicates otherwise.
-
----
-
-# Documentation
-
-Every manual migration should explain:
-
-Why it exists.
-
-What problem it solves.
-
-Whether Prisma supports it.
-
----
-
-# Future Compatibility
-
-The schema should support:
-
-Supabase
-
-PostgreSQL
-
-Prisma upgrades
-
-Future integrations
-
-Without redesign.
-
----
-
-# Code Review Checklist
-
-Before approving any schema change verify:
-
-✓ Naming follows conventions.
-
-✓ Ownership is explicit.
-
-✓ Delete behavior defined.
-
-✓ Indexes justified.
-
-✓ Relations named.
-
-✓ UUID used.
-
-✓ Decimal where needed.
-
-✓ No business logic in Prisma.
-
-✓ DTO mapping planned.
-
-✓ RLS compatible.
-
-✓ Migration documented.
-
-✓ Tests updated.
-
----
-
-# Final Principle
-
-The database is a long-term asset.
-
-Every schema decision should prioritize:
-
-Correctness
-
-↓
-
-Consistency
-
-↓
-
-Maintainability
-
-↓
-
-Performance
-
-Never sacrifice long-term architecture for short-term convenience.
+Database constraints enforce universal structural integrity. Authenticated
+transactional services enforce contextual business invariants. Operational
+roles and tests reinforce append-only and immutable behavior. Each obligation
+must have one documented owner and must not be silently weakened.
