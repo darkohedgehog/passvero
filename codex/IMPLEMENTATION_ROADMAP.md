@@ -55,7 +55,7 @@ Billing
 ✅ Complete
 
 Platform Services
-⬜ Not started
+🟨 In progress
 
 ---
 
@@ -67,7 +67,7 @@ Platform Services
 
 Current task:
 
-Notification
+IntegrationMapping
 
 ---
 
@@ -161,13 +161,13 @@ Platform Services
 
 Scope:
 
-- Notification
-- IntegrationMapping
-- BackgroundJob
+- Notification — ✅ Complete
+- IntegrationMapping — 🟨 Current
+- BackgroundJob — ⬜ Planned
 
 Status
 
-⬜ Planned
+🟨 In progress
 
 ---
 

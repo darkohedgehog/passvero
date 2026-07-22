@@ -874,16 +874,30 @@ Do not use a domain-specific enum or `severity` for this purpose.
 id
 organizationId
 provider
+externalAccountId
+externalResourceType
+externalResourceId
 entityType
 entityId
-externalId
-externalParentId
-syncStatus
+status
 lastSyncedAt
+lastErrorAt
+lastErrorCode
 metadata
+archivedAt
 createdAt
 updatedAt
 ```
+
+Use the explicit relation name:
+
+```txt
+OrganizationIntegrationMappings
+```
+
+`provider` and `entityType` are normalized uppercase String values, not enums.
+
+Use `IntegrationMappingStatus` for the retained mapping lifecycle.
 
 ## BackgroundJob
 
@@ -950,9 +964,7 @@ SubscriptionStatus
 BillingProvider
 NotificationType
 NotificationStatus
-IntegrationProvider
-IntegrationEntityType
-IntegrationSyncStatus
+IntegrationMappingStatus
 BackgroundJobType
 BackgroundJobStatus
 ```
@@ -1402,10 +1414,11 @@ Use:
 
 ```txt
 provider
-externalId
 externalCustomerId
 externalSubscriptionId
-externalParentId
+externalAccountId
+externalResourceType
+externalResourceId
 ```
 
 Avoid provider-specific fields in core models:

@@ -36,8 +36,8 @@ test("Phase 6A adds exactly Notification and its two approved enums", async () =
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
 
-  assert.deepEqual(modelNames.slice(-1), ["Notification"]);
-  assert.deepEqual(enumNames.slice(-2), ["NotificationType", "NotificationStatus"]);
+  assert.deepEqual(modelNames.slice(-2, -1), ["Notification"]);
+  assert.deepEqual(enumNames.slice(-3, -1), ["NotificationType", "NotificationStatus"]);
   assert.match(
     block(schema, "enum", "NotificationType"),
     /^\s*INFO\s+SUCCESS\s+WARNING\s+ERROR\s+ACTION_REQUIRED\s*$/,

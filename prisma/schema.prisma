@@ -132,6 +132,13 @@ enum NotificationStatus {
   ARCHIVED
 }
 
+enum IntegrationMappingStatus {
+  ACTIVE
+  DISABLED
+  ERROR
+  ARCHIVED
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -179,15 +186,16 @@ model Organization {
   updatedAt     DateTime           @updatedAt
   archivedAt    DateTime?
 
-  memberships     Membership[]     @relation("OrganizationMemberships")
-  invitations     Invitation[]     @relation("OrganizationInvitations")
-  products        Product[]        @relation("OrganizationProducts")
-  productVersions ProductVersion[] @relation("OrganizationProductVersions")
-  documents       Document[]       @relation("OrganizationDocuments")
-  passports       Passport[]       @relation("OrganizationPassports")
-  auditLogs       AuditLog[]       @relation("OrganizationAuditLogs")
-  subscription    Subscription?    @relation("OrganizationSubscription")
-  notifications   Notification[]   @relation("OrganizationNotifications")
+  memberships         Membership[]         @relation("OrganizationMemberships")
+  invitations         Invitation[]         @relation("OrganizationInvitations")
+  products            Product[]            @relation("OrganizationProducts")
+  productVersions     ProductVersion[]     @relation("OrganizationProductVersions")
+  documents           Document[]           @relation("OrganizationDocuments")
+  passports           Passport[]           @relation("OrganizationPassports")
+  auditLogs           AuditLog[]           @relation("OrganizationAuditLogs")
+  subscription        Subscription?        @relation("OrganizationSubscription")
+  notifications       Notification[]       @relation("OrganizationNotifications")
+  integrationMappings IntegrationMapping[] @relation("OrganizationIntegrationMappings")
 
   @@index([status])
   @@index([createdAt])
@@ -700,4 +708,38 @@ model Notification {
   @@index([organizationId, entityType, entityId, createdAt])
   @@index([expiresAt])
   @@index([createdAt])
+}
+
+model IntegrationMapping {
+  id                   String                   @id @default(uuid()) @db.Uuid
+  organizationId       String                   @db.Uuid
+  provider             String
+  externalAccountId    String?
+  externalResourceType String
+  externalResourceId   String
+  entityType           String
+  entityId             String
+  status               IntegrationMappingStatus @default(ACTIVE)
+  lastSyncedAt         DateTime?
+  lastErrorAt          DateTime?
+  lastErrorCode        String?
+  /// Small allowlisted provider-neutral context. Never store credentials,
+  /// tokens, secrets, provider configuration, or complete payloads.
+  metadata             Json?
+  archivedAt           DateTime?
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  organization Organization @relation("OrganizationIntegrationMappings", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// PostgreSQL partial unique indexes in the migration enforce both uniqueness
+  /// rules when externalAccountId is NULL.
+  @@unique([organizationId, provider, externalAccountId, externalResourceType, externalResourceId], map: "IntegrationMapping_external_resource_key")
+  @@unique([organizationId, provider, externalAccountId, externalResourceType, entityType, entityId], map: "IntegrationMapping_internal_entity_key")
+  @@index([organizationId, provider, status])
+  @@index([organizationId, entityType, entityId])
+  @@index([organizationId, provider, externalResourceType])
+  @@index([lastSyncedAt])
+  @@index([lastErrorAt])
+  @@index([archivedAt])
 }

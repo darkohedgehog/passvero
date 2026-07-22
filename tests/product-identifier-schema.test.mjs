@@ -55,6 +55,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "Plan",
     "Subscription",
     "Notification",
+    "IntegrationMapping",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -74,6 +75,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "BillingProvider",
     "NotificationType",
     "NotificationStatus",
+    "IntegrationMappingStatus",
   ]);
 });
 

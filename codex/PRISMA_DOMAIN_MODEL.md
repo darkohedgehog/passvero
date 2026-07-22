@@ -6694,29 +6694,26 @@ Notification.
 
 ## Purpose
 
-Maps Passvero entities to external systems.
+IntegrationMapping associates one Passvero entity with one external provider
+resource.
 
-Allows future integrations without polluting Product.
+It stores stable identifiers and limited synchronization context without
+polluting Product, Subscription, or other domain models with provider-specific
+fields.
 
----
-
-## Responsibilities
-
-Stores:
-
-External System
-
-External ID
-
-Internal Entity
-
-Synchronization Status
+It is a retained historical mapping, not an integration connection,
+configuration record, credential store, OAuth token store, webhook log, sync
+job, or domain lifecycle model.
 
 ---
 
 ## Ownership
 
-Organization owned.
+Every IntegrationMapping belongs to exactly one Organization through required
+`organizationId`.
+
+Organization ownership is explicit and must be enforced by application
+services.
 
 ---
 
@@ -6725,25 +6722,100 @@ Organization owned.
 - id
 - organizationId
 - provider
+- externalResourceType
+- externalResourceId
 - entityType
 - entityId
-- externalId
+- status
+- createdAt
+- updatedAt
 
 ---
 
-## Providers
+## Optional Fields
 
-Future:
+- externalAccountId
+- lastSyncedAt
+- lastErrorAt
+- lastErrorCode
+- metadata
+- archivedAt
 
-WooCommerce
+---
 
-Shopify
+## Provider and External Resource Identity
 
-GS1
+`provider` is a normalized uppercase String, not an enum. It identifies the
+external provider or system, such as `STRIPE`, `GS1`, `SAP`, or `CUSTOM_ERP`.
 
-ERP
+`externalResourceType` is a normalized uppercase String identifying the
+provider-facing resource category.
 
-Custom API
+`externalResourceId` stores the provider's stable resource identifier. It is
+not globally unique and must not contain secrets or signed URLs.
+
+`externalAccountId` optionally identifies the external account, tenant,
+merchant, workspace, or connection context. It is an identifier, not a
+credential, and is not globally unique.
+
+---
+
+## Internal Logical Entity Reference
+
+`entityType` and `entityId` are required logical references to the Passvero
+entity represented by the mapping.
+
+`entityType` is a normalized uppercase String, not an enum. `entityId` is a
+trimmed stable identifier and is not required to be a UUID.
+
+IntegrationMapping has no foreign keys or Prisma relations to Product,
+ProductVersion, Passport, Document, Subscription, Notification, or other
+domain entities.
+
+---
+
+## Lifecycle
+
+`IntegrationMappingStatus` contains exactly:
+
+- ACTIVE
+- DISABLED
+- ERROR
+- ARCHIVED
+
+ACTIVE mappings are available for normal operations. DISABLED mappings are
+retained but excluded from synchronization. ERROR records a normalized current
+integration problem. ARCHIVED mappings are retained as history and unavailable
+for new operations.
+
+Transient synchronization states belong to BackgroundJob. Application services
+control status transitions.
+
+ARCHIVED requires `archivedAt`. Other states require `archivedAt` to remain
+null. ERROR requires `lastErrorAt`; recovery does not automatically clear
+historical error fields.
+
+`lastErrorCode` stores only a normalized, non-sensitive error category. It must
+not contain provider messages, response bodies, stack traces, credentials, or
+payloads.
+
+`lastSyncedAt`, `lastErrorAt`, and `archivedAt`, when present, must not precede
+`createdAt`.
+
+---
+
+## Metadata
+
+`metadata` is optional JSON for small, allowlisted, non-sensitive mapping
+context.
+
+It must never contain access tokens, refresh tokens, API keys, passwords,
+client secrets, webhook secrets, authorization headers, cookies, signed URLs,
+complete provider payloads, request or response bodies, file contents, billing
+secrets, or binary content.
+
+Application services must allowlist metadata keys by provider and resource
+type.
 
 ---
 
@@ -6755,35 +6827,60 @@ Organization
 1:N IntegrationMapping
 ```
 
+Use the explicit relation name `OrganizationIntegrationMappings`.
+
+Organization deletion is restricted and Organization updates cascade.
+
+This is the only IntegrationMapping relation.
+
 ---
 
-## Constraints
+## Uniqueness
 
-Composite uniqueness:
+Two composite uniqueness rules apply within an Organization, provider,
+external-account context, and external resource type:
 
-organizationId
+- one external resource maps to at most one Passvero entity;
+- one Passvero entity maps to at most one provider resource of that type.
 
-provider
+Because `externalAccountId` is nullable, partial unique indexes enforce both
+rules when it is null. Normal Prisma composite unique constraints cover
+non-null account values.
 
-entityType
+External resource IDs and internal entity IDs are never globally unique.
 
-entityId
+---
+
+## Credential and Configuration Boundary
+
+IntegrationMapping stores no credentials, access or refresh tokens, API keys,
+client secrets, passwords, webhook secrets, authorization headers, encrypted
+credentials, provider configuration, or complete provider payloads.
+
+Integration connections, OAuth, webhook processing, synchronization jobs, and
+provider configuration require separate reviewed models and phases.
 
 ---
 
 ## Delete Behavior
 
-Safe to delete.
+IntegrationMapping is retained historical organization-owned data.
 
-Only mapping disappears.
+It must not disappear through Organization cascade deletion.
 
-Never Product.
+Obsolete mappings must be archived or explicitly removed through reviewed
+application workflows.
 
 ---
 
 ## Anti-patterns
 
 Never add WooCommerce fields directly into Product.
+
+Never use IntegrationMapping as BackgroundJob or synchronization history.
+
+Never store credentials, tokens, secrets, webhook payloads, or provider
+configuration in IntegrationMapping.
 
 ---
 
@@ -6961,8 +7058,11 @@ IntegrationMapping
 
 ↓
 
-Product
+Organization
 ```
+
+IntegrationMapping may logically identify domain entities through `entityType`
+and `entityId`, but it never owns or directly relates to them.
 
 Forbidden:
 
@@ -7014,11 +7114,9 @@ Implement initially:
 
 Current Platform Services milestone:
 
-Notification
+IntegrationMapping
 
 Defer:
-
-IntegrationMapping
 
 Advanced billing
 
