@@ -1839,24 +1839,107 @@ Do not attribute automated actions to an arbitrary user.
 
 # 44. Background jobs
 
+BackgroundJob is a persistent platform-service record for asynchronous work
+requested by Passvero. It is not a worker, queue provider, scheduler, AuditLog,
+Notification, notification-delivery record, IntegrationMapping, domain
+lifecycle model, or credential store.
+
 Operations suitable for background processing:
 
 - large file processing;
 - image transformation;
 - QR/PDF batch generation;
 - scan aggregation;
-- email delivery;
+- notification work;
+- integration synchronization;
 - exports;
 - imports.
 
-Job state should be explicit if implemented:
+`BackgroundJobScope` contains exactly:
 
 ```txt
-PENDING
-PROCESSING
+PLATFORM
+ORGANIZATION
+```
+
+`organizationId` is optional at schema level. PLATFORM requires it to be null;
+ORGANIZATION requires it to be non-null. BackgroundJob has one optional
+Organization relation named `OrganizationBackgroundJobs`, using
+`onDelete: Restrict` and `onUpdate: Cascade`. It has no User or domain-entity
+foreign keys.
+
+`BackgroundJobStatus` contains exactly:
+
+```txt
+QUEUED
+RUNNING
 SUCCEEDED
 FAILED
+CANCELED
 ```
+
+Canonical fields are:
+
+```txt
+queue
+jobType
+attemptCount
+maxAttempts
+scheduledAt
+priority
+payload
+result
+entityType
+entityId
+deduplicationKey
+correlationId
+lockedAt
+lockOwner
+startedAt
+completedAt
+failedAt
+canceledAt
+lastErrorCode
+lastErrorSummary
+```
+
+`queue`, `jobType`, and `entityType` are normalized uppercase String values,
+not enums. `entityType` and `entityId` are logical references and must be null
+together or populated together.
+
+Retry is not a status. Retry eligibility is derived from QUEUED status,
+`attemptCount`, `maxAttempts`, and `scheduledAt`. Application services control
+attempt increments, scheduling, and retries. The database never executes or
+automatically retries jobs.
+
+Only RUNNING jobs may have `lockedAt` and `lockOwner`, and both lock fields must
+be null or populated together. Lifecycle timestamps must match the status:
+
+- QUEUED has no start, terminal timestamp, or active lock;
+- RUNNING requires `startedAt` and an active lock, with no terminal timestamp;
+- SUCCEEDED requires `startedAt` and `completedAt`, with no active lock;
+- FAILED requires `startedAt`, `failedAt`, and `lastErrorCode`, with no active
+  lock;
+- CANCELED requires `canceledAt`, no success or failure timestamp, and no
+  active lock; `startedAt` may be null or populated.
+
+`lastErrorCode` is a normalized non-sensitive error category.
+`lastErrorSummary` is a short sanitized operational description. Never store
+raw exceptions, stack traces, secrets, credentials, authorization headers, or
+complete request, response, provider, document, or file payloads.
+
+`payload` contains only minimal allowlisted execution input. `result` contains
+only a small normalized outcome. Large content must be referenced by stable ID
+or storage key rather than embedded in JSON.
+
+Deduplication applies only to active QUEUED and RUNNING jobs and is scoped by
+scope, Organization context, queue, job type, and `deduplicationKey`.
+`correlationId` is non-unique operational grouping context, not a session or
+authentication identifier.
+
+BackgroundJob records may be retained as operational history. Retention is a
+future operational policy; Phase 6C does not add automatic deletion, database
+scheduling, triggers, cron ownership, TTL, partitions, or archival fields.
 
 Do not block publication on non-critical analytics processing.
 

@@ -67,7 +67,7 @@ Platform Services
 
 Current task:
 
-IntegrationMapping
+BackgroundJob
 
 ---
 
@@ -162,8 +162,13 @@ Platform Services
 Scope:
 
 - Notification — ✅ Complete
-- IntegrationMapping — 🟨 Current
-- BackgroundJob — ⬜ Planned
+- IntegrationMapping — ✅ Complete
+- BackgroundJob — 🟨 Current
+
+Completion gate:
+
+- Database Architecture Freeze follows BackgroundJob completion and final
+  Platform Services review.
 
 Status
 

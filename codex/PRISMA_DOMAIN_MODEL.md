@@ -6888,9 +6888,17 @@ configuration in IntegrationMapping.
 
 ## Purpose
 
-Represents asynchronous processing.
+BackgroundJob is a persistent platform-service record representing asynchronous
+work requested by Passvero.
 
-Background jobs prevent long-running HTTP requests.
+It records work identity, eligibility, execution state, limited inputs and
+outcomes, and retained operational history. It is not a worker implementation,
+queue provider, cron scheduler, webhook event, integration mapping, AuditLog,
+Notification, notification delivery, domain lifecycle model, or credential
+store.
+
+Worker processes, queue adapters, polling, execution services, and retry
+orchestration remain future application infrastructure.
 
 ---
 
@@ -6898,56 +6906,69 @@ Background jobs prevent long-running HTTP requests.
 
 Examples:
 
-Image optimization
-
-QR generation
-
-Email sending
-
-Exports
-
-Imports
-
-Analytics aggregation
+- image optimization;
+- QR asset generation;
+- document processing;
+- exports and imports;
+- notification work;
+- integration synchronization;
+- analytics aggregation.
 
 ---
 
 ## Ownership
 
-System entity.
+`BackgroundJobScope` contains exactly:
 
-Organization optional.
+- PLATFORM
+- ORGANIZATION
+
+PLATFORM jobs do not belong to an Organization and require `organizationId` to
+be null. ORGANIZATION jobs belong to exactly one Organization and require a
+non-null `organizationId`.
+
+Although `organizationId` is optional in the Prisma schema, a database CHECK
+constraint must enforce this scope-to-ownership consistency.
+
+Organization deletion is restricted and Organization updates cascade. Retained
+organization jobs must not disappear through cascade deletion.
 
 ---
 
 ## Lifecycle
 
-PENDING
+`BackgroundJobStatus` contains exactly:
 
-↓
+- QUEUED
+- RUNNING
+- SUCCEEDED
+- FAILED
+- CANCELED
 
-RUNNING
+QUEUED jobs wait until they are eligible for execution. RUNNING jobs are
+currently claimed by a worker. SUCCEEDED, FAILED, and CANCELED are terminal
+states for that job execution record.
 
-↓
-
-SUCCEEDED
-
-↓
-
-FAILED
-
-↓
-
-RETRYING
+Retry eligibility is derived from status, attempt counts, and `scheduledAt`.
+RETRYING is not a separate status. Application services control every
+transition; the database does not execute, retry, cancel, or complete jobs
+automatically.
 
 ---
 
 ## Required Fields
 
 - id
-- type
+- scope
+- queue
+- jobType
 - status
+- priority
+- attemptCount
+- maxAttempts
+- scheduledAt
 - createdAt
+- updatedAt
 
 ---
 
@@ -6956,36 +6977,186 @@ RETRYING
 - organizationId
 - payload
 - result
-- retryCount
+- entityType
+- entityId
+- deduplicationKey
+- correlationId
+- lockedAt
+- lockOwner
 - startedAt
-- finishedAt
-- failureReason
+- completedAt
+- failedAt
+- canceledAt
+- lastErrorCode
+- lastErrorSummary
+
+---
+
+## Queue and Job Type
+
+`queue` and `jobType` are normalized uppercase snake-case String values, not
+enums. The database must not define a closed queue or job-type vocabulary.
+
+Queue examples include `DEFAULT`, `DOCUMENT_PROCESSING`, `ANALYTICS`,
+`INTEGRATIONS`, and `NOTIFICATIONS`.
+
+Job-type examples include `GENERATE_QR_ASSET`, `PROCESS_DOCUMENT`,
+`SYNCHRONIZE_PRODUCT`, `SEND_NOTIFICATION`, and
+`AGGREGATE_SCAN_ANALYTICS`.
+
+Application services own the canonical constants.
+
+---
+
+## Payload and Result
+
+`payload` and `result` are optional, limited, allowlisted JSON values with no
+default and no GIN index.
+
+Payload stores only the minimal input required to execute the job. Result
+stores only a small normalized outcome needed by later application services.
+Large content must be referenced through stable IDs or storage keys.
+
+Neither field may contain passwords, API keys, access or refresh tokens, OAuth
+secrets, authorization headers, cookies, webhook signing secrets, complete
+HTTP or provider payloads, binary or base64 file content, uploaded documents,
+sensitive personal data, or stack traces.
+
+---
+
+## Logical Entity Context
+
+`entityType` and `entityId` provide optional logical context. Both fields must
+be null together or populated together.
+
+They are not foreign keys. BackgroundJob has no direct relation to Product,
+ProductVersion, Passport, Document, Subscription, Notification,
+IntegrationMapping, QRCode, ScanEvent, or AuditLog.
+
+---
+
+## Attempts and Scheduling
+
+`attemptCount` begins at zero and must never be negative.
+
+`maxAttempts` must be positive, and `attemptCount` must not exceed
+`maxAttempts`. Each execution attempt is recorded by an application service.
+
+`scheduledAt` represents both initial scheduling and later retry eligibility.
+A QUEUED job becomes eligible only after this timestamp is reached.
+
+Do not add `retryCount`, `retries`, `retryStatus`, `retryHistory`, or
+`nextRetryAt`. Do not add cron expressions, recurrence rules, scheduler tables,
+automatic retry scheduling, triggers, or stored procedures. Recurring work may
+later be implemented by services that create individual BackgroundJob rows.
+
+---
+
+## Priority
+
+`priority` is an Int used only for ordering eligible work. Higher values mean
+higher execution priority.
+
+Priority does not bypass tenant isolation, scheduling, locking, or attempt
+limits. It is not an enum.
+
+---
+
+## Worker Locking
+
+`lockedAt` and `lockOwner` must be null together or populated together. Only a
+RUNNING job may have an active lock.
+
+`lockOwner` is a non-sensitive worker-instance identifier. It must not contain
+host credentials, authentication data, connection strings, or provider tokens.
+
+The database does not acquire or release locks automatically.
+
+---
+
+## Lifecycle Timestamps
+
+Lifecycle consistency is:
+
+- QUEUED: no `startedAt`, terminal timestamp, or active lock;
+- RUNNING: `startedAt` and an active lock are required, with no terminal
+  timestamp;
+- SUCCEEDED: `startedAt` and `completedAt` are required, with no other terminal
+  timestamp or active lock;
+- FAILED: `startedAt` and `failedAt` are required, with no other terminal
+  timestamp or active lock;
+- CANCELED: `canceledAt` is required, `completedAt` and `failedAt` are null, and
+  no active lock exists; `startedAt` may be null or populated.
+
+Application services set lifecycle timestamps. No lifecycle trigger is used.
+
+---
+
+## Error Information
+
+`lastErrorCode` stores a normalized uppercase snake-case, non-sensitive error
+category. FAILED requires `lastErrorCode`.
+
+`lastErrorSummary` stores a short sanitized operational description. Previous
+normalized error information may remain after a successful retry as limited
+operational history.
+
+Neither field may store raw exceptions, complete stack traces, provider
+response bodies, credentials, authorization headers, complete request payloads,
+or personal data not required for diagnosis.
+
+---
+
+## Deduplication
+
+`deduplicationKey` prevents concurrently active duplicate work only for QUEUED
+and RUNNING jobs. It is not globally unique and does not prevent a later job
+after an earlier equivalent job is terminal.
+
+Deduplication is scoped by `scope`, organization context, `queue`, `jobType`,
+and `deduplicationKey`.
+
+Because `organizationId` is nullable, separate PostgreSQL partial unique
+indexes are required for:
+
+1. active PLATFORM jobs;
+2. active ORGANIZATION jobs.
+
+---
+
+## Correlation
+
+`correlationId` optionally groups jobs belonging to a larger application
+operation, workflow, request, or audit trail. It is not unique and must not be
+used as a session ID, authentication token, or visitor identifier.
 
 ---
 
 ## Relationships
 
-Organization optional.
+BackgroundJob has exactly one optional Prisma relation: Organization.
+
+Use the explicit relation name `OrganizationBackgroundJobs`.
+
+```txt
+Organization 1:N BackgroundJob
+```
+
+The relation is populated only for ORGANIZATION-scoped jobs. BackgroundJob has
+no User relation, domain-entity relation, or parent/child self-relation.
+
+Workflow dependencies and job graphs remain future application-service
+responsibilities.
 
 ---
 
 ## Delete Behavior
 
-Old jobs may be archived or removed.
+BackgroundJob records may be retained for operational history.
 
-Retention policy depends on operations.
-
----
-
-## Future Extensions
-
-Queue priority
-
-Worker name
-
-Distributed execution
-
-Dead-letter queue
+Phase 6C does not add `deletedAt`, `archivedAt`, partitions, database TTL,
+automatic cleanup, retention jobs, scheduled deletion, or cascading domain
+deletion. Retention remains future operational infrastructure.
 
 ---
 
@@ -6994,6 +7165,12 @@ Dead-letter queue
 Never perform long-running operations synchronously.
 
 Never use BackgroundJob as AuditLog.
+
+Never use BackgroundJob as a domain lifecycle model, Notification,
+IntegrationMapping, notification delivery, credential store, queue provider,
+worker, or scheduler.
+
+Never store secrets, complete payloads, raw errors, or stack traces.
 
 ---
 
@@ -7064,6 +7241,19 @@ Organization
 IntegrationMapping may logically identify domain entities through `entityType`
 and `entityId`, but it never owns or directly relates to them.
 
+Allowed:
+
+```txt
+BackgroundJob
+
+↓
+
+Organization (optional only for ORGANIZATION scope)
+```
+
+BackgroundJob may logically identify domain entities through `entityType` and
+`entityId`, but it never owns or directly relates to them.
+
 Forbidden:
 
 ```txt
@@ -7110,11 +7300,13 @@ Implement initially:
 
 ✓ Plan (simple)
 
-✓ BackgroundJob (optional)
+✓ Notification
+
+✓ IntegrationMapping
 
 Current Platform Services milestone:
 
-IntegrationMapping
+BackgroundJob
 
 Defer:
 

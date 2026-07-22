@@ -903,21 +903,50 @@ Use `IntegrationMappingStatus` for the retained mapping lifecycle.
 
 ```txt
 id
+scope
 organizationId
-type
+queue
+jobType
 status
+priority
+attemptCount
+maxAttempts
+scheduledAt
 payload
 result
-retryCount
-maxRetries
-priority
+entityType
+entityId
+deduplicationKey
+correlationId
+lockedAt
+lockOwner
 startedAt
-finishedAt
-availableAt
-failureCode
-failureMessage
+completedAt
+failedAt
+canceledAt
+lastErrorCode
+lastErrorSummary
 createdAt
 updatedAt
+```
+
+`organizationId` is optional at the schema level. `BackgroundJobScope` requires
+it for ORGANIZATION jobs and forbids it for PLATFORM jobs.
+
+`queue`, `jobType`, and `entityType` are normalized uppercase String values,
+not enums. `entityType` and `entityId` are optional logical references and must
+be null or populated together.
+
+Use `scheduledAt` for initial scheduling and later retry eligibility. Do not
+use `availableAt`, `nextRetryAt`, or a separate retry-scheduling field.
+
+Use `attemptCount` and `maxAttempts`. Do not duplicate them with `retryCount`,
+`retries`, or `maxRetries`.
+
+Use the explicit relation name:
+
+```txt
+OrganizationBackgroundJobs
 ```
 
 ---
@@ -965,7 +994,7 @@ BillingProvider
 NotificationType
 NotificationStatus
 IntegrationMappingStatus
-BackgroundJobType
+BackgroundJobScope
 BackgroundJobStatus
 ```
 
@@ -1139,11 +1168,18 @@ SUSPENDED
 ## BackgroundJobStatus
 
 ```txt
-PENDING
+QUEUED
 RUNNING
 SUCCEEDED
 FAILED
-RETRYING
+CANCELED
+```
+
+## BackgroundJobScope
+
+```txt
+PLATFORM
+ORGANIZATION
 ```
 
 ---
@@ -1214,6 +1250,24 @@ Use relation name:
 ```txt
 ClonedProductVersions
 ```
+
+## Organization and BackgroundJob
+
+Conceptual mapping:
+
+```txt
+Organization.backgroundJobs
+BackgroundJob.organization
+```
+
+Use relation name:
+
+```txt
+OrganizationBackgroundJobs
+```
+
+The BackgroundJob side is optional because PLATFORM jobs have no Organization.
+Organization deletion uses Restrict and updates use Cascade.
 
 ## User actor relations
 
@@ -1319,8 +1373,8 @@ Use clear unit suffixes:
 ```txt
 sizeBytes
 pageCount
-retryCount
-maxRetries
+attemptCount
+maxAttempts
 sortOrder
 versionNumber
 downloadCount
@@ -1468,6 +1522,15 @@ failureCode
 failureMessage
 failureReasonCode
 ```
+
+For BackgroundJob, use the normalized retained-error names:
+
+```txt
+lastErrorCode
+lastErrorSummary
+```
+
+Do not use `failureReason`, raw `error`, or stack-trace fields on BackgroundJob.
 
 Avoid:
 
