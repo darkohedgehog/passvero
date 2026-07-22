@@ -6478,11 +6478,17 @@ Never hardcode pricing into Product logic.
 
 ## Purpose
 
-Represents user notifications.
+Notification represents an application-level message intended for an
+Organization, one specific User inside that Organization, or the Organization
+generally when no User is targeted.
 
 Notifications improve user experience.
 
 They never replace business logic.
+
+Notification is the user-facing message record. It is not an email delivery
+log, push-delivery record, SMS record, AuditLog, BackgroundJob, or domain
+lifecycle model.
 
 ---
 
@@ -6490,23 +6496,37 @@ They never replace business logic.
 
 Examples:
 
-Invitation accepted
+- ProductVersion published
 
-Passport published
+- Passport withdrawn
 
-Document failed
+- Document upload failed
 
-Trial ending
+- Subscription past due
 
-Subscription issue
+- Invitation accepted
+
+- Background process completed
+
+Business context is expressed by `eventType`, a stable uppercase snake-case
+identifier. `eventType` remains a String rather than an enum so the event
+vocabulary can evolve without coupling Notification to domain models.
 
 ---
 
 ## Ownership
 
-Notification belongs to User.
+Every Notification belongs to exactly one Organization.
 
-Organization ownership is indirect.
+Organization ownership is explicit through `organizationId`.
+
+A Notification may optionally target one User through `userId`.
+
+When `userId` is null, the Notification is organization-wide or visible
+according to application rules. Application services must verify that a
+targeted User has or had an appropriate relationship with the Organization.
+
+Notification does not relate directly to Membership.
 
 ---
 
@@ -6516,65 +6536,138 @@ Created
 
 ↓
 
-Unread
+UNREAD
 
 ↓
 
-Read
+READ, DISMISSED, or ARCHIVED according to application behavior
 
-↓
+`NotificationStatus` contains exactly:
 
-Archived
+- UNREAD
+- READ
+- DISMISSED
+- ARCHIVED
+
+Application services control lifecycle transitions and keep `readAt`,
+`dismissedAt`, and `archivedAt` consistent with the current status.
+
+`expiresAt` may exclude a Notification from normal application views. It does
+not delete, archive, or otherwise change the Notification automatically.
+
+`NotificationStatus` replaces the earlier `NotificationSeverity` concept.
+Delivery and transport states do not belong to Notification.
+
+---
+
+## Presentation Type
+
+`NotificationType` expresses presentation style and urgency, not business
+domain or delivery channel.
+
+It contains:
+
+- INFO
+- SUCCESS
+- WARNING
+- ERROR
+- ACTION_REQUIRED
+
+Business context belongs in `eventType`.
 
 ---
 
 ## Required Fields
 
 - id
-- userId
+- organizationId
 - type
+- status
+- eventType
+- title
+- message
 - createdAt
+- updatedAt
 
 ---
 
 ## Optional Fields
 
-- readAt
-- metadata
-- severity
+- userId
 - actionUrl
+- entityType
+- entityId
+- readAt
+- dismissedAt
+- archivedAt
+- expiresAt
+- metadata
 
 ---
 
-## Notification Types
+## Logical Entity Context
 
-Examples:
+`entityType` and `entityId` provide optional logical context without foreign
+keys to Product, ProductVersion, Passport, Document, Subscription, or other
+domain entities.
 
-INFO
+Both fields must be null or both must be populated.
 
-SUCCESS
+This keeps Notification loosely coupled to the Product and operational
+domains.
 
-WARNING
+---
 
-ERROR
+## Metadata
+
+`metadata` is optional JSON for small, allowlisted presentation context.
+
+It must never contain secrets, provider credentials, signed URLs, request
+headers, cookies, raw payloads, file contents, document contents, complete
+entity snapshots, or stack traces.
+
+Application services must allowlist metadata keys per `eventType`.
 
 ---
 
 ## Relationships
 
 ```txt
-Notification
-
-N:1 User
+Organization 1:N Notification
+User         1:N Notification (optional on Notification)
 ```
+
+Use explicit relation names:
+
+- `OrganizationNotifications`
+- `UserNotifications`
+
+Organization deletion is restricted and Organization updates cascade.
+
+User deletion sets `userId` to null and User updates cascade.
+
+Notification has no direct relation to domain entities or delivery providers.
+
+---
+
+## Delivery Boundary
+
+Notification records application messages, not transport attempts or provider
+outcomes.
+
+Email, push, SMS, webhook, and other delivery infrastructure may reference
+Notification through separate models in a future reviewed phase. Provider
+identifiers, delivery channels, delivery status, retries, and failure metadata
+do not belong to Notification.
 
 ---
 
 ## Delete Behavior
 
-Notifications may be deleted safely.
+Notification history belongs to the Organization and must not be silently
+deleted through Organization cascade behavior.
 
-Business entities remain.
+Retention and explicit deletion policy are separate reviewed concerns.
 
 ---
 
@@ -6584,27 +6677,16 @@ None.
 
 ---
 
-## Future Extensions
-
-Push
-
-Email
-
-SMS
-
-Slack
-
-Teams
-
-Webhook
-
----
-
 ## Anti-patterns
 
-Never use Notification as audit.
+Never use Notification as AuditLog.
 
 Never use Notification for permissions.
+
+Never use Notification as BackgroundJob or as a domain lifecycle record.
+
+Never store email, push, SMS, webhook, or provider delivery state on
+Notification.
 
 ---
 
@@ -6851,7 +6933,13 @@ Notification
 
 ↓
 
-User
+Organization
+
+Notification
+
+↓
+
+User (optional target)
 ```
 
 Forbidden:
@@ -6924,9 +7012,11 @@ Implement initially:
 
 ✓ BackgroundJob (optional)
 
-Defer:
+Current Platform Services milestone:
 
 Notification
+
+Defer:
 
 IntegrationMapping
 
@@ -6946,7 +7036,8 @@ The following rules are mandatory:
 
 1. Billing must never own Product data.
 
-2. Notifications are transient.
+2. Notification visibility may expire, but retention and deletion require a
+   separate reviewed policy.
 
 3. Integrations are mappings, not Product extensions.
 

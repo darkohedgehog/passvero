@@ -117,6 +117,21 @@ enum BillingProvider {
   MANUAL
 }
 
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  ACTION_REQUIRED
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  DISMISSED
+  ARCHIVED
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -143,6 +158,7 @@ model User {
   documentsArchived        Document[]       @relation("DocumentArchivedBy")
   passportsWithdrawn       Passport[]       @relation("PassportWithdrawnBy")
   auditLogs                AuditLog[]       @relation("UserAuditLogs")
+  notifications            Notification[]   @relation("UserNotifications")
 }
 
 model Organization {
@@ -171,6 +187,7 @@ model Organization {
   passports       Passport[]       @relation("OrganizationPassports")
   auditLogs       AuditLog[]       @relation("OrganizationAuditLogs")
   subscription    Subscription?    @relation("OrganizationSubscription")
+  notifications   Notification[]   @relation("OrganizationNotifications")
 
   @@index([status])
   @@index([createdAt])
@@ -642,4 +659,45 @@ model Subscription {
   @@index([planId, status])
   @@index([billingProvider])
   @@index([currentPeriodEnd])
+}
+
+model Notification {
+  id             String             @id @default(uuid()) @db.Uuid
+  organizationId String             @db.Uuid
+  userId         String?            @db.Uuid
+  type           NotificationType
+  status         NotificationStatus @default(UNREAD)
+
+  /// Stable uppercase snake-case business event identifier.
+  eventType String
+  title     String
+  message   String
+  actionUrl String?
+
+  /// Optional logical polymorphic entity context. Both fields must be null or
+  /// both must be populated.
+  entityType String?
+  entityId   String?
+
+  /// Small allowlisted presentation metadata. Never store secrets, complete
+  /// payloads, request headers, file contents, or provider credentials.
+  metadata Json?
+
+  readAt      DateTime?
+  dismissedAt DateTime?
+  archivedAt  DateTime?
+  expiresAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation("OrganizationNotifications", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user         User?        @relation("UserNotifications", fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([organizationId, status, createdAt])
+  @@index([userId, status, createdAt])
+  @@index([organizationId, eventType, createdAt])
+  @@index([organizationId, entityType, entityId, createdAt])
+  @@index([expiresAt])
+  @@index([createdAt])
 }

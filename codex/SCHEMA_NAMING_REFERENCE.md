@@ -835,18 +835,38 @@ updatedAt
 
 ```txt
 id
-userId
 organizationId
+userId
 type
-severity
+status
+eventType
 title
 message
 actionUrl
+entityType
+entityId
 metadata
 readAt
+dismissedAt
 archivedAt
+expiresAt
 createdAt
+updatedAt
 ```
+
+Use explicit relation names:
+
+```txt
+OrganizationNotifications
+UserNotifications
+```
+
+`NotificationType` expresses presentation style and urgency.
+
+`NotificationStatus` expresses application inbox lifecycle.
+
+Use `eventType` for the stable uppercase snake-case business event identifier.
+Do not use a domain-specific enum or `severity` for this purpose.
 
 ## IntegrationMapping
 
@@ -929,7 +949,7 @@ AuditSource
 SubscriptionStatus
 BillingProvider
 NotificationType
-NotificationSeverity
+NotificationStatus
 IntegrationProvider
 IntegrationEntityType
 IntegrationSyncStatus

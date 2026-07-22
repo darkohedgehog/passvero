@@ -55,6 +55,7 @@ test("Phase 5B adds only Subscription and its two approved enums", async () => {
     "AuditLog",
     "Plan",
     "Subscription",
+    "Notification",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -72,6 +73,8 @@ test("Phase 5B adds only Subscription and its two approved enums", async () => {
     "PlanStatus",
     "SubscriptionStatus",
     "BillingProvider",
+    "NotificationType",
+    "NotificationStatus",
   ]);
   assert.match(
     block(schema, "enum", "SubscriptionStatus"),
