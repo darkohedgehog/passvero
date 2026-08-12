@@ -7,6 +7,7 @@ import { PRODUCT_CREATE } from "../../src/application/permissions/product-permis
 import { createCreateProductService } from "../../src/application/products/create-product/create-product";
 import {
   CreateProductPersistenceError,
+  type CreateProductPersistenceErrorKind,
   type ProductCreationEligibility,
 } from "../../src/application/products/create-product/ports";
 import type { CreateProductCommand } from "../../src/application/products/create-product/contracts";
@@ -536,7 +537,7 @@ test("maps a false guarded pointer assignment to the safe pointer conflict error
 
 test("maps known persistence failures to safe stable errors without retrying", async () => {
   const cases: readonly {
-    readonly kind: "ORGANIZATION_SKU_CONFLICT" | "POINTER_CONFLICT" | "ACTIVE_DRAFT_CONFLICT" | "NOT_FOUND" | "UNKNOWN" | "PUBLIC_CODE_CONFLICT";
+    readonly kind: "ORGANIZATION_SKU_CONFLICT" | "POINTER_CONFLICT" | "ACTIVE_DRAFT_CONFLICT" | "NOT_FOUND" | "UNKNOWN";
     readonly category: ApplicationErrorCategory;
     readonly code: string;
   }[] = [
@@ -557,7 +558,6 @@ test("maps known persistence failures to safe stable errors without retrying", a
     },
     { kind: "NOT_FOUND", category: "NOT_FOUND", code: "CREATE_PRODUCT_CONTEXT_NOT_FOUND" },
     { kind: "UNKNOWN", category: "INTERNAL", code: "CREATE_PRODUCT_INTERNAL" },
-    { kind: "PUBLIC_CODE_CONFLICT", category: "INTERNAL", code: "CREATE_PRODUCT_INTERNAL" },
   ];
 
   for (const { kind, category, code } of cases) {
@@ -577,6 +577,227 @@ test("maps known persistence failures to safe stable errors without retrying", a
       "eligibility",
       "product",
     ]);
+  }
+});
+
+interface RetryFixture {
+  readonly service: ReturnType<typeof createCreateProductService<{ readonly id: string }>>;
+  readonly publicCodes: readonly string[];
+  readonly transactionTokens: readonly { readonly id: string }[];
+  readonly identityInputs: readonly {
+    readonly transactionId: string;
+    readonly publicCode: string;
+  }[];
+  readonly eligibilityTransactionIds: readonly string[];
+  readonly telemetry: {
+    readonly collisions: Array<{ readonly attempt: 1 | 2 | 3 }>;
+    readonly exhaustions: number;
+  };
+}
+
+function createRetryFixture(
+  productErrors: readonly CreateProductPersistenceErrorKind[],
+): RetryFixture {
+  const publicCodes = [
+    "AbCdEfGhIjKlMnOpQrStU0",
+    "AbCdEfGhIjKlMnOpQrStU1",
+    "AbCdEfGhIjKlMnOpQrStU2",
+  ];
+  const transactionTokens: Array<{ readonly id: string }> = [];
+  const identityInputs: Array<{ readonly transactionId: string; readonly publicCode: string }> = [];
+  const eligibilityTransactionIds: string[] = [];
+  const telemetry = {
+    collisions: [] as Array<{ readonly attempt: 1 | 2 | 3 }>,
+    exhaustions: 0,
+  };
+  let codeIndex = 0;
+  let productIndex = 0;
+
+  return {
+    service: createCreateProductService<{ readonly id: string }>({
+      transactionRunner: {
+        async run(work) {
+          const transaction = { id: `transaction-${transactionTokens.length + 1}` };
+          transactionTokens.push(transaction);
+          return work(transaction);
+        },
+      },
+      persistence: {
+        async readEligibility(transaction) {
+          eligibilityTransactionIds.push(transaction.id);
+          return {
+            organizationStatus: "ACTIVE",
+            membershipStatus: "ACTIVE",
+            membershipRole: "EDITOR",
+          };
+        },
+        async createProductIdentity(transaction, input) {
+          identityInputs.push({ transactionId: transaction.id, publicCode: input.publicCode });
+          const kind = productErrors[productIndex++];
+          if (kind !== undefined) {
+            throw new CreateProductPersistenceError(kind);
+          }
+          return { productId: PRODUCT_ID, createdAt: CREATED_AT };
+        },
+        async createInitialProductVersion() {
+          return { productVersionId: VERSION_ID };
+        },
+        async createInitialProductTranslation() {
+          return { productTranslationId: "translation-0001" };
+        },
+        async assignCurrentDraftVersionIfUnset() {
+          return true;
+        },
+        async insertProductCreatedAuditEvent() {
+          return { auditLogId: "audit-0001" };
+        },
+      },
+      publicCodeGenerator: {
+        generate() {
+          const publicCode = publicCodes[codeIndex];
+          codeIndex += 1;
+          assert.ok(publicCode !== undefined, "unexpected fourth public-code candidate");
+          return publicCode;
+        },
+      },
+      monotonicNow: (() => {
+        const values = [100, 141];
+        return () => values.shift() ?? 141;
+      })(),
+      telemetry: {
+        recordSuccess() {},
+        recordFailure() {},
+        recordPublicCodeCollision(input) {
+          telemetry.collisions.push(input);
+        },
+        recordPublicCodeExhaustion() {
+          telemetry.exhaustions += 1;
+        },
+      },
+    }),
+    publicCodes,
+    transactionTokens,
+    identityInputs,
+    eligibilityTransactionIds,
+    telemetry,
+  };
+}
+
+function assertRetryAttempts(
+  fixture: RetryFixture,
+  expectedAttempts: number,
+): void {
+  assert.equal(fixture.transactionTokens.length, expectedAttempts);
+  assert.equal(fixture.identityInputs.length, expectedAttempts);
+  assert.equal(fixture.eligibilityTransactionIds.length, expectedAttempts);
+  assert.deepEqual(
+    fixture.identityInputs.map((input) => input.publicCode),
+    fixture.publicCodes.slice(0, expectedAttempts),
+  );
+  assert.deepEqual(
+    fixture.identityInputs.map((input) => input.transactionId),
+    fixture.transactionTokens.map((transaction) => transaction.id),
+  );
+  assert.deepEqual(
+    fixture.eligibilityTransactionIds,
+    fixture.transactionTokens.map((transaction) => transaction.id),
+  );
+  assert.equal(new Set(fixture.identityInputs.map((input) => input.publicCode)).size, expectedAttempts);
+  assert.equal(new Set(fixture.transactionTokens.map((transaction) => transaction.id)).size, expectedAttempts);
+}
+
+test("retries a public-code collision once with a fresh candidate and transaction", async () => {
+  const fixture = createRetryFixture(["PUBLIC_CODE_CONFLICT"]);
+
+  const result = await fixture.service(validCommand, activeEditorContext);
+
+  assert.equal(result.publicCode, fixture.publicCodes[1]);
+  assertRetryAttempts(fixture, 2);
+  assert.deepEqual(fixture.telemetry.collisions, [{ attempt: 1 }]);
+  assert.deepEqual(Object.keys(fixture.telemetry.collisions[0] ?? {}), ["attempt"]);
+  assert.equal(fixture.telemetry.exhaustions, 0);
+});
+
+test("retries two public-code collisions with fresh candidates and transactions", async () => {
+  const fixture = createRetryFixture(["PUBLIC_CODE_CONFLICT", "PUBLIC_CODE_CONFLICT"]);
+
+  const result = await fixture.service(validCommand, activeEditorContext);
+
+  assert.equal(result.publicCode, fixture.publicCodes[2]);
+  assertRetryAttempts(fixture, 3);
+  assert.deepEqual(fixture.telemetry.collisions, [{ attempt: 1 }, { attempt: 2 }]);
+  for (const collision of fixture.telemetry.collisions) {
+    assert.deepEqual(Object.keys(collision), ["attempt"]);
+  }
+  assert.equal(fixture.telemetry.exhaustions, 0);
+});
+
+test("exhausts exactly three public-code candidates after a third collision", async () => {
+  const fixture = createRetryFixture([
+    "PUBLIC_CODE_CONFLICT",
+    "PUBLIC_CODE_CONFLICT",
+    "PUBLIC_CODE_CONFLICT",
+  ]);
+
+  await assert.rejects(
+    fixture.service(validCommand, activeEditorContext),
+    (error: unknown) => error instanceof ApplicationError
+      && error.category === "INTERNAL"
+      && error.code === "CREATE_PRODUCT_PUBLIC_CODE_EXHAUSTED"
+      && error.retryable === false
+      && error.correlationId === activeEditorContext.correlationId,
+  );
+
+  assertRetryAttempts(fixture, 3);
+  assert.deepEqual(
+    fixture.telemetry.collisions,
+    [{ attempt: 1 }, { attempt: 2 }, { attempt: 3 }],
+  );
+  for (const collision of fixture.telemetry.collisions) {
+    assert.deepEqual(Object.keys(collision), ["attempt"]);
+  }
+  assert.equal(fixture.telemetry.exhaustions, 1);
+});
+
+test("does not retry non-public-code persistence failures", async () => {
+  const cases: readonly {
+    readonly kind: "ORGANIZATION_SKU_CONFLICT" | "ACTIVE_DRAFT_CONFLICT" | "POINTER_CONFLICT" | "UNKNOWN";
+    readonly category: ApplicationErrorCategory;
+    readonly code: string;
+  }[] = [
+    {
+      kind: "ORGANIZATION_SKU_CONFLICT",
+      category: "CONFLICT",
+      code: "CREATE_PRODUCT_SKU_CONFLICT",
+    },
+    {
+      kind: "ACTIVE_DRAFT_CONFLICT",
+      category: "INVALID_STATE",
+      code: "CREATE_PRODUCT_POINTER_CONFLICT",
+    },
+    {
+      kind: "POINTER_CONFLICT",
+      category: "INVALID_STATE",
+      code: "CREATE_PRODUCT_POINTER_CONFLICT",
+    },
+    { kind: "UNKNOWN", category: "INTERNAL", code: "CREATE_PRODUCT_INTERNAL" },
+  ];
+
+  for (const { kind, category, code } of cases) {
+    const fixture = createRetryFixture([kind]);
+
+    await assert.rejects(
+      fixture.service(validCommand, activeEditorContext),
+      (error: unknown) => error instanceof ApplicationError
+        && error.category === category
+        && error.code === code
+        && error.retryable === false
+        && error.correlationId === activeEditorContext.correlationId,
+    );
+
+    assertRetryAttempts(fixture, 1);
+    assert.deepEqual(fixture.telemetry.collisions, []);
+    assert.equal(fixture.telemetry.exhaustions, 0);
   }
 });
 

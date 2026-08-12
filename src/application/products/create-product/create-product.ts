@@ -40,109 +40,139 @@ export function createCreateProductService<Transaction>(
         context.correlationId,
         trustedApplicationErrors,
       );
-      const publicCode = generateTrustedProductPublicCode(
-        dependencies,
-        context.correlationId,
-        trustedApplicationErrors,
-      );
-
-      const result = await dependencies.transactionRunner.run(async (transaction) => {
-        const eligibility = await dependencies.persistence.readEligibility(transaction, {
-          organizationId: context.organizationId,
-          userId: context.userId,
-          membershipId: context.membershipId,
-        });
-
-        if (eligibility === null) {
-          throw createProductError(
-            "NOT_FOUND",
-            "CREATE_PRODUCT_CONTEXT_NOT_FOUND",
-            context.correlationId,
-          );
-        }
-
-        if (
-          eligibility.membershipStatus !== "ACTIVE" ||
-          !roleHasProductPermission(eligibility.membershipRole, PRODUCT_CREATE)
-        ) {
-          throw createProductError(
-            "FORBIDDEN",
-            "CREATE_PRODUCT_FORBIDDEN",
-            context.correlationId,
-          );
-        }
-
-        if (eligibility.organizationStatus !== "ACTIVE") {
-          throw createProductError(
-            "INVALID_STATE",
-            "CREATE_PRODUCT_ORGANIZATION_INELIGIBLE",
-            context.correlationId,
-          );
-        }
-
-        const product = await dependencies.persistence.createProductIdentity(transaction, {
-          organizationId: context.organizationId,
-          internalName: normalizedCommand.internalName,
-          sku: normalizedCommand.sku,
-          normalizedSku: normalizedCommand.normalizedSku,
-          publicCode,
-          actorId: context.userId,
-        });
-        const version = await dependencies.persistence.createInitialProductVersion(transaction, {
-          productId: product.productId,
-          organizationId: context.organizationId,
-          sourceLocale: normalizedCommand.sourceLocale,
-          actorId: context.userId,
-        });
-
-        await dependencies.persistence.createInitialProductTranslation(transaction, {
-          productVersionId: version.productVersionId,
-          locale: normalizedCommand.sourceLocale,
-          productName: normalizedCommand.productName,
-        });
-
-        const assigned = await dependencies.persistence.assignCurrentDraftVersionIfUnset(
-          transaction,
-          {
-            productId: product.productId,
-            organizationId: context.organizationId,
-            productVersionId: version.productVersionId,
-          },
+      for (const attempt of [1, 2, 3] as const) {
+        const publicCode = generateTrustedProductPublicCode(
+          dependencies,
+          context.correlationId,
+          trustedApplicationErrors,
         );
 
-        if (!assigned) {
-          throw createProductError(
-            "INVALID_STATE",
-            "CREATE_PRODUCT_POINTER_CONFLICT",
-            context.correlationId,
-          );
+        try {
+          const result = await dependencies.transactionRunner.run(async (transaction) => {
+            const eligibility = await dependencies.persistence.readEligibility(transaction, {
+              organizationId: context.organizationId,
+              userId: context.userId,
+              membershipId: context.membershipId,
+            });
+
+            if (eligibility === null) {
+              throw createProductError(
+                "NOT_FOUND",
+                "CREATE_PRODUCT_CONTEXT_NOT_FOUND",
+                context.correlationId,
+              );
+            }
+
+            if (
+              eligibility.membershipStatus !== "ACTIVE" ||
+              !roleHasProductPermission(eligibility.membershipRole, PRODUCT_CREATE)
+            ) {
+              throw createProductError(
+                "FORBIDDEN",
+                "CREATE_PRODUCT_FORBIDDEN",
+                context.correlationId,
+              );
+            }
+
+            if (eligibility.organizationStatus !== "ACTIVE") {
+              throw createProductError(
+                "INVALID_STATE",
+                "CREATE_PRODUCT_ORGANIZATION_INELIGIBLE",
+                context.correlationId,
+              );
+            }
+
+            const product = await dependencies.persistence.createProductIdentity(transaction, {
+              organizationId: context.organizationId,
+              internalName: normalizedCommand.internalName,
+              sku: normalizedCommand.sku,
+              normalizedSku: normalizedCommand.normalizedSku,
+              publicCode,
+              actorId: context.userId,
+            });
+            const version = await dependencies.persistence.createInitialProductVersion(transaction, {
+              productId: product.productId,
+              organizationId: context.organizationId,
+              sourceLocale: normalizedCommand.sourceLocale,
+              actorId: context.userId,
+            });
+
+            await dependencies.persistence.createInitialProductTranslation(transaction, {
+              productVersionId: version.productVersionId,
+              locale: normalizedCommand.sourceLocale,
+              productName: normalizedCommand.productName,
+            });
+
+            const assigned = await dependencies.persistence.assignCurrentDraftVersionIfUnset(
+              transaction,
+              {
+                productId: product.productId,
+                organizationId: context.organizationId,
+                productVersionId: version.productVersionId,
+              },
+            );
+
+            if (!assigned) {
+              throw createProductError(
+                "INVALID_STATE",
+                "CREATE_PRODUCT_POINTER_CONFLICT",
+                context.correlationId,
+              );
+            }
+
+            await dependencies.persistence.insertProductCreatedAuditEvent(transaction, {
+              organizationId: context.organizationId,
+              actorId: context.userId,
+              productId: product.productId,
+              initialProductVersionId: version.productVersionId,
+              skuSupplied: normalizedCommand.sku !== null,
+              correlationId: context.correlationId,
+            });
+
+            return {
+              productId: product.productId,
+              initialProductVersionId: version.productVersionId,
+              publicCode,
+              productStatus: "ACTIVE" as const,
+              draftStatus: "DRAFT" as const,
+              organizationSku: normalizedCommand.sku,
+              createdAt: product.createdAt,
+            };
+          });
+
+          dependencies.telemetry.recordSuccess({
+            durationMs: dependencies.monotonicNow() - startedAt,
+          });
+
+          return result;
+        } catch (error) {
+          if (
+            error instanceof CreateProductPersistenceError
+            && error.kind === "PUBLIC_CODE_CONFLICT"
+          ) {
+            dependencies.telemetry.recordPublicCodeCollision({ attempt });
+
+            if (attempt === 3) {
+              dependencies.telemetry.recordPublicCodeExhaustion();
+              throw createProductError(
+                "INTERNAL",
+                "CREATE_PRODUCT_PUBLIC_CODE_EXHAUSTED",
+                context.correlationId,
+              );
+            }
+
+            continue;
+          }
+
+          throw error;
         }
+      }
 
-        await dependencies.persistence.insertProductCreatedAuditEvent(transaction, {
-          organizationId: context.organizationId,
-          actorId: context.userId,
-          productId: product.productId,
-          initialProductVersionId: version.productVersionId,
-          skuSupplied: normalizedCommand.sku !== null,
-          correlationId: context.correlationId,
-        });
-
-        return {
-          productId: product.productId,
-          initialProductVersionId: version.productVersionId,
-          publicCode,
-          productStatus: "ACTIVE" as const,
-          draftStatus: "DRAFT" as const,
-          organizationSku: normalizedCommand.sku,
-          createdAt: product.createdAt,
-        };
-      });
-
-      dependencies.telemetry.recordSuccess({
-        durationMs: dependencies.monotonicNow() - startedAt,
-      });
-
-      return result;
+      throw createProductError(
+        "INTERNAL",
+        "CREATE_PRODUCT_PUBLIC_CODE_EXHAUSTED",
+        context.correlationId,
+      );
     } catch (error) {
       const applicationError = mapCreateProductError(
         error,
