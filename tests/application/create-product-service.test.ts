@@ -188,6 +188,8 @@ interface FailureFixtureOptions {
   readonly auditError?: unknown;
   readonly pointerAssigned?: boolean;
   readonly publicCode?: string;
+  readonly monotonicErrors?: readonly unknown[];
+  readonly failureTelemetryError?: unknown;
 }
 
 interface FailureFixture {
@@ -297,6 +299,10 @@ function createFailureFixture(options: FailureFixtureOptions = {}): FailureFixtu
       },
       monotonicNow() {
         monotonicCalls += 1;
+        const error = options.monotonicErrors?.[monotonicCalls - 1];
+        if (error !== undefined) {
+          throw error;
+        }
         return monotonicValues.shift() ?? 141;
       },
       telemetry: {
@@ -305,6 +311,9 @@ function createFailureFixture(options: FailureFixtureOptions = {}): FailureFixtu
         },
         recordFailure(input) {
           telemetry.failures.push(input);
+          if (options.failureTelemetryError !== undefined) {
+            throw options.failureTelemetryError;
+          }
         },
         recordPublicCodeCollision() {
           telemetry.collisions += 1;
@@ -369,6 +378,32 @@ function assertSafeError(error: ApplicationError): void {
     assert.equal(serialized.includes(unsafeValue), false, `error exposed ${unsafeValue}`);
   }
   assert.equal("cause" in error, false, "error retained an unsafe cause");
+}
+
+async function assertSafeBoundaryFailure(
+  fixture: FailureFixture,
+  taintedError: Error,
+): Promise<ApplicationError> {
+  let observedError: ApplicationError | undefined;
+
+  await assert.rejects(
+    fixture.service(validCommand, activeEditorContext),
+    (error: unknown) => {
+      assert.ok(error instanceof ApplicationError);
+      assert.equal(error.category, "INTERNAL");
+      assert.equal(error.code, "CREATE_PRODUCT_INTERNAL");
+      assert.equal(error.retryable, false);
+      assert.equal(error.correlationId, activeEditorContext.correlationId);
+      assertSafeError(error);
+      const serialized = `${error.category} ${error.code} ${error.message} ${error.correlationId}`;
+      assert.equal(serialized.includes(taintedError.message), false, "error exposed boundary details");
+      observedError = error;
+      return true;
+    },
+  );
+
+  assert.ok(observedError !== undefined);
+  return observedError;
 }
 
 test("returns an unauthenticated safe error without touching persistence for null context", async () => {
@@ -601,6 +636,7 @@ interface RetryFixture {
 }
 
 interface RetryFixtureOptions {
+  readonly successTelemetryErrorBeforeRecord?: unknown;
   readonly successTelemetryError?: unknown;
 }
 
@@ -681,6 +717,9 @@ function createRetryFixture(
       })(),
       telemetry: {
         recordSuccess(input) {
+          if (options.successTelemetryErrorBeforeRecord !== undefined) {
+            throw options.successTelemetryErrorBeforeRecord;
+          }
           telemetry.successes.push(input);
           if (options.successTelemetryError !== undefined) {
             throw options.successTelemetryError;
@@ -831,25 +870,108 @@ test("does not retry non-public-code persistence failures", async () => {
   }
 });
 
-test("does not retry a collision-shaped error from success telemetry", async () => {
-  const fixture = createRetryFixture([], {
-    successTelemetryError: new CreateProductPersistenceError("PUBLIC_CODE_CONFLICT"),
+test("returns the committed result when success telemetry throws", async () => {
+  const cases: readonly {
+    readonly options: RetryFixtureOptions;
+    readonly successes: readonly { readonly durationMs: number }[];
+  }[] = [
+    {
+      options: {
+        successTelemetryError: new CreateProductPersistenceError("PUBLIC_CODE_CONFLICT"),
+      },
+      successes: [{ durationMs: 41 }],
+    },
+    {
+      options: {
+        successTelemetryErrorBeforeRecord: new Error(
+          "success telemetry SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001",
+        ),
+      },
+      successes: [],
+    },
+  ];
+
+  for (const { options, successes } of cases) {
+    const fixture = createRetryFixture([], options);
+
+    const result = await fixture.service(validCommand, activeEditorContext);
+
+    assert.equal(result.publicCode, fixture.publicCodes[0]);
+    assertRetryAttempts(fixture, 1);
+    assert.deepEqual(fixture.telemetry.collisions, []);
+    assert.equal(fixture.telemetry.exhaustions, 0);
+    assert.deepEqual(fixture.telemetry.successes, successes);
+    assert.deepEqual(fixture.telemetry.failures, []);
+  }
+});
+
+test("sanitizes an initial clock failure before product work", async () => {
+  const initialClockError = new ApplicationError(
+    "CONFLICT",
+    "P2002 Product_publicCode_key",
+    "initial clock SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001",
+    true,
+    "tainted-initial-clock-correlation",
+  );
+  Object.assign(initialClockError, {
+    cause: new Error("initial clock SQL candidate AbCdEfGhIjKlMnOpQrStUv"),
+  });
+  const fixture = createFailureFixture({ monotonicErrors: [initialClockError] });
+
+  const returnedError = await assertSafeBoundaryFailure(fixture, initialClockError);
+
+  assert.notStrictEqual(returnedError, initialClockError);
+  assert.deepEqual(fixture.recordedSteps, []);
+  assert.deepEqual(fixture.telemetry.successes, []);
+  assert.deepEqual(fixture.telemetry.failures, [{ category: "INTERNAL", durationMs: 0 }]);
+  assert.equal(fixture.telemetry.collisions, 0);
+  assert.equal(fixture.telemetry.exhaustions, 0);
+  assert.equal(fixture.monotonicCalls(), 1);
+});
+
+test("preserves a safe failure when the terminal clock throws", async () => {
+  const terminalClockError = new Error(
+    "terminal clock SQL candidate AbCdEfGhIjKlMnOpQrStUv organization-0001",
+  );
+  const fixture = createFailureFixture({
+    productError: new Error("product SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001"),
+    monotonicErrors: [undefined, terminalClockError],
   });
 
-  await assert.rejects(
-    fixture.service(validCommand, activeEditorContext),
-    (error: unknown) => error instanceof ApplicationError
-      && error.category === "INTERNAL"
-      && error.code === "CREATE_PRODUCT_INTERNAL"
-      && error.retryable === false
-      && error.correlationId === activeEditorContext.correlationId,
-  );
+  await assertSafeBoundaryFailure(fixture, terminalClockError);
 
-  assertRetryAttempts(fixture, 1);
-  assert.deepEqual(fixture.telemetry.collisions, []);
-  assert.equal(fixture.telemetry.exhaustions, 0);
-  assert.deepEqual(fixture.telemetry.successes, [{ durationMs: 41 }]);
+  assert.deepEqual(fixture.recordedSteps, [
+    "public-code",
+    "transaction:start",
+    "eligibility",
+    "product",
+  ]);
+  assert.deepEqual(fixture.telemetry.successes, []);
+  assert.deepEqual(fixture.telemetry.failures, [{ category: "INTERNAL", durationMs: 0 }]);
+  assert.equal(fixture.monotonicCalls(), 2);
+});
+
+test("preserves a safe failure when the failure telemetry sink throws", async () => {
+  const failureTelemetryError = new ApplicationError(
+    "CONFLICT",
+    "P2002 Product_publicCode_key",
+    "failure telemetry SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001",
+    true,
+    "tainted-failure-telemetry-correlation",
+  );
+  Object.assign(failureTelemetryError, {
+    cause: new Error("failure telemetry SQL candidate AbCdEfGhIjKlMnOpQrStUv"),
+  });
+  const fixture = createFailureFixture({
+    productError: new Error("product SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001"),
+    failureTelemetryError,
+  });
+
+  await assertSafeBoundaryFailure(fixture, failureTelemetryError);
+
+  assert.deepEqual(fixture.telemetry.successes, []);
   assert.deepEqual(fixture.telemetry.failures, [{ category: "INTERNAL", durationMs: 41 }]);
+  assert.equal(fixture.monotonicCalls(), 2);
 });
 
 test("maps an unrecognized persistence failure to safe internal without retrying", async () => {

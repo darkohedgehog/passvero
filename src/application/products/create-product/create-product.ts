@@ -12,11 +12,13 @@ export function createCreateProductService<Transaction>(
   dependencies: CreateProductDependencies<Transaction>,
 ): CreateProduct {
   return async (command, context) => {
-    const startedAt = dependencies.monotonicNow();
     const trustedApplicationErrors = new WeakSet<ApplicationError>();
     const createProductError = createProductErrorFactory(trustedApplicationErrors);
+    let startedAt: number | null = null;
 
     try {
+      startedAt = dependencies.monotonicNow();
+
       if (context === null) {
         throw createProductError(
           "UNAUTHENTICATED",
@@ -163,9 +165,7 @@ export function createCreateProductService<Transaction>(
           throw error;
         }
 
-        dependencies.telemetry.recordSuccess({
-          durationMs: dependencies.monotonicNow() - startedAt,
-        });
+        recordCreateProductSuccess(dependencies, startedAt);
 
         return result;
       }
@@ -183,14 +183,54 @@ export function createCreateProductService<Transaction>(
         createProductError,
       );
 
-      dependencies.telemetry.recordFailure({
-        category: applicationError.category,
-        durationMs: dependencies.monotonicNow() - startedAt,
-      });
+      recordCreateProductFailure(dependencies, applicationError.category, startedAt);
 
       throw applicationError;
     }
   };
+}
+
+function recordCreateProductSuccess<Transaction>(
+  dependencies: CreateProductDependencies<Transaction>,
+  startedAt: number | null,
+): void {
+  try {
+    dependencies.telemetry.recordSuccess({
+      durationMs: getCreateProductDuration(dependencies, startedAt),
+    });
+  } catch {
+    // Telemetry is observational after a committed transaction.
+  }
+}
+
+function recordCreateProductFailure<Transaction>(
+  dependencies: CreateProductDependencies<Transaction>,
+  category: ApplicationErrorCategory,
+  startedAt: number | null,
+): void {
+  try {
+    dependencies.telemetry.recordFailure({
+      category,
+      durationMs: getCreateProductDuration(dependencies, startedAt),
+    });
+  } catch {
+    // Failure telemetry must not replace the mapped safe error.
+  }
+}
+
+function getCreateProductDuration<Transaction>(
+  dependencies: CreateProductDependencies<Transaction>,
+  startedAt: number | null,
+): number {
+  if (startedAt === null) {
+    return 0;
+  }
+
+  try {
+    return dependencies.monotonicNow() - startedAt;
+  } catch {
+    return 0;
+  }
 }
 
 function normalizeTrustedCreateProductCommand(
