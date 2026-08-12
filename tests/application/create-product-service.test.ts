@@ -28,6 +28,8 @@ const activeEditorContext: AuthenticatedUserContext = {
 
 test("creates and returns one complete initial Product aggregate", async () => {
   const recordedSteps: string[] = [];
+  const successTelemetryCalls: Array<{ readonly durationMs: number }> = [];
+  const failureTelemetryCalls: unknown[] = [];
   const transactionToken = { name: "transaction-0001" };
   const service = createCreateProductService({
     transactionRunner: {
@@ -122,10 +124,10 @@ test("creates and returns one complete initial Product aggregate", async () => {
     })(),
     telemetry: {
       recordSuccess(input) {
-        assert.deepEqual(input, { durationMs: 43 });
+        successTelemetryCalls.push(input);
       },
       recordFailure() {
-        assert.fail("success flow must not record failure telemetry");
+        failureTelemetryCalls.push(undefined);
       },
       recordPublicCodeCollision() {
         assert.fail("success flow must not record collision telemetry");
@@ -164,6 +166,8 @@ test("creates and returns one complete initial Product aggregate", async () => {
     "audit",
     "transaction:commit",
   ]);
+  assert.deepEqual(successTelemetryCalls, [{ durationMs: 43 }]);
+  assert.deepEqual(failureTelemetryCalls, []);
 });
 
 const validCommand: CreateProductCommand = {
@@ -173,6 +177,8 @@ const validCommand: CreateProductCommand = {
 };
 
 interface FailureFixtureOptions {
+  readonly transactionError?: unknown;
+  readonly eligibilityError?: unknown;
   readonly eligibility?: ProductCreationEligibility | null;
   readonly productError?: unknown;
   readonly versionError?: unknown;
@@ -218,6 +224,9 @@ function createFailureFixture(options: FailureFixtureOptions = {}): FailureFixtu
       transactionRunner: {
         async run(work) {
           recordedSteps.push("transaction:start");
+          if (options.transactionError !== undefined) {
+            throw options.transactionError;
+          }
           const result = await work(transaction);
           recordedSteps.push("transaction:commit");
           return result;
@@ -227,6 +236,9 @@ function createFailureFixture(options: FailureFixtureOptions = {}): FailureFixtu
         async readEligibility(receivedTransaction) {
           assert.strictEqual(receivedTransaction, transaction);
           recordedSteps.push("eligibility");
+          if (options.eligibilityError !== undefined) {
+            throw options.eligibilityError;
+          }
           return options.eligibility === undefined
             ? {
                 organizationStatus: "ACTIVE",
@@ -316,7 +328,9 @@ async function assertFailure(
     readonly correlationId?: string;
   },
   command = validCommand,
-): Promise<void> {
+): Promise<ApplicationError> {
+  let observedError: ApplicationError | undefined;
+
   await assert.rejects(
     fixture.service(command, context),
     (error: unknown) => {
@@ -326,6 +340,7 @@ async function assertFailure(
       assert.equal(error.retryable, false);
       assert.equal(error.correlationId, expected.correlationId);
       assertSafeError(error);
+      observedError = error;
       return true;
     },
   );
@@ -335,6 +350,9 @@ async function assertFailure(
   assert.equal(fixture.telemetry.collisions, 0);
   assert.equal(fixture.telemetry.exhaustions, 0);
   assert.equal(fixture.monotonicCalls(), 2);
+
+  assert.ok(observedError !== undefined);
+  return observedError;
 }
 
 function assertSafeError(error: ApplicationError): void {
@@ -349,6 +367,7 @@ function assertSafeError(error: ApplicationError): void {
   ]) {
     assert.equal(serialized.includes(unsafeValue), false, `error exposed ${unsafeValue}`);
   }
+  assert.equal("cause" in error, false, "error retained an unsafe cause");
 }
 
 test("returns an unauthenticated safe error without touching persistence for null context", async () => {
@@ -444,6 +463,30 @@ test("maps every non-active Organization status to the safe ineligible-state err
     await assertFailure(fixture, activeEditorContext, {
       category: "INVALID_STATE",
       code: "CREATE_PRODUCT_ORGANIZATION_INELIGIBLE",
+      correlationId: activeEditorContext.correlationId,
+    });
+
+    assert.deepEqual(fixture.recordedSteps, ["public-code", "transaction:start", "eligibility"]);
+  }
+});
+
+test("prioritizes revalidated Membership authorization over non-active Organization disclosure", async () => {
+  const cases: readonly ProductCreationEligibility[] = [
+    ...(["SUSPENDED", "DEACTIVATED", "PENDING_DELETION"] as const).flatMap(
+      (organizationStatus) => [
+        { organizationStatus, membershipStatus: "SUSPENDED" as const, membershipRole: "EDITOR" as const },
+        { organizationStatus, membershipStatus: "REMOVED" as const, membershipRole: "EDITOR" as const },
+        { organizationStatus, membershipStatus: "ACTIVE" as const, membershipRole: "VIEWER" as const },
+      ],
+    ),
+  ];
+
+  for (const eligibility of cases) {
+    const fixture = createFailureFixture({ eligibility });
+
+    await assertFailure(fixture, activeEditorContext, {
+      category: "FORBIDDEN",
+      code: "CREATE_PRODUCT_FORBIDDEN",
       correlationId: activeEditorContext.correlationId,
     });
 
@@ -556,4 +599,71 @@ test("maps an unrecognized persistence failure to safe internal without retrying
     "eligibility",
     "product",
   ]);
+});
+
+test("sanitizes tainted ApplicationErrors from every transaction and persistence boundary", async () => {
+  const cases: readonly {
+    readonly boundary: string;
+    readonly configure: (error: ApplicationError) => FailureFixtureOptions;
+    readonly expectedSteps: readonly string[];
+  }[] = [
+    {
+      boundary: "transaction runner",
+      configure: (error) => ({ transactionError: error }),
+      expectedSteps: ["public-code", "transaction:start"],
+    },
+    {
+      boundary: "eligibility read",
+      configure: (error) => ({ eligibilityError: error }),
+      expectedSteps: ["public-code", "transaction:start", "eligibility"],
+    },
+    {
+      boundary: "product creation",
+      configure: (error) => ({ productError: error }),
+      expectedSteps: ["public-code", "transaction:start", "eligibility", "product"],
+    },
+    {
+      boundary: "version creation",
+      configure: (error) => ({ versionError: error }),
+      expectedSteps: ["public-code", "transaction:start", "eligibility", "product", "version"],
+    },
+    {
+      boundary: "translation creation",
+      configure: (error) => ({ translationError: error }),
+      expectedSteps: ["public-code", "transaction:start", "eligibility", "product", "version", "translation"],
+    },
+    {
+      boundary: "pointer assignment",
+      configure: (error) => ({ pointerError: error }),
+      expectedSteps: ["public-code", "transaction:start", "eligibility", "product", "version", "translation", "pointer"],
+    },
+    {
+      boundary: "audit insertion",
+      configure: (error) => ({ auditError: error }),
+      expectedSteps: ["public-code", "transaction:start", "eligibility", "product", "version", "translation", "pointer", "audit"],
+    },
+  ];
+
+  for (const { boundary, configure, expectedSteps } of cases) {
+    const taintedError = new ApplicationError(
+      "CONFLICT",
+      "P2002 Product_publicCode_key",
+      "SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001 organization-0001",
+      true,
+      "tainted-correlation-0001",
+    );
+    Object.assign(taintedError, {
+      cause: new Error("P2002 Product_publicCode_key SQL"),
+    });
+    const fixture = createFailureFixture(configure(taintedError));
+
+    const returnedError = await assertFailure(fixture, activeEditorContext, {
+      category: "INTERNAL",
+      code: "CREATE_PRODUCT_INTERNAL",
+      correlationId: activeEditorContext.correlationId,
+    });
+
+    assert.notStrictEqual(returnedError, taintedError, `${boundary} error passed through`);
+    assert.deepEqual(fixture.recordedSteps, expectedSteps);
+  }
 });

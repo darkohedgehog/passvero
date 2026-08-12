@@ -8,6 +8,8 @@ import { CreateProductPersistenceError } from "@/src/application/products/create
 import { normalizeCreateProductCommand } from "@/src/application/products/create-product/normalize-command";
 import { assertValidProductPublicCode } from "@/src/application/products/create-product/public-code";
 
+const trustedApplicationErrors = new WeakSet<ApplicationError>();
+
 export function createCreateProductService<Transaction>(
   dependencies: CreateProductDependencies<Transaction>,
 ): CreateProduct {
@@ -33,9 +35,12 @@ export function createCreateProductService<Transaction>(
         );
       }
 
-      const normalizedCommand = normalizeCreateProductCommand(command, context.correlationId);
-      const publicCode = assertValidProductPublicCode(
-        dependencies.publicCodeGenerator.generate(),
+      const normalizedCommand = normalizeTrustedCreateProductCommand(
+        command,
+        context.correlationId,
+      );
+      const publicCode = generateTrustedProductPublicCode(
+        dependencies,
         context.correlationId,
       );
 
@@ -54,14 +59,6 @@ export function createCreateProductService<Transaction>(
           );
         }
 
-        if (eligibility.organizationStatus !== "ACTIVE") {
-          throw createProductError(
-            "INVALID_STATE",
-            "CREATE_PRODUCT_ORGANIZATION_INELIGIBLE",
-            context.correlationId,
-          );
-        }
-
         if (
           eligibility.membershipStatus !== "ACTIVE" ||
           !roleHasProductPermission(eligibility.membershipRole, PRODUCT_CREATE)
@@ -69,6 +66,14 @@ export function createCreateProductService<Transaction>(
           throw createProductError(
             "FORBIDDEN",
             "CREATE_PRODUCT_FORBIDDEN",
+            context.correlationId,
+          );
+        }
+
+        if (eligibility.organizationStatus !== "ACTIVE") {
+          throw createProductError(
+            "INVALID_STATE",
+            "CREATE_PRODUCT_ORGANIZATION_INELIGIBLE",
             context.correlationId,
           );
         }
@@ -152,11 +157,43 @@ export function createCreateProductService<Transaction>(
   };
 }
 
+function normalizeTrustedCreateProductCommand(
+  command: Parameters<CreateProduct>[0],
+  correlationId: string,
+) {
+  try {
+    return normalizeCreateProductCommand(command, correlationId);
+  } catch (error) {
+    if (error instanceof ApplicationError) {
+      throw trustApplicationError(error);
+    }
+
+    throw error;
+  }
+}
+
+function generateTrustedProductPublicCode<Transaction>(
+  dependencies: CreateProductDependencies<Transaction>,
+  correlationId: string,
+): string {
+  const generatedCode = dependencies.publicCodeGenerator.generate();
+
+  try {
+    return assertValidProductPublicCode(generatedCode, correlationId);
+  } catch (error) {
+    if (error instanceof ApplicationError) {
+      throw trustApplicationError(error);
+    }
+
+    throw error;
+  }
+}
+
 function mapCreateProductError(
   error: unknown,
   correlationId: string | undefined,
 ): ApplicationError {
-  if (error instanceof ApplicationError) {
+  if (error instanceof ApplicationError && trustedApplicationErrors.has(error)) {
     return error;
   }
 
@@ -195,11 +232,17 @@ function createProductError(
   code: string,
   correlationId?: string,
 ): ApplicationError {
-  return new ApplicationError(
+  return trustApplicationError(new ApplicationError(
     category,
     code,
     "The product could not be created.",
     false,
     correlationId,
-  );
+  ));
+}
+
+function trustApplicationError(error: ApplicationError): ApplicationError {
+  trustedApplicationErrors.add(error);
+
+  return error;
 }
