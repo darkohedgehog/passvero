@@ -667,3 +667,62 @@ test("sanitizes tainted ApplicationErrors from every transaction and persistence
     assert.deepEqual(fixture.recordedSteps, expectedSteps);
   }
 });
+
+test("sanitizes a mutated locally trusted ApplicationError replayed by a later invocation", async () => {
+  const firstContext = {
+    ...activeEditorContext,
+    correlationId: "correlation-first-invocation",
+  };
+  const firstFixture = createFailureFixture();
+  const previouslyTrustedError = await assertFailure(
+    firstFixture,
+    firstContext,
+    {
+      category: "VALIDATION",
+      code: "CREATE_PRODUCT_NAME_INVALID",
+      correlationId: firstContext.correlationId,
+    },
+    { ...validCommand, initialProductName: "   " },
+  );
+
+  Object.assign(previouslyTrustedError, {
+    category: "CONFLICT",
+    code: "P2002 Product_publicCode_key",
+    message: "SQL candidate AbCdEfGhIjKlMnOpQrStUv user-0001 organization-0001",
+    retryable: true,
+    correlationId: "tainted-replayed-correlation",
+    cause: new Error("P2002 Product_publicCode_key SQL"),
+  });
+
+  const secondContext = {
+    ...activeEditorContext,
+    correlationId: "correlation-second-invocation",
+  };
+  const secondFixture = createFailureFixture({
+    transactionError: previouslyTrustedError,
+  });
+  const returnedError = await assertFailure(secondFixture, secondContext, {
+    category: "INTERNAL",
+    code: "CREATE_PRODUCT_INTERNAL",
+    correlationId: secondContext.correlationId,
+  });
+
+  assert.notStrictEqual(returnedError, previouslyTrustedError);
+  assert.equal(returnedError.correlationId, secondContext.correlationId);
+  assert.equal("cause" in returnedError, false);
+  for (const unsafeValue of [
+    "P2002",
+    "Product_publicCode_key",
+    "SQL",
+    PUBLIC_CODE,
+    activeEditorContext.userId,
+    activeEditorContext.organizationId,
+    "tainted-replayed-correlation",
+  ]) {
+    assert.equal(
+      `${returnedError.category} ${returnedError.code} ${returnedError.message} ${returnedError.correlationId}`.includes(unsafeValue),
+      false,
+      `replayed error exposed ${unsafeValue}`,
+    );
+  }
+});

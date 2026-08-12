@@ -8,13 +8,13 @@ import { CreateProductPersistenceError } from "@/src/application/products/create
 import { normalizeCreateProductCommand } from "@/src/application/products/create-product/normalize-command";
 import { assertValidProductPublicCode } from "@/src/application/products/create-product/public-code";
 
-const trustedApplicationErrors = new WeakSet<ApplicationError>();
-
 export function createCreateProductService<Transaction>(
   dependencies: CreateProductDependencies<Transaction>,
 ): CreateProduct {
   return async (command, context) => {
     const startedAt = dependencies.monotonicNow();
+    const trustedApplicationErrors = new WeakSet<ApplicationError>();
+    const createProductError = createProductErrorFactory(trustedApplicationErrors);
 
     try {
       if (context === null) {
@@ -38,10 +38,12 @@ export function createCreateProductService<Transaction>(
       const normalizedCommand = normalizeTrustedCreateProductCommand(
         command,
         context.correlationId,
+        trustedApplicationErrors,
       );
       const publicCode = generateTrustedProductPublicCode(
         dependencies,
         context.correlationId,
+        trustedApplicationErrors,
       );
 
       const result = await dependencies.transactionRunner.run(async (transaction) => {
@@ -145,6 +147,8 @@ export function createCreateProductService<Transaction>(
       const applicationError = mapCreateProductError(
         error,
         context?.correlationId,
+        trustedApplicationErrors,
+        createProductError,
       );
 
       dependencies.telemetry.recordFailure({
@@ -160,12 +164,13 @@ export function createCreateProductService<Transaction>(
 function normalizeTrustedCreateProductCommand(
   command: Parameters<CreateProduct>[0],
   correlationId: string,
+  trustedApplicationErrors: WeakSet<ApplicationError>,
 ) {
   try {
     return normalizeCreateProductCommand(command, correlationId);
   } catch (error) {
     if (error instanceof ApplicationError) {
-      throw trustApplicationError(error);
+      throw trustApplicationError(trustedApplicationErrors, error);
     }
 
     throw error;
@@ -175,6 +180,7 @@ function normalizeTrustedCreateProductCommand(
 function generateTrustedProductPublicCode<Transaction>(
   dependencies: CreateProductDependencies<Transaction>,
   correlationId: string,
+  trustedApplicationErrors: WeakSet<ApplicationError>,
 ): string {
   const generatedCode = dependencies.publicCodeGenerator.generate();
 
@@ -182,7 +188,7 @@ function generateTrustedProductPublicCode<Transaction>(
     return assertValidProductPublicCode(generatedCode, correlationId);
   } catch (error) {
     if (error instanceof ApplicationError) {
-      throw trustApplicationError(error);
+      throw trustApplicationError(trustedApplicationErrors, error);
     }
 
     throw error;
@@ -192,6 +198,8 @@ function generateTrustedProductPublicCode<Transaction>(
 function mapCreateProductError(
   error: unknown,
   correlationId: string | undefined,
+  trustedApplicationErrors: WeakSet<ApplicationError>,
+  createProductError: CreateProductError,
 ): ApplicationError {
   if (error instanceof ApplicationError && trustedApplicationErrors.has(error)) {
     return error;
@@ -227,21 +235,31 @@ function mapCreateProductError(
   return createProductError("INTERNAL", "CREATE_PRODUCT_INTERNAL", correlationId);
 }
 
-function createProductError(
+type CreateProductError = (
   category: ApplicationErrorCategory,
   code: string,
   correlationId?: string,
-): ApplicationError {
-  return trustApplicationError(new ApplicationError(
-    category,
-    code,
-    "The product could not be created.",
-    false,
-    correlationId,
-  ));
+) => ApplicationError;
+
+function createProductErrorFactory(
+  trustedApplicationErrors: WeakSet<ApplicationError>,
+): CreateProductError {
+  return (category, code, correlationId) => trustApplicationError(
+    trustedApplicationErrors,
+    new ApplicationError(
+      category,
+      code,
+      "The product could not be created.",
+      false,
+      correlationId,
+    ),
+  );
 }
 
-function trustApplicationError(error: ApplicationError): ApplicationError {
+function trustApplicationError(
+  trustedApplicationErrors: WeakSet<ApplicationError>,
+  error: ApplicationError,
+): ApplicationError {
   trustedApplicationErrors.add(error);
 
   return error;
