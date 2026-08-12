@@ -133,6 +133,10 @@ export async function cleanupCreateProductFixture(
 }
 
 function validateSafeTestDatabaseUrl(url: string): SafeTestDatabaseConfig {
+  if (url !== url.trim()) {
+    throw new Error("TEST_DATABASE_URL must not contain surrounding whitespace.");
+  }
+
   let parsedUrl: URL;
 
   try {
