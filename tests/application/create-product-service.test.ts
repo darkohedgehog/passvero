@@ -590,13 +590,23 @@ interface RetryFixture {
   }[];
   readonly eligibilityTransactionIds: readonly string[];
   readonly telemetry: {
+    readonly successes: Array<{ readonly durationMs: number }>;
+    readonly failures: Array<{
+      readonly category: ApplicationErrorCategory;
+      readonly durationMs: number;
+    }>;
     readonly collisions: Array<{ readonly attempt: 1 | 2 | 3 }>;
     readonly exhaustions: number;
   };
 }
 
+interface RetryFixtureOptions {
+  readonly successTelemetryError?: unknown;
+}
+
 function createRetryFixture(
   productErrors: readonly CreateProductPersistenceErrorKind[],
+  options: RetryFixtureOptions = {},
 ): RetryFixture {
   const publicCodes = [
     "AbCdEfGhIjKlMnOpQrStU0",
@@ -607,6 +617,11 @@ function createRetryFixture(
   const identityInputs: Array<{ readonly transactionId: string; readonly publicCode: string }> = [];
   const eligibilityTransactionIds: string[] = [];
   const telemetry = {
+    successes: [] as Array<{ readonly durationMs: number }>,
+    failures: [] as Array<{
+      readonly category: ApplicationErrorCategory;
+      readonly durationMs: number;
+    }>,
     collisions: [] as Array<{ readonly attempt: 1 | 2 | 3 }>,
     exhaustions: 0,
   };
@@ -665,8 +680,15 @@ function createRetryFixture(
         return () => values.shift() ?? 141;
       })(),
       telemetry: {
-        recordSuccess() {},
-        recordFailure() {},
+        recordSuccess(input) {
+          telemetry.successes.push(input);
+          if (options.successTelemetryError !== undefined) {
+            throw options.successTelemetryError;
+          }
+        },
+        recordFailure(input) {
+          telemetry.failures.push(input);
+        },
         recordPublicCodeCollision(input) {
           telemetry.collisions.push(input);
         },
@@ -716,6 +738,8 @@ test("retries a public-code collision once with a fresh candidate and transactio
   assert.deepEqual(fixture.telemetry.collisions, [{ attempt: 1 }]);
   assert.deepEqual(Object.keys(fixture.telemetry.collisions[0] ?? {}), ["attempt"]);
   assert.equal(fixture.telemetry.exhaustions, 0);
+  assert.deepEqual(fixture.telemetry.successes, [{ durationMs: 41 }]);
+  assert.deepEqual(fixture.telemetry.failures, []);
 });
 
 test("retries two public-code collisions with fresh candidates and transactions", async () => {
@@ -730,6 +754,8 @@ test("retries two public-code collisions with fresh candidates and transactions"
     assert.deepEqual(Object.keys(collision), ["attempt"]);
   }
   assert.equal(fixture.telemetry.exhaustions, 0);
+  assert.deepEqual(fixture.telemetry.successes, [{ durationMs: 41 }]);
+  assert.deepEqual(fixture.telemetry.failures, []);
 });
 
 test("exhausts exactly three public-code candidates after a third collision", async () => {
@@ -757,6 +783,8 @@ test("exhausts exactly three public-code candidates after a third collision", as
     assert.deepEqual(Object.keys(collision), ["attempt"]);
   }
   assert.equal(fixture.telemetry.exhaustions, 1);
+  assert.deepEqual(fixture.telemetry.successes, []);
+  assert.deepEqual(fixture.telemetry.failures, [{ category: "INTERNAL", durationMs: 41 }]);
 });
 
 test("does not retry non-public-code persistence failures", async () => {
@@ -798,7 +826,30 @@ test("does not retry non-public-code persistence failures", async () => {
     assertRetryAttempts(fixture, 1);
     assert.deepEqual(fixture.telemetry.collisions, []);
     assert.equal(fixture.telemetry.exhaustions, 0);
+    assert.deepEqual(fixture.telemetry.successes, []);
+    assert.deepEqual(fixture.telemetry.failures, [{ category, durationMs: 41 }]);
   }
+});
+
+test("does not retry a collision-shaped error from success telemetry", async () => {
+  const fixture = createRetryFixture([], {
+    successTelemetryError: new CreateProductPersistenceError("PUBLIC_CODE_CONFLICT"),
+  });
+
+  await assert.rejects(
+    fixture.service(validCommand, activeEditorContext),
+    (error: unknown) => error instanceof ApplicationError
+      && error.category === "INTERNAL"
+      && error.code === "CREATE_PRODUCT_INTERNAL"
+      && error.retryable === false
+      && error.correlationId === activeEditorContext.correlationId,
+  );
+
+  assertRetryAttempts(fixture, 1);
+  assert.deepEqual(fixture.telemetry.collisions, []);
+  assert.equal(fixture.telemetry.exhaustions, 0);
+  assert.deepEqual(fixture.telemetry.successes, [{ durationMs: 41 }]);
+  assert.deepEqual(fixture.telemetry.failures, [{ category: "INTERNAL", durationMs: 41 }]);
 });
 
 test("maps an unrecognized persistence failure to safe internal without retrying", async () => {

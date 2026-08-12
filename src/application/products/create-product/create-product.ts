@@ -46,9 +46,10 @@ export function createCreateProductService<Transaction>(
           context.correlationId,
           trustedApplicationErrors,
         );
+        let result: Awaited<ReturnType<CreateProduct>>;
 
         try {
-          const result = await dependencies.transactionRunner.run(async (transaction) => {
+          result = await dependencies.transactionRunner.run(async (transaction) => {
             const eligibility = await dependencies.persistence.readEligibility(transaction, {
               organizationId: context.organizationId,
               userId: context.userId,
@@ -140,11 +141,6 @@ export function createCreateProductService<Transaction>(
             };
           });
 
-          dependencies.telemetry.recordSuccess({
-            durationMs: dependencies.monotonicNow() - startedAt,
-          });
-
-          return result;
         } catch (error) {
           if (
             error instanceof CreateProductPersistenceError
@@ -166,6 +162,12 @@ export function createCreateProductService<Transaction>(
 
           throw error;
         }
+
+        dependencies.telemetry.recordSuccess({
+          durationMs: dependencies.monotonicNow() - startedAt,
+        });
+
+        return result;
       }
 
       throw createProductError(
