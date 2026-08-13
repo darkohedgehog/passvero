@@ -4,6 +4,7 @@ import type {
   ProductCreationEligibility,
   TransactionRunner,
 } from "@/src/application/products/create-product/ports";
+import { CreateProductPersistenceError } from "@/src/application/products/create-product/ports";
 import type { PassveroLocale } from "@/src/domain/values/passvero-locale";
 import {
   Prisma,
@@ -115,6 +116,18 @@ implements CreateProductPersistence<CreateProductPrismaTransaction> {
     },
   ): Promise<{ readonly productVersionId: string }> {
     try {
+      const product = await transaction.product.findFirst({
+        where: {
+          id: input.productId,
+          organizationId: input.organizationId,
+        },
+        select: { id: true },
+      });
+
+      if (product === null) {
+        throw new CreateProductPersistenceError("NOT_FOUND");
+      }
+
       const productVersion = await transaction.productVersion.create({
         data: {
           productId: input.productId,
@@ -138,6 +151,10 @@ implements CreateProductPersistence<CreateProductPrismaTransaction> {
 
       return { productVersionId: productVersion.id };
     } catch (error) {
+      if (error instanceof CreateProductPersistenceError) {
+        throw error;
+      }
+
       throw translatePrismaPgCreateProductError(error, "createInitialProductVersion");
     }
   }
@@ -180,6 +197,12 @@ implements CreateProductPersistence<CreateProductPrismaTransaction> {
           id: input.productId,
           organizationId: input.organizationId,
           currentDraftVersionId: null,
+          versions: {
+            some: {
+              id: input.productVersionId,
+              organizationId: input.organizationId,
+            },
+          },
         },
         data: { currentDraftVersionId: input.productVersionId },
       });

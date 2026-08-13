@@ -6,6 +6,7 @@ import type { AuthenticatedUserContext } from "../../src/application/context/aut
 import { ApplicationError } from "../../src/application/errors/application-error";
 import { PRODUCT_CREATE } from "../../src/application/permissions/product-permissions";
 import { createCreateProductService } from "../../src/application/products/create-product/create-product";
+import type { CreateProductCommand } from "../../src/application/products/create-product/contracts";
 import type { ProductPublicCodeGenerator } from "../../src/application/products/create-product/public-code";
 import type {
   CreateProductPersistence,
@@ -241,13 +242,94 @@ test("persists one complete initial Product aggregate atomically", async () => {
   assert.deepEqual(await countForbiddenAggregateRows(fixture, result.productId), {
     passports: 0,
     qrCodes: 0,
+    identifiers: 0,
+    materials: 0,
     documents: 0,
+    productDocuments: 0,
     productImages: 0,
     notifications: 0,
     integrationMappings: 0,
     backgroundJobs: 0,
     subscriptions: 0,
   });
+});
+
+test("allows multiple Products without an Organization SKU", async () => {
+  const fixture = await createFixture();
+  const service = createService({
+    publicCodeGenerator: new SequencePublicCodeGenerator([
+      createPublicCode(),
+      createPublicCode(),
+    ]),
+  });
+
+  const first = await service(
+    { initialLocale: "hr", initialProductName: `Null SKU A ${randomUUID()}` },
+    fixture.context,
+  );
+  registerProduct(fixture, first.productId);
+  const second = await service(
+    { initialLocale: "hr", initialProductName: `Null SKU B ${randomUUID()}` },
+    fixture.context,
+  );
+  registerProduct(fixture, second.productId);
+
+  assert.deepEqual(
+    await prisma.product.findMany({
+      where: { id: { in: [first.productId, second.productId] } },
+      orderBy: { id: "asc" },
+      select: { sku: true, normalizedSku: true },
+    }),
+    [
+      { sku: null, normalizedSku: null },
+      { sku: null, normalizedSku: null },
+    ],
+  );
+});
+
+test("ignores caller-supplied ownership lifecycle pointer and public-code fields", async () => {
+  const fixture = await createFixture();
+  const service = createService({
+    publicCodeGenerator: new SequencePublicCodeGenerator([createPublicCode()]),
+  });
+  const command = {
+    initialLocale: "en",
+    initialProductName: `Trusted ownership ${randomUUID()}`,
+    organizationSku: null,
+    organizationId: randomUUID(),
+    actorId: randomUUID(),
+    lifecycleStatus: "ARCHIVED",
+    currentDraftVersionId: randomUUID(),
+    currentPublishedVersionId: randomUUID(),
+    publicCode: createPublicCode(),
+  } as CreateProductCommand;
+
+  const result = await service(command, fixture.context);
+  registerProduct(fixture, result.productId);
+
+  assert.deepEqual(
+    await prisma.product.findUnique({
+      where: { id: result.productId },
+      select: {
+        organizationId: true,
+        lifecycleStatus: true,
+        currentDraftVersionId: true,
+        currentPublishedVersionId: true,
+        createdById: true,
+        updatedById: true,
+        publicCode: true,
+      },
+    }),
+    {
+      organizationId: fixture.ids.organizationId,
+      lifecycleStatus: "ACTIVE",
+      currentDraftVersionId: result.initialProductVersionId,
+      currentPublishedVersionId: null,
+      createdById: fixture.ids.userId,
+      updatedById: fixture.ids.userId,
+      publicCode: result.publicCode,
+    },
+  );
 });
 
 test("rolls back the complete aggregate after every approved persistence failpoint", async () => {
@@ -290,6 +372,202 @@ test("rolls back the complete aggregate after every approved persistence failpoi
   }
 });
 
+test("revalidates Membership and Organization eligibility inside PostgreSQL transactions", async () => {
+  const fixture = await createFixture();
+  const service = createService({
+    publicCodeGenerator: new SequencePublicCodeGenerator([
+      createPublicCode(),
+      createPublicCode(),
+      createPublicCode(),
+      createPublicCode(),
+      createPublicCode(),
+    ]),
+    persistence: recordCreatedProducts(persistence, (productId) => {
+      registerProduct(fixture, productId);
+    }),
+  });
+
+  await prisma.membership.update({
+    where: { id: fixture.ids.membershipId },
+    data: { status: "SUSPENDED" },
+  });
+  await assert.rejects(
+    service(
+      { initialLocale: "hr", initialProductName: `Suspended ${randomUUID()}` },
+      fixture.context,
+    ),
+    (error: unknown) => assertApplicationError(
+      error,
+      "FORBIDDEN",
+      "CREATE_PRODUCT_FORBIDDEN",
+    ),
+  );
+
+  await prisma.membership.update({
+    where: { id: fixture.ids.membershipId },
+    data: { status: "ACTIVE" },
+  });
+  await prisma.membership.update({
+    where: { id: fixture.ids.membershipId },
+    data: { status: "REMOVED" },
+  });
+  await assert.rejects(
+    service(
+      { initialLocale: "hr", initialProductName: `Removed ${randomUUID()}` },
+      fixture.context,
+    ),
+    (error: unknown) => assertApplicationError(
+      error,
+      "FORBIDDEN",
+      "CREATE_PRODUCT_FORBIDDEN",
+    ),
+  );
+
+  await prisma.membership.update({
+    where: { id: fixture.ids.membershipId },
+    data: { status: "ACTIVE", role: "VIEWER" },
+  });
+  await assert.rejects(
+    service(
+      { initialLocale: "hr", initialProductName: `Viewer ${randomUUID()}` },
+      fixture.context,
+    ),
+    (error: unknown) => assertApplicationError(
+      error,
+      "FORBIDDEN",
+      "CREATE_PRODUCT_FORBIDDEN",
+    ),
+  );
+
+  await prisma.membership.update({
+    where: { id: fixture.ids.membershipId },
+    data: { role: "EDITOR" },
+  });
+  await prisma.organization.update({
+    where: { id: fixture.ids.organizationId },
+    data: { status: "SUSPENDED" },
+  });
+  await assert.rejects(
+    service(
+      { initialLocale: "hr", initialProductName: `Ineligible ${randomUUID()}` },
+      fixture.context,
+    ),
+    (error: unknown) => assertApplicationError(
+      error,
+      "INVALID_STATE",
+      "CREATE_PRODUCT_ORGANIZATION_INELIGIBLE",
+    ),
+  );
+
+  await prisma.organization.update({
+    where: { id: fixture.ids.organizationId },
+    data: { status: "ACTIVE" },
+  });
+  await prisma.membership.delete({ where: { id: fixture.ids.membershipId } });
+  await assert.rejects(
+    service(
+      { initialLocale: "hr", initialProductName: `Missing context ${randomUUID()}` },
+      fixture.context,
+    ),
+    (error: unknown) => assertApplicationError(
+      error,
+      "NOT_FOUND",
+      "CREATE_PRODUCT_CONTEXT_NOT_FOUND",
+    ),
+  );
+
+  assert.deepEqual(await countCreateProductRows(fixture), {
+    products: 0,
+    versions: 0,
+    translations: 0,
+    auditLogs: 0,
+  });
+});
+
+test("rejects missing permission and a cross-tenant context without persistence", async () => {
+  const fixture = await createFixture();
+  const foreignIds: CreateProductFixtureIds = {
+    userId: randomUUID(),
+    organizationId: randomUUID(),
+    membershipId: randomUUID(),
+    productIds: [],
+  };
+  const recordedProducts = recordCreatedProducts(persistence, (productId) => {
+    registerProduct(fixture, productId);
+  });
+  const service = createService({
+    publicCodeGenerator: new SequencePublicCodeGenerator([
+      createPublicCode(),
+      createPublicCode(),
+    ]),
+    persistence: recordedProducts,
+  });
+
+  await prisma.user.create({
+    data: {
+      id: foreignIds.userId,
+      email: `${randomUUID()}@task9.passvero.test`,
+      displayName: `Task 10 Foreign User ${randomUUID()}`,
+    },
+  });
+  await prisma.organization.create({
+    data: {
+      id: foreignIds.organizationId,
+      displayName: `Task 10 Foreign Organization ${randomUUID()}`,
+      status: "ACTIVE",
+    },
+  });
+  await prisma.membership.create({
+    data: {
+      id: foreignIds.membershipId,
+      userId: foreignIds.userId,
+      organizationId: foreignIds.organizationId,
+      role: "EDITOR",
+      status: "ACTIVE",
+      joinedAt: new Date(),
+    },
+  });
+
+  try {
+    await assert.rejects(
+      service(
+        { initialLocale: "hr", initialProductName: `No permission ${randomUUID()}` },
+        { ...fixture.context, permissions: [] },
+      ),
+      (error: unknown) => assertApplicationError(
+        error,
+        "FORBIDDEN",
+        "CREATE_PRODUCT_FORBIDDEN",
+      ),
+    );
+
+    await assert.rejects(
+      service(
+        { initialLocale: "hr", initialProductName: `Cross tenant ${randomUUID()}` },
+        {
+          ...fixture.context,
+          userId: foreignIds.userId,
+          membershipId: foreignIds.membershipId,
+        },
+      ),
+      (error: unknown) => assertApplicationError(
+        error,
+        "NOT_FOUND",
+        "CREATE_PRODUCT_CONTEXT_NOT_FOUND",
+      ),
+    );
+
+    assert.deepEqual(await countCreateProductRows(fixture), {
+      products: 0,
+      versions: 0,
+      translations: 0,
+      auditLogs: 0,
+    });
+  } finally {
+    await cleanupCreateProductFixture(prisma, foreignIds);
+  }
+});
+
 test("allows one concurrent same-SKU create and maps the other to safe CONFLICT", async () => {
   const fixture = await createFixture();
   const generator = new SequencePublicCodeGenerator([
@@ -320,13 +598,12 @@ test("allows one concurrent same-SKU create and maps the other to safe CONFLICT"
   const fulfilled = results.filter((result) => result.status === "fulfilled");
   const rejected = results.filter((result) => result.status === "rejected");
 
-  assert.equal(fulfilled.length, 1);
-  assert.equal(rejected.length, 1);
-  const created = fulfilled[0];
-  assert.equal(created?.status, "fulfilled");
-  if (created?.status === "fulfilled") {
+  for (const created of fulfilled) {
     registerProduct(fixture, created.value.productId);
   }
+
+  assert.equal(fulfilled.length, 1);
+  assert.equal(rejected.length, 1);
   const conflict = rejected[0];
   assert.equal(conflict?.status, "rejected");
   if (conflict?.status === "rejected") {
@@ -392,13 +669,34 @@ test("translates real Product uniqueness and active-draft constraints exactly", 
       actorId: fixture.ids.userId,
     }));
   registerProduct(fixture, pointerCandidate.productId);
+  const pointerVersion = await transactionRunner.run((transaction) =>
+    persistence.createInitialProductVersion(transaction, {
+      productId: pointerCandidate.productId,
+      organizationId: fixture.ids.organizationId,
+      sourceLocale: "hr",
+      actorId: fixture.ids.userId,
+    }));
+  const pointerBlocker = await transactionRunner.run((transaction) =>
+    persistence.createProductIdentity(transaction, {
+      organizationId: fixture.ids.organizationId,
+      internalName: `Pointer blocker ${randomUUID()}`,
+      sku: null,
+      normalizedSku: null,
+      publicCode: createPublicCode(),
+      actorId: fixture.ids.userId,
+    }));
+  registerProduct(fixture, pointerBlocker.productId);
+  await prisma.product.update({
+    where: { id: pointerBlocker.productId },
+    data: { currentDraftVersionId: pointerVersion.productVersionId },
+  });
 
   await assert.rejects(
     transactionRunner.run((transaction) =>
       persistence.assignCurrentDraftVersionIfUnset(transaction, {
         productId: pointerCandidate.productId,
         organizationId: fixture.ids.organizationId,
-        productVersionId: holder.initialProductVersionId,
+        productVersionId: pointerVersion.productVersionId,
       })),
     (error: unknown) => assertPersistenceError(error, "POINTER_CONFLICT"),
   );
@@ -445,6 +743,99 @@ test("does not overwrite an unexpected current draft pointer", async () => {
     }).then((product) => product?.currentDraftVersionId),
     holder.initialProductVersionId,
   );
+});
+
+test("rejects an unpointed draft version belonging to another Product", async () => {
+  const fixture = await createFixture();
+  const target = await transactionRunner.run((transaction) =>
+    persistence.createProductIdentity(transaction, {
+      organizationId: fixture.ids.organizationId,
+      internalName: `Pointer target ${randomUUID()}`,
+      sku: null,
+      normalizedSku: null,
+      publicCode: createPublicCode(),
+      actorId: fixture.ids.userId,
+    }));
+  registerProduct(fixture, target.productId);
+  const foreignProduct = await transactionRunner.run((transaction) =>
+    persistence.createProductIdentity(transaction, {
+      organizationId: fixture.ids.organizationId,
+      internalName: `Foreign pointer product ${randomUUID()}`,
+      sku: null,
+      normalizedSku: null,
+      publicCode: createPublicCode(),
+      actorId: fixture.ids.userId,
+    }));
+  registerProduct(fixture, foreignProduct.productId);
+  const foreignVersion = await transactionRunner.run((transaction) =>
+    persistence.createInitialProductVersion(transaction, {
+      productId: foreignProduct.productId,
+      organizationId: fixture.ids.organizationId,
+      sourceLocale: "hr",
+      actorId: fixture.ids.userId,
+    }));
+
+  const assigned = await transactionRunner.run((transaction) =>
+    persistence.assignCurrentDraftVersionIfUnset(transaction, {
+      productId: target.productId,
+      organizationId: fixture.ids.organizationId,
+      productVersionId: foreignVersion.productVersionId,
+    }));
+
+  assert.equal(assigned, false);
+  assert.equal(
+    await prisma.product.findUnique({
+      where: { id: target.productId },
+      select: { currentDraftVersionId: true },
+    }).then((product) => product?.currentDraftVersionId),
+    null,
+  );
+});
+
+test("rejects ProductVersion creation with a different Organization", async () => {
+  const fixture = await createFixture();
+  const foreignOrganizationId = randomUUID();
+  const target = await transactionRunner.run((transaction) =>
+    persistence.createProductIdentity(transaction, {
+      organizationId: fixture.ids.organizationId,
+      internalName: `Version tenant target ${randomUUID()}`,
+      sku: null,
+      normalizedSku: null,
+      publicCode: createPublicCode(),
+      actorId: fixture.ids.userId,
+    }));
+  registerProduct(fixture, target.productId);
+  await prisma.organization.create({
+    data: {
+      id: foreignOrganizationId,
+      displayName: `Task 10 Foreign Organization ${randomUUID()}`,
+      status: "ACTIVE",
+    },
+    select: { id: true },
+  });
+
+  try {
+    await assert.rejects(
+      transactionRunner.run((transaction) =>
+        persistence.createInitialProductVersion(transaction, {
+          productId: target.productId,
+          organizationId: foreignOrganizationId,
+          sourceLocale: "hr",
+          actorId: fixture.ids.userId,
+        })),
+      (error: unknown) => assertPersistenceError(error, "NOT_FOUND"),
+    );
+  } finally {
+    await prisma.productVersion.deleteMany({
+      where: {
+        productId: target.productId,
+        organizationId: foreignOrganizationId,
+      },
+    });
+    await prisma.organization.deleteMany({
+      where: { id: foreignOrganizationId },
+    });
+  }
 });
 
 test("retries one real public-code collision in a fresh complete transaction", async () => {
@@ -681,7 +1072,7 @@ type PersistenceFailpoint = "product" | "version" | "translation" | "pointer" | 
 
 function createFailAfterPersistence(
   delegate: CreateProductPersistence<CreateProductPrismaTransaction>,
-  failpoint: PersistenceFailpoint,
+  failpoint: PersistenceFailpoint | undefined,
   onProductCreated: (productId: string) => void,
 ): CreateProductPersistence<CreateProductPrismaTransaction> {
   const fail = (stage: PersistenceFailpoint): void => {
@@ -723,6 +1114,13 @@ function createFailAfterPersistence(
   };
 }
 
+function recordCreatedProducts(
+  delegate: CreateProductPersistence<CreateProductPrismaTransaction>,
+  onProductCreated: (productId: string) => void,
+): CreateProductPersistence<CreateProductPrismaTransaction> {
+  return createFailAfterPersistence(delegate, undefined, onProductCreated);
+}
+
 function createPublicCode(): string {
   return randomUUID().replaceAll("-", "").slice(0, 22);
 }
@@ -749,9 +1147,9 @@ async function createAndRegisterProduct(
 
 function assertApplicationError(
   error: unknown,
-  category: "CONFLICT" | "INTERNAL",
+  category: "VALIDATION" | "CONFLICT" | "FORBIDDEN" | "INVALID_STATE" | "NOT_FOUND" | "INTERNAL",
   code: string,
-): asserts error is ApplicationError {
+): error is ApplicationError {
   assert.ok(error instanceof ApplicationError);
   assert.equal(error.category, category);
   assert.equal(error.code, code);
@@ -759,6 +1157,7 @@ function assertApplicationError(
   assert.equal(error.correlationId?.length, 36);
   assert.equal("cause" in error, false);
   assert.doesNotMatch(`${error.code} ${error.message}`, /P2002|SQL|postgresql:\/\//);
+  return true;
 }
 
 function assertPersistenceError(
@@ -767,7 +1166,8 @@ function assertPersistenceError(
     | "PUBLIC_CODE_CONFLICT"
     | "ORGANIZATION_SKU_CONFLICT"
     | "ACTIVE_DRAFT_CONFLICT"
-    | "POINTER_CONFLICT",
+    | "POINTER_CONFLICT"
+    | "NOT_FOUND",
 ): boolean {
   assert.ok(error instanceof CreateProductPersistenceError);
   assert.equal(error.kind, kind);
@@ -814,7 +1214,10 @@ async function countForbiddenAggregateRows(
   const [
     passports,
     qrCodes,
+    identifiers,
+    materials,
     documents,
+    productDocuments,
     productImages,
     notifications,
     integrationMappings,
@@ -827,8 +1230,17 @@ async function countForbiddenAggregateRows(
     prisma.qRCode.count({
       where: { passport: { productId, organizationId: fixture.ids.organizationId } },
     }),
+    prisma.productIdentifier.count({
+      where: { productVersion: { productId, organizationId: fixture.ids.organizationId } },
+    }),
+    prisma.productMaterial.count({
+      where: { productVersion: { productId, organizationId: fixture.ids.organizationId } },
+    }),
     prisma.document.count({
       where: { organizationId: fixture.ids.organizationId },
+    }),
+    prisma.productDocument.count({
+      where: { productVersion: { productId, organizationId: fixture.ids.organizationId } },
     }),
     prisma.productImage.count({
       where: { productVersion: { productId, organizationId: fixture.ids.organizationId } },
@@ -850,7 +1262,10 @@ async function countForbiddenAggregateRows(
   return {
     passports,
     qrCodes,
+    identifiers,
+    materials,
     documents,
+    productDocuments,
     productImages,
     notifications,
     integrationMappings,

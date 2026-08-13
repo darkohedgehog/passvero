@@ -638,6 +638,8 @@ interface RetryFixture {
 interface RetryFixtureOptions {
   readonly successTelemetryErrorBeforeRecord?: unknown;
   readonly successTelemetryError?: unknown;
+  readonly collisionTelemetryError?: unknown;
+  readonly exhaustionTelemetryError?: unknown;
 }
 
 function createRetryFixture(
@@ -730,9 +732,15 @@ function createRetryFixture(
         },
         recordPublicCodeCollision(input) {
           telemetry.collisions.push(input);
+          if (options.collisionTelemetryError !== undefined) {
+            throw options.collisionTelemetryError;
+          }
         },
         recordPublicCodeExhaustion() {
           telemetry.exhaustions += 1;
+          if (options.exhaustionTelemetryError !== undefined) {
+            throw options.exhaustionTelemetryError;
+          }
         },
       },
     }),
@@ -903,6 +911,49 @@ test("returns the committed result when success telemetry throws", async () => {
     assert.deepEqual(fixture.telemetry.successes, successes);
     assert.deepEqual(fixture.telemetry.failures, []);
   }
+});
+
+test("continues public-code retries when collision telemetry throws", async () => {
+  const fixture = createRetryFixture(
+    ["PUBLIC_CODE_CONFLICT"],
+    { collisionTelemetryError: new Error("collision telemetry unavailable") },
+  );
+
+  const result = await fixture.service(validCommand, activeEditorContext);
+
+  assert.equal(result.publicCode, fixture.publicCodes[1]);
+  assertRetryAttempts(fixture, 2);
+  assert.deepEqual(fixture.telemetry.collisions, [{ attempt: 1 }]);
+  assert.deepEqual(fixture.telemetry.successes, [{ durationMs: 41 }]);
+  assert.deepEqual(fixture.telemetry.failures, []);
+});
+
+test("preserves the stable exhausted error when collision and exhaustion telemetry throw", async () => {
+  const fixture = createRetryFixture(
+    ["PUBLIC_CODE_CONFLICT", "PUBLIC_CODE_CONFLICT", "PUBLIC_CODE_CONFLICT"],
+    {
+      collisionTelemetryError: new Error("collision telemetry unavailable"),
+      exhaustionTelemetryError: new Error("exhaustion telemetry unavailable"),
+    },
+  );
+
+  await assert.rejects(
+    fixture.service(validCommand, activeEditorContext),
+    (error: unknown) => error instanceof ApplicationError
+      && error.category === "INTERNAL"
+      && error.code === "CREATE_PRODUCT_PUBLIC_CODE_EXHAUSTED"
+      && error.retryable === false
+      && error.correlationId === activeEditorContext.correlationId,
+  );
+
+  assertRetryAttempts(fixture, 3);
+  assert.deepEqual(
+    fixture.telemetry.collisions,
+    [{ attempt: 1 }, { attempt: 2 }, { attempt: 3 }],
+  );
+  assert.equal(fixture.telemetry.exhaustions, 1);
+  assert.deepEqual(fixture.telemetry.successes, []);
+  assert.deepEqual(fixture.telemetry.failures, [{ category: "INTERNAL", durationMs: 41 }]);
 });
 
 test("sanitizes an initial clock failure before product work", async () => {

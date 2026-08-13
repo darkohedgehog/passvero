@@ -148,10 +148,10 @@ export function createCreateProductService<Transaction>(
             error instanceof CreateProductPersistenceError
             && error.kind === "PUBLIC_CODE_CONFLICT"
           ) {
-            dependencies.telemetry.recordPublicCodeCollision({ attempt });
+            recordPublicCodeCollision(dependencies, attempt);
 
             if (attempt === 3) {
-              dependencies.telemetry.recordPublicCodeExhaustion();
+              recordPublicCodeExhaustion(dependencies);
               throw createProductError(
                 "INTERNAL",
                 "CREATE_PRODUCT_PUBLIC_CODE_EXHAUSTED",
@@ -188,6 +188,27 @@ export function createCreateProductService<Transaction>(
       throw applicationError;
     }
   };
+}
+
+function recordPublicCodeCollision<Transaction>(
+  dependencies: CreateProductDependencies<Transaction>,
+  attempt: 1 | 2 | 3,
+): void {
+  try {
+    dependencies.telemetry.recordPublicCodeCollision({ attempt });
+  } catch {
+    // Collision telemetry is observational and must not interrupt retries.
+  }
+}
+
+function recordPublicCodeExhaustion<Transaction>(
+  dependencies: CreateProductDependencies<Transaction>,
+): void {
+  try {
+    dependencies.telemetry.recordPublicCodeExhaustion();
+  } catch {
+    // Exhaustion telemetry must not replace the stable application error.
+  }
 }
 
 function recordCreateProductSuccess<Transaction>(
