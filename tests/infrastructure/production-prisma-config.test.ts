@@ -32,6 +32,12 @@ test("accepts only the production runtime role and database over direct PostgreS
     ).connectionString,
     "postgresql://passvero%5Fapp:not-a-real-secret@localhost/passvero",
   );
+  assert.equal(
+    validateProductionDatabaseUrl(
+      "postgresql://passvero_app:not-a-real-secret@localhost/pass%76ero",
+    ).connectionString,
+    "postgresql://passvero_app:not-a-real-secret@localhost/pass%76ero",
+  );
 });
 
 test("rejects missing, padded, malformed, hosted, test, and migrator configurations", () => {
@@ -46,7 +52,33 @@ test("rejects missing, padded, malformed, hosted, test, and migrator configurati
   expectCode("postgresql://passvero_test:not-a-real-secret@localhost/passvero", "ROLE");
   expectCode("postgresql://passvero_app:not-a-real-secret@localhost/passvero_test", "DATABASE");
   expectCode("postgresql://passvero_app:not-a-real-secret@localhost/other", "DATABASE");
+  expectCode(
+    "postgresql://passvero_app:not-a-real-secret@localhost/passvero%2Fextra",
+    "DATABASE",
+  );
   expectCode("postgresql://passvero%ZZ:not-a-real-secret@localhost/passvero", "MALFORMED");
+});
+
+test("rejects decoded user query parameters with a stable secret-free role error", () => {
+  const candidates = [
+    `${validUrl}?user=passvero_migrator`,
+    `${validUrl}?%75ser=passvero_migrator`,
+    `${validUrl}?user=passvero_app`,
+  ];
+
+  for (const candidate of candidates) {
+    assert.throws(() => validateProductionDatabaseUrl(candidate), (error: unknown) => {
+      assert.ok(error instanceof ProductionDatabaseConfigError);
+      assert.equal(error.code, "ROLE");
+      assert.equal(
+        error.message,
+        "Production database configuration must use the runtime role.",
+      );
+      assert.doesNotMatch(error.message, /passvero_app|passvero_migrator|user=|%75ser/);
+      assert.equal("cause" in error, false);
+      return true;
+    });
+  }
 });
 
 test("never exposes candidate secrets through validation errors", () => {

@@ -33,7 +33,7 @@ const corePath =
   "src/infrastructure/persistence/prisma/production-prisma-runtime-core.ts";
 
 function assertClientSourceDoesNotImportRuntime(source, label) {
-  if (/^\s*["']use client["'];/m.test(source)) {
+  if (/^\s*["']use client["'];?/m.test(source)) {
     assert.doesNotMatch(
       source,
       /production-prisma-runtime|production-prisma-config|production-prisma-runtime-core|prisma-create-product-composition/,
@@ -59,6 +59,13 @@ test("guards client modules against production database imports", () => {
     () => assertClientSourceDoesNotImportRuntime(
       '"use client";\nimport "@/src/infrastructure/persistence/prisma/production-prisma-runtime";',
       "synthetic-client.tsx",
+    ),
+    /imports the production database boundary/,
+  );
+  assert.throws(
+    () => assertClientSourceDoesNotImportRuntime(
+      '"use client"\nimport "@/src/infrastructure/persistence/prisma/production-prisma-runtime";',
+      "synthetic-semicolonless-client.tsx",
     ),
     /imports the production database boundary/,
   );

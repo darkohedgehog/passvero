@@ -46,6 +46,9 @@ export function validateProductionDatabaseUrl(
   if (parsed.protocol !== "postgres:" && parsed.protocol !== "postgresql:") {
     throw new ProductionDatabaseConfigError("SCHEME");
   }
+  if (parsed.searchParams.has("user")) {
+    throw new ProductionDatabaseConfigError("ROLE");
+  }
 
   let user: string;
   let database: string;
