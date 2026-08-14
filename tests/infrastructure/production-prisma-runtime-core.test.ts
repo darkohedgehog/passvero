@@ -95,9 +95,36 @@ test("coalesces concurrent disconnects and blocks access while disconnecting", a
   const second = lifecycle.disconnect();
   assert.equal(first, second);
   assert.throws(() => lifecycle.getRuntime(), /disconnect is in progress/i);
+  await Promise.resolve();
   assert.ok(release !== undefined);
   release();
   await first;
+});
+
+test("normalizes synchronous disconnect throws and blocks access after failure", async () => {
+  const client = {
+    $disconnect(): Promise<void> {
+      throw new Error("synchronous disconnect failed");
+    },
+  };
+  const lifecycle = createProductionPrismaRuntimeLifecycle(() => ({
+    pool: {}, adapter: {}, client,
+  }));
+  const runtime = lifecycle.getRuntime();
+
+  let result: Promise<void> | undefined;
+  try {
+    result = lifecycle.disconnect();
+  } catch {
+    assert.equal(lifecycle.getRuntime(), runtime);
+    assert.fail(
+      "disconnect threw synchronously and getRuntime returned the failed-disconnect client",
+    );
+  }
+
+  assert.ok(result !== undefined);
+  await assert.rejects(result, /synchronous disconnect failed/);
+  assert.throws(() => lifecycle.getRuntime(), /disconnect previously failed/i);
 });
 
 test("does not cache failed initialization or return a runtime after failed disconnect", async () => {

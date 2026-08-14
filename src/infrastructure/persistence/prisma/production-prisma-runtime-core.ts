@@ -67,7 +67,8 @@ export function createProductionPrismaRuntimeLifecycle<
       if (runtime === undefined) return Promise.resolve();
 
       const current = runtime;
-      disconnecting = current.client.$disconnect()
+      disconnecting = Promise.resolve()
+        .then(() => current.client.$disconnect())
         .then(() => {
           if (runtime === current) runtime = undefined;
           disconnectFailed = false;
