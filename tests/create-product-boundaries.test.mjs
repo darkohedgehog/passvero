@@ -66,10 +66,12 @@ test("keeps generated Prisma access inside the CreateProduct adapter", () => {
   ];
   const generatedClientImporters = sourceFiles.filter((path) =>
     /generated\/prisma\/client/.test(read(path)),
-  );
+  ).sort();
 
   assert.deepEqual(generatedClientImporters, [
+    "src/infrastructure/persistence/prisma/prisma-create-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product.ts",
+    "src/infrastructure/persistence/prisma/production-prisma-runtime.ts",
   ]);
 });
 
