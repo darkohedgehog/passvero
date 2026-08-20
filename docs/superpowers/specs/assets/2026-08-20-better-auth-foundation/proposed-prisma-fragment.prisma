@@ -11,6 +11,7 @@ model AuthProviderUser {
   updatedAt            DateTime              @updatedAt
   authprovidersessions AuthProviderSession[] @relation("AuthProviderUserSessions")
   authprovideraccounts AuthProviderAccount[] @relation("AuthProviderUserAccounts")
+  credentialTokens     AuthCredentialToken[] @relation("AuthProviderUserCredentialTokens")
 
   @@unique([email])
   @@map("AuthProviderUser")
@@ -27,10 +28,12 @@ model AuthProviderSession {
   userId                 String
   authprovideruser       AuthProviderUser @relation("AuthProviderUserSessions", fields: [userId], references: [id], onDelete: Cascade)
   authenticatedAt        DateTime
-  selectedOrganizationId String?
+  selectedOrganizationId String?          @db.Uuid
+  selectedOrganization   Organization?    @relation("AuthProviderSessionSelectedOrganization", fields: [selectedOrganizationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   @@unique([token])
   @@index([userId])
+  @@index([selectedOrganizationId])
   @@map("AuthProviderSession")
 }
 
@@ -80,4 +83,61 @@ model AuthIdentity {
 
   @@unique([provider, providerSubject])
   @@index([userId])
+}
+
+enum AuthCredentialTokenPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+model AuthCredentialToken {
+  id             String                     @id @default(uuid()) @db.Uuid
+  providerUserId String
+  purpose        AuthCredentialTokenPurpose
+  tokenDigest    String                     @unique @db.VarChar(43)
+  expiresAt      DateTime
+  consumedAt     DateTime?
+  invalidatedAt  DateTime?
+  createdAt      DateTime                   @default(now())
+
+  providerUser AuthProviderUser @relation("AuthProviderUserCredentialTokens", fields: [providerUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([providerUserId, purpose])
+  @@index([expiresAt])
+}
+
+model AccountActivation {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @db.Uuid
+  tokenDigest   String    @unique @db.VarChar(43)
+  expiresAt     DateTime
+  consumedAt    DateTime?
+  invalidatedAt DateTime?
+  createdAt     DateTime  @default(now())
+
+  user User @relation("UserAccountActivations", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+enum AuthAbuseDimension {
+  TRUSTED_NETWORK
+  ACCOUNT_IDENTIFIER
+  ACCOUNT_AND_TRUSTED_NETWORK
+  GLOBAL_ENDPOINT
+}
+
+model AuthAbuseBucket {
+  id            String             @id @default(uuid()) @db.Uuid
+  dimension     AuthAbuseDimension
+  keyDigest     String             @unique @db.VarChar(43)
+  failureCount  Int                @default(0)
+  backoffLevel  Int                @default(0)
+  blockedUntil  DateTime?
+  expiresAt     DateTime
+  updatedAt     DateTime           @updatedAt
+
+  @@index([dimension, blockedUntil])
+  @@index([expiresAt])
 }

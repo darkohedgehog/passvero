@@ -45,11 +45,13 @@
 
 ## Provider-model and canonical identity reconciliation
 
-The proposed provider models are kept separate from canonical `User`,
-`Organization`, and `Membership`. The raw model names already avoid collisions,
-so they are retained. The two generated user relations receive explicit relation
-names only; all Better Auth-required fields, unique constraints, indexes, table
-maps, and cascade behavior are preserved.
+The proposed provider identity models are kept separate from canonical `User`
+and `Membership`. The raw model names already avoid collisions, so they are
+retained. The generated user relations receive explicit relation names only;
+all Better Auth-required fields, unique constraints, indexes, table maps, and
+cascade behavior are preserved. Task 4 adds one nullable
+`AuthProviderSession.selectedOrganizationId` relation to canonical
+`Organization` solely as server-side selection, never identity or authorization.
 
 `AuthIdentity` is the only proposed binding to canonical `User`. It supports
 multiple provider identities per canonical user, uses `(provider,
@@ -62,7 +64,8 @@ The canonical proposal also requires `authIdentities AuthIdentity[]` on `User`.
 That inverse is a required future canonical-schema edit and appears only in the
 disposable validation copy; it is intentionally absent from `prisma/schema.prisma`
 in this review-only task. No provider model relates to `Organization` or
-`Membership`.
+`Membership`, except the Task 4 nullable session-selection relation to
+`Organization`; no provider model contains organization or membership authority.
 
 | Identifier or relation field | Generated type | Proposed Prisma type | PostgreSQL type | Length or check requirement | Migration or exit implication |
 | --- | --- | --- | --- | --- | --- |
@@ -90,3 +93,100 @@ to UUID based on their current appearance. It must preserve the provider-model
 relations and constraints shown here, create the canonical `AuthIdentity`
 foreign key and indexes, and keep application services dependent only on
 canonical `User` after identity resolution.
+
+## Session, activation, recovery, and abuse persistence decision
+
+The exact table, column, type, index, foreign-key, CHECK, partial-index,
+retention, atomicity, and deployment requirements are in
+`docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-migration-contract.md`.
+That asset is a review contract, not SQL and not migration authority.
+
+### Organization-selection choice
+
+**Decision: persist `selectedOrganizationId` directly on
+`AuthProviderSession`, with a nullable UUID foreign key to canonical
+`Organization`.** This is the one selected persistence design. It is compatible
+with the generated provider model's additional server-side session field, keeps
+the database session authoritative, and does not expose organization state in
+the cookie: the browser still receives only the opaque session credential.
+`ON DELETE SET NULL` clears a physically deleted organization, while every
+request and switch must still revalidate active membership and active
+organization status. The value is selection only, never authorization evidence.
+
+A separate one-to-one `AuthSessionSelection` is rejected. It would add a table,
+join, uniqueness rule, lifecycle cleanup path, and migration/exit cost without
+creating a stronger authority boundary. Neither the selected session design nor
+the cookie contains role, permission, membership status, organization status,
+entitlement, billing, or platform-administration state.
+
+`authenticatedAt` remains a required server-owned session timestamp. Rotation
+must preserve it so rolling expiration cannot bypass the 30-day absolute limit.
+Expired and revoked sessions are deleted/invalidated by the provider lifecycle
+and cannot retain selection.
+
+### Token-storage reconciliation
+
+The installed/disposable package evidence is Better Auth 1.7.1
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/package.json:2-3`).
+Its relevant behavior is:
+
+- Built-in email verification creates a signed JWT containing lower-cased email
+  and optional update data
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:13-18`),
+  then verifies and parses that JWT on use
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:173-186`). It does not
+  persist a token digest, atomically consume a token, or let a new token
+  invalidate predecessors. Signed/encoded opacity is not single use.
+- Password reset generates a token and persists
+  `reset-password:<raw token>` as the verification identifier
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:74-87`). The 1.7.1 option
+  explicitly defaults verification identifier storage to `plain`
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/types/init-options.d.mts:1173-1182`), and the
+  storage implementation passes an absent/`plain` identifier through unchanged
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/verification-token-storage.mjs:4-12`). Token opacity
+  is therefore not evidence of hashing.
+- Reset consumption calls `consumeVerificationValue` before password mutation
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:157-174`). Its database path
+  transactionally consumes the latest row and returns null to losing concurrent
+  callers (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:818-860`). That makes a
+  single identifier concurrency-safe, but reset issuance creates independent
+  identifiers and does not supersede every predecessor for the user.
+
+**Required before Stage 13E:** use the proposed Passvero-owned
+`AuthCredentialToken` persistence and reviewed adapter/endpoint boundary for
+email verification and password reset. The built-in stateless email-verification
+flow and default reset storage are rejected. Merely enabling identifier hashing
+would still leave email verification without atomic consumption and both flows
+without the approved predecessor-invalidation transaction.
+
+`AuthCredentialToken` and `AccountActivation` store only HMAC-SHA-256 digests,
+never raw or encoded capabilities. Issuance locks the owning provider/canonical
+user, invalidates every active predecessor, and inserts one replacement in the
+same transaction; a partial unique index is the backstop. Consumption is an
+atomic conditional `UPDATE ... RETURNING` gated on digest, unconsumed,
+non-invalidated, and unexpired state. Email verification, password replacement
+plus all-session revocation, and activation plus credential/identity creation
+must commit in that same transaction, so only one concurrent request can cause
+the protected state change. The fixed lifetimes are 24 hours for verification,
+30 minutes for reset, and 24 hours for activation; terminal/expired rows are
+retained no longer than 30 additional days.
+
+### Progressive PostgreSQL abuse state
+
+`AuthAbuseBucket` permits exactly four enum dimensions:
+`TRUSTED_NETWORK`, `ACCOUNT_IDENTIFIER`,
+`ACCOUNT_AND_TRUSTED_NETWORK`, and `GLOBAL_ENDPOINT`. Its unique `keyDigest` is
+a versioned, keyed HMAC-SHA-256 base64url digest over the enum, an allowlisted
+endpoint code, and only the dimension's normalized components. Plain SHA-256
+and plaintext email, IP/network, user-agent, password, token, forwarded-header,
+canonical/provider user, session, tenant, role, or permission columns are
+forbidden.
+
+Each attempt updates all applicable buckets in one transaction through atomic
+upsert/increment statements. CHECK constraints require non-negative failures,
+backoff level 0 through 12, finite blocks within expiry, valid digest shape, and
+expiry no more than 30 days after the last transition. Success cannot delete or
+erase trusted-network, combined, or global attack evidence. Expired rows are
+pruned in bounded batches within 24 hours, yielding a hard 31-day maximum after
+the last transition. No database action or connection was used to reach these
+review conclusions.
