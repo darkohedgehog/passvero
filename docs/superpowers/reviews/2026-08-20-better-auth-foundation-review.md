@@ -313,10 +313,10 @@ implementation approval.
 | Rotation preserves `authenticatedAt` | **PASS** | Refresh conditionally replaces the opaque token in one transaction, advances `lastRefreshAt` and `updatedAt`, caps `expiresAt`, and preserves `authenticatedAt` plus selection. Authenticated password change preserves all lifetime anchors while deleting other sessions and rotating the current token. Zero-row races and post-commit cookie-delivery failure require reauthentication. Better Auth 1.7.1 native same-token refresh and delete-then-create password-change behavior are rejected. |
 | Organization selection without authorization snapshots | **PASS** | The selected design is nullable `AuthProviderSession.selectedOrganizationId UUID` with `ON DELETE SET NULL ON UPDATE CASCADE`, written only by the dedicated CSRF-protected mutation after canonical identity, active membership, and active organization revalidation. The session and cookie store no roles, permissions, membership/organization status, entitlement, billing, or platform-admin state. Every request and business mutation revalidates authority. A separate one-to-one selection table is rejected as added join/write/lifecycle cost without a stronger boundary. |
 | Verification, reset, and activation token lifecycle | **PASS** | `AuthCredentialToken` and `AccountActivation` store only distinct-key HMAC-SHA-256 digests as 43-character base64url values. Owner-lock issuance invalidates active predecessors and inserts one replacement; partial unique indexes backstop that rule. Atomic conditional consumption gates digest, single-use state, invalidation, and expiry and commits the protected state change in the same transaction. Lifetimes are verification 24 hours, reset 30 minutes, activation 24 hours; terminal/expired rows remain no longer than 30 additional days. Activation also binds the locked current canonical email by separate-key `intendedEmailDigest`. Native stateless email verification and default plaintext reset identifiers are rejected. |
-| Password hashing ownership | **PASS** | Better Auth owns credential hashing and verification; Passvero does not introduce a second password hash. In pinned 1.7.1, context creation selects the configured override or Better Auth defaults (`better-auth/dist/context/create-context.mjs:181-188`), and the default delegates to `@better-auth/utils/password` using scrypt in Node (`better-auth/dist/crypto/password.mjs:1-12`). The selected contract uses that reviewed default and stores only its hash in nullable `AuthProviderAccount.password`. The later password-policy boundary must normalize to NFC, enforce 15-128 Unicode code points without trimming, and complete compromised/common/contextual checks before hashing; changing hash/verify functions requires a new security review. |
+| Password hashing ownership | **PASS** | The mandatory Passvero auth-layer/provider-edge password boundary owns normalization, policy checks, and the exact configured `emailAndPassword.password.hash/verify` callbacks; domain code never handles provider hashes. Pinned Better Auth 1.7.1 permits custom callbacks, while its default is rejected because it applies NFKC and compares hex text. The selected boundary applies NFC exactly once, enforces every approved check before credential scrypt/comparison, and stores only the versioned self-describing Passvero scrypt envelope in nullable `AuthProviderAccount.password`. Native password-bearing routes that bypass this boundary are not exposed. This boundary is a hard gate before Stage 13E. |
 | Progressive PostgreSQL abuse control | **PASS** | Exactly four keyed-digest dimensions are allowed. The endpoint matrix applies global/network admission before lookup and account/combined admission after a resolved owner. One `SERIALIZABLE` transaction uses the fixed lock hierarchy, atomic upsert/counters, finite level 0-12 backoff, exact thresholds/windows, and no automatic retry on serialization failure. Success never erases evidence. Rows expire no later than 30 days after their last transition and are pruned within 24 hours, for a hard 31-day maximum. Plaintext identifiers, network data, tokens, credentials, proxy headers, and authorization snapshots are forbidden. |
 | Excluded secondary/native capabilities | **PASS** | Redis, secondary session storage, cookie cache, Better Auth Organization/Admin/OAuth/magic-link/2FA/passkey plugins, public signup, and automatic linking remain excluded. The initial route/config surface exposes neither provider organizations nor generic session update/read paths. No excluded package, schema, source, route, migration, or environment change exists in this review stage. |
-| Migration and exit cost | **OPERATOR DECISION REQUIRED** | Approval accepts two enums, eight proposed tables, three future canonical inverse relations, provider-owned opaque identifiers, named CHECKs/partial indexes, a required Passvero session boundary, and a required digest-only credential-token boundary. Prisma cannot express every database invariant, so a later generated migration requires manual amendment and independent schema-test/migration review. Exit remains bounded because domain services consume canonical `User`, not provider types, but provider/session/token evidence and retention windows prevent an immediate destructive drop. This material cost is the sole unresolved operator decision. |
+| Migration and exit cost | **OPERATOR DECISION REQUIRED** | Approval accepts two enums, eight proposed tables, three future canonical inverse relations, provider-owned opaque identifiers, named CHECKs/partial indexes, a required Passvero session boundary, a required digest-only credential-token boundary, and the mandatory NFC custom password boundary. Prisma cannot express every database invariant, so a later generated migration requires manual amendment and independent schema-test/migration review. Exit remains bounded because domain services consume canonical `User`, not provider types, and the password envelope is provider-independent, but provider/session/token evidence and retention windows prevent an immediate destructive drop. This material cost is the sole unresolved operator decision. |
 | Rollback and forward compatibility | **PASS** | Rollback is forward-only while credential, token, session, or abuse evidence exists: disable new auth paths, preserve rows through required retention, and use a separately reviewed migration. Never use Better Auth migration execution, `prisma db push`, direct review SQL, or destructive cleanup as recovery. A Better Auth upgrade requires a fresh generated-schema diff, installed-source review of every rejected native path, disposable Prisma validation, and renewed operator approval. Provider-neutral `AuthIdentity` and opaque subjects preserve replacement-provider portability. |
 
 ## Exact proposed contracts submitted for decision
@@ -358,9 +358,144 @@ The atomic persistence contract comprises exactly:
   and deployment exclusions in
   `docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-migration-contract.md`.
 
+`AuthProviderAccount.password` persists only the selected versioned Passvero
+password-hash envelope below. It never persists a raw, merely normalized, or
+unversioned Better Auth default value. This adds no table, column, enum, index,
+or migration shape beyond the already proposed nullable provider password
+column.
+
+### Mandatory NFC password boundary
+
+The pinned default is not compatible with the approved
+`PASSWORD_UNICODE_NORMALIZATION=NFC` policy. Better Auth 1.7.1 delegates its
+default to `@better-auth/utils/password`; the exact Node implementation fixes
+`N = 16384`, `r = 16`, `p = 1`, and `dkLen = 64`, but calls
+`password.normalize("NFKC")`, emits an unversioned `<hex-salt>:<hex-key>` value,
+and compares hex strings
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/utils/dist/password.node.mjs:3-41`).
+NFKC creates a broader equivalence class than NFC by collapsing compatibility
+characters that the approved policy keeps distinct. Two distinct NFC password
+inputs can therefore reach the same default KDF input; a stored default hash
+cannot later recover that distinction. This is the reviewer's equivalence risk,
+not an algorithm-strength objection.
+
+Better Auth explicitly supports custom asynchronous `hash(password)` and
+`verify({ hash, password })` callbacks at
+`emailAndPassword.password`
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/types/init-options.d.mts:720-733`).
+The selected mandatory design supplies both
+`emailAndPassword.password.hash` and `emailAndPassword.password.verify` from one
+server-only Passvero authentication-adapter module. This module is provider-edge
+code. It is not a domain service, is never imported by domain code, and is the
+only module allowed to parse or produce credential hashes.
+
+The exact Better Auth configuration interface is:
+
+```ts
+emailAndPassword: {
+  minPasswordLength: 1,
+  maxPasswordLength: 256,
+  password: {
+    hash: hashPreparedNfcPassword,
+    verify: verifyPreparedNfcPassword,
+  },
+}
+
+declare function hashPreparedNfcPassword(password: string): Promise<string>;
+declare function verifyPreparedNfcPassword(input: {
+  hash: string;
+  password: string;
+}): Promise<boolean>;
+```
+
+The callback `string` types match Better Auth's required interface; their module
+is private to the sole auth-layer entry point, so a raw/unprepared string cannot
+reach them through an application route.
+
+Every password-bearing Passvero flow—activation, sign-in, reset, authenticated
+change, and future rehash—must use one reviewed auth-layer entry point. That
+entry point converts the raw JavaScript string to NFC exactly once before every
+length, common, contextual, compromised, hash, and comparison operation. It
+then counts 15-128 Unicode code points, preserves spaces, and permits no
+trimming, truncation, or second normalization. Common, contextual, and
+compromised-password checks consume that same prepared NFC value and complete
+before credential hashing or comparison. A compromised-password service may
+receive only an approved k-anonymity digest prefix, never the plaintext value.
+The prepared value is encoded once as UTF-8 bytes for the KDF; malformed string
+input fails generically. Better Auth's own non-authoritative transport bounds
+are configured `minPasswordLength: 1` and `maxPasswordLength: 256` only so its
+UTF-16 checks cannot reject an already approved 15-128-code-point value. The
+Passvero check remains authoritative, and native unwrapped password endpoints
+are not exposed.
+
+The v1 hash operation is exact:
+
+1. Obtain a cryptographically random 16-byte salt from Node
+   `crypto.randomBytes(16)` for every hash or rehash.
+2. Encode the prepared NFC password as UTF-8 bytes with no intermediary string
+   transformation.
+3. Invoke asynchronous Node `crypto.scrypt` with `N = 16384`, `r = 16`,
+   `p = 1`, `dkLen = 64`, and
+   `maxmem = 128 * N * r * 2 = 67,108,864 bytes`.
+4. Encode salt and derived key as canonical unpadded base64url and return the
+   versioned self-describing format
+   `$passvero$scrypt$v=1$N=16384$r=16$p=1$dkLen=64$<salt>$<derived-key>`, where
+   `<salt>` is exactly a 22-character unpadded base64url salt and
+   `<derived-key>` is exactly an 86-character unpadded base64url derived key.
+
+Verification uses a strict full-string parser with a fixed maximum input
+length. For v1 it accepts only the literal algorithm/version labels, exact field
+order, exact parameter names and values above, one 22-character canonical
+unpadded base64url salt decoding to 16 bytes, and one 86-character canonical
+unpadded base64url key decoding to 64 bytes. Missing, duplicate, reordered,
+unknown, out-of-range, padded, noncanonical, overlong, or trailing data is
+rejected before KDF allocation. It derives exactly 64 bytes using the parsed and
+bounded v1 parameters and compares equal-length byte buffers only with Node
+`crypto.timingSafeEqual`; string equality is forbidden. Parse, policy, KDF,
+comparison, and resource failures produce the same generic authentication
+failure and safe protected telemetry. Temporary byte buffers are cleared in a
+`finally` path where Node ownership permits.
+
+No plaintext logging/transmission is allowed: the raw or prepared password is
+never persisted, logged, placed in telemetry/errors/queues, returned, or sent to
+an external service. It exists only in the HTTPS request and the in-process
+server auth boundary for the duration of the operation. Tests use structural
+contract and generated random/property inputs at implementation time; review
+artifacts and fixtures must not store test passwords.
+
+The Better Auth default `<hex-salt>:<hex-key>` format and every other unversioned,
+NFKC-derived, unknown-algorithm, or unknown-parameter format MUST NOT be accepted
+as legacy input. The only initial accepted format is Passvero scrypt v1. No
+existing Passvero authentication credentials require legacy migration: this
+review branch has no Better Auth dependency or auth source, the canonical schema
+has no provider-account/auth tables, and no database was accessed. If any
+out-of-band credential store is discovered before Stage 13E, implementation
+must stop and reopen the operator/security gate rather than add a default-hash
+fallback.
+
+An algorithm/parameter upgrade requires a new reviewed envelope version with
+fixed bounds and explicit accepted-version allowlist. New credentials always
+use the one current version. An older Passvero version remains verifiable only
+when explicitly retained by that review; after successful authentication the
+auth-layer credential service must rehash the already prepared NFC value with a
+fresh salt and replace the provider hash in the same transaction as the
+credential-authentication state transition. Failed authentication never
+rehashes. An old verifier may be removed only after protected inventory proves
+zero remaining hashes and the rollback window closes. Provider exit exports or
+imports only the self-describing hash envelope and identity binding, never
+plaintext; a replacement provider must implement the exact accepted verifier or
+force the digest-only password-reset flow. It must never reinterpret the
+normalization policy.
+
+Configuration, route isolation, NFC-once property tests, Unicode code-point
+boundaries, canonical envelope parsing, resource bounds, timing-safe comparison,
+generic failures, no-default-format acceptance, and upgrade/exit behavior are a
+hard gate before Stage 13E. This selected mandatory boundary resolves password
+ownership as `PASS`; migration and exit cost remains the sole operator gate.
+
 This is an indivisible decision: implementation must not substitute native
-provider behavior for either Passvero-owned boundary or accept only a subset of
-the constraints.
+provider behavior for any of the three mandatory Passvero-owned boundaries or
+accept only a subset of the constraints.
 
 ## Rejected native and alternative behaviors
 
@@ -371,6 +506,7 @@ the constraints.
 | Native Better Auth authenticated password-change session replacement | **REJECT** | Delete-and-create resets a defaulted `authenticatedAt`; the Passvero transaction preserves all lifetime anchors. |
 | Built-in stateless email verification | **REJECT** | A signed JWT has no persisted atomic single-use state or predecessor invalidation. |
 | Default Better Auth password-reset identifier storage | **REJECT** | Pinned 1.7.1 stores `reset-password:<raw token>` under the default `plain` mode; hashing alone still does not add complete supersession. |
+| Better Auth default password hash/verify | **REJECT** | Pinned 1.7.1 applies NFKC, emits an unversioned hex envelope, and compares hex strings. It violates the approved NFC equivalence contract and MUST NOT be accepted as new or legacy credential input. |
 | Generic session additional-field update | **REJECT** | It would make server-owned timestamps or organization selection client-writable; all three fields are `input: false`. |
 | Better Auth Organization plugin and automatic linking | **REJECT** | Provider organization/role state and email-based linking would violate canonical identity and authorization boundaries. |
 | Redis, cookie cache, and secondary session authority | **REJECT** | Initial authority is the PostgreSQL session row; duplicate authority and stale authorization state are excluded. |

@@ -340,6 +340,42 @@ test("migration contract fixes token lifecycle, abuse retention, and deployment 
   }
 });
 
+test("password contract preserves NFC equivalence and rejects the Better Auth default", async () => {
+  const review = await readFile(reviewPath, "utf8");
+  const password = review.match(
+    /### Mandatory NFC password boundary[\s\S]*?(?=## Rejected native and alternative behaviors)/,
+  )?.[0];
+  assert.ok(password);
+  assert.match(password, /@better-auth\/utils\/dist\/password\.node\.mjs:3-41/);
+  assert.match(password, /@better-auth\/core\/dist\/types\/init-options\.d\.mts:720-733/);
+  assert.match(password, /NFKC.*broader equivalence class/is);
+  assert.match(password, /NFC exactly once before every\s+length, common, contextual, compromised, hash, and comparison operation/is);
+  assert.match(password, /no\s+trimming, truncation, or second normalization/is);
+  assert.match(password, /emailAndPassword\.password\.hash/);
+  assert.match(password, /emailAndPassword\.password\.verify/);
+  assert.match(password, /N = 16384/);
+  assert.match(password, /r = 16/);
+  assert.match(password, /p = 1/);
+  assert.match(password, /dkLen = 64/);
+  assert.match(password, /maxmem = 128 \* N \* r \* 2 = 67,108,864 bytes/);
+  assert.match(password, /cryptographically random 16-byte salt/);
+  assert.match(password, /UTF-8 bytes/);
+  assert.match(password, /\$passvero\$scrypt\$v=1\$N=16384\$r=16\$p=1\$dkLen=64\$/);
+  assert.match(password, /22-character unpadded base64url salt/);
+  assert.match(password, /86-character unpadded base64url derived key/);
+  assert.match(password, /strict full-string parser/i);
+  assert.match(password, /timingSafeEqual/);
+  assert.match(password, /generic authentication\s+failure/i);
+  assert.match(password, /Better Auth default `<hex-salt>:<hex-key>`.*MUST NOT be accepted/is);
+  assert.match(password, /hard gate before Stage 13E/i);
+  assert.match(password, /no\s+existing Passvero authentication credentials require legacy migration/i);
+  assert.match(password, /rehash.*successful authentication.*same transaction/is);
+  assert.match(
+    review,
+    /\| Better Auth default password hash\/verify \| \*\*REJECT\*\* \|[^\n]*NFKC/,
+  );
+});
+
 test("review stage leaves implementation paths unchanged", async () => {
   const review = await readFile(reviewPath, "utf8");
   for (const row of [
