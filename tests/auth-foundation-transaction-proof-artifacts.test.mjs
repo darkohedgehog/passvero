@@ -19,6 +19,7 @@ const REQUIRED_FILES = [
   "src/auth.ts",
   "src/proof-boundary.ts",
   "src/evidence.ts",
+  "src/publication.mjs",
   "test/harness-contract.test.ts",
   "test/cluster-identity.test.ts",
 ];
@@ -268,21 +269,19 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /PROOF_PORT\s*=\s*\$\(\(|PROOF_PORT\+\+|55433/,
   ]) assert.doesNotMatch(source, forbidden);
 
-  assert.doesNotMatch(source, /RUN_ROOT_REAL\/prepared-evidence|(?:stage_external_evidence|commit_staged_evidence)[^\n]*\|\| true/);
-  const markdownPublication = source.indexOf('mv -f -- "$PUBLICATION_MARKDOWN" "$SCRIPT_DIR/evidence.md"');
-  const jsonPublication = source.indexOf('mv -f -- "$PUBLICATION_JSON" "$SCRIPT_DIR/evidence.json"');
+  assert.doesNotMatch(source, /RUN_ROOT_REAL\/prepared-evidence|publish_candidate[^\n]*\|\| true/);
+  const publication = await readHarness("src/publication.mjs");
+  const markdownPublication = publication.indexOf("await rename(stageMarkdown, finalMarkdown)");
+  const jsonPublication = publication.indexOf("await rename(stageJson, finalJson)");
   assert.ok(markdownPublication > 0 && jsonPublication > markdownPublication, "authoritative JSON must publish last");
   assert.match(source, /"\$proof_status" -eq 0 && "\$mandatory_verdict" == PASS && "\$suffix" == 1111/);
   assert.match(source, /mandatory-verdict/);
   assert.match(source, /"\$candidate" != "pass-1111"/);
   assert.match(source, /CLEANUP=FAIL_PROOF_WITH_COMPLETE_CLEANUP/);
-  const passStage = source.lastIndexOf('stage_external_evidence "$candidate"');
-  const pendingRetirement = source.lastIndexOf("retire_pending_evidence");
-  const authoritativeCommit = source.lastIndexOf("commit_staged_evidence");
-  assert.ok(passStage > 0 && pendingRetirement > passStage && authoritativeCommit > pendingRetirement,
-    "PASS must stage, retire pending, then commit authoritative JSON");
+  assert.ok(publication.indexOf("await stage(input.candidate)") < publication.indexOf("await (input.retirePending ?? unlink)(pendingPath)"));
+  assert.ok(publication.indexOf("await (input.retirePending ?? unlink)(pendingPath)") < publication.indexOf("await commit()"));
   assert.match(source, /publish_checked_failure "\$candidate" "\$failure_status"/);
-  assert.match(source, /CLEANUP=FAIL_PENDING_RETAINED/);
+  assert.match(publication, /FAIL_PENDING_RETAINED/);
   assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERED/);
   assert.match(source, /CLEANUP=FAIL_PUBLICATION_STAGED/);
 

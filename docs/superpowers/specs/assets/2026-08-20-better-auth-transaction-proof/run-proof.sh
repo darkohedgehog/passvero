@@ -14,8 +14,6 @@ RUN_ROOT=""
 RUN_ROOT_REAL=""
 CLEANUP_REQUIRED=0
 PREPARED_EVIDENCE="$SCRIPT_DIR/.cleanup-evidence-prepared"
-PUBLICATION_JSON="$SCRIPT_DIR/.evidence-publication.json"
-PUBLICATION_MARKDOWN="$SCRIPT_DIR/.evidence-publication.md"
 
 die() {
   printf '%s\n' "$1" >&2
@@ -250,8 +248,8 @@ validate_cleanup_target() {
 prepare_cleanup_evidence() {
   local pending="$SCRIPT_DIR/evidence.pending.json"
   [[ ! -e "$PREPARED_EVIDENCE" && ! -L "$PREPARED_EVIDENCE" ]] || return 1
-  [[ ! -e "$PUBLICATION_JSON" && ! -L "$PUBLICATION_JSON" ]] || return 1
-  [[ ! -e "$PUBLICATION_MARKDOWN" && ! -L "$PUBLICATION_MARKDOWN" ]] || return 1
+  [[ ! -e "$SCRIPT_DIR/.evidence-publication.json" && ! -L "$SCRIPT_DIR/.evidence-publication.json" ]] || return 1
+  [[ ! -e "$SCRIPT_DIR/.evidence-publication.md" && ! -L "$SCRIPT_DIR/.evidence-publication.md" ]] || return 1
   [[ ! -e "$SCRIPT_DIR/evidence.json" && ! -L "$SCRIPT_DIR/evidence.json" ]] || return 1
   [[ ! -e "$SCRIPT_DIR/evidence.md" && ! -L "$SCRIPT_DIR/evidence.md" ]] || return 1
   env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
@@ -276,58 +274,24 @@ validate_prepared_file() {
   [[ "$(stat -f '%u:%Lp' "$file")" == "$(id -u):600" ]] || return 1
 }
 
-validate_external_prepared_root() {
-  [[ "$PREPARED_EVIDENCE" == "$SCRIPT_DIR/.cleanup-evidence-prepared" ]] || return 1
-  "$NODE_BIN" -e 'const fs=require("fs");const [candidate,parent,uid]=process.argv.slice(1);const s=fs.lstatSync(candidate);if(s.isSymbolicLink()||!s.isDirectory()||s.uid!==Number(uid)||(s.mode&0o777)!==0o700||fs.realpathSync(candidate)!==candidate||fs.realpathSync(parent)!==parent)process.exit(75)' \
-    "$PREPARED_EVIDENCE" "$SCRIPT_DIR" "$(id -u)"
-}
-
-discard_publication_stage() {
-  rm -f -- "$PUBLICATION_JSON" "$PUBLICATION_MARKDOWN"
-  [[ ! -e "$PUBLICATION_JSON" && ! -e "$PUBLICATION_MARKDOWN" ]]
-}
-
-stage_external_evidence() {
-  local key="$1"
-  [[ "$key" =~ ^(?:pass-1111|fail-[01]{4})$ ]] || return 1
-  validate_external_prepared_root || return 1
-  local json="$PREPARED_EVIDENCE/$key.json"
-  local markdown="$PREPARED_EVIDENCE/$key.md"
-  validate_prepared_file "$json" || return 1
-  validate_prepared_file "$markdown" || return 1
-  discard_publication_stage || return 1
-  install -m 0600 "$markdown" "$PUBLICATION_MARKDOWN" || return 1
-  install -m 0600 "$json" "$PUBLICATION_JSON" || return 1
-  validate_prepared_file "$PUBLICATION_MARKDOWN" || return 1
-  validate_prepared_file "$PUBLICATION_JSON" || return 1
-}
-
-commit_staged_evidence() {
-  mv -f -- "$PUBLICATION_MARKDOWN" "$SCRIPT_DIR/evidence.md" || return 1
-  mv -f -- "$PUBLICATION_JSON" "$SCRIPT_DIR/evidence.json" || return 1
-}
-
-retire_pending_evidence() {
-  local pending="$SCRIPT_DIR/evidence.pending.json"
-  rm -f -- "$pending" || return 1
-  [[ ! -e "$pending" && ! -L "$pending" ]]
+publish_candidate() {
+  local key="$1" output publication_status
+  set +e
+  output="$(env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" \
+    "$NODE_BIN" "$HARNESS_SOURCE/src/publication.mjs" "$SCRIPT_DIR" "$PREPARED_EVIDENCE" \
+    "$SCRIPT_DIR/evidence.pending.json" "$key" 2>/dev/null)"
+  publication_status=$?
+  set -e
+  if [[ "$key" == "pass-1111" ]]; then
+    [[ "$publication_status" -eq 0 && "$output" == "PUBLICATION=PASS" ]]
+  else
+    [[ "$publication_status" -eq 1 && "$output" =~ ^PUBLICATION=FAIL(?:_PENDING_RETAINED)?$ ]]
+  fi
 }
 
 publish_checked_failure() {
   local key="$1" safe_status="$2"
-  if ! stage_external_evidence "$key"; then
-    printf '%s\n' "CLEANUP=FAIL_PUBLICATION_STAGED" >&2
-    return 1
-  fi
-  if ! retire_pending_evidence; then
-    if commit_staged_evidence; then
-      printf '%s\n' "CLEANUP=FAIL_PENDING_RETAINED" >&2
-    else
-      printf '%s\n' "CLEANUP=FAIL_PUBLICATION_STAGED" >&2
-    fi
-    return 1
-  fi
-  if commit_staged_evidence; then
+  if publish_candidate "$key"; then
     printf '%s\n' "$safe_status" >&2
   else
     printf '%s\n' "CLEANUP=FAIL_PUBLICATION_STAGED" >&2
@@ -392,16 +356,7 @@ cleanup() {
     publish_checked_failure "$candidate" "$failure_status"
     exit 1
   fi
-  if ! stage_external_evidence "$candidate"; then
-    publish_checked_failure "fail-1111" "CLEANUP=FAIL_PUBLICATION_RECOVERED"
-    exit 1
-  fi
-  if ! retire_pending_evidence; then
-    discard_publication_stage
-    publish_checked_failure "fail-1111" "CLEANUP=FAIL_PENDING_RETAINED"
-    exit 1
-  fi
-  if ! commit_staged_evidence; then
+  if ! publish_candidate "$candidate"; then
     publish_checked_failure "fail-1111" "CLEANUP=FAIL_PUBLICATION_RECOVERED"
     exit 1
   fi

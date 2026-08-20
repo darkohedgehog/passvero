@@ -15,6 +15,7 @@ import {
   validateDisposableHarnessEnvironment,
 } from "../src/run-root.js";
 import { renderEvidenceJson, type ProofEvidence } from "../src/evidence.js";
+import { publishEvidenceState } from "../src/publication.mjs";
 
 const EMPTY_COUNTS = {
   providerUser: 0,
@@ -27,6 +28,12 @@ const EMPTY_COUNTS = {
   credentialToken: 0,
   abuseBucket: 0,
 } as const;
+
+const REQUIRED_HYPOTHESIS_IDS = [
+  "H1_NATIVE_TRANSACTION", "H2_DIRECT_API_OUTER_TRANSACTION", "H3_HANDLER_CONTEXT_REPLACEMENT",
+  "H4_CONTROLLED_ACTIVATION", "H5_SESSION_COOKIE_AFTER_COMMIT", "H6_RECOVERY_AND_REVOCATION",
+  "H7_ROUTE_EXPOSURE",
+] as const;
 
 async function createSyntheticRunRoot(): Promise<string> {
   const runRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
@@ -111,6 +118,15 @@ function cleanEvidence(): ProofEvidence {
     ],
     cleanup: { listenerAbsent: true, rootRemoved: true },
     assertions: ["static contract only"],
+  };
+}
+
+function exactMandatoryEvidence(): ProofEvidence {
+  const base = cleanEvidence();
+  const hypothesis = base.hypotheses[0];
+  return {
+    ...base,
+    hypotheses: REQUIRED_HYPOTHESIS_IDS.map((id) => ({ ...hypothesis, id, status: "PASS" })),
   };
 }
 
@@ -277,6 +293,60 @@ test("proof failure remains authoritative FAIL even when cleanup is complete", (
   assert.equal(selectCleanupEvidenceCandidate(73, true, complete), "fail-1111");
   assert.equal(selectCleanupEvidenceCandidate(0, true, { ...complete, rootGone: false }), "fail-1110");
   assert.throws(() => selectCleanupEvidenceCandidate(-1, true, complete), /STOP_RUN_ROOT_INVALID/);
+});
+
+test("mandatory verdict derivation requires the exact seven PASS hypotheses", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const exact = exactMandatoryEvidence();
+  const { cleanup: _cleanup, ...exactPending } = exact;
+  const variants = [
+    { evidence: exactPending, verdict: "PASS" },
+    { evidence: { ...exactPending, hypotheses: exactPending.hypotheses.map((item, index) => index === 3 ? { ...item, status: "FAIL" as const } : item) }, verdict: "FAIL" },
+    { evidence: { ...exactPending, hypotheses: exactPending.hypotheses.slice(0, -1) }, verdict: "FAIL" },
+    { evidence: { ...exactPending, hypotheses: [...exactPending.hypotheses.slice(0, -1), exactPending.hypotheses[0]] }, verdict: "FAIL" },
+  ];
+  try {
+    for (const variant of variants) {
+      await writeFile(pendingPath, JSON.stringify(variant.evidence), { mode: 0o600 });
+      await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+      assert.equal(readFileSync(path.join(preparedPath, "mandatory-verdict"), "utf8"), variant.verdict);
+      await rm(preparedPath, { recursive: true });
+    }
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+test("pending retirement failure executes checked FAIL publication and discards PASS", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+  try {
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+    const result = await publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+      retirePending: async () => { throw new Error("injected retirement failure"); },
+    });
+    assert.equal(result.passed, false);
+    assert.equal(result.exitCode, 1);
+    assert.equal(result.status, "FAIL_PENDING_RETAINED");
+    assert.equal(result.authoritativeCandidate, "fail-1111");
+    assert.equal(lstatSync(pendingPath).isFile(), true);
+    const authoritative = JSON.parse(readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8")) as { status: string };
+    assert.equal(authoritative.status, "FAIL");
+    assert.notEqual(authoritative.status, "PASS");
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
 });
 
 test("run-root rejects unsafe modes, symlinks, formats, port, and socket escape", async () => {
