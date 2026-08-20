@@ -294,3 +294,95 @@ evidence. CHECK constraints cover attempt/failure counts, window/failure/decay
 timestamps, finite blocks, digest shape, and 30-day expiry. Expired rows are
 pruned within 24 hours, yielding a hard 31-day maximum after the last transition.
 No database action or connection was used to reach these review conclusions.
+
+## Final cumulative review matrix
+
+`PASS` means the review-only proposal satisfies the approved Phase 12
+architecture when every recorded implementation gate is enforced. `REJECT`
+means the named native or alternative behavior must not be exposed by Passvero.
+`OPERATOR DECISION REQUIRED` is the one remaining approval gate; it is not an
+implementation approval.
+
+| Review item | Outcome | Evidence and exact implication |
+| --- | --- | --- |
+| Next.js 16 and React 19 compatibility | **PASS** | The official [Better Auth Next.js integration](https://better-auth.com/docs/integrations/next) states that Better Auth is fully compatible with Next.js 16 and documents `proxy.ts`, Route Handlers, RSCs, and Server Actions. The pinned `better-auth@1.7.1` registry/package metadata accepts `next ^16`, `react ^19`, and `react-dom ^19` (`better-auth/package.json:510-525` in the disposable capture). Passvero pins Next.js 16.2.11, React 19.2.4, and React DOM 19.2.4. Cookie-only proxy checks remain optimistic only; the reviewed server boundary is authoritative. |
+| Prisma 7 and PostgreSQL adapter compatibility | **PASS** | Registry evidence for `better-auth@1.7.1` accepts Prisma/client `^7` and `pg ^8`; `@better-auth/prisma-adapter@1.7.1` accepts Prisma/client `^7` (`@better-auth/prisma-adapter/package.json:37-41`). The official [Prisma adapter guide](https://better-auth.com/docs/adapters/prisma) explicitly covers Prisma 7, supports schema generation, and marks Prisma schema migration unsupported. The pinned disposable PostgreSQL configuration generated the captured four-model schema without database access. Passvero pins Prisma/client 7.8.0. Only manually reviewed Passvero schema/migration work may consume this proposal. |
+| Provider-table isolation from canonical `User` | **PASS** | `AuthProviderUser`, `AuthProviderSession`, `AuthProviderAccount`, and `AuthProviderVerification` retain provider-owned string identifiers and relations. Only Passvero-owned `AuthIdentity.userId UUID` references canonical `User.id`; email, organization, membership, role, permission, and entitlement are not identity bindings. The only provider-to-domain relation is nullable session selection to `Organization`, expressly not authority. |
+| Stable provider-subject binding and multi-identity support | **PASS** | The selected binding is required `AuthIdentity(provider, providerSubject, userId)` with unique `(provider, providerSubject)`, non-unique `userId` index, `ON DELETE RESTRICT ON UPDATE CASCADE`, and no email. Multiple rows may reference one canonical user. `providerSubject` remains opaque `TEXT`; UUID-shaped current values are not coerced. Automatic same-email linking is rejected and conflicts fail closed. |
+| Database-authoritative session and lifetime policy | **PASS** | The browser receives only an opaque credential. The database row owns `authenticatedAt`, `lastRefreshAt`, `expiresAt`, and nullable `selectedOrganizationId`; all three extensions are `input: false`. Request-time enforcement applies 7-day inactivity, refresh due at 24 hours, and a 30-day absolute deadline. Named CHECKs cap expiry at both anchors, while bounded hourly cleanup is non-authoritative. `disableSessionRefresh: true` and application-router exclusion prevent native refresh/read paths from bypassing the sole reviewed Passvero session service/adapter. |
+| Rotation preserves `authenticatedAt` | **PASS** | Refresh conditionally replaces the opaque token in one transaction, advances `lastRefreshAt` and `updatedAt`, caps `expiresAt`, and preserves `authenticatedAt` plus selection. Authenticated password change preserves all lifetime anchors while deleting other sessions and rotating the current token. Zero-row races and post-commit cookie-delivery failure require reauthentication. Better Auth 1.7.1 native same-token refresh and delete-then-create password-change behavior are rejected. |
+| Organization selection without authorization snapshots | **PASS** | The selected design is nullable `AuthProviderSession.selectedOrganizationId UUID` with `ON DELETE SET NULL ON UPDATE CASCADE`, written only by the dedicated CSRF-protected mutation after canonical identity, active membership, and active organization revalidation. The session and cookie store no roles, permissions, membership/organization status, entitlement, billing, or platform-admin state. Every request and business mutation revalidates authority. A separate one-to-one selection table is rejected as added join/write/lifecycle cost without a stronger boundary. |
+| Verification, reset, and activation token lifecycle | **PASS** | `AuthCredentialToken` and `AccountActivation` store only distinct-key HMAC-SHA-256 digests as 43-character base64url values. Owner-lock issuance invalidates active predecessors and inserts one replacement; partial unique indexes backstop that rule. Atomic conditional consumption gates digest, single-use state, invalidation, and expiry and commits the protected state change in the same transaction. Lifetimes are verification 24 hours, reset 30 minutes, activation 24 hours; terminal/expired rows remain no longer than 30 additional days. Activation also binds the locked current canonical email by separate-key `intendedEmailDigest`. Native stateless email verification and default plaintext reset identifiers are rejected. |
+| Password hashing ownership | **PASS** | Better Auth owns credential hashing and verification; Passvero does not introduce a second password hash. In pinned 1.7.1, context creation selects the configured override or Better Auth defaults (`better-auth/dist/context/create-context.mjs:181-188`), and the default delegates to `@better-auth/utils/password` using scrypt in Node (`better-auth/dist/crypto/password.mjs:1-12`). The selected contract uses that reviewed default and stores only its hash in nullable `AuthProviderAccount.password`. The later password-policy boundary must normalize to NFC, enforce 15-128 Unicode code points without trimming, and complete compromised/common/contextual checks before hashing; changing hash/verify functions requires a new security review. |
+| Progressive PostgreSQL abuse control | **PASS** | Exactly four keyed-digest dimensions are allowed. The endpoint matrix applies global/network admission before lookup and account/combined admission after a resolved owner. One `SERIALIZABLE` transaction uses the fixed lock hierarchy, atomic upsert/counters, finite level 0-12 backoff, exact thresholds/windows, and no automatic retry on serialization failure. Success never erases evidence. Rows expire no later than 30 days after their last transition and are pruned within 24 hours, for a hard 31-day maximum. Plaintext identifiers, network data, tokens, credentials, proxy headers, and authorization snapshots are forbidden. |
+| Excluded secondary/native capabilities | **PASS** | Redis, secondary session storage, cookie cache, Better Auth Organization/Admin/OAuth/magic-link/2FA/passkey plugins, public signup, and automatic linking remain excluded. The initial route/config surface exposes neither provider organizations nor generic session update/read paths. No excluded package, schema, source, route, migration, or environment change exists in this review stage. |
+| Migration and exit cost | **OPERATOR DECISION REQUIRED** | Approval accepts two enums, eight proposed tables, three future canonical inverse relations, provider-owned opaque identifiers, named CHECKs/partial indexes, a required Passvero session boundary, and a required digest-only credential-token boundary. Prisma cannot express every database invariant, so a later generated migration requires manual amendment and independent schema-test/migration review. Exit remains bounded because domain services consume canonical `User`, not provider types, but provider/session/token evidence and retention windows prevent an immediate destructive drop. This material cost is the sole unresolved operator decision. |
+| Rollback and forward compatibility | **PASS** | Rollback is forward-only while credential, token, session, or abuse evidence exists: disable new auth paths, preserve rows through required retention, and use a separately reviewed migration. Never use Better Auth migration execution, `prisma db push`, direct review SQL, or destructive cleanup as recovery. A Better Auth upgrade requires a fresh generated-schema diff, installed-source review of every rejected native path, disposable Prisma validation, and renewed operator approval. Provider-neutral `AuthIdentity` and opaque subjects preserve replacement-provider portability. |
+
+## Exact proposed contracts submitted for decision
+
+The atomic runtime-facing identity/session contract is:
+
+```ts
+export const AUTH_PROVIDER = "BETTER_AUTH" as const;
+
+export interface AuthIdentityBinding {
+  readonly provider: typeof AUTH_PROVIDER;
+  readonly providerSubject: string;
+  readonly userId: string;
+}
+
+export interface AuthSessionExtension {
+  readonly authenticatedAt: Date;
+  readonly lastRefreshAt: Date;
+  readonly selectedOrganizationId: string | null;
+}
+```
+
+The atomic persistence contract comprises exactly:
+
+- provider-owned `AuthProviderUser`, `AuthProviderSession`,
+  `AuthProviderAccount`, and retained adapter-compatibility
+  `AuthProviderVerification`;
+- Passvero-owned `AuthIdentity`, `AuthCredentialToken`, `AccountActivation`, and
+  `AuthAbuseBucket`;
+- enums `AuthCredentialTokenPurpose` with only `EMAIL_VERIFICATION` and
+  `PASSWORD_RESET`, and `AuthAbuseDimension` with only the four reviewed
+  dimensions;
+- future canonical inverses `User.authIdentities`,
+  `User.accountActivations`, and `Organization.authProviderSessions`;
+- the exact Prisma proposal in
+  `docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-prisma-fragment.prisma`;
+- the exact PostgreSQL columns, types, defaults, indexes, foreign-key actions,
+  CHECKs, partial indexes, atomic transitions, retention, forbidden columns,
+  and deployment exclusions in
+  `docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-migration-contract.md`.
+
+This is an indivisible decision: implementation must not substitute native
+provider behavior for either Passvero-owned boundary or accept only a subset of
+the constraints.
+
+## Rejected native and alternative behaviors
+
+| Behavior | Outcome | Reason |
+| --- | --- | --- |
+| Native Better Auth `/get-session` as an application read/refresh path | **REJECT** | It can bypass the reviewed database read, lifetime, rotation, and cookie-delivery boundary. The route is not exposed. |
+| Native Better Auth same-token session refresh | **REJECT** | It does not rotate the opaque token or enforce the Passvero absolute cap. |
+| Native Better Auth authenticated password-change session replacement | **REJECT** | Delete-and-create resets a defaulted `authenticatedAt`; the Passvero transaction preserves all lifetime anchors. |
+| Built-in stateless email verification | **REJECT** | A signed JWT has no persisted atomic single-use state or predecessor invalidation. |
+| Default Better Auth password-reset identifier storage | **REJECT** | Pinned 1.7.1 stores `reset-password:<raw token>` under the default `plain` mode; hashing alone still does not add complete supersession. |
+| Generic session additional-field update | **REJECT** | It would make server-owned timestamps or organization selection client-writable; all three fields are `input: false`. |
+| Better Auth Organization plugin and automatic linking | **REJECT** | Provider organization/role state and email-based linking would violate canonical identity and authorization boundaries. |
+| Redis, cookie cache, and secondary session authority | **REJECT** | Initial authority is the PostgreSQL session row; duplicate authority and stale authorization state are excluded. |
+| Separate `AuthSessionSelection` table | **REJECT** | It adds a table, join, write, uniqueness, cleanup, and exit path without strengthening authorization. |
+| Better Auth CLI migration, Prisma `db push`, or direct SQL during review | **REJECT** | Schema generation is evidence only; migration authoring, deployment, rollback, and cleanup require later independent authorization. |
+
+## Operator decision gate
+
+**Outcome:** OPERATOR DECISION REQUIRED
+
+The only unresolved decision is whether to accept the complete
+`AUTH_FOUNDATION_PERSISTENCE_CONTRACT` above as the input to a later, separately
+authorized implementation plan. Approval would not install dependencies,
+modify the canonical Prisma schema, author or deploy a migration, connect to
+PostgreSQL, generate a client or secret, or authorize Stage 13B/13E work.

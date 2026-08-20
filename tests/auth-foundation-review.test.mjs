@@ -339,3 +339,30 @@ test("migration contract fixes token lifecycle, abuse retention, and deployment 
     assert.match(contract, new RegExp(rule));
   }
 });
+
+test("review stage leaves implementation paths unchanged", async () => {
+  const review = await readFile(reviewPath, "utf8");
+  for (const row of [
+    "| Next.js 16 and React 19 compatibility | **PASS** |",
+    "| Prisma 7 and PostgreSQL adapter compatibility | **PASS** |",
+    "| Provider-table isolation from canonical `User` | **PASS** |",
+    "| Stable provider-subject binding and multi-identity support | **PASS** |",
+    "| Database-authoritative session and lifetime policy | **PASS** |",
+    "| Rotation preserves `authenticatedAt` | **PASS** |",
+    "| Organization selection without authorization snapshots | **PASS** |",
+    "| Verification, reset, and activation token lifecycle | **PASS** |",
+    "| Password hashing ownership | **PASS** |",
+    "| Progressive PostgreSQL abuse control | **PASS** |",
+    "| Excluded secondary/native capabilities | **PASS** |",
+    "| Migration and exit cost | **OPERATOR DECISION REQUIRED** |",
+    "| Rollback and forward compatibility | **PASS** |",
+  ]) {
+    assert.ok(review.includes(row), `missing final matrix row: ${row}`);
+  }
+
+  const packageJson = await readFile("package.json", "utf8");
+  assert.doesNotMatch(packageJson, /"better-auth"/);
+  const canonicalSchema = await readFile("prisma/schema.prisma", "utf8");
+  assert.doesNotMatch(canonicalSchema, /model AuthProviderUser\s*\{/);
+  assert.doesNotMatch(canonicalSchema, /model AuthIdentity\s*\{/);
+});
