@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -8,6 +10,11 @@ const proposalPath =
   "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-prisma-fragment.prisma";
 const migrationContractPath =
   "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-migration-contract.md";
+const rawCandidatePath =
+  "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/generated-prisma-schema.prisma";
+const stage13aBase = "331f8f1cd29203ee7d8d9364c7324313b75f822f";
+const rawGeneratorBodySha256 =
+  "7034757e4505ccf015ca00b46c373dfdd3de2c40f0e5b20ce0608446c4b5909e";
 
 function modelBlock(schema, modelName) {
   return schema.match(new RegExp(`model ${modelName}\\s*\\{[\\s\\S]*?^\\}`, "m"))?.[0];
@@ -70,10 +77,7 @@ test("authentication review records the exact candidate versions and exclusions"
 });
 
 test("raw candidate contains the four isolated provider models", async () => {
-  const schema = await readFile(
-    "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/generated-prisma-schema.prisma",
-    "utf8",
-  );
+  const schema = await readFile(rawCandidatePath, "utf8");
   for (const model of [
     "AuthProviderUser",
     "AuthProviderSession",
@@ -84,6 +88,18 @@ test("raw candidate contains the four isolated provider models", async () => {
   }
   assert.doesNotMatch(schema, /model Organization\s*\{/);
   assert.doesNotMatch(schema, /model Membership\s*\{/);
+});
+
+test("raw generator body is hash-pinned and future signup exclusion is reconciled", async () => {
+  const schema = await readFile(rawCandidatePath, "utf8");
+  const body = schema.split("\n").slice(2).join("\n");
+  assert.equal(createHash("sha256").update(body).digest("hex"), rawGeneratorBodySha256);
+
+  const review = await readFile(reviewPath, "utf8");
+  assert.match(review, new RegExp(`RAW_GENERATOR_BODY_SHA256=${rawGeneratorBodySha256}`));
+  assert.match(review, /captured disposable harness omitted `disableSignUp: true`/i);
+  assert.match(review, /regenerated.*`emailAndPassword\.disableSignUp: true`.*body.*byte-identical/is);
+  assert.match(review, /future configuration.*`emailAndPassword\.disableSignUp: true`/is);
 });
 
 test("proposal keeps provider identity separate and binds by stable subject", async () => {
@@ -149,7 +165,7 @@ test("session extensions are server-owned and absolute lifetime is enforced", as
   assert.match(contract, /lastRefreshAt:\s*\{\s*type: "date",\s*required: true,\s*input: false,\s*defaultValue: \(\) => new Date\(\)/s);
   assert.match(contract, /selectedOrganizationId:\s*\{\s*type: "string",\s*required: false,\s*input: false,?\s*\}/s);
   assert.match(contract, /disableSessionRefresh: true/);
-  assert.match(contract, /reviewed Passvero session service\/adapter boundary is REQUIRED before Stage\s+13E and is the only session create\/read\/refresh\/rotate\/revoke\/password-change\s+entry point/is);
+  assert.match(contract, /reviewed Passvero session infrastructure boundary is REQUIRED before Stage\s+13E and is the only session create\/read\/refresh\/rotate\/revoke\/password-change\s+entry point/is);
   assert.match(contract, /dedicated CSRF-protected organization-selection mutation/i);
   assert.match(contract, /organization-selection mutation.*updates `updatedAt`.*MUST NOT (?:modify|advance) `lastRefreshAt`/is);
   assert.match(contract, /24-hour refresh.*lastRefreshAt/is);
@@ -166,16 +182,104 @@ test("session extensions are server-owned and absolute lifetime is enforced", as
 });
 
 test("credential token tables have exact digest, lifetime, single-use, and FK contracts", async () => {
+  const schema = await readFile(proposalPath, "utf8");
+  const proposedCredential = modelBlock(schema, "AuthCredentialToken");
+  assert.ok(proposedCredential);
+  assert.match(proposedCredential, /targetEmailDigest\s+String\s+@db\.VarChar\(43\)/);
+  assert.doesNotMatch(proposedCredential, /^\s*(?:email|targetEmail)\s+/m);
+  assert.doesNotMatch(proposedCredential, /createdAt\s+DateTime\s+@default/);
+  assert.match(proposedCredential, /@@index\(\[providerUserId, purpose\]\)/);
+  assert.match(proposedCredential, /@@index\(\[expiresAt\]\)/);
+
   const contract = await readFile(migrationContractPath, "utf8");
   const credential = contractSection(contract, "AuthCredentialToken", "AccountActivation");
   assert.ok(credential);
   assert.match(credential, /\| `tokenDigest` \| `VARCHAR\(43\)` \| no \| none \|/);
+  assert.match(credential, /\| `targetEmailDigest` \| `VARCHAR\(43\)` \| no \| none \|/);
+  assert.match(credential, /\| `createdAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
   assert.match(credential, /AuthCredentialToken_providerUserId_fkey.*ON DELETE CASCADE ON UPDATE CASCADE/s);
+  assert.match(credential, /AuthCredentialToken_providerUserId_purpose_idx/);
+  assert.match(credential, /AuthCredentialToken_expiresAt_idx/);
   assert.match(credential, /ux_auth_credential_token_one_active_per_provider_user_purpose/);
   assert.match(credential, /where `consumedAt IS NULL AND invalidatedAt IS NULL`/);
   assert.match(credential, /ck_auth_credential_token_digest.*\^\[A-Za-z0-9_-\]\{43\}\$/s);
-  assert.match(contract, /24 hours for `EMAIL_VERIFICATION`, 30 minutes for\s+`PASSWORD_RESET`, and 24 hours for `AccountActivation`/s);
+  assert.match(credential, /ck_auth_credential_token_target_email_digest.*\^\[A-Za-z0-9_-\]\{43\}\$/s);
+  assert.match(
+    credential,
+    /ck_auth_credential_token_fixed_lifetime[\s\S]*?"expiresAt" = "createdAt" \+ CASE "purpose"[\s\S]*?WHEN 'EMAIL_VERIFICATION'::"AuthCredentialTokenPurpose" THEN INTERVAL '24 hours'[\s\S]*?WHEN 'PASSWORD_RESET'::"AuthCredentialTokenPurpose" THEN INTERVAL '30 minutes'[\s\S]*?END/,
+  );
+  assert.match(contract, /one trusted transaction timestamp.*`createdAt`.*`expiresAt`/is);
   assert.match(contract, /one atomic conditional update,\s+never read-then-update/i);
+});
+
+test("credential tokens are canonical capabilities bound to the locked provider email", async () => {
+  const contract = await readFile(migrationContractPath, "utf8");
+  assert.match(contract, /32 CSPRNG bytes.*43-character canonical unpadded base64url/is);
+  assert.match(contract, /strictly decode.*exactly 32 bytes.*re-encode.*canonical/is);
+  assert.match(contract, /`passvero-auth-credential-capability`.*`v1`.*purpose/is);
+  assert.match(contract, /`passvero-auth-credential-target-email`.*`v1`.*purpose.*normalized current `AuthProviderUser\.email`/is);
+  assert.match(contract, /capability key.*target-email key.*activation.*abuse.*Better Auth secret.*distinct/is);
+  assert.match(contract, /key rotation.*invalidate.*active credential tokens.*before.*v1 key/is);
+  assert.match(contract, /lock.*`AuthProviderUser`.*invalidate.*active credential tokens.*before.*email mutation/is);
+  assert.match(contract, /consumption locks.*`AuthProviderUser`.*recomputes.*`targetEmailDigest`.*`crypto\.timingSafeEqual`/is);
+  assert.match(contract, /target-email\s+mismatch.*`invalidatedAt`.*generic invalid-token/is);
+  assert.match(contract, /`EMAIL_VERIFICATION`.*`emailVerified = false`.*`emailVerified = true`.*same transaction/is);
+  assert.match(contract, /one concurrent caller.*protected transition/is);
+  assert.match(contract, /raw capability.*MUST NOT.*log.*telemetry.*analytics/is);
+  assert.match(contract, /`Referrer-Policy: no-referrer`/);
+  assert.match(contract, /URL fragment.*POST body.*history\.replaceState/is);
+});
+
+test("initial release owns every auth route and provider write at the Passvero edge", async () => {
+  const review = await readFile(reviewPath, "utf8");
+  assert.match(review, /NATIVE_AUTH_ROUTE_ALLOWLIST=\[\]/);
+  assert.match(review, /BETTER_AUTH_CATCH_ALL_HANDLER=NOT_EXPORTED/);
+  assert.match(review, /all initial activation, sign-in, verification, reset, session, and password\s+operations.*Passvero-owned auth-edge/is);
+  assert.match(review, /shared PostgreSQL abuse boundary/i);
+  assert.match(review, /direct Prisma reads and writes.*one `Serializable` transaction/is);
+  assert.match(review, /Better Auth.*schema and account compatibility foundation.*future\s+provider-adapter candidate/is);
+  assert.match(review, /No\s+Better Auth native endpoint or Prisma-adapter write path is used/is);
+  assert.match(review, /required future implementation contract.*not an implementation claim/is);
+  assert.match(review, /provider-neutral interfaces.*application and domain/is);
+  assert.match(review, /Phase 12.*does not require.*native catch-all.*Prisma adapter/is);
+  for (const operation of [
+    "SIGN_IN_PASSWORD",
+    "SEND_EMAIL_VERIFICATION",
+    "CONSUME_EMAIL_VERIFICATION",
+    "REQUEST_PASSWORD_RESET",
+    "CONSUME_PASSWORD_RESET",
+    "ISSUE_ACCOUNT_ACTIVATION",
+    "CONSUME_ACCOUNT_ACTIVATION",
+    "READ_SESSION",
+    "REFRESH_SESSION",
+    "SIGN_OUT",
+    "REVOKE_SESSION",
+    "REVOKE_ALL_SESSIONS",
+    "CHANGE_PASSWORD",
+    "SELECT_ORGANIZATION",
+  ]) {
+    assert.match(
+      review,
+      new RegExp("\\| `" + operation + "` \\| Passvero auth edge \\|"),
+    );
+  }
+});
+
+test("direct provider ownership fixes compatibility rows, lock order, cookies, and retries", async () => {
+  const contract = await readFile(migrationContractPath, "utf8");
+  assert.match(contract, /`providerId = "credential"`.*`issuer = "local:credential"`.*`accountId = userId`.*non-null `password`/is);
+  assert.match(contract, /credential lookup.*providerId.*issuer.*accountId.*userId/is);
+  assert.match(contract, /`AuthProviderUser\.email`.*normalized.*unique lookup.*`emailVerified`/is);
+  assert.match(contract, /`AuthIdentity\.provider = "BETTER_AUTH"`.*`providerSubject = AuthProviderUser\.id`/is);
+  assert.match(contract, /session lookup.*unique `token`.*`authenticatedAt`.*`lastRefreshAt`.*`expiresAt`/is);
+  assert.match(contract, /lock order.*`User`.*`AuthProviderUser`.*`AuthProviderAccount`.*credential token.*session/is);
+  assert.match(contract, /post-commit.*`Set-Cookie`.*never.*before commit/is);
+  assert.match(contract, /maximum three total transaction attempts/i);
+  assert.match(contract, /`40001`.*`40P01`.*`P2034`/s);
+  assert.match(contract, /ambiguous commit.*MUST NOT be\s+retried/is);
+  assert.match(contract, /generic transient authentication response/i);
+  assert.match(contract, /business\s+and domain.*provider-neutral interfaces.*must not import.*Better Auth.*Prisma provider models/is);
+  assert.match(contract, /no Better\s+Auth native handler or Prisma\s+adapter participates in the\s+transaction/is);
 });
 
 test("activation binds the capability to the current canonical intended email", async () => {
@@ -295,7 +399,7 @@ test("review records the Better Auth hard gates with precise source lines", asyn
   assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:173-186/);
   assert.match(review, /better-auth\/dist\/db\/internal-adapter\.mjs:818-845/);
   assert.match(review, /@better-auth\/prisma-adapter\/dist\/index\.mjs:319-332/);
-  assert.match(review, /reviewed Passvero session service\/adapter boundary/i);
+  assert.match(review, /reviewed Passvero session infrastructure boundary/i);
   assert.match(review, /Required before Stage 13E/);
 });
 
@@ -401,4 +505,31 @@ test("review stage leaves implementation paths unchanged", async () => {
   const canonicalSchema = await readFile("prisma/schema.prisma", "utf8");
   assert.doesNotMatch(canonicalSchema, /model AuthProviderUser\s*\{/);
   assert.doesNotMatch(canonicalSchema, /model AuthIdentity\s*\{/);
+});
+
+test("cumulative Stage 13A diff leaves every forbidden implementation path untouched", () => {
+  const forbiddenPaths = [
+    "package.json",
+    "package-lock.json",
+    "packages",
+    "src",
+    "prisma/schema.prisma",
+    "prisma/migrations",
+    "prisma.config.ts",
+    "next.config.ts",
+    "next.config.mjs",
+    "tsconfig.json",
+    "eslint.config.mjs",
+    "postcss.config.mjs",
+    "components.json",
+    ":(glob).env*",
+    ":(glob)**/.env*",
+    ":(glob)**/generated/**",
+  ];
+  const diff = execFileSync(
+    "git",
+    ["diff", "--name-only", stage13aBase, "--", ...forbiddenPaths],
+    { encoding: "utf8" },
+  );
+  assert.equal(diff, "");
 });

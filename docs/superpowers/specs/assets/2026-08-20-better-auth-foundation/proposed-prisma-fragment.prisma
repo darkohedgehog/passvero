@@ -96,14 +96,15 @@ enum AuthCredentialTokenPurpose {
 }
 
 model AuthCredentialToken {
-  id             String                     @id @default(uuid()) @db.Uuid
-  providerUserId String
-  purpose        AuthCredentialTokenPurpose
-  tokenDigest    String                     @unique @db.VarChar(43)
-  expiresAt      DateTime
-  consumedAt     DateTime?
-  invalidatedAt  DateTime?
-  createdAt      DateTime                   @default(now())
+  id                String                     @id @default(uuid()) @db.Uuid
+  providerUserId    String
+  purpose           AuthCredentialTokenPurpose
+  tokenDigest       String                     @unique @db.VarChar(43)
+  targetEmailDigest String                     @db.VarChar(43)
+  expiresAt         DateTime
+  consumedAt        DateTime?
+  invalidatedAt     DateTime?
+  createdAt         DateTime
 
   providerUser AuthProviderUser @relation("AuthProviderUserCredentialTokens", fields: [providerUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 

@@ -20,6 +20,32 @@ default and every write must set them explicitly.
   `ACCOUNT_AND_TRUSTED_NETWORK`, `GLOBAL_ENDPOINT` only. Adding a dimension is a
   future schema-and-migration review, not a runtime string extension.
 
+## Initial-release execution ownership
+
+This is a required future implementation contract, not an implementation claim.
+The initial release mounts no Better Auth catch-all or native HTTP handler:
+`NATIVE_AUTH_ROUTE_ALLOWLIST=[]` and
+`BETTER_AUTH_CATCH_ALL_HANDLER=NOT_EXPORTED`. The pinned Better Auth package and
+generated models remain the schema and account compatibility foundation and a
+future provider-adapter candidate. Better Auth native endpoint writes and the
+Better Auth Prisma-adapter write path are not used for the initial activation,
+sign-in, verification, reset, session, or password flows. Enabling either path
+requires a separately reviewed transaction-integration proof that it preserves
+every lock, invariant, state transition, abuse update, and post-commit effect in
+this contract.
+
+Passvero-owned auth-edge route handlers call Passvero-owned infrastructure
+services. Those services use direct Prisma reads and writes against the reviewed
+Better Auth-compatible provider tables and Passvero-owned auth tables. Each
+state-changing flow uses one Prisma `Serializable` transaction for its required
+provider, canonical, capability, session, identity, and abuse writes. No Better
+Auth native handler or Prisma adapter participates in the transaction. Business
+and domain layers receive only provider-neutral interfaces and must not import
+Better Auth, Prisma provider models, cookies, headers, or route APIs. This keeps
+the Phase 12 provider-neutral boundary: the frozen design selects Better Auth as
+the provider compatibility foundation but does not require a native catch-all or
+Prisma adapter to own the initial-release writes.
+
 ## Exact table contracts
 
 ### `AuthProviderUser`
@@ -37,6 +63,11 @@ default and every write must set them explicitly.
 - Primary key: `AuthProviderUser_pkey` on (`id`).
 - Unique indexes: `AuthProviderUser_email_key` on (`email`).
 - Non-unique indexes, foreign keys, CHECK constraints, partial indexes: none.
+- `AuthProviderUser.email` is the exact shared normalized account identifier and
+  unique lookup value; the `emailVerified` state must be true for sign-in.
+  Creation or email mutation uses only the Passvero auth-edge infrastructure;
+  email mutation follows the owner-lock and credential-token invalidation rules
+  below.
 - Forbidden additions: canonical `User.id`, canonical role, permission,
   organization, membership, or entitlement snapshots.
 
@@ -83,6 +114,11 @@ default and every write must set them explicitly.
   may advance `updatedAt` but never advance `lastRefreshAt`.
   `selectedOrganizationId` is cleared when the session expires or is revoked and
   whenever server-side eligibility revalidation fails.
+- Session lookup uses the unique `token`, then requires the linked provider user
+  and validates `authenticatedAt`, `lastRefreshAt`, and `expiresAt` before any
+  `AuthIdentity` or organization resolution. Session creation writes the opaque
+  token and every server-owned timestamp directly in the same transaction as the
+  successful sign-in state transition.
 - Forbidden additions: role, permission, membership-status, organization-status,
   entitlement, billing, or platform-administration snapshots.
 
@@ -95,7 +131,24 @@ cost without creating a security boundary. The stored UUID remains only a
 selection hint; every request and switch revalidates membership and organization
 status and every business mutation revalidates authorization transactionally.
 
-The reviewed Better Auth configuration MUST declare exactly:
+The future compatibility configuration MUST declare public signup disabled even
+though no native handler is exported:
+
+```ts
+emailAndPassword: {
+  enabled: true,
+  disableSignUp: true,
+  requireEmailVerification: true,
+  minPasswordLength: 1,
+  maxPasswordLength: 256,
+  password: {
+    hash: hashPreparedNfcPassword,
+    verify: verifyPreparedNfcPassword,
+  },
+}
+```
+
+The reviewed session compatibility configuration MUST declare exactly:
 
 ```ts
 session: {
@@ -139,16 +192,16 @@ them through create input or `/update-session`. Full-authentication creation
 captures one server timestamp and explicitly supplies it as both
 `authenticatedAt` and `lastRefreshAt`; the defaults are fail-closed coverage for
 an ordinary internal creation path, not permission to use different semantic
-anchors. The Passvero wrapper must pass both already stored values explicitly on
-every replacement path. Better
-Auth's internal create path obtains additional-field defaults before constructing
-the session record and includes them in the create payload; its server-only
-`overrideAll` branch can explicitly replace a default
+anchors. Passvero infrastructure writes both stored values directly and
+preserves them on every replacement path. For compatibility evidence only,
+Better Auth's internal create path obtains additional-field defaults before
+constructing the session record and includes them in the create payload; its
+server-only `overrideAll` branch can explicitly replace a default
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:248-320`).
-Passvero rotation updates the existing row rather than creating a replacement.
-Any future replacement path must invoke that server-only branch through the
-reviewed service with the original `authenticatedAt` and `lastRefreshAt`; it must
-never expose the override or rely on parsed client input.
+The initial Passvero rotation updates the existing row directly rather than
+calling that adapter or creating a replacement. Any future provider-adapter path
+must first prove equivalent preservation in a separate review; it must never
+expose an override or rely on parsed client input.
 
 Only a dedicated CSRF-protected organization-selection mutation may write
 `selectedOrganizationId`. It accepts an untrusted UUID, loads the current
@@ -162,7 +215,7 @@ organization-selection mutation updates `updatedAt` to `now` as a general write
 but MUST NOT advance `lastRefreshAt` or modify `expiresAt` or `authenticatedAt`;
 repeated organization switches therefore cannot postpone refresh or expiry.
 
-### Session enforcement and reviewed adapter boundary
+### Session enforcement and reviewed infrastructure boundary
 
 Every authenticated request uses the database row and performs these checks
 before identity or organization resolution:
@@ -195,9 +248,10 @@ authenticated password change with `revokeOtherSessions` deletes all sessions
 and creates a fresh session
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-user.mjs:180-189`),
 which would reset a defaulted `authenticatedAt`. Both native paths are rejected.
-A reviewed Passvero session service/adapter boundary is REQUIRED before Stage
+A reviewed Passvero session infrastructure boundary is REQUIRED before Stage
 13E and is the only session create/read/refresh/rotate/revoke/password-change
-entry point.
+entry point. It performs the direct Prisma transaction; no Better Auth native
+handler or Prisma-adapter method is its caller or write participant.
 
 Better Auth 1.7.1 declares `disableSessionRefresh?: boolean`, default false, and
 documents that true prevents refresh regardless of `updateAge`
@@ -258,6 +312,21 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 - Foreign key: `AuthProviderAccount_userId_fkey` references
   `AuthProviderUser(id)` with `ON DELETE CASCADE ON UPDATE CASCADE`.
 - CHECK constraints and partial indexes: none.
+- The only initial credential row has `providerId = "credential"`,
+  `issuer = "local:credential"`, `accountId = userId`, and a non-null `password`.
+  `accessToken`, `refreshToken`, `idToken`, their expiry fields, and `scope` are
+  null. A credential lookup matches all four of `userId`, `providerId`, `issuer`,
+  and `accountId`; a match by email, `providerId` alone, or `accountId` alone is
+  forbidden. The composite unique (`issuer`, `accountId`) constraint is the
+  database collision backstop.
+- These conventions match pinned 1.7.1 evidence:
+  `createLocalAccountIssuer("credential")` returns `local:credential`
+  (`@better-auth/core/dist/db/schema/account.mjs:38-41`), native sign-in requires
+  `providerId`, issuer, and `accountId = AuthProviderUser.id`
+  (`better-auth/dist/api/routes/sign-in.mjs:318-319`), and the internal credential
+  lookup uses the same four fields
+  (`better-auth/dist/db/internal-adapter.mjs:625-675`). The evidence fixes
+  compatibility values; those native/internal functions are not invoked.
 - Forbidden additions: canonical role, permission, organization, membership, or
   entitlement snapshots. Credential fields must never be logged.
 
@@ -276,7 +345,8 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 - Unique indexes, foreign keys, CHECK constraints, partial indexes: none.
 - Non-unique indexes: `AuthProviderVerification_identifier_idx` on
   (`identifier`).
-- This provider-required table is retained for adapter compatibility, but the
+- This generated table is retained for Better Auth schema compatibility and a
+  possible future reviewed provider-adapter path, but the
   initial Passvero email-verification and password-reset flows MUST NOT persist
   their capabilities here. Those flows use `AuthCredentialToken`; enabling a
   Better Auth feature that writes a raw/encoded capability to this table
@@ -300,6 +370,10 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 - Foreign key: `AuthIdentity_userId_fkey` references `User(id)` with
   `ON DELETE RESTRICT ON UPDATE CASCADE`.
 - CHECK constraints and partial indexes: none.
+- Initial writes require `AuthIdentity.provider = "BETTER_AUTH"` and
+  `providerSubject = AuthProviderUser.id`. Resolution matches the unique
+  (`provider`, `providerSubject`) pair, then returns only canonical `User.id` to
+  application/domain code.
 - Forbidden columns: email and provider access, refresh, identity, session,
   verification, reset, or activation token material.
 
@@ -311,10 +385,11 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 | `providerUserId` | `TEXT` | no | none |
 | `purpose` | `AuthCredentialTokenPurpose` | no | none |
 | `tokenDigest` | `VARCHAR(43)` | no | none |
+| `targetEmailDigest` | `VARCHAR(43)` | no | none |
 | `expiresAt` | `TIMESTAMP(3)` | no | none |
 | `consumedAt` | `TIMESTAMP(3)` | yes | none |
 | `invalidatedAt` | `TIMESTAMP(3)` | yes | none |
-| `createdAt` | `TIMESTAMP(3)` | no | `CURRENT_TIMESTAMP` |
+| `createdAt` | `TIMESTAMP(3)` | no | none |
 
 - Primary key: `AuthCredentialToken_pkey` on (`id`).
 - Unique indexes: `AuthCredentialToken_tokenDigest_key` on (`tokenDigest`).
@@ -329,15 +404,30 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 - CHECK constraints:
   - `ck_auth_credential_token_digest`: `tokenDigest` matches
     `^[A-Za-z0-9_-]{43}$`.
-  - `ck_auth_credential_token_expiry`: `expiresAt > createdAt`.
+  - `ck_auth_credential_token_target_email_digest`: `targetEmailDigest` matches
+    `^[A-Za-z0-9_-]{43}$`.
+  - `ck_auth_credential_token_fixed_lifetime` uses this exact predicate:
+
+    ```sql
+    "expiresAt" = "createdAt" + CASE "purpose"
+      WHEN 'EMAIL_VERIFICATION'::"AuthCredentialTokenPurpose" THEN INTERVAL '24 hours'
+      WHEN 'PASSWORD_RESET'::"AuthCredentialTokenPurpose" THEN INTERVAL '30 minutes'
+    END
+    ```
+
+    The service reads one trusted transaction timestamp and derives both
+    `createdAt` and `expiresAt` from it; neither field uses a caller timestamp or
+    independent clock read. Both values are explicitly inserted. The CHECK makes
+    24 hours for `EMAIL_VERIFICATION` and 30 minutes for `PASSWORD_RESET`
+    purpose-dependent database invariants, not application-only policy.
   - `ck_auth_credential_token_terminal_state`: `consumedAt` and
     `invalidatedAt` are not both non-null.
   - `ck_auth_credential_token_consumed_time`: `consumedAt IS NULL OR
     (consumedAt >= createdAt AND consumedAt < expiresAt)`.
   - `ck_auth_credential_token_invalidated_time`: `invalidatedAt IS NULL OR
     invalidatedAt >= createdAt`.
-- Forbidden columns: plaintext/encoded token, email, password, IP address,
-  network, user agent, session credential, role, or permission.
+- Forbidden columns: plaintext/encoded token, plaintext target email, password,
+  IP address, network, user agent, session credential, role, or permission.
 
 ### `AccountActivation`
 
@@ -421,12 +511,53 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 
 ## Digest and allowed-dimension contract
 
-Every `tokenDigest`, `intendedEmailDigest`, and `keyDigest` is the 43-character,
-unpadded base64url encoding of HMAC-SHA-256 output under a distinct, versioned
-server-side key for that purpose. Keys are neither stored in these tables nor
-reused as the Better Auth secret. Plain SHA-256 is forbidden for enumerable
-email/network input. Digest equality is the only database lookup; raw
-capabilities and raw abuse-key input are never persisted or logged.
+Every emailed capability is generated as exactly 32 CSPRNG bytes from
+`crypto.randomBytes(32)` and encoded as a 43-character canonical unpadded
+base64url string. Presentation strictly decodes the string to exactly 32 bytes
+and re-encodes it to require byte-for-byte canonical form before computing a
+digest. Padded, noncanonical, wrong-alphabet, wrong-length, or wrong-decoded-size
+input receives the same generic invalid-token result before database lookup.
+
+Every `tokenDigest`, `targetEmailDigest`, `intendedEmailDigest`, and `keyDigest`
+is the 43-character canonical unpadded base64url encoding of HMAC-SHA-256 output.
+Messages use an unambiguous length-prefixed binary encoding; concatenated or
+delimiter-only encodings are forbidden. The exact initial namespaces are:
+
+- `AuthCredentialToken.tokenDigest`: literal
+  `passvero-auth-credential-capability`, version `v1`, token purpose, then the
+  decoded 32 capability bytes.
+- `AuthCredentialToken.targetEmailDigest`: literal
+  `passvero-auth-credential-target-email`, version `v1`, token purpose, then the
+  normalized current `AuthProviderUser.email` UTF-8 bytes.
+- `AccountActivation.tokenDigest`: literal `passvero-auth-activation-capability`,
+  version `v1`, then the decoded 32 capability bytes.
+- `AccountActivation.intendedEmailDigest`: literal
+  `passvero-auth-activation-target-email`, version `v1`, then the normalized
+  canonical email UTF-8 bytes.
+- `AuthAbuseBucket.keyDigest`: the abuse namespace and components below.
+
+The credential capability key, credential target-email key, activation
+capability key, activation target-email key, abuse key, and Better Auth secret
+are all distinct server-side secrets. No key or key identifier persists in these
+tables. Initial release accepts only key/message version `v1`. Key rotation must
+first lock affected owners and invalidate all active credential tokens and
+activations before the v1 key is removed; because the maximum lifetime is 24
+hours, old terminal rows need no verification key. Silent multi-key fallback or
+reinterpretation of an existing 43-character digest is forbidden. Plain
+SHA-256 is forbidden for capabilities and enumerable email/network input.
+Digest equality is the only database lookup; raw capabilities, normalized email,
+and raw abuse-key input are never persisted or logged.
+
+Raw capability delivery uses the configured fixed HTTPS origin only. The
+capability is placed in a URL fragment, which is not sent in the landing-page
+HTTP request; the token page sets `Referrer-Policy: no-referrer`, permits no
+third-party resources, posts the capability only in the same-origin POST body,
+and removes the fragment immediately with `history.replaceState`. The raw
+capability and its digest MUST NOT appear in access/application logs, protected
+telemetry, analytics, error messages, traces, metrics labels, queues, referrers,
+or response bodies. Ingress and application logging tests must prove full URL,
+query, fragment-derived body fields, authorization/cookie values, and known
+digest fields are redacted before Stage 13E.
 
 The abuse HMAC message is an unambiguous length-prefixed encoding of literal
 namespace `passvero-auth-abuse`, version `v1`, enum dimension, allowlisted
@@ -547,13 +678,23 @@ Issuance performs predecessor invalidation and insertion in one transaction:
 
 1. Lock the owning `AuthProviderUser` row (`AuthCredentialToken`) or canonical
    `User` row (`AccountActivation`) with `SELECT ... FOR UPDATE`.
-2. For activation, normalize the locked canonical `User.email` using the exact
+2. For a credential token, normalize the locked current
+   `AuthProviderUser.email` using the exact account-identifier function and
+   compute `targetEmailDigest` with the dedicated credential target-email key,
+   v1 namespace, and token purpose. The message purpose prevents a verification
+   digest from being reused as a reset digest. For activation, normalize the
+   locked canonical `User.email` using the exact
    account-identifier normalization below and compute `intendedEmailDigest` with
    the dedicated activation-email HMAC key. The activation email is addressed
    from that same locked canonical value; operator-supplied email is not trusted.
-3. Set `invalidatedAt = statement_timestamp()` on every matching row for that
+3. Read one trusted transaction timestamp `issuedAt`. For
+   `AuthCredentialToken`, explicitly set `createdAt = issuedAt` and derive
+   `expiresAt = issuedAt + 24 hours` for `EMAIL_VERIFICATION` or `issuedAt + 30
+   minutes` for `PASSWORD_RESET`. No request time, JavaScript clock, database
+   default, or second timestamp read may supply either field.
+4. Set `invalidatedAt = issuedAt` on every matching row for that
    owner and purpose whose `consumedAt` and `invalidatedAt` are null.
-4. Insert exactly one fresh digest-only row. The partial unique index is the
+5. Insert exactly one fresh digest-only row. The partial unique index is the
    database backstop. No email is used as an ownership or lookup key.
 
 Concurrent issuance serializes on the owner row. The later transaction
@@ -563,7 +704,13 @@ partial-index predicate cannot safely depend on wall-clock time.
 
 After staged abuse admission, consumption locks the owner row first, revalidates
 the non-consuming digest lookup, and performs one atomic conditional update,
-never read-then-update for token state:
+never read-then-update for token state. For `AuthCredentialToken`, it locks the
+current `AuthProviderUser`, normalizes its current email, recomputes the
+purpose-bound `targetEmailDigest`, decodes both 43-character digests to equal
+32-byte buffers, and compares only with `crypto.timingSafeEqual`. A target-email
+mismatch atomically sets `invalidatedAt` on the still-active token and returns the
+same generic invalid-token result; it never consumes or applies the protected
+state transition.
 
 ```sql
 UPDATE "<token table>"
@@ -578,9 +725,14 @@ RETURNING "id", "userId or providerUserId", "purpose";
 Exactly one concurrent caller can receive a row; all others receive zero rows
 and fail with the same generic invalid-token result. The prior lookup never
 authorizes consumption; only this update does. Email verification plus
-`emailVerified`, password replacement plus all-session revocation, or activation
-plus credential creation and `AuthIdentity` binding must occur in the same
-transaction as this update. A transaction failure rolls every change back.
+the exact `EMAIL_VERIFICATION` transition from `emailVerified = false` to
+`emailVerified = true`, password replacement plus all-session revocation, or
+activation plus credential creation and `AuthIdentity` binding must occur in the
+same transaction as this update. A verification token presented after another
+transaction has already verified the owner is invalidated and fails generically;
+it is not treated as a reusable idempotency token. Therefore one concurrent
+caller can commit the protected transition and every loser observes zero rows or
+the now-terminal owner state. A transaction failure rolls every change back.
 Activation never creates a session; normal sign-in follows successful activation.
 
 Activation consumption locks the canonical `User` owner first, revalidates the
@@ -600,11 +752,68 @@ updates and case/normalization-only bypasses are forbidden. Consequently an
 activation issued for an older canonical email cannot bind credentials after an
 email change, including under concurrent issuance, consumption, or mutation.
 
+Every provider-email mutation locks the owning `AuthProviderUser` row, invalidates
+every active `EMAIL_VERIFICATION` and `PASSWORD_RESET` credential token for that
+owner before the email mutation writes the newly normalized unique email, and sets
+`emailVerified = false`. If the flow issues a replacement verification
+capability, it derives its target digest from that newly stored locked email and
+inserts it before commit. Direct Prisma email updates, case/normalization-only
+bypasses, and mutations that leave an old reset token active are forbidden.
+Provider-email mutation, token issuance, token consumption, and password reset
+all use this same owner-first order, so concurrent operations cannot authorize an
+old address after commit.
+
 The selected lifetimes are 24 hours for `EMAIL_VERIFICATION`, 30 minutes for
 `PASSWORD_RESET`, and 24 hours for `AccountActivation`. These match the approved
 verification/recovery windows and give the email-bound activation capability no
 longer life than verification. Consumed, invalidated, and expired token rows are
 deleted no later than 30 days after their terminal timestamp or expiry.
+
+### Direct provider writes, lock order, cookie effects, and retries
+
+The Passvero infrastructure owns the initial compatibility-row contract:
+
+- Controlled activation locks canonical `User` and the activation, revalidates
+  the intended-email digest, then creates one `AuthProviderUser` with the locked
+  normalized email and `emailVerified = true`, one exact credential
+  `AuthProviderAccount`, and one `AuthIdentity` with provider `BETTER_AUTH` and
+  subject equal to the provider-user id. It consumes the activation in the same
+  transaction and creates no session.
+- Password sign-in looks up `AuthProviderUser` by its unique normalized email,
+  requires `emailVerified = true`, and loads only the credential account whose
+  `userId`, `providerId`, issuer, and `accountId` match the exact convention
+  above. Successful proof creates the database session and resolves
+  `AuthIdentity`; downstream code receives only the provider-neutral identity.
+- Verification and reset use only `AuthCredentialToken`. Provider-email change,
+  password replacement, session revocation/rotation, and identity/session reads
+  use the exact direct contracts in this file. `AuthProviderVerification` is not
+  written by an initial flow.
+
+After the Stage A abuse bucket locks, the cross-table row lock order is: canonical
+`User` when the flow has one, `AuthProviderUser`, `AuthProviderAccount`, the
+credential token or `AccountActivation`, `AuthIdentity`, then
+`AuthProviderSession`. A flow omits rows it does not need but never reverses the
+remaining order. Unique inserts occur only after the relevant owner locks and
+fail closed on collisions. The abuse Stage B locks retain their already specified
+position before protected mutations. No Better Auth native handler or Prisma
+adapter participates in the transaction.
+
+Session creation, refresh, rotation, password change, and sign-out may compute a
+cookie value inside the transaction, but post-commit `Set-Cookie` delivery is
+required and is never emitted before commit. A rollback emits no new cookie. An
+ambiguous commit or post-commit delivery failure clears the presented credential
+where a response is possible and requires reauthentication; it must not
+reconstruct or reuse an old token.
+
+The transaction runner permits a maximum three total transaction attempts (the
+initial attempt plus at most two retries) only for PostgreSQL `40001` or `40P01`
+reported as a known rolled-back Prisma `P2034`. Every retry opens a fresh
+`Serializable` transaction, repeats owner/bucket revalidation, and obtains a new
+trusted transaction timestamp. Unique conflicts, conditional zero-row results,
+authentication failures, unknown errors, and an ambiguous commit MUST NOT be
+retried. Exhaustion returns one generic transient authentication response and
+protected token-free telemetry; it never exposes the retry count, account
+existence, or conflicting table.
 
 ### Progressive abuse state
 
@@ -702,8 +911,9 @@ transition then run in one PostgreSQL SERIALIZABLE transaction:
 8. Set `updatedAt = now` and `expiresAt = now + 30 days` on every changed row,
    return only the safe result, and commit. A token conditional consume that
    loses a race is a protected-action failure under the already derived buckets.
-   A serialization failure is a generic transient denial; the authentication
-   operation is not retried automatically.
+   A serialization/deadlock failure follows the maximum-three-attempt runner
+   above; retry exhaustion is a generic transient denial. No other failure is
+   retried automatically.
 
 The transaction is the atomic admission/check/update transition: concurrent
 requests sharing any digest serialize before the protected action, and no
@@ -753,13 +963,15 @@ The inspected package identifies itself as Better Auth 1.7.1 at
   identifier for each token and does not invalidate a user's predecessors.
 
 **Stage 13E gate:** Passvero MUST implement and review the `AuthCredentialToken`
-store and its adapter/endpoint boundary before enabling email verification or
-password reset. The built-in stateless email-verification route and the default
-password-reset verification persistence are rejected for Passvero's approved
-single-use, superseding, digest-only policy. A hashing option alone is
-insufficient because it does not add email-verification consumption or
+store and its Passvero-owned auth-edge/infrastructure boundary before enabling
+email verification or password reset. The built-in stateless email-verification
+route and the default password-reset verification persistence are rejected for
+Passvero's approved single-use, superseding, digest-only policy. A hashing option
+alone is insufficient because it does not add email-verification consumption or
 predecessor invalidation. No compliance claim may rely on token opacity,
-base64url encoding, signing, or provider naming.
+base64url encoding, signing, or provider naming, and no Better Auth handler or
+Prisma-adapter write path may be substituted without the separate equivalence
+review.
 
 ## Required future canonical inverse relations
 
