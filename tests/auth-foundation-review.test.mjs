@@ -9,6 +9,16 @@ const proposalPath =
 const migrationContractPath =
   "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-migration-contract.md";
 
+function modelBlock(schema, modelName) {
+  return schema.match(new RegExp(`model ${modelName}\\s*\\{[\\s\\S]*?^\\}`, "m"))?.[0];
+}
+
+function contractSection(contract, heading, nextHeading) {
+  return contract.match(
+    new RegExp("### `" + heading + "`[\\s\\S]*?(?=### `" + nextHeading + "`)"),
+  )?.[0];
+}
+
 test("authentication review records the exact candidate versions and exclusions", async () => {
   const review = await readFile(reviewPath, "utf8");
   assert.match(review, /better-auth: 1\.7\.1/);
@@ -45,7 +55,7 @@ test("raw candidate contains the four isolated provider models", async () => {
 
 test("proposal keeps provider identity separate and binds by stable subject", async () => {
   const schema = await readFile(proposalPath, "utf8");
-  const identity = schema.match(/model AuthIdentity\s*\{[\s\S]*?^\}/m)?.[0];
+  const identity = modelBlock(schema, "AuthIdentity");
   assert.ok(identity);
   assert.match(identity, /provider\s+String/);
   assert.match(identity, /providerSubject\s+String/);
@@ -59,17 +69,170 @@ test("proposal covers server session, activation, and progressive abuse state", 
   const schema = await readFile(proposalPath, "utf8");
   assert.match(schema, /authenticatedAt\s+DateTime/);
   assert.match(schema, /selectedOrganizationId\s+String\?\s+@db\.Uuid/);
-  const session = schema.match(/model AuthProviderSession\s*\{[\s\S]*?^\}/m)?.[0];
+  const session = modelBlock(schema, "AuthProviderSession");
   assert.ok(session);
   assert.doesNotMatch(session, /\b(role|roles|permission|permissions)\b/i);
   assert.match(schema, /model AccountActivation\s*\{/);
   assert.match(schema, /tokenDigest\s+String\s+@unique/);
   assert.match(schema, /model AuthCredentialToken\s*\{/);
-  const abuse = schema.match(/model AuthAbuseBucket\s*\{[\s\S]*?^\}/m)?.[0];
+  const activation = modelBlock(schema, "AccountActivation");
+  assert.ok(activation);
+  assert.match(activation, /id\s+String\s+@id @default\(uuid\(\)\) @db\.Uuid/);
+  assert.match(activation, /userId\s+String\s+@db\.Uuid/);
+  assert.match(activation, /intendedEmailDigest\s+String\s+@db\.VarChar\(43\)/);
+  assert.match(activation, /createdAt\s+DateTime\s+@default\(now\(\)\)/);
+  assert.doesNotMatch(activation, /^\s*(?:email|intendedEmail)\s+/m);
+  const abuse = modelBlock(schema, "AuthAbuseBucket");
   assert.ok(abuse);
   assert.match(abuse, /keyDigest\s+String\s+@unique/);
+  assert.match(abuse, /attemptCount\s+Int\s+@default\(0\)/);
+  assert.match(abuse, /failureCount\s+Int\s+@default\(0\)/);
+  assert.match(abuse, /backoffLevel\s+Int\s+@default\(0\)/);
+  assert.match(abuse, /windowStartedAt\s+DateTime/);
+  assert.match(abuse, /lastFailureAt\s+DateTime\?/);
   assert.doesNotMatch(abuse, /email\s+String/);
   assert.doesNotMatch(abuse, /ipAddress\s+String/);
+});
+
+test("session extensions are server-owned and absolute lifetime is enforced", async () => {
+  const contract = await readFile(migrationContractPath, "utf8");
+  const session = contractSection(contract, "AuthProviderSession", "AuthProviderAccount");
+  assert.ok(session);
+  assert.match(session, /\| `authenticatedAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
+  assert.match(session, /\| `selectedOrganizationId` \| `UUID` \| yes \| none \|/);
+  assert.match(session, /ck_auth_provider_session_absolute_expiry/);
+  assert.match(session, /expiresAt.*<=.*authenticatedAt.*INTERVAL '30 days'/s);
+  assert.match(session, /ck_auth_provider_session_authenticated_origin.*authenticatedAt <=\s+createdAt/s);
+  assert.match(session, /AuthProviderSession_userId_fkey.*ON DELETE CASCADE ON UPDATE CASCADE/s);
+  assert.match(session, /AuthProviderSession_selectedOrganizationId_fkey.*ON DELETE SET NULL ON UPDATE CASCADE/s);
+  assert.match(contract, /authenticatedAt:\s*\{\s*type: "date",\s*required: true,\s*input: false,\s*defaultValue: \(\) => new Date\(\)/s);
+  assert.match(contract, /selectedOrganizationId:\s*\{\s*type: "string",\s*required: false,\s*input: false,?\s*\}/s);
+  assert.match(contract, /dedicated CSRF-protected organization-selection mutation/i);
+  assert.match(contract, /7-day inactivity expiry/i);
+  assert.match(contract, /24-hour refresh/i);
+  assert.match(contract, /30-day absolute/i);
+  assert.match(contract, /atomic opaque-token rotation/i);
+  assert.match(contract, /authenticated password change/i);
+  assert.match(contract, /delete every session row/i);
+  assert.match(contract, /bounded\s+batches at least hourly/i);
+});
+
+test("credential token tables have exact digest, lifetime, single-use, and FK contracts", async () => {
+  const contract = await readFile(migrationContractPath, "utf8");
+  const credential = contractSection(contract, "AuthCredentialToken", "AccountActivation");
+  assert.ok(credential);
+  assert.match(credential, /\| `tokenDigest` \| `VARCHAR\(43\)` \| no \| none \|/);
+  assert.match(credential, /AuthCredentialToken_providerUserId_fkey.*ON DELETE CASCADE ON UPDATE CASCADE/s);
+  assert.match(credential, /ux_auth_credential_token_one_active_per_provider_user_purpose/);
+  assert.match(credential, /where `consumedAt IS NULL AND invalidatedAt IS NULL`/);
+  assert.match(credential, /ck_auth_credential_token_digest.*\^\[A-Za-z0-9_-\]\{43\}\$/s);
+  assert.match(contract, /24 hours for `EMAIL_VERIFICATION`, 30 minutes for\s+`PASSWORD_RESET`, and 24 hours for `AccountActivation`/s);
+  assert.match(contract, /one atomic conditional update, never read-then-update/i);
+});
+
+test("activation binds the capability to the current canonical intended email", async () => {
+  const contract = await readFile(migrationContractPath, "utf8");
+  const activation = contractSection(contract, "AccountActivation", "AuthAbuseBucket");
+  assert.ok(activation);
+  assert.match(activation, /\| `intendedEmailDigest` \| `VARCHAR\(43\)` \| no \| none \|/);
+  assert.match(activation, /ck_account_activation_intended_email_digest/);
+  assert.match(activation, /ux_account_activation_one_active_per_user/);
+  assert.match(activation, /consumedAt IS NULL AND invalidatedAt IS NULL/);
+  assert.match(contract, /lock.*canonical `User`.*normalize.*current canonical email.*intendedEmailDigest/is);
+  assert.match(contract, /constant-time equality/i);
+  assert.match(contract, /email mutation.*invalidates every active activation/is);
+});
+
+test("abuse contract fixes endpoint applicability, normalization, and schedule", async () => {
+  const contract = await readFile(migrationContractPath, "utf8");
+  const abuse = contract.match(/### `AuthAbuseBucket`[\s\S]*?(?=## Digest and allowed-dimension contract)/)?.[0];
+  assert.ok(abuse);
+  assert.match(abuse, /\| `windowStartedAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
+  assert.match(abuse, /\| `lastFailureAt` \| `TIMESTAMP\(3\)` \| yes \| none \|/);
+  assert.match(abuse, /\| `attemptCount` \| `INTEGER` \| no \| `0` \|/);
+  assert.match(abuse, /ck_auth_abuse_bucket_digest.*\^\[A-Za-z0-9_-\]\{43\}\$/s);
+  assert.match(abuse, /ck_auth_abuse_bucket_attempt_count.*attemptCount >= 0/s);
+  assert.match(abuse, /ck_auth_abuse_bucket_backoff_level.*BETWEEN 0 AND 12/s);
+  assert.match(abuse, /ck_auth_abuse_bucket_retention.*INTERVAL '30 days'/s);
+  for (const endpoint of [
+    "SIGN_IN_PASSWORD",
+    "SEND_EMAIL_VERIFICATION",
+    "REQUEST_PASSWORD_RESET",
+    "ISSUE_ACCOUNT_ACTIVATION",
+    "CHANGE_PASSWORD",
+  ]) {
+    assert.match(
+      contract,
+      new RegExp(
+        "\\| `" + endpoint + "` \\| YES \\| YES \\| YES \\| YES \\|",
+      ),
+    );
+  }
+  for (const endpoint of [
+    "CONSUME_EMAIL_VERIFICATION",
+    "CONSUME_PASSWORD_RESET",
+    "CONSUME_ACCOUNT_ACTIVATION",
+  ]) {
+    assert.match(
+      contract,
+      new RegExp(
+        "\\| `" + endpoint + "` \\| YES \\| POST-LOOKUP \\| POST-LOOKUP \\| YES \\|",
+      ),
+    );
+  }
+  assert.match(contract, /token-only invalid or unknown.*TRUSTED_NETWORK.*GLOBAL_ENDPOINT/is);
+  assert.match(contract, /rightmost untrusted address/i);
+  assert.match(contract, /Missing mode, missing\/invalid CIDRs.*fails closed/is);
+  assert.match(contract, /IPv4-mapped IPv6/i);
+  assert.match(contract, /203\.0\.113\.197.*203\.0\.113\.0\/24/s);
+  assert.match(contract, /2001:0db8:abcd:1234.*2001:db8:abcd:1200::\/56/s);
+  assert.match(contract, /User@Example\.COM.*user@example\.com/s);
+  assert.match(contract, /SERIALIZABLE transaction/i);
+  for (const row of [
+    "| `TRUSTED_NETWORK` | 30 | 15 minutes | failed protected action |",
+    "| `ACCOUNT_IDENTIFIER` | 5 | 15 minutes | failed protected action |",
+    "| `ACCOUNT_AND_TRUSTED_NETWORK` | 5 | 15 minutes | failed protected action |",
+    "| `GLOBAL_ENDPOINT` | 100 | 1 minute | every admitted request |",
+  ]) {
+    assert.match(contract, new RegExp(row.replace(/[|]/g, "\\|")));
+  }
+  for (const [level, duration] of [
+    [0, "0 minutes"],
+    [1, "1 minute"],
+    [2, "2 minutes"],
+    [3, "4 minutes"],
+    [4, "8 minutes"],
+    [5, "15 minutes"],
+    [6, "30 minutes"],
+    [7, "60 minutes"],
+    [8, "120 minutes"],
+    [9, "240 minutes"],
+    [10, "480 minutes"],
+    [11, "720 minutes"],
+    [12, "1,440 minutes"],
+  ]) {
+    assert.match(
+      contract,
+      new RegExp("\\| " + level + " \\| " + duration + " \\|"),
+    );
+  }
+  assert.match(contract, /one level per\s+complete 24 hours/i);
+});
+
+test("review records the Better Auth hard gates with precise source lines", async () => {
+  const review = await readFile(reviewPath, "utf8");
+  assert.match(review, /@better-auth\/core\/dist\/db\/type\.d\.mts:31-53/);
+  assert.match(review, /better-auth\/dist\/db\/schema\.mjs:59-108/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/update-session\.mjs:31-54/);
+  assert.match(review, /better-auth\/dist\/db\/internal-adapter\.mjs:248-320/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/session\.mjs:171-207/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/session\.mjs:411-441/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/update-user\.mjs:180-189/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:23-35/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:173-186/);
+  assert.match(review, /@better-auth\/prisma-adapter\/dist\/index\.mjs:319-332/);
+  assert.match(review, /reviewed Passvero session service\/adapter boundary/i);
+  assert.match(review, /Required before Stage 13E/);
 });
 
 test("migration contract fixes token lifecycle, abuse retention, and deployment gates", async () => {

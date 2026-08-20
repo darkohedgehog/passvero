@@ -119,10 +119,52 @@ creating a stronger authority boundary. Neither the selected session design nor
 the cookie contains role, permission, membership status, organization status,
 entitlement, billing, or platform-administration state.
 
-`authenticatedAt` remains a required server-owned session timestamp. Rotation
-must preserve it so rolling expiration cannot bypass the 30-day absolute limit.
-Expired and revoked sessions are deleted/invalidated by the provider lifecycle
-and cannot retain selection.
+### Session-input and lifecycle reconciliation
+
+The captured disposable configuration is not implementation-safe as written:
+Better Auth's field type declares `input` default true and documents a function
+`defaultValue` as an application create default, not a database default
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/db/type.d.mts:31-53`).
+The session parser copies supplied additional fields unless `input: false`, and
+applies defaults on create
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/schema.mjs:59-108`).
+The generic update endpoint parses session additional fields and writes them
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-session.mjs:31-54`).
+The internal create path evaluates additional-field defaults before building the
+record and provides a server-only `overrideAll` merge after those defaults
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:248-320`).
+
+**Required correction before Stage 13E:** both `authenticatedAt` and
+`selectedOrganizationId` are configured `input: false`; `authenticatedAt` is
+required with `defaultValue: () => new Date()`, while selection is optional with
+no default. Full-authentication creation receives server time. Only the reviewed
+Passvero session wrapper may explicitly preserve `authenticatedAt` during a
+replacement. Selection is writable only through the dedicated CSRF-protected
+server mutation that locks the session and revalidates active membership and
+active organization before its conditional update. The generic provider update
+route, client input, and cookies cannot write either field.
+
+The database CHECK is `expiresAt > authenticatedAt AND expiresAt <=
+authenticatedAt + INTERVAL '30 days'`. Every request independently rejects and
+deletes a session at either the 7-day inactivity deadline or 30-day absolute
+deadline. At the 24-hour refresh boundary, one conditional update atomically
+rotates the opaque token, caps the new 7-day expiry at the absolute deadline,
+preserves `authenticatedAt` and selection, and returns the sole value eligible
+for the post-commit cookie. Delivery failure is fail-closed reauthentication.
+
+Better Auth's native refresh instead extends expiry on the same token
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:171-207`).
+Native authenticated password change deletes sessions and creates a new one
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-user.mjs:180-189`),
+which would reset a defaulted `authenticatedAt`. Those paths are rejected. A
+reviewed Passvero session service/adapter boundary is mandatory: password change
+updates the hash, deletes other sessions, and rotates the current token while
+preserving its original `authenticatedAt`; reset and revoke-all delete every
+session row and expire the cookie. Native revoke-all calls `deleteUserSessions`
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:411-441`),
+but it remains behind the Passvero boundary so cookie expiry and the complete
+policy cannot be bypassed. Expired/absolute-expired rows are deleted in bounded
+batches at least hourly, while request-time checks remain authoritative.
 
 ### Token-storage reconciliation
 
@@ -130,10 +172,10 @@ The installed/disposable package evidence is Better Auth 1.7.1
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/package.json:2-3`).
 Its relevant behavior is:
 
-- Built-in email verification creates a signed JWT containing lower-cased email
-  and optional update data
-  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:13-18`),
-  then verifies and parses that JWT on use
+- Built-in email verification issuance creates the signed-JWT capability and
+  passes it to the email callback/URL without a verification-row write
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:23-35`),
+  then reads, verifies, and parses that JWT on use
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:173-186`). It does not
   persist a token digest, atomically consume a token, or let a new token
   invalidate predecessors. Signed/encoded opacity is not single use.
@@ -147,8 +189,9 @@ Its relevant behavior is:
   is therefore not evidence of hashing.
 - Reset consumption calls `consumeVerificationValue` before password mutation
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:157-174`). Its database path
-  transactionally consumes the latest row and returns null to losing concurrent
-  callers (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:818-860`). That makes a
+  reaches Prisma adapter `consumeOne`, whose unique-id branch atomically deletes
+  and returns null to a losing concurrent caller
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/prisma-adapter/dist/index.mjs:319-332`). That makes a
   single identifier concurrency-safe, but reset issuance creates independent
   identifiers and does not supersede every predecessor for the user.
 
@@ -171,6 +214,17 @@ the protected state change. The fixed lifetimes are 24 hours for verification,
 30 minutes for reset, and 24 hours for activation; terminal/expired rows are
 retained no longer than 30 additional days.
 
+`AccountActivation` additionally stores `intendedEmailDigest`, a separate-key,
+43-character base64url HMAC-SHA-256 digest of the normalized canonical email at
+issuance. Issuance locks canonical `User`, derives the digest from its current
+email, invalidates predecessors, and inserts the replacement atomically.
+Consumption locks activation and user, recomputes the current canonical-email
+digest, uses constant-time equality, and only then conditionally consumes and
+creates the provider credential/identity in the same transaction. Any canonical
+email mutation locks the user and invalidates all active activations before the
+email change. A mismatch is invalidated and receives the generic token failure;
+no plaintext intended email is added to activation persistence.
+
 ### Progressive PostgreSQL abuse state
 
 `AuthAbuseBucket` permits exactly four enum dimensions:
@@ -182,11 +236,30 @@ and plaintext email, IP/network, user-agent, password, token, forwarded-header,
 canonical/provider user, session, tenant, role, or permission columns are
 forbidden.
 
-Each attempt updates all applicable buckets in one transaction through atomic
-upsert/increment statements. CHECK constraints require non-negative failures,
-backoff level 0 through 12, finite blocks within expiry, valid digest shape, and
-expiry no more than 30 days after the last transition. Success cannot delete or
-erase trusted-network, combined, or global attack evidence. Expired rows are
-pruned in bounded batches within 24 hours, yielding a hard 31-day maximum after
-the last transition. No database action or connection was used to reach these
-review conclusions.
+The exact endpoint matrix distinguishes identifier endpoints from token-only
+consumption. Sign-in, send-verification, reset request, activation issuance, and
+authenticated password change use all four dimensions. Token consumption uses
+network/global before lookup, then account/combined only when a digest row yields
+a subject; an invalid unknown token never fabricates account state. A nonexistent
+email still uses the normalized attempted identifier, so account existence
+cannot change buckets or response shape.
+
+Trusted network selection is explicit `DIRECT` or configured
+`TRUSTED_PROXY_CHAIN`. Proxy mode validates the transport peer/CIDR allowlist and
+walks a single configured chain right-to-left to the rightmost untrusted address;
+missing/invalid configuration, malformed or excessive chains, and IPv4/IPv6
+parse failures deny generically. IPv4-mapped IPv6 is unmapped, IPv4 is canonical
+`/24`, and native IPv6 is RFC 5952 `/56`. Account input is trimmed, NFC-normalized,
+Unicode-lowercased, and domain-IDNA-normalized by the same function used for
+lookup and persistence. The migration contract records executable vectors.
+
+After any required Turnstile call, all applicable rows plus the local protected
+operation run in one PostgreSQL `SERIALIZABLE` transaction and deterministic
+digest-lock order. Thresholds are network 30 failures/15 minutes, account 5/15,
+combined 5/15, and global 100 attempts/1 minute. Backoff levels 1–12 map from 1
+minute through 1,440 minutes; a level decays only once per complete 24 hours
+without failure. Success never erases evidence. CHECK constraints cover attempt
+and failure counts, window/failure timestamps, finite blocks, digest shape, and
+30-day expiry. Expired rows are pruned within 24 hours, yielding a hard 31-day
+maximum after the last transition. No database action or connection was used to
+reach these review conclusions.

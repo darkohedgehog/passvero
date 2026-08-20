@@ -27,7 +27,9 @@ model AuthProviderSession {
   userAgent              String?
   userId                 String
   authprovideruser       AuthProviderUser @relation("AuthProviderUserSessions", fields: [userId], references: [id], onDelete: Cascade)
+  /// Better Auth config must set input: false and a server-time create default.
   authenticatedAt        DateTime
+  /// Better Auth config must set input: false; only the dedicated server mutation writes it.
   selectedOrganizationId String?          @db.Uuid
   selectedOrganization   Organization?    @relation("AuthProviderSessionSelectedOrganization", fields: [selectedOrganizationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
@@ -107,13 +109,14 @@ model AuthCredentialToken {
 }
 
 model AccountActivation {
-  id            String    @id @default(uuid()) @db.Uuid
-  userId        String    @db.Uuid
-  tokenDigest   String    @unique @db.VarChar(43)
-  expiresAt     DateTime
-  consumedAt    DateTime?
-  invalidatedAt DateTime?
-  createdAt     DateTime  @default(now())
+  id                  String    @id @default(uuid()) @db.Uuid
+  userId              String    @db.Uuid
+  tokenDigest         String    @unique @db.VarChar(43)
+  intendedEmailDigest String    @db.VarChar(43)
+  expiresAt           DateTime
+  consumedAt          DateTime?
+  invalidatedAt       DateTime?
+  createdAt           DateTime  @default(now())
 
   user User @relation("UserAccountActivations", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
@@ -129,14 +132,17 @@ enum AuthAbuseDimension {
 }
 
 model AuthAbuseBucket {
-  id            String             @id @default(uuid()) @db.Uuid
-  dimension     AuthAbuseDimension
-  keyDigest     String             @unique @db.VarChar(43)
-  failureCount  Int                @default(0)
-  backoffLevel  Int                @default(0)
-  blockedUntil  DateTime?
-  expiresAt     DateTime
-  updatedAt     DateTime           @updatedAt
+  id              String             @id @default(uuid()) @db.Uuid
+  dimension       AuthAbuseDimension
+  keyDigest       String             @unique @db.VarChar(43)
+  attemptCount    Int                @default(0)
+  failureCount    Int                @default(0)
+  backoffLevel    Int                @default(0)
+  windowStartedAt DateTime
+  lastFailureAt   DateTime?
+  blockedUntil    DateTime?
+  expiresAt       DateTime
+  updatedAt       DateTime           @updatedAt
 
   @@index([dimension, blockedUntil])
   @@index([expiresAt])
