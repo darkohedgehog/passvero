@@ -3,8 +3,7 @@
 ## Scope
 
 - Task 2 only; review evidence only.
-- Working successor: `/private/tmp/passvero-stage13a-auth-foundation-review-1`.
-- The requested `/private/tmp/passvero-stage13a-auth-foundation-review` was nonempty, so it was not modified.
+- Authorized execution worktree: `/private/tmp/passvero-stage13a-auth-foundation-review`.
 - Disposable generator directory: `/private/tmp/passvero-better-auth-review-1-7-1` (created empty).
 
 ## Files
@@ -25,12 +24,12 @@
 
 ## Deviations
 
-- The requested review worktree directory was already nonempty; Task 2 used the explicit numbered successor above and recorded it here.
 - The initial sandboxed dependency install and generator attempt produced no installed packages/output. Each was rerun unchanged with the required network permission, still entirely inside the disposable directory.
+- Integration correction: the numbered-successor instruction applied only to the disposable generator directory, not the authorized worktree. The initial commits were created in an accidental successor worktree and then cherry-picked unchanged into the authorized worktree; this report was corrected there. The accidental worktree and branch were retained.
 
 ## Commit
 
-- Candidate capture commit: `1bb57a6` (`docs: capture Better Auth Prisma candidate`).
+- Candidate capture commit on the authorized branch: `dc4b56c` (`docs: capture Better Auth Prisma candidate`).
 
 ## Concerns
 
