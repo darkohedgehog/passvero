@@ -38,3 +38,18 @@ test("raw candidate contains the four isolated provider models", async () => {
   assert.doesNotMatch(schema, /model Organization\s*\{/);
   assert.doesNotMatch(schema, /model Membership\s*\{/);
 });
+
+test("proposal keeps provider identity separate and binds by stable subject", async () => {
+  const schema = await readFile(
+    "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-prisma-fragment.prisma",
+    "utf8",
+  );
+  const identity = schema.match(/model AuthIdentity\s*\{[\s\S]*?^\}/m)?.[0];
+  assert.ok(identity);
+  assert.match(identity, /provider\s+String/);
+  assert.match(identity, /providerSubject\s+String/);
+  assert.match(identity, /userId\s+String\s+@db\.Uuid/);
+  assert.match(identity, /@@unique\(\[provider, providerSubject\]\)/);
+  assert.match(identity, /user\s+User\s+@relation/);
+  assert.doesNotMatch(identity, /email/);
+});
