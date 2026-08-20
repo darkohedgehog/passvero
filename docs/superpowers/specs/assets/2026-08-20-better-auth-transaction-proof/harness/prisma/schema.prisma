@@ -1,0 +1,171 @@
+// DISPOSABLE_PROOF_ONLY_NOT_CANONICAL_SCHEMA
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthCredentialTokenPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum AuthAbuseDimension {
+  TRUSTED_NETWORK
+  ACCOUNT_IDENTIFIER
+  ACCOUNT_AND_TRUSTED_NETWORK
+  GLOBAL_ENDPOINT
+}
+
+model User {
+  id                 String              @id @default(uuid()) @db.Uuid
+  email              String              @unique
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  authIdentities     AuthIdentity[]
+  accountActivations AccountActivation[] @relation("UserAccountActivations")
+
+  @@map("ProofCanonicalUser")
+}
+
+model AuthIdentity {
+  id              String   @id @default(uuid()) @db.Uuid
+  provider        String
+  providerSubject String
+  userId          String   @db.Uuid
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+}
+
+model AccountActivation {
+  id                  String    @id @default(uuid()) @db.Uuid
+  userId              String    @db.Uuid
+  tokenDigest         String    @unique @db.VarChar(43)
+  intendedEmailDigest String    @db.VarChar(43)
+  expiresAt           DateTime
+  consumedAt          DateTime?
+  invalidatedAt       DateTime?
+  createdAt           DateTime  @default(now())
+  user                User      @relation("UserAccountActivations", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AuthCredentialToken {
+  id                String                     @id @default(uuid()) @db.Uuid
+  providerUserId    String
+  purpose           AuthCredentialTokenPurpose
+  tokenDigest       String                     @unique @db.VarChar(43)
+  targetEmailDigest String                     @db.VarChar(43)
+  expiresAt         DateTime
+  consumedAt        DateTime?
+  invalidatedAt     DateTime?
+  createdAt         DateTime                   @default(now())
+  providerUser      AuthProviderUser           @relation("AuthProviderUserCredentialTokens", fields: [providerUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([providerUserId, purpose])
+  @@index([expiresAt])
+}
+
+model AuthAbuseBucket {
+  id               String             @id @default(uuid()) @db.Uuid
+  dimension        AuthAbuseDimension
+  keyDigest        String             @unique @db.VarChar(43)
+  attemptCount     Int                @default(0)
+  failureCount     Int                @default(0)
+  backoffLevel     Int                @default(0)
+  windowStartedAt  DateTime
+  lastFailureAt    DateTime?
+  backoffUpdatedAt DateTime
+  blockedUntil     DateTime?
+  expiresAt        DateTime
+  updatedAt        DateTime           @updatedAt
+
+  @@index([dimension, blockedUntil])
+  @@index([expiresAt])
+}
+
+model ProofMarker {
+  id            String   @id @default(uuid()) @db.Uuid
+  label         String   @unique
+  transactionId String
+  createdAt     DateTime @default(now())
+}
+
+model AuthProviderUser {
+  id                   String                @id
+  name                 String
+  email                String
+  emailVerified        Boolean               @default(false)
+  image                String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  authprovidersessions AuthProviderSession[]
+  authprovideraccounts AuthProviderAccount[]
+  credentialTokens     AuthCredentialToken[] @relation("AuthProviderUserCredentialTokens")
+
+  @@unique([email])
+  @@map("AuthProviderUser")
+}
+
+model AuthProviderSession {
+  id                     String           @id
+  expiresAt              DateTime
+  token                  String
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  ipAddress              String?
+  userAgent              String?
+  userId                 String
+  authprovideruser       AuthProviderUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  authenticatedAt        DateTime
+  lastRefreshAt          DateTime
+  selectedOrganizationId String?
+
+  @@unique([token])
+  @@index([userId])
+  @@index([lastRefreshAt])
+  @@map("AuthProviderSession")
+}
+
+model AuthProviderAccount {
+  id                    String           @id
+  issuer                String
+  accountId             String
+  providerId            String
+  userId                String
+  authprovideruser      AuthProviderUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  @@unique([issuer, accountId], map: "AuthProviderAccount_issuer_accountId_uidx")
+  @@index([userId])
+  @@map("AuthProviderAccount")
+}
+
+model AuthProviderVerification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("AuthProviderVerification")
+}
