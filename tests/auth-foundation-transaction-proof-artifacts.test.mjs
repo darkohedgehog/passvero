@@ -278,8 +278,10 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.match(source, /mandatory-verdict/);
   assert.match(source, /"\$candidate" != "pass-1111"/);
   assert.match(source, /CLEANUP=FAIL_PROOF_WITH_COMPLETE_CLEANUP/);
-  assert.ok(publication.indexOf("await stage(input.candidate)") < publication.indexOf("await (input.retirePending ?? unlink)(pendingPath)"));
-  assert.ok(publication.indexOf("await (input.retirePending ?? unlink)(pendingPath)") < publication.indexOf("await commit()"));
+  assert.ok(publication.indexOf("await stage(input.candidate)") < publication.indexOf("await input.retirePending(pendingPath)"));
+  assert.ok(publication.indexOf("await input.retirePending(pendingPath)") < publication.indexOf("await input.inspectPending(pendingPath)"));
+  assert.ok(publication.indexOf("await input.inspectPending(pendingPath)") < publication.indexOf("pendingRetired = true"));
+  assert.ok(publication.indexOf("pendingRetired = true") < publication.indexOf("await commit()"));
   assert.match(source, /publish_checked_failure "\$candidate" "\$failure_status"/);
   assert.match(publication, /FAIL_PENDING_RETAINED/);
   assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERED/);

@@ -320,7 +320,43 @@ test("mandatory verdict derivation requires the exact seven PASS hypotheses", as
   }
 });
 
-test("pending retirement failure executes checked FAIL publication and discards PASS", async () => {
+test("resolved no-op pending retirement executes checked FAIL publication and discards PASS", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+  try {
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+    await assert.rejects(() => publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+    }), /pending retirement callbacks are required/);
+    const result = await publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+      retirePending: async () => undefined,
+      inspectPending: lstatSync,
+    });
+    assert.equal(result.passed, false);
+    assert.equal(result.exitCode, 1);
+    assert.equal(result.status, "FAIL_PENDING_RETAINED");
+    assert.equal(result.authoritativeCandidate, "fail-1111");
+    assert.equal(lstatSync(pendingPath).isFile(), true);
+    const authoritative = JSON.parse(readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8")) as { status: string };
+    assert.equal(authoritative.status, "FAIL");
+    assert.notEqual(authoritative.status, "PASS");
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+test("surviving pending symlink is not treated as retired", async () => {
   const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(evidenceRoot, 0o700);
   const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
@@ -334,16 +370,17 @@ test("pending retirement failure executes checked FAIL publication and discards 
       preparedDirectory: preparedPath,
       pendingPath,
       candidate: "pass-1111",
-      retirePending: async () => { throw new Error("injected retirement failure"); },
+      retirePending: async (candidate: string) => {
+        await unlink(candidate);
+        await symlink(path.join(preparedPath, "pass-1111.json"), candidate);
+      },
+      inspectPending: lstatSync,
     });
-    assert.equal(result.passed, false);
     assert.equal(result.exitCode, 1);
-    assert.equal(result.status, "FAIL_PENDING_RETAINED");
     assert.equal(result.authoritativeCandidate, "fail-1111");
-    assert.equal(lstatSync(pendingPath).isFile(), true);
+    assert.equal(lstatSync(pendingPath).isSymbolicLink(), true);
     const authoritative = JSON.parse(readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8")) as { status: string };
     assert.equal(authoritative.status, "FAIL");
-    assert.notEqual(authoritative.status, "PASS");
   } finally {
     await rm(evidenceRoot, { recursive: true });
   }
