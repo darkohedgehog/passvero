@@ -21,3 +21,20 @@ test("authentication review records the exact candidate versions and exclusions"
   assert.match(review, /Automatic linking: EXCLUDED/);
   assert.match(review, /Database connection performed: NO/);
 });
+
+test("raw candidate contains the four isolated provider models", async () => {
+  const schema = await readFile(
+    "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/generated-prisma-schema.prisma",
+    "utf8",
+  );
+  for (const model of [
+    "AuthProviderUser",
+    "AuthProviderSession",
+    "AuthProviderAccount",
+    "AuthProviderVerification",
+  ]) {
+    assert.match(schema, new RegExp(`model ${model} \\{`));
+  }
+  assert.doesNotMatch(schema, /model Organization\s*\{/);
+  assert.doesNotMatch(schema, /model Membership\s*\{/);
+});

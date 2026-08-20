@@ -33,3 +33,12 @@
   major version 7.
 - Repository `package.json` and lockfile record Prisma 7.8.0, Next.js 16.2.11,
   and React 19.2.4.
+
+## Raw generator capture
+
+- CLI: auth 1.7.1
+- Configuration: disposable review-only Better Auth configuration
+- Output: `docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/generated-prisma-schema.prisma`
+- Database connection: not performed
+- Canonical Prisma schema mutation: not performed
+- Canonical migration mutation: not performed
