@@ -231,24 +231,37 @@ test("generated SQL validator requires the exact quoted unqualified table set", 
   assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE TABLE "AuthIdentity"')), /STOP_RUN_ROOT_INVALID/);
   assert.throws(() => validateGeneratedSql(`${sql}\nCREATE TEMP TABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
   assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE TABLE IF NOT EXISTS "User"')), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(`${sql}\nCREATE/*hidden*/TABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE/*hidden*/TABLE "AuthIdentity"')), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(`${sql}\nCREATE -- hidden\nTABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE -- hidden\nTABLE "AuthIdentity"')), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(`${sql}\nCREATE\n-- CreateTable\nTABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE\n-- CreateTable\nTABLE "AuthIdentity"')), /STOP_RUN_ROOT_INVALID/);
+  assert.doesNotThrow(() => validateGeneratedSql(`-- CreateTable\n${sql}`));
 });
 
 test("cleanup evidence preparation rejects sensitive pending drafts before finalization", async () => {
   const runRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(runRoot, 0o700);
-  const pendingPath = path.join(runRoot, "pending.json");
-  const preparedPath = path.join(runRoot, "prepared-evidence");
+  const pendingPath = path.join(runRoot, "evidence.pending.json");
+  const preparedPath = path.join(runRoot, ".cleanup-evidence-prepared");
   try {
     const { cleanup: _cleanup, ...pending } = cleanEvidence();
     await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
-    await prepareCleanupEvidence(pendingPath, preparedPath);
-    assert.match(readFileSync(path.join(preparedPath, "1111.json"), "utf8"), /"rootGone": true/);
+    await prepareCleanupEvidence(pendingPath, preparedPath, runRoot);
+    assert.match(readFileSync(path.join(preparedPath, "pass-1111.json"), "utf8"), /"rootGone": true/);
+    assert.match(readFileSync(path.join(preparedPath, "fail-1111.json"), "utf8"), /"status": "FAIL"/);
     await rm(preparedPath, { recursive: true });
 
+    await assert.rejects(
+      () => prepareCleanupEvidence(pendingPath, path.join(runRoot, "inside-run-root-prepared"), runRoot),
+      /prepared evidence path is not authoritative/,
+    );
+
     await writeFile(pendingPath, JSON.stringify({ ...pending, passwordMaterial: "opaque" }), { mode: 0o600 });
-    await assert.rejects(() => prepareCleanupEvidence(pendingPath, preparedPath), /STOP_EVIDENCE_REDACTION/);
+    await assert.rejects(() => prepareCleanupEvidence(pendingPath, preparedPath, runRoot), /STOP_EVIDENCE_REDACTION/);
     await writeFile(pendingPath, JSON.stringify({ ...pending, assertions: ["__Host-session=opaque; Path=/; HttpOnly; Secure; SameSite=Lax"] }), { mode: 0o600 });
-    await assert.rejects(() => prepareCleanupEvidence(pendingPath, preparedPath), /STOP_EVIDENCE_REDACTION/);
+    await assert.rejects(() => prepareCleanupEvidence(pendingPath, preparedPath, runRoot), /STOP_EVIDENCE_REDACTION/);
   } finally {
     await rm(runRoot, { recursive: true });
   }

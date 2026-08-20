@@ -248,7 +248,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /CLEANUP=FAIL_RETAINED:/,
     /rm -rf -- "\$RUN_ROOT_REAL"/,
     /prepare-cleanup-evidence/,
-    /evidence\.final\.pending\.json/,
+    /\.cleanup-evidence-prepared/,
     /fs\.lstatSync\(candidate\)/,
     /validate_delete_target/,
   ]) assert.match(source, contract);
@@ -267,6 +267,17 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /rm -rf[^\n]*[*?\[]/,
     /PROOF_PORT\s*=\s*\$\(\(|PROOF_PORT\+\+|55433/,
   ]) assert.doesNotMatch(source, forbidden);
+
+  assert.doesNotMatch(source, /RUN_ROOT_REAL\/prepared-evidence|publish_external_evidence[^\n]*\|\| true/);
+  const markdownPublication = source.indexOf('mv -f -- "$PUBLICATION_MARKDOWN" "$SCRIPT_DIR/evidence.md"');
+  const jsonPublication = source.indexOf('mv -f -- "$PUBLICATION_JSON" "$SCRIPT_DIR/evidence.json"');
+  assert.ok(markdownPublication > 0 && jsonPublication > markdownPublication, "authoritative JSON must publish last");
+  const rootGoneGate = source.indexOf('&& "$rootGone" == true');
+  const passPublication = source.indexOf('publish_external_evidence "pass-1111"');
+  assert.ok(rootGoneGate > 0 && passPublication > rootGoneGate, "PASS publication must follow rootGone");
+  assert.match(source, /publish_failure_or_report "\$suffix" "CLEANUP=FAIL_RETAINED:/);
+  assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERED/);
+  assert.match(source, /CLEANUP=FAIL_PUBLICATION_STAGED/);
 
   const runRoot = await readHarness("src/run-root.ts");
   assert.match(runRoot, /renderEvidenceJson\(\{ \.\.\.pending, cleanup: \{\} \}\)/);

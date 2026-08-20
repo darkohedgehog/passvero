@@ -133,8 +133,28 @@ const EXPECTED_PROOF_TABLES = [
 ] as const;
 
 export function validateGeneratedSql(source: string): void {
+  if (/\/\*/u.test(source) || /\*\//u.test(source)) {
+    fail("generated SQL block comments are unsupported");
+  }
+  const lines = source.split("\n");
+  const normalized = lines.map((line, index) => {
+    const comment = line.indexOf("--");
+    if (comment === -1) return line;
+    if (line.slice(0, comment).trim().length !== 0) {
+      fail("generated SQL inline comments are unsupported");
+    }
+    if (!/^\s*-- (?:CreateEnum|CreateTable|CreateIndex|AddForeignKey|AlterTable)\s*$/u.test(line)) {
+      fail("generated SQL comment form is unsupported");
+    }
+    const previous = lines.slice(0, index).reverse().find((candidate) => candidate.trim().length > 0)?.trim() ?? "";
+    const next = lines.slice(index + 1).find((candidate) => candidate.trim().length > 0)?.trim() ?? "";
+    if (/\bCREATE$/iu.test(previous) || /^TABLE\b/iu.test(next)) {
+      fail("generated SQL comments may not separate CREATE TABLE tokens");
+    }
+    return "";
+  }).join("\n");
   const createTable = /\bCREATE\s+((?:(?:GLOBAL|LOCAL)\s+)?(?:TEMPORARY|TEMP|UNLOGGED)\s+)?TABLE\s+(IF\s+NOT\s+EXISTS\s+)?([^\s(;,]+)/giu;
-  const commands = [...source.matchAll(createTable)];
+  const commands = [...normalized.matchAll(createTable)];
   if (commands.some((match) => match[1] || match[2])) {
     fail("generated SQL table declarations must use plain CREATE TABLE");
   }
@@ -161,15 +181,32 @@ function asEvidenceDraft(value: unknown): Omit<ProofEvidence, "cleanup"> {
   return value as Omit<ProofEvidence, "cleanup">;
 }
 
-export async function prepareCleanupEvidence(pendingPath: string, outputDirectory: string): Promise<void> {
+function assertOwnedRealDirectory(candidate: string, label: string): string {
+  if (!path.isAbsolute(candidate)) fail(`${label} must be absolute`);
+  const status = lstatSync(candidate);
+  if (status.isSymbolicLink() || !status.isDirectory()) fail(`${label} must be a non-symlink directory`);
+  if (typeof process.getuid !== "function" || status.uid !== process.getuid()) fail(`${label} owner mismatch`);
+  const resolved = realpathSync(candidate);
+  if (resolved !== candidate) fail(`${label} must already be a real path`);
+  return resolved;
+}
+
+export async function prepareCleanupEvidence(
+  pendingPath: string,
+  outputDirectory: string,
+  evidenceDirectory: string,
+): Promise<void> {
+  const evidenceRoot = assertOwnedRealDirectory(evidenceDirectory, "evidence directory");
+  if (pendingPath !== path.join(evidenceRoot, "evidence.pending.json")) {
+    fail("pending evidence path is not authoritative");
+  }
   assertProtectedFile(pendingPath, "pending evidence");
   const pending = asEvidenceDraft(JSON.parse(readFileSync(pendingPath, "utf8")) as unknown);
   renderEvidenceJson({ ...pending, cleanup: {} });
   renderEvidenceMarkdown({ ...pending, cleanup: {} });
-  if (path.basename(outputDirectory) !== "prepared-evidence" || !RUN_ROOT_PATTERN.test(path.dirname(outputDirectory))) {
-    fail("prepared evidence directory must be directly inside a disposable run root");
+  if (outputDirectory !== path.join(evidenceRoot, ".cleanup-evidence-prepared")) {
+    fail("prepared evidence path is not authoritative");
   }
-  assertProtectedDirectory(path.dirname(outputDirectory), "prepared evidence parent");
   await mkdir(outputDirectory, { mode: 0o700 });
   const preparedRoot = assertProtectedDirectory(outputDirectory, "prepared evidence directory");
   for (let mask = 0; mask < 16; mask += 1) {
@@ -179,11 +216,18 @@ export async function prepareCleanupEvidence(pendingPath: string, outputDirector
       pidGone: Boolean(mask & 2),
       rootGone: Boolean(mask & 1),
     };
-    const evidence: ProofEvidence = { ...pending, cleanup };
+    const evidence = { ...pending, status: "FAIL", cleanup } as ProofEvidence & { readonly status: "FAIL" };
     const suffix = mask.toString(2).padStart(4, "0");
-    await writeProtected(path.join(preparedRoot, `${suffix}.json`), renderEvidenceJson(evidence));
-    await writeProtected(path.join(preparedRoot, `${suffix}.md`), renderEvidenceMarkdown(evidence));
+    await writeProtected(path.join(preparedRoot, `fail-${suffix}.json`), renderEvidenceJson(evidence));
+    await writeProtected(path.join(preparedRoot, `fail-${suffix}.md`), renderEvidenceMarkdown(evidence));
   }
+  const success = {
+    ...pending,
+    status: "PASS",
+    cleanup: { serverStopped: true, listenerGone: true, pidGone: true, rootGone: true },
+  } as ProofEvidence & { readonly status: "PASS" };
+  await writeProtected(path.join(preparedRoot, "pass-1111.json"), renderEvidenceJson(success));
+  await writeProtected(path.join(preparedRoot, "pass-1111.md"), renderEvidenceMarkdown(success));
 }
 
 function fail(message: string): never {
@@ -316,7 +360,10 @@ async function runCli(): Promise<void> {
     return;
   }
   if (process.argv[2] === "prepare-cleanup-evidence" && process.argv.length === 5) {
-    await prepareCleanupEvidence(process.argv[3], process.argv[4]);
+    fail("prepare-cleanup-evidence requires an authoritative evidence directory");
+  }
+  if (process.argv[2] === "prepare-cleanup-evidence" && process.argv.length === 6) {
+    await prepareCleanupEvidence(process.argv[3], process.argv[4], process.argv[5]);
     return;
   }
   fail("usage: run-root.ts <bootstrap|validate-generated-sql|prepare-cleanup-evidence> ...");
