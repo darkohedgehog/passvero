@@ -390,3 +390,68 @@ token opacity, encoding, signing, or identifier hashing alone is insufficient.
   route exclusion plus refresh rotation, and the Passvero-owned digest-only
   verification/reset store implements the specified staged abuse and token
   lifecycle ordering.
+
+## Fix Round 3
+
+### Test-evidence findings resolved
+
+- Added one scoped reset-evidence validator that requires the six Better Auth
+  1.7.1 citations in behavioral chain order and pins the associated issuance,
+  plaintext-storage, endpoint-consumption, internal-adapter, and Prisma
+  concurrency behavior. The final test validates the real review and removes
+  each citation independently to prove that every omission is detected.
+- Added exact migration-contract assertions that the reviewed Passvero session
+  boundary is the only create/read/refresh/rotate/revoke/password-change entry
+  point, application middleware and endpoints call only that boundary for
+  authoritative reads and refresh, and no native route can provide an alternate
+  session-read path. These assertions are additional to the existing
+  `disableSessionRefresh: true` and native `/get-session` exclusion checks.
+- No review correction was required: every requested citation and behavior was
+  already present and exact.
+
+### Changed lines and source chain
+
+- `tests/auth-foundation-review.test.mjs:22-52` defines the ordered citation and
+  behavior assertions; lines 152 and 157-158 pin the sole-session-boundary
+  invariant; lines 302-313 validate the review and mutation guards.
+- Reset issuance:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:74-87`.
+- `storeIdentifier` default:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/types/init-options.d.mts:1173-1182`.
+- Plaintext/absent-option pass-through:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/verification-token-storage.mjs:4-12`.
+- Reset endpoint consumption before password mutation:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:157-174`.
+- Internal-adapter latest-row consume branch:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:818-845`.
+- Prisma atomic unique-id `consumeOne` deletion:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/prisma-adapter/dist/index.mjs:319-332`.
+
+### RED to GREEN and verification evidence
+
+- Intentional RED: `node --test tests/auth-foundation-review.test.mjs` returned
+  exit 1 with 10 passing and 1 failing. Removing
+  `internal-adapter.mjs:818-845` produced the exact failure
+  `missing or out-of-order reset evidence citation`.
+- A mutation-harness draft initially appended a marker while retaining the
+  original citation substring and therefore produced `Missing expected
+  exception`; replacing the citation entirely corrected the probe without any
+  review or contract change.
+- GREEN: `node --test tests/auth-foundation-review.test.mjs` returned exit 0
+  with 11 passing and 0 failing, total duration 51.618167 ms.
+- Fresh pre-report rerun of the same focused command returned exit 0 with 11
+  passing and 0 failing, total duration 61.498834 ms.
+- `git diff --exit-code 096f439 -- package.json package-lock.json
+  prisma/schema.prisma prisma/migrations prisma.config.ts .env .env.local
+  src/generated`: exit 0; no forbidden path changed from the Task 4 base.
+- `git diff --check`: exit 0 before the test commit.
+- Test commit: `757d238` (`test: pin authentication reset evidence chain`).
+
+### Scope and remaining concerns
+
+- This round changed only the owned focused test and this Task 4 report. It did
+  not modify packages, source, canonical schema, migrations, environment,
+  generated clients, review prose, or migration-contract prose; it did not
+  access a database or secrets.
+- Stage 13E remains gated on implementation and review of the sole Passvero
+  session boundary and Passvero-owned digest-only verification/reset store.
