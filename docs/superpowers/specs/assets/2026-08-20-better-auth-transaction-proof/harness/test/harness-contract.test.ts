@@ -10,6 +10,7 @@ import {
   PROOF_ROOT_SENTINEL,
   readAuthSecret,
   readRunIdentity,
+  selectCleanupEvidenceCandidate,
   validateGeneratedSql,
   validateDisposableHarnessEnvironment,
 } from "../src/run-root.js";
@@ -251,6 +252,7 @@ test("cleanup evidence preparation rejects sensitive pending drafts before final
     await prepareCleanupEvidence(pendingPath, preparedPath, runRoot);
     assert.match(readFileSync(path.join(preparedPath, "pass-1111.json"), "utf8"), /"rootGone": true/);
     assert.match(readFileSync(path.join(preparedPath, "fail-1111.json"), "utf8"), /"status": "FAIL"/);
+    assert.equal(readFileSync(path.join(preparedPath, "mandatory-verdict"), "utf8"), "FAIL");
     await rm(preparedPath, { recursive: true });
 
     await assert.rejects(
@@ -265,6 +267,16 @@ test("cleanup evidence preparation rejects sensitive pending drafts before final
   } finally {
     await rm(runRoot, { recursive: true });
   }
+});
+
+test("proof failure remains authoritative FAIL even when cleanup is complete", () => {
+  const complete = { serverStopped: true, listenerGone: true, pidGone: true, rootGone: true };
+  assert.equal(selectCleanupEvidenceCandidate(0, true, complete), "pass-1111");
+  assert.equal(selectCleanupEvidenceCandidate(0, false, complete), "fail-1111");
+  assert.equal(selectCleanupEvidenceCandidate(1, true, complete), "fail-1111");
+  assert.equal(selectCleanupEvidenceCandidate(73, true, complete), "fail-1111");
+  assert.equal(selectCleanupEvidenceCandidate(0, true, { ...complete, rootGone: false }), "fail-1110");
+  assert.throws(() => selectCleanupEvidenceCandidate(-1, true, complete), /STOP_RUN_ROOT_INVALID/);
 });
 
 test("run-root rejects unsafe modes, symlinks, formats, port, and socket escape", async () => {

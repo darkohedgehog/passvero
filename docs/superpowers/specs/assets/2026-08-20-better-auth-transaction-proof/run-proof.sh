@@ -287,7 +287,7 @@ discard_publication_stage() {
   [[ ! -e "$PUBLICATION_JSON" && ! -e "$PUBLICATION_MARKDOWN" ]]
 }
 
-publish_external_evidence() {
+stage_external_evidence() {
   local key="$1"
   [[ "$key" =~ ^(?:pass-1111|fail-[01]{4})$ ]] || return 1
   validate_external_prepared_root || return 1
@@ -300,18 +300,49 @@ publish_external_evidence() {
   install -m 0600 "$json" "$PUBLICATION_JSON" || return 1
   validate_prepared_file "$PUBLICATION_MARKDOWN" || return 1
   validate_prepared_file "$PUBLICATION_JSON" || return 1
+}
+
+commit_staged_evidence() {
   mv -f -- "$PUBLICATION_MARKDOWN" "$SCRIPT_DIR/evidence.md" || return 1
   mv -f -- "$PUBLICATION_JSON" "$SCRIPT_DIR/evidence.json" || return 1
 }
 
-publish_failure_or_report() {
-  local suffix="$1" safe_status="$2"
-  if publish_external_evidence "fail-$suffix"; then
+retire_pending_evidence() {
+  local pending="$SCRIPT_DIR/evidence.pending.json"
+  rm -f -- "$pending" || return 1
+  [[ ! -e "$pending" && ! -L "$pending" ]]
+}
+
+publish_checked_failure() {
+  local key="$1" safe_status="$2"
+  if ! stage_external_evidence "$key"; then
+    printf '%s\n' "CLEANUP=FAIL_PUBLICATION_STAGED" >&2
+    return 1
+  fi
+  if ! retire_pending_evidence; then
+    if commit_staged_evidence; then
+      printf '%s\n' "CLEANUP=FAIL_PENDING_RETAINED" >&2
+    else
+      printf '%s\n' "CLEANUP=FAIL_PUBLICATION_STAGED" >&2
+    fi
+    return 1
+  fi
+  if commit_staged_evidence; then
     printf '%s\n' "$safe_status" >&2
   else
     printf '%s\n' "CLEANUP=FAIL_PUBLICATION_STAGED" >&2
   fi
   return 1
+}
+
+select_cleanup_candidate() {
+  local proof_status="$1" mandatory_verdict="$2" suffix="$3"
+  [[ "$proof_status" =~ ^[0-9]+$ && "$mandatory_verdict" =~ ^(?:PASS|FAIL)$ && "$suffix" =~ ^[01]{4}$ ]] || return 1
+  if [[ "$proof_status" -eq 0 && "$mandatory_verdict" == PASS && "$suffix" == 1111 ]]; then
+    printf '%s' "pass-1111"
+  else
+    printf '%s' "fail-$suffix"
+  fi
 }
 
 validate_delete_target() {
@@ -343,24 +374,39 @@ cleanup() {
   if ! kill -0 "$pid" 2>/dev/null; then pidGone=true; fi
   if [[ "$serverStopped" == true && "$listenerGone" == true && "$pidGone" == true ]]; then
     if ! validate_delete_target; then
-      publish_failure_or_report "1110" "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")"
+      publish_checked_failure "fail-1110" "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")"
       exit 1
     fi
     rm -rf -- "$RUN_ROOT_REAL"
     if [[ ! -e "$RUN_ROOT_REAL" ]]; then rootGone=true; fi
   fi
-  if [[ "$serverStopped" == true && "$listenerGone" == true && "$pidGone" == true && "$rootGone" == true ]]; then
-    if ! publish_external_evidence "pass-1111"; then
-      publish_failure_or_report "1111" "CLEANUP=FAIL_PUBLICATION_RECOVERED"
-      exit 1
-    fi
-    printf '%s\n' "CLEANUP=PASS"
-    exit "$exit_status"
-  fi
   local suffix
   suffix="$(cleanup_mask "$serverStopped" "$listenerGone" "$pidGone" "$rootGone")"
-  publish_failure_or_report "$suffix" "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")"
-  exit 1
+  local mandatory_verdict
+  mandatory_verdict="$(protected_value "$PREPARED_EVIDENCE/mandatory-verdict")" || mandatory_verdict="FAIL"
+  local candidate
+  candidate="$(select_cleanup_candidate "$exit_status" "$mandatory_verdict" "$suffix")" || candidate="fail-$suffix"
+  if [[ "$candidate" != "pass-1111" ]]; then
+    local failure_status="CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")"
+    [[ "$suffix" == 1111 ]] && failure_status="CLEANUP=FAIL_PROOF_WITH_COMPLETE_CLEANUP"
+    publish_checked_failure "$candidate" "$failure_status"
+    exit 1
+  fi
+  if ! stage_external_evidence "$candidate"; then
+    publish_checked_failure "fail-1111" "CLEANUP=FAIL_PUBLICATION_RECOVERED"
+    exit 1
+  fi
+  if ! retire_pending_evidence; then
+    discard_publication_stage
+    publish_checked_failure "fail-1111" "CLEANUP=FAIL_PENDING_RETAINED"
+    exit 1
+  fi
+  if ! commit_staged_evidence; then
+    publish_checked_failure "fail-1111" "CLEANUP=FAIL_PUBLICATION_RECOVERED"
+    exit 1
+  fi
+  printf '%s\n' "CLEANUP=PASS"
+  exit 0
 }
 
 run_all() {

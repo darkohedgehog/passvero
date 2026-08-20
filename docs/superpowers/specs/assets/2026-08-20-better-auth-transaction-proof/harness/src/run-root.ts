@@ -228,6 +228,29 @@ export async function prepareCleanupEvidence(
   } as ProofEvidence & { readonly status: "PASS" };
   await writeProtected(path.join(preparedRoot, "pass-1111.json"), renderEvidenceJson(success));
   await writeProtected(path.join(preparedRoot, "pass-1111.md"), renderEvidenceMarkdown(success));
+  const mandatoryIds = new Set<ProofEvidence["hypotheses"][number]["id"]>([
+    "H1_NATIVE_TRANSACTION", "H2_DIRECT_API_OUTER_TRANSACTION", "H3_HANDLER_CONTEXT_REPLACEMENT",
+    "H4_CONTROLLED_ACTIVATION", "H5_SESSION_COOKIE_AFTER_COMMIT", "H6_RECOVERY_AND_REVOCATION",
+    "H7_ROUTE_EXPOSURE",
+  ]);
+  const observedIds = new Set(pending.hypotheses.map((hypothesis) => hypothesis.id));
+  const mandatoryPassed = pending.hypotheses.length === mandatoryIds.size
+    && observedIds.size === mandatoryIds.size
+    && [...mandatoryIds].every((id) => observedIds.has(id))
+    && pending.hypotheses.every((hypothesis) => hypothesis.status === "PASS");
+  await writeProtected(path.join(preparedRoot, "mandatory-verdict"), mandatoryPassed ? "PASS" : "FAIL");
+}
+
+export function selectCleanupEvidenceCandidate(
+  proofExitStatus: number,
+  mandatoryHypothesesPassed: boolean,
+  cleanup: { readonly serverStopped: boolean; readonly listenerGone: boolean; readonly pidGone: boolean; readonly rootGone: boolean },
+): `pass-1111` | `fail-${string}` {
+  if (!Number.isSafeInteger(proofExitStatus) || proofExitStatus < 0) fail("proof exit status is invalid");
+  const suffix = [cleanup.serverStopped, cleanup.listenerGone, cleanup.pidGone, cleanup.rootGone]
+    .map((value) => value ? "1" : "0")
+    .join("");
+  return proofExitStatus === 0 && mandatoryHypothesesPassed && suffix === "1111" ? "pass-1111" : `fail-${suffix}`;
 }
 
 function fail(message: string): never {
