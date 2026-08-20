@@ -1,7 +1,9 @@
 # Proposed Authentication Persistence Migration Contract
 
-**Status:** Review-only candidate; not executable migration SQL  
-**Schema proposal:** `proposed-prisma-fragment.prisma`  
+**Status:** Review-only candidate; not executable migration SQL
+
+**Schema proposal:** `proposed-prisma-fragment.prisma`
+
 **Canonical schema and migration directories changed:** NO
 
 This contract is the exact PostgreSQL target for a later, separately authorized

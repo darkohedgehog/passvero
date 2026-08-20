@@ -125,7 +125,10 @@ token opacity, encoding, signing, or identifier hashing alone is insufficient.
   prisma/schema.prisma prisma/migrations prisma.config.ts .env .env.local
   src/generated`: exit 0; all forbidden repository paths are unchanged from the
   Task 4 base.
-- `git diff --check`: exit 0 before the contract commit.
+- `git diff --check`: the pre-commit tracked diff exited 0, but the final
+  `096f439..HEAD` range check correctly exposed two Markdown hard-break trailing
+  spaces that had been untracked at the earlier check. They were removed, the
+  report was corrected, and the complete range check was rerun successfully.
 - Required sensitive-value `rg` scan: matches were manually classified as the
   captured provider `password` field, policy/source-code descriptions, forbidden
   field names, exact local source paths, and the literal non-value placeholder
@@ -154,6 +157,9 @@ token opacity, encoding, signing, or identifier hashing alone is insufficient.
 - The existing disposable Task 3 combined schema was extended with only the
   proposed fragment and required `User`/`Organization` inverse relations. It is
   outside the repository and is not a canonical or migration source.
+- The first post-commit `git diff --check 096f439..HEAD` failed on two Markdown
+  hard-break trailing spaces in the new contract. No semantic content changed;
+  the spaces were removed and the complete check was rerun before completion.
 - No integration tests, migration generation/deployment, `db push`, Better Auth
   migration execution, database cleanup, or database reads were run because the
   stage is review-only and has no database authority.
