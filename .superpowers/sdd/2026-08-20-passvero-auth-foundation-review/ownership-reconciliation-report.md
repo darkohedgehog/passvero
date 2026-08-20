@@ -92,3 +92,30 @@ The exact Better Auth-backed transaction boundary remains required and unproven.
 No persistence, schema, migration, or Stage 13B/13E approval follows from this
 reconciliation. The next admissible evidence is separately authorized proof,
 not implementation against these candidate inputs.
+
+## Fix Round 1
+
+- Starting HEAD: `9bdf24b6aa966554d5d1826b293830567ad2f5f8`.
+- Recast the rejected native password-change row so lifetime-anchor preservation
+  is an acceptance criterion for future accepted Better Auth-backed transaction
+  proof, not present-tense behavior of “the Passvero transaction.”
+- Searched both authoritative artifacts for equivalent residual direct or
+  Passvero transaction-ownership prose. No second positive ownership claim was
+  found; remaining direct-Passvero references explicitly reject or supersede
+  that strategy.
+- Strengthened the no-replacement/direct-write guard across both the review and
+  migration contract. It now rejects “the/a Passvero transaction” and the earlier
+  direct-ownership formulations while requiring both artifacts to state the
+  rejection and absence of a selected replacement integration.
+- Restored exact migration-contract assertions for the retained credential-row
+  convention and four-field lookup, cross-table ordering as an acceptance input,
+  post-commit cookie/no-cookie-on-rollback semantics, three-attempt retry ceiling,
+  `40001`/`40P01`/`P2034` handling, non-retriable failures, and failure-injection
+  rollback evidence.
+- RED: the focused suite returned 18 passed and 1 failed. The new dual-artifact
+  guard failed only on the residual “the Passvero transaction” sentence.
+- GREEN: the focused suite returned 19 passed and 0 failed after the sentence was
+  corrected.
+- Cumulative MJS verification: 175 passed and 0 failed.
+- No package, source, canonical schema, migration, environment, generated-client,
+  database, secret, or transaction-spike work was performed.

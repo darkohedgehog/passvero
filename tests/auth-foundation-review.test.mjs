@@ -271,6 +271,35 @@ test("Better Auth-backed transaction proof is required and unproven", async () =
   assert.match(contract, /acceptance criteria only.*not an implementation plan/i);
   assert.match(contract, /no replacement integration.*selected or approved/i);
   assert.doesNotMatch(contract, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVED/);
+
+  assert.match(
+    contract,
+    /Candidate package evidence indicates a credential row with `providerId = "credential"`,\s+`issuer = "local:credential"`, `accountId = userId`, and a non-null `password`/i,
+  );
+  assert.match(
+    contract,
+    /credential lookup matches all four of `userId`, `providerId`, `issuer`,\s+and `accountId`/i,
+  );
+  assert.match(
+    contract,
+    /cross-table order—canonical `User` when present,\s+`AuthProviderUser`, `AuthProviderAccount`, credential token or\s+`AccountActivation`, `AuthIdentity`, then `AuthProviderSession`—is an acceptance\s+input, not an authorized implementation/i,
+  );
+  assert.match(
+    contract,
+    /post-commit `Set-Cookie` delivery is\s+required and is never emitted before commit\. A rollback emits no new cookie/is,
+  );
+  assert.match(
+    contract,
+    /maximum three total transaction\s+attempts \(the initial attempt plus at most two retries\) only for PostgreSQL\s+`40001` or `40P01`\s+reported as a known rolled-back Prisma `P2034`/i,
+  );
+  assert.match(
+    contract,
+    /Unique conflicts, conditional zero-row results,\s+authentication failures, unknown errors, and an ambiguous commit MUST NOT be\s+retried/is,
+  );
+  assert.match(
+    contract,
+    /failure injection to demonstrate rollback of every required state.*absence of split-brain provider\/canonical state/is,
+  );
 });
 
 test("direct provider-table writes are rejected without contradictory ownership prose", async () => {
@@ -281,11 +310,14 @@ test("direct provider-table writes are rejected without contradictory ownership 
     /\| Direct Passvero writes to Better Auth provider tables \| \*\*REJECT\*\* \|/,
   );
   for (const artifact of [review, contract]) {
+    assert.match(artifact, /Direct Passvero (?:writes|provider-table writes).*reject/is);
+    assert.match(artifact, /No replacement integration is selected or approved/i);
     assert.doesNotMatch(artifact, /Passvero-owned infrastructure performs direct Prisma reads and writes/i);
     assert.doesNotMatch(artifact, /Passvero infrastructure (?:directly )?(?:owns|writes) (?:their initial writes|these rows|the initial compatibility-row contract)/i);
     assert.doesNotMatch(artifact, /Better Auth remains (?:only )?the pinned schema and account compatibility foundation/i);
     assert.doesNotMatch(artifact, /Every initial auth\/session\/password operation is Passvero-owned/i);
     assert.doesNotMatch(artifact, /No Better Auth native handler or Prisma adapter participates in the transaction/i);
+    assert.doesNotMatch(artifact, /\b(?:the|a) Passvero(?:-owned)? transaction\b/i);
   }
 });
 

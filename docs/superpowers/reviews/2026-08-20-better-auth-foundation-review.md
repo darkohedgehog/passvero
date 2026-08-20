@@ -609,7 +609,7 @@ frozen authentication authority or accept only a subset of the constraints.
 | Unproven Better Auth native or adapter transaction path | **REJECT** | No specific path is approved until it satisfies every transaction-proof acceptance criterion; this does not authorize direct Passvero provider-table writes. |
 | Native Better Auth `/get-session` as an application read/refresh path | **REJECT** | It can bypass the reviewed database read, lifetime, rotation, and cookie-delivery boundary. The route is not exposed. |
 | Native Better Auth same-token session refresh | **REJECT** | It does not rotate the opaque token or enforce the Passvero absolute cap. |
-| Native Better Auth authenticated password-change session replacement | **REJECT** | Delete-and-create resets a defaulted `authenticatedAt`; the Passvero transaction preserves all lifetime anchors. |
+| Native Better Auth authenticated password-change session replacement | **REJECT** | Delete-and-create resets a defaulted `authenticatedAt`; accepted proof must demonstrate a Better Auth-backed transaction path that preserves every lifetime anchor. |
 | Built-in stateless email verification | **REJECT** | A signed JWT has no persisted atomic single-use state or predecessor invalidation. |
 | Default Better Auth password-reset identifier storage | **REJECT** | Pinned 1.7.1 stores `reset-password:<raw token>` under the default `plain` mode; hashing alone still does not add complete supersession. |
 | Better Auth default password hash/verify | **REJECT** | Pinned 1.7.1 applies NFKC, emits an unversioned hex envelope, and compares hex strings. It violates the approved NFC equivalence contract and MUST NOT be accepted as new or legacy credential input. |
