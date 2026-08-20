@@ -6,9 +6,11 @@ import path from "node:path";
 import {
   bootstrapRunRoot,
   buildConnectionString,
+  prepareCleanupEvidence,
   PROOF_ROOT_SENTINEL,
   readAuthSecret,
   readRunIdentity,
+  validateGeneratedSql,
   validateDisposableHarnessEnvironment,
 } from "../src/run-root.js";
 import { renderEvidenceJson, type ProofEvidence } from "../src/evidence.js";
@@ -207,6 +209,46 @@ test("bootstrap creates independent protected identities without shell secret ha
       assert.equal(status.isSymbolicLink(), false);
     }
     await assert.rejects(() => bootstrapRunRoot(runRoot), /STOP_RUN_ROOT_INVALID|EEXIST/);
+  } finally {
+    await rm(runRoot, { recursive: true });
+  }
+});
+
+test("generated SQL validator requires the exact quoted unqualified table set", () => {
+  const names = [
+    "User", "AuthIdentity", "AccountActivation", "AuthCredentialToken", "AuthAbuseBucket",
+    "ProofMarker", "AuthProviderUser", "AuthProviderSession", "AuthProviderAccount",
+    "AuthProviderVerification",
+  ];
+  const sql = names.map((name) => `CREATE TABLE "${name}" ("id" text);`).join("\n");
+  assert.doesNotThrow(() => validateGeneratedSql(sql));
+  assert.throws(() => validateGeneratedSql("SELECT 1;"), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(names.slice(1).map((name) => `CREATE TABLE "${name}" (id text);`).join("\n")), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(`${sql}\nCREATE TABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', "CREATE TABLE User")), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE TABLE public."User"')), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE TABLE "public"."User"')), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE TABLE "AuthIdentity"')), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(`${sql}\nCREATE TEMP TABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
+  assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE TABLE IF NOT EXISTS "User"')), /STOP_RUN_ROOT_INVALID/);
+});
+
+test("cleanup evidence preparation rejects sensitive pending drafts before finalization", async () => {
+  const runRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
+  await chmod(runRoot, 0o700);
+  const pendingPath = path.join(runRoot, "pending.json");
+  const preparedPath = path.join(runRoot, "prepared-evidence");
+  try {
+    const { cleanup: _cleanup, ...pending } = cleanEvidence();
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath);
+    assert.match(readFileSync(path.join(preparedPath, "1111.json"), "utf8"), /"rootGone": true/);
+    await rm(preparedPath, { recursive: true });
+
+    await writeFile(pendingPath, JSON.stringify({ ...pending, passwordMaterial: "opaque" }), { mode: 0o600 });
+    await assert.rejects(() => prepareCleanupEvidence(pendingPath, preparedPath), /STOP_EVIDENCE_REDACTION/);
+    await writeFile(pendingPath, JSON.stringify({ ...pending, assertions: ["__Host-session=opaque; Path=/; HttpOnly; Secure; SameSite=Lax"] }), { mode: 0o600 });
+    await assert.rejects(() => prepareCleanupEvidence(pendingPath, preparedPath), /STOP_EVIDENCE_REDACTION/);
   } finally {
     await rm(runRoot, { recursive: true });
   }

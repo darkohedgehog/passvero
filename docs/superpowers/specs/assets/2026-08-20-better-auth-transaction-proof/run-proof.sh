@@ -171,7 +171,11 @@ prove_cluster_identity() {
 
 validate_generated_sql() {
   local schema_file="$1"
-  "$NODE_BIN" -e 'const fs=require("fs");const s=fs.readFileSync(process.argv[1],"utf8");const ok=new Set(["User","AuthIdentity","AccountActivation","AuthCredentialToken","AuthAbuseBucket","ProofMarker","AuthProviderUser","AuthProviderSession","AuthProviderAccount","AuthProviderVerification"]);for(const m of s.matchAll(/CREATE TABLE \"([^\"]+)\"/g)){if(!ok.has(m[1]))process.exit(73)}' "$schema_file" || die "STOP_SCHEMA_ALLOWLIST"
+  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+    XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+    npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$NODE_BIN" --import tsx \
+    "$RUN_ROOT_REAL/harness/src/run-root.ts" validate-generated-sql "$schema_file" || die "STOP_SCHEMA_ALLOWLIST"
 }
 
 append_reviewed_constraints() {
@@ -240,24 +244,67 @@ validate_cleanup_target() {
   [[ "$db_hash" == "$expected_hash" ]] || return 1
 }
 
-stop_proven_cluster_on_retention() {
-  validate_local_cluster_identity || return 0
-  env -i PATH="$PG_BIN:/usr/bin:/bin" "$PG_BIN/pg_ctl" -D "$RUN_ROOT_REAL/data" stop -m fast >/dev/null 2>&1 || true
-}
-
-finalize_cleanup_evidence() {
+prepare_cleanup_evidence() {
   local pending="$SCRIPT_DIR/evidence.pending.json"
-  [[ ! -L "$pending" && -f "$pending" ]] || return 1
-  "$NODE_BIN" -e 'const fs=require("fs");const p=process.argv[1];const o=JSON.parse(fs.readFileSync(p,"utf8"));if(Object.hasOwn(o,"cleanup"))process.exit(71)' "$pending" || return 1
-  "$NODE_BIN" -e 'const fs=require("fs");const [p,j,m]=process.argv.slice(1);const o=JSON.parse(fs.readFileSync(p,"utf8"));o.cleanup={serverStopped:true,listenerGone:true,pidGone:true,rootGone:true};fs.writeFileSync(j,JSON.stringify(o,null,2)+"\n",{mode:0o600});fs.writeFileSync(m,"# Better Auth transaction proof evidence\n\nCLEANUP=PASS\n",{mode:0o600})' "$pending" "$SCRIPT_DIR/evidence.json" "$SCRIPT_DIR/evidence.md"
-  rm -f -- "$pending"
+  [[ ! -e "$RUN_ROOT_REAL/prepared-evidence" && ! -L "$RUN_ROOT_REAL/prepared-evidence" ]] || return 1
+  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+    XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+    npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$NODE_BIN" --import tsx \
+    "$RUN_ROOT_REAL/harness/src/run-root.ts" prepare-cleanup-evidence \
+    "$pending" "$RUN_ROOT_REAL/prepared-evidence"
 }
 
-finalize_failure_evidence() {
+cleanup_mask() {
   local server_stopped="$1" listener_gone="$2" pid_gone="$3" root_gone="$4"
-  local pending="$SCRIPT_DIR/evidence.pending.json"
-  "$NODE_BIN" -e 'const fs=require("fs");const [p,j,m,a,b,c,d]=process.argv.slice(1);let o={};try{o=JSON.parse(fs.readFileSync(p,"utf8"))}catch{};delete o.cleanup;o.status="FAIL";o.cleanup={serverStopped:a==="true",listenerGone:b==="true",pidGone:c==="true",rootGone:d==="true"};fs.writeFileSync(j,JSON.stringify(o,null,2)+"\n",{mode:0o600});fs.writeFileSync(m,"# Better Auth transaction proof evidence\n\nSTATUS=FAIL\n",{mode:0o600})' \
-    "$pending" "$SCRIPT_DIR/evidence.json" "$SCRIPT_DIR/evidence.md" "$server_stopped" "$listener_gone" "$pid_gone" "$root_gone" || true
+  [[ "$server_stopped" == true ]] && printf '1' || printf '0'
+  [[ "$listener_gone" == true ]] && printf '1' || printf '0'
+  [[ "$pid_gone" == true ]] && printf '1' || printf '0'
+  [[ "$root_gone" == true ]] && printf '1' || printf '0'
+}
+
+validate_prepared_file() {
+  local file="$1"
+  [[ ! -L "$file" && -f "$file" ]] || return 1
+  [[ "$(stat -f '%u:%Lp' "$file")" == "$(id -u):600" ]] || return 1
+}
+
+publish_prepared_evidence() {
+  local suffix="$1"
+  local json="$RUN_ROOT_REAL/prepared-evidence/$suffix.json"
+  local markdown="$RUN_ROOT_REAL/prepared-evidence/$suffix.md"
+  validate_prepared_file "$json" || return 1
+  validate_prepared_file "$markdown" || return 1
+  install -m 0600 "$json" "$SCRIPT_DIR/evidence.json" || return 1
+  install -m 0600 "$markdown" "$SCRIPT_DIR/evidence.md" || return 1
+}
+
+stage_success_evidence() {
+  local json="$RUN_ROOT_REAL/prepared-evidence/1111.json"
+  local markdown="$RUN_ROOT_REAL/prepared-evidence/1111.md"
+  [[ ! -e "$SCRIPT_DIR/evidence.final.pending.json" && ! -L "$SCRIPT_DIR/evidence.final.pending.json" ]] || return 1
+  [[ ! -e "$SCRIPT_DIR/evidence.final.pending.md" && ! -L "$SCRIPT_DIR/evidence.final.pending.md" ]] || return 1
+  validate_prepared_file "$json" || return 1
+  validate_prepared_file "$markdown" || return 1
+  install -m 0600 "$json" "$SCRIPT_DIR/evidence.final.pending.json" || return 1
+  install -m 0600 "$markdown" "$SCRIPT_DIR/evidence.final.pending.md" || return 1
+  validate_prepared_file "$SCRIPT_DIR/evidence.final.pending.json" || return 1
+  validate_prepared_file "$SCRIPT_DIR/evidence.final.pending.md" || return 1
+}
+
+discard_staged_success_evidence() {
+  rm -f -- "$SCRIPT_DIR/evidence.final.pending.json" "$SCRIPT_DIR/evidence.final.pending.md"
+}
+
+publish_staged_success_evidence() {
+  mv -f -- "$SCRIPT_DIR/evidence.final.pending.json" "$SCRIPT_DIR/evidence.json" || return 1
+  mv -f -- "$SCRIPT_DIR/evidence.final.pending.md" "$SCRIPT_DIR/evidence.md" || return 1
+}
+
+validate_delete_target() {
+  [[ "$RUN_ROOT_REAL" =~ ^/private/tmp/passvero-stage13a-pg\.[A-Za-z0-9]+$ ]] || return 1
+  "$NODE_BIN" -e 'const fs=require("fs");const [candidate,repository,uid]=process.argv.slice(1);const s=fs.lstatSync(candidate);if(s.isSymbolicLink()||!s.isDirectory()||s.uid!==Number(uid)||(s.mode&0o777)!==0o700||fs.realpathSync(candidate)!==candidate||candidate==="/"||candidate==="/private/tmp"||candidate===repository)process.exit(74)' \
+    "$RUN_ROOT_REAL" "$REPOSITORY_ROOT" "$(id -u)"
 }
 
 cleanup() {
@@ -266,15 +313,10 @@ cleanup() {
   set +e
   [[ "$CLEANUP_REQUIRED" -eq 1 ]] || exit "$exit_status"
   if ! validate_cleanup_target; then
-    stop_proven_cluster_on_retention
-    finalize_failure_evidence false false false false
     printf '%s\n' "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")" >&2
     exit 1
   fi
-  local pending="$SCRIPT_DIR/evidence.pending.json"
-  if [[ ! -f "$pending" ]] || ! "$NODE_BIN" -e 'const fs=require("fs");const o=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(Object.hasOwn(o,"cleanup"))process.exit(1)' "$pending"; then
-    stop_proven_cluster_on_retention
-    finalize_failure_evidence false false false false
+  if ! prepare_cleanup_evidence; then
     printf '%s\n' "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")" >&2
     exit 1
   fi
@@ -284,22 +326,30 @@ cleanup() {
   set +e
   env -i PATH="$PG_BIN:/usr/bin:/bin" "$PG_BIN/pg_isready" -h 127.0.0.1 -p "$PROOF_PORT" -q >/dev/null 2>&1
   local ready_status=$?
-  set -e
   if [[ "$ready_status" -eq 2 ]] && ! /usr/sbin/lsof -nP -iTCP:${PROOF_PORT} -sTCP:LISTEN >/dev/null 2>&1; then listenerGone=true; fi
   if ! kill -0 "$pid" 2>/dev/null; then pidGone=true; fi
   if [[ "$serverStopped" == true && "$listenerGone" == true && "$pidGone" == true ]]; then
+    if ! stage_success_evidence || ! validate_delete_target || \
+      ! rm -f -- "$SCRIPT_DIR/evidence.pending.json" || [[ -e "$SCRIPT_DIR/evidence.pending.json" ]]; then
+      discard_staged_success_evidence
+      printf '%s\n' "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")" >&2
+      exit 1
+    fi
     rm -rf -- "$RUN_ROOT_REAL"
     if [[ ! -e "$RUN_ROOT_REAL" ]]; then rootGone=true; fi
   fi
   if [[ "$serverStopped" == true && "$listenerGone" == true && "$pidGone" == true && "$rootGone" == true ]]; then
-    if ! finalize_cleanup_evidence; then
-      finalize_failure_evidence true true true true
+    if ! publish_staged_success_evidence; then
+      printf '%s\n' "CLEANUP=FAIL_EVIDENCE_STAGED" >&2
       exit 1
     fi
     printf '%s\n' "CLEANUP=PASS"
     exit "$exit_status"
   fi
-  finalize_failure_evidence "$serverStopped" "$listenerGone" "$pidGone" "$rootGone"
+  discard_staged_success_evidence
+  local suffix
+  suffix="$(cleanup_mask "$serverStopped" "$listenerGone" "$pidGone" "$rootGone")"
+  publish_prepared_evidence "$suffix" || true
   printf '%s\n' "CLEANUP=FAIL_RETAINED:$(basename "$RUN_ROOT_REAL")" >&2
   exit 1
 }

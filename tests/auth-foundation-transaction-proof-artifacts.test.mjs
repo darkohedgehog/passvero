@@ -247,6 +247,10 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /trap cleanup EXIT/,
     /CLEANUP=FAIL_RETAINED:/,
     /rm -rf -- "\$RUN_ROOT_REAL"/,
+    /prepare-cleanup-evidence/,
+    /evidence\.final\.pending\.json/,
+    /fs\.lstatSync\(candidate\)/,
+    /validate_delete_target/,
   ]) assert.match(source, contract);
 
   const staticBody = source.match(/run_static\(\) \{([\s\S]*?)^\}/m)?.[1];
@@ -263,4 +267,10 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /rm -rf[^\n]*[*?\[]/,
     /PROOF_PORT\s*=\s*\$\(\(|PROOF_PORT\+\+|55433/,
   ]) assert.doesNotMatch(source, forbidden);
+
+  const runRoot = await readHarness("src/run-root.ts");
+  assert.match(runRoot, /renderEvidenceJson\(\{ \.\.\.pending, cleanup: \{\} \}\)/);
+  assert.match(runRoot, /validateGeneratedSql/);
+  assert.match(runRoot, /generated SQL must contain the exact table count/);
+  assert.match(runRoot, /exact quoted unqualified identifiers/);
 });

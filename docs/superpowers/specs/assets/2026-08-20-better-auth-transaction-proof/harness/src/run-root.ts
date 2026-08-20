@@ -3,6 +3,7 @@ import { lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { renderEvidenceJson, renderEvidenceMarkdown, type ProofEvidence } from "./evidence.js";
 
 const RUN_ROOT_PATTERN = /^\/private\/tmp\/passvero-stage13a-pg\.[A-Za-z0-9]+$/;
 const STATIC_HARNESS_PATTERN = /^\/private\/tmp\/passvero-stage13a-harness\.[A-Za-z0-9]+$/;
@@ -116,6 +117,73 @@ export async function bootstrapRunRoot(candidate: string): Promise<void> {
       `INSERT INTO passvero_stage13a_proof_sentinel (run_id_hash) VALUES ('${runIdHash}');`,
     ].join("\n"),
   );
+}
+
+const EXPECTED_PROOF_TABLES = [
+  "User",
+  "AuthIdentity",
+  "AccountActivation",
+  "AuthCredentialToken",
+  "AuthAbuseBucket",
+  "ProofMarker",
+  "AuthProviderUser",
+  "AuthProviderSession",
+  "AuthProviderAccount",
+  "AuthProviderVerification",
+] as const;
+
+export function validateGeneratedSql(source: string): void {
+  const createTable = /\bCREATE\s+((?:(?:GLOBAL|LOCAL)\s+)?(?:TEMPORARY|TEMP|UNLOGGED)\s+)?TABLE\s+(IF\s+NOT\s+EXISTS\s+)?([^\s(;,]+)/giu;
+  const commands = [...source.matchAll(createTable)];
+  if (commands.some((match) => match[1] || match[2])) {
+    fail("generated SQL table declarations must use plain CREATE TABLE");
+  }
+  const declarations = commands.map((match) => match[3]);
+  if (declarations.length !== EXPECTED_PROOF_TABLES.length) {
+    fail("generated SQL must contain the exact table count");
+  }
+  const names = declarations.map((declaration) => {
+    const quoted = declaration.match(/^"([A-Za-z][A-Za-z0-9]*)"$/u);
+    if (!quoted) fail("generated SQL table names must be exact quoted unqualified identifiers");
+    return quoted[1];
+  });
+  if (new Set(names).size !== names.length) fail("generated SQL contains a duplicate table");
+  const expected = new Set<string>(EXPECTED_PROOF_TABLES);
+  for (const name of names) if (!expected.delete(name)) fail("generated SQL contains an unexpected table");
+  if (expected.size !== 0) fail("generated SQL is missing an expected table");
+}
+
+function asEvidenceDraft(value: unknown): Omit<ProofEvidence, "cleanup"> {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    fail("pending evidence must be an object");
+  }
+  if (Object.hasOwn(value, "cleanup")) fail("pending evidence must not contain cleanup");
+  return value as Omit<ProofEvidence, "cleanup">;
+}
+
+export async function prepareCleanupEvidence(pendingPath: string, outputDirectory: string): Promise<void> {
+  assertProtectedFile(pendingPath, "pending evidence");
+  const pending = asEvidenceDraft(JSON.parse(readFileSync(pendingPath, "utf8")) as unknown);
+  renderEvidenceJson({ ...pending, cleanup: {} });
+  renderEvidenceMarkdown({ ...pending, cleanup: {} });
+  if (path.basename(outputDirectory) !== "prepared-evidence" || !RUN_ROOT_PATTERN.test(path.dirname(outputDirectory))) {
+    fail("prepared evidence directory must be directly inside a disposable run root");
+  }
+  assertProtectedDirectory(path.dirname(outputDirectory), "prepared evidence parent");
+  await mkdir(outputDirectory, { mode: 0o700 });
+  const preparedRoot = assertProtectedDirectory(outputDirectory, "prepared evidence directory");
+  for (let mask = 0; mask < 16; mask += 1) {
+    const cleanup = {
+      serverStopped: Boolean(mask & 8),
+      listenerGone: Boolean(mask & 4),
+      pidGone: Boolean(mask & 2),
+      rootGone: Boolean(mask & 1),
+    };
+    const evidence: ProofEvidence = { ...pending, cleanup };
+    const suffix = mask.toString(2).padStart(4, "0");
+    await writeProtected(path.join(preparedRoot, `${suffix}.json`), renderEvidenceJson(evidence));
+    await writeProtected(path.join(preparedRoot, `${suffix}.md`), renderEvidenceMarkdown(evidence));
+  }
 }
 
 function fail(message: string): never {
@@ -239,10 +307,19 @@ export function readAuthSecret(identity: RunIdentity): string {
 }
 
 async function runCli(): Promise<void> {
-  if (process.argv.length !== 4 || process.argv[2] !== "bootstrap") {
-    fail("usage: run-root.ts bootstrap <validated-run-root>");
+  if (process.argv[2] === "bootstrap" && process.argv.length === 4) {
+    await bootstrapRunRoot(process.argv[3]);
+    return;
   }
-  await bootstrapRunRoot(process.argv[3]);
+  if (process.argv[2] === "validate-generated-sql" && process.argv.length === 4) {
+    validateGeneratedSql(readFileSync(process.argv[3], "utf8"));
+    return;
+  }
+  if (process.argv[2] === "prepare-cleanup-evidence" && process.argv.length === 5) {
+    await prepareCleanupEvidence(process.argv[3], process.argv[4]);
+    return;
+  }
+  fail("usage: run-root.ts <bootstrap|validate-generated-sql|prepare-cleanup-evidence> ...");
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {

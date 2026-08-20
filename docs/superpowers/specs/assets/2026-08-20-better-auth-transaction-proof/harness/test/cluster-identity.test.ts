@@ -63,6 +63,11 @@ test("cluster identity validator rejects every mismatched authority anchor", () 
   assert.match(validateClusterIdentity(observation, expected).systemIdentifierHash, /^[a-f0-9]{64}$/);
   assert.throws(() => validateClusterIdentity({ ...observation, port: 55433 }, expected), /STOP_CLUSTER_IDENTITY/);
   assert.throws(() => validateClusterIdentity({ ...observation, sentinelHash: "b".repeat(64) }, expected), /STOP_CLUSTER_IDENTITY/);
+  assert.throws(() => validateClusterIdentity({ ...observation, database: "pvproof_test_wrong" }, expected), /database mismatch/);
+  assert.throws(() => validateClusterIdentity({ ...observation, user: "pvproof_app_wrong" }, expected), /role mismatch/);
+  assert.throws(() => validateClusterIdentity({ ...observation, dataDirectory: realpathSync("/") }, expected), /data directory mismatch/);
+  assert.throws(() => validateClusterIdentity({ ...observation, socketDirectories: "/private/tmp/wrong-socket" }, expected), /socket mismatch/);
+  assert.throws(() => validateClusterIdentity({ ...observation, systemIdentifier: "not-a-system-id" }, expected), /system identifier format/);
 });
 
 test("live disposable cluster identity is proven before schema application", {
