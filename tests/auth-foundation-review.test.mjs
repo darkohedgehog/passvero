@@ -19,6 +19,39 @@ function contractSection(contract, heading, nextHeading) {
   )?.[0];
 }
 
+const resetEvidenceCitations = [
+  "better-auth/dist/api/routes/password.mjs:74-87",
+  "@better-auth/core/dist/types/init-options.d.mts:1173-1182",
+  "better-auth/dist/db/verification-token-storage.mjs:4-12",
+  "better-auth/dist/api/routes/password.mjs:157-174",
+  "better-auth/dist/db/internal-adapter.mjs:818-845",
+  "@better-auth/prisma-adapter/dist/index.mjs:319-332",
+];
+
+function assertResetEvidenceChain(review) {
+  const section = review.match(
+    /### Token-storage reconciliation[\s\S]*?(?=\*\*Required before Stage 13E:\*\*)/,
+  )?.[0];
+  assert.ok(section, "missing reset token-storage reconciliation section");
+
+  let previousIndex = -1;
+  for (const citation of resetEvidenceCitations) {
+    const citationIndex = section.indexOf(citation);
+    assert.ok(
+      citationIndex > previousIndex,
+      `missing or out-of-order reset evidence citation: ${citation}`,
+    );
+    previousIndex = citationIndex;
+  }
+
+  assert.match(section, /generates a token and persists\s+`reset-password:<raw token>`/s);
+  assert.match(section, /defaults verification identifier storage to `plain`/s);
+  assert.match(section, /passes an absent\/`plain` identifier through unchanged/s);
+  assert.match(section, /calls `consumeVerificationValue` before password mutation/s);
+  assert.match(section, /latest identifier row inside the internal consume lock\/transaction[\s\S]*?`consumeOne` by unique id/);
+  assert.match(section, /atomically deletes and returns null to a losing\s+concurrent caller/s);
+}
+
 test("authentication review records the exact candidate versions and exclusions", async () => {
   const review = await readFile(reviewPath, "utf8");
   assert.match(review, /better-auth: 1\.7\.1/);
@@ -116,10 +149,13 @@ test("session extensions are server-owned and absolute lifetime is enforced", as
   assert.match(contract, /lastRefreshAt:\s*\{\s*type: "date",\s*required: true,\s*input: false,\s*defaultValue: \(\) => new Date\(\)/s);
   assert.match(contract, /selectedOrganizationId:\s*\{\s*type: "string",\s*required: false,\s*input: false,?\s*\}/s);
   assert.match(contract, /disableSessionRefresh: true/);
+  assert.match(contract, /reviewed Passvero session service\/adapter boundary is REQUIRED before Stage\s+13E and is the only session create\/read\/refresh\/rotate\/revoke\/password-change\s+entry point/is);
   assert.match(contract, /dedicated CSRF-protected organization-selection mutation/i);
   assert.match(contract, /organization-selection mutation.*updates `updatedAt`.*MUST NOT (?:modify|advance) `lastRefreshAt`/is);
   assert.match(contract, /24-hour refresh.*lastRefreshAt/is);
   assert.match(contract, /native `\/get-session` route.*(?:not exposed|unreachable)/is);
+  assert.match(contract, /request middleware and\s+application endpoints call only the reviewed Passvero session boundary for\s+authoritative reads and refresh/is);
+  assert.match(contract, /no native route may be an alternate session-read path/is);
   assert.match(contract, /7-day inactivity expiry/i);
   assert.match(contract, /24-hour refresh/i);
   assert.match(contract, /30-day absolute/i);
@@ -261,6 +297,19 @@ test("review records the Better Auth hard gates with precise source lines", asyn
   assert.match(review, /@better-auth\/prisma-adapter\/dist\/index\.mjs:319-332/);
   assert.match(review, /reviewed Passvero session service\/adapter boundary/i);
   assert.match(review, /Required before Stage 13E/);
+});
+
+test("review preserves the complete Better Auth reset evidence chain", async () => {
+  const review = await readFile(reviewPath, "utf8");
+  assertResetEvidenceChain(review);
+
+  for (const citation of resetEvidenceCitations) {
+    const missingCitation = review.replace(citation, "[removed reset evidence citation]");
+    assert.throws(
+      () => assertResetEvidenceChain(missingCitation),
+      new RegExp(`missing or out-of-order reset evidence citation: ${citation.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`),
+    );
+  }
 });
 
 test("migration contract fixes token lifecycle, abuse retention, and deployment gates", async () => {
