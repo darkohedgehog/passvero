@@ -29,12 +29,15 @@ model AuthProviderSession {
   authprovideruser       AuthProviderUser @relation("AuthProviderUserSessions", fields: [userId], references: [id], onDelete: Cascade)
   /// Better Auth config must set input: false and a server-time create default.
   authenticatedAt        DateTime
+  /// Better Auth config must set input: false; only successful Passvero refresh advances it.
+  lastRefreshAt          DateTime
   /// Better Auth config must set input: false; only the dedicated server mutation writes it.
   selectedOrganizationId String?          @db.Uuid
   selectedOrganization   Organization?    @relation("AuthProviderSessionSelectedOrganization", fields: [selectedOrganizationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   @@unique([token])
   @@index([userId])
+  @@index([lastRefreshAt])
   @@index([selectedOrganizationId])
   @@map("AuthProviderSession")
 }
@@ -132,17 +135,18 @@ enum AuthAbuseDimension {
 }
 
 model AuthAbuseBucket {
-  id              String             @id @default(uuid()) @db.Uuid
-  dimension       AuthAbuseDimension
-  keyDigest       String             @unique @db.VarChar(43)
-  attemptCount    Int                @default(0)
-  failureCount    Int                @default(0)
-  backoffLevel    Int                @default(0)
-  windowStartedAt DateTime
-  lastFailureAt   DateTime?
-  blockedUntil    DateTime?
-  expiresAt       DateTime
-  updatedAt       DateTime           @updatedAt
+  id               String             @id @default(uuid()) @db.Uuid
+  dimension        AuthAbuseDimension
+  keyDigest        String             @unique @db.VarChar(43)
+  attemptCount     Int                @default(0)
+  failureCount     Int                @default(0)
+  backoffLevel     Int                @default(0)
+  windowStartedAt  DateTime
+  lastFailureAt    DateTime?
+  backoffUpdatedAt DateTime
+  blockedUntil     DateTime?
+  expiresAt        DateTime
+  updatedAt        DateTime           @updatedAt
 
   @@index([dimension, blockedUntil])
   @@index([expiresAt])

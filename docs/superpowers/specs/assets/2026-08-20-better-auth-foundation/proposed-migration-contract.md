@@ -53,13 +53,14 @@ default and every write must set them explicitly.
 | `userAgent` | `TEXT` | yes | none |
 | `userId` | `TEXT` | no | none |
 | `authenticatedAt` | `TIMESTAMP(3)` | no | none |
+| `lastRefreshAt` | `TIMESTAMP(3)` | no | none |
 | `selectedOrganizationId` | `UUID` | yes | none |
 
 - Primary key: `AuthProviderSession_pkey` on (`id`).
 - Unique indexes: `AuthProviderSession_token_key` on (`token`).
-- Non-unique indexes: `AuthProviderSession_userId_idx` on (`userId`) and
-  `AuthProviderSession_selectedOrganizationId_idx` on
-  (`selectedOrganizationId`).
+- Non-unique indexes: `AuthProviderSession_userId_idx` on (`userId`),
+  `AuthProviderSession_lastRefreshAt_idx` on (`lastRefreshAt`), and
+  `AuthProviderSession_selectedOrganizationId_idx` on (`selectedOrganizationId`).
 - Foreign keys: `AuthProviderSession_userId_fkey` references
   `AuthProviderUser(id)` with `ON DELETE CASCADE ON UPDATE CASCADE`;
   `AuthProviderSession_selectedOrganizationId_fkey` references
@@ -67,13 +68,21 @@ default and every write must set them explicitly.
 - CHECK constraints:
   - `ck_auth_provider_session_absolute_expiry`: `expiresAt > authenticatedAt
     AND expiresAt <= authenticatedAt + INTERVAL '30 days'`.
+  - `ck_auth_provider_session_inactivity_expiry`: `expiresAt > lastRefreshAt AND
+    expiresAt <= lastRefreshAt + INTERVAL '7 days'`.
+  - `ck_auth_provider_session_refresh_order`: `authenticatedAt <= lastRefreshAt
+    AND lastRefreshAt <= updatedAt`.
   - `ck_auth_provider_session_authenticated_origin`: `authenticatedAt <=
     createdAt`.
 - Partial indexes: none.
 - `authenticatedAt` is set from the successful full-authentication instant and
   is preserved by every refresh, opaque-token rotation, and authenticated
-  password-change path. `selectedOrganizationId` is cleared when the session
-  expires or is revoked and whenever server-side eligibility revalidation fails.
+  password-change path. `lastRefreshAt` starts at that same server-captured
+  instant and advances only on a successful Passvero rolling refresh. General
+  writes, including organization selection and authenticated password change,
+  may advance `updatedAt` but never advance `lastRefreshAt`.
+  `selectedOrganizationId` is cleared when the session expires or is revoked and
+  whenever server-side eligibility revalidation fails.
 - Forbidden additions: role, permission, membership-status, organization-status,
   entitlement, billing, or platform-administration snapshots.
 
@@ -92,9 +101,16 @@ The reviewed Better Auth configuration MUST declare exactly:
 session: {
   expiresIn: 60 * 60 * 24 * 7,
   updateAge: 60 * 60 * 24,
-  cookieCache: {enabled: false},
+  disableSessionRefresh: true,
+  cookieCache: { enabled: false },
   additionalFields: {
     authenticatedAt: {
+      type: "date",
+      required: true,
+      input: false,
+      defaultValue: () => new Date(),
+    },
+    lastRefreshAt: {
       type: "date",
       required: true,
       input: false,
@@ -118,18 +134,21 @@ copies it, and applies create defaults
 The generic `/update-session` endpoint passes parsed additional fields directly
 to `internalAdapter.updateSession`
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-session.mjs:31-54`).
-Therefore both fields are `input: false`: clients cannot set either through
-create input or `/update-session`. `authenticatedAt` receives the server clock
-default on ordinary full-authentication session creation; the Passvero wrapper
-must pass the already stored value explicitly on every replacement path. Better
+Therefore all three additional fields are `input: false`: clients cannot set
+them through create input or `/update-session`. Full-authentication creation
+captures one server timestamp and explicitly supplies it as both
+`authenticatedAt` and `lastRefreshAt`; the defaults are fail-closed coverage for
+an ordinary internal creation path, not permission to use different semantic
+anchors. The Passvero wrapper must pass both already stored values explicitly on
+every replacement path. Better
 Auth's internal create path obtains additional-field defaults before constructing
 the session record and includes them in the create payload; its server-only
 `overrideAll` branch can explicitly replace a default
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:248-320`).
 Passvero rotation updates the existing row rather than creating a replacement.
 Any future replacement path must invoke that server-only branch through the
-reviewed service with the original `authenticatedAt`; it must never expose the
-override or rely on parsed client input.
+reviewed service with the original `authenticatedAt` and `lastRefreshAt`; it must
+never expose the override or rely on parsed client input.
 
 Only a dedicated CSRF-protected organization-selection mutation may write
 `selectedOrganizationId`. It accepts an untrusted UUID, loads the current
@@ -138,7 +157,10 @@ database session, resolves `AuthIdentity` to canonical `User`, locks/revalidates
 updates by current session id and token in one transaction. Zero updated rows,
 invalid membership, inactive organization, or stale session clears selection
 and returns the safe no-access state. No generic provider update endpoint,
-client session input, or cookie payload may select an organization.
+client session input, or cookie payload may select an organization. The
+organization-selection mutation updates `updatedAt` to `now` as a general write
+but MUST NOT advance `lastRefreshAt` or modify `expiresAt` or `authenticatedAt`;
+repeated organization switches therefore cannot postpone refresh or expiry.
 
 ### Session enforcement and reviewed adapter boundary
 
@@ -149,16 +171,18 @@ before identity or organization resolution:
    `now >= authenticatedAt + 30 days`. This is the request-time 30-day absolute
    check and remains mandatory even with the database CHECK.
 2. The 7-day inactivity expiry is `expiresAt`; it is never later than
-   `min(last successful refresh + 7 days, authenticatedAt + 30 days)`.
-3. A 24-hour refresh is due when `now >= updatedAt + 24 hours`. Refresh uses
+   `min(lastRefreshAt + 7 days, authenticatedAt + 30 days)`.
+3. A 24-hour refresh is due when `now >= lastRefreshAt + 24 hours`. Refresh uses
    `newExpiresAt = min(now + 7 days, authenticatedAt + 30 days)` and never
-   modifies `authenticatedAt` or authorization state.
+   modifies `authenticatedAt` or authorization state. A successful refresh sets
+   `lastRefreshAt = now` and `updatedAt = now` to the same transaction timestamp.
 4. Refresh performs atomic opaque-token rotation with one conditional database
    update: match session id, old token, and unexpired absolute/inactivity state;
-   set a newly generated opaque token, `expiresAt`, and `updatedAt`; preserve
-   `authenticatedAt` and `selectedOrganizationId`; `RETURNING` supplies the only
-   token eligible for `Set-Cookie`. The old token is invalid at commit. The
-   response emits the cookie only after a successful commit with `Max-Age`
+   set a newly generated opaque token, `expiresAt`, `lastRefreshAt`, and
+   `updatedAt`; preserve `authenticatedAt` and `selectedOrganizationId`;
+   `RETURNING` supplies the only token eligible for `Set-Cookie`. The old token
+   is invalid at commit. The response emits the cookie only after a successful
+   commit with `Max-Age`
    capped to `newExpiresAt`; a commit/cookie-delivery interruption fails closed
    to reauthentication rather than restoring the old token. A zero-row race
    clears the presented cookie and requires reauthentication.
@@ -175,13 +199,28 @@ A reviewed Passvero session service/adapter boundary is REQUIRED before Stage
 13E and is the only session create/read/refresh/rotate/revoke/password-change
 entry point.
 
+Better Auth 1.7.1 declares `disableSessionRefresh?: boolean`, default false, and
+documents that true prevents refresh regardless of `updateAge`
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/types/init-options.d.mts:905-918`).
+Its get-session route incorporates that option into `needsRefresh` before the
+same-token update
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:171-207`).
+The required configuration sets `disableSessionRefresh: true` as defense in
+depth. In addition, the native `/get-session` route is not exposed by the
+application router and is unreachable from clients; request middleware and
+application endpoints call only the reviewed Passvero session boundary for
+authoritative reads and refresh. Per-request `disableRefresh` query input is not
+a security control, and no native route may be an alternate session-read path.
+
 Authenticated password change verifies the current password, updates the hash,
 deletes every other session row, and conditionally rotates the current row/token
-in one transaction while preserving its `authenticatedAt`; it does not call the
-native delete-and-create path. Password reset deletes every session row for the
-provider user in the same transaction as token consumption and password update,
-then expires the presented cookie and does not sign in. Revoke-all likewise must
-delete every session row for the provider user and expire the cookie. Better
+in one transaction while preserving its `authenticatedAt`, `lastRefreshAt`, and
+`expiresAt`; it does not call the native delete-and-create path and does not count
+password change as rolling refresh. Password reset deletes every session row for
+the provider user in the same transaction as token consumption and password
+update, then expires the presented cookie and does not sign in. Revoke-all
+likewise must delete every session row for the provider user and expire the
+cookie. Better
 Auth's native revoke-all endpoint does call `deleteUserSessions`, but does not
 establish this service's cookie, absolute-age, or transaction rules
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:411-441`),
@@ -348,6 +387,7 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
 | `backoffLevel` | `INTEGER` | no | `0` |
 | `windowStartedAt` | `TIMESTAMP(3)` | no | none |
 | `lastFailureAt` | `TIMESTAMP(3)` | yes | none |
+| `backoffUpdatedAt` | `TIMESTAMP(3)` | no | none |
 | `blockedUntil` | `TIMESTAMP(3)` | yes | none |
 | `expiresAt` | `TIMESTAMP(3)` | no | none |
 | `updatedAt` | `TIMESTAMP(3)` | no | none |
@@ -367,6 +407,9 @@ cleanup. Cleanup never extends, rotates, or reconstructs a session.
   - `ck_auth_abuse_bucket_window`: `windowStartedAt <= updatedAt`.
   - `ck_auth_abuse_bucket_last_failure`: `lastFailureAt IS NULL OR
     lastFailureAt <= updatedAt`.
+  - `ck_auth_abuse_bucket_backoff_time`: `backoffUpdatedAt <= updatedAt`.
+  - `ck_auth_abuse_bucket_failure_decay_order`: `lastFailureAt IS NULL OR
+    lastFailureAt <= backoffUpdatedAt`.
   - `ck_auth_abuse_bucket_block_window`: `blockedUntil IS NULL OR
     blockedUntil <= expiresAt`.
   - `ck_auth_abuse_bucket_retention`: `expiresAt > updatedAt AND expiresAt <=
@@ -424,10 +467,21 @@ buckets still use the normalized attempted identifier; database existence never
 changes applicability or response shape. A token-only invalid or unknown token
 has no account subject, so only `TRUSTED_NETWORK` and `GLOBAL_ENDPOINT` apply.
 When a token digest resolves, email verification/reset derive the account value
-from the locked provider user and activation uses its stored
-`intendedEmailDigest`; then the two `POST-LOOKUP` buckets are mandatory before
-the conditional consume. Thus "all four" means all four applicable phases for a
-resolved subject, not four fabricated buckets for an unknown token.
+from the normalized current `AuthProviderUser.email`. For
+`CONSUME_ACCOUNT_ACTIVATION`, derive `ACCOUNT_IDENTIFIER` from the normalized
+current canonical `User.email`, not `intendedEmailDigest`; the intended-email
+digest proves capability binding but is not an abuse-key input and cannot
+fragment evidence from sign-in, verification, reset, or activation transports.
+The combined bucket uses that same normalized account value plus the normalized
+network. Then the two `POST-LOOKUP` buckets are mandatory before the conditional
+consume. Thus "all four" means all four applicable phases for a resolved
+subject, not four fabricated buckets for an unknown token.
+
+For identifier-carrying activation issuance, the account component is the same
+normalized requested canonical account identifier used for lookup, even when no
+canonical account exists; a missing account changes neither the two account
+buckets nor the response shape. For an unknown activation token, there is no
+owner/email source, so only the pre-lookup network/global phase is possible.
 
 ### Trusted-proxy selection and network normalization
 
@@ -507,7 +561,9 @@ invalidates the earlier token before returning, so at most one issued token is
 active. Expired rows are invalidated by the same issuance update because a
 partial-index predicate cannot safely depend on wall-clock time.
 
-Consumption is one atomic conditional update, never read-then-update:
+After staged abuse admission, consumption locks the owner row first, revalidates
+the non-consuming digest lookup, and performs one atomic conditional update,
+never read-then-update for token state:
 
 ```sql
 UPDATE "<token table>"
@@ -520,14 +576,16 @@ RETURNING "id", "userId or providerUserId", "purpose";
 ```
 
 Exactly one concurrent caller can receive a row; all others receive zero rows
-and fail with the same generic invalid-token result. Email verification plus
+and fail with the same generic invalid-token result. The prior lookup never
+authorizes consumption; only this update does. Email verification plus
 `emailVerified`, password replacement plus all-session revocation, or activation
 plus credential creation and `AuthIdentity` binding must occur in the same
 transaction as this update. A transaction failure rolls every change back.
 Activation never creates a session; normal sign-in follows successful activation.
 
-Activation consumption locks the `AccountActivation` and canonical `User` rows,
-re-normalizes the current canonical email, recomputes its keyed digest, and uses
+Activation consumption locks the canonical `User` owner first, revalidates the
+looked-up `AccountActivation`, re-normalizes the current canonical email,
+recomputes its keyed digest, and uses
 constant-time equality against `intendedEmailDigest` before the conditional
 consume. A mismatch atomically sets `invalidatedAt` and returns the generic
 invalid-token result. Credential creation uses that locked canonical email, the
@@ -582,42 +640,78 @@ the database transaction. No other network call occurs while bucket locks are
 held. The protected local credential/token operation and every applicable abuse
 transition then run in one PostgreSQL SERIALIZABLE transaction:
 
-1. Derive the applicable digests from the matrix. For token-only endpoints,
-   perform a non-consuming digest lookup to obtain the subject when present,
-   derive the post-lookup digests, and rely on the later conditional consume to
-   detect a concurrent token change.
-2. Upsert missing rows with the exact enum, `attemptCount = 0`,
-   `failureCount = 0`, `backoffLevel = 0`, `windowStartedAt = now`, null
+1. Use one transaction timestamp `now`. Upsert a missing bucket with its exact
+   enum, `attemptCount = 0`, `failureCount = 0`, `backoffLevel = 0`,
+   `windowStartedAt = now`, `backoffUpdatedAt = now`, null
    `lastFailureAt`/`blockedUntil`, `expiresAt = now + 30 days`, and
-   `updatedAt = now`. Lock every applicable row in ascending `keyDigest` order.
-   A stored enum mismatch for a digest fails closed.
-3. Before admission, apply window rollover: when the dimension's fixed window
-   has elapsed, set `attemptCount = 0`, `failureCount = 0`, and
-   `windowStartedAt = now`. Apply backoff decay by lowering `backoffLevel` one
-   level per complete 24 hours since `lastFailureAt`; never below zero. Clear an
-   elapsed `blockedUntil`; never shorten a live block.
-4. Reject generically without the protected operation if any applicable
-   `blockedUntil > now`. Otherwise increment `attemptCount` with checked
-   arithmetic. If a `GLOBAL_ENDPOINT` increment would exceed 100 in its one-minute
-   window, raise its level, set the mapped finite block, commit that transition,
-   and reject the protected operation.
-5. Execute the local protected operation. On failure, increment `failureCount`
-   and set `lastFailureAt = now` for every applicable bucket. When the new
-   failure count reaches that dimension's threshold, reset `failureCount = 0`,
-   increment `backoffLevel` with `LEAST(12, backoffLevel + 1)`, and set
-   `blockedUntil = now + mapped duration`. On success, do not decrement, reset,
-   delete, or shorten any bucket; only the time-based rollover/decay above may
-   reduce state.
-6. Set `updatedAt = now` and `expiresAt = now + 30 days` on every changed row,
-   return the safe result, and commit. A serialization failure is a generic
-   transient denial; the authentication operation is not retried automatically.
+   `updatedAt = now`. A stored enum mismatch for a digest fails closed.
+2. **Stage A** derives, upserts, and locks `GLOBAL_ENDPOINT` first and
+   `TRUSTED_NETWORK` second, then performs their rollover, decay, block check,
+   and admission. This phase always runs before any account or token existence
+   lookup. Increment admitted `attemptCount` values with checked arithmetic. If
+   the global increment would exceed 100 in its one-minute window, set
+   `backoffLevel = LEAST(12, backoffLevel + 1)`, set
+   `backoffUpdatedAt = now`, set the mapped finite `blockedUntil`, commit the
+   abuse transition, and reject without a protected operation.
+3. Identifier-carrying endpoints already have the normalized attempted account
+   component and proceed to Stage B. For a token-only endpoint, a non-consuming
+   token digest lookup occurs after Stage A admission and before Stage B. If a
+   row resolves, lock its provider/canonical owner in the existing owner-first
+   token lifecycle order, revalidate the token-to-owner relation, and normalize
+   the current owner email as specified above. Do not lock or consume the token
+   row during this lookup. If the token is absent, stale, or loses its owner,
+   apply the failed protected-action transition to the network bucket, preserve
+   the admitted global attempt, commit network/global state, and return the
+   generic invalid-token response. An unknown token therefore records and
+   commits its network/global evidence; it cannot bypass or fabricate
+   account/composite state.
+4. **Stage B** derives, upserts, and locks `ACCOUNT_IDENTIFIER` first and
+   `ACCOUNT_AND_TRUSTED_NETWORK` second, then performs their rollover, decay,
+   block checks, and admitted-attempt increments. It is mandatory for every
+   identifier request and every token lookup with a revalidated owner. A Stage B
+   block commits the already admitted Stage A evidence and returns generically
+   without the protected operation.
+5. The lock hierarchy is fixed by dimension, never digest byte order:
+   `GLOBAL_ENDPOINT`, `TRUSTED_NETWORK`, optional owner for a token lookup,
+   `ACCOUNT_IDENTIFIER`, then `ACCOUNT_AND_TRUSTED_NETWORK`. All handlers for an
+   endpoint use this hierarchy. Because endpoint code is part of every digest,
+   different endpoints share no abuse row; within an endpoint the global row
+   serializes requests before any later shared row. Token lifecycle writes retain
+   their separately specified owner-first order after abuse admission, so the
+   staged design introduces no reverse bucket or owner/token lock order.
+6. For every locked bucket, window rollover resets `attemptCount = 0`,
+   `failureCount = 0`, and `windowStartedAt = now` only when its fixed window has
+   elapsed. Decay is exact and idempotent:
+   `elapsedPeriods = floor((now - backoffUpdatedAt) / 24 hours)`,
+   `decaySteps = min(backoffLevel, elapsedPeriods)`, then
+   `backoffLevel = backoffLevel - decaySteps` and
+   `backoffUpdatedAt = backoffUpdatedAt + decaySteps * 24 hours`. Never lower
+   below zero, discard the unconsumed time remainder, or use `updatedAt` or
+   `lastFailureAt` as the decay anchor. Clear an elapsed `blockedUntil`; never
+   shorten a live block.
+7. Execute the local protected operation only after all applicable stages admit
+   it. On failure, increment `failureCount` for `TRUSTED_NETWORK` and any
+   applicable account/composite buckets. Every protected-action failure sets
+   `lastFailureAt = now` and `backoffUpdatedAt = now` on each, restarting the
+   24-hour failure-free decay interval. When a new failure count reaches its
+   dimension threshold, reset `failureCount = 0`, increment `backoffLevel` with
+   `LEAST(12, backoffLevel + 1)`, and set the mapped finite block. Global volume
+   uses its attempt threshold instead of failure count; whenever
+   `GLOBAL_ENDPOINT` raises its level it also sets `backoffUpdatedAt = now`. On
+   success, do not decrement, reset, delete, or shorten a bucket.
+8. Set `updatedAt = now` and `expiresAt = now + 30 days` on every changed row,
+   return only the safe result, and commit. A token conditional consume that
+   loses a race is a protected-action failure under the already derived buckets.
+   A serialization failure is a generic transient denial; the authentication
+   operation is not retried automatically.
 
 The transaction is the atomic admission/check/update transition: concurrent
 requests sharing any digest serialize before the protected action, and no
 credential/token state commits without its abuse transition. The global row is
 per allowlisted endpoint code, so one endpoint cannot spend another's window.
 There is no permanent lockout: every block is finite, decay is one level per
-complete 24 hours without a failure, and level 12 is the hard maximum.
+complete 24 hours without a failure and is anchored by `backoffUpdatedAt`; level
+12 is the hard maximum.
 
 Every transition sets `expiresAt` no more than 30 days after `updatedAt`.
 An authorized maintenance job deletes expired buckets within 24 hours; therefore
@@ -630,8 +724,11 @@ must never truncate, reset counters, or target rows by plaintext identity data.
 The inspected package identifies itself as Better Auth 1.7.1 at
 `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/package.json:2-3`.
 
-- Email verification issuance calls the signed-JWT token creator, places the
-  returned capability in the URL/callback, and creates no verification row
+- Email verification's helper signs a JWT containing lower-cased email and
+  optional update/payload data
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:13-18`). Issuance calls
+  that signed-JWT helper, places the returned capability in the URL/callback,
+  and creates no verification row
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:23-35`). The route later
   reads the presented token, verifies that JWT, and parses its payload
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:173-186`). This is an
@@ -647,8 +744,10 @@ The inspected package identifies itself as Better Auth 1.7.1 at
   opacity therefore does not make the default database value a hash.
 - The reset endpoint does use `consumeVerificationValue` before changing the
   password (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:157-174`), and the
-  Prisma adapter atomically deletes by unique `id`, returning null to a losing
-  concurrent caller
+  internal adapter selects the latest identifier row inside its consume lock and
+  transaction, then calls adapter `consumeOne` by unique id
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:818-845`). The Prisma adapter
+  atomically deletes that unique id, returning null to a losing concurrent caller
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/prisma-adapter/dist/index.mjs:319-332`). This covers
   concurrency-safe consumption of one identifier, but issuance creates a new
   identifier for each token and does not invalidate a user's predecessors.

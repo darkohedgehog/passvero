@@ -134,33 +134,42 @@ The internal create path evaluates additional-field defaults before building the
 record and provides a server-only `overrideAll` merge after those defaults
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:248-320`).
 
-**Required correction before Stage 13E:** both `authenticatedAt` and
-`selectedOrganizationId` are configured `input: false`; `authenticatedAt` is
-required with `defaultValue: () => new Date()`, while selection is optional with
-no default. Full-authentication creation receives server time. Only the reviewed
-Passvero session wrapper may explicitly preserve `authenticatedAt` during a
-replacement. Selection is writable only through the dedicated CSRF-protected
-server mutation that locks the session and revalidates active membership and
-active organization before its conditional update. The generic provider update
-route, client input, and cookies cannot write either field.
+**Required correction before Stage 13E:** `authenticatedAt`, `lastRefreshAt`, and
+`selectedOrganizationId` are configured `input: false`; both timestamps are
+required with server-clock create defaults, while selection is optional with no
+default. Full-authentication creation captures one server timestamp for both
+anchors. Only the reviewed Passvero session wrapper may explicitly preserve
+them during a replacement. Selection is writable only through the dedicated
+CSRF-protected server mutation that locks the session and revalidates active
+membership and active organization before its conditional update. That write
+advances general `updatedAt` but never `lastRefreshAt` or expiry. The generic
+provider update route, client input, and cookies cannot write these fields.
 
-The database CHECK is `expiresAt > authenticatedAt AND expiresAt <=
-authenticatedAt + INTERVAL '30 days'`. Every request independently rejects and
-deletes a session at either the 7-day inactivity deadline or 30-day absolute
-deadline. At the 24-hour refresh boundary, one conditional update atomically
-rotates the opaque token, caps the new 7-day expiry at the absolute deadline,
-preserves `authenticatedAt` and selection, and returns the sole value eligible
-for the post-commit cookie. Delivery failure is fail-closed reauthentication.
+Database CHECKs cap expiry at both `lastRefreshAt + INTERVAL '7 days'` and
+`authenticatedAt + INTERVAL '30 days'`, and require `authenticatedAt <=
+lastRefreshAt <= updatedAt`. Every request independently rejects and deletes a
+session at either deadline. At `lastRefreshAt + 24 hours`, one conditional
+update atomically rotates the opaque token, sets `lastRefreshAt`/`updatedAt` to
+the transaction timestamp, caps expiry at the absolute deadline, preserves
+`authenticatedAt` and selection, and returns the sole value eligible for the
+post-commit cookie. Delivery failure is fail-closed reauthentication.
 
 Better Auth's native refresh instead extends expiry on the same token
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:171-207`).
+Its option type confirms `disableSessionRefresh: true` prevents refresh
+regardless of `updateAge`
+(`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/types/init-options.d.mts:905-918`).
 Native authenticated password change deletes sessions and creates a new one
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-user.mjs:180-189`),
 which would reset a defaulted `authenticatedAt`. Those paths are rejected. A
-reviewed Passvero session service/adapter boundary is mandatory: password change
+reviewed Passvero session service/adapter boundary is mandatory. Configuration
+sets `disableSessionRefresh: true`, and the native `/get-session` route is not
+exposed by the application router, so it is unreachable as an alternate read or
+refresh path. Password change
 updates the hash, deletes other sessions, and rotates the current token while
-preserving its original `authenticatedAt`; reset and revoke-all delete every
-session row and expire the cookie. Native revoke-all calls `deleteUserSessions`
+preserving its original `authenticatedAt`, `lastRefreshAt`, and expiry; reset and
+revoke-all delete every session row and expire the cookie. Native revoke-all
+calls `deleteUserSessions`
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:411-441`),
 but it remains behind the Passvero boundary so cookie expiry and the complete
 policy cannot be bypassed. Expired/absolute-expired rows are deleted in bounded
@@ -172,8 +181,11 @@ The installed/disposable package evidence is Better Auth 1.7.1
 (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/package.json:2-3`).
 Its relevant behavior is:
 
-- Built-in email verification issuance creates the signed-JWT capability and
-  passes it to the email callback/URL without a verification-row write
+- Built-in email verification uses a helper that signs lower-cased email and
+  optional update/payload data into the JWT
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:13-18`). Issuance creates
+  that signed-JWT capability and passes it to the email callback/URL without a
+  verification-row write
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:23-35`),
   then reads, verifies, and parses that JWT on use
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:173-186`). It does not
@@ -189,8 +201,11 @@ Its relevant behavior is:
   is therefore not evidence of hashing.
 - Reset consumption calls `consumeVerificationValue` before password mutation
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/password.mjs:157-174`). Its database path
-  reaches Prisma adapter `consumeOne`, whose unique-id branch atomically deletes
-  and returns null to a losing concurrent caller
+  selects the latest identifier row inside the internal consume lock/transaction
+  and invokes `consumeOne` by unique id
+  (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:818-845`), then reaches the Prisma
+  adapter unique-id branch, which atomically deletes and returns null to a losing
+  concurrent caller
   (`/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/prisma-adapter/dist/index.mjs:319-332`). That makes a
   single identifier concurrency-safe, but reset issuance creates independent
   identifiers and does not supersede every predecessor for the user.
@@ -244,6 +259,13 @@ a subject; an invalid unknown token never fabricates account state. A nonexisten
 email still uses the normalized attempted identifier, so account existence
 cannot change buckets or response shape.
 
+Resolved verification/reset tokens use normalized current provider email for
+the account component. Resolved activation uses normalized current canonical
+`User.email`, exactly like the other transports; `intendedEmailDigest` proves
+activation binding but is never the abuse-key source. Unknown tokens commit only
+network/global evidence, while an identifier request with no account still uses
+the normalized attempted identifier.
+
 Trusted network selection is explicit `DIRECT` or configured
 `TRUSTED_PROXY_CHAIN`. Proxy mode validates the transport peer/CIDR allowlist and
 walks a single configured chain right-to-left to the rightmost untrusted address;
@@ -253,13 +275,22 @@ parse failures deny generically. IPv4-mapped IPv6 is unmapped, IPv4 is canonical
 Unicode-lowercased, and domain-IDNA-normalized by the same function used for
 lookup and persistence. The migration contract records executable vectors.
 
-After any required Turnstile call, all applicable rows plus the local protected
-operation run in one PostgreSQL `SERIALIZABLE` transaction and deterministic
-digest-lock order. Thresholds are network 30 failures/15 minutes, account 5/15,
-combined 5/15, and global 100 attempts/1 minute. Backoff levels 1–12 map from 1
-minute through 1,440 minutes; a level decays only once per complete 24 hours
-without failure. Success never erases evidence. CHECK constraints cover attempt
-and failure counts, window/failure timestamps, finite blocks, digest shape, and
-30-day expiry. Expired rows are pruned within 24 hours, yielding a hard 31-day
-maximum after the last transition. No database action or connection was used to
-reach these review conclusions.
+After any required Turnstile call, one PostgreSQL `SERIALIZABLE` transaction
+uses a realizable fixed hierarchy. Stage A locks and admits global then network
+before any token lookup. A token lookup then either commits unknown-token
+network/global evidence or locks/revalidates its owner and derives the common
+account value.
+Stage B locks/admit account then combined before any protected operation. The
+endpoint code in every digest prevents cross-endpoint row sharing, while the
+per-endpoint global row serializes later same-endpoint locks.
+
+Thresholds are network 30 failures/15 minutes, account 5/15, combined 5/15, and
+global 100 attempts/1 minute. `backoffUpdatedAt` is the explicit decay anchor:
+each failure and each global-volume level increase resets it; decay consumes
+only complete 24-hour periods and advances the anchor by exactly the consumed
+periods, preserving the remainder and making repeated evaluation idempotent.
+Backoff levels 1–12 map from 1 minute through 1,440 minutes. Success never erases
+evidence. CHECK constraints cover attempt/failure counts, window/failure/decay
+timestamps, finite blocks, digest shape, and 30-day expiry. Expired rows are
+pruned within 24 hours, yielding a hard 31-day maximum after the last transition.
+No database action or connection was used to reach these review conclusions.

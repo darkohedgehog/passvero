@@ -68,9 +68,11 @@ test("proposal keeps provider identity separate and binds by stable subject", as
 test("proposal covers server session, activation, and progressive abuse state", async () => {
   const schema = await readFile(proposalPath, "utf8");
   assert.match(schema, /authenticatedAt\s+DateTime/);
+  assert.match(schema, /lastRefreshAt\s+DateTime/);
   assert.match(schema, /selectedOrganizationId\s+String\?\s+@db\.Uuid/);
   const session = modelBlock(schema, "AuthProviderSession");
   assert.ok(session);
+  assert.match(session, /@@index\(\[lastRefreshAt\]\)/);
   assert.doesNotMatch(session, /\b(role|roles|permission|permissions)\b/i);
   assert.match(schema, /model AccountActivation\s*\{/);
   assert.match(schema, /tokenDigest\s+String\s+@unique/);
@@ -90,6 +92,7 @@ test("proposal covers server session, activation, and progressive abuse state", 
   assert.match(abuse, /backoffLevel\s+Int\s+@default\(0\)/);
   assert.match(abuse, /windowStartedAt\s+DateTime/);
   assert.match(abuse, /lastFailureAt\s+DateTime\?/);
+  assert.match(abuse, /backoffUpdatedAt\s+DateTime/);
   assert.doesNotMatch(abuse, /email\s+String/);
   assert.doesNotMatch(abuse, /ipAddress\s+String/);
 });
@@ -99,15 +102,24 @@ test("session extensions are server-owned and absolute lifetime is enforced", as
   const session = contractSection(contract, "AuthProviderSession", "AuthProviderAccount");
   assert.ok(session);
   assert.match(session, /\| `authenticatedAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
+  assert.match(session, /\| `lastRefreshAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
   assert.match(session, /\| `selectedOrganizationId` \| `UUID` \| yes \| none \|/);
   assert.match(session, /ck_auth_provider_session_absolute_expiry/);
   assert.match(session, /expiresAt.*<=.*authenticatedAt.*INTERVAL '30 days'/s);
+  assert.match(session, /ck_auth_provider_session_inactivity_expiry.*expiresAt.*<=.*lastRefreshAt.*INTERVAL '7 days'/s);
+  assert.match(session, /ck_auth_provider_session_refresh_order.*authenticatedAt <=\s+lastRefreshAt.*lastRefreshAt <= updatedAt/s);
   assert.match(session, /ck_auth_provider_session_authenticated_origin.*authenticatedAt <=\s+createdAt/s);
+  assert.match(session, /AuthProviderSession_lastRefreshAt_idx/);
   assert.match(session, /AuthProviderSession_userId_fkey.*ON DELETE CASCADE ON UPDATE CASCADE/s);
   assert.match(session, /AuthProviderSession_selectedOrganizationId_fkey.*ON DELETE SET NULL ON UPDATE CASCADE/s);
   assert.match(contract, /authenticatedAt:\s*\{\s*type: "date",\s*required: true,\s*input: false,\s*defaultValue: \(\) => new Date\(\)/s);
+  assert.match(contract, /lastRefreshAt:\s*\{\s*type: "date",\s*required: true,\s*input: false,\s*defaultValue: \(\) => new Date\(\)/s);
   assert.match(contract, /selectedOrganizationId:\s*\{\s*type: "string",\s*required: false,\s*input: false,?\s*\}/s);
+  assert.match(contract, /disableSessionRefresh: true/);
   assert.match(contract, /dedicated CSRF-protected organization-selection mutation/i);
+  assert.match(contract, /organization-selection mutation.*updates `updatedAt`.*MUST NOT (?:modify|advance) `lastRefreshAt`/is);
+  assert.match(contract, /24-hour refresh.*lastRefreshAt/is);
+  assert.match(contract, /native `\/get-session` route.*(?:not exposed|unreachable)/is);
   assert.match(contract, /7-day inactivity expiry/i);
   assert.match(contract, /24-hour refresh/i);
   assert.match(contract, /30-day absolute/i);
@@ -127,7 +139,7 @@ test("credential token tables have exact digest, lifetime, single-use, and FK co
   assert.match(credential, /where `consumedAt IS NULL AND invalidatedAt IS NULL`/);
   assert.match(credential, /ck_auth_credential_token_digest.*\^\[A-Za-z0-9_-\]\{43\}\$/s);
   assert.match(contract, /24 hours for `EMAIL_VERIFICATION`, 30 minutes for\s+`PASSWORD_RESET`, and 24 hours for `AccountActivation`/s);
-  assert.match(contract, /one atomic conditional update, never read-then-update/i);
+  assert.match(contract, /one atomic conditional update,\s+never read-then-update/i);
 });
 
 test("activation binds the capability to the current canonical intended email", async () => {
@@ -149,10 +161,13 @@ test("abuse contract fixes endpoint applicability, normalization, and schedule",
   assert.ok(abuse);
   assert.match(abuse, /\| `windowStartedAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
   assert.match(abuse, /\| `lastFailureAt` \| `TIMESTAMP\(3\)` \| yes \| none \|/);
+  assert.match(abuse, /\| `backoffUpdatedAt` \| `TIMESTAMP\(3\)` \| no \| none \|/);
   assert.match(abuse, /\| `attemptCount` \| `INTEGER` \| no \| `0` \|/);
   assert.match(abuse, /ck_auth_abuse_bucket_digest.*\^\[A-Za-z0-9_-\]\{43\}\$/s);
   assert.match(abuse, /ck_auth_abuse_bucket_attempt_count.*attemptCount >= 0/s);
   assert.match(abuse, /ck_auth_abuse_bucket_backoff_level.*BETWEEN 0 AND 12/s);
+  assert.match(abuse, /ck_auth_abuse_bucket_backoff_time.*backoffUpdatedAt <= updatedAt/s);
+  assert.match(abuse, /ck_auth_abuse_bucket_failure_decay_order.*lastFailureAt IS NULL OR\s+lastFailureAt <= backoffUpdatedAt/s);
   assert.match(abuse, /ck_auth_abuse_bucket_retention.*INTERVAL '30 days'/s);
   for (const endpoint of [
     "SIGN_IN_PASSWORD",
@@ -188,6 +203,11 @@ test("abuse contract fixes endpoint applicability, normalization, and schedule",
   assert.match(contract, /2001:0db8:abcd:1234.*2001:db8:abcd:1200::\/56/s);
   assert.match(contract, /User@Example\.COM.*user@example\.com/s);
   assert.match(contract, /SERIALIZABLE transaction/i);
+  assert.match(contract, /Stage A.*`GLOBAL_ENDPOINT`.*`TRUSTED_NETWORK`.*admission/is);
+  assert.match(contract, /token digest lookup.*after Stage A.*before Stage B/is);
+  assert.match(contract, /Stage B.*`ACCOUNT_IDENTIFIER`.*`ACCOUNT_AND_TRUSTED_NETWORK`/is);
+  assert.match(contract, /unknown token.*network\/global.*commit/is);
+  assert.match(contract, /`CONSUME_ACCOUNT_ACTIVATION`.*current canonical `User\.email`.*not `intendedEmailDigest`/is);
   for (const row of [
     "| `TRUSTED_NETWORK` | 30 | 15 minutes | failed protected action |",
     "| `ACCOUNT_IDENTIFIER` | 5 | 15 minutes | failed protected action |",
@@ -217,6 +237,11 @@ test("abuse contract fixes endpoint applicability, normalization, and schedule",
     );
   }
   assert.match(contract, /one level per\s+complete 24 hours/i);
+  assert.match(contract, /elapsedPeriods = floor\(\(now - backoffUpdatedAt\) \/ 24 hours\)/);
+  assert.match(contract, /decaySteps = min\(backoffLevel, elapsedPeriods\)/);
+  assert.match(contract, /backoffUpdatedAt = backoffUpdatedAt \+ decaySteps \* 24 hours/);
+  assert.match(contract, /every protected-action failure.*backoffUpdatedAt = now/is);
+  assert.match(contract, /GLOBAL_ENDPOINT.*raises.*backoffUpdatedAt = now/is);
 });
 
 test("review records the Better Auth hard gates with precise source lines", async () => {
@@ -225,11 +250,14 @@ test("review records the Better Auth hard gates with precise source lines", asyn
   assert.match(review, /better-auth\/dist\/db\/schema\.mjs:59-108/);
   assert.match(review, /better-auth\/dist\/api\/routes\/update-session\.mjs:31-54/);
   assert.match(review, /better-auth\/dist\/db\/internal-adapter\.mjs:248-320/);
+  assert.match(review, /@better-auth\/core\/dist\/types\/init-options\.d\.mts:905-918/);
   assert.match(review, /better-auth\/dist\/api\/routes\/session\.mjs:171-207/);
   assert.match(review, /better-auth\/dist\/api\/routes\/session\.mjs:411-441/);
   assert.match(review, /better-auth\/dist\/api\/routes\/update-user\.mjs:180-189/);
   assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:23-35/);
+  assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:13-18/);
   assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:173-186/);
+  assert.match(review, /better-auth\/dist\/db\/internal-adapter\.mjs:818-845/);
   assert.match(review, /@better-auth\/prisma-adapter\/dist\/index\.mjs:319-332/);
   assert.match(review, /reviewed Passvero session service\/adapter boundary/i);
   assert.match(review, /Required before Stage 13E/);
