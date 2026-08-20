@@ -286,3 +286,107 @@ token opacity, encoding, signing, or identifier hashing alone is insufficient.
   digest-only verification/reset token store. Built-in stateless email
   verification, default reset persistence, native same-token refresh, and native
   password-change session replacement do not satisfy this contract.
+
+## Fix Round 2
+
+### Reviewer findings resolved
+
+- Added required server-owned `AuthProviderSession.lastRefreshAt` persistence,
+  configured as `input: false` with a server-clock create default. The migration
+  contract adds its exact `TIMESTAMP(3)` column, index, ordering/inactivity
+  CHECKs, and preservation rules. Organization selection advances general
+  `updatedAt` but cannot advance `lastRefreshAt` or expiry, so repeated switches
+  do not defer rolling refresh.
+- Confirmed Better Auth 1.7.1 supports `disableSessionRefresh: true` and made it
+  mandatory. The native `/get-session` route is also excluded from the exposed
+  application router; middleware and endpoints must use the reviewed Passvero
+  boundary as the sole authoritative session read/refresh path.
+- Replaced the unrealizable all-digest lock claim with one staged
+  `SERIALIZABLE` transaction. Stage A locks/admit global then network before
+  lookup; token-only requests then perform a non-consuming lookup and owner
+  revalidation; Stage B locks/admit account then combined before the protected
+  operation. Unknown tokens commit network/global evidence without fabricating
+  account buckets, and the fixed dimension hierarchy prevents reverse bucket
+  locking.
+- Activation consumption now derives `ACCOUNT_IDENTIFIER` from the normalized
+  current canonical `User.email`, the same account source used across transports.
+  `intendedEmailDigest` remains only the capability-binding proof and is never an
+  abuse-key input. Identifier requests without an account still use the
+  normalized attempted value; unknown activation tokens have only Stage A state.
+- Added required `AuthAbuseBucket.backoffUpdatedAt` persistence and exact CHECKs.
+  Every protected-action failure and every global-volume level increase resets
+  the anchor. Decay consumes complete 24-hour periods, advances the anchor by
+  exactly the consumed periods, and preserves the remainder, making repeated
+  evaluation idempotent.
+- Tests now assert refresh-anchor non-advancement, native refresh disablement and
+  route unreachability, staged lookup/admission order, the common activation
+  account source, exact decay formulas/anchors, and the complete Better Auth
+  source chain.
+
+### Changed lines
+
+- Review commit hunks begin at current lines 137, 159, 165, 170, 184, 204, 262,
+  and 278.
+- Migration-contract commit hunks begin at current lines 56, 61, 71, 80, 104,
+  113, 137, 150, 160, 174, 177, 181, 202, 217, 390, 410, 470, 564, 579, 586,
+  643, 647, 713, 727, and 747.
+- Prisma-proposal additions begin at current lines 32, 40, and 138.
+- Focused-test additions begin at current lines 71, 75, 95, 105, 109, 112,
+  116, 118, 120, 142, 164, 169, 206, 240, 253, 258, and 260.
+
+### RED to GREEN evidence
+
+- Initial meaningful RED: `node --test tests/auth-foundation-review.test.mjs`
+  ran 10 tests with 6 passing and 4 failing on the missing refresh anchor,
+  session controls, abuse decay/staging state, and source citations.
+- After the main contract reached GREEN, a second test-first invariant required
+  `lastFailureAt <= backoffUpdatedAt`; RED was 9 passing and 1 failing until the
+  named CHECK was added.
+- Fresh final GREEN before commit: 10 tests passed, 0 failed, total duration
+  70.57975 ms.
+
+### Better Auth 1.7.1 source evidence
+
+- `disableSessionRefresh` type, meaning, and default:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/types/init-options.d.mts:905-918`.
+- Native get-session refresh calculation, option check, same-token update, and
+  cookie write:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:171-207`.
+- Email signed-JWT helper:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:13-18`.
+- Email issuance and verification/use:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:23-35`
+  and `:173-186`.
+- Reset consume branch from latest-row selection through adapter call:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:818-845`.
+- Prisma atomic unique-id `consumeOne` deletion:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/prisma-adapter/dist/index.mjs:319-332`.
+
+### Verification and safety results
+
+- `node --test tests/auth-foundation-review.test.mjs`: 10 passed, 0 failed.
+- Disposable combined `npx prisma format` and `npx prisma validate`: both passed;
+  Prisma reported the schema valid without a database connection.
+- Forbidden-path diff from `096f439` across packages, canonical schema and
+  migrations, Prisma config, environment files, and generated client: exit 0.
+- Sensitive-value scan was manually classified. Matches were provider schema
+  field names, policy prose, exact local source paths, negative scan markers in
+  this report, or the literal non-value `reset-password:<raw token>` placeholder.
+  No credential, secret value, or connection string was present.
+- `git diff --check`: exit 0 before the fix commit.
+- Fix commit: `040ea316e4806d4dff03183074757eb03e6264e1`
+  (`docs: refine auth persistence lifecycle contract`).
+
+### Deviations and remaining concerns
+
+- No package, application source, canonical Prisma schema, canonical migration,
+  environment, generated client, secret, or database was modified or accessed.
+  The only non-repository write was formatting the explicitly disposable
+  combined Prisma schema.
+- The native route exclusion is an implementation hard gate, not a claim about
+  Better Auth configuration alone: `disableSessionRefresh` prevents the native
+  write but does not turn the native read into the Passvero policy boundary.
+- Stage 13E remains blocked until the reviewed session boundary enforces native
+  route exclusion plus refresh rotation, and the Passvero-owned digest-only
+  verification/reset store implements the specified staged abuse and token
+  lifecycle ordering.
