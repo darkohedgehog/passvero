@@ -19,13 +19,14 @@
 - Use the single explicit port `55432`. If any TCP listener or PostgreSQL server already uses it, stop. Do not retry on another port.
 - Never read, source, print, or pass the repository's `DATABASE_URL`, `TEST_DATABASE_URL`, or any `.env*` value. The disposable harness must not import `dotenv`.
 - Generate a fresh database role name, database name, and password inside the protected run root. The password file is mode `0600`; its value and every constructed connection URL are forbidden from stdout, stderr, Git, JSON, Markdown, and test names.
-- Invoke all harness and Prisma commands through `env -i` with only explicit `PATH`, `HOME`, `TMPDIR`, `PASSVERO_PROOF_RUN_ROOT`, and `NODE_OPTIONS=--no-warnings`; repository Prisma configuration must never load.
+- Invoke all harness and Prisma commands through `env -i` with only explicit `PATH`, `TMPDIR`, `PASSVERO_PROOF_RUN_ROOT`, `NODE_OPTIONS=--no-warnings`, and task-scoped npm cache/config variables under the validated disposable root. Do not set or repurpose `HOME`, `CODEX_HOME`, or any repository environment variable; repository Prisma configuration must never load.
 - Do not run any Prisma command from the repository root, including `prisma --version`: an earlier repository-root `prisma --version` unexpectedly loaded `prisma.config.ts`. Version evidence must come from package metadata or from the isolated harness after its config-access guard passes.
 - Pin installed `better-auth` and `@better-auth/prisma-adapter` to `1.7.1`, retain the reviewed `auth` CLI evidence at `1.7.1`, pin Prisma packages to `7.8.0`, and verify the installed source contents by hash before execution. Any source/API/hash mismatch is `STOP_SOURCE_DRIFT`.
 - Better Auth Organization, Admin, OAuth, magic-link, 2FA, and passkey plugins remain excluded. Public self-registration, automatic same-email linking, Redis, cookie cache, and the Better Auth catch-all handler remain excluded.
 - Do not accept Better Auth hooks as the transaction bridge: hook types expose no raw Prisma transaction, and a root-client hook write is outside the active transaction. Commit/rollback coupling must use the explicit outer transaction adapter.
 - No plaintext activation, verification, reset, or session token; email; password; IP address; credential; cookie value; database URL; or raw system identifier may appear in evidence or logs.
-- Any existing path/port, identity mismatch, unexpected environment/config access, partial rollback, cookie-before-commit, route bypass, uncontrolled sign-up, unexpected native behavior, or cleanup mismatch produces a terminal proof failure. Do not adjust the architecture or weaken an assertion during execution.
+- Any existing path/port, identity mismatch, unexpected environment/config access, partial rollback on an accepted path, cookie-before-commit, route bypass, uncontrolled sign-up, unexpected native behavior, or cleanup mismatch produces a terminal proof failure. The isolated H1 `transaction:false` split-write negative control is expected evidence, never an accepted path, and is the only permitted partial-write observation. Do not adjust the architecture or weaken an assertion during execution.
+- Tasks 1–9 perform source, static, type, and reviewer gates only. They must not start PostgreSQL or execute a live hypothesis. Task 10 invokes `run-proof.sh --all` exactly once; a failed all-proof invocation is preserved and never retried.
 - A passing proof can make the persistence contract `APPROVAL_READY`; it does not approve the canonical schema, migration, dependency, or implementation automatically.
 - Every task is implemented by a fresh task agent and reviewed by a fresh task reviewer before the next task. A task with an open finding remains incomplete.
 
@@ -60,6 +61,8 @@ The no-database source gate must preserve these reviewed 1.7.1 facts and hashes:
 | `better-auth/dist/api/routes/password.mjs` | `a2c44c376d1aba333161d3b9cc688e1cab6522b14d895f61382f1a8e31620286` | Reset issuance and consumption/password/session chain are lines 21–175. |
 | `better-auth/dist/api/routes/session.mjs` | `831a00b6e144c1560c21406de1db586a67089630ad58fb2f3c7dcd3c5c963d57` | Native refresh/revoke behavior is evidence only and must not silently replace Passvero policy. |
 | `better-auth/dist/api/routes/update-user.mjs` | `c4993821a1895ee5260f87ee50f8bb8762b450923e7a133edeb3f91d5ba15744` | Native password-change session replacement is evidence only and must preserve frozen session anchors in any accepted wrapper. |
+| `@better-auth/core/src/api/index.ts` | `3eab3ac214b7d20b5e2c46d94b3c766c46408cf1348af4871ed4ec55cccf5c2e` | `createAuthEndpoint.serverOnly` sets `SERVER_ONLY`, has no path, remains callable through `auth.api`, and is excluded from the HTTP router at lines 169–215. |
+| `better-auth/dist/plugins/anonymous/index.mjs` | `dd66d20b7b65d3fd18ccd6734dddd3ae5d79c30644fb952b651809604d0a9ac4` | An official Better Auth plugin uses `ctx.context.internalAdapter.createUser` and `createSession`; this proves the pinned plugin-authority pattern, not adoption of the anonymous plugin. |
 
 ## Planned file map
 
@@ -165,7 +168,7 @@ export async function runBetterAuthBoundary<T>(input: {
 
 - [ ] **Step 1: Write the failing source-contract test**
 
-Create a `node:test` suite that reads only the fourteen listed package files, computes SHA-256, asserts every exact digest, and asserts these literal source patterns: `transaction: config.transaction ?? false`, `prisma.$transaction`, `getCurrentAdapter`, `runWithTransaction`, `store?.isTransactionActive`, `runWithAdapter(handlerCtx.adapter`, `dispatchAuthEndpoint`, `disabledPaths.includes`, `disableSignUp`, `createSession`, `setSessionCookie`, `consumeVerificationValue`, and `deleteUserSessions`. Also resolve `@better-auth/core/context` through `createRequire` and assert the public functions `getCurrentAdapter` and `runWithTransaction` exist.
+Create a `node:test` suite that reads only the sixteen listed package files, computes SHA-256, asserts every exact digest, and asserts these literal source patterns: `transaction: config.transaction ?? false`, `prisma.$transaction`, `getCurrentAdapter`, `runWithTransaction`, `store?.isTransactionActive`, `runWithAdapter(handlerCtx.adapter`, `dispatchAuthEndpoint`, `disabledPaths.includes`, `disableSignUp`, `createSession`, `setSessionCookie`, `consumeVerificationValue`, `deleteUserSessions`, `createAuthEndpoint.serverOnly`, `SERVER_ONLY`, and `internalAdapter.createUser`. Also resolve `@better-auth/core/context` through `createRequire` and assert the public functions `getCurrentAdapter` and `runWithTransaction` exist.
 
 ```js
 const REVIEW_ROOT = "/private/tmp/passvero-better-auth-review-1-7-1";
@@ -184,6 +187,8 @@ const EXPECTED = new Map([
   ["node_modules/better-auth/dist/api/routes/password.mjs", "a2c44c376d1aba333161d3b9cc688e1cab6522b14d895f61382f1a8e31620286"],
   ["node_modules/better-auth/dist/api/routes/session.mjs", "831a00b6e144c1560c21406de1db586a67089630ad58fb2f3c7dcd3c5c963d57"],
   ["node_modules/better-auth/dist/api/routes/update-user.mjs", "c4993821a1895ee5260f87ee50f8bb8762b450923e7a133edeb3f91d5ba15744"],
+  ["node_modules/@better-auth/core/src/api/index.ts", "3eab3ac214b7d20b5e2c46d94b3c766c46408cf1348af4871ed4ec55cccf5c2e"],
+  ["node_modules/better-auth/dist/plugins/anonymous/index.mjs", "dd66d20b7b65d3fd18ccd6734dddd3ae5d79c30644fb952b651809604d0a9ac4"],
 ]);
 ```
 
@@ -204,7 +209,7 @@ Use `readFile`, `createHash("sha256")`, `assert.match`, and `createRequire(`${RE
 - [ ] **Step 4: Run the zero-database gate and observe GREEN**
 
 ```bash
-env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" HOME="/private/tmp" NODE_OPTIONS="--no-warnings" /opt/homebrew/bin/node --test tests/auth-foundation-transaction-proof-source.test.mjs
+env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" /opt/homebrew/bin/node --test tests/auth-foundation-transaction-proof-source.test.mjs
 ```
 
 Expected: PASS with `SOURCE_CONTRACT=PASS`; `pgrep -f 'passvero-stage13a-pg'` returns no process. If the test fails, stop the plan before Task 2.
@@ -394,7 +399,7 @@ Add `credentialTokens AuthCredentialToken[] @relation("AuthProviderUserCredentia
 
 - [ ] **Step 5: Implement protected run-root configuration**
 
-`readRunIdentity()` must require an absolute real path matching `/private/tmp/passvero-stage13a-pg.[A-Za-z0-9]+`, reject symlinks, require owner UID equals `process.getuid()`, mode `0700`, and read exactly `identity/role`, `identity/database`, `identity/password`, `identity/port`, and `identity/socket-dir`. It validates role/database against `^pvproof_[a-f0-9]{12}$`, port equals `55432`, password is 48 URL-safe characters, and socket path is inside the real run root. `buildConnectionString()` returns the URL only to Prisma config/runtime and is never exportable to evidence.
+`readRunIdentity()` must require an absolute real path matching `/private/tmp/passvero-stage13a-pg.[A-Za-z0-9]+`, reject symlinks, require owner UID equals `process.getuid()`, mode `0700`, and read exactly `identity/superuser-role`, `identity/superuser-password`, `identity/application-role`, `identity/application-password`, `identity/database`, `identity/port`, and `identity/socket-dir`. It validates the independently generated names against `^pvproof_admin_[a-f0-9]{12}$`, `^pvproof_app_[a-f0-9]{12}$`, and `^pvproof_test_[a-f0-9]{12}$`; port equals `55432`; each password is exactly 48 canonical base64url characters; and the socket path is inside the real run root. `buildConnectionString()` uses only the application role/password and returns the URL only to Prisma config/runtime; neither role's password is exportable to evidence.
 
 `prisma.config.ts` imports only `defineConfig`, `readRunIdentity`, and `buildConnectionString`; it must not import dotenv or use a database environment variable:
 
@@ -442,7 +447,7 @@ Evidence JSON contains only package hashes, opaque cluster ID hash, hashed Postg
 
 - [ ] **Step 8: Run no-database harness contract tests**
 
-Copy the harness to a fresh non-cluster temp directory, run `npm ci --ignore-scripts --no-audit --no-fund`, TypeScript typecheck, and `harness-contract.test.ts` under `env -i`. The test uses a synthetic protected run-root structure but never constructs Prisma or connects.
+Copy the harness to a fresh directory created by `mktemp -d /private/tmp/passvero-stage13a-harness.XXXXXX`, validate that exact root with the same owner/mode/no-symlink rules, and run `npm ci --ignore-scripts --no-audit --no-fund`, TypeScript typecheck, and `harness-contract.test.ts` under `env -i`. Supply `TMPDIR`, `npm_config_cache`, and `npm_config_userconfig` only inside that root; do not set `HOME`. The test uses a synthetic protected run-root structure but never constructs Prisma or connects. Validate and remove only this static root after the checks.
 
 Expected: manifest, type, environment, redaction, and path tests PASS; PostgreSQL process count remains zero.
 
@@ -468,7 +473,7 @@ Reviewer gate: reject any environment fallback, repository config import, unpinn
 
 - [ ] **Step 1: Add failing static lifecycle tests**
 
-Assert `run-proof.sh` contains `set -euo pipefail`, `umask 077`, exact port `55432`, exact PostgreSQL 16 binary prefix, `mktemp -d /private/tmp/passvero-stage13a-pg.XXXXXX`, a sentinel constant, preflight listener check, cleanup validator, and trap. Assert it does not contain `docker`, `source .env`, `DATABASE_URL`, `TEST_DATABASE_URL`, `rm -rf /`, a globbed delete, or port increment/retry logic.
+Assert `run-proof.sh` accepts only `--static` and `--all`, contains `set -euo pipefail`, `umask 077`, exact port `55432`, exact PostgreSQL 16 binary prefix, `mktemp -d /private/tmp/passvero-stage13a-pg.XXXXXX`, a sentinel constant, preflight listener check, cleanup validator, and trap. Assert `--static` cannot call `initdb`, `pg_ctl`, `createdb`, `psql`, or any generated Prisma client. Assert the script does not contain `docker`, `source .env`, `DATABASE_URL`, `TEST_DATABASE_URL`, `rm -rf /`, a globbed delete, or port increment/retry logic.
 
 - [ ] **Step 2: Run static tests and observe RED**
 
@@ -480,16 +485,16 @@ Expected: FAIL because the lifecycle script is absent.
 
 - [ ] **Step 3: Implement fail-closed bootstrap**
 
-The script first runs Task 1, then checks TCP port `55432` with both `/usr/sbin/lsof -nP -iTCP:55432 -sTCP:LISTEN` and `pg_isready -h 127.0.0.1 -p 55432`; either indication aborts before `mktemp`. Set `umask 077`, create the run root once, write `.passvero-stage13a-proof-root` containing constant `PASSVERO_STAGE13A_PG_V1` plus a generated opaque run ID, and generate role/database suffixes plus 48-character password and 48-character Better Auth secret without stdout.
+The script first validates its sole argument. `--static` performs only the validated static-root copy/install/type/source checks and exits; Tasks 1–9 may call it repeatedly. `--all` may be invoked exactly once in Task 10. Before the `--all` run creates any root, it executes Task 1 and checks TCP port `55432` with both `/usr/sbin/lsof -nP -iTCP:55432 -sTCP:LISTEN` and `pg_isready -h 127.0.0.1 -p 55432`; either indication aborts before `mktemp`. Set `umask 077`, create the run root once, write `.passvero-stage13a-proof-root` containing constant `PASSVERO_STAGE13A_PG_V1` plus a generated opaque run ID, and call a reviewed `run-root.ts bootstrap` command that uses `randomBytes` plus `writeFile(..., { mode: 0o600, flag: "wx" })` to create independently generated superuser/application roles, database name, 48-character canonical base64url passwords, and 48-character Better Auth secret without stdout. Shell redirection must not create secrets.
 
 Initialize with:
 
 ```bash
-/opt/homebrew/opt/postgresql@16/bin/initdb -D "$RUN_ROOT/data" --encoding=UTF8 --locale=C --auth-local=scram-sha-256 --auth-host=scram-sha-256 --pwfile="$RUN_ROOT/identity/superuser-password"
+/opt/homebrew/opt/postgresql@16/bin/initdb -D "$RUN_ROOT/data" --encoding=UTF8 --locale=C --username="$(<"$RUN_ROOT/identity/superuser-role")" --auth-local=scram-sha-256 --auth-host=scram-sha-256 --pwfile="$RUN_ROOT/identity/superuser-password"
 /opt/homebrew/opt/postgresql@16/bin/pg_ctl -D "$RUN_ROOT/data" -l "$RUN_ROOT/log/postgres.log" -o "-h 127.0.0.1 -p 55432 -k $RUN_ROOT/socket -c listen_addresses=127.0.0.1 -c unix_socket_permissions=0700" start
 ```
 
-Create only the generated proof role/database using protected password files and loopback/socket connections. Revoke public database/schema privileges. Write a sentinel database table/row containing the opaque run ID hash.
+Connect as the generated cluster superuser over loopback using only protected files, create exactly the generated application role and database, set the role password without placing it in command arguments or output, and make the application role the database owner. Revoke public database/schema privileges. Reconnect over TCP as the application role, then write the sentinel database table/row containing the opaque run ID hash. No SQL command may interpolate an unvalidated identifier; use `psql` variables after regex validation and identifier quoting.
 
 - [ ] **Step 4: Implement the identity gate before schema application**
 
@@ -507,7 +512,7 @@ Before cleanup, render and validate a redacted draft at the repository asset
 path `evidence.pending.json`; this draft may contain no cleanup verdict and is
 not staged or committed. Then run `pg_ctl ... stop -m fast`, require
 `pg_isready` failure, require no listener at `55432`, require recorded PID
-absent, remove only the validated explicit realpath, and require path absence.
+absent, execute exactly `rm -rf -- "$RUN_ROOT_REAL"` only after every preceding validation succeeds, and require path absence. `RUN_ROOT_REAL` must be a literal validated scalar, never a glob, substitution result used without comparison, `/private/tmp`, `/`, a home directory, or the repository.
 Record four booleans: `serverStopped`, `listenerGone`, `pidGone`, `rootGone`.
 Only after all four checks complete may the script merge them into final
 `evidence.json`/`evidence.md` and delete the explicit pending file. On cleanup
@@ -516,7 +521,7 @@ without all four booleans.
 
 - [ ] **Step 7: Run static tests only and commit**
 
-Do not start PostgreSQL in this task. Run the source and artifact suites; expected PASS.
+Do not start PostgreSQL in this task. Run the source and artifact suites plus `run-proof.sh --static`; expected PASS. A process/listener check before and after must prove that no PostgreSQL cluster was started.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/run-proof.sh docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/cluster-identity.test.ts tests/auth-foundation-transaction-proof-artifacts.test.mjs
@@ -539,17 +544,17 @@ Reviewer gate: manually trace every cleanup branch and confirm no unvalidated re
 
 Create unique opaque fixture IDs. Inject failure specifically when `AuthProviderAccount.create` executes after provider user creation. With adapter transaction false, call direct `auth.api.signUpEmail` using a proof-only configuration with `disableSignUp:false`; assert user delta `+1`, account delta `0` as the expected split-write baseline, then clean the fixture inside the disposable database. With transaction true, repeat and assert both deltas `0`. Record `txid_current()` hashes around every write.
 
-- [ ] **Step 2: Run H1 and observe RED**
+- [ ] **Step 2: Run the no-database H1 source/manifest gate and observe RED**
 
-Run only `native-transaction.test.ts` through `run-proof.sh --task H1`; expected FAIL until injection and row snapshots are complete. If public signup can be reached through any mounted HTTP handler during the test, terminate with `STOP_UNCONTROLLED_SIGNUP`.
+Run the repository artifact test and `run-proof.sh --static`. Expected: FAIL because the H1 scenario manifest and typed assertions are incomplete. PostgreSQL must not start. Runtime H1 remains `NOT_EXECUTED` until Task 10's single `--all` run.
 
 - [ ] **Step 3: Implement adapter instrumentation without provider writes**
 
 Wrap Prisma delegates only to observe model/action and inject an exception; all successful provider writes must still originate from Better Auth. Add nested calls proving `transaction:true` creates one Prisma transaction for native sign-up and `runWithTransaction` reuses the active adapter rather than opening a second transaction. Also run a `transaction:false` adapter inside an already active tx-bound adapter and assert it delegates to the supplied tx.
 
-- [ ] **Step 4: Run H1 to GREEN and commit**
+- [ ] **Step 4: Run H1 static/type checks to GREEN and commit**
 
-Expected: baseline split is observed, native transaction true rolls back user/account, nested execution uses one transaction, no session/cookie exists because `autoSignIn:false`, and fixture cleanup returns all counts to zero.
+Expected before live proof: the typed H1 test encodes the expected negative-control split, accepted rollback, nested transaction-ID, no-session/cookie, and fixture-cleanup assertions; source/artifact/static checks PASS and no PostgreSQL process exists. Task 10 alone determines the runtime H1 verdict.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/native-transaction.test.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/evidence.ts
@@ -577,13 +582,9 @@ Add deterministic serialization/deadlock cases. An orchestration wrapper may ret
 
 For `auth.handler`, place an outer tx adapter in `runWithTransaction`, invoke an HTTP Request at the configured base path, inject failure after the handler returns, and assert observed provider writes do not share the outer tx. H3 passes only by proving the handler is unsafe/rejected for this boundary.
 
-- [ ] **Step 2: Run H2/H3 and observe RED**
+- [ ] **Step 2: Run the no-database H2/H3 source/manifest gate and observe RED**
 
-```bash
-run-proof.sh --task H2,H3
-```
-
-Expected: initial failure because the outer adapter and deferred failure injection are not wired.
+Run the repository artifact test and `run-proof.sh --static`. Expected: FAIL because the outer-adapter, retry, handler-replacement, and deferred-failure scenario manifests are incomplete. PostgreSQL must not start; H2/H3 remain `NOT_EXECUTED` until Task 10.
 
 - [ ] **Step 3: Implement the exact direct boundary**
 
@@ -595,9 +596,9 @@ Run the retry classifier against injected `40001`, `40P01`, `P2034`, unique-cons
 
 Do not repair the handler path. Record whether provider state committed separately or otherwise escaped the injected outer rollback, plus the source mechanism at `base.mjs:17-40`. Assert `auth.handler` and the catch-all route are prohibited by the accepted boundary even if a specific test happens to roll back due to unrelated adapter configuration.
 
-- [ ] **Step 5: Run H2/H3 to GREEN and commit**
+- [ ] **Step 5: Run H2/H3 static/type checks to GREEN and commit**
 
-Expected: H2 PASS with one transaction ID and zero rows after every injection; H3 PASS as a negative compatibility result, with handler/catch-all explicitly rejected.
+Expected before live proof: the typed tests encode one-transaction/zero-row rollback requirements and handler rejection, all static/type checks PASS, and no PostgreSQL process exists. Task 10 alone assigns H2/H3 PASS or FAIL.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/proof-boundary.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/direct-boundary.test.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/handler-boundary.test.ts
@@ -626,13 +627,13 @@ With production-shaped config `disableSignUp:true`, require direct `auth.api.sig
 
 - [ ] **Step 3: Implement the minimal proof-only server plugin**
 
-Create a proof plugin with one `scope:"server"` endpoint named `activatePreprovisionedCredential`. Its handler accepts already-validated opaque internal inputs, resolves the current adapter from Better Auth context, and calls Better Auth's provider-authoritative internal user/account creation methods. The endpoint is called only through direct `auth.api.activatePreprovisionedCredential` inside `runBetterAuthBoundary`; it has no mounted HTTP route and production-shaped built-in signup remains disabled.
+Create a proof plugin with one endpoint named `activatePreprovisionedCredential` declared exactly through public `createAuthEndpoint.serverOnly({ method: "POST", body: activationSchema }, handler)`. In pinned 1.7.1 this sets `metadata.SERVER_ONLY`, has no path, remains callable through `auth.api`, and is excluded from the HTTP router. Its handler accepts already-validated opaque internal inputs and calls `ctx.context.internalAdapter.createUser` plus `linkAccount`, the same pinned internal-adapter pattern used by official Better Auth plugins and native sign-up. The endpoint is called only through direct `auth.api.activatePreprovisionedCredential` inside `runBetterAuthBoundary`; production-shaped built-in signup remains disabled.
 
-If Better Auth 1.7.1 cannot expose the required provider-authoritative operation through a supported plugin/server API, set H4 to FAIL with `NO_SUPPORTED_SERVER_ONLY_ACTIVATION_PATH`, stop all later hypotheses, and do not import private internals or invent direct provider writes.
+If Better Auth 1.7.1 cannot expose the required provider-authoritative operation through this public server-only endpoint surface and the typed `AuthContext.internalAdapter`, set H4 to FAIL with `NO_SUPPORTED_SERVER_ONLY_ACTIVATION_PATH`, stop all later hypotheses, and do not import unexported modules or invent direct provider writes. Acceptance is pinned-version-specific and requires a renewed source/proof review on upgrade.
 
-- [ ] **Step 4: Run H4 to its terminal verdict and commit**
+- [ ] **Step 4: Run H4 static/type checks and commit**
 
-PASS requires exactly one winning concurrent consumer, one provider user/account, one AuthIdentity, consumed activation, zero sessions/cookies, one transaction ID, and zero deltas for every injected failure. Any reachable public signup is terminal FAIL.
+The typed test must require exactly one winning concurrent consumer, one provider user/account, one AuthIdentity, consumed activation, zero sessions/cookies, one transaction ID, and zero deltas for every injected failure. Run artifact tests and `run-proof.sh --static`; no database starts. Task 10 assigns H4 PASS/FAIL. Any reachable public signup during that one live run is terminal FAIL.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/auth.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/controlled-activation.test.ts
@@ -667,9 +668,9 @@ Direct API dispatch runs with response/header capture inside the transaction, bu
 
 Both timestamps are `input:false`; create them from one server instant. Test client-supplied values cannot override them. Prove the dedicated tx-bound rotation conditionally updates token/expires/lastRefreshAt while preserving authenticatedAt and selectedOrganizationId, and that password change verifies through Better Auth then uses its authoritative account update inside the same tx while deleting other sessions and rotating the current session without resetting anchors. If any step requires direct provider-table writes, H5 FAILS.
 
-- [ ] **Step 5: Run H5 and commit**
+- [ ] **Step 5: Run H5 static/type checks and commit**
 
-PASS requires no cookie before commit, no session/cookie on rollback, correct attributes (`Secure`, `HttpOnly`, `SameSite=Lax`, host-only), absolute/inactivity caps, rotation, revoke-all, and preserved anchors.
+The typed test must require no cookie before commit, no session/cookie on rollback, correct attributes (`Secure`, `HttpOnly`, `SameSite=Lax`, host-only), absolute/inactivity caps, rotation, revoke-all, and preserved anchors. Run artifact tests and `run-proof.sh --static`; Task 10 assigns the runtime verdict.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/proof-boundary.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/session-boundary.test.ts
@@ -704,9 +705,9 @@ Verify current password through Better Auth, update credential authoritatively, 
 
 Classify Better Auth after-commit hooks using `transaction.ts:139-150` and `with-hooks.mjs:31-39,67-75`: failure after commit cannot roll back and must produce a redacted operational failure, not a false rollback claim. Security-critical token/session state may not be delegated exclusively to after hooks. Test this distinction separately from a callback executed inside the outer transaction.
 
-- [ ] **Step 5: Run H6 and commit**
+- [ ] **Step 5: Run H6 static/type checks and commit**
 
-PASS requires atomic credential/token/session state, single-use concurrency, callback classification, no automatic sign-in, and zero secret leaks.
+The typed test must require atomic credential/token/session state, single-use concurrency, callback classification, no automatic sign-in, and zero secret leaks. Run artifact tests and `run-proof.sh --static`; Task 10 assigns the runtime verdict.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/auth.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/recovery-boundary.test.ts
@@ -737,9 +738,9 @@ HTTP calls to all native routes return 404 because `disabledPaths` is enforced i
 
 Normalize exactly as Better Auth's router does and require every alternate spelling to stay denied. A 2xx/3xx response from any native auth HTTP route, or a direct sign-up success, is `STOP_ROUTE_BYPASS`.
 
-- [ ] **Step 4: Run H7 and commit**
+- [ ] **Step 4: Run H7 static/type checks and commit**
 
-Expected: exhaustive route matrix PASS, no public sign-up, no native handler route, direct server allowlist recorded exactly.
+Expected before live proof: the exhaustive route matrix is typed and statically enumerated, no public sign-up/native-handler allowance is present, the direct server allowlist is exact, and no PostgreSQL process exists. Task 10 assigns H7 PASS/FAIL.
 
 ```bash
 git add docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/auth.ts docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/route-boundary.test.ts
@@ -782,11 +783,12 @@ Expected: one fresh run root, port 55432 used once, identity gate before schema,
 H1–H7 terminal results, a redacted pending evidence capture before cleanup,
 final evidence only after cleanup booleans are known, and cleanup trap completes.
 Do not retry a failed hypothesis or rerun the all-proof command; preserve its
-redacted failure evidence.
+redacted failure evidence. The script must refuse `--all` if final or pending
+evidence already records an execution attempt.
 
 - [ ] **Step 3: Verify cleanup independently**
 
-Run explicit checks for no listener at 55432, `pg_isready` failure, recorded PID absence, and the exact run-root path absence. Compare them to evidence booleans. Any mismatch sets overall status FAIL even when H1–H7 passed.
+Run explicit checks for no listener at 55432, `pg_isready` failure, recorded PID absence, and no directory matching the exact `/private/tmp/passvero-stage13a-pg.*` proof prefix. Compare them to evidence booleans. Any mismatch sets overall status FAIL even when H1–H7 passed. This is read-only enumeration; never delete a prefix match outside the validated script cleanup.
 
 - [ ] **Step 4: Run the redaction and determinism tests**
 
@@ -830,7 +832,6 @@ npm run test:application
 npm run test:infrastructure
 unlink src/generated
 npm run lint
-(cd /private/tmp/passvero-better-auth-review-1-7-1 && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" HOME="/private/tmp" NODE_OPTIONS="--no-warnings" ./node_modules/.bin/prisma validate --schema /private/tmp/passvero-stage13a-auth-foundation-review/prisma/schema.prisma)
 git diff --check
 test ! -e src/generated
 ```
@@ -841,9 +842,11 @@ fails before `unlink`, unlink the validated symlink before reporting the failure
 
 Expected baseline before this plan: 175 source tests, 54 application tests, and
 11 infrastructure tests. The source total after this plan must equal 175 plus
-the exact new `node:test` cases committed by Tasks 1–3; all source, application,
-infrastructure, isolated Prisma schema validation, lint, artifact, and diff
-checks PASS with zero failures, and the exact final counts are recorded.
+the exact new repository `node:test` cases committed by Tasks 1–3; all source,
+application, infrastructure, disposable-harness Prisma validation, lint,
+artifact, and diff checks PASS with zero failures, and the exact final counts
+are recorded. Never invoke Prisma against the repository schema during this
+proof.
 
 - [ ] **Step 7: Commit evidence and request fresh final reviews**
 
