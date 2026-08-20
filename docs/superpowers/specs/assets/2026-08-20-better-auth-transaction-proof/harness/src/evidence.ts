@@ -58,6 +58,7 @@ const FORBIDDEN_VALUE = [
   /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/,
   /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
   /set-cookie\s*:/i,
+  /(?:^|\s)(?:__Host-|__Secure-)?[!#$%&'*+.^_`|~0-9A-Za-z-]+=[^;,\s]+;\s*(?:Domain|Expires|HttpOnly|Max-Age|Partitioned|Path|SameSite|Secure)\b/i,
 ];
 
 function validateEvidence(value: unknown, key = "root"): void {

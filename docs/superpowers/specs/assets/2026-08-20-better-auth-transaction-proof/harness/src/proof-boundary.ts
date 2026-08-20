@@ -128,6 +128,7 @@ export async function runBetterAuthBoundary<T>(input: {
     },
     { isolationLevel: "Serializable" },
   );
+  const finalized = finalizeAfterCommit(pending);
   injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK");
-  return finalizeAfterCommit(pending);
+  return finalized;
 }

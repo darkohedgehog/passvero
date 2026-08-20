@@ -1,6 +1,11 @@
 import { defineConfig } from "prisma/config";
-import { buildConnectionString, readRunIdentity } from "./src/run-root.js";
+import {
+  buildConnectionString,
+  readRunIdentity,
+  validateDisposableHarnessEnvironment,
+} from "./src/run-root.js";
 
+validateDisposableHarnessEnvironment();
 const identity = readRunIdentity();
 
 export default defineConfig({

@@ -1,8 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { chmod, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
+import {
+  buildConnectionString,
+  readAuthSecret,
+  readRunIdentity,
+  validateDisposableHarnessEnvironment,
+} from "../src/run-root.js";
 import { renderEvidenceJson, type ProofEvidence } from "../src/evidence.js";
 
 const EMPTY_COUNTS = {
@@ -39,6 +44,37 @@ async function createSyntheticRunRoot(): Promise<string> {
     [...values].map(([name, value]) => writeFile(path.join(identityDir, name), value, { mode: 0o600 })),
   );
   return runRoot;
+}
+
+async function withSyntheticRunRoot(
+  action: (runRoot: string) => Promise<void> | void,
+): Promise<void> {
+  const previous = process.env.PASSVERO_PROOF_RUN_ROOT;
+  const runRoot = await createSyntheticRunRoot();
+  try {
+    process.env.PASSVERO_PROOF_RUN_ROOT = runRoot;
+    await action(runRoot);
+  } finally {
+    if (previous === undefined) delete process.env.PASSVERO_PROOF_RUN_ROOT;
+    else process.env.PASSVERO_PROOF_RUN_ROOT = previous;
+    await rm(runRoot, { recursive: true });
+  }
+}
+
+async function createSyntheticHarnessRoot(): Promise<string> {
+  const harnessRoot = await mkdtemp("/private/tmp/passvero-stage13a-harness.");
+  await chmod(harnessRoot, 0o700);
+  await mkdir(path.join(harnessRoot, "cache"), { mode: 0o700 });
+  await mkdir(path.join(harnessRoot, "tmp"), { mode: 0o700 });
+  await writeFile(path.join(harnessRoot, "npmrc"), "", { mode: 0o600 });
+  return harnessRoot;
+}
+
+function setHarnessEnvironment(harnessRoot: string): void {
+  process.env.XDG_CACHE_HOME = path.join(harnessRoot, "cache");
+  process.env.npm_config_cache = path.join(harnessRoot, "cache");
+  process.env.npm_config_userconfig = path.join(harnessRoot, "npmrc");
+  process.env.TMPDIR = path.join(harnessRoot, "tmp");
 }
 
 function cleanEvidence(): ProofEvidence {
@@ -79,6 +115,44 @@ test("static tool caches remain inside the disposable harness root", () => {
   assert.equal(process.env.npm_config_cache, path.join(harnessRoot, "cache"));
   assert.equal(process.env.npm_config_userconfig, path.join(harnessRoot, "npmrc"));
   assert.equal(process.env.TMPDIR, path.join(harnessRoot, "tmp"));
+  assert.equal(validateDisposableHarnessEnvironment(), harnessRoot);
+});
+
+test("disposable harness validation rejects lexical and filesystem escapes", async () => {
+  const saved = {
+    xdg: process.env.XDG_CACHE_HOME,
+    npmCache: process.env.npm_config_cache,
+    npmConfig: process.env.npm_config_userconfig,
+    temp: process.env.TMPDIR,
+  };
+  const harnessRoot = await createSyntheticHarnessRoot();
+  const symlinkPath = `${harnessRoot}link`;
+  try {
+    setHarnessEnvironment(harnessRoot);
+    assert.equal(validateDisposableHarnessEnvironment(harnessRoot), harnessRoot);
+
+    process.env.XDG_CACHE_HOME = "/private/tmp";
+    assert.throws(() => validateDisposableHarnessEnvironment(harnessRoot), /STOP_RUN_ROOT_INVALID/);
+    setHarnessEnvironment(harnessRoot);
+
+    await chmod(harnessRoot, 0o755);
+    assert.throws(() => validateDisposableHarnessEnvironment(harnessRoot), /mode must be 0700/);
+    await chmod(harnessRoot, 0o700);
+
+    await symlink(harnessRoot, symlinkPath);
+    assert.throws(() => validateDisposableHarnessEnvironment(symlinkPath), /must not be a symlink/);
+  } finally {
+    await unlink(symlinkPath).catch(() => undefined);
+    await rm(harnessRoot, { recursive: true });
+    if (saved.xdg === undefined) delete process.env.XDG_CACHE_HOME;
+    else process.env.XDG_CACHE_HOME = saved.xdg;
+    if (saved.npmCache === undefined) delete process.env.npm_config_cache;
+    else process.env.npm_config_cache = saved.npmCache;
+    if (saved.npmConfig === undefined) delete process.env.npm_config_userconfig;
+    else process.env.npm_config_userconfig = saved.npmConfig;
+    if (saved.temp === undefined) delete process.env.TMPDIR;
+    else process.env.TMPDIR = saved.temp;
+  }
 });
 
 test("run-root identity fails closed and builds only an application connection", async () => {
@@ -103,6 +177,59 @@ test("run-root identity fails closed and builds only an application connection",
   }
 });
 
+test("run-root rejects unsafe modes, symlinks, formats, port, and socket escape", async () => {
+  await withSyntheticRunRoot(async (runRoot) => {
+    await chmod(path.join(runRoot, "identity", "application-password"), 0o644);
+    assert.throws(() => readRunIdentity(), /mode must be 0600/);
+  });
+
+  await withSyntheticRunRoot(async (runRoot) => {
+    const rolePath = path.join(runRoot, "identity", "application-role");
+    const targetPath = path.join(runRoot, "identity", "role-target");
+    await writeFile(targetPath, "pvproof_app_012345abcdef", { mode: 0o600 });
+    await unlink(rolePath);
+    await symlink(targetPath, rolePath);
+    assert.throws(() => readRunIdentity(), /non-symlink file/);
+  });
+
+  await withSyntheticRunRoot(async (runRoot) => {
+    await chmod(runRoot, 0o755);
+    assert.throws(() => readRunIdentity(), /mode must be 0700/);
+  });
+
+  await withSyntheticRunRoot(async (runRoot) => {
+    await writeFile(path.join(runRoot, "identity", "superuser-role"), "pvproof_admin_nothex", { mode: 0o600 });
+    assert.throws(() => readRunIdentity(), /superuser role is invalid/);
+  });
+
+  await withSyntheticRunRoot(async (runRoot) => {
+    await writeFile(path.join(runRoot, "identity", "application-password"), "B".repeat(47), { mode: 0o600 });
+    assert.throws(() => readRunIdentity(), /application credential is invalid/);
+  });
+
+  await withSyntheticRunRoot(async (runRoot) => {
+    await writeFile(path.join(runRoot, "identity", "port"), "55433", { mode: 0o600 });
+    assert.throws(() => readRunIdentity(), /port must be 55432/);
+  });
+
+  const outside = await mkdtemp("/private/tmp/passvero-stage13a-outside.");
+  await chmod(outside, 0o700);
+  try {
+    await withSyntheticRunRoot(async (runRoot) => {
+      await writeFile(path.join(runRoot, "identity", "socket-dir"), outside, { mode: 0o600 });
+      assert.throws(() => readRunIdentity(), /socket directory must be directly inside run root/);
+    });
+  } finally {
+    await rm(outside, { recursive: true });
+  }
+
+  await withSyntheticRunRoot(async (runRoot) => {
+    await chmod(path.join(runRoot, "identity", "auth-secret"), 0o644);
+    const identity = readRunIdentity();
+    assert.throws(() => readAuthSecret(identity), /mode must be 0600/);
+  });
+});
+
 test("evidence rendering is deterministic and rejects sensitive shapes", () => {
   const evidence = cleanEvidence();
   const rendered = renderEvidenceJson(evidence);
@@ -116,6 +243,11 @@ test("evidence rendering is deterministic and rejects sensitive shapes", () => {
   const address = ["operator", "invalid.example"].join("@");
   assert.throws(
     () => renderEvidenceJson({ ...evidence, assertions: [address] }),
+    /STOP_EVIDENCE_REDACTION/,
+  );
+  const serializedCookie = `${"__Host-session"}=${"opaque"}; Path=/; HttpOnly; Secure; SameSite=Lax`;
+  assert.throws(
+    () => renderEvidenceJson({ ...evidence, assertions: [serializedCookie] }),
     /STOP_EVIDENCE_REDACTION/,
   );
 });

@@ -2,6 +2,8 @@ import { lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
 
 const RUN_ROOT_PATTERN = /^\/private\/tmp\/passvero-stage13a-pg\.[A-Za-z0-9]+$/;
+const STATIC_HARNESS_PATTERN = /^\/private\/tmp\/passvero-stage13a-harness\.[A-Za-z0-9]+$/;
+const LIVE_HARNESS_PATTERN = /^\/private\/tmp\/passvero-stage13a-pg\.[A-Za-z0-9]+\/harness$/;
 const ROLE_PATTERN = /^pvproof_(?:admin|app)_[a-f0-9]{12}$/;
 const DATABASE_PATTERN = /^pvproof_test_[a-f0-9]{12}$/;
 const BASE64URL_48 = /^[A-Za-z0-9_-]{48}$/;
@@ -32,7 +34,12 @@ function fail(message: string): never {
 
 function assertProtectedDirectory(candidate: string, label: string): string {
   if (!path.isAbsolute(candidate)) fail(`${label} must be absolute`);
-  const linkStatus = lstatSync(candidate);
+  let linkStatus: ReturnType<typeof lstatSync>;
+  try {
+    linkStatus = lstatSync(candidate);
+  } catch {
+    fail(`${label} is unavailable`);
+  }
   if (linkStatus.isSymbolicLink()) fail(`${label} must not be a symlink`);
   const resolved = realpathSync(candidate);
   if (resolved !== candidate) fail(`${label} must already be a real path`);
@@ -45,18 +52,47 @@ function assertProtectedDirectory(candidate: string, label: string): string {
   return resolved;
 }
 
-function readIdentityValue(identityDir: string, name: (typeof IDENTITY_NAMES)[number]): string {
-  const filePath = path.join(identityDir, name);
-  const linkStatus = lstatSync(filePath);
-  if (linkStatus.isSymbolicLink() || !linkStatus.isFile()) {
-    fail(`identity/${name} must be a regular non-symlink file`);
+function assertProtectedFile(filePath: string, label: string): void {
+  let status: ReturnType<typeof lstatSync>;
+  try {
+    status = lstatSync(filePath);
+  } catch {
+    fail(`${label} is unavailable`);
   }
+  if (status.isSymbolicLink() || !status.isFile()) fail(`${label} must be a regular non-symlink file`);
+  if (typeof process.getuid !== "function" || status.uid !== process.getuid()) fail(`${label} owner mismatch`);
+  if ((status.mode & 0o777) !== 0o600) fail(`${label} mode must be 0600`);
+}
+
+function readProtectedFile(filePath: string, label: string): string {
+  assertProtectedFile(filePath, label);
   const raw = readFileSync(filePath, "utf8");
   const value = raw.endsWith("\n") ? raw.slice(0, -1) : raw;
   if (value.length === 0 || value.includes("\n") || value.includes("\r")) {
-    fail(`identity/${name} must contain exactly one non-empty canonical line`);
+    fail(`${label} must contain exactly one non-empty canonical line`);
   }
   return value;
+}
+
+function readIdentityValue(identityDir: string, name: (typeof IDENTITY_NAMES)[number]): string {
+  return readProtectedFile(path.join(identityDir, name), `identity/${name}`);
+}
+
+export function validateDisposableHarnessEnvironment(candidate = process.cwd()): string {
+  if (!STATIC_HARNESS_PATTERN.test(candidate) && !LIVE_HARNESS_PATTERN.test(candidate)) {
+    fail("harness root path does not match an approved disposable prefix");
+  }
+  const harnessRoot = assertProtectedDirectory(candidate, "harness root");
+  const cacheDir = assertProtectedDirectory(path.join(harnessRoot, "cache"), "harness cache");
+  const tempDir = assertProtectedDirectory(path.join(harnessRoot, "tmp"), "harness temp directory");
+  assertProtectedFile(path.join(harnessRoot, "npmrc"), "harness npm user config");
+  if (process.env.XDG_CACHE_HOME !== cacheDir) fail("XDG cache must equal the validated harness cache");
+  if (process.env.npm_config_cache !== cacheDir) fail("npm cache must equal the validated harness cache");
+  if (process.env.TMPDIR !== tempDir) fail("TMPDIR must equal the validated harness temp directory");
+  if (process.env.npm_config_userconfig !== path.join(harnessRoot, "npmrc")) {
+    fail("npm user config must be inside the validated harness root");
+  }
+  return harnessRoot;
 }
 
 export function readRunIdentity(): RunIdentity {
@@ -107,10 +143,7 @@ export function buildConnectionString(identity: RunIdentity): string {
 
 export function readAuthSecret(identity: RunIdentity): string {
   const secretPath = path.join(identity.runRoot, "identity", "auth-secret");
-  const status = lstatSync(secretPath);
-  if (status.isSymbolicLink() || !status.isFile()) fail("auth secret must be a regular non-symlink file");
-  const raw = readFileSync(secretPath, "utf8");
-  const secret = raw.endsWith("\n") ? raw.slice(0, -1) : raw;
+  const secret = readProtectedFile(secretPath, "auth secret");
   if (!BASE64URL_48.test(secret)) fail("auth secret is invalid");
   return secret;
 }
