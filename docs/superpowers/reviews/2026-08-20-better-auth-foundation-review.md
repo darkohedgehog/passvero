@@ -12,8 +12,15 @@
 - Next.js: 16.2.11
 - React: 19.2.4
 - Organization plugin: EXCLUDED
+- Admin plugin: EXCLUDED
+- OAuth plugin: EXCLUDED
+- Magic-link plugin: EXCLUDED
+- 2FA plugin: EXCLUDED
+- Passkey plugin: EXCLUDED
 - Redis: EXCLUDED
 - Cookie cache: EXCLUDED
+- Public signup: EXCLUDED
+- Automatic linking: EXCLUDED
 - Database connection performed: NO
 - Schema or migration modified: NO
 
