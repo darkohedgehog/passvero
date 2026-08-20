@@ -134,6 +134,22 @@ function assertSource(condition, message) {
   assert.ok(condition, `STOP_SOURCE_DRIFT: ${message}`);
 }
 
+function selectSourceLines(source, file, start, end) {
+  const lines = source.split("\n");
+  assertSource(
+    lines.length >= end,
+    `${file} lines ${start}-${end} exceed source EOF (${lines.length} lines)`,
+  );
+  return lines.slice(start - 1, end).join("\n");
+}
+
+test("line-range fixture rejects an end beyond source EOF", () => {
+  assert.throws(
+    () => selectSourceLines("only line", "fixture", 1, 2),
+    /STOP_SOURCE_DRIFT: fixture lines 1-2 exceed source EOF \(1 lines\)/,
+  );
+});
+
 test("freezes the Better Auth transaction source contract", async () => {
   try {
     const sources = new Map();
@@ -146,7 +162,7 @@ test("freezes the Better Auth transaction source contract", async () => {
 
     for (const { file, start, end, patterns } of RANGE_ASSERTIONS) {
       const source = sources.get(file);
-      const selectedLines = source.split("\n").slice(start - 1, end).join("\n");
+      const selectedLines = selectSourceLines(source, file, start, end);
       assertSource(selectedLines.length > 0, `${file} lines ${start}-${end} are missing`);
       for (const pattern of patterns) {
         assert.match(

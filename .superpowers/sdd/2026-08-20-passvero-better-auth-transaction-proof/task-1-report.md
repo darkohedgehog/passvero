@@ -71,3 +71,32 @@ Pinned source hashes:
 
 Task content commit before this report metadata update: `910dba8`
 (`910dba8cc33001e42e7a625d0ed4ba13e2394688`).
+
+## Fix Round 1
+
+Addressed the review finding in the line-range helper. It now splits the
+source into lines and asserts `lines.length >= end` with a
+`STOP_SOURCE_DRIFT` message before slicing. A focused one-line fixture proves
+that requesting lines 1–2 fails instead of silently truncating.
+
+RED command and result:
+
+```text
+node --test tests/auth-foundation-transaction-proof-source.test.mjs
+```
+
+Result: FAIL, the fixture assertion reported
+`STOP_SOURCE_DRIFT: fixture line range must reject an end beyond EOF` while the
+existing source-contract test remained passing.
+
+GREEN command and result:
+
+```text
+env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" /opt/homebrew/bin/node --test tests/auth-foundation-transaction-proof-source.test.mjs
+```
+
+Result: PASS, both tests passed; output included
+`SOURCE_CONTRACT=PASS`.
+
+`git diff --check` passed. No database, PostgreSQL, service, Prisma, npm,
+config, or environment command was run, and no forbidden file was edited.
