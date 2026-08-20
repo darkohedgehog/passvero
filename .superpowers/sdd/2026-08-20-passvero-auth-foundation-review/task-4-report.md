@@ -166,3 +166,123 @@ token opacity, encoding, signing, or identifier hashing alone is insufficient.
 - Stage 13E remains blocked until the persistence contract is approved and the
   Passvero-owned credential-token adapter/endpoint boundary receives its own
   implementation and security review.
+
+## Fix Round 1
+
+### Reviewer findings resolved
+
+- Session fields are now explicitly server-owned. The contract requires
+  `authenticatedAt` and `selectedOrganizationId` to use `input: false`, gives
+  `authenticatedAt` a server-clock create default, and permits organization
+  selection only through a dedicated CSRF-protected mutation that locks the
+  session and revalidates active membership and organization status. The one
+  organization-persistence choice remains the nullable database-session UUID;
+  no role, permission, membership state, or organization state is placed in a
+  session credential or cookie.
+- Session enforcement now fixes a request-time 30-day absolute deadline, 7-day
+  rolling inactivity expiry capped by that deadline, a 24-hour refresh boundary,
+  conditional opaque-token rotation with fail-closed post-commit cookie delivery,
+  `authenticatedAt` preservation, password-change/reset/revocation behavior,
+  and hourly bounded cleanup. The proposed migration requires
+  `ck_auth_provider_session_absolute_expiry` so `expiresAt` is no later than
+  `authenticatedAt + INTERVAL '30 days'`. Native Better Auth paths that do not
+  preserve these rules are rejected behind a reviewed Passvero service/adapter
+  boundary before Stage 13E.
+- Activation now binds a capability to the locked canonical email through
+  `intendedEmailDigest VARCHAR(43)`, using a distinct keyed HMAC over the exact
+  normalized email. Issuance, consumption, mismatch invalidation, canonical
+  email mutation, and protected credential/identity creation have explicit lock
+  ordering and transaction rules. No plaintext intended-email column is allowed.
+- Abuse persistence now has exact attempt-window state, endpoint/dimension
+  applicability (including unknown token and nonexistent-account cases), trusted
+  proxy selection/fail-closed rules, IPv4-mapped IPv6 and prefix normalization,
+  account-normalization vectors, fixed thresholds/windows, the complete level
+  0-12 backoff schedule, 24-hour decay, deterministic locks, and one
+  `SERIALIZABLE` admission/check/update transaction.
+- Focused tests now scope exact proposal and contract assertions for server-only
+  session input, foreign-key actions, CHECKs, digest lengths, partial-index
+  predicates, lifetimes, activation binding, every abuse-matrix row, every
+  threshold/backoff row, normalization vectors, and Better Auth hard gates.
+
+### Changed lines
+
+- Review: Round 1 commit hunks at current lines 122-167, 175-178, 192-194,
+  217-227, and 239-265.
+- Migration contract: Round 1 commit hunks beginning at current lines 67, 74,
+  89, 310, 327, 346, 349, 364, 367, 381, 404, 496, 502, 529, 553, 633, and 650.
+- Prisma proposal: comments at current lines 30 and 32; activation and abuse
+  additions beginning at current lines 112 and 135.
+- Focused tests: helpers at current line 12 and Round 1 assertions beginning at
+  current lines 58, 72, 78, 88, and 97.
+
+### RED to GREEN evidence
+
+- The first two new-test invocations exposed JavaScript syntax errors caused by
+  embedded Markdown backticks in dynamic regular-expression literals. The test
+  construction was corrected before treating the run as policy evidence.
+- Meaningful RED: `node --test tests/auth-foundation-review.test.mjs` ran 9
+  tests with 4 passing and 5 failing on the absent session lifetime/input
+  contract, activation email binding, abuse state/matrix, and source citations.
+- GREEN after the contract changes: 10 tests passed and 0 failed.
+- Fresh final GREEN after strengthening the exact matrix and schedule checks:
+  10 tests passed, 0 failed, total duration 66.988209 ms.
+
+### Better Auth 1.7.1 source evidence
+
+- Additional-field `input` defaults and application-level create defaults:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/core/dist/db/type.d.mts:31-53`.
+- Additional-field input rejection/copy and create-default parsing:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/schema.mjs:59-108`.
+- Generic update-session parsing and persistence:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-session.mjs:31-54`.
+- Server create-session default and override ordering:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/db/internal-adapter.mjs:248-320`.
+- Native same-token refresh and native password-change replacement behavior:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:171-207`
+  and
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/update-user.mjs:180-189`.
+- Native revoke-all deletion behavior:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/session.mjs:411-441`.
+- Email-verification issuance/use:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/better-auth/dist/api/routes/email-verification.mjs:23-35`
+  and `:173-186`.
+- Prisma adapter concurrency-safe `consumeOne` deletion:
+  `/private/tmp/passvero-better-auth-review-1-7-1/node_modules/@better-auth/prisma-adapter/dist/index.mjs:319-332`.
+
+### Verification and safety results
+
+- `node --test tests/auth-foundation-review.test.mjs`: 10 passed, 0 failed.
+- `npx prisma format --schema
+  /private/tmp/passvero-better-auth-review-1-7-1/proposed-review-schema.prisma`:
+  passed and formatted only the disposable combined schema.
+- `npx prisma validate --schema
+  /private/tmp/passvero-better-auth-review-1-7-1/proposed-review-schema.prisma`:
+  passed; Prisma reported the disposable combined schema valid without a
+  database connection.
+- `git diff --exit-code 096f439 -- package.json package-lock.json
+  prisma/schema.prisma prisma/migrations prisma.config.ts .env .env.local
+  src/generated`: exit 0. No forbidden repository path changed from the Task 4
+  base.
+- Sensitive-value `rg` scan: every match was manually classified as a generated
+  schema field name, policy prose, an exact local source path, or the literal
+  non-value placeholder `reset-password:<raw token>`. The connection markers
+  appear only in this report's negative scan record; there was no secret,
+  credential value, or connection string.
+- `git diff --check`: exit 0 before the fix commit.
+- Fix commit: `e5d6c15e51f69aca221b136eeca7f000a79d59aa`
+  (`docs: address auth persistence review findings`).
+
+### Deviations and remaining concerns
+
+- The initial test-syntax mistakes and the later singular `1 minute` assertion
+  mismatch were test-harness corrections; neither required a contract-policy
+  change. The meaningful RED failures and final GREEN results are recorded
+  separately above.
+- No package, source, canonical schema, migration, environment, generated client,
+  secret, or database was modified or accessed. The only non-repository write was
+  formatting the explicitly disposable combined Prisma schema.
+- Stage 13E remains blocked until both reviewed Passvero boundaries are
+  implemented and reviewed: the session lifecycle service/adapter and the
+  digest-only verification/reset token store. Built-in stateless email
+  verification, default reset persistence, native same-token refresh, and native
+  password-change session replacement do not satisfy this contract.
