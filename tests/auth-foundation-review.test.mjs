@@ -165,12 +165,12 @@ test("session extensions are server-owned and absolute lifetime is enforced", as
   assert.match(contract, /lastRefreshAt:\s*\{\s*type: "date",\s*required: true,\s*input: false,\s*defaultValue: \(\) => new Date\(\)/s);
   assert.match(contract, /selectedOrganizationId:\s*\{\s*type: "string",\s*required: false,\s*input: false,?\s*\}/s);
   assert.match(contract, /disableSessionRefresh: true/);
-  assert.match(contract, /reviewed Passvero session infrastructure boundary is REQUIRED before Stage\s+13E and is the only session create\/read\/refresh\/rotate\/revoke\/password-change\s+entry point/is);
+  assert.match(contract, /provider-neutral Passvero session facade backed by the proven Better Auth\s+transaction boundary is REQUIRED before Stage 13E/is);
   assert.match(contract, /dedicated CSRF-protected organization-selection mutation/i);
   assert.match(contract, /organization-selection mutation.*updates `updatedAt`.*MUST NOT (?:modify|advance) `lastRefreshAt`/is);
   assert.match(contract, /24-hour refresh.*lastRefreshAt/is);
   assert.match(contract, /native `\/get-session` route.*(?:not exposed|unreachable)/is);
-  assert.match(contract, /request middleware and\s+application endpoints call only the reviewed Passvero session boundary for\s+authoritative reads and refresh/is);
+  assert.match(contract, /request middleware and\s+application endpoints call only the reviewed provider-neutral session facade for\s+authoritative reads and refresh/is);
   assert.match(contract, /no native route may be an alternate session-read path/is);
   assert.match(contract, /7-day inactivity expiry/i);
   assert.match(contract, /24-hour refresh/i);
@@ -230,56 +230,63 @@ test("credential tokens are canonical capabilities bound to the locked provider 
   assert.match(contract, /URL fragment.*POST body.*history\.replaceState/is);
 });
 
-test("initial release owns every auth route and provider write at the Passvero edge", async () => {
+test("runtime ownership preserves Better Auth authentication authority", async () => {
   const review = await readFile(reviewPath, "utf8");
   assert.match(review, /NATIVE_AUTH_ROUTE_ALLOWLIST=\[\]/);
   assert.match(review, /BETTER_AUTH_CATCH_ALL_HANDLER=NOT_EXPORTED/);
-  assert.match(review, /all initial activation, sign-in, verification, reset, session, and password\s+operations.*Passvero-owned auth-edge/is);
-  assert.match(review, /shared PostgreSQL abuse boundary/i);
-  assert.match(review, /direct Prisma reads and writes.*one `Serializable` transaction/is);
-  assert.match(review, /Better Auth.*schema and account compatibility foundation.*future\s+provider-adapter candidate/is);
-  assert.match(review, /No\s+Better Auth native endpoint or Prisma-adapter write path is used/is);
-  assert.match(review, /required future implementation contract.*not an implementation claim/is);
+  assert.match(
+    review,
+    /AUTH_FOUNDATION_RUNTIME_OWNERSHIP=BETTER_AUTH_BACKED_TRANSACTION_PROOF_REQUIRED/,
+  );
+  assert.match(
+    review,
+    /Better Auth is authoritative for authentication proof,\s+credentials,\s+recovery,\s+and session establishment/i,
+  );
+  assert.match(
+    review,
+    /Passvero remains authoritative for canonical `User`,\s+`Membership`,\s+`Organization`,\s+permissions,\s+and business authorization/i,
+  );
   assert.match(review, /provider-neutral interfaces.*application and domain/is);
-  assert.match(review, /Phase 12.*does not require.*native catch-all.*Prisma adapter/is);
-  for (const operation of [
-    "SIGN_IN_PASSWORD",
-    "SEND_EMAIL_VERIFICATION",
-    "CONSUME_EMAIL_VERIFICATION",
-    "REQUEST_PASSWORD_RESET",
-    "CONSUME_PASSWORD_RESET",
-    "ISSUE_ACCOUNT_ACTIVATION",
-    "CONSUME_ACCOUNT_ACTIVATION",
-    "READ_SESSION",
-    "REFRESH_SESSION",
-    "SIGN_OUT",
-    "REVOKE_SESSION",
-    "REVOKE_ALL_SESSIONS",
-    "CHANGE_PASSWORD",
-    "SELECT_ORGANIZATION",
-  ]) {
-    assert.match(
-      review,
-      new RegExp("\\| `" + operation + "` \\| Passvero auth edge \\|"),
-    );
-  }
 });
 
-test("direct provider ownership fixes compatibility rows, lock order, cookies, and retries", async () => {
+test("Better Auth-backed transaction proof is required and unproven", async () => {
   const contract = await readFile(migrationContractPath, "utf8");
-  assert.match(contract, /`providerId = "credential"`.*`issuer = "local:credential"`.*`accountId = userId`.*non-null `password`/is);
-  assert.match(contract, /credential lookup.*providerId.*issuer.*accountId.*userId/is);
-  assert.match(contract, /`AuthProviderUser\.email`.*normalized.*unique lookup.*`emailVerified`/is);
-  assert.match(contract, /`AuthIdentity\.provider = "BETTER_AUTH"`.*`providerSubject = AuthProviderUser\.id`/is);
-  assert.match(contract, /session lookup.*unique `token`.*`authenticatedAt`.*`lastRefreshAt`.*`expiresAt`/is);
-  assert.match(contract, /lock order.*`User`.*`AuthProviderUser`.*`AuthProviderAccount`.*credential token.*session/is);
-  assert.match(contract, /post-commit.*`Set-Cookie`.*never.*before commit/is);
-  assert.match(contract, /maximum three total transaction attempts/i);
-  assert.match(contract, /`40001`.*`40P01`.*`P2034`/s);
-  assert.match(contract, /ambiguous commit.*MUST NOT be\s+retried/is);
-  assert.match(contract, /generic transient authentication response/i);
-  assert.match(contract, /business\s+and domain.*provider-neutral interfaces.*must not import.*Better Auth.*Prisma provider models/is);
-  assert.match(contract, /no Better\s+Auth native handler or Prisma\s+adapter participates in the\s+transaction/is);
+  assert.match(
+    contract,
+    /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_BETTER_AUTH_TRANSACTION_PROOF/,
+  );
+  assert.match(contract, /Better Auth-backed transaction boundary.*REQUIRED AND UNPROVEN/is);
+  assert.match(contract, /proof is pinned to `better-auth@1\.7\.1`/i);
+  assert.match(contract, /activation credential creation.*`AuthIdentity` binding.*atomic/is);
+  assert.match(contract, /abuse.*token.*provider.*canonical state.*one rollback domain.*evidence-backed equivalent.*frozen authority/is);
+  assert.match(contract, /session establishment.*rotation.*revocation.*`authenticatedAt`/is);
+  assert.match(contract, /password.*recovery paths/is);
+  assert.match(contract, /native-route allowlist.*no bypass/is);
+  assert.match(contract, /post-commit cookie semantics/i);
+  assert.match(contract, /transaction isolation.*retry behavior/is);
+  assert.match(contract, /exact provider-row.*cookie conventions.*Better Auth.*reviewed adapter/is);
+  assert.match(contract, /failure injection.*rollback/is);
+  assert.match(contract, /provider-neutral application and domain boundary/i);
+  assert.match(contract, /disposable PostgreSQL environment.*separate operator authorization/is);
+  assert.match(contract, /acceptance criteria only.*not an implementation plan/i);
+  assert.match(contract, /no replacement integration.*selected or approved/i);
+  assert.doesNotMatch(contract, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVED/);
+});
+
+test("direct provider-table writes are rejected without contradictory ownership prose", async () => {
+  const review = await readFile(reviewPath, "utf8");
+  const contract = await readFile(migrationContractPath, "utf8");
+  assert.match(
+    review,
+    /\| Direct Passvero writes to Better Auth provider tables \| \*\*REJECT\*\* \|/,
+  );
+  for (const artifact of [review, contract]) {
+    assert.doesNotMatch(artifact, /Passvero-owned infrastructure performs direct Prisma reads and writes/i);
+    assert.doesNotMatch(artifact, /Passvero infrastructure (?:directly )?(?:owns|writes) (?:their initial writes|these rows|the initial compatibility-row contract)/i);
+    assert.doesNotMatch(artifact, /Better Auth remains (?:only )?the pinned schema and account compatibility foundation/i);
+    assert.doesNotMatch(artifact, /Every initial auth\/session\/password operation is Passvero-owned/i);
+    assert.doesNotMatch(artifact, /No Better Auth native handler or Prisma adapter participates in the transaction/i);
+  }
 });
 
 test("activation binds the capability to the current canonical intended email", async () => {
@@ -399,8 +406,8 @@ test("review records the Better Auth hard gates with precise source lines", asyn
   assert.match(review, /better-auth\/dist\/api\/routes\/email-verification\.mjs:173-186/);
   assert.match(review, /better-auth\/dist\/db\/internal-adapter\.mjs:818-845/);
   assert.match(review, /@better-auth\/prisma-adapter\/dist\/index\.mjs:319-332/);
-  assert.match(review, /reviewed Passvero session infrastructure boundary/i);
-  assert.match(review, /Required before Stage 13E/);
+  assert.match(review, /provider-neutral Passvero session facade/i);
+  assert.match(review, /Required before Stage 13E/i);
 });
 
 test("review preserves the complete Better Auth reset evidence chain", async () => {
@@ -482,23 +489,28 @@ test("password contract preserves NFC equivalence and rejects the Better Auth de
 
 test("review stage leaves implementation paths unchanged", async () => {
   const review = await readFile(reviewPath, "utf8");
-  for (const row of [
+  const matrixRows = [
     "| Next.js 16 and React 19 compatibility | **PASS** |",
     "| Prisma 7 and PostgreSQL adapter compatibility | **PASS** |",
-    "| Provider-table isolation from canonical `User` | **PASS** |",
-    "| Stable provider-subject binding and multi-identity support | **PASS** |",
-    "| Database-authoritative session and lifetime policy | **PASS** |",
-    "| Rotation preserves `authenticatedAt` | **PASS** |",
-    "| Organization selection without authorization snapshots | **PASS** |",
-    "| Verification, reset, and activation token lifecycle | **PASS** |",
-    "| Password hashing ownership | **PASS** |",
-    "| Progressive PostgreSQL abuse control | **PASS** |",
+    "| Provider-table isolation from canonical `User` | **CANDIDATE INPUT** |",
+    "| Stable provider-subject binding and multi-identity support | **CANDIDATE INPUT** |",
+    "| Database-authoritative session and lifetime policy | **PROOF REQUIRED** |",
+    "| Rotation preserves `authenticatedAt` | **PROOF REQUIRED** |",
+    "| Organization selection without authorization snapshots | **CANDIDATE INPUT** |",
+    "| Verification, reset, and activation token lifecycle | **PROOF REQUIRED** |",
+    "| Password hashing ownership | **PROOF REQUIRED** |",
+    "| Progressive PostgreSQL abuse control | **PROOF REQUIRED** |",
     "| Excluded secondary/native capabilities | **PASS** |",
-    "| Migration and exit cost | **OPERATOR DECISION REQUIRED** |",
-    "| Rollback and forward compatibility | **PASS** |",
-  ]) {
+    "| Migration and exit cost | **DEFERRED** |",
+    "| Rollback and forward compatibility | **CANDIDATE INPUT** |",
+  ];
+  assert.equal(matrixRows.length, 13);
+  for (const row of matrixRows) {
     assert.ok(review.includes(row), `missing final matrix row: ${row}`);
   }
+  assert.match(review, /transaction proof.*PROOF REQUIRED\/PENDING.*outside the 13-row\s+decision count/is);
+  assert.match(review, /migration and exit approval is deferred/i);
+  assert.doesNotMatch(review, /material cost is the sole unresolved operator decision/i);
 
   const packageJson = await readFile("package.json", "utf8");
   assert.doesNotMatch(packageJson, /"better-auth"/);
