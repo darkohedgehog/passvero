@@ -1,5 +1,8 @@
+import { createHash, randomBytes } from "node:crypto";
 import { lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const RUN_ROOT_PATTERN = /^\/private\/tmp\/passvero-stage13a-pg\.[A-Za-z0-9]+$/;
 const STATIC_HARNESS_PATTERN = /^\/private\/tmp\/passvero-stage13a-harness\.[A-Za-z0-9]+$/;
@@ -7,6 +10,7 @@ const LIVE_HARNESS_PATTERN = /^\/private\/tmp\/passvero-stage13a-pg\.[A-Za-z0-9]
 const ROLE_PATTERN = /^pvproof_(?:admin|app)_[a-f0-9]{12}$/;
 const DATABASE_PATTERN = /^pvproof_test_[a-f0-9]{12}$/;
 const BASE64URL_48 = /^[A-Za-z0-9_-]{48}$/;
+export const PROOF_ROOT_SENTINEL = "PASSVERO_STAGE13A_PG_V1";
 const IDENTITY_NAMES = [
   "superuser-role",
   "superuser-password",
@@ -26,6 +30,92 @@ export interface RunIdentity {
   readonly database: string;
   readonly port: 55432;
   readonly socketDir: string;
+}
+
+function opaqueBase64Url(bytes: number): string {
+  return randomBytes(bytes).toString("base64url");
+}
+
+async function writeProtected(filePath: string, value: string): Promise<void> {
+  await writeFile(filePath, value, { encoding: "utf8", mode: 0o600, flag: "wx" });
+}
+
+export async function bootstrapRunRoot(candidate: string): Promise<void> {
+  if (!RUN_ROOT_PATTERN.test(candidate)) fail("bootstrap root path does not match the proof prefix");
+  const runRoot = assertProtectedDirectory(candidate, "bootstrap root");
+  const identityDir = path.join(runRoot, "identity");
+  const socketDir = path.join(runRoot, "socket");
+  const logDir = path.join(runRoot, "log");
+  const sqlDir = path.join(runRoot, "sql");
+  await mkdir(identityDir, { mode: 0o700 });
+  await mkdir(socketDir, { mode: 0o700 });
+  await mkdir(logDir, { mode: 0o700 });
+  await mkdir(sqlDir, { mode: 0o700 });
+
+  const runId = opaqueBase64Url(24);
+  const values = new Map<string, string>([
+    ["superuser-role", `pvproof_admin_${randomBytes(6).toString("hex")}`],
+    ["superuser-password", opaqueBase64Url(36)],
+    ["application-role", `pvproof_app_${randomBytes(6).toString("hex")}`],
+    ["application-password", opaqueBase64Url(36)],
+    ["database", `pvproof_test_${randomBytes(6).toString("hex")}`],
+    ["port", "55432"],
+    ["socket-dir", socketDir],
+    ["auth-secret", opaqueBase64Url(36)],
+    ["run-id", runId],
+  ]);
+  await writeProtected(
+    path.join(runRoot, ".passvero-stage13a-proof-root"),
+    `${PROOF_ROOT_SENTINEL}:${runId}`,
+  );
+  for (const [name, value] of values) {
+    await writeProtected(path.join(identityDir, name), value);
+  }
+
+  const superuserRole = values.get("superuser-role");
+  const superuserPassword = values.get("superuser-password");
+  const applicationRole = values.get("application-role");
+  const applicationPassword = values.get("application-password");
+  const database = values.get("database");
+  if (!superuserRole || !superuserPassword || !applicationRole || !applicationPassword || !database) {
+    fail("generated identity is incomplete");
+  }
+  if (!/^pvproof_admin_[a-f0-9]{12}$/.test(superuserRole)) fail("generated superuser role is invalid");
+  if (!/^pvproof_app_[a-f0-9]{12}$/.test(applicationRole)) fail("generated application role is invalid");
+  if (!DATABASE_PATTERN.test(database)) fail("generated database is invalid");
+  if (!BASE64URL_48.test(superuserPassword) || !BASE64URL_48.test(applicationPassword)) {
+    fail("generated credential is invalid");
+  }
+  const runIdHash = createHash("sha256").update(runId).digest("hex");
+  await writeProtected(path.join(identityDir, "run-id-hash"), runIdHash);
+  await writeProtected(
+    path.join(identityDir, "superuser-pgpass"),
+    `127.0.0.1:55432:*:${superuserRole}:${superuserPassword}`,
+  );
+  await writeProtected(
+    path.join(identityDir, "application-pgpass"),
+    `127.0.0.1:55432:${database}:${applicationRole}:${applicationPassword}`,
+  );
+  await writeProtected(
+    path.join(sqlDir, "cluster-bootstrap.sql"),
+    [
+      "CREATE ROLE :\"app_role\" LOGIN;",
+      "CREATE DATABASE :\"database\" OWNER :\"app_role\";",
+      "REVOKE CONNECT, TEMPORARY ON DATABASE :\"database\" FROM PUBLIC;",
+    ].join("\n"),
+  );
+  await writeProtected(
+    path.join(sqlDir, "role-password.sql"),
+    `ALTER ROLE "${applicationRole}" PASSWORD '${applicationPassword}';`,
+  );
+  await writeProtected(
+    path.join(sqlDir, "sentinel.sql"),
+    [
+      "REVOKE ALL ON SCHEMA public FROM PUBLIC;",
+      "CREATE TABLE passvero_stage13a_proof_sentinel (run_id_hash text PRIMARY KEY);",
+      `INSERT INTO passvero_stage13a_proof_sentinel (run_id_hash) VALUES ('${runIdHash}');`,
+    ].join("\n"),
+  );
 }
 
 function fail(message: string): never {
@@ -146,4 +236,15 @@ export function readAuthSecret(identity: RunIdentity): string {
   const secret = readProtectedFile(secretPath, "auth secret");
   if (!BASE64URL_48.test(secret)) fail("auth secret is invalid");
   return secret;
+}
+
+async function runCli(): Promise<void> {
+  if (process.argv.length !== 4 || process.argv[2] !== "bootstrap") {
+    fail("usage: run-root.ts bootstrap <validated-run-root>");
+  }
+  await bootstrapRunRoot(process.argv[3]);
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
+  await runCli();
 }

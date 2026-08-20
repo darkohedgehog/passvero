@@ -1,9 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { lstatSync, readFileSync } from "node:fs";
 import { chmod, mkdir, mkdtemp, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
+  bootstrapRunRoot,
   buildConnectionString,
+  PROOF_ROOT_SENTINEL,
   readAuthSecret,
   readRunIdentity,
   validateDisposableHarnessEnvironment,
@@ -173,6 +176,38 @@ test("run-root identity fails closed and builds only an application connection",
   } finally {
     if (previous === undefined) delete process.env.PASSVERO_PROOF_RUN_ROOT;
     else process.env.PASSVERO_PROOF_RUN_ROOT = previous;
+    await rm(runRoot, { recursive: true });
+  }
+});
+
+test("bootstrap creates independent protected identities without shell secret handling", async () => {
+  const runRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
+  await chmod(runRoot, 0o700);
+  try {
+    await bootstrapRunRoot(runRoot);
+    const identity = readFileSync(path.join(runRoot, ".passvero-stage13a-proof-root"), "utf8");
+    assert.match(identity, new RegExp(`^${PROOF_ROOT_SENTINEL}:[A-Za-z0-9_-]{32}$`));
+    const parsed = (() => {
+      const previous = process.env.PASSVERO_PROOF_RUN_ROOT;
+      try {
+        process.env.PASSVERO_PROOF_RUN_ROOT = runRoot;
+        return readRunIdentity();
+      } finally {
+        if (previous === undefined) delete process.env.PASSVERO_PROOF_RUN_ROOT;
+        else process.env.PASSVERO_PROOF_RUN_ROOT = previous;
+      }
+    })();
+    assert.notEqual(parsed.superuserRole.replace("pvproof_admin_", ""), parsed.applicationRole.replace("pvproof_app_", ""));
+    assert.notEqual(parsed.superuserPassword, parsed.applicationPassword);
+    assert.equal(parsed.superuserPassword.length, 48);
+    assert.equal(parsed.applicationPassword.length, 48);
+    for (const name of [".passvero-stage13a-proof-root", "identity/superuser-password", "identity/application-password", "identity/auth-secret"]) {
+      const status = lstatSync(path.join(runRoot, name));
+      assert.equal(status.mode & 0o777, 0o600);
+      assert.equal(status.isSymbolicLink(), false);
+    }
+    await assert.rejects(() => bootstrapRunRoot(runRoot), /STOP_RUN_ROOT_INVALID|EEXIST/);
+  } finally {
     await rm(runRoot, { recursive: true });
   }
 });

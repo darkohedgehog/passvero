@@ -8,6 +8,7 @@ const HARNESS_ROOT = path.join(
   process.cwd(),
   "docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness",
 );
+const PROOF_ROOT = path.dirname(HARNESS_ROOT);
 
 const REQUIRED_FILES = [
   "package.json",
@@ -19,6 +20,7 @@ const REQUIRED_FILES = [
   "src/proof-boundary.ts",
   "src/evidence.ts",
   "test/harness-contract.test.ts",
+  "test/cluster-identity.test.ts",
 ];
 
 const EXPECTED_DEPENDENCIES = {
@@ -222,6 +224,43 @@ test("run-root and tool-environment gates encode filesystem ownership and contai
     /npm cache must equal the validated harness cache/,
     /TMPDIR must equal the validated harness temp directory/,
     /socket directory must be directly inside run root/,
+    /randomBytes\(/,
+    /mode: 0o600, flag: "wx"/,
   ]) assert.match(runRoot, contract);
   assert.ok(config.indexOf("validateDisposableHarnessEnvironment();") < config.indexOf("readRunIdentity();"));
+});
+
+test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lifecycle", async () => {
+  const source = await readFile(path.join(PROOF_ROOT, "run-proof.sh"), "utf8");
+  for (const contract of [
+    /set -euo pipefail/,
+    /umask 077/,
+    /\[\[ \$# -eq 1 \]\]/,
+    /--static\|--all/,
+    /PROOF_PORT=55432/,
+    /PG_BIN=\/opt\/homebrew\/opt\/postgresql@16\/bin/,
+    /mktemp -d \/private\/tmp\/passvero-stage13a-pg\.XXXXXX/,
+    /PASSVERO_STAGE13A_PG_V1/,
+    /\/usr\/sbin\/lsof -nP -iTCP:\$\{PROOF_PORT\} -sTCP:LISTEN/,
+    /pg_isready" -h 127\.0\.0\.1 -p "\$PROOF_PORT"/,
+    /validate_cleanup_target/,
+    /trap cleanup EXIT/,
+    /CLEANUP=FAIL_RETAINED:/,
+    /rm -rf -- "\$RUN_ROOT_REAL"/,
+  ]) assert.match(source, contract);
+
+  const staticBody = source.match(/run_static\(\) \{([\s\S]*?)^\}/m)?.[1];
+  assert.ok(staticBody, "run_static must be a separately reviewable function");
+  assert.doesNotMatch(staticBody, /\b(?:initdb|pg_ctl|createdb|psql)\b|generated\/prisma/);
+  assert.match(staticBody, /node_modules\/typescript\/bin\/tsc --noEmit --strict/);
+
+  for (const forbidden of [
+    /docker/i,
+    /source\s+\.env/,
+    /DATABASE_URL/,
+    /TEST_DATABASE_URL/,
+    /rm -rf \/(?:\s|$)/,
+    /rm -rf[^\n]*[*?\[]/,
+    /PROOF_PORT\s*=\s*\$\(\(|PROOF_PORT\+\+|55433/,
+  ]) assert.doesNotMatch(source, forbidden);
 });
