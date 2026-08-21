@@ -19,8 +19,8 @@ import {
   type DirectAuthApi,
   type TransactionClient,
 } from "../src/proof-boundary.js";
-import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type RowCounts } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, HYPOTHESIS_FAILURE_CODES, type RowCounts } from "../src/evidence.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 type ActivationFailurePoint = (typeof CONTROLLED_ACTIVATION_FAILURE_POINTS)[number];
@@ -579,9 +579,10 @@ test("live H4 proves controlled activation and public signup rejection once", {
   const generated: unknown = await import(generatedPath);
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
+  const proofBefore = await readCounts(prisma);
+  let proofAfter = proofBefore;
+  const transactionIds: string[] = [];
   try {
-    const proofBefore = await readCounts(prisma);
-    const transactionIds: string[] = [];
     const surfaceFixture = await preprovisionActivation(prisma);
     await prisma.$transaction(async (tx) => {
       const auth = createControlledActivationAuth(tx);
@@ -703,7 +704,7 @@ test("live H4 proves controlled activation and public signup rejection once", {
       assert.equal(Reflect.get(activation, "consumedAt"), null);
     }
 
-    const proofAfter = await readCounts(prisma);
+    proofAfter = await readCounts(prisma);
     await writeHypothesisAssertionResult({
       id: "H4_CONTROLLED_ACTIVATION",
       status: "PASS",
@@ -715,6 +716,22 @@ test("live H4 proves controlled activation and public signup rejection once", {
       assertions: ["H4_CONTROLLED_ACTIVATION_ASSERTIONS_COMPLETE"],
       failureCode: null,
     });
+  } catch (cause: unknown) {
+    try {
+      proofAfter = await readCounts(prisma);
+      await writeHypothesisResult({
+        id: "H4_CONTROLLED_ACTIVATION",
+        status: "FAIL",
+        transactionIds,
+        before: proofBefore,
+        after: proofAfter,
+        deltas: deltaRowCounts(proofBefore, proofAfter),
+        cookie: EMPTY_DEFERRED_COOKIE,
+        assertions: [],
+        failureCode: HYPOTHESIS_FAILURE_CODES.H4_CONTROLLED_ACTIVATION,
+      });
+    } catch { /* the original process failure remains authoritative */ }
+    throw cause;
   } finally {
     await prisma.$disconnect();
   }

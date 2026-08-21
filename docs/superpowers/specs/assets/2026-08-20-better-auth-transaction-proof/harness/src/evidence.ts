@@ -183,16 +183,31 @@ export const HYPOTHESIS_ASSERTION_CODES = {
   H7_ROUTE_EXPOSURE: ["H7_ROUTE_EXPOSURE_ASSERTIONS_COMPLETE"],
 } as const satisfies Readonly<Record<HypothesisId, readonly string[]>>;
 
+export const HYPOTHESIS_FAILURE_CODES = {
+  H1_NATIVE_TRANSACTION: "H1_NATIVE_TRANSACTION_ASSERTION_FAILED",
+  H2_DIRECT_API_OUTER_TRANSACTION: "H2_DIRECT_API_OUTER_TRANSACTION_ASSERTION_FAILED",
+  H3_HANDLER_CONTEXT_REPLACEMENT: "H3_HANDLER_CONTEXT_REPLACEMENT_ASSERTION_FAILED",
+  H4_CONTROLLED_ACTIVATION: "H4_CONTROLLED_ACTIVATION_ASSERTION_FAILED",
+  H5_SESSION_COOKIE_AFTER_COMMIT: "H5_SESSION_COOKIE_AFTER_COMMIT_ASSERTION_FAILED",
+  H6_RECOVERY_AND_REVOCATION: "H6_RECOVERY_AND_REVOCATION_ASSERTION_FAILED",
+  H7_ROUTE_EXPOSURE: "H7_ROUTE_EXPOSURE_ASSERTION_FAILED",
+} as const satisfies Readonly<Record<HypothesisId, string>>;
+
 export interface HypothesisAssertionResult extends HypothesisEvidence {
   readonly status: "PASS";
   readonly failureCode: null;
+}
+
+export interface HypothesisFailureResult extends HypothesisEvidence {
+  readonly status: "FAIL";
+  readonly failureCode: (typeof HYPOTHESIS_FAILURE_CODES)[HypothesisId];
 }
 
 export interface HypothesisProcessFailure {
   readonly id: HypothesisId;
   readonly status: "FAIL";
   readonly processExitCode: number;
-  readonly failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED";
+  readonly failureCode: "STOP_HYPOTHESIS_PROCESS_CRASH";
 }
 
 export interface ProofEvidence {
@@ -242,12 +257,11 @@ function parseRowCounts(value: unknown, allowNegative: boolean): RowCounts | nul
   if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
   const record = value as Readonly<Record<string, unknown>>;
   if (!hasExactKeys(record, ROW_COUNT_KEYS)) return null;
-  const parsed = Object.fromEntries(ROW_COUNT_KEYS.map((key) => [key, Number(record[key])])) as unknown;
-  if (parsed === null || typeof parsed !== "object") return null;
-  const counts = parsed as RowCounts;
-  if (!ROW_COUNT_KEYS.every((key) => Number.isSafeInteger(counts[key])
-    && (allowNegative || counts[key] >= 0))) return null;
-  return counts;
+  if (!ROW_COUNT_KEYS.every((key) => typeof record[key] === "number"
+    && Number.isFinite(record[key])
+    && Number.isSafeInteger(record[key])
+    && (allowNegative || Number(record[key]) >= 0))) return null;
+  return Object.fromEntries(ROW_COUNT_KEYS.map((key) => [key, record[key]])) as unknown as RowCounts;
 }
 
 export function deltaRowCounts(before: RowCounts, after: RowCounts): RowCounts {
@@ -313,19 +327,58 @@ export function parseHypothesisAssertionResult(value: unknown): HypothesisAssert
   };
 }
 
+export function parseHypothesisFailureResult(value: unknown): HypothesisFailureResult | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Readonly<Record<string, unknown>>;
+  if (!hasExactKeys(record, ASSERTION_RESULT_KEYS)) return null;
+  if (!isHypothesisId(record.id)) return null;
+  if (record.status !== "FAIL" || record.failureCode !== HYPOTHESIS_FAILURE_CODES[record.id]) return null;
+  if (!Array.isArray(record.transactionIds)
+    || !record.transactionIds.every((entry) => typeof entry === "string" && /^[a-f0-9]{64}$/.test(entry))) return null;
+  const before = parseRowCounts(record.before, false);
+  const after = parseRowCounts(record.after, false);
+  const deltas = parseRowCounts(record.deltas, true);
+  const cookie = parseCookie(record.cookie);
+  if (!before || !after || !deltas || !cookie) return null;
+  const computed = deltaRowCounts(before, after);
+  if (!ROW_COUNT_KEYS.every((key) => computed[key] === deltas[key])) return null;
+  const allowedAssertions = HYPOTHESIS_ASSERTION_CODES[record.id] as readonly string[];
+  const assertions = record.assertions;
+  if (!Array.isArray(assertions)
+    || new Set(assertions).size !== assertions.length
+    || !assertions.every((entry) => typeof entry === "string" && allowedAssertions.includes(entry))) return null;
+  return {
+    id: record.id,
+    status: "FAIL",
+    transactionIds: [...record.transactionIds] as string[],
+    before,
+    after,
+    deltas,
+    cookie,
+    assertions: [...assertions] as string[],
+    failureCode: HYPOTHESIS_FAILURE_CODES[record.id],
+  };
+}
+
+export function parseHypothesisResult(
+  value: unknown,
+): HypothesisAssertionResult | HypothesisFailureResult | null {
+  return parseHypothesisAssertionResult(value) ?? parseHypothesisFailureResult(value);
+}
+
 function parseProcessFailure(value: unknown): HypothesisProcessFailure | null {
   if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
   const record = value as Readonly<Record<string, unknown>>;
   if (!hasExactKeys(record, ["id", "status", "processExitCode", "failureCode"])) return null;
   if (!isHypothesisId(record.id) || record.status !== "FAIL"
-    || record.failureCode !== "STOP_HYPOTHESIS_PROCESS_FAILED") return null;
+    || record.failureCode !== "STOP_HYPOTHESIS_PROCESS_CRASH") return null;
   if (!Number.isSafeInteger(record.processExitCode)
     || Number(record.processExitCode) <= 0 || Number(record.processExitCode) > 255) return null;
   return {
     id: record.id,
     status: "FAIL",
     processExitCode: Number(record.processExitCode),
-    failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED",
+    failureCode: "STOP_HYPOTHESIS_PROCESS_CRASH",
   };
 }
 
@@ -350,9 +403,9 @@ function processEvidence(
 export function aggregateHypothesisProcessResults(
   candidates: readonly unknown[],
 ): readonly HypothesisEvidence[] {
-  const parsed = candidates.map((candidate) => parseHypothesisAssertionResult(candidate) ?? parseProcessFailure(candidate));
+  const parsed = candidates.map((candidate) => parseHypothesisResult(candidate) ?? parseProcessFailure(candidate));
   const containsInvalid = parsed.some((candidate) => candidate === null);
-  const valid = parsed.filter((candidate): candidate is HypothesisAssertionResult | HypothesisProcessFailure => candidate !== null);
+  const valid = parsed.filter((candidate): candidate is HypothesisAssertionResult | HypothesisFailureResult | HypothesisProcessFailure => candidate !== null);
   return REQUIRED_HYPOTHESIS_IDS.map((id, index) => {
     const matches = valid.filter((candidate) => candidate.id === id);
     if (containsInvalid && index === 0) {
@@ -366,7 +419,8 @@ export function aggregateHypothesisProcessResults(
     }
     const result = matches[0];
     if (result.status === "FAIL") {
-      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_PROCESS_FAILED");
+      if ("processExitCode" in result) return processEvidence(id, "FAIL", result.failureCode);
+      return result;
     }
     return result;
   });
@@ -388,10 +442,12 @@ const FORBIDDEN_VALUE = [
   /https?:\/\//i,
   /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/,
   /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
-  /(?:^|\s)\/(?:Users|private|tmp|var|opt|home)(?:\/|\s|$)/,
+  /(?:^|[^A-Za-z0-9])\/(?:Users|private|tmp|var|opt|home)(?:\/|$)/,
   /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i,
+  /\b[0-9a-f]{32}\b/i,
+  /\b(?:tx|transaction)[-_: =]+[A-Za-z0-9_-]{8,}\b/i,
   /\b\d{8,}\b/,
-  /\b(?=[A-Za-z0-9_-]{32,63}\b)(?=.*[G-Zg-z_-])[A-Za-z0-9_-]+\b/,
+  /\b(?=[A-Za-z0-9_-]{32,}\b)(?=[A-Za-z0-9_-]*[G-Zg-z_-])[A-Za-z0-9_-]+\b/,
   /set-cookie\s*:/i,
   /(?:^|\s)(?:__Host-|__Secure-)?[!#$%&'*+.^_`|~0-9A-Za-z-]+=[^;,\s]+;\s*(?:Domain|Expires|HttpOnly|Max-Age|Partitioned|Path|SameSite|Secure)\b/i,
 ];
@@ -399,7 +455,7 @@ const FORBIDDEN_VALUE = [
 function validateEvidence(value: unknown, key = "root"): void {
   if (FORBIDDEN_KEY.test(key)) throw new Error(`STOP_EVIDENCE_REDACTION: forbidden key ${key}`);
   if (typeof value === "string") {
-    if (/^(?:H[1-7]_[A-Z0-9_]+|STOP_(?:HYPOTHESIS_(?:RESULT_(?:INVALID|MISSING|DUPLICATE)|PROCESS_FAILED)|PRE_EVIDENCE_FAILURE))$/.test(value)) {
+    if (/^(?:H[1-7]_[A-Z0-9_]+|STOP_(?:HYPOTHESIS_(?:RESULT_(?:INVALID|MISSING|DUPLICATE)|PROCESS_CRASH)|PRE_EVIDENCE_FAILURE))$/.test(value)) {
       return;
     }
     for (const pattern of FORBIDDEN_VALUE) {

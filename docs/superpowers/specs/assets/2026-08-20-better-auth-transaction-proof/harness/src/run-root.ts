@@ -6,11 +6,13 @@ import { fileURLToPath } from "node:url";
 import {
   aggregateHypothesisProcessResults,
   parseHypothesisAssertionResult,
+  parseHypothesisResult,
   renderEvidenceJson,
   renderEvidenceMarkdown,
   renderPendingEvidenceJson,
   REQUIRED_HYPOTHESIS_IDS,
   type HypothesisAssertionResult,
+  type HypothesisFailureResult,
   type HypothesisId,
   type HypothesisProcessFailure,
   type ProofEvidence,
@@ -292,15 +294,21 @@ function isHypothesisId(value: string): value is HypothesisId {
   return (REQUIRED_HYPOTHESIS_IDS as readonly string[]).includes(value);
 }
 
-export async function writeHypothesisAssertionResult(result: HypothesisAssertionResult): Promise<void> {
-  const parsed = parseHypothesisAssertionResult(result);
-  if (!parsed) fail("hypothesis assertion result is invalid");
+export async function writeHypothesisResult(
+  result: HypothesisAssertionResult | HypothesisFailureResult,
+): Promise<void> {
+  const parsed = parseHypothesisResult(result);
+  if (!parsed) fail("hypothesis result is invalid");
   const identity = readRunIdentity();
   const directory = assertProtectedDirectory(
     path.join(identity.runRoot, "evidence-fragments"),
     "evidence fragments",
   );
   await writeProtected(path.join(directory, `${parsed.id}.json`), `${JSON.stringify(parsed)}\n`);
+}
+
+export async function writeHypothesisAssertionResult(result: HypothesisAssertionResult): Promise<void> {
+  await writeHypothesisResult(result);
 }
 
 export async function recordHypothesisProcessFailure(id: string, processExitCode: number): Promise<void> {
@@ -317,7 +325,7 @@ export async function recordHypothesisProcessFailure(id: string, processExitCode
     id,
     status: "FAIL",
     processExitCode,
-    failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED",
+    failureCode: "STOP_HYPOTHESIS_PROCESS_CRASH",
   } satisfies HypothesisProcessFailure;
   await writeProtected(path.join(directory, `${id}.json`), `${JSON.stringify(result)}\n`);
 }
@@ -338,18 +346,24 @@ function readProtectedJsonDirectory(runRoot: string, name: string): readonly unk
   });
 }
 
-export function validateRecordedHypothesisResult(id: string): HypothesisAssertionResult {
+export function validateRecordedHypothesisResult(
+  id: string,
+  expectedStatus: "PASS" | "FAIL" = "PASS",
+): HypothesisAssertionResult | HypothesisFailureResult {
   if (!isHypothesisId(id)) fail("hypothesis result id is invalid");
   const identity = readRunIdentity();
   const results = readProtectedJsonDirectory(identity.runRoot, "evidence-fragments");
-  const parsed = results.map(parseHypothesisAssertionResult);
+  const parsed = results.map(parseHypothesisResult);
   if (parsed.some((result) => result === null)) {
     fail("hypothesis assertion result is missing, duplicate, malformed, or conflicting");
   }
   const matching = parsed.filter(
-    (result): result is HypothesisAssertionResult => result !== null && result.id === id,
+    (result): result is HypothesisAssertionResult | HypothesisFailureResult => result !== null && result.id === id,
   );
   if (matching.length !== 1) fail("hypothesis assertion result is missing, duplicate, malformed, or conflicting");
+  if (matching[0].status !== expectedStatus) {
+    fail("hypothesis assertion result status conflicts with process exit status");
+  }
   return matching[0];
 }
 
@@ -540,8 +554,9 @@ async function runCli(): Promise<void> {
     await recordHypothesisProcessFailure(process.argv[3], Number(process.argv[4]));
     return;
   }
-  if (process.argv[2] === "validate-hypothesis-result" && process.argv.length === 4) {
-    validateRecordedHypothesisResult(process.argv[3]);
+  if (process.argv[2] === "validate-hypothesis-result" && process.argv.length === 5
+    && (process.argv[4] === "PASS" || process.argv[4] === "FAIL")) {
+    validateRecordedHypothesisResult(process.argv[3], process.argv[4]);
     return;
   }
   if (process.argv[2] === "aggregate-proof-evidence" && process.argv.length === 5) {

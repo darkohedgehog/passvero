@@ -49,20 +49,21 @@ const TASK_9_ARTIFACT_HASHES = new Map([
 ]);
 
 const TASK_10_ORCHESTRATION_HASHES = new Map([
-  ["src/evidence.ts", "3cf4d9761aaabff05431e8b3fabb9c04848a692ce3f30ecb04ec3eb60be06aac"],
-  ["src/run-root.ts", "318b2a9ac287f7bef5298c2a8fcbd2ddc5a716b6af45f68393f390d9744d617e"],
-  ["src/publication.mjs", "d770d64f1c736e4ecc53f799f207b99fd9f13e39a4699a2787bcfe3086e7d380"],
+  ["src/evidence.ts", "1af09dfa57c99fa5275b7310af6dfff96e6ed6be8c6c85dec903ccf082f43f44"],
+  ["src/run-root.ts", "a977c4df5c8754f02149c13852db5250cbabdf24806e3da57524a4952f33bfda"],
+  ["src/publication.mjs", "ec30cb0ced5ea9ccc3edfa2b5af627acd88f6e0e640ac5001e71b7f530aac5bf"],
   ["src/lifecycle.ts", "8d5f22bfa631d132664f6833365113e3f8638be3d06c85080a67ff03acce8f5c"],
-  ["test/harness-contract.test.ts", "e58eab7f455e51e776822afe7e761008a5bdd74a45d93508dbb556f927330d71"],
-  ["test/native-transaction.test.ts", "cf3f1c3ceb8d3faad02d67827e1e57c7eb78c8e3460e9a041db129674ec4d6ba"],
-  ["test/direct-boundary.test.ts", "a06015f3ef961e9b837c7d3b244acda1977cc42f5e1c47ac268bbfe20c733cf8"],
-  ["test/handler-boundary.test.ts", "34ca19cd9ef2b6de5df2dbcdc9d5583157d142ce5089e2ea6d214f9afa4ccce5"],
-  ["test/controlled-activation.test.ts", "24ed1affda81556ae410b84e04bbb729623a8037281c05f0c09717c9aa14f04f"],
-  ["test/session-boundary.test.ts", "96fcfbe0dbce37d465e71664fa7d5538a615d51365c560951156e40428b3ab52"],
-  ["test/recovery-boundary.test.ts", "8038a38d8b0373ee8407df12e7eeefefdcd96223aac18b11fa939b4ab9320eb9"],
-  ["test/route-boundary.test.ts", "c2319423f2bee53beee45753ee3bd7fa1df31f321beddd88f87336a0e5ab9726"],
+  ["test/harness-contract.test.ts", "b61eeda3136f937fb034f9612099f74da3bc7c82b4b38996f270fe87cb82d769"],
+  ["test/native-transaction.test.ts", "e83a2cf4537e51345781d0999bd89d58b6f29a34e83528fc4a2357065ae118ba"],
+  ["test/direct-boundary.test.ts", "5f6100dbf8bd6c07d95a1ff7ba17283d371c59c108555ae04c0ad08e0cbd8dc7"],
+  ["test/handler-boundary.test.ts", "e91ff34540943448e4f4cdccfa95064867c701e876921c1caec09f1c7c679501"],
+  ["test/controlled-activation.test.ts", "06420fea8cfd17d9f85a0af53a20d6aed3f00c385b367a15d5358ef1dda5cd7a"],
+  ["test/session-boundary.test.ts", "7a54228f168829f72c169c48ab15dab7f916825f26897b81d79972eba6f273b7"],
+  ["test/recovery-boundary.test.ts", "9f2c27ca7f2271c1931a30cdabddcbcc8484b86ed9c136acd3056eadf3461736"],
+  ["test/route-boundary.test.ts", "43d7b7d0412b9d447431d8b6d1678e810e6f10c0e6634bf96650aee2a0d9a855"],
 ]);
-const TASK_10_RUNNER_HASH = "4b03347d880a665de199b5459b8e11d6a48ca81e3a3ade8413f12f19e99e77da";
+const TASK_10_RUNNER_HASH = "a753c250ac843d97a8edcd41d1bc068e3eaf6be3f5bc50a9505efd123e386183";
+const TASK_10_SHELL_SIMULATION_HASH = "de5e278585c1fa1297a7b9893e0d6d608e40537e20e3ce8b50cbf40a278d5e87";
 
 const EXPECTED_DEPENDENCIES = {
   "@better-auth/core": "1.7.1",
@@ -411,8 +412,8 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /pg_isready" -h 127\.0\.0\.1 -p "\$PROOF_PORT"/,
     /validate_cleanup_target/,
     /trap cleanup EXIT/,
-    /trap 'exit 130' INT/,
-    /trap 'exit 143' TERM/,
+    /trap 'request_signal_failure 130' INT/,
+    /trap 'request_signal_failure 143' TERM/,
     /CLEANUP=FAIL_RETAINED/,
     /rm -rf -- "\$RUN_ROOT_REAL"/,
     /prepare-cleanup-evidence/,
@@ -465,7 +466,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.ok(publication.indexOf('await commitFail("fail-1111")') < publication.indexOf("await input.retirePending(pendingPath)"));
   assert.ok(publication.indexOf("await input.retirePending(pendingPath)") < publication.indexOf("await input.inspectPending(pendingPath)"));
   assert.ok(publication.indexOf("await input.inspectPending(pendingPath)") < publication.indexOf("pendingRetired = true"));
-  assert.ok(publication.indexOf("pendingRetired = true") < publication.lastIndexOf("await stage(\"pass-1111\")"));
+  assert.ok(publication.indexOf("pendingRetired = true") < publication.lastIndexOf("await stagePublication(\"pass-1111\")"));
   assert.match(source, /publish_checked_failure "\$candidate" "\$material" "\$pending_arg" "\$failure_status"/);
   assert.match(publication, /FAIL_PENDING_RETAINED/);
   assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERABLE/);
@@ -480,6 +481,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
 
 test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 verdict", async () => {
   const runner = await readFile(path.join(PROOF_ROOT, "run-proof.sh"), "utf8");
+  const shellSimulation = await readFile(path.join(PROOF_ROOT, "static-shell-simulations.sh"), "utf8");
   const evidence = await readHarness("src/evidence.ts");
   const runRoot = await readHarness("src/run-root.ts");
   const contract = await readHarness("test/harness-contract.test.ts");
@@ -488,6 +490,7 @@ test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 
   assert.ok(runAll, "run_all must remain separately reviewable");
   assert.ok(hypotheses, "run_hypotheses must remain separately reviewable");
   assert.equal(createHash("sha256").update(runner).digest("hex"), TASK_10_RUNNER_HASH);
+  assert.equal(createHash("sha256").update(shellSimulation).digest("hex"), TASK_10_SHELL_SIMULATION_HASH);
   assert.doesNotMatch(runner, /STOP_HYPOTHESES_NOT_IMPLEMENTED/);
   assert.ok(runAll.indexOf("claim_attempt") < runAll.indexOf("bootstrap_root"));
   assert.ok(runAll.indexOf("prove_cluster_identity") < runAll.indexOf("generate_apply_schema"));
@@ -508,7 +511,7 @@ test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 
   assert.match(evidence, /REQUIRED_HYPOTHESIS_IDS/);
   assert.match(evidence, /STOP_HYPOTHESIS_RESULT_MISSING/);
   assert.match(evidence, /STOP_HYPOTHESIS_RESULT_DUPLICATE/);
-  assert.match(evidence, /STOP_HYPOTHESIS_PROCESS_FAILED/);
+  assert.match(evidence, /STOP_HYPOTHESIS_PROCESS_CRASH/);
   assert.match(runRoot, /writeProtected\(path\.join\(directory, `\$\{parsed\.id\}\.json`\)/);
   assert.match(runRoot, /validateRecordedHypothesisResult/);
   assert.match(runRoot, /renderPendingEvidenceJson\(evidence\)/);

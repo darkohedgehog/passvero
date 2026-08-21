@@ -17,17 +17,21 @@ import {
   validateGeneratedSql,
   validateDisposableHarnessEnvironment,
   writeHypothesisAssertionResult,
+  writeHypothesisResult,
 } from "../src/run-root.js";
 import {
   aggregateHypothesisProcessResults,
   deltaRowCounts,
   HYPOTHESIS_ASSERTION_CODES,
+  HYPOTHESIS_FAILURE_CODES,
   mandatoryHypothesesPassed,
   parseHypothesisAssertionResult,
+  parseHypothesisResult,
   renderEvidenceJson,
   renderPendingEvidenceJson,
   REQUIRED_HYPOTHESIS_IDS as PROOF_HYPOTHESIS_IDS,
   type HypothesisAssertionResult,
+  type HypothesisFailureResult,
   type ProofEvidence,
 } from "../src/evidence.js";
 import { claimEvidenceAttempt, finalizeEvidenceAttempt, publishEvidenceState } from "../src/publication.mjs";
@@ -198,6 +202,18 @@ function allPassAssertionResults(): readonly HypothesisAssertionResult[] {
   return PROOF_HYPOTHESIS_IDS.map((id) => assertionResult(id));
 }
 
+function failureResult(
+  id: (typeof REQUIRED_HYPOTHESIS_IDS)[number],
+): HypothesisFailureResult {
+  const success = assertionResult(id);
+  return {
+    ...success,
+    status: "FAIL",
+    assertions: [],
+    failureCode: HYPOTHESIS_FAILURE_CODES[id],
+  };
+}
+
 test("process aggregation accepts exactly seven unique assertion-bound results", () => {
   const hypotheses = aggregateHypothesisProcessResults(allPassAssertionResults());
   assert.deepEqual(hypotheses.map(({ id }) => id), PROOF_HYPOTHESIS_IDS);
@@ -207,11 +223,11 @@ test("process aggregation accepts exactly seven unique assertion-bound results",
 
 test("process aggregation rejects one explicit hypothesis failure", () => {
   const results = allPassAssertionResults().map((result, index) => index === 2
-    ? { id: result.id, status: "FAIL" as const, processExitCode: 1, failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED" as const }
+    ? failureResult(result.id)
     : result);
   const hypotheses = aggregateHypothesisProcessResults(results);
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
-  assert.equal(hypotheses[2]?.failureCode, "STOP_HYPOTHESIS_PROCESS_FAILED");
+  assert.equal(hypotheses[2]?.failureCode, HYPOTHESIS_FAILURE_CODES.H3_HANDLER_CONTEXT_REPLACEMENT);
 });
 
 test("process aggregation rejects a missing hypothesis result", () => {
@@ -229,11 +245,24 @@ test("process aggregation rejects a duplicate hypothesis result", () => {
 
 test("process aggregation records a crashed hypothesis process as terminal failure", () => {
   const results = allPassAssertionResults().map((result, index) => index === 4
-    ? { id: result.id, status: "FAIL" as const, processExitCode: 70, failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED" as const }
+    ? { id: result.id, status: "FAIL" as const, processExitCode: 70, failureCode: "STOP_HYPOTHESIS_PROCESS_CRASH" as const }
     : result);
   const hypotheses = aggregateHypothesisProcessResults(results);
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
-  assert.equal(hypotheses[4]?.failureCode, "STOP_HYPOTHESIS_PROCESS_FAILED");
+  assert.equal(hypotheses[4]?.failureCode, "STOP_HYPOTHESIS_PROCESS_CRASH");
+});
+
+test("structured hypothesis FAIL preserves observed safe evidence and exact H-specific code", () => {
+  const failed = failureResult("H4_CONTROLLED_ACTIVATION");
+  const results = allPassAssertionResults().map((result) => result.id === failed.id ? failed : result);
+  const hypotheses = aggregateHypothesisProcessResults(results);
+  assert.equal(hypotheses[3]?.status, "FAIL");
+  assert.equal(hypotheses[3]?.failureCode, HYPOTHESIS_FAILURE_CODES.H4_CONTROLLED_ACTIVATION);
+  assert.deepEqual(hypotheses[3]?.before, failed.before);
+  assert.deepEqual(hypotheses[3]?.after, failed.after);
+  assert.deepEqual(hypotheses[3]?.deltas, failed.deltas);
+  assert.deepEqual(hypotheses[3]?.transactionIds, failed.transactionIds);
+  assert.deepEqual(hypotheses[3]?.cookie, failed.cookie);
 });
 
 test("process aggregation rejects zero-exit skipped or malformed assertion evidence", () => {
@@ -270,6 +299,19 @@ test("assertion results preserve redacted facts and protected fragments aggregat
   });
 });
 
+test("failure result writer durably preserves observed safe evidence under the exact hypothesis id", async () => {
+  await withSyntheticRunRoot(async (runRoot) => {
+    const failed = failureResult("H5_SESSION_COOKIE_AFTER_COMMIT");
+    await writeHypothesisResult(failed);
+    assert.deepEqual(validateRecordedHypothesisResult(failed.id, "FAIL"), failed);
+    const persisted = JSON.parse(readFileSync(
+      path.join(runRoot, "evidence-fragments", `${failed.id}.json`),
+      "utf8",
+    )) as unknown;
+    assert.deepEqual(persisted, failed);
+  });
+});
+
 test("result parser rejects malformed, conflicting, duplicate assertions and dishonest deltas", () => {
   const valid = assertionResult("H1_NATIVE_TRANSACTION");
   assert.deepEqual(parseHypothesisAssertionResult(valid), valid);
@@ -280,13 +322,30 @@ test("result parser rejects malformed, conflicting, duplicate assertions and dis
   assert.equal(parseHypothesisAssertionResult({ ...valid, extra: true }), null);
 });
 
+test("all seven fragments reject primitive row-count corruption instead of coercing false PASS", () => {
+  const corruptions: readonly unknown[] = ["3", true, null, Number.NaN, Number.POSITIVE_INFINITY, 1.5, -1];
+  for (const [index, id] of REQUIRED_HYPOTHESIS_IDS.entries()) {
+    const valid = assertionResult(id);
+    const corrupted = {
+      ...valid,
+      before: { ...valid.before, providerUser: corruptions[index] },
+    };
+    assert.equal(parseHypothesisResult(corrupted), null, id);
+  }
+  const valid = assertionResult("H1_NATIVE_TRANSACTION");
+  const { providerUser: _providerUser, ...missing } = valid.before;
+  assert.equal(parseHypothesisResult({ ...valid, before: missing }), null);
+  assert.equal(parseHypothesisResult({ ...valid, before: { ...valid.before, unexpected: 0 } }), null);
+  assert.equal(parseHypothesisResult({ ...valid, after: { ...valid.after, providerUser: Number.MAX_SAFE_INTEGER + 1 } }), null);
+});
+
 test("a process failure conflicts with any structured PASS for the same hypothesis", async () => {
   await withSyntheticRunRoot(async () => {
     await writeHypothesisAssertionResult(assertionResult("H1_NATIVE_TRANSACTION"));
     await recordHypothesisProcessFailure("H1_NATIVE_TRANSACTION", 70);
     const combined = [assertionResult("H1_NATIVE_TRANSACTION"), {
       id: "H1_NATIVE_TRANSACTION", status: "FAIL", processExitCode: 70,
-      failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED",
+      failureCode: "STOP_HYPOTHESIS_PROCESS_CRASH",
     }];
     assert.equal(aggregateHypothesisProcessResults(combined)[0]?.failureCode, "STOP_HYPOTHESIS_RESULT_DUPLICATE");
   });
@@ -761,6 +820,68 @@ test("PASS becomes authoritative only on the final JSON rename after checked cle
     assert.equal(authoritative.status, "PASS");
     assert.match(readFileSync(path.join(evidenceRoot, "evidence.md"), "utf8"), /NON-AUTHORITATIVE/);
     assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", "attempt-claimed.json")), true);
+    const commitReady = JSON.parse(readFileSync(
+      path.join(evidenceRoot, ".proof-attempt-state", "commit-ready-state.json"),
+      "utf8",
+    )) as { readonly state: string; readonly status: string };
+    assert.deepEqual(commitReady, { state: "COMMIT_READY", status: "PASS" });
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+test("commit-ready persistence failure occurs before authoritative PASS and leaves checked FAIL", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-publication.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
+  const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+  try {
+    await claimEvidenceAttempt(evidenceRoot);
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+    await assert.rejects(() => publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+      retirePending: unlink,
+      inspectPending: lstat,
+      writeCommitReady: async () => { throw new Error("INJECTED_COMMIT_READY_FAILURE"); },
+    }), /INJECTED_COMMIT_READY_FAILURE/);
+    const authoritative = JSON.parse(readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8")) as {
+      readonly status: string;
+    };
+    assert.equal(authoritative.status, "FAIL");
+    assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", "final-state.json")), false);
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+test("PASS marker failure occurs before authoritative JSON and leaves checked FAIL", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-publication.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
+  const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+  try {
+    await claimEvidenceAttempt(evidenceRoot);
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+    await assert.rejects(() => publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+      retirePending: unlink,
+      inspectPending: lstat,
+      beforeAuthoritativePass: () => { throw new Error("INJECTED_PASS_MARKER_FAILURE"); },
+    }), /INJECTED_PASS_MARKER_FAILURE/);
+    const authoritative = JSON.parse(readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8")) as {
+      readonly status: string;
+    };
+    assert.equal(authoritative.status, "FAIL");
   } finally {
     await rm(evidenceRoot, { recursive: true });
   }
@@ -830,11 +951,32 @@ for (const failAt of [1, 2]) {
         assert.equal(evidence.status, "FAIL");
       }
       assert.equal(existsSync(path.join(attemptRoot, "attempt-claimed.json")), true);
+      assert.equal(existsSync(path.join(attemptRoot, "final-state.json")), false);
     } finally {
       await rm(evidenceRoot, { recursive: true });
     }
   });
 }
+
+test("FAIL staging exception cannot create final-state or authoritative PASS", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-publication.");
+  await chmod(evidenceRoot, 0o700);
+  try {
+    const attemptRoot = await claimEvidenceAttempt(evidenceRoot);
+    await assert.rejects(() => publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: path.join(attemptRoot, "failure-material"),
+      pendingPath: null,
+      candidate: "fail-1110",
+      stagePublication: async () => { throw new Error("INJECTED_STAGE_FAILURE"); },
+    }), /INJECTED_STAGE_FAILURE/);
+    assert.equal(existsSync(path.join(attemptRoot, "final-state.json")), false);
+    assert.equal(existsSync(path.join(evidenceRoot, "evidence.json")), false);
+    assert.equal(existsSync(path.join(attemptRoot, "attempt-claimed.json")), true);
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
 
 test("run-root rejects unsafe modes, symlinks, formats, port, and socket escape", async () => {
   await withSyntheticRunRoot(async (runRoot) => {
@@ -912,7 +1054,11 @@ test("evidence rendering is deterministic and rejects sensitive shapes", () => {
   for (const sensitive of [
     "https://invalid.example/auth/callback",
     "/private/tmp/passvero-stage13a-pg.abcdef/log/postgres.log",
+    `(${JSON.stringify("/private/tmp/passvero-stage13a-pg.abcdef/log/private.log")})`,
     "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+    "0123456789abcdef0123456789abcdef",
+    "opaque-proof-material-with-lowercase-letters-and-dashes-0123456789ABCDEFGHIJ",
+    "tx:raw-transaction-identity-0123456789",
     "opaque_authentication_material_ABC123456789",
     "transaction 123456789012345678",
     ["symlink target ", "Users", "operator", "private-proof.log"].join("/"),

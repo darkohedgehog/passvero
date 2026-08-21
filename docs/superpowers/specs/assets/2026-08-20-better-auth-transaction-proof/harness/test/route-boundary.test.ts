@@ -17,8 +17,8 @@ import {
   handlePassveroAuthHttpRequest,
   type RecoveryProofBoundary,
 } from "../src/auth.js";
-import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type RowCounts } from "../src/evidence.js";
-import { writeHypothesisAssertionResult } from "../src/run-root.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, HYPOTHESIS_FAILURE_CODES, type RowCounts } from "../src/evidence.js";
+import { writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 import * as authModule from "../src/auth.js";
 
 type HttpMethod = "GET" | "POST";
@@ -47,18 +47,35 @@ function assertionBoundH7Test(name: (typeof H7_ASSERTION_TESTS)[number], action:
 
 test.after(async () => {
   if (process.env.PASSVERO_PROOF_H7 !== "1") return;
-  assert.deepEqual([...completedH7Assertions].sort(), [...H7_ASSERTION_TESTS].sort());
-  await writeHypothesisAssertionResult({
-    id: "H7_ROUTE_EXPOSURE",
-    status: "PASS",
-    transactionIds: [],
-    before: ZERO_ROW_COUNTS,
-    after: ZERO_ROW_COUNTS,
-    deltas: deltaRowCounts(ZERO_ROW_COUNTS, ZERO_ROW_COUNTS),
-    cookie: EMPTY_DEFERRED_COOKIE,
-    assertions: ["H7_ROUTE_EXPOSURE_ASSERTIONS_COMPLETE"],
-    failureCode: null,
-  });
+  try {
+    assert.deepEqual([...completedH7Assertions].sort(), [...H7_ASSERTION_TESTS].sort());
+    await writeHypothesisAssertionResult({
+      id: "H7_ROUTE_EXPOSURE",
+      status: "PASS",
+      transactionIds: [],
+      before: ZERO_ROW_COUNTS,
+      after: ZERO_ROW_COUNTS,
+      deltas: deltaRowCounts(ZERO_ROW_COUNTS, ZERO_ROW_COUNTS),
+      cookie: EMPTY_DEFERRED_COOKIE,
+      assertions: ["H7_ROUTE_EXPOSURE_ASSERTIONS_COMPLETE"],
+      failureCode: null,
+    });
+  } catch (cause: unknown) {
+    try {
+      await writeHypothesisResult({
+        id: "H7_ROUTE_EXPOSURE",
+        status: "FAIL",
+        transactionIds: [],
+        before: ZERO_ROW_COUNTS,
+        after: ZERO_ROW_COUNTS,
+        deltas: deltaRowCounts(ZERO_ROW_COUNTS, ZERO_ROW_COUNTS),
+        cookie: EMPTY_DEFERRED_COOKIE,
+        assertions: [],
+        failureCode: HYPOTHESIS_FAILURE_CODES.H7_ROUTE_EXPOSURE,
+      });
+    } catch { /* the original process failure remains authoritative */ }
+    throw cause;
+  }
 });
 type UnknownRecord = Record<PropertyKey, unknown>;
 

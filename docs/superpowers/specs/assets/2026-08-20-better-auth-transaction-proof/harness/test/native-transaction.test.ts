@@ -8,6 +8,7 @@ import { createProofAuth, type ProofAuth } from "../src/auth.js";
 import {
   EMPTY_DEFERRED_COOKIE,
   deltaRowCounts,
+  HYPOTHESIS_FAILURE_CODES,
   H1_NATIVE_TRANSACTION_RUNTIME_VERDICT,
   H1_NATIVE_TRANSACTION_SCENARIOS,
   type H1NativeTransactionEvidence,
@@ -16,7 +17,7 @@ import {
   type H1WriteObservation,
   type RowCounts,
 } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 
 type ProviderModel = H1WriteObservation["model"];
 type DelegateAction = H1WriteObservation["action"];
@@ -347,9 +348,17 @@ async function cleanFixture(
   });
 }
 
+interface H1AggregateObservation {
+  before?: RowCounts;
+  after?: RowCounts;
+  transactionIds: string[];
+  cookie: H1ScenarioEvidence["cookie"];
+}
+
 async function runScenario(
   rootPrisma: ProofPrismaClient,
   contract: H1ScenarioContract,
+  aggregateObservation?: H1AggregateObservation,
 ): Promise<H1ScenarioEvidence> {
   const fixtureId = randomBytes(16).toString("hex");
   const state: InstrumentationState = {
@@ -359,6 +368,10 @@ async function runScenario(
     observations: [],
   };
   const before = await readCounts(rootPrisma);
+  if (aggregateObservation) {
+    aggregateObservation.before ??= before;
+    aggregateObservation.after = before;
+  }
   const instrumentedRoot = instrumentPrisma(rootPrisma, state);
 
   try {
@@ -400,6 +413,7 @@ async function runScenario(
     };
 
     const responseObservation = await attempt();
+    if (aggregateObservation) aggregateObservation.cookie = responseObservation.cookie;
     requireNoSessionResponse(responseObservation);
     assert.equal(responseObservation.status, 422, "H1 injected account failure must produce an error response");
     assert.equal(state.failureInjected, true, "account create failure point must execute");
@@ -418,6 +432,10 @@ async function runScenario(
       "failure injection must occur only when provider account creation follows provider user creation",
     );
     const transactionIds = state.observations.map((observation) => observation.transactionIdHash);
+    if (aggregateObservation) {
+      aggregateObservation.after = after;
+      aggregateObservation.transactionIds.push(...transactionIds);
+    }
     transactionIds.forEach((hash) => assert.match(hash, /^[a-f0-9]{64}$/));
     assert.equal(
       new Set(transactionIds).size === 1,
@@ -454,13 +472,23 @@ async function runScenario(
       ],
       failureCode: null,
     };
+  } catch (cause: unknown) {
+    if (aggregateObservation) {
+      aggregateObservation.transactionIds.push(
+        ...state.observations.map((observation) => observation.transactionIdHash),
+      );
+      try { aggregateObservation.after = await readCounts(rootPrisma); } catch { /* preserve prior observation */ }
+    }
+    throw cause;
   } finally {
     await cleanFixture(rootPrisma, state, fixtureId);
     assert.deepEqual(await readCounts(rootPrisma), before, "H1 fixture cleanup must restore all row counts");
   }
 }
 
-export async function runH1NativeTransactionProof(): Promise<H1NativeTransactionEvidence> {
+export async function runH1NativeTransactionProof(
+  aggregateObservation?: H1AggregateObservation,
+): Promise<H1NativeTransactionEvidence> {
   const generatedPath = "../generated/client/client.js";
   const generated: unknown = await import(generatedPath);
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
@@ -468,7 +496,7 @@ export async function runH1NativeTransactionProof(): Promise<H1NativeTransaction
   try {
     const scenarios: H1ScenarioEvidence[] = [];
     for (const contract of H1_NATIVE_TRANSACTION_SCENARIOS) {
-      scenarios.push(await runScenario(prisma, contract));
+      scenarios.push(await runScenario(prisma, contract, aggregateObservation));
     }
     return {
       id: "H1_NATIVE_TRANSACTION",
@@ -564,24 +592,48 @@ test("H1 direct response observation rejects any response cookie without retaini
 test("live H1 proves native and nested transaction behavior once", {
   skip: process.env.PASSVERO_PROOF_H1 !== "1",
 }, async () => {
-  const evidence = await runH1NativeTransactionProof();
-  assert.equal(evidence.runtimeVerdict, "PASS");
-  assert.equal(evidence.scenarios.length, H1_NATIVE_TRANSACTION_SCENARIOS.length);
-  assert.equal(evidence.scenarios.every((scenario) => scenario.status === "PASS"), true);
-  assert.equal(evidence.scenarios[0]?.acceptedArchitecture, false);
-  assert.equal(evidence.scenarios.slice(1).every((scenario) => scenario.acceptedArchitecture), true);
-  const before = evidence.scenarios[0]?.before;
-  const after = evidence.scenarios.at(-1)?.after;
-  if (!before || !after) throw new Error("STOP_H1_ASSERTION_RESULT_INCOMPLETE");
-  await writeHypothesisAssertionResult({
-    id: "H1_NATIVE_TRANSACTION",
-    status: "PASS",
-    transactionIds: evidence.scenarios.flatMap(({ transactionIds }) => transactionIds),
-    before,
-    after,
-    deltas: deltaRowCounts(before, after),
+  const observation: H1AggregateObservation = {
+    transactionIds: [],
     cookie: EMPTY_DEFERRED_COOKIE,
-    assertions: ["H1_NATIVE_AND_NESTED_ASSERTIONS_COMPLETE"],
-    failureCode: null,
-  });
+  };
+  try {
+    const evidence = await runH1NativeTransactionProof(observation);
+    assert.equal(evidence.runtimeVerdict, "PASS");
+    assert.equal(evidence.scenarios.length, H1_NATIVE_TRANSACTION_SCENARIOS.length);
+    assert.equal(evidence.scenarios.every((scenario) => scenario.status === "PASS"), true);
+    assert.equal(evidence.scenarios[0]?.acceptedArchitecture, false);
+    assert.equal(evidence.scenarios.slice(1).every((scenario) => scenario.acceptedArchitecture), true);
+    const before = evidence.scenarios[0]?.before;
+    const after = evidence.scenarios.at(-1)?.after;
+    if (!before || !after) throw new Error("STOP_H1_ASSERTION_RESULT_INCOMPLETE");
+    await writeHypothesisAssertionResult({
+      id: "H1_NATIVE_TRANSACTION",
+      status: "PASS",
+      transactionIds: evidence.scenarios.flatMap(({ transactionIds }) => transactionIds),
+      before,
+      after,
+      deltas: deltaRowCounts(before, after),
+      cookie: EMPTY_DEFERRED_COOKIE,
+      assertions: ["H1_NATIVE_AND_NESTED_ASSERTIONS_COMPLETE"],
+      failureCode: null,
+    });
+  } catch (cause: unknown) {
+    if (observation.before) {
+      try {
+        const after = observation.after ?? observation.before;
+        await writeHypothesisResult({
+          id: "H1_NATIVE_TRANSACTION",
+          status: "FAIL",
+          transactionIds: observation.transactionIds,
+          before: observation.before,
+          after,
+          deltas: deltaRowCounts(observation.before, after),
+          cookie: observation.cookie,
+          assertions: [],
+          failureCode: HYPOTHESIS_FAILURE_CODES.H1_NATIVE_TRANSACTION,
+        });
+      } catch { /* the original process failure remains authoritative */ }
+    }
+    throw cause;
+  }
 });

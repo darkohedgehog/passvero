@@ -5,14 +5,14 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { getCurrentAdapter, runWithTransaction } from "@better-auth/core/context";
 import { createProofAuth } from "../src/auth.js";
-import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type DeferredCookie, type RowCounts } from "../src/evidence.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, HYPOTHESIS_FAILURE_CODES, type DeferredCookie, type RowCounts } from "../src/evidence.js";
 import {
   H3_HANDLER_BOUNDARY_RUNTIME_VERDICT,
   HANDLER_BOUNDARY_REJECTION,
   type BoundaryRootPrisma,
   type TransactionClient,
 } from "../src/proof-boundary.js";
-import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 
@@ -118,6 +118,7 @@ test("live H3 demonstrates handler adapter replacement and remains rejected", {
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
   const before = await readCounts(prisma);
+  let after = before;
   let handlerResponseStatus = 0;
   let handlerCookie: DeferredCookie = EMPTY_DEFERRED_COOKIE;
   try {
@@ -148,7 +149,7 @@ test("live H3 demonstrates handler adapter replacement and remains rejected", {
       }, { isolationLevel: "Serializable" }),
       /INJECTED_H3_OUTER_ROLLBACK_AFTER_HANDLER/,
     );
-    const after = await readCounts(prisma);
+    after = await readCounts(prisma);
     const providerEscapedOuterRollback = after.providerUser > before.providerUser
       || after.providerAccount > before.providerAccount;
     assert.ok(handlerResponseStatus >= 200 && handlerResponseStatus < 300);
@@ -166,6 +167,22 @@ test("live H3 demonstrates handler adapter replacement and remains rejected", {
       assertions: ["H3_HANDLER_REJECTION_ASSERTIONS_COMPLETE"],
       failureCode: null,
     });
+  } catch (cause: unknown) {
+    try {
+      after = await readCounts(prisma);
+      await writeHypothesisResult({
+        id: "H3_HANDLER_CONTEXT_REPLACEMENT",
+        status: "FAIL",
+        transactionIds: [],
+        before,
+        after,
+        deltas: deltaRowCounts(before, after),
+        cookie: handlerCookie,
+        assertions: [],
+        failureCode: HYPOTHESIS_FAILURE_CODES.H3_HANDLER_CONTEXT_REPLACEMENT,
+      });
+    } catch { /* the original process failure remains authoritative */ }
+    throw cause;
   } finally {
     await prisma.$disconnect();
   }

@@ -1,3 +1,4 @@
+import { writeSync } from "node:fs";
 import { lstat, mkdir, readFile, realpath, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -115,6 +116,7 @@ export async function claimEvidenceAttempt(evidenceDirectory) {
   const logRoot = path.join(attemptRoot, "logs");
   await mkdir(logRoot, { mode: 0o700 });
   await validateDirectory(logRoot, "attempt log directory", 0o700);
+  await writeProtected(path.join(logRoot, "orchestration.log"), "");
   for (let mask = 0; mask < 16; mask += 1) {
     const suffix = mask.toString(2).padStart(4, "0");
     const evidence = preEvidenceFailure({
@@ -176,9 +178,10 @@ export async function publishEvidenceState(input) {
   }
 
   const renamePublication = input.renamePublication ?? rename;
+  const stagePublication = input.stagePublication ?? stage;
 
   async function commitFail(candidate) {
-    await stage(candidate);
+    await stagePublication(candidate);
     await renamePublication(stageJson, finalJson);
     await renamePublication(stageMarkdown, finalMarkdown);
   }
@@ -219,8 +222,16 @@ export async function publishEvidenceState(input) {
     };
   }
 
-  await stage("pass-1111");
+  const commitReadyPath = path.join(attemptRoot, "commit-ready-state.json");
+  const writeCommitReady = input.writeCommitReady ?? writeProtected;
+  await writeCommitReady(
+    commitReadyPath,
+    `${JSON.stringify({ state: "COMMIT_READY", status: "PASS" })}\n`,
+  );
+  await validateFile(commitReadyPath, "commit-ready state");
+  await stagePublication("pass-1111");
   await renamePublication(stageMarkdown, finalMarkdown);
+  if (typeof input.beforeAuthoritativePass === "function") input.beforeAuthoritativePass();
   await renamePublication(stageJson, finalJson);
   return { passed: true, exitCode: 0, status: "PASS", authoritativeCandidate: "pass-1111" };
 }
@@ -237,6 +248,7 @@ async function runCli() {
   if (process.argv[2] !== "publish" || process.argv.length !== 7) {
     fail("usage: publication.mjs publish <evidence-dir> <prepared-dir> <pending-or-dash> <candidate>");
   }
+  let passMarkerWritten = false;
   const result = await publishEvidenceState({
     evidenceDirectory: process.argv[3],
     preparedDirectory: process.argv[4],
@@ -244,8 +256,12 @@ async function runCli() {
     candidate: process.argv[6],
     retirePending: unlink,
     inspectPending: lstat,
+    beforeAuthoritativePass: () => {
+      writeSync(1, "PUBLICATION=PASS\n");
+      passMarkerWritten = true;
+    },
   });
-  process.stdout.write(`PUBLICATION=${result.status}\n`);
+  if (!passMarkerWritten) writeSync(1, `PUBLICATION=${result.status}\n`);
   process.exitCode = result.exitCode;
 }
 

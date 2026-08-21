@@ -17,8 +17,8 @@ import {
   type TransactionClient,
   type SessionProofRecord,
 } from "../src/proof-boundary.js";
-import { deltaRowCounts, type RowCounts } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, HYPOTHESIS_FAILURE_CODES, type DeferredCookie, type RowCounts } from "../src/evidence.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 
 type Purpose = "EMAIL_VERIFICATION" | "PASSWORD_RESET";
 type ResetFailurePoint =
@@ -1215,6 +1215,13 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
   const allCapabilities: string[] = [];
   const allCredentials: string[] = [];
   const runtimeEvidence: Readonly<Record<string, unknown>>[] = [];
+  const verificationStages: H6StageEvidence[] = [];
+  const predecessorStages: H6StageEvidence[] = [];
+  const resetStages: H6StageEvidence[] = [];
+  const changeStages: H6StageEvidence[] = [];
+  let beforeRows: RowCounts | undefined;
+  let afterRows: RowCounts | undefined;
+  let observedCookie: DeferredCookie = EMPTY_DEFERRED_COOKIE;
   try {
     const abuseBucketId = randomUUID();
     const keyDigest = createHash("sha256").update(randomBytes(32)).digest("base64url");
@@ -1232,7 +1239,7 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       blockedUntil: null,
       expiresAt: new Date(now.getTime() + 86_400_000),
     } });
-    const beforeRows = await h6PublicRows(prisma);
+    beforeRows = await h6PublicRows(prisma);
 
     const label = h6FixtureLabel();
     const password = `H6-${label}-Old-Aa1!`;
@@ -1242,7 +1249,6 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       email: `h6-${label}@invalid.example`, password,
     });
 
-    const verificationStages: H6StageEvidence[] = [];
     const verificationIssue = await runIndependentH6Boundary({
       prisma, label: `h6-verify-issue-${label}`, abuseBucketId, capabilityKey, targetEmailKey,
       stages: verificationStages,
@@ -1277,7 +1283,6 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
     assert.equal(secondSignIn.cookie.present, true);
     assert.equal(await h6SessionCount(prisma, fixture.providerUserId), 2);
 
-    const predecessorStages: H6StageEvidence[] = [];
     const predecessor = await runIndependentH6Boundary({
       prisma, label: `h6-reset-predecessor-${label}`, abuseBucketId, capabilityKey, targetEmailKey,
       stages: predecessorStages,
@@ -1341,7 +1346,6 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       prisma, fixture, replacementPassword, abuseBucketId, tokenId: current.value.value.record.id,
     }), beforeCallbackFailure);
 
-    const resetStages: H6StageEvidence[] = [];
     const resetCall = (consumer: string) => runIndependentH6Boundary({
       prisma, label: `h6-reset-${consumer}-${label}`, abuseBucketId, capabilityKey, targetEmailKey,
       stages: resetStages,
@@ -1358,6 +1362,7 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       failure: "GENERIC_CREDENTIAL_FAILURE",
     });
     assert.equal(resetWinner.value.cookie.present, false);
+    observedCookie = resetWinner.value.cookie;
     assert.equal(resetWinner.value.value.cookieEligible, false);
     assert.equal(resetWinner.value.value.sessionCreated, false);
     assert.equal(await h6SessionCount(prisma, fixture.providerUserId), 0);
@@ -1375,7 +1380,6 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       replacementSignIn.value.token,
     );
     const abuseBeforeChange = await h6AbuseAttempts(prisma, abuseBucketId);
-    const changeStages: H6StageEvidence[] = [];
     const changeCall = (consumer: string) => runIndependentH6Boundary({
       prisma, label: `h6-change-${consumer}-${label}`, abuseBucketId, capabilityKey, targetEmailKey,
       stages: changeStages,
@@ -1393,6 +1397,7 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
     const changeWinner = changes.find((entry) => entry.status === "fulfilled");
     assert.ok(changeWinner?.status === "fulfilled");
     assert.equal(changeWinner.value.value.cookie.present, true);
+    observedCookie = changeWinner.value.value.cookie;
     assert.equal(changeWinner.value.value.value.authenticatedAt.getTime(), currentSession.authenticatedAt.getTime());
     assert.ok(changeWinner.value.value.value.lastRefreshAt > currentSession.lastRefreshAt);
     assert.ok(
@@ -1469,7 +1474,7 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
     });
 
     await h6DatabaseLeakScan(prisma, [...allCapabilities, ...allCredentials]);
-    const afterRows = await h6PublicRows(prisma);
+    afterRows = await h6PublicRows(prisma);
     runtimeEvidence.push({
       verificationOneWinner: true,
       resetOneWinner: true,
@@ -1498,6 +1503,30 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       assertions: ["H6_RECOVERY_AND_REVOCATION_ASSERTIONS_COMPLETE"],
       failureCode: null,
     });
+  } catch (cause: unknown) {
+    if (beforeRows) {
+      try {
+        afterRows = await h6PublicRows(prisma);
+        const transactionIds = [
+          ...verificationStages,
+          ...predecessorStages,
+          ...resetStages,
+          ...changeStages,
+        ].map(({ transactionIdHash }) => transactionIdHash);
+        await writeHypothesisResult({
+          id: "H6_RECOVERY_AND_REVOCATION",
+          status: "FAIL",
+          transactionIds,
+          before: beforeRows,
+          after: afterRows,
+          deltas: deltaRowCounts(beforeRows, afterRows),
+          cookie: observedCookie,
+          assertions: [],
+          failureCode: HYPOTHESIS_FAILURE_CODES.H6_RECOVERY_AND_REVOCATION,
+        });
+      } catch { /* the original process failure remains authoritative */ }
+    }
+    throw cause;
   } finally {
     await prisma.$disconnect();
   }

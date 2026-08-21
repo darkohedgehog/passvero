@@ -29,9 +29,9 @@ import {
   type BoundaryRootPrisma,
   type TransactionClient,
 } from "../src/proof-boundary.js";
-import { deltaRowCounts, type RowCounts } from "../src/evidence.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, HYPOTHESIS_FAILURE_CODES, type DeferredCookie, type RowCounts } from "../src/evidence.js";
 import { createControlledActivationAuth, createProofAuth } from "../src/auth.js";
-import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 
@@ -1143,8 +1143,10 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
   const generated: unknown = await import(generatedPath);
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
+  const proofBefore = await readCounts(prisma);
+  let proofAfter = proofBefore;
+  let observedCookie: DeferredCookie = EMPTY_DEFERRED_COOKIE;
   try {
-    const proofBefore = await readCounts(prisma);
     const unverifiedLabel = fixtureLabel();
     const unverifiedEmail = `h5-unverified-${unverifiedLabel}@invalid.example`;
     const unverifiedPassword = `H5-${unverifiedLabel}-Aa1!`;
@@ -1198,6 +1200,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
         selectedOrganizationId: "attacker-selected-organization",
       },
     });
+    observedCookie = valid.cookie;
     assert.equal(await providerSessionCount(prisma), beforeValid + 1);
     assert.equal(valid.value.providerUserId, userId);
     assert.equal(valid.cookie.present, true);
@@ -1284,6 +1287,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
       rotatedToken: refreshToken,
       now: refreshNow,
     });
+    observedCookie = refreshed.cookie;
     assert.ok(refreshed.value);
     assert.equal(refreshed.cookie.present, true);
     assert.equal(refreshed.cookie.secure, true);
@@ -1368,6 +1372,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
       rotatedToken: randomBytes(32).toString("base64url"),
       now: new Date(passwordSession.lastRefreshAt.getTime() + 1),
     });
+    observedCookie = changed.cookie;
     assert.equal(changed.value.authenticatedAt.getTime(), passwordSession.authenticatedAt.getTime());
     assert.equal(changed.value.selectedOrganizationId, passwordSession.selectedOrganizationId);
     assert.equal(changed.cookie.present, true);
@@ -1381,7 +1386,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
     assert.equal(newPasswordSignIn.value.providerUserId, userId);
 
     assert.equal(H5_SESSION_ROTATION_FEASIBILITY.verdict, "SUPPORTED_STATIC");
-    const proofAfter = await readCounts(prisma);
+    proofAfter = await readCounts(prisma);
     await writeHypothesisAssertionResult({
       id: "H5_SESSION_COOKIE_AFTER_COMMIT",
       status: "PASS",
@@ -1393,6 +1398,22 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
       assertions: ["H5_SESSION_AND_COOKIE_ASSERTIONS_COMPLETE"],
       failureCode: null,
     });
+  } catch (cause: unknown) {
+    try {
+      proofAfter = await readCounts(prisma);
+      await writeHypothesisResult({
+        id: "H5_SESSION_COOKIE_AFTER_COMMIT",
+        status: "FAIL",
+        transactionIds: [],
+        before: proofBefore,
+        after: proofAfter,
+        deltas: deltaRowCounts(proofBefore, proofAfter),
+        cookie: observedCookie,
+        assertions: [],
+        failureCode: HYPOTHESIS_FAILURE_CODES.H5_SESSION_COOKIE_AFTER_COMMIT,
+      });
+    } catch { /* the original process failure remains authoritative */ }
+    throw cause;
   } finally {
     await prisma.$disconnect();
   }

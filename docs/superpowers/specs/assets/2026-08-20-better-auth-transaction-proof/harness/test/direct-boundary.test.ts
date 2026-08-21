@@ -23,8 +23,8 @@ import {
   type TransactionClient,
 } from "../src/proof-boundary.js";
 import { createProofAuth } from "../src/auth.js";
-import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type RowCounts } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, HYPOTHESIS_FAILURE_CODES, type RowCounts } from "../src/evidence.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult, writeHypothesisResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 type WriteModel =
@@ -570,9 +570,10 @@ test("live H2 proves direct API commit and rollback matrices once", {
   const generated: unknown = await import(generatedPath);
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
+  const before = await readCounts(prisma);
+  let after = before;
+  const transactionIds: string[] = [];
   try {
-    const before = await readCounts(prisma);
-    const transactionIds: string[] = [];
     assert.equal(await proveAdapterMode(prisma, false), true, "transaction:false must reuse the supplied tx");
     assert.equal(await proveAdapterMode(prisma, true), false, "transaction:true must not enter a nested tx callback");
     for (const order of ["PROVIDER_FIRST", "CANONICAL_FIRST"] as const) {
@@ -580,7 +581,7 @@ test("live H2 proves direct API commit and rollback matrices once", {
         transactionIds.push(...await runMatrixCase(prisma, order, failurePoint));
       }
     }
-    const after = await readCounts(prisma);
+    after = await readCounts(prisma);
     await writeHypothesisAssertionResult({
       id: "H2_DIRECT_API_OUTER_TRANSACTION",
       status: "PASS",
@@ -592,6 +593,22 @@ test("live H2 proves direct API commit and rollback matrices once", {
       assertions: ["H2_DIRECT_BOUNDARY_ASSERTIONS_COMPLETE"],
       failureCode: null,
     });
+  } catch (cause: unknown) {
+    try {
+      after = await readCounts(prisma);
+      await writeHypothesisResult({
+        id: "H2_DIRECT_API_OUTER_TRANSACTION",
+        status: "FAIL",
+        transactionIds,
+        before,
+        after,
+        deltas: deltaRowCounts(before, after),
+        cookie: EMPTY_DEFERRED_COOKIE,
+        assertions: [],
+        failureCode: HYPOTHESIS_FAILURE_CODES.H2_DIRECT_API_OUTER_TRANSACTION,
+      });
+    } catch { /* the original process failure remains authoritative */ }
+    throw cause;
   } finally {
     await prisma.$disconnect();
   }
