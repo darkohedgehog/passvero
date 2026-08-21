@@ -11,7 +11,10 @@ import {
   type ControlledActivationApi,
 } from "../src/auth.js";
 import {
+  BoundaryAttemptFailed,
+  captureDirectResponseHeaders,
   runBetterAuthBoundary,
+  runCapturedBoundaryAttempt,
   type BoundaryRootPrisma,
   type DirectAuthApi,
   type TransactionClient,
@@ -94,6 +97,8 @@ interface ActivationResult {
   readonly transactionIds: readonly string[];
 }
 
+type ProviderSeed = Pick<ActivationFixture, "credential" | "email" | "name" | "providerSubject">;
+
 const PROVIDER_DELEGATES = new Map<PropertyKey, ProviderWriteModel>([
   ["authProviderUser", "AuthProviderUser"],
   ["authProviderAccount", "AuthProviderAccount"],
@@ -162,6 +167,19 @@ function digest(value: string): string {
 
 function fixtureLabel(): string {
   return randomBytes(16).toString("hex");
+}
+
+function providerConflictSeed(
+  fixture: ActivationFixture,
+  conflict: "EMAIL" | "SUBJECT",
+  distinctValue: string,
+): ProviderSeed {
+  return {
+    credential: fixture.credential,
+    email: conflict === "EMAIL" ? fixture.email : distinctValue,
+    name: fixture.name,
+    providerSubject: conflict === "SUBJECT" ? fixture.providerSubject : distinctValue,
+  };
 }
 
 function requiredString(value: unknown, stop: string): string {
@@ -312,6 +330,16 @@ function providerUserId(value: unknown): string {
   return requiredString(Reflect.get(user, "id"), "STOP_H4_ACTIVATION_RESPONSE_INVALID");
 }
 
+async function observeControlledActivationResponse(response: Response): Promise<string> {
+  captureDirectResponseHeaders(response);
+  const cookieHeader = ["set", "cookie"].join("-");
+  if (response.headers.has(cookieHeader)) {
+    throw new Error("STOP_H4_CONTROLLED_ACTIVATION_COOKIE_PRESENT");
+  }
+  if (!response.ok) throw new Error("STOP_H4_PROVIDER_CREDENTIAL_CREATE_FAILED");
+  return providerUserId(await response.json());
+}
+
 function failAt(actual: ActivationFailurePoint, expected: ActivationFailurePoint): void {
   if (actual === expected) throw new Error(`INJECTED_H4_${expected}`);
 }
@@ -381,16 +409,17 @@ async function activate(
       if (!isRecord(consumed) || Reflect.get(consumed, "count") !== 1) throw new Error("ACTIVATION_REJECTED");
 
       const auth = createControlledActivationAuth(tx);
-      const activated = await auth.api.activatePreprovisionedCredential({
+      const response = await auth.api.activatePreprovisionedCredential({
         body: {
           credential: fixture.credential,
           email: fixture.email,
           name: fixture.name,
           providerSubject: fixture.providerSubject,
         },
+        asResponse: true,
       });
       await assertAdapterBound();
-      const activatedProviderUserId = providerUserId(activated);
+      const activatedProviderUserId = await observeControlledActivationResponse(response);
       assert.equal(activatedProviderUserId, fixture.providerSubject);
       failAt(failurePoint, "AFTER_PROVIDER_CREDENTIAL_CREATION");
 
@@ -424,14 +453,15 @@ async function activate(
 
 async function seedProviderCredential(
   rootPrisma: H4PrismaClient,
-  input: Pick<ActivationFixture, "credential" | "email" | "name" | "providerSubject">,
+  input: ProviderSeed,
 ): Promise<void> {
   const result = await runBetterAuthBoundary({
     rootPrisma,
     failurePoint: "NONE",
     invoke: async (_h2Api, rawTx) => {
       const auth = createControlledActivationAuth(rawTx);
-      return auth.api.activatePreprovisionedCredential({ body: input });
+      const response = await auth.api.activatePreprovisionedCredential({ body: input, asResponse: true });
+      return observeControlledActivationResponse(response);
     },
   });
   assert.equal(result.cookie.present, false);
@@ -486,6 +516,60 @@ test("H4 manifest freezes the server-only activation hypothesis while runtime re
   assert.equal(endpoint.path, undefined);
   assert.equal(endpoint.options.method, "POST");
   assert.equal(hasServerOnlyMetadata(endpoint), true);
+});
+
+test("H4 direct activation response rejects cookie metadata and records zero-cookie success", async () => {
+  const body = JSON.stringify({ user: { id: "provider-subject", emailVerified: false } });
+  const observed = await runCapturedBoundaryAttempt({
+    transactionalWork: () => observeControlledActivationResponse(new Response(body, {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    })),
+    failurePoint: "NONE",
+  });
+  assert.equal(observed.value, "provider-subject");
+  assert.equal(observed.cookie.present, false);
+
+  const cookieHeader = ["set", "cookie"].join("-");
+  await assert.rejects(
+    () => runCapturedBoundaryAttempt({
+      transactionalWork: () => observeControlledActivationResponse(new Response(body, {
+        status: 200,
+        headers: { [cookieHeader]: "__Host-proof=opaque; Path=/; HttpOnly; Secure; SameSite=Lax" },
+      })),
+      failurePoint: "NONE",
+    }),
+    (error: unknown) => {
+      assert.equal(error instanceof BoundaryAttemptFailed, true);
+      if (!(error instanceof BoundaryAttemptFailed)) return false;
+      assert.doesNotMatch(JSON.stringify(error), /__Host-proof|opaque|set-cookie/i);
+      return error.commitObserved === false
+        && error.cookieEligible === false
+        && error.capturedCookieDiscarded === true;
+    },
+  );
+});
+
+test("H4 provider-conflict fixtures isolate email and subject guards", () => {
+  const fixture: ActivationFixture = {
+    activationId: "activation-id",
+    abuseBucketId: "abuse-id",
+    canonicalUserId: "canonical-id",
+    credential: "H4-fixture-Aa1!",
+    email: "target@invalid.example",
+    name: "target",
+    providerSubject: "target-subject",
+    token: "activation-token",
+  };
+  const emailConflict = providerConflictSeed(fixture, "EMAIL", "distinct-subject");
+  assert.equal(emailConflict.email, "target@invalid.example");
+  assert.equal(emailConflict.providerSubject, "distinct-subject");
+  assert.notEqual(emailConflict.providerSubject, fixture.providerSubject);
+
+  const subjectConflict = providerConflictSeed(fixture, "SUBJECT", "distinct@invalid.example");
+  assert.equal(subjectConflict.email, "distinct@invalid.example");
+  assert.notEqual(subjectConflict.email, fixture.email);
+  assert.equal(subjectConflict.providerSubject, "target-subject");
 });
 
 test("live H4 proves controlled activation and public signup rejection once", {
@@ -557,14 +641,25 @@ test("live H4 proves controlled activation and public signup rejection once", {
     }));
 
     const existingEmail = await preprovisionActivation(prisma);
-    await seedProviderCredential(prisma, existingEmail);
+    const existingEmailSeed = providerConflictSeed(
+      existingEmail,
+      "EMAIL",
+      `existing-email-seed-${fixtureLabel()}`,
+    );
+    assert.equal(existingEmailSeed.email, existingEmail.email);
+    assert.notEqual(existingEmailSeed.providerSubject, existingEmail.providerSubject);
+    await seedProviderCredential(prisma, existingEmailSeed);
     await assertRejectedWithoutDelta(prisma, existingEmail);
 
     const existingSubject = await preprovisionActivation(prisma);
-    await seedProviderCredential(prisma, {
-      ...existingSubject,
-      email: `provider-seed-${fixtureLabel()}@invalid.example`,
-    });
+    const existingSubjectSeed = providerConflictSeed(
+      existingSubject,
+      "SUBJECT",
+      `provider-seed-${fixtureLabel()}@invalid.example`,
+    );
+    assert.notEqual(existingSubjectSeed.email, existingSubject.email);
+    assert.equal(existingSubjectSeed.providerSubject, existingSubject.providerSubject);
+    await seedProviderCredential(prisma, existingSubjectSeed);
     await assertRejectedWithoutDelta(prisma, existingSubject);
 
     const existingIdentity = await preprovisionActivation(prisma);

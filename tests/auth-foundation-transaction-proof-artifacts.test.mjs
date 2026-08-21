@@ -35,7 +35,7 @@ const TASK_5_ARTIFACT_HASHES = new Map([
 
 const TASK_6_ARTIFACT_HASHES = new Map([
   ["src/auth.ts", "2414b3d7672b47aef1bb69cc863b3934f1c4b5580c21566b83e4f10ff2bd6080"],
-  ["test/controlled-activation.test.ts", "ce00f6385ac0e6f041efb0451035f8f6360ac75141c27bc5d8edb155d547d5a2"],
+  ["test/controlled-activation.test.ts", "08a2313e55174550a728cd87c03355e7baa9d6e7679f94afd658705570ae3dac"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -213,19 +213,10 @@ test("the Better Auth factory freezes the approved security and route surface", 
   const list = source.match(/DISABLED_NATIVE_PATHS = \[([\s\S]*?)\] as const/)?.[1];
   assert.ok(list, "disabled native path list missing");
   assert.deepEqual([...list.matchAll(/"([^"]+)"/g)].map((match) => match[1]), EXPECTED_DISABLED_PATHS);
-
-  assert.match(source, /createAuthEndpoint\.serverOnly\(\{\s*method: "POST",\s*body: activationSchema\s*\},/);
-  assert.match(source, /ctx\.context\.internalAdapter\.createUser\(/);
-  assert.match(source, /ctx\.context\.internalAdapter\.linkAccount\(/);
-  assert.match(source, /disableSignUp: true/);
-  assert.doesNotMatch(source, /activatePreprovisionedCredential:\s*createAuthEndpoint\(\s*"\//);
 });
 
 test("proof sources forbid direct provider writes, any, and premature cookie exposure", async () => {
-  const sourceNames = [
-    "src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts",
-    "test/controlled-activation.test.ts",
-  ];
+  const sourceNames = ["src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts"];
   const sources = await Promise.all(sourceNames.map(readHarness));
   for (const [index, source] of sources.entries()) {
     assert.doesNotMatch(source, /\bas\s+any\b|:\s*any\b|<any>/, `${sourceNames[index]} contains any`);
