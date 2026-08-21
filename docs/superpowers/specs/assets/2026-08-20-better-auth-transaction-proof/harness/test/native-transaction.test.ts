@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash, randomBytes } from "node:crypto";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { runWithTransaction } from "@better-auth/core/context";
+import { APIError } from "better-auth/api";
+import { createProofAuth, type ProofAuth } from "../src/auth.js";
 import {
   EMPTY_DEFERRED_COOKIE,
   H1_NATIVE_TRANSACTION_RUNTIME_VERDICT,
@@ -43,31 +47,11 @@ interface ProofPrismaClient extends ProofTransactionClient {
   $disconnect(): Promise<void>;
 }
 
-interface GeneratedClientModule {
-  readonly PrismaClient: new (input: { readonly adapter: object }) => ProofPrismaClient;
-}
-
-interface ProofAuth {
-  readonly api: {
-    signUpEmail(input: {
-      readonly body: {
-        readonly name: string;
-        readonly email: string;
-        readonly password: string;
-      };
-    }): Promise<unknown>;
-  };
-  readonly $context: Promise<{ readonly adapter: object }>;
-}
-
-interface H1RuntimeModules {
-  readonly PrismaPg: new (input: { readonly connectionString: string }) => object;
-  readonly createProofAuth: (input: {
-    readonly prisma: object;
-    readonly adapterTransaction: boolean;
-    readonly disableSignUp: boolean;
-  }) => ProofAuth;
-  readonly runWithTransaction: <T>(adapter: object, action: () => Promise<T>) => Promise<T>;
+interface DirectResponseObservation {
+  readonly status: number;
+  readonly responseHeaderCount: number;
+  readonly setCookieHeaderCount: number;
+  readonly cookie: H1ScenarioEvidence["cookie"];
 }
 
 interface InstrumentationState {
@@ -84,18 +68,61 @@ const PROVIDER_DELEGATES = new Map<PropertyKey, ProviderModel>([
   ["authProviderVerification", "AuthProviderVerification"],
 ]);
 
-const WRITE_ACTIONS = new Set<DelegateAction>([
-  "create",
-  "update",
-  "updateMany",
-  "delete",
-  "deleteMany",
-  "upsert",
-]);
+function isRecord(value: unknown): value is UnknownRecord {
+  return value !== null && typeof value === "object";
+}
 
-function asRecord(value: unknown, stopCode: string): UnknownRecord {
-  if (value === null || typeof value !== "object") throw new Error(stopCode);
-  return value as UnknownRecord;
+function requireRecord(value: unknown, stopCode: string): UnknownRecord {
+  if (!isRecord(value)) throw new Error(stopCode);
+  return value;
+}
+
+function hasMethod(value: UnknownRecord, property: PropertyKey): boolean {
+  return typeof Reflect.get(value, property) === "function";
+}
+
+function isProofSqlClient(value: unknown): value is ProofSqlClient {
+  return isRecord(value) && hasMethod(value, "$queryRaw");
+}
+
+function isCountAndCleanupDelegate(value: unknown): value is CountAndCleanupDelegate {
+  return isRecord(value) && hasMethod(value, "count") && hasMethod(value, "deleteMany");
+}
+
+function isProofPrismaClient(value: unknown): value is ProofPrismaClient {
+  if (!isRecord(value)) return false;
+  for (const name of [
+    "authProviderUser",
+    "authProviderAccount",
+    "authProviderSession",
+    "authProviderVerification",
+    "user",
+    "authIdentity",
+    "accountActivation",
+    "authCredentialToken",
+    "authAbuseBucket",
+  ]) {
+    if (!isCountAndCleanupDelegate(Reflect.get(value, name))) return false;
+  }
+  return hasMethod(value, "$queryRaw") && hasMethod(value, "$transaction") && hasMethod(value, "$disconnect");
+}
+
+function createGeneratedPrismaClient(module: unknown, adapter: PrismaPg): ProofPrismaClient {
+  const exported = requireRecord(module, "STOP_H1_GENERATED_MODULE_INVALID");
+  const Constructor = Reflect.get(exported, "PrismaClient");
+  if (typeof Constructor !== "function") throw new Error("STOP_H1_GENERATED_MODULE_INVALID");
+  const client: unknown = Reflect.construct(Constructor, [{ adapter }]);
+  if (!isProofPrismaClient(client)) throw new Error("STOP_H1_GENERATED_CLIENT_INVALID");
+  return client;
+}
+
+function isDelegateAction(value: PropertyKey): value is DelegateAction {
+  return value === "create"
+    || value === "update"
+    || value === "updateMany"
+    || value === "delete"
+    || value === "deleteMany"
+    || value === "upsert";
 }
 
 async function currentTransactionIdHash(client: ProofSqlClient): Promise<string> {
@@ -112,7 +139,7 @@ function instrumentPrisma<T extends object>(client: T, state: InstrumentationSta
   let proxy: T;
   proxy = new Proxy(client, {
     get(target, property, receiver) {
-      const value = Reflect.get(target, property, receiver) as unknown;
+      const value: unknown = Reflect.get(target, property, receiver);
       if (property === "$transaction" && typeof value === "function") {
         return async (action: unknown) => {
           if (typeof action !== "function") throw new Error("STOP_H1_BATCH_TRANSACTION_FORBIDDEN");
@@ -127,32 +154,35 @@ function instrumentPrisma<T extends object>(client: T, state: InstrumentationSta
       if (cached) return cached;
       const delegate = new Proxy(value, {
         get(delegateTarget, actionProperty, delegateReceiver) {
-          const method = Reflect.get(delegateTarget, actionProperty, delegateReceiver) as unknown;
-          if (typeof actionProperty !== "string" || !WRITE_ACTIONS.has(actionProperty as DelegateAction) || typeof method !== "function") {
+          const method: unknown = Reflect.get(delegateTarget, actionProperty, delegateReceiver);
+          if (!isDelegateAction(actionProperty) || typeof method !== "function") {
             return method;
           }
-          const action = actionProperty as DelegateAction;
+          const action = actionProperty;
           return async (...args: readonly unknown[]) => {
-            const sqlClient = proxy as unknown as ProofSqlClient;
+            if (!isProofSqlClient(proxy)) throw new Error("STOP_H1_INSTRUMENTED_CLIENT_INVALID");
             state.observations.push({
               model,
               action,
               phase: "BEFORE",
-              transactionIdHash: await currentTransactionIdHash(sqlClient),
+              transactionIdHash: await currentTransactionIdHash(proxy),
             });
             if (model === "AuthProviderAccount" && action === "create") {
               state.failureInjected = true;
-              throw new Error("INJECTED_H1_AUTH_PROVIDER_ACCOUNT_CREATE");
+              throw APIError.from("UNPROCESSABLE_ENTITY", {
+                code: "H1_AUTH_PROVIDER_ACCOUNT_CREATE_INJECTED",
+                message: "H1 provider account create failure injected",
+              });
             }
-            const result = await Reflect.apply(method, delegateTarget, args);
+            const result: unknown = await Reflect.apply(method, delegateTarget, args);
             state.observations.push({
               model,
               action,
               phase: "AFTER",
-              transactionIdHash: await currentTransactionIdHash(sqlClient),
+              transactionIdHash: await currentTransactionIdHash(proxy),
             });
             if (model === "AuthProviderUser" && action === "create") {
-              const id = Reflect.get(asRecord(result, "STOP_H1_PROVIDER_USER_RESULT_INVALID"), "id");
+              const id = Reflect.get(requireRecord(result, "STOP_H1_PROVIDER_USER_RESULT_INVALID"), "id");
               if (typeof id !== "string" || id.length === 0) throw new Error("STOP_H1_PROVIDER_USER_ID_INVALID");
               state.createdProviderUserIds.push(id);
             }
@@ -206,14 +236,96 @@ function countDelta(before: RowCounts, after: RowCounts, key: keyof RowCounts): 
   return after[key] - before[key];
 }
 
-async function invokeSignUp(auth: ProofAuth, fixtureId: string): Promise<void> {
-  await auth.api.signUpEmail({
+function readSetCookieHeaders(headers: Headers): string[] {
+  const getSetCookie: unknown = Reflect.get(headers, "getSetCookie");
+  if (typeof getSetCookie === "function") {
+    const values: unknown = Reflect.apply(getSetCookie, headers, []);
+    if (Array.isArray(values) && values.every((value) => typeof value === "string")) return [...values];
+    throw new Error("STOP_H1_RESPONSE_HEADERS_INVALID");
+  }
+  const value = headers.get(["set", "cookie"].join("-"));
+  return value === null ? [] : [value];
+}
+
+function parseObservedCookie(raw: string | undefined): H1ScenarioEvidence["cookie"] {
+  if (raw === undefined) {
+    return {
+      present: false,
+      nameHash: null,
+      secure: false,
+      httpOnly: false,
+      sameSite: null,
+      hostOnly: true,
+      maxAgeSeconds: null,
+    };
+  }
+  const segments = raw.split(";").map((segment) => segment.trim());
+  const pair = segments.shift() ?? "";
+  const separator = pair.indexOf("=");
+  const name = separator >= 0 ? pair.slice(0, separator) : pair;
+  const attributes = new Map(
+    segments.map((segment) => {
+      const index = segment.indexOf("=");
+      return index < 0
+        ? [segment.toLowerCase(), ""]
+        : [segment.slice(0, index).toLowerCase(), segment.slice(index + 1)];
+    }),
+  );
+  const maxAge = attributes.get("max-age");
+  return {
+    present: true,
+    nameHash: createHash("sha256").update(name).digest("hex"),
+    secure: attributes.has("secure"),
+    httpOnly: attributes.has("httponly"),
+    sameSite: attributes.get("samesite")?.toLowerCase() === "lax" ? "lax" : null,
+    hostOnly: !attributes.has("domain"),
+    maxAgeSeconds: maxAge !== undefined && /^\d+$/.test(maxAge) ? Number(maxAge) : null,
+  };
+}
+
+function observeDirectApiResponse(response: Response): DirectResponseObservation {
+  const rawHeaders = readSetCookieHeaders(response.headers);
+  const setCookieHeaderCount = rawHeaders.length;
+  let responseHeaderCount = 0;
+  response.headers.forEach(() => {
+    responseHeaderCount += 1;
+  });
+  try {
+    return {
+      status: response.status,
+      responseHeaderCount,
+      setCookieHeaderCount,
+      cookie: parseObservedCookie(rawHeaders[0]),
+    };
+  } finally {
+    rawHeaders.splice(0, rawHeaders.length);
+  }
+}
+
+function requireNoSessionResponse(observation: DirectResponseObservation): void {
+  if (observation.status < 400) {
+    throw new Error("STOP_H1_DIRECT_RESPONSE_INVALID");
+  }
+  if (observation.setCookieHeaderCount !== 0 || observation.cookie.present) {
+    throw new Error("STOP_H1_SESSION_RESPONSE_OBSERVED");
+  }
+}
+
+function requireDirectResponseObservation(value: DirectResponseObservation | undefined): DirectResponseObservation {
+  if (value === undefined) throw new Error("STOP_H1_DIRECT_RESPONSE_MISSING");
+  return value;
+}
+
+async function invokeSignUp(auth: ProofAuth, fixtureId: string): Promise<DirectResponseObservation> {
+  const response = await auth.api.signUpEmail({
     body: {
       name: `proof-${fixtureId}`,
       email: `proof-${fixtureId}@invalid.example`,
       password: `H1-${fixtureId}-Aa1!`,
     },
+    asResponse: true,
   });
+  return observeDirectApiResponse(response);
 }
 
 async function cleanFixture(
@@ -237,7 +349,6 @@ async function cleanFixture(
 async function runScenario(
   rootPrisma: ProofPrismaClient,
   contract: H1ScenarioContract,
-  runtime: H1RuntimeModules,
 ): Promise<H1ScenarioEvidence> {
   const fixtureId = randomBytes(16).toString("hex");
   const state: InstrumentationState = {
@@ -250,30 +361,46 @@ async function runScenario(
   const instrumentedRoot = instrumentPrisma(rootPrisma, state);
 
   try {
-    const attempt = async () => {
+    const attempt = async (): Promise<DirectResponseObservation> => {
       if (contract.explicitOuterTransaction) {
-        await instrumentedRoot.$transaction(async (tx) => {
-          const auth = runtime.createProofAuth({ prisma: tx, adapterTransaction: false, disableSignUp: false });
-          const adapter = (await auth.$context).adapter;
-          await runtime.runWithTransaction(adapter, () => invokeSignUp(auth, fixtureId));
-        });
-        return;
+        let observation: DirectResponseObservation | undefined;
+        await assert.rejects(
+          () => instrumentedRoot.$transaction(async (tx) => {
+            const auth = createProofAuth({ prisma: tx, adapterTransaction: false, disableSignUp: false });
+            const adapter = (await auth.$context).adapter;
+            observation = await runWithTransaction(adapter, () => invokeSignUp(auth, fixtureId));
+            requireNoSessionResponse(observation);
+            throw new Error("INJECTED_H1_OUTER_ROLLBACK_AFTER_RESPONSE");
+          }),
+          /INJECTED_H1_OUTER_ROLLBACK_AFTER_RESPONSE/,
+        );
+        return requireDirectResponseObservation(observation);
       }
 
-      const auth = runtime.createProofAuth({
+      const auth = createProofAuth({
         prisma: instrumentedRoot,
         adapterTransaction: contract.adapterTransaction,
         disableSignUp: false,
       });
       if (contract.nestedRunWithTransaction) {
         const adapter = (await auth.$context).adapter;
-        await runtime.runWithTransaction(adapter, () => invokeSignUp(auth, fixtureId));
-        return;
+        let observation: DirectResponseObservation | undefined;
+        await assert.rejects(
+          () => runWithTransaction(adapter, async () => {
+            observation = await invokeSignUp(auth, fixtureId);
+            requireNoSessionResponse(observation);
+            throw new Error("INJECTED_H1_OUTER_ROLLBACK_AFTER_RESPONSE");
+          }),
+          /INJECTED_H1_OUTER_ROLLBACK_AFTER_RESPONSE/,
+        );
+        return requireDirectResponseObservation(observation);
       }
-      await invokeSignUp(auth, fixtureId);
+      return invokeSignUp(auth, fixtureId);
     };
 
-    await assert.rejects(attempt, /INJECTED_H1_AUTH_PROVIDER_ACCOUNT_CREATE|FAILED_TO_CREATE_USER/);
+    const responseObservation = await attempt();
+    requireNoSessionResponse(responseObservation);
+    assert.equal(responseObservation.status, 422, "H1 injected account failure must produce an error response");
     assert.equal(state.failureInjected, true, "account create failure point must execute");
     const after = await readCounts(rootPrisma);
     assert.equal(countDelta(before, after, "providerUser"), contract.expectedProviderUserDelta);
@@ -311,12 +438,15 @@ async function runScenario(
       writes: state.observations,
       before,
       after,
-      cookie: EMPTY_DEFERRED_COOKIE,
+      responseStatus: responseObservation.status,
+      responseHeaderCount: responseObservation.responseHeaderCount,
+      setCookieHeaderCount: responseObservation.setCookieHeaderCount,
+      cookie: responseObservation.cookie,
       fixtureCleaned: true,
       successfulProviderWriteOrigin: "BETTER_AUTH_API",
       assertions: [
         "provider account failure followed provider user creation",
-        "no provider session or deferred response header was created",
+        "observed direct error response contained no session row or response cookie header",
         contract.acceptedArchitecture
           ? "accepted path rolled provider writes back through one explicit boundary"
           : "split write retained only as rejected isolated negative control",
@@ -331,21 +461,13 @@ async function runScenario(
 
 export async function runH1NativeTransactionProof(): Promise<H1NativeTransactionEvidence> {
   const generatedPath = "../generated/client/client.js";
-  const adapterPath = "@prisma/adapter-pg";
-  const authPath = "../src/auth.js";
-  const contextPath = "@better-auth/core/context";
-  const generated = await import(generatedPath) as unknown as GeneratedClientModule;
-  const adapterModule = await import(adapterPath) as unknown as Pick<H1RuntimeModules, "PrismaPg">;
-  const authModule = await import(authPath) as unknown as Pick<H1RuntimeModules, "createProofAuth">;
-  const contextModule = await import(contextPath) as unknown as Pick<H1RuntimeModules, "runWithTransaction">;
-  const runtime: H1RuntimeModules = { ...adapterModule, ...authModule, ...contextModule };
-  const prisma = new generated.PrismaClient({
-    adapter: new runtime.PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) }),
-  });
+  const generated: unknown = await import(generatedPath);
+  const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
+  const prisma = createGeneratedPrismaClient(generated, adapter);
   try {
     const scenarios: H1ScenarioEvidence[] = [];
     for (const contract of H1_NATIVE_TRANSACTION_SCENARIOS) {
-      scenarios.push(await runScenario(prisma, contract, runtime));
+      scenarios.push(await runScenario(prisma, contract));
     }
     return {
       id: "H1_NATIVE_TRANSACTION",
@@ -410,6 +532,32 @@ test("H1 manifest keeps the split-write control rejected and runtime unexecuted"
       expectedSingleTransactionId: true,
     },
   ]);
+});
+
+test("H1 direct response observation rejects any response cookie without retaining its value", () => {
+  const clean = observeDirectApiResponse(new Response(null, {
+    status: 422,
+    headers: { "x-proof-observation": "present" },
+  }));
+  assert.deepEqual(clean, {
+    status: 422,
+    responseHeaderCount: 1,
+    setCookieHeaderCount: 0,
+    cookie: EMPTY_DEFERRED_COOKIE,
+  });
+  assert.doesNotThrow(() => requireNoSessionResponse(clean));
+
+  const cookieHeaderName = ["set", "cookie"].join("-");
+  const rawCookieValue = ["__Host-proof=opaque", "Path=/", "HttpOnly", "Secure", "SameSite=Lax"].join("; ");
+  const unsafe = observeDirectApiResponse(new Response(null, {
+    status: 422,
+    headers: { [cookieHeaderName]: rawCookieValue },
+  }));
+  assert.equal(unsafe.setCookieHeaderCount, 1);
+  assert.equal(unsafe.cookie.present, true);
+  assert.match(unsafe.cookie.nameHash ?? "", /^[a-f0-9]{64}$/);
+  assert.doesNotMatch(JSON.stringify(unsafe), /opaque/);
+  assert.throws(() => requireNoSessionResponse(unsafe), /STOP_H1_SESSION_RESPONSE_OBSERVED/);
 });
 
 test("live H1 proves native and nested transaction behavior once", {

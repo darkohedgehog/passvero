@@ -133,6 +133,9 @@ export interface H1ScenarioEvidence {
   readonly writes: readonly H1WriteObservation[];
   readonly before: RowCounts;
   readonly after: RowCounts;
+  readonly responseStatus: number;
+  readonly responseHeaderCount: number;
+  readonly setCookieHeaderCount: number;
   readonly cookie: DeferredCookie;
   readonly fixtureCleaned: boolean;
   readonly successfulProviderWriteOrigin: "BETTER_AUTH_API";
