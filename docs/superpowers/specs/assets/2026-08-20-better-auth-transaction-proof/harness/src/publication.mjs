@@ -179,6 +179,7 @@ export async function publishEvidenceState(input) {
 
   const renamePublication = input.renamePublication ?? rename;
   const stagePublication = input.stagePublication ?? stage;
+  const assertPublicationAllowed = input.assertPublicationAllowed ?? (() => undefined);
 
   async function commitFail(candidate) {
     await stagePublication(candidate);
@@ -192,7 +193,9 @@ export async function publishEvidenceState(input) {
   }
 
   if (preparedRoot !== path.join(attemptRoot, "prepared")) fail("PASS requires prepared proof material");
+  assertPublicationAllowed();
   await commitFail("fail-1111");
+  assertPublicationAllowed();
 
   let pendingRetired = false;
   if (pendingPath !== null
@@ -229,11 +232,66 @@ export async function publishEvidenceState(input) {
     `${JSON.stringify({ state: "COMMIT_READY", status: "PASS" })}\n`,
   );
   await validateFile(commitReadyPath, "commit-ready state");
+  assertPublicationAllowed();
   await stagePublication("pass-1111");
+  assertPublicationAllowed();
   await renamePublication(stageMarkdown, finalMarkdown);
-  if (typeof input.beforeAuthoritativePass === "function") input.beforeAuthoritativePass();
+  assertPublicationAllowed();
+  if (typeof input.beforeAuthoritativePass === "function") await input.beforeAuthoritativePass();
+  assertPublicationAllowed();
   await renamePublication(stageJson, finalJson);
-  return { passed: true, exitCode: 0, status: "PASS", authoritativeCandidate: "pass-1111" };
+  const interruptedAfterCommit = typeof input.wasPublicationInterrupted === "function"
+    ? input.wasPublicationInterrupted()
+    : false;
+  return {
+    passed: true,
+    exitCode: 0,
+    status: "PASS",
+    authoritativeCandidate: "pass-1111",
+    interruptedAfterCommit,
+  };
+}
+
+function createPublicationInterrupt(evidenceDirectory) {
+  const abortController = new AbortController();
+  let interrupted = false;
+  const interrupt = () => {
+    interrupted = true;
+    abortController.abort();
+  };
+  process.on("SIGINT", interrupt);
+  process.on("SIGTERM", interrupt);
+
+  function assertPublicationAllowed() {
+    if (interrupted) fail("publication interrupted");
+  }
+
+  async function beforeAuthoritativePass() {
+    assertPublicationAllowed();
+    if (process.env.PASSVERO_PROOF_STATIC_PUBLICATION_DELAY === "1") {
+      await writeProtected(path.join(evidenceDirectory, "pre-json-window"), "READY\n");
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(resolve, 5_000);
+        abortController.signal.addEventListener("abort", () => {
+          clearTimeout(timer);
+          reject(new Error("STOP_EVIDENCE_PUBLICATION: publication interrupted"));
+        }, { once: true });
+      });
+    }
+    assertPublicationAllowed();
+  }
+
+  function dispose() {
+    process.removeListener("SIGINT", interrupt);
+    process.removeListener("SIGTERM", interrupt);
+  }
+
+  return {
+    assertPublicationAllowed,
+    beforeAuthoritativePass,
+    wasInterrupted: () => interrupted,
+    dispose,
+  };
 }
 
 async function runCli() {
@@ -248,21 +306,30 @@ async function runCli() {
   if (process.argv[2] !== "publish" || process.argv.length !== 7) {
     fail("usage: publication.mjs publish <evidence-dir> <prepared-dir> <pending-or-dash> <candidate>");
   }
+  const publicationInterrupt = createPublicationInterrupt(process.argv[3]);
   let passMarkerWritten = false;
-  const result = await publishEvidenceState({
-    evidenceDirectory: process.argv[3],
-    preparedDirectory: process.argv[4],
-    pendingPath: process.argv[5] === "-" ? null : process.argv[5],
-    candidate: process.argv[6],
-    retirePending: unlink,
-    inspectPending: lstat,
-    beforeAuthoritativePass: () => {
-      writeSync(1, "PUBLICATION=PASS\n");
-      passMarkerWritten = true;
-    },
-  });
-  if (!passMarkerWritten) writeSync(1, `PUBLICATION=${result.status}\n`);
-  process.exitCode = result.exitCode;
+  try {
+    const result = await publishEvidenceState({
+      evidenceDirectory: process.argv[3],
+      preparedDirectory: process.argv[4],
+      pendingPath: process.argv[5] === "-" ? null : process.argv[5],
+      candidate: process.argv[6],
+      retirePending: unlink,
+      inspectPending: lstat,
+      assertPublicationAllowed: publicationInterrupt.assertPublicationAllowed,
+      wasPublicationInterrupted: publicationInterrupt.wasInterrupted,
+      beforeAuthoritativePass: async () => {
+        await publicationInterrupt.beforeAuthoritativePass();
+        publicationInterrupt.assertPublicationAllowed();
+        writeSync(1, "PUBLICATION=PASS\n");
+        passMarkerWritten = true;
+      },
+    });
+    if (!passMarkerWritten) writeSync(1, `PUBLICATION=${result.status}\n`);
+    process.exitCode = result.exitCode;
+  } finally {
+    publicationInterrupt.dispose();
+  }
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === await realpath(process.argv[1])) {

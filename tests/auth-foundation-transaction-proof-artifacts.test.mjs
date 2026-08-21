@@ -51,7 +51,7 @@ const TASK_9_ARTIFACT_HASHES = new Map([
 const TASK_10_ORCHESTRATION_HASHES = new Map([
   ["src/evidence.ts", "1af09dfa57c99fa5275b7310af6dfff96e6ed6be8c6c85dec903ccf082f43f44"],
   ["src/run-root.ts", "a977c4df5c8754f02149c13852db5250cbabdf24806e3da57524a4952f33bfda"],
-  ["src/publication.mjs", "ec30cb0ced5ea9ccc3edfa2b5af627acd88f6e0e640ac5001e71b7f530aac5bf"],
+  ["src/publication.mjs", "d61ffb689c6c5d437306ad0fa943546869db68099fe39e58b468b3dae350b005"],
   ["src/lifecycle.ts", "8d5f22bfa631d132664f6833365113e3f8638be3d06c85080a67ff03acce8f5c"],
   ["test/harness-contract.test.ts", "b61eeda3136f937fb034f9612099f74da3bc7c82b4b38996f270fe87cb82d769"],
   ["test/native-transaction.test.ts", "e83a2cf4537e51345781d0999bd89d58b6f29a34e83528fc4a2357065ae118ba"],
@@ -62,8 +62,8 @@ const TASK_10_ORCHESTRATION_HASHES = new Map([
   ["test/recovery-boundary.test.ts", "9f2c27ca7f2271c1931a30cdabddcbcc8484b86ed9c136acd3056eadf3461736"],
   ["test/route-boundary.test.ts", "43d7b7d0412b9d447431d8b6d1678e810e6f10c0e6634bf96650aee2a0d9a855"],
 ]);
-const TASK_10_RUNNER_HASH = "a753c250ac843d97a8edcd41d1bc068e3eaf6be3f5bc50a9505efd123e386183";
-const TASK_10_SHELL_SIMULATION_HASH = "de5e278585c1fa1297a7b9893e0d6d608e40537e20e3ce8b50cbf40a278d5e87";
+const TASK_10_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1e302395fc75df8f8183a56";
+const TASK_10_SHELL_SIMULATION_HASH = "aeacc38f11cac1094befafb422b824bba521c1676d4e5e3bfa76e57b35bdb8a8";
 
 const EXPECTED_DEPENDENCIES = {
   "@better-auth/core": "1.7.1",
@@ -421,6 +421,10 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /prove_partial_postmaster/,
     /fs\.lstatSync\(candidate\)/,
     /validate_delete_target/,
+    /prearm_root_allocation/,
+    /ROOT_ALLOCATION_PENDING/,
+    /supervise_publication_child/,
+    /PUBLICATION_CHILD_TRUSTED/,
   ]) assert.match(source, contract);
 
   const staticBody = source.match(/run_static\(\) \{([\s\S]*?)^\}/m)?.[1];
@@ -471,6 +475,9 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.match(publication, /FAIL_PENDING_RETAINED/);
   assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERABLE/);
   assert.match(publication, /attempt-claimed\.json/);
+  assert.match(publication, /process\.on\("SIGTERM", interrupt\)/);
+  assert.match(publication, /assertPublicationAllowed/);
+  assert.match(publication, /pre-json-window/);
 
   const runRoot = await readHarness("src/run-root.ts");
   assert.match(runRoot, /renderEvidenceJson\(\{ \.\.\.pending, cleanup: \{\} \}\)/);

@@ -13,6 +13,7 @@ SENTINEL_CONSTANT=PASSVERO_STAGE13A_PG_V1
 RUN_ROOT=""
 RUN_ROOT_REAL=""
 CLEANUP_REQUIRED=0
+ROOT_ALLOCATION_UNCERTAIN=0
 ATTEMPT_STATE="$SCRIPT_DIR/.proof-attempt-state"
 FAILURE_MATERIAL="$ATTEMPT_STATE/failure-material"
 PREPARED_EVIDENCE="$ATTEMPT_STATE/prepared"
@@ -25,6 +26,10 @@ PENDING_READY=0
 PREPARED_READY=0
 CLEANUP_ACTIVE=0
 SIGNAL_STATUS=0
+PUBLICATION_CHILD_PID=""
+PUBLICATION_CHILD_OWNER_SHELL_PID=""
+PUBLICATION_CHILD_ACTIVE=0
+PUBLICATION_CHILD_TRUSTED=0
 
 die() {
   printf '%s\n' "$1"
@@ -47,7 +52,19 @@ cleanup_checkpoint() {
 request_signal_failure() {
   local status="$1"
   record_cleanup_signal "$status"
+  if [[ "$PUBLICATION_CHILD_ACTIVE" -eq 1 ]]; then
+    terminate_publication_child || true
+    return
+  fi
   if [[ "$CLEANUP_ACTIVE" -eq 0 ]]; then exit "$status"; fi
+}
+
+terminate_publication_child() {
+  local child_pid="$PUBLICATION_CHILD_PID"
+  [[ "$PUBLICATION_CHILD_ACTIVE" -eq 1 && "$PUBLICATION_CHILD_TRUSTED" -eq 1 ]] || return 1
+  [[ "$PUBLICATION_CHILD_OWNER_SHELL_PID" == "$$" ]] || return 1
+  [[ "$child_pid" =~ ^[1-9][0-9]*$ ]] || return 1
+  kill -TERM -- "$child_pid" >/dev/null 2>&1 || true
 }
 
 require_mode() {
@@ -184,10 +201,41 @@ claim_attempt() {
   PHASE=CLAIMED
 }
 
-bootstrap_root() {
-  RUN_ROOT="$(mktemp -d /private/tmp/passvero-stage13a-pg.XXXXXX 2>&9)"
+prearm_root_allocation() {
+  RUN_ROOT=""
+  RUN_ROOT_REAL=""
   CLEANUP_REQUIRED=1
+  ROOT_ALLOCATION_UNCERTAIN=1
+  PHASE=ROOT_ALLOCATION_PENDING
+}
+
+allocate_run_root() {
+  local allocation_state="$ATTEMPT_STATE/root-allocation.path" allocated_root
+  [[ ! -e "$allocation_state" && ! -L "$allocation_state" ]] || return 1
+  install -m 0600 /dev/null "$allocation_state" >&9 2>&1 || return 1
+  if [[ "${PASSVERO_PROOF_SOURCE_ONLY:-0}" == 1 \
+    && "${PASSVERO_PROOF_STATIC_INJECT:-}" == SIGNAL_BEFORE_MKTEMP ]]; then
+    kill -TERM "$$"
+    return "$SIGNAL_STATUS"
+  fi
+  mktemp -d /private/tmp/passvero-stage13a-pg.XXXXXX 2>&9 3>"$allocation_state" >&3 || return 1
+  if [[ "${PASSVERO_PROOF_SOURCE_ONLY:-0}" == 1 \
+    && "${PASSVERO_PROOF_STATIC_INJECT:-}" == AFTER_MKTEMP_BEFORE_ASSIGNMENT ]]; then return 97; fi
+  allocated_root="$(protected_value "$allocation_state" 2>&9)" || return 1
+  RUN_ROOT="$allocated_root"
+  [[ "$RUN_ROOT" =~ ^/private/tmp/passvero-stage13a-pg\.[A-Za-z0-9]+$ ]] || die "STOP_RUN_ROOT_INVALID"
+  [[ ! -L "$RUN_ROOT" && -d "$RUN_ROOT" ]] || die "STOP_RUN_ROOT_INVALID"
+  [[ "$(cd "$RUN_ROOT" 2>&9 && pwd -P 2>&9)" == "$RUN_ROOT" ]] || die "STOP_RUN_ROOT_INVALID"
+  [[ "$(stat -f '%u:%Lp' "$RUN_ROOT" 2>&9)" == "$(id -u):700" ]] || die "STOP_RUN_ROOT_INVALID"
+  ROOT_ALLOCATION_UNCERTAIN=0
   PHASE=ROOT_ALLOCATED
+  unlink "$allocation_state" >&9 2>&1 || return 1
+}
+
+bootstrap_root() {
+  prearm_root_allocation
+  local allocation_status
+  allocate_run_root || { allocation_status=$?; return "$allocation_status"; }
   if [[ "${PASSVERO_PROOF_SOURCE_ONLY:-0}" == 1 \
     && "${PASSVERO_PROOF_STATIC_INJECT:-}" == AFTER_MKTEMP ]]; then return 97; fi
   chmod 0700 "$RUN_ROOT" >&9 2>&1
@@ -511,21 +559,77 @@ validate_prepared_file() {
   [[ "$(stat -f '%u:%Lp' "$file")" == "$(id -u):600" ]] || return 1
 }
 
+supervise_publication_child() {
+  local key="$1" material="$2" pending_arg="$3"
+  local publication_output="$ATTEMPT_STATE/publication-output.log" child_pid child_status=1
+  local errexit_was_set=0 static_delay=0
+  case "$-" in *e*) errexit_was_set=1 ;; esac
+  [[ "$SIGNAL_STATUS" -eq 0 ]] || return 1
+  [[ ! -L "$ATTEMPT_STATE" && -d "$ATTEMPT_STATE" ]] || return 1
+  [[ "$(cd "$ATTEMPT_STATE" 2>&9 && pwd -P 2>&9)" == "$ATTEMPT_STATE" ]] || return 1
+  [[ "$(stat -f '%u:%Lp' "$ATTEMPT_STATE" 2>&9)" == "$(id -u):700" ]] || return 1
+  [[ ! -L "$publication_output" ]] || return 1
+  install -m 0600 /dev/null "$publication_output" >&9 2>&1 || return 1
+  [[ ! -L "$publication_output" && -f "$publication_output" ]] || return 1
+  [[ "$(stat -f '%u:%Lp' "$publication_output" 2>&9)" == "$(id -u):600" ]] || return 1
+  if [[ "${PASSVERO_PROOF_SOURCE_ONLY:-0}" == 1 \
+    && "${PASSVERO_PROOF_STATIC_PUBLICATION_DELAY:-0}" == 1 ]]; then static_delay=1; fi
+  (
+    exec 2>&9
+    exec 3>"$publication_output"
+    exec 1>&3
+    if [[ "$static_delay" -eq 1 ]]; then
+      exec env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" \
+        PASSVERO_PROOF_STATIC_PUBLICATION_DELAY=1 \
+        "$NODE_BIN" "$HARNESS_SOURCE/src/publication.mjs" publish "$SCRIPT_DIR" "$material" \
+        "$pending_arg" "$key"
+    fi
+    exec env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" \
+      "$NODE_BIN" "$HARNESS_SOURCE/src/publication.mjs" publish "$SCRIPT_DIR" "$material" \
+      "$pending_arg" "$key"
+  ) &
+  child_pid=$!
+  PUBLICATION_CHILD_PID="$child_pid"
+  PUBLICATION_CHILD_OWNER_SHELL_PID="$$"
+  PUBLICATION_CHILD_TRUSTED=1
+  PUBLICATION_CHILD_ACTIVE=1
+  if [[ "$SIGNAL_STATUS" -ne 0 ]]; then terminate_publication_child || true; fi
+  set +e
+  wait "$child_pid"
+  child_status=$?
+  if [[ "$SIGNAL_STATUS" -ne 0 ]]; then
+    local reaped_status
+    terminate_publication_child || true
+    wait "$child_pid" >/dev/null 2>&1
+    reaped_status=$?
+    if [[ "$reaped_status" -ne 127 ]]; then child_status="$reaped_status"; fi
+  fi
+  if [[ "$errexit_was_set" -eq 1 ]]; then set -e; else set +e; fi
+  PUBLICATION_CHILD_ACTIVE=0
+  PUBLICATION_CHILD_TRUSTED=0
+  PUBLICATION_CHILD_PID=""
+  PUBLICATION_CHILD_OWNER_SHELL_PID=""
+  return "$child_status"
+}
+
 publish_candidate() {
   local key="$1" material="$2" pending_arg="$3" publication_status publication_output expected_output
+  local errexit_was_set=0 publication_matches=1
+  case "$-" in *e*) errexit_was_set=1 ;; esac
+  [[ "$SIGNAL_STATUS" -eq 0 ]] || return 1
   set +e
-  publication_output="$(env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" \
-    "$NODE_BIN" "$HARNESS_SOURCE/src/publication.mjs" publish "$SCRIPT_DIR" "$material" \
-    "$pending_arg" "$key" 2>&9)"
+  supervise_publication_child "$key" "$material" "$pending_arg"
   publication_status=$?
-  set -e
+  publication_output="$(protected_value "$ATTEMPT_STATE/publication-output.log" 2>&9)" || publication_output=""
   if [[ "$key" == "pass-1111" ]]; then
     expected_output="PUBLICATION=PASS"
-    [[ "$publication_status" -eq 0 && "$publication_output" == "$expected_output" ]]
+    if [[ "$publication_status" -ne 0 || "$publication_output" != "$expected_output" ]]; then publication_matches=0; fi
   else
     expected_output="PUBLICATION=FAIL"
-    [[ "$publication_status" -eq 1 && "$publication_output" == "$expected_output" ]]
+    if [[ "$publication_status" -ne 1 || "$publication_output" != "$expected_output" ]]; then publication_matches=0; fi
   fi
+  if [[ "$errexit_was_set" -eq 1 ]]; then set -e; else set +e; fi
+  [[ "$publication_matches" -eq 1 ]]
 }
 
 publish_checked_failure() {
@@ -590,6 +694,7 @@ cleanup() {
   if [[ "$SIGNAL_STATUS" -ne 0 ]]; then exit_status="$SIGNAL_STATUS"; fi
   [[ "$PHASE" != UNCLAIMED ]] || exit "$exit_status"
   local serverStopped=true listenerGone=false pidGone=true rootGone=true
+  if [[ "$CLEANUP_REQUIRED" -eq 1 || "$ROOT_ALLOCATION_UNCERTAIN" -eq 1 ]]; then rootGone=false; fi
   local pid="" full_cleanup=false mandatory_verdict=FAIL material="$FAILURE_MATERIAL" pending_arg="-"
   local cleanup_root
   cleanup_root="$(current_cleanup_root)"
