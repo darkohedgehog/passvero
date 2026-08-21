@@ -22,7 +22,15 @@ const REQUIRED_FILES = [
   "src/publication.mjs",
   "test/harness-contract.test.ts",
   "test/cluster-identity.test.ts",
+  "test/direct-boundary.test.ts",
+  "test/handler-boundary.test.ts",
 ];
+
+const TASK_5_ARTIFACT_HASHES = new Map([
+  ["src/proof-boundary.ts", "92b659927833c7c023959be970498a667477037856d7ddde64cc7e1f531ee01f"],
+  ["test/direct-boundary.test.ts", "82fa13b4acee46968f9ba5972241e73dcfb3e332e853576c75ab631c9f2b9e8d"],
+  ["test/handler-boundary.test.ts", "e6ce226521e12111be4e2934e7c33bc1ab77fdef9883c463a3e4dd7dca5b4801"],
+]);
 
 const EXPECTED_DEPENDENCIES = {
   "@better-auth/core": "1.7.1",
@@ -92,6 +100,14 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
   assert.equal(lockfile.lockfileVersion, 3);
   assert.deepEqual(lockfile.packages[""].dependencies, EXPECTED_DEPENDENCIES);
   assert.deepEqual(lockfile.packages[""].devDependencies, EXPECTED_DEV_DEPENDENCIES);
+
+  for (const [relativePath, expectedHash] of TASK_5_ARTIFACT_HASHES) {
+    assert.equal(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      expectedHash,
+      `${relativePath} drifted from the reviewed Task 5 proof`,
+    );
+  }
 
   const prismaConfig = sources.get("prisma.config.ts");
   assert.doesNotMatch(prismaConfig, /dotenv/);
@@ -210,6 +226,17 @@ test("proof sources forbid direct provider writes, any, and premature cookie exp
   const returnIndex = boundary.lastIndexOf("return finalized");
   assert.ok(finalizeIndex > 0 && finalizeIndex < afterCommitFailureIndex);
   assert.ok(afterCommitFailureIndex < returnIndex);
+
+  const directBoundary = await readHarness("test/direct-boundary.test.ts");
+  assert.match(directBoundary, /AssertNever<Extract<"handler", keyof DirectAuthApi>>/);
+  assert.match(
+    directBoundary,
+    /return providerUserId;\s*}\s*const canonicalId = await createCanonicalAndAbuse[\s\S]*?failAt\(failurePoint, "AFTER_CANONICAL_WRITE"\);[\s\S]*?const providerUserId = await createProviderCredential[\s\S]*?failAt\(failurePoint, "AFTER_PROVIDER_WRITE"\);[\s\S]*?await linkAndConsumeCredential/,
+  );
+  assert.match(boundary, /api: DirectAuthApi/);
+
+  const handlerBoundary = await readHarness("test/handler-boundary.test.ts");
+  assert.doesNotMatch(handlerBoundary, /providerTransactionIds|instrumentProviderWrites|STOP_H3_TRANSACTION_ID_INVALID/);
 });
 
 test("run-root and tool-environment gates encode filesystem ownership and containment", async () => {
@@ -258,6 +285,13 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.ok(staticBody, "run_static must be a separately reviewable function");
   assert.doesNotMatch(staticBody, /\b(?:initdb|pg_ctl|createdb|psql)\b|generated\/prisma/);
   assert.match(staticBody, /node_modules\/typescript\/bin\/tsc --noEmit --strict/);
+  for (const task5TypeInput of [
+    "src/proof-boundary.ts",
+    "test/direct-boundary.test.ts",
+    "test/handler-boundary.test.ts",
+  ]) {
+    assert.match(staticBody, new RegExp(task5TypeInput.replaceAll("/", "\\/\\s*")));
+  }
 
   for (const forbidden of [
     /docker/i,

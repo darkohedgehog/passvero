@@ -14,6 +14,7 @@ export type FailurePoint =
   | "AFTER_COMMIT_CALLBACK";
 
 export type TransactionClient = Parameters<typeof createProofAuth>[0]["prisma"];
+export type DirectAuthApi = ProofAuth["api"];
 
 export interface BoundaryRootPrisma {
   $transaction<T>(
@@ -23,10 +24,6 @@ export interface BoundaryRootPrisma {
 }
 
 export interface BoundaryAttemptAudit {
-  readonly rolledBack: boolean;
-  readonly commitObserved: boolean;
-  readonly cookieEligible: boolean;
-  readonly callbackPublished: boolean;
   readonly finalRowDeltas: RowCounts;
 }
 
@@ -34,6 +31,10 @@ export interface BoundaryFailedAttemptRecord {
   readonly attemptNumber: number;
   readonly failureClass: "SERIALIZATION" | "DEADLOCK" | "PRISMA_TRANSACTION_CONFLICT" | "NON_RETRYABLE";
   readonly finalRowDeltas: RowCounts;
+  readonly commitObserved: boolean;
+  readonly cookieEligible: boolean;
+  readonly callbackPublished: boolean;
+  readonly capturedCookieDiscarded: boolean;
 }
 
 export interface BoundaryRetryResult<T> {
@@ -68,16 +69,29 @@ export class BoundaryRetryStopped extends Error {
   }
 }
 
-class BoundaryCommittedFailure extends Error {
-  readonly commitObserved = true;
+type RetryableTransactionCode = "40001" | "40P01" | "P2034";
+
+export class BoundaryAttemptFailed extends Error {
+  readonly retryCode: RetryableTransactionCode | null;
+  readonly commitObserved: boolean;
   readonly cookieEligible: boolean;
   readonly callbackPublished: boolean;
+  readonly capturedCookieDiscarded: boolean;
 
-  constructor(cookieEligible: boolean, callbackPublished: boolean) {
-    super("STOP_BOUNDARY_FAILURE_AFTER_COMMIT");
-    this.name = "BoundaryCommittedFailure";
-    this.cookieEligible = cookieEligible;
-    this.callbackPublished = callbackPublished;
+  constructor(input: {
+    readonly retryCode: RetryableTransactionCode | null;
+    readonly commitObserved: boolean;
+    readonly cookieEligible: boolean;
+    readonly callbackPublished: boolean;
+    readonly capturedCookieDiscarded: boolean;
+  }) {
+    super("STOP_BOUNDARY_ATTEMPT_FAILED");
+    this.name = "BoundaryAttemptFailed";
+    this.retryCode = input.retryCode;
+    this.commitObserved = input.commitObserved;
+    this.cookieEligible = input.cookieEligible;
+    this.callbackPublished = input.callbackPublished;
+    this.capturedCookieDiscarded = input.capturedCookieDiscarded;
   }
 }
 
@@ -95,6 +109,13 @@ export const DIRECT_BOUNDARY_ADAPTER_MODES = [
   { adapterTransaction: false, accepted: true, expectedNestedPrismaTransaction: false },
   { adapterTransaction: true, accepted: false, expectedNestedPrismaTransaction: true },
 ] as const;
+
+export const DIRECT_BOUNDARY_STAGE_ORDERS = {
+  PROVIDER_FIRST: ["PROVIDER", "CANONICAL_AND_ABUSE", "IDENTITY_AND_TOKEN"],
+  CANONICAL_FIRST: ["CANONICAL_AND_ABUSE", "PROVIDER", "IDENTITY_AND_TOKEN"],
+} as const;
+
+export const EMAIL_VERIFICATION_LIFETIME_MS = 86_400_000 as const;
 
 export const DIRECT_BOUNDARY_RETRY_SCENARIOS = [
   { injectedCode: "40001", expectedAttempts: 3 },
@@ -127,6 +148,12 @@ export interface BoundaryResult<T> {
   readonly value: T;
   readonly cookie: DeferredCookie;
   readonly committed: true;
+}
+
+export interface CapturedBoundaryAttemptInput<T> {
+  readonly transactionalWork: () => Promise<T>;
+  readonly failurePoint: FailurePoint;
+  readonly afterCommit?: (value: T) => void | Promise<void>;
 }
 
 interface CaptureState {
@@ -216,10 +243,57 @@ function finalizeAfterCommit<T>(pending: { value: T; capturedHeaders: string[] }
   }
 }
 
+function retryCodeFrom(error: unknown): RetryableTransactionCode | null {
+  const code = readErrorCode(error);
+  return code === "40001" || code === "40P01" || code === "P2034" ? code : null;
+}
+
+export async function runCapturedBoundaryAttempt<T>(
+  input: CapturedBoundaryAttemptInput<T>,
+): Promise<BoundaryResult<T>> {
+  return headerCapture.run({ rawHeaders: [] }, async () => {
+    let pending: { value: T; capturedHeaders: string[] };
+    try {
+      const value = await input.transactionalWork();
+      pending = { value, capturedHeaders: takeCapturedHeaders() };
+    } catch (error) {
+      const capturedCookieDiscarded = (headerCapture.getStore()?.rawHeaders.length ?? 0) > 0;
+      clearCapturedHeaders();
+      throw new BoundaryAttemptFailed({
+        retryCode: retryCodeFrom(error),
+        commitObserved: false,
+        cookieEligible: false,
+        callbackPublished: false,
+        capturedCookieDiscarded,
+      });
+    }
+
+    const cookieEligible = pending.capturedHeaders.length > 0;
+    let callbackPublished = false;
+    try {
+      const finalized = finalizeAfterCommit(pending);
+      if (input.afterCommit) {
+        callbackPublished = true;
+        await input.afterCommit(finalized.value);
+      }
+      injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK");
+      return finalized;
+    } catch {
+      throw new BoundaryAttemptFailed({
+        retryCode: null,
+        commitObserved: true,
+        cookieEligible,
+        callbackPublished,
+        capturedCookieDiscarded: false,
+      });
+    }
+  });
+}
+
 export async function runBetterAuthBoundary<T>(input: {
   readonly rootPrisma: BoundaryRootPrisma;
   readonly invoke: (
-    auth: ProofAuth,
+    api: DirectAuthApi,
     tx: TransactionClient,
     assertAdapterBound: () => Promise<void>,
   ) => Promise<T>;
@@ -228,48 +302,38 @@ export async function runBetterAuthBoundary<T>(input: {
   readonly bindTransactionClient?: (tx: TransactionClient) => TransactionClient;
 }): Promise<BoundaryResult<T>> {
   readRunIdentity();
-  const pending = await input.rootPrisma.$transaction(
-    async (rawTx) => {
-      const tx = input.bindTransactionClient?.(rawTx) ?? rawTx;
-      const auth = createProofAuth({
-        prisma: tx,
-        adapterTransaction: false,
-        disableSignUp: false,
-      });
-      const adapter = (await auth.$context).adapter;
-      const assertAdapterBound = async (): Promise<void> => {
-        if (await getCurrentAdapter(adapter) !== adapter) {
-          throw new Error("STOP_BOUNDARY_ADAPTER_REPLACED");
-        }
-      };
-      await assertAdapterBound();
-      return runWithTransaction(adapter, async () => headerCapture.run({ rawHeaders: [] }, async () => {
-        try {
+  return runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      const pending = await input.rootPrisma.$transaction(
+        async (rawTx) => {
+          const tx = input.bindTransactionClient?.(rawTx) ?? rawTx;
+          const auth = createProofAuth({
+            prisma: tx,
+            adapterTransaction: false,
+            disableSignUp: false,
+          });
+          const adapter = (await auth.$context).adapter;
+          const assertAdapterBound = async (): Promise<void> => {
+            if (await getCurrentAdapter(adapter) !== adapter) {
+              throw new Error("STOP_BOUNDARY_ADAPTER_REPLACED");
+            }
+          };
           await assertAdapterBound();
-          const value = await input.invoke(auth, tx, assertAdapterBound);
-          await assertAdapterBound();
-          injectFailure(input.failurePoint, "BEFORE_COMMIT");
-          return { value, capturedHeaders: takeCapturedHeaders() };
-        } catch (error) {
-          clearCapturedHeaders();
-          throw error;
-        }
-      }));
+          return runWithTransaction(adapter, async () => {
+            await assertAdapterBound();
+            const value = await input.invoke(auth.api, tx, assertAdapterBound);
+            await assertAdapterBound();
+            injectFailure(input.failurePoint, "BEFORE_COMMIT");
+            return value;
+          });
+        },
+        { isolationLevel: "Serializable" },
+      );
+      return pending;
     },
-    { isolationLevel: "Serializable" },
-  );
-  const finalized = finalizeAfterCommit(pending);
-  let callbackPublished = false;
-  try {
-    if (input.afterCommit) {
-      callbackPublished = true;
-      await input.afterCommit(finalized.value);
-    }
-    injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK");
-    return finalized;
-  } catch {
-    throw new BoundaryCommittedFailure(finalized.cookie.present, callbackPublished);
-  }
+    failurePoint: input.failurePoint,
+    afterCommit: input.afterCommit,
+  });
 }
 
 function readErrorCode(error: unknown): string | null {
@@ -283,23 +347,38 @@ function readErrorCode(error: unknown): string | null {
 }
 
 function retryableTransactionFailure(error: unknown): boolean {
-  const code = readErrorCode(error);
-  return code === "40001" || code === "40P01" || code === "P2034";
+  return error instanceof BoundaryAttemptFailed && error.retryCode !== null && !error.commitObserved;
 }
 
 function safeFailureClass(error: unknown): BoundaryFailedAttemptRecord["failureClass"] {
-  const code = readErrorCode(error);
+  const code = error instanceof BoundaryAttemptFailed ? error.retryCode : null;
   if (code === "40001") return "SERIALIZATION";
   if (code === "40P01") return "DEADLOCK";
   if (code === "P2034") return "PRISMA_TRANSACTION_CONFLICT";
   return "NON_RETRYABLE";
 }
 
-function unsafeAuditReason(audit: BoundaryAttemptAudit): BoundaryRetryStopReason | null {
-  if (!audit.rolledBack) return "ROLLBACK_UNPROVEN";
-  if (audit.commitObserved) return "COMMIT_OBSERVED";
-  if (audit.cookieEligible) return "COOKIE_ELIGIBLE";
-  if (audit.callbackPublished) return "CALLBACK_PUBLISHED";
+const ROW_COUNT_KEYS = [
+  "providerUser", "providerAccount", "providerSession", "providerVerification", "canonicalUser",
+  "authIdentity", "activation", "credentialToken", "abuseBucket",
+] as const satisfies readonly (keyof RowCounts)[];
+
+function everyRowDeltaIsExactlyZero(deltas: RowCounts): boolean {
+  const entries = Object.entries(deltas);
+  return entries.length === ROW_COUNT_KEYS.length
+    && entries.every(([, value]) => value === 0)
+    && ROW_COUNT_KEYS.every((key) => Object.hasOwn(deltas, key) && deltas[key] === 0);
+}
+
+function unsafeAuditReason(
+  audit: BoundaryAttemptAudit,
+  failure: BoundaryAttemptFailed | null,
+): BoundaryRetryStopReason | null {
+  if (!everyRowDeltaIsExactlyZero(audit.finalRowDeltas)) return "ROLLBACK_UNPROVEN";
+  if (!failure) return "NON_RETRYABLE";
+  if (failure.commitObserved) return "COMMIT_OBSERVED";
+  if (failure.cookieEligible) return "COOKIE_ELIGIBLE";
+  if (failure.callbackPublished) return "CALLBACK_PUBLISHED";
   return null;
 }
 
@@ -322,10 +401,14 @@ export async function runBoundaryWithRetry<T>(input: {
         attemptNumber: attemptCount,
         failureClass: safeFailureClass(error),
         finalRowDeltas: audit.finalRowDeltas,
+        commitObserved: error instanceof BoundaryAttemptFailed && error.commitObserved,
+        cookieEligible: error instanceof BoundaryAttemptFailed && error.cookieEligible,
+        callbackPublished: error instanceof BoundaryAttemptFailed && error.callbackPublished,
+        capturedCookieDiscarded: error instanceof BoundaryAttemptFailed && error.capturedCookieDiscarded,
       });
       let unsafeReason: BoundaryRetryStopReason | null;
       try {
-        unsafeReason = unsafeAuditReason(audit);
+        unsafeReason = unsafeAuditReason(audit, error instanceof BoundaryAttemptFailed ? error : null);
       } catch {
         throw new BoundaryRetryStopped(attemptCount, "ROLLBACK_UNPROVEN", failedAttempts);
       }

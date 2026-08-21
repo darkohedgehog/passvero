@@ -75,7 +75,8 @@ run_static() {
     npm_config_userconfig="$static_root/npmrc" NODE_OPTIONS="--no-warnings" \
     "$NODE_BIN" node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 \
     --module NodeNext --moduleResolution NodeNext --skipLibCheck \
-    src/run-root.ts test/cluster-identity.test.ts); then
+    src/evidence.ts src/auth.ts src/run-root.ts src/proof-boundary.ts \
+    test/cluster-identity.test.ts test/direct-boundary.test.ts test/handler-boundary.test.ts); then
     static_cleanup "$static_root"
     return 1
   fi

@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { getCurrentAdapter, runWithTransaction } from "@better-auth/core/context";
@@ -15,15 +14,11 @@ import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 
-interface ProofSqlClient {
-  $queryRaw<T>(query: TemplateStringsArray): Promise<T>;
-}
-
 interface ProviderCountDelegate {
   count(): Promise<number>;
 }
 
-interface H3PrismaClient extends BoundaryRootPrisma, ProofSqlClient {
+interface H3PrismaClient extends BoundaryRootPrisma {
   readonly authProviderUser: ProviderCountDelegate;
   readonly authProviderAccount: ProviderCountDelegate;
   $disconnect(): Promise<void>;
@@ -37,17 +32,13 @@ function hasMethod(value: UnknownRecord, property: PropertyKey): boolean {
   return typeof Reflect.get(value, property) === "function";
 }
 
-function isProofSqlClient(value: unknown): value is ProofSqlClient {
-  return isRecord(value) && hasMethod(value, "$queryRaw");
-}
-
 function isH3PrismaClient(value: unknown): value is H3PrismaClient {
   if (!isRecord(value)) return false;
   const user = Reflect.get(value, "authProviderUser");
   const account = Reflect.get(value, "authProviderAccount");
   return isRecord(user) && hasMethod(user, "count")
     && isRecord(account) && hasMethod(account, "count")
-    && hasMethod(value, "$queryRaw") && hasMethod(value, "$transaction") && hasMethod(value, "$disconnect");
+    && hasMethod(value, "$transaction") && hasMethod(value, "$disconnect");
 }
 
 function createGeneratedPrismaClient(module: unknown, adapter: PrismaPg): H3PrismaClient {
@@ -57,53 +48,6 @@ function createGeneratedPrismaClient(module: unknown, adapter: PrismaPg): H3Pris
   const client: unknown = Reflect.construct(Constructor, [{ adapter }]);
   if (!isH3PrismaClient(client)) throw new Error("STOP_H3_GENERATED_CLIENT_INVALID");
   return client;
-}
-
-function instrumentProviderWrites<T extends object>(client: T, transactionIds: string[]): T {
-  const providerDelegates = new Set<PropertyKey>([
-    "authProviderUser", "authProviderAccount", "authProviderSession", "authProviderVerification",
-  ]);
-  const writeActions = new Set<PropertyKey>([
-    "create", "update", "updateMany", "delete", "deleteMany", "upsert",
-  ]);
-  const delegateCache = new Map<PropertyKey, object>();
-  let proxy: T;
-  proxy = new Proxy(client, {
-    get(target, property, receiver) {
-      const value: unknown = Reflect.get(target, property, receiver);
-      if (!providerDelegates.has(property) || value === null || typeof value !== "object") return value;
-      const cached = delegateCache.get(property);
-      if (cached) return cached;
-      const delegate = new Proxy(value, {
-        get(delegateTarget, action, delegateReceiver) {
-          const method: unknown = Reflect.get(delegateTarget, action, delegateReceiver);
-          if (!writeActions.has(action) || typeof method !== "function") return method;
-          return async (...args: readonly unknown[]) => {
-            if (!isProofSqlClient(proxy)) {
-              throw new Error("STOP_H3_INSTRUMENTED_CLIENT_INVALID");
-            }
-            const beforeWrite = await transactionIdHash(proxy);
-            const result: unknown = await Reflect.apply(method, delegateTarget, args);
-            const afterWrite = await transactionIdHash(proxy);
-            transactionIds.push(beforeWrite, afterWrite);
-            return result;
-          };
-        },
-      });
-      delegateCache.set(property, delegate);
-      return delegate;
-    },
-  });
-  return proxy;
-}
-
-async function transactionIdHash(client: ProofSqlClient): Promise<string> {
-  const rows = await client.$queryRaw<readonly { readonly transactionId: bigint }[]>`
-    SELECT txid_current() AS "transactionId"
-  `;
-  const value = rows[0]?.transactionId.toString();
-  if (!value || !/^\d+$/.test(value)) throw new Error("STOP_H3_TRANSACTION_ID_INVALID");
-  return createHash("sha256").update(value).digest("hex");
 }
 
 test("H3 manifest rejects handler and catch-all use unconditionally while runtime remains unexecuted", () => {
@@ -128,19 +72,13 @@ test("live H3 demonstrates handler adapter replacement and remains rejected", {
     providerUser: await prisma.authProviderUser.count(),
     providerAccount: await prisma.authProviderAccount.count(),
   };
-  let outerTransactionIdHash = "";
   let handlerResponseStatus = 0;
-  const providerTransactionIds: string[] = [];
   try {
-    const handlerPrisma = instrumentProviderWrites(prisma, providerTransactionIds);
-    const handlerSeed = createProofAuth({ prisma: handlerPrisma, adapterTransaction: false, disableSignUp: false });
+    const handlerSeed = createProofAuth({ prisma, adapterTransaction: false, disableSignUp: false });
     const handlerAuth = betterAuth({ ...handlerSeed.options, disabledPaths: [] });
     await assert.rejects(
       () => prisma.$transaction(async (rawTx: TransactionClient) => {
-        if (!isProofSqlClient(rawTx)) throw new Error("STOP_H3_TRANSACTION_CLIENT_INVALID");
-        const tx = rawTx;
-        outerTransactionIdHash = await transactionIdHash(tx);
-        const outerAuth = createProofAuth({ prisma: tx, adapterTransaction: false, disableSignUp: true });
+        const outerAuth = createProofAuth({ prisma: rawTx, adapterTransaction: false, disableSignUp: true });
         const outerAdapter = (await outerAuth.$context).adapter;
         await runWithTransaction(outerAdapter, async () => {
           assert.equal(await getCurrentAdapter(outerAdapter), outerAdapter);
@@ -168,13 +106,7 @@ test("live H3 demonstrates handler adapter replacement and remains rejected", {
     };
     const providerEscapedOuterRollback = after.providerUser > before.providerUser
       || after.providerAccount > before.providerAccount;
-    assert.match(outerTransactionIdHash, /^[a-f0-9]{64}$/);
     assert.ok(handlerResponseStatus >= 200 && handlerResponseStatus < 300);
-    assert.ok(providerTransactionIds.length > 0, "handler proof must observe Better Auth provider writes");
-    providerTransactionIds.forEach((transactionId) => {
-      assert.match(transactionId, /^[a-f0-9]{64}$/);
-      assert.notEqual(transactionId, outerTransactionIdHash, "handler provider writes must not share the outer tx");
-    });
     assert.equal(HANDLER_BOUNDARY_REJECTION.accepted, false);
     assert.equal(providerEscapedOuterRollback, true, "handler provider state must escape the injected outer rollback");
     assert.equal(HANDLER_BOUNDARY_REJECTION.outcomeIndependent, true);

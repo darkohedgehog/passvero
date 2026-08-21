@@ -8,17 +8,21 @@ import {
   DIRECT_BOUNDARY_FAILURE_SCENARIOS,
   DIRECT_BOUNDARY_NEVER_RETRY_CLASSES,
   DIRECT_BOUNDARY_RETRY_SCENARIOS,
+  DIRECT_BOUNDARY_STAGE_ORDERS,
+  EMAIL_VERIFICATION_LIFETIME_MS,
   H2_DIRECT_BOUNDARY_RUNTIME_VERDICT,
   BoundaryRetryStopped,
   captureDirectResponseHeaders,
   runBetterAuthBoundary,
   runBoundaryWithRetry,
+  runCapturedBoundaryAttempt,
   type BoundaryAttemptAudit,
   type BoundaryRootPrisma,
+  type DirectAuthApi,
   type FailurePoint,
   type TransactionClient,
 } from "../src/proof-boundary.js";
-import { createProofAuth, type ProofAuth } from "../src/auth.js";
+import { createProofAuth } from "../src/auth.js";
 import type { RowCounts } from "../src/evidence.js";
 import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
 
@@ -33,6 +37,8 @@ type WriteModel =
   | "AuthCredentialToken";
 
 type ProviderWriteModel = "AuthProviderUser" | "AuthProviderAccount" | "AuthProviderVerification";
+type AssertNever<T extends never> = T;
+type DirectBoundaryHandlerMustBeUnavailable = AssertNever<Extract<"handler", keyof DirectAuthApi>>;
 
 interface WriteObservation {
   readonly model: WriteModel;
@@ -67,7 +73,7 @@ interface H2TransactionClient extends TransactionClient, ProofSqlClient {
   readonly authIdentity: CountDelegate & CreateDelegate;
   readonly accountActivation: CountDelegate;
   readonly authCredentialToken: CountDelegate & CreateDelegate & UpdateDelegate;
-  readonly authAbuseBucket: CountDelegate & CreateDelegate;
+  readonly authAbuseBucket: CountDelegate & CreateDelegate & UpdateDelegate;
 }
 
 interface H2PrismaClient extends H2TransactionClient, BoundaryRootPrisma {
@@ -101,10 +107,13 @@ function isH2TransactionClient(value: unknown): value is H2TransactionClient {
   for (const name of ["authProviderUser", "authProviderAccount", "authProviderSession", "authProviderVerification", "accountActivation"]) {
     if (!isCountDelegate(Reflect.get(value, name))) return false;
   }
-  for (const name of ["user", "authIdentity", "authAbuseBucket"]) {
+  for (const name of ["user", "authIdentity"]) {
     const delegate = Reflect.get(value, name);
     if (!isCountDelegate(delegate) || !isRecord(delegate) || !hasMethod(delegate, "create")) return false;
   }
+  const abuse = Reflect.get(value, "authAbuseBucket");
+  if (!isCountDelegate(abuse) || !isRecord(abuse)
+    || !hasMethod(abuse, "create") || !hasMethod(abuse, "update")) return false;
   const credential = Reflect.get(value, "authCredentialToken");
   return isCountDelegate(credential) && isRecord(credential)
     && hasMethod(credential, "create") && hasMethod(credential, "update")
@@ -185,6 +194,18 @@ function digest(label: string): string {
   return createHash("sha256").update(label).digest("base64url");
 }
 
+function emailVerificationTimes(createdAt: Date): {
+  readonly createdAt: Date;
+  readonly expiresAt: Date;
+  readonly consumedAt: Date;
+} {
+  return {
+    createdAt,
+    expiresAt: new Date(createdAt.getTime() + EMAIL_VERIFICATION_LIFETIME_MS),
+    consumedAt: new Date(createdAt.getTime() + 1),
+  };
+}
+
 function responseUserId(value: unknown): string {
   if (!isRecord(value)) throw new Error("STOP_H2_DIRECT_RESPONSE_INVALID");
   const user = Reflect.get(value, "user");
@@ -194,8 +215,8 @@ function responseUserId(value: unknown): string {
   return id;
 }
 
-async function createProviderCredential(auth: ProofAuth, fixtureId: string): Promise<string> {
-  const response = await auth.api.signUpEmail({
+async function createProviderCredential(api: DirectAuthApi, fixtureId: string): Promise<string> {
+  const response = await api.signUpEmail({
     body: {
       name: `proof-${fixtureId}`,
       email: `proof-${fixtureId}@invalid.example`,
@@ -232,7 +253,7 @@ async function createCanonicalAndAbuse(
   }
   const canonicalId = Reflect.get(created, "id");
   if (typeof canonicalId !== "string") throw new Error("STOP_H2_CANONICAL_USER_INVALID");
-  await recordWrite(tx, observations, "AuthAbuseBucket", () => tx.authAbuseBucket.create({
+  const abuse = await recordWrite(tx, observations, "AuthAbuseBucket", () => tx.authAbuseBucket.create({
     data: {
       dimension: "ACCOUNT_IDENTIFIER",
       keyDigest: digest(`abuse-${fixtureId}`),
@@ -244,6 +265,13 @@ async function createCanonicalAndAbuse(
       backoffUpdatedAt: new Date(),
       expiresAt: new Date(Date.now() + 60_000),
     },
+  }));
+  if (!isRecord(abuse)) throw new Error("STOP_H2_ABUSE_BUCKET_INVALID");
+  const abuseId = Reflect.get(abuse, "id");
+  if (typeof abuseId !== "string") throw new Error("STOP_H2_ABUSE_BUCKET_INVALID");
+  await recordWrite(tx, observations, "AuthAbuseBucket", () => tx.authAbuseBucket.update({
+    where: { id: abuseId },
+    data: { attemptCount: 2, backoffUpdatedAt: new Date() },
   }));
   return canonicalId;
 }
@@ -258,13 +286,15 @@ async function linkAndConsumeCredential(
   await recordWrite(tx, observations, "AuthIdentity", () => tx.authIdentity.create({
     data: { provider: "credential", providerSubject: providerUserId, userId: canonicalId },
   }));
+  const { createdAt, expiresAt, consumedAt } = emailVerificationTimes(new Date());
   const created = await recordWrite(tx, observations, "AuthCredentialToken", () => tx.authCredentialToken.create({
     data: {
       providerUserId,
       purpose: "EMAIL_VERIFICATION",
       tokenDigest: digest(`credential-${fixtureId}`),
       targetEmailDigest: digest(`target-${fixtureId}`),
-      expiresAt: new Date(Date.now() + 86_400_000),
+      createdAt,
+      expiresAt,
     },
   }));
   if (!isRecord(created) || typeof Reflect.get(created, "id") !== "string") {
@@ -272,7 +302,7 @@ async function linkAndConsumeCredential(
   }
   await recordWrite(tx, observations, "AuthCredentialToken", () => tx.authCredentialToken.update({
     where: { id: Reflect.get(created, "id") },
-    data: { consumedAt: new Date() },
+    data: { consumedAt },
   }));
 }
 
@@ -289,7 +319,7 @@ async function runMatrixCase(
   const before = await readCounts(rootPrisma);
   const observations: WriteObservation[] = [];
   const invoke = async (
-    auth: ProofAuth,
+    api: DirectAuthApi,
     rawTx: TransactionClient,
     assertAdapterBound: () => Promise<void>,
   ): Promise<string> => {
@@ -297,7 +327,7 @@ async function runMatrixCase(
     const tx = rawTx;
     await assertAdapterBound();
     if (order === "PROVIDER_FIRST") {
-      const providerUserId = await createProviderCredential(auth, fixtureId);
+      const providerUserId = await createProviderCredential(api, fixtureId);
       await assertAdapterBound();
       failAt(failurePoint, "AFTER_PROVIDER_WRITE");
       const canonicalId = await createCanonicalAndAbuse(tx, fixtureId, observations);
@@ -306,11 +336,11 @@ async function runMatrixCase(
       return providerUserId;
     }
     const canonicalId = await createCanonicalAndAbuse(tx, fixtureId, observations);
-    const providerUserId = await createProviderCredential(auth, fixtureId);
-    await assertAdapterBound();
-    await linkAndConsumeCredential(tx, fixtureId, canonicalId, providerUserId, observations);
     failAt(failurePoint, "AFTER_CANONICAL_WRITE");
+    const providerUserId = await createProviderCredential(api, fixtureId);
+    await assertAdapterBound();
     failAt(failurePoint, "AFTER_PROVIDER_WRITE");
+    await linkAndConsumeCredential(tx, fixtureId, canonicalId, providerUserId, observations);
     return providerUserId;
   };
 
@@ -368,8 +398,25 @@ const ZERO_ROW_DELTAS = {
   abuseBucket: 0,
 } as const satisfies RowCounts;
 
+const NONZERO_ROW_DELTAS = {
+  ...ZERO_ROW_DELTAS,
+  providerUser: 1,
+} as const satisfies RowCounts;
+
+function capturedFailure(code: string): Promise<unknown> {
+  return runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      throw codedError(code, "credential material must never be recorded");
+    },
+    failurePoint: "NONE",
+  });
+}
+
 test("H2 manifest freezes the direct-only boundary while runtime remains unexecuted", () => {
+  const compileTimeOnly: DirectBoundaryHandlerMustBeUnavailable[] = [];
+  assert.equal(compileTimeOnly.length, 0);
   assert.equal(H2_DIRECT_BOUNDARY_RUNTIME_VERDICT, "NOT_EXECUTED");
+  assert.equal(EMAIL_VERIFICATION_LIFETIME_MS, 86_400_000);
   assert.deepEqual(DIRECT_BOUNDARY_FAILURE_SCENARIOS, [
     "NONE", "AFTER_PROVIDER_WRITE", "AFTER_CANONICAL_WRITE", "BEFORE_COMMIT",
   ]);
@@ -377,26 +424,29 @@ test("H2 manifest freezes the direct-only boundary while runtime remains unexecu
     { adapterTransaction: false, accepted: true, expectedNestedPrismaTransaction: false },
     { adapterTransaction: true, accepted: false, expectedNestedPrismaTransaction: true },
   ]);
+  assert.deepEqual(DIRECT_BOUNDARY_STAGE_ORDERS, {
+    PROVIDER_FIRST: ["PROVIDER", "CANONICAL_AND_ABUSE", "IDENTITY_AND_TOKEN"],
+    CANONICAL_FIRST: ["CANONICAL_AND_ABUSE", "PROVIDER", "IDENTITY_AND_TOKEN"],
+  });
+  const createdAt = new Date("2026-08-21T00:00:00.000Z");
+  const times = emailVerificationTimes(createdAt);
+  assert.equal(times.createdAt, createdAt);
+  assert.equal(times.expiresAt.getTime() - times.createdAt.getTime(), 86_400_000);
+  assert.ok(times.consumedAt >= times.createdAt && times.consumedAt < times.expiresAt);
 });
 
 test("H2 retry classifier permits only serialization, deadlock, and P2034 after proven rollback", async () => {
   for (const scenario of DIRECT_BOUNDARY_RETRY_SCENARIOS) {
     let attempts = 0;
     let audits = 0;
-    let callbacks = 0;
-    let cookies = 0;
     const audit: BoundaryAttemptAudit = {
-      rolledBack: true,
-      commitObserved: false,
-      cookieEligible: false,
-      callbackPublished: false,
       finalRowDeltas: ZERO_ROW_DELTAS,
     };
     await assert.rejects(
       () => runBoundaryWithRetry({
         attempt: async () => {
           attempts += 1;
-          throw codedError(scenario.injectedCode, "credential material must never be recorded");
+          return capturedFailure(scenario.injectedCode);
         },
         auditFailure: async () => {
           audits += 1;
@@ -415,30 +465,22 @@ test("H2 retry classifier permits only serialization, deadlock, and P2034 after 
     );
     assert.equal(attempts, scenario.expectedAttempts);
     assert.equal(audits, scenario.expectedAttempts);
-    assert.equal(callbacks, 0);
-    assert.equal(cookies, 0);
-    callbacks += 0;
-    cookies += 0;
   }
 });
 
-test("H2 never retries when rollback is unproven or commit, cookie, or callback is observable", async () => {
-  for (const unsafeAudit of [
-    { rolledBack: false, commitObserved: false, cookieEligible: false, callbackPublished: false, finalRowDeltas: ZERO_ROW_DELTAS },
-    { rolledBack: true, commitObserved: true, cookieEligible: false, callbackPublished: false, finalRowDeltas: ZERO_ROW_DELTAS },
-    { rolledBack: true, commitObserved: false, cookieEligible: true, callbackPublished: false, finalRowDeltas: ZERO_ROW_DELTAS },
-    { rolledBack: true, commitObserved: false, cookieEligible: false, callbackPublished: true, finalRowDeltas: ZERO_ROW_DELTAS },
-  ] satisfies readonly BoundaryAttemptAudit[]) {
-    let attempts = 0;
-    await assert.rejects(() => runBoundaryWithRetry({
+test("H2 never retries a retryable code when any final row delta is nonzero", async () => {
+  let attempts = 0;
+  await assert.rejects(
+    () => runBoundaryWithRetry({
       attempt: async () => {
         attempts += 1;
-        throw codedError("40001", "unsafe detail");
+        return capturedFailure("40001");
       },
-      auditFailure: async () => unsafeAudit,
-    }));
-    assert.equal(attempts, 1);
-  }
+      auditFailure: async () => ({ finalRowDeltas: NONZERO_ROW_DELTAS }),
+    }),
+    (error: unknown) => error instanceof BoundaryRetryStopped && error.reason === "ROLLBACK_UNPROVEN",
+  );
+  assert.equal(attempts, 1);
 });
 
 test("H2 never retries constraint, validation, credential, unknown, connection, ambiguity, or after-commit failures", async () => {
@@ -447,46 +489,76 @@ test("H2 never retries constraint, validation, credential, unknown, connection, 
     await assert.rejects(() => runBoundaryWithRetry({
       attempt: async () => {
         attempts += 1;
-        throw codedError(scenario.injectedCode, "unsafe detail");
+        return capturedFailure(scenario.injectedCode);
       },
-      auditFailure: async () => ({
-        rolledBack: true,
-        commitObserved: scenario.id === "COMMIT_AMBIGUITY" || scenario.id === "AFTER_COMMIT",
-        cookieEligible: scenario.id === "AFTER_COMMIT",
-        callbackPublished: scenario.id === "AFTER_COMMIT",
-        finalRowDeltas: ZERO_ROW_DELTAS,
-      }),
+      auditFailure: async () => ({ finalRowDeltas: ZERO_ROW_DELTAS }),
     }));
     assert.equal(attempts, 1, scenario.id);
   }
 });
 
-test("H2 returns only the successful third attempt and publishes after commit once", async () => {
+test("H2 composes retry with real deferred-cookie capture and after-commit publication", async () => {
   let attempts = 0;
   let published = 0;
   const result = await runBoundaryWithRetry({
-    attempt: async () => {
-      attempts += 1;
-      if (attempts < 3) throw codedError("40P01", "discarded attempt detail");
-      published += 1;
-      return "committed";
-    },
-    auditFailure: async () => ({
-      rolledBack: true,
-      commitObserved: false,
-      cookieEligible: false,
-      callbackPublished: false,
-      finalRowDeltas: ZERO_ROW_DELTAS,
+    attempt: async () => runCapturedBoundaryAttempt({
+      transactionalWork: async () => {
+        const headerName = ["set", "cookie"].join("-");
+        captureDirectResponseHeaders(new Response(null, {
+          headers: { [headerName]: ["__Host-proof=opaque", "Path=/", "HttpOnly", "Secure", "SameSite=Lax"].join("; ") },
+        }));
+        attempts += 1;
+        if (attempts < 3) throw codedError("40P01", "discarded attempt detail");
+        return "committed";
+      },
+      failurePoint: "NONE",
+      afterCommit: async () => {
+        published += 1;
+      },
     }),
+    auditFailure: async () => ({ finalRowDeltas: ZERO_ROW_DELTAS }),
   });
-  assert.deepEqual(result, {
-    value: "committed",
-    attemptCount: 3,
-    failedAttempts: [
-      { attemptNumber: 1, failureClass: "DEADLOCK", finalRowDeltas: ZERO_ROW_DELTAS },
-      { attemptNumber: 2, failureClass: "DEADLOCK", finalRowDeltas: ZERO_ROW_DELTAS },
-    ],
-  });
+  assert.equal(result.value.value, "committed");
+  assert.equal(result.value.cookie.present, true);
+  assert.equal(result.attemptCount, 3);
+  assert.equal(result.failedAttempts.length, 2);
+  assert.equal(result.failedAttempts.every((attempt) => attempt.cookieEligible === false), true);
+  assert.equal(result.failedAttempts.every((attempt) => attempt.callbackPublished === false), true);
+  assert.equal(result.failedAttempts.every((attempt) => attempt.capturedCookieDiscarded === true), true);
+  assert.equal(published, 1);
+});
+
+test("H2 stops retry after real cookie and callback eligibility becomes externally visible", async () => {
+  let attempts = 0;
+  let published = 0;
+  await assert.rejects(
+    () => runBoundaryWithRetry({
+      attempt: async () => runCapturedBoundaryAttempt({
+        transactionalWork: async () => {
+          attempts += 1;
+          const headerName = ["set", "cookie"].join("-");
+          captureDirectResponseHeaders(new Response(null, {
+            headers: { [headerName]: ["__Host-proof=opaque", "Path=/", "HttpOnly", "Secure", "SameSite=Lax"].join("; ") },
+          }));
+          return "committed";
+        },
+        failurePoint: "AFTER_COMMIT_CALLBACK",
+        afterCommit: async () => {
+          published += 1;
+        },
+      }),
+      auditFailure: async () => ({ finalRowDeltas: ZERO_ROW_DELTAS }),
+    }),
+    (error: unknown) => {
+      assert.equal(error instanceof BoundaryRetryStopped, true);
+      if (!(error instanceof BoundaryRetryStopped)) return false;
+      assert.equal(error.reason, "COMMIT_OBSERVED");
+      assert.equal(error.failedAttempts[0]?.cookieEligible, true);
+      assert.equal(error.failedAttempts[0]?.callbackPublished, true);
+      return true;
+    },
+  );
+  assert.equal(attempts, 1);
   assert.equal(published, 1);
 });
 
