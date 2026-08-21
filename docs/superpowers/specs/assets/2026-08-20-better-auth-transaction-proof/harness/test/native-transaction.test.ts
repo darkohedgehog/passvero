@@ -138,8 +138,7 @@ async function currentTransactionIdHash(client: ProofSqlClient): Promise<string>
 
 function instrumentPrisma<T extends object>(client: T, state: InstrumentationState): T {
   const delegateCache = new Map<PropertyKey, object>();
-  let proxy: T;
-  proxy = new Proxy(client, {
+  const proxy: T = new Proxy(client, {
     get(target, property, receiver) {
       const value: unknown = Reflect.get(target, property, receiver);
       if (property === "$transaction" && typeof value === "function") {

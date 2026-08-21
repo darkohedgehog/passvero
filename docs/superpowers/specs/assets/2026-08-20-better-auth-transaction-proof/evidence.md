@@ -2,8 +2,8 @@
 
 POST-EXECUTION RECONCILIATION: this corrected public artifact was not generated
 by the publisher executed at `d1f350627c3da72feaa18eb5416ff17e07db81a8`.
-It preserves the historical execution facts without changing the executed proof
-source or rerunning the proof.
+Historical execution facts remain pinned to that commit. The later post-proof
+`prefer-const` successor source was not executed, and the proof was not rerun.
 The JSON file is the authoritative corrected public record; this Markdown is
 its companion.
 

@@ -64,7 +64,6 @@ const TASK_10_ORCHESTRATION_HASHES = new Map([
   ["src/publication.mjs", "d61ffb689c6c5d437306ad0fa943546869db68099fe39e58b468b3dae350b005"],
   ["src/lifecycle.ts", "8d5f22bfa631d132664f6833365113e3f8638be3d06c85080a67ff03acce8f5c"],
   ["test/harness-contract.test.ts", "b61eeda3136f937fb034f9612099f74da3bc7c82b4b38996f270fe87cb82d769"],
-  ["test/native-transaction.test.ts", "e83a2cf4537e51345781d0999bd89d58b6f29a34e83528fc4a2357065ae118ba"],
   ["test/direct-boundary.test.ts", "5f6100dbf8bd6c07d95a1ff7ba17283d371c59c108555ae04c0ad08e0cbd8dc7"],
   ["test/handler-boundary.test.ts", "e91ff34540943448e4f4cdccfa95064867c701e876921c1caec09f1c7c679501"],
   ["test/controlled-activation.test.ts", "06420fea8cfd17d9f85a0af53a20d6aed3f00c385b367a15d5358ef1dda5cd7a"],
@@ -72,10 +71,14 @@ const TASK_10_ORCHESTRATION_HASHES = new Map([
   ["test/recovery-boundary.test.ts", "9f2c27ca7f2271c1931a30cdabddcbcc8484b86ed9c136acd3056eadf3461736"],
   ["test/route-boundary.test.ts", "43d7b7d0412b9d447431d8b6d1678e810e6f10c0e6634bf96650aee2a0d9a855"],
 ]);
+const TASK_10_EXECUTED_NATIVE_TRANSACTION_HASH =
+  "e83a2cf4537e51345781d0999bd89d58b6f29a34e83528fc4a2357065ae118ba";
+const TASK_10_POST_PROOF_LINT_SUCCESSOR_NATIVE_TRANSACTION_HASH =
+  "e378998b921151c79594ba0ca0aa044b001a550173f56d9813f845cbe8143401";
 const TASK_10_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1e302395fc75df8f8183a56";
 const TASK_10_SHELL_SIMULATION_HASH = "aeacc38f11cac1094befafb422b824bba521c1676d4e5e3bfa76e57b35bdb8a8";
 const TASK_10_FAILURE_EVIDENCE_JSON_HASH = "a266b49904e2e6f6cf3d479cf9424fcc35fdbe0fd744b73d864f5e052f162b8a";
-const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "b612a1c7cdd2037035cb95fa40a68c2aaf1958faca642a1e2d2d99dcab3fd734";
+const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "8d1d2962a6a2b0c4734c74c735a69c50784ad40b7784dd2911b3750ae2712aff";
 
 const REQUIRED_HYPOTHESIS_IDS = [
   "H1_NATIVE_TRANSACTION",
@@ -218,6 +221,22 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       `${relativePath} drifted from the reviewed Task 10 orchestration`,
     );
   }
+  const nativeTransactionSource = sources.get("test/native-transaction.test.ts");
+  const nativeTransactionHash = createHash("sha256")
+    .update(nativeTransactionSource)
+    .digest("hex");
+  assert.equal(
+    nativeTransactionHash,
+    TASK_10_POST_PROOF_LINT_SUCCESSOR_NATIVE_TRANSACTION_HASH,
+    "post-proof lint successor drifted from the authorized semantics-preserving correction",
+  );
+  assert.notEqual(
+    nativeTransactionHash,
+    TASK_10_EXECUTED_NATIVE_TRANSACTION_HASH,
+    "post-proof lint successor must not be represented as the historically executed source",
+  );
+  assert.match(nativeTransactionSource, /const proxy: T = new Proxy\(client, \{/);
+  assert.doesNotMatch(nativeTransactionSource, /let proxy: T;\s*proxy = new Proxy\(client, \{/);
 
   const prismaConfig = sources.get("prisma.config.ts");
   assert.doesNotMatch(prismaConfig, /dotenv/);
@@ -618,8 +637,8 @@ test("the terminal proof reconciliation is deterministic, redacted, and blocks p
     "",
     "POST-EXECUTION RECONCILIATION: this corrected public artifact was not generated",
     "by the publisher executed at `d1f350627c3da72feaa18eb5416ff17e07db81a8`.",
-    "It preserves the historical execution facts without changing the executed proof",
-    "source or rerunning the proof.",
+    "Historical execution facts remain pinned to that commit. The later post-proof",
+    "`prefer-const` successor source was not executed, and the proof was not rerun.",
     "The JSON file is the authoritative corrected public record; this Markdown is",
     "its companion.",
     "",
@@ -677,7 +696,9 @@ test("the terminal proof reconciliation is deterministic, redacted, and blocks p
     assert.match(source, /retry count is (?:zero|0)/i);
     assert.match(source, /FAIL_RETAINED/);
     assert.match(source, /separate explicit exact-target\s+authorization/i);
-    assert.match(source, /TASK_10_LINT_GATE=BLOCKED_POST_PROOF_DISPOSITION_REQUIRED/);
+    assert.match(source, /TASK_10_LINT_GATE=PASS_POST_PROOF_SUCCESSOR_ONLY/);
+    assert.match(source, /historical execution source.*d1f3506/is);
+    assert.match(source, /successor (?:source )?was not\s+executed/i);
     assert.doesNotMatch(source, /PostgreSQL connection performed: YES, exactly once/i);
     assert.doesNotMatch(source, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVAL_READY/);
     assert.doesNotMatch(source, /BETTER_AUTH_RUNTIME_BOUNDARY=/);

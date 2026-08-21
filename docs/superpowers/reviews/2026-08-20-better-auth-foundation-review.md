@@ -124,13 +124,19 @@ fresh explicit operator authorization.
 The committed evidence JSON and Markdown were corrected after execution to
 remove synthetic runtime observations and add invocation, retry, cleanup, and
 provenance fields. They explicitly identify themselves as post-execution
-reconciliation artifacts and preserve the executed source commit. The executed
-publisher/harness source was not changed and the proof was not rerun.
+reconciliation artifacts and preserve the historical execution source commit
+`d1f350627c3da72feaa18eb5416ff17e07db81a8`. That source had one
+`prefer-const` error and 15 warnings. The proof was not rerun.
 
-`TASK_10_LINT_GATE=BLOCKED_POST_PROOF_DISPOSITION_REQUIRED`: mandatory lint
-remains non-green because the reviewed executed harness contains one
-`prefer-const` error, plus 15 warnings. The harness MUST NOT be changed in place
-to make the historical proof appear clean; disposition requires separate review.
+`TASK_10_LINT_GATE=PASS_POST_PROOF_SUCCESSOR_ONLY`: after separate operator
+authorization, the post-proof successor changes only the native-transaction
+proxy binding from a `let` declaration plus assignment to one `const`
+initializer. Its file hash is
+`e378998b921151c79594ba0ca0aa044b001a550173f56d9813f845cbe8143401`.
+Fresh `npm run lint` exits 0 with 0 errors and the same 15 warnings. The
+historical execution source remains `d1f3506`; the successor source was not
+executed and does not alter any proof, hypothesis, cleanup, or persistence
+fact.
 
 ## Provider-model and canonical identity reconciliation
 
