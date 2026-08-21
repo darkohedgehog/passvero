@@ -10,9 +10,11 @@ import {
   DIRECT_SERVER_API_ALLOWLIST,
   DISABLED_NATIVE_PATHS,
   H7_ROUTE_EXPOSURE_RUNTIME_VERDICT,
+  PASSVERO_HTTP_AUTH_BOUNDARY,
   RECOVERY_SERVER_ONLY_ENDPOINTS,
   controlledActivationPlugin,
   createRecoveryRouteBoundaryPlugin,
+  handlePassveroAuthHttpRequest,
   type RecoveryProofBoundary,
 } from "../src/auth.js";
 import * as authModule from "../src/auth.js";
@@ -118,10 +120,28 @@ const EXPECTED_DIRECT_ALLOWLIST = [
   "afterCommitCredentialProbe",
 ] as const;
 
-const EXPECTED_ENCODED_DYNAMIC_PATHS = [
-  "/callback/:id%2F",
-  "/reset-password/:token%2F",
+const CONCRETE_DYNAMIC_ROUTES = [
+  { name: "callbackOAuthConcrete", path: "/callback/google", methods: ["GET", "POST"] },
+  { name: "callbackOAuthConcreteEncoded", path: "/callback/google%2F", methods: ["GET", "POST"] },
+  { name: "requestPasswordResetConcrete", path: "/reset-password/concrete-reset-value", methods: ["GET"] },
+  { name: "requestPasswordResetConcreteEncoded", path: "/reset-password/concrete-reset-value%2F", methods: ["GET"] },
 ] as const;
+
+const RAW_HANDLER_NEGATIVE_CONTROL = [
+  { id: "CALLBACK_CONCRETE", path: "/callback/google", expectedStatus: 302 },
+  { id: "CALLBACK_CONCRETE_ENCODED", path: "/callback/google%2F", expectedStatus: 302 },
+  { id: "RESET_CONCRETE", path: "/reset-password/concrete-reset-value", expectedStatus: 400 },
+  { id: "RESET_CONCRETE_ENCODED", path: "/reset-password/concrete-reset-value%2F", expectedStatus: 400 },
+] as const;
+
+const EXPECTED_PRODUCTION_MATRIX_COUNTS = {
+  nativeAndConcrete: 532,
+  serverOnlySpellings: 294,
+  baseSpellings: 36,
+  total: 862,
+} as const;
+
+type PassveroHttpAuthBoundary = (request: Request) => Response | Promise<Response>;
 
 function isRecord(value: unknown): value is UnknownRecord {
   return value !== null && (typeof value === "object" || typeof value === "function");
@@ -177,15 +197,6 @@ function staticRecoveryBoundary(): RecoveryProofBoundary {
   };
 }
 
-function productionDisabledPaths(): readonly string[] {
-  const value = Reflect.get(authModule, "PRODUCTION_DISABLED_NATIVE_PATHS");
-  assert.equal(Array.isArray(value), true, "production disabled-path registry missing");
-  if (!Array.isArray(value) || !value.every((entry) => typeof entry === "string")) {
-    throw new Error("STOP_ROUTE_DISABLED_PATH_REGISTRY_INVALID");
-  }
-  return value;
-}
-
 function createStaticRouteAuth(base: BaseForm) {
   return betterAuth({
     appName: "Passvero route boundary proof",
@@ -203,7 +214,7 @@ function createStaticRouteAuth(base: BaseForm) {
       disableSessionRefresh: true,
       cookieCache: { enabled: false },
     },
-    disabledPaths: [...productionDisabledPaths()],
+    disabledPaths: [...DISABLED_NATIVE_PATHS],
     plugins: [
       controlledActivationPlugin(),
       createRecoveryRouteBoundaryPlugin(staticRecoveryBoundary()),
@@ -211,6 +222,17 @@ function createStaticRouteAuth(base: BaseForm) {
     logger: { disabled: true },
     telemetry: { enabled: false },
   });
+}
+
+function instrumentRawHandler(auth: ReturnType<typeof createStaticRouteAuth>) {
+  let invocationCount = 0;
+  return {
+    invoke: async (request: Request): Promise<Response> => {
+      invocationCount += 1;
+      return auth.handler(request);
+    },
+    count: (): number => invocationCount,
+  };
 }
 
 function normalizeLikePinnedRouter(requestUrl: string, basePath: string): string {
@@ -277,17 +299,16 @@ function serverOnlySpellings(name: string): readonly string[] {
   return [`/${kebab}`, `/${name}`, `/${snake}`];
 }
 
-async function assertHttp404(input: {
-  readonly auth: ReturnType<typeof createStaticRouteAuth>;
+async function assertProductionHttp404(input: {
+  readonly boundary: PassveroHttpAuthBoundary;
   readonly url: string;
   readonly method: HttpMethod;
   readonly matrixId: string;
 }): Promise<void> {
-  const response = await input.auth.handler(new Request(input.url, { method: input.method }));
-  if (response.status >= 200 && response.status < 400) {
+  const response = await input.boundary(new Request(input.url, { method: input.method }));
+  if (response.status !== 404) {
     assert.fail(`STOP_ROUTE_BYPASS:${input.matrixId}:${response.status}`);
   }
-  assert.equal(response.status, 404, input.matrixId);
 }
 
 test("H7 freezes the exact HTTP and direct-call policy while runtime remains unexecuted", () => {
@@ -298,10 +319,13 @@ test("H7 freezes the exact HTTP and direct-call policy while runtime remains une
   assert.deepEqual(CONTROLLED_ACTIVATION_FAILURE_POINTS, [
     "NONE", "AFTER_PROVIDER_CREDENTIAL_CREATION", "AFTER_AUTH_IDENTITY_CREATION",
   ]);
-  assert.deepEqual(productionDisabledPaths(), [
-    ...DISABLED_NATIVE_PATHS,
-    ...EXPECTED_ENCODED_DYNAMIC_PATHS,
-  ]);
+  assert.equal(Reflect.get(authModule, "PRODUCTION_DISABLED_NATIVE_PATHS"), undefined);
+  assert.deepEqual(PASSVERO_HTTP_AUTH_BOUNDARY, {
+    basePath: "/internal-auth",
+    status: 404,
+    delegatesToBetterAuthHandler: false,
+    catchAllExported: false,
+  });
 });
 
 test("runtime auth.api exactly matches the pinned source endpoint registry", async () => {
@@ -323,7 +347,25 @@ test("runtime auth.api exactly matches the pinned source endpoint registry", asy
   );
 });
 
-test("every native HTTP method is denied for both base forms and every frozen spelling", async () => {
+test("raw Better Auth handler proves concrete dynamic routes remain reachable negative controls", async () => {
+  for (const base of BASE_FORMS) {
+    const raw = instrumentRawHandler(createStaticRouteAuth(base));
+    for (const negativeControl of RAW_HANDLER_NEGATIVE_CONTROL) {
+      const response = await raw.invoke(new Request(
+        `https://auth-proof.invalid${canonicalPath(base, negativeControl.path)}`,
+        { method: "GET" },
+      ));
+      assert.equal(
+        response.status,
+        negativeControl.expectedStatus,
+        `RAW_HANDLER_NEGATIVE_CONTROL:${base.id}:${negativeControl.id}`,
+      );
+    }
+    assert.equal(raw.count(), RAW_HANDLER_NEGATIVE_CONTROL.length);
+  }
+});
+
+test("production HTTP boundary denies every native route without invoking Better Auth", async () => {
   const nativeRoutes = PINNED_ENDPOINT_REGISTRY.filter(
     (entry): entry is typeof entry & { readonly path: string } => entry.path !== null,
   );
@@ -332,9 +374,11 @@ test("every native HTTP method is denied for both base forms and every frozen sp
     [...DISABLED_NATIVE_PATHS].sort(),
   );
 
+  let responseCount = 0;
   for (const base of BASE_FORMS) {
-    const auth = createStaticRouteAuth(base);
-    for (const endpoint of nativeRoutes) {
+    const raw = instrumentRawHandler(createStaticRouteAuth(base));
+    const boundary: PassveroHttpAuthBoundary = handlePassveroAuthHttpRequest;
+    for (const endpoint of [...nativeRoutes, ...CONCRETE_DYNAMIC_ROUTES]) {
       for (const variant of httpVariants(base, endpoint.path)) {
         const url = `https://auth-proof.invalid${variant.pathname}`;
         assert.equal(
@@ -343,16 +387,19 @@ test("every native HTTP method is denied for both base forms and every frozen sp
           `${base.id}:${endpoint.name}:${variant.id}:normalization`,
         );
         for (const method of endpoint.methods) {
-          await assertHttp404({
-            auth,
+          await assertProductionHttp404({
+            boundary,
             url,
             method,
             matrixId: `${base.id}:${endpoint.name}:${method}:${variant.id}`,
           });
+          responseCount += 1;
         }
       }
     }
+    assert.equal(raw.count(), 0, `STOP_ROUTE_HANDLER_INVOKED:${base.id}`);
   }
+  assert.equal(responseCount, EXPECTED_PRODUCTION_MATRIX_COUNTS.nativeAndConcrete);
 });
 
 test("all pathless activation, recovery, and native server-only spellings are handler-unreachable", async () => {
@@ -362,21 +409,65 @@ test("all pathless activation, recovery, and native server-only spellings are ha
   ]);
   assert.equal(pathless.every(({ serverOnly }) => serverOnly), true);
 
+  let responseCount = 0;
   for (const base of BASE_FORMS) {
-    const auth = createStaticRouteAuth(base);
+    const raw = instrumentRawHandler(createStaticRouteAuth(base));
+    const boundary: PassveroHttpAuthBoundary = handlePassveroAuthHttpRequest;
     for (const endpoint of pathless) {
       for (const guessedPath of serverOnlySpellings(endpoint.name)) {
         for (const variant of httpVariants(base, guessedPath)) {
-          await assertHttp404({
-            auth,
+          await assertProductionHttp404({
+            boundary,
             url: `https://auth-proof.invalid${variant.pathname}`,
             method: endpoint.methods[0],
             matrixId: `${base.id}:${endpoint.name}:${guessedPath}:${variant.id}`,
           });
+          responseCount += 1;
         }
       }
     }
+    assert.equal(raw.count(), 0, `STOP_ROUTE_HANDLER_INVOKED:${base.id}:server-only`);
   }
+  assert.equal(responseCount, EXPECTED_PRODUCTION_MATRIX_COUNTS.serverOnlySpellings);
+});
+
+test("production HTTP boundary denies base and alternate spellings without a catch-all delegation", async () => {
+  const spellings = [
+    "/internal-auth",
+    "/internal-auth/",
+    "/internal-auth%2F",
+    "/internal-auth//",
+    "/internal-auth?route-proof=1",
+    "/internal_auth",
+    "/internalAuth",
+    "/INTERNAL-AUTH",
+    "/wrong-auth",
+  ] as const;
+
+  let responseCount = 0;
+  for (const base of BASE_FORMS) {
+    const raw = instrumentRawHandler(createStaticRouteAuth(base));
+    const boundary: PassveroHttpAuthBoundary = handlePassveroAuthHttpRequest;
+    for (const spelling of spellings) {
+      for (const method of ["GET", "POST"] as const) {
+        await assertProductionHttp404({
+          boundary,
+          url: `https://auth-proof.invalid${spelling}`,
+          method,
+          matrixId: `${base.id}:BASE_SPELLING:${method}:${spelling}`,
+        });
+        responseCount += 1;
+      }
+    }
+    assert.equal(raw.count(), 0, `STOP_ROUTE_HANDLER_INVOKED:${base.id}:base-spelling`);
+  }
+  assert.equal(responseCount, EXPECTED_PRODUCTION_MATRIX_COUNTS.baseSpellings);
+  assert.equal(
+    EXPECTED_PRODUCTION_MATRIX_COUNTS.nativeAndConcrete
+      + EXPECTED_PRODUCTION_MATRIX_COUNTS.serverOnlySpellings
+      + EXPECTED_PRODUCTION_MATRIX_COUNTS.baseSpellings,
+    EXPECTED_PRODUCTION_MATRIX_COUNTS.total,
+  );
 });
 
 test("direct API remains distinct, exact-allowlisted, and direct signup is rejected", async () => {

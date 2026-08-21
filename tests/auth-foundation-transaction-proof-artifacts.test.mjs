@@ -51,8 +51,8 @@ const TASK_8_ARTIFACT_HASHES = new Map([
 const TASK_8_AUTH_PREFIX_HASH = "5f62090e132f5f6ad0e379ccc8928087a562a3cf798b9bc16420bb6139efccc9";
 
 const TASK_9_ARTIFACT_HASHES = new Map([
-  ["src/auth.ts", "9c596df4f6ad767703b42ccbcfcbdb0970090fa53df677a7e84902df4e054150"],
-  ["test/route-boundary.test.ts", "daedcb3bf24f744e4f5266c712ddf39ce13bbcd5fef5f0eb9718d3694000ae6f"],
+  ["src/auth.ts", "4090e54fb2b726459080b792d8469fd5f7b77c025b2d644513dee5604d13f2ab"],
+  ["test/route-boundary.test.ts", "5f139b4f8aac5170dcf6690eb73ba5b1bcea88390b2a7a9b97ee3b198e153814"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -334,6 +334,14 @@ test("proof sources forbid direct provider writes, any, and premature cookie exp
   assert.match(auth, /ctx\.context\.internalAdapter/);
   assert.match(auth, /changePasswordCredentialProof: createAuthEndpoint\.serverOnly/);
   assert.match(auth, /changePasswordWithBetterAuthAuthority/);
+  assert.match(auth, /disabledPaths: \[\.\.\.DISABLED_NATIVE_PATHS\]/);
+  assert.doesNotMatch(auth, /PRODUCTION_DISABLED_NATIVE_PATHS|ENCODED_DYNAMIC_NATIVE_PATHS/);
+  const httpBoundaryStart = auth.indexOf("export function handlePassveroAuthHttpRequest");
+  const httpBoundaryEnd = auth.indexOf("export const DIRECT_SERVER_API_ALLOWLIST", httpBoundaryStart);
+  assert.ok(httpBoundaryStart >= 0 && httpBoundaryEnd > httpBoundaryStart);
+  const httpBoundary = auth.slice(httpBoundaryStart, httpBoundaryEnd);
+  assert.match(httpBoundary, /return new Response\("Not Found", \{ status: PASSVERO_HTTP_AUTH_BOUNDARY\.status \}\)/);
+  assert.doesNotMatch(httpBoundary, /auth\.handler|betterAuth\(/);
   assert.doesNotMatch(auth, /console\.(?:log|error|warn|info)/);
   const finalizeIndex = boundary.lastIndexOf("const finalized = finalizeAfterCommit(pending)");
   const afterCommitFailureIndex = boundary.lastIndexOf('injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK")');
