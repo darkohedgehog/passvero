@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import { getCurrentAdapter, runWithTransaction } from "@better-auth/core/context";
-import type { DBAdapter } from "@better-auth/core/db/adapter";
+import type { DBAdapter, Where } from "@better-auth/core/db/adapter";
 import { createProofAuth, type ProofAuth } from "./auth.js";
 import type { DeferredCookie, RowCounts } from "./evidence.js";
 import { readRunIdentity } from "./run-root.js";
@@ -16,6 +16,7 @@ export type FailurePoint =
 
 export type TransactionClient = Parameters<typeof createProofAuth>[0]["prisma"];
 export type DirectAuthApi = ProofAuth["api"];
+export type BetterAuthBoundaryContext = Awaited<ProofAuth["$context"]>;
 
 export interface BoundaryRootPrisma {
   $transaction<T>(
@@ -104,16 +105,12 @@ export const H2_DIRECT_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
 export const H3_HANDLER_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
 export const H5_SESSION_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
 export const H5_SESSION_ROTATION_FEASIBILITY = {
-  accepted: false,
-  verdict: "FAIL",
-  reason: "NO_SUPPORTED_ATOMIC_SESSION_ROTATION",
+  accepted: true,
+  verdict: "SUPPORTED_STATIC",
+  operation: "DBAdapter.incrementOne",
+  callShape: "incrementOne({ model, where, increment: {}, set })",
   pinnedPublicAdapter: "@better-auth/core@1.7.1 DBAdapter",
-  rejectedOperations: [
-    "DBAdapter.update: explicitly not race-safe for guarded state transitions",
-    "DBAdapter.incrementOne: requires a numeric session field to increment",
-    "non-public session helper: unexported and read-then-update",
-    "Prisma provider-session delegate: direct provider-table write",
-  ],
+  upgradeSensitive: true,
 } as const;
 
 export const SESSION_REFRESH_MS = 86_400_000 as const;
@@ -230,7 +227,7 @@ export function requiredAtomicRotationGuards(input: {
   readonly sessionId: string;
   readonly presentedToken: string;
   readonly now: Date;
-}): readonly Readonly<{ readonly field: string; readonly operator: string; readonly value: string | Date }>[] {
+}): readonly Where[] {
   return [
     { field: "id", operator: "eq", value: input.sessionId },
     { field: "token", operator: "eq", value: input.presentedToken },
@@ -240,8 +237,55 @@ export function requiredAtomicRotationGuards(input: {
   ];
 }
 
-export function requireSupportedAtomicSessionRotation(): never {
-  throw new Error(H5_SESSION_ROTATION_FEASIBILITY.reason);
+export async function rotateSessionWithBetterAuthAuthority(
+  adapter: Pick<DBAdapter, "incrementOne">,
+  input: {
+    readonly currentSession: SessionProofRecord;
+    readonly presentedToken: string;
+    readonly rotatedToken: string;
+    readonly now: Date;
+    readonly mode?: "REFRESH" | "SECURITY_EVENT";
+  },
+): Promise<SessionProofRecord | null> {
+  if (!/^[A-Za-z0-9_-]{16,}$/.test(input.rotatedToken)) {
+    throw new Error("STOP_H5_ROTATED_TOKEN_INVALID");
+  }
+  const decision = evaluateSessionPolicy(input.currentSession, input.now);
+  if (decision.action === "REAUTHENTICATE") return null;
+  if (decision.action === "ACTIVE" && input.mode !== "SECURITY_EVENT") return null;
+  const expiresAt = decision.action === "ROTATE"
+    ? decision.expiresAt
+    : new Date(Math.min(
+      input.now.getTime() + SESSION_INACTIVITY_MS,
+      input.currentSession.authenticatedAt.getTime() + SESSION_ABSOLUTE_MS,
+    ));
+  const rotated = await adapter.incrementOne<SessionProofRecord>({
+    model: "session",
+    where: [...requiredAtomicRotationGuards({
+      sessionId: input.currentSession.id,
+      presentedToken: input.presentedToken,
+      now: input.now,
+    })],
+    increment: {},
+    set: {
+      token: input.rotatedToken,
+      expiresAt,
+      lastRefreshAt: input.now,
+    },
+  });
+  if (!rotated) return null;
+  if (
+    rotated.id !== input.currentSession.id
+    || rotated.userId !== input.currentSession.userId
+    || rotated.token !== input.rotatedToken
+    || rotated.expiresAt.getTime() !== expiresAt.getTime()
+    || rotated.lastRefreshAt.getTime() !== input.now.getTime()
+    || rotated.authenticatedAt.getTime() !== input.currentSession.authenticatedAt.getTime()
+    || rotated.selectedOrganizationId !== input.currentSession.selectedOrganizationId
+  ) {
+    throw new Error("STOP_H5_ATOMIC_SESSION_ROTATION_RESULT_INVALID");
+  }
+  return rotated;
 }
 
 function validatedSessionMaxAgeSeconds(input: {
@@ -322,6 +366,69 @@ export async function revokeAllWithBetterAuthAuthority(
     where: [{ field: "userId", operator: "eq", value: userId }],
   });
   stageExpiredSessionCookie(expiringCookieResponse);
+}
+
+export interface BetterAuthCredentialAuthority {
+  findCredentialAccount(userId: string): Promise<{
+    readonly id: string;
+    readonly password?: string | null;
+  } | null>;
+  updateAccount(accountId: string, data: { readonly password: string }): Promise<unknown>;
+}
+
+export interface BetterAuthPasswordAuthority {
+  verify(input: { readonly hash: string; readonly password: string }): Promise<boolean>;
+  hash(password: string): Promise<string>;
+}
+
+export async function changePasswordWithBetterAuthAuthority(input: {
+  readonly credentialAuthority: BetterAuthCredentialAuthority;
+  readonly password: BetterAuthPasswordAuthority;
+  readonly sessionAdapter: Pick<DBAdapter, "deleteMany" | "incrementOne">;
+  readonly userId: string;
+  readonly currentPassword: string;
+  readonly newPassword: string;
+  readonly currentSession: SessionProofRecord;
+  readonly rotatedToken: string;
+  readonly now: Date;
+  readonly cookieResponse: Response;
+}): Promise<SessionProofRecord> {
+  if (input.currentSession.userId !== input.userId) {
+    throw new Error("STOP_H5_PASSWORD_CHANGE_SESSION_USER_MISMATCH");
+  }
+  const account = await input.credentialAuthority.findCredentialAccount(input.userId);
+  if (!account?.password) throw new Error("STOP_H5_CREDENTIAL_ACCOUNT_NOT_FOUND");
+  const verified = await input.password.verify({
+    hash: account.password,
+    password: input.currentPassword,
+  });
+  if (!verified) throw new Error("STOP_H5_CURRENT_PASSWORD_INVALID");
+  const passwordHash = await input.password.hash(input.newPassword);
+  await input.credentialAuthority.updateAccount(account.id, { password: passwordHash });
+  await input.sessionAdapter.deleteMany({
+    model: "session",
+    where: [
+      { field: "userId", operator: "eq", value: input.userId },
+      { field: "id", operator: "ne", value: input.currentSession.id },
+    ],
+  });
+  const rotated = await rotateSessionWithBetterAuthAuthority(input.sessionAdapter, {
+    currentSession: input.currentSession,
+    presentedToken: input.currentSession.token,
+    rotatedToken: input.rotatedToken,
+    now: input.now,
+    mode: "SECURITY_EVENT",
+  });
+  if (!rotated) throw new Error("STOP_H5_PASSWORD_CHANGE_ROTATION_GUARD_LOST");
+  stageRotatedSessionCookie({
+    token: rotated.token,
+    response: input.cookieResponse,
+    now: input.now,
+    expiresAt: rotated.expiresAt,
+    authenticatedAt: rotated.authenticatedAt,
+    lastRefreshAt: rotated.lastRefreshAt,
+  });
+  return rotated;
 }
 
 export const DIRECT_BOUNDARY_FAILURE_SCENARIOS = [
@@ -543,6 +650,7 @@ export async function runBetterAuthBoundary<T>(input: {
     api: DirectAuthApi,
     tx: TransactionClient,
     assertAdapterBound: () => Promise<void>,
+    context: BetterAuthBoundaryContext,
   ) => Promise<T>;
   readonly failurePoint: FailurePoint;
   readonly afterCommit?: (value: T, response: Response) => void | Promise<void>;
@@ -560,7 +668,8 @@ export async function runBetterAuthBoundary<T>(input: {
             adapterTransaction: false,
             disableSignUp: false,
           });
-          const adapter = (await auth.$context).adapter;
+          const context = await auth.$context;
+          const adapter = context.adapter;
           const assertAdapterBound = async (): Promise<void> => {
             if (await getCurrentAdapter(adapter) !== adapter) {
               throw new Error("STOP_BOUNDARY_ADAPTER_REPLACED");
@@ -571,7 +680,7 @@ export async function runBetterAuthBoundary<T>(input: {
             await assertAdapterBound();
             return runSessionCommitStages({
               sessionWrite: async () => {
-                const value = await input.invoke(auth.api, tx, assertAdapterBound);
+                const value = await input.invoke(auth.api, tx, assertAdapterBound, context);
                 await assertAdapterBound();
                 return value;
               },

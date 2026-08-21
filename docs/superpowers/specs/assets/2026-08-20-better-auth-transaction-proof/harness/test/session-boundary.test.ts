@@ -15,8 +15,9 @@ import {
   captureDirectResponseHeaders,
   evaluateSessionPolicy,
   expireSessionWithBetterAuthAuthority,
+  changePasswordWithBetterAuthAuthority,
   requiredAtomicRotationGuards,
-  requireSupportedAtomicSessionRotation,
+  rotateSessionWithBetterAuthAuthority,
   revokeAllWithBetterAuthAuthority,
   runBoundaryWithRetry,
   runBetterAuthBoundary,
@@ -235,6 +236,72 @@ async function signIn(
   });
 }
 
+async function rotateSession(
+  prisma: H5PrismaClient,
+  input: {
+    readonly currentSession: SessionProofRecord;
+    readonly presentedToken: string;
+    readonly rotatedToken: string;
+    readonly now: Date;
+  },
+) {
+  return runBetterAuthBoundary({
+    rootPrisma: prisma,
+    failurePoint: "NONE",
+    invoke: async (_api, _tx, _assertAdapterBound, context) => {
+      const rotated = await rotateSessionWithBetterAuthAuthority(context.adapter, input);
+      if (rotated) {
+        stageRotatedSessionCookie({
+          token: rotated.token,
+          response: authoritativeCookieResponse(
+            rotated.token,
+            Math.floor((rotated.expiresAt.getTime() - input.now.getTime()) / 1_000),
+          ),
+          now: input.now,
+          expiresAt: rotated.expiresAt,
+          authenticatedAt: rotated.authenticatedAt,
+          lastRefreshAt: rotated.lastRefreshAt,
+        });
+      }
+      return rotated;
+    },
+  });
+}
+
+async function changePassword(
+  prisma: H5PrismaClient,
+  input: {
+    readonly currentPassword: string;
+    readonly newPassword: string;
+    readonly currentSession: SessionProofRecord;
+    readonly rotatedToken: string;
+    readonly now: Date;
+  },
+) {
+  return runBetterAuthBoundary({
+    rootPrisma: prisma,
+    failurePoint: "NONE",
+    invoke: async (_api, _tx, _assertAdapterBound, context) => changePasswordWithBetterAuthAuthority({
+      credentialAuthority: context.internalAdapter,
+      password: context.password,
+      sessionAdapter: context.adapter,
+      userId: input.currentSession.userId,
+      currentPassword: input.currentPassword,
+      newPassword: input.newPassword,
+      currentSession: input.currentSession,
+      rotatedToken: input.rotatedToken,
+      now: input.now,
+      cookieResponse: authoritativeCookieResponse(
+        input.rotatedToken,
+        Math.floor((Math.min(
+          input.now.getTime() + SESSION_INACTIVITY_MS,
+          input.currentSession.authenticatedAt.getTime() + SESSION_ABSOLUTE_MS,
+        ) - input.now.getTime()) / 1_000),
+      ),
+    }),
+  });
+}
+
 function failSessionCreate(rawTx: TransactionClient): TransactionClient {
   if (!isH5TransactionClient(rawTx)) throw new Error("STOP_H5_TRANSACTION_CLIENT_INVALID");
   const sessionDelegate = rawTx.authProviderSession;
@@ -286,6 +353,44 @@ function sessionAt(input: {
     authenticatedAt: input.authenticatedAt,
     lastRefreshAt,
     selectedOrganizationId: "selected-organization-id",
+  };
+}
+
+function comparable(value: unknown): unknown {
+  return value instanceof Date ? value.getTime() : value;
+}
+
+function guardedSessionIncrementAdapter(initial: SessionProofRecord): {
+  readonly adapter: Pick<DBAdapter, "incrementOne">;
+  readonly calls: Readonly<Record<string, unknown>>[];
+} {
+  let stored = initial;
+  const calls: Readonly<Record<string, unknown>>[] = [];
+  return {
+    calls,
+    adapter: {
+      incrementOne: async <T>(
+        input: Parameters<DBAdapter["incrementOne"]>[0],
+      ): Promise<T | null> => {
+        await Promise.resolve();
+        calls.push(input);
+        if (input.model !== "session" || Object.keys(input.increment).length !== 0 || !input.set) {
+          throw new Error("STOP_H5_GUARDED_ADAPTER_CALL_INVALID");
+        }
+        const matches = input.where.every((condition) => {
+          const actual = comparable(Reflect.get(stored, condition.field));
+          const expected = comparable(condition.value);
+          if (condition.operator === "eq") return actual === expected;
+          if (condition.operator === "gt") {
+            return typeof actual === "number" && typeof expected === "number" && actual > expected;
+          }
+          throw new Error("STOP_H5_GUARDED_ADAPTER_OPERATOR_INVALID");
+        });
+        if (!matches) return null;
+        stored = proofSession({ ...stored, ...input.set });
+        return stored as unknown as T;
+      },
+    },
   };
 }
 
@@ -558,36 +663,78 @@ test("invalid deferred cookie attributes fail closed after commit", async () => 
 
 });
 
-test("pinned public adapter cannot express the required atomic session rotation", () => {
+test("pinned public adapter supports an upgrade-sensitive atomic session rotation", () => {
   assert.deepEqual(H5_SESSION_ROTATION_FEASIBILITY, {
-    accepted: false,
-    verdict: "FAIL",
-    reason: "NO_SUPPORTED_ATOMIC_SESSION_ROTATION",
+    accepted: true,
+    verdict: "SUPPORTED_STATIC",
+    operation: "DBAdapter.incrementOne",
+    callShape: "incrementOne({ model, where, increment: {}, set })",
     pinnedPublicAdapter: "@better-auth/core@1.7.1 DBAdapter",
-    rejectedOperations: [
-      "DBAdapter.update: explicitly not race-safe for guarded state transitions",
-      "DBAdapter.incrementOne: requires a numeric session field to increment",
-      "non-public session helper: unexported and read-then-update",
-      "Prisma provider-session delegate: direct provider-table write",
-    ],
+    upgradeSensitive: true,
   });
-  assert.throws(requireSupportedAtomicSessionRotation, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
 });
 
-test("atomic rotation guard rejects a stale presented token", () => {
-  const guards = requiredAtomicRotationGuards({
-    sessionId: "session-id",
+test("atomic rotation makes the exact pinned public adapter call and preserves anchors", async () => {
+  const now = new Date("2026-08-21T00:00:00.000Z");
+  const current = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+  });
+  const calls: Readonly<Record<string, unknown>>[] = [];
+  const adapter: Pick<DBAdapter, "incrementOne"> = {
+    incrementOne: async <T>(input: Parameters<DBAdapter["incrementOne"]>[0]): Promise<T | null> => {
+      calls.push(input);
+      return {
+        ...current,
+        token: "rotated_session_token_1234",
+        expiresAt: new Date("2026-08-28T00:00:00.000Z"),
+        lastRefreshAt: now,
+      } as T;
+    },
+  };
+  const rotated = await rotateSessionWithBetterAuthAuthority(adapter, {
+    currentSession: current,
+    presentedToken: current.token,
+    rotatedToken: "rotated_session_token_1234",
+    now,
+  });
+  assert.equal(rotated?.authenticatedAt, current.authenticatedAt);
+  assert.equal(rotated?.selectedOrganizationId, current.selectedOrganizationId);
+  assert.deepEqual(calls, [{
+    model: "session",
+    increment: {},
+    set: {
+      token: "rotated_session_token_1234",
+      expiresAt: new Date("2026-08-28T00:00:00.000Z"),
+      lastRefreshAt: now,
+    },
+    where: requiredAtomicRotationGuards({
+      sessionId: current.id,
+      presentedToken: current.token,
+      now,
+    }),
+  }]);
+});
+
+test("atomic rotation returns null for a stale presented token", async () => {
+  const currentSession = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+    expiresAt: new Date("2026-09-01T00:00:00.000Z"),
+    token: "current-token",
+  });
+  const guarded = guardedSessionIncrementAdapter(currentSession);
+  const rotated = await rotateSessionWithBetterAuthAuthority(guarded.adapter, {
+    currentSession,
     presentedToken: "stale-token",
+    rotatedToken: "rotated_session_token_1234",
     now: new Date("2026-08-21T00:00:00.000Z"),
   });
-  assert.deepEqual(guards.slice(0, 2), [
-    { field: "id", operator: "eq", value: "session-id" },
-    { field: "token", operator: "eq", value: "stale-token" },
-  ]);
-  assert.throws(requireSupportedAtomicSessionRotation, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
+  assert.equal(rotated, null);
+  assert.equal(guarded.calls.length, 1);
 });
 
-test("atomic rotation guard rejects exact expiry, inactivity, and absolute deadlines", () => {
+test("atomic rotation rejects exact expiry, inactivity, and absolute deadlines", async () => {
   const now = new Date("2026-08-21T00:00:00.000Z");
   const guards = requiredAtomicRotationGuards({ sessionId: "session-id", presentedToken: "token", now });
   assert.deepEqual(guards, [
@@ -597,15 +744,57 @@ test("atomic rotation guard rejects exact expiry, inactivity, and absolute deadl
     { field: "lastRefreshAt", operator: "gt", value: new Date(now.getTime() - SESSION_INACTIVITY_MS) },
     { field: "authenticatedAt", operator: "gt", value: new Date(now.getTime() - SESSION_ABSOLUTE_MS) },
   ]);
+  for (const currentSession of [
+    sessionAt({
+      authenticatedAt: new Date(now.getTime() - SESSION_ABSOLUTE_MS),
+      lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+      expiresAt: new Date("2026-09-01T00:00:00.000Z"),
+      token: "token",
+    }),
+    sessionAt({
+      authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+      lastRefreshAt: new Date(now.getTime() - SESSION_INACTIVITY_MS),
+      expiresAt: new Date("2026-09-01T00:00:00.000Z"),
+      token: "token",
+    }),
+    sessionAt({
+      authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+      lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+      expiresAt: now,
+      token: "token",
+    }),
+  ]) {
+    const guarded = guardedSessionIncrementAdapter(currentSession);
+    assert.equal(await rotateSessionWithBetterAuthAuthority(guarded.adapter, {
+      currentSession,
+      presentedToken: "token",
+      rotatedToken: "rotated_session_token_1234",
+      now,
+    }), null);
+    assert.equal(guarded.calls.length, 0);
+  }
 });
 
-test("concurrent rotation requires one conditional-update winner and remains unsupported", async () => {
-  const attempts = await Promise.allSettled([
-    Promise.resolve().then(requireSupportedAtomicSessionRotation),
-    Promise.resolve().then(requireSupportedAtomicSessionRotation),
+test("concurrent atomic rotations have exactly one winner", async () => {
+  const current = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+  });
+  const guarded = guardedSessionIncrementAdapter(current);
+  const now = new Date("2026-08-21T00:00:00.000Z");
+  const attempts = await Promise.all([
+    rotateSessionWithBetterAuthAuthority(guarded.adapter, {
+      currentSession: current, presentedToken: current.token,
+      rotatedToken: "rotated_session_token_1111", now,
+    }),
+    rotateSessionWithBetterAuthAuthority(guarded.adapter, {
+      currentSession: current, presentedToken: current.token,
+      rotatedToken: "rotated_session_token_2222", now,
+    }),
   ]);
-  assert.equal(attempts.every((attempt) => attempt.status === "rejected"), true);
-  assert.equal(attempts.filter((attempt) => attempt.status === "fulfilled").length, 0);
+  assert.equal(attempts.filter((attempt) => attempt !== null).length, 1);
+  assert.equal(attempts.filter((attempt) => attempt === null).length, 1);
+  assert.equal(guarded.calls.length, 2);
 });
 
 test("rotated cookie is deferred and capped by inactivity and absolute limits", async () => {
@@ -732,11 +921,136 @@ test("expiry and revoke-all use public adapter operations and publish an expirin
     && !error.cookieEligible);
 });
 
-test("password change is rejected before credential mutation because current-session rotation is unsupported", () => {
-  assert.throws(requireSupportedAtomicSessionRotation, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
+test("expiry and revoke delivery failures are never retried", async () => {
+  for (const operation of ["EXPIRE", "REVOKE_ALL"] as const) {
+    let attempts = 0;
+    const adapter: Pick<DBAdapter, "delete" | "deleteMany"> = {
+      delete: async () => {},
+      deleteMany: async () => 1,
+    };
+    await assert.rejects(() => runBoundaryWithRetry({
+      attempt: async () => {
+        attempts += 1;
+        return runCapturedBoundaryAttempt({
+          transactionalWork: async () => {
+            if (operation === "EXPIRE") {
+              await expireSessionWithBetterAuthAuthority(
+                adapter, "session-id", "token", authoritativeCookieResponse("", 0),
+              );
+            } else {
+              await revokeAllWithBetterAuthAuthority(
+                adapter, "user-id", authoritativeCookieResponse("", 0),
+              );
+            }
+            return operation;
+          },
+          failurePoint: "NONE",
+          afterCommit: () => { throw new Error("DELIVERY_FAILED"); },
+        });
+      },
+      auditFailure: async () => ({ finalRowDeltas: { ...ZERO_DELTAS, providerSession: -1 } }),
+    }), (error: unknown) => Reflect.get(error as object, "reason") === "COMMIT_OBSERVED");
+    assert.equal(attempts, 1);
+  }
 });
 
-test("live H5 uses controlled activation and exercises sign-in rollback cases only", {
+test("authenticated password change uses Better Auth authority and atomically rotates the current session", async () => {
+  const current = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+  });
+  const calls: string[] = [];
+  const result = await runCapturedBoundaryAttempt({
+    transactionalWork: () => changePasswordWithBetterAuthAuthority({
+      credentialAuthority: {
+        findCredentialAccount: async () => {
+          calls.push("FIND_CREDENTIAL_ACCOUNT");
+          return { id: "account-id", password: "current-hash" };
+        },
+        updateAccount: async (_id, data) => {
+          calls.push(`UPDATE_ACCOUNT:${data.password}`);
+        },
+      },
+      password: {
+        verify: async () => { calls.push("VERIFY_CURRENT_PASSWORD"); return true; },
+        hash: async () => { calls.push("HASH_NEW_PASSWORD"); return "new-hash"; },
+      },
+      sessionAdapter: {
+        deleteMany: async (input) => { calls.push(`DELETE_OTHER_SESSIONS:${input.where.length}`); return 2; },
+        incrementOne: async <T>(input: Parameters<DBAdapter["incrementOne"]>[0]): Promise<T | null> => {
+          calls.push("ATOMIC_ROTATE_CURRENT_SESSION");
+          return { ...current, ...input.set } as T;
+        },
+      },
+      userId: current.userId,
+      currentPassword: "current-password",
+      newPassword: "new-password",
+      currentSession: current,
+      rotatedToken: "rotated_session_token_1234",
+      now: new Date("2026-08-21T00:00:00.000Z"),
+      cookieResponse: authoritativeCookieResponse("rotated_session_token_1234", 604800),
+    }),
+    failurePoint: "NONE",
+  });
+  assert.deepEqual(calls, [
+    "FIND_CREDENTIAL_ACCOUNT",
+    "VERIFY_CURRENT_PASSWORD",
+    "HASH_NEW_PASSWORD",
+    "UPDATE_ACCOUNT:new-hash",
+    "DELETE_OTHER_SESSIONS:2",
+    "ATOMIC_ROTATE_CURRENT_SESSION",
+  ]);
+  assert.equal(result.value.authenticatedAt, current.authenticatedAt);
+  assert.equal(result.value.selectedOrganizationId, current.selectedOrganizationId);
+  assert.equal(result.cookie.secure, true);
+  assert.equal(result.cookie.httpOnly, true);
+  assert.equal(result.cookie.sameSite, "lax");
+  assert.equal(result.cookie.hostOnly, true);
+});
+
+test("authenticated password change rejects an invalid current password before mutation or cookie staging", async () => {
+  const current = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
+  });
+  const calls: string[] = [];
+  let externalResponse: Response | undefined;
+  await assert.rejects(() => runCapturedBoundaryAttempt({
+    transactionalWork: () => changePasswordWithBetterAuthAuthority({
+      credentialAuthority: {
+        findCredentialAccount: async () => {
+          calls.push("FIND_CREDENTIAL_ACCOUNT");
+          return { id: "account-id", password: "current-hash" };
+        },
+        updateAccount: async () => { throw new Error("UNEXPECTED_ACCOUNT_UPDATE"); },
+      },
+      password: {
+        verify: async () => { calls.push("VERIFY_CURRENT_PASSWORD"); return false; },
+        hash: async () => { throw new Error("UNEXPECTED_PASSWORD_HASH"); },
+      },
+      sessionAdapter: {
+        deleteMany: async () => { throw new Error("UNEXPECTED_SESSION_DELETE"); },
+        incrementOne: async <T>(): Promise<T | null> => { throw new Error("UNEXPECTED_SESSION_ROTATION"); },
+      },
+      userId: current.userId,
+      currentPassword: "invalid-current-password",
+      newPassword: "new-password",
+      currentSession: current,
+      rotatedToken: "rotated_session_token_1234",
+      now: new Date("2026-08-21T00:00:00.000Z"),
+      cookieResponse: authoritativeCookieResponse("rotated_session_token_1234", 604800),
+    }),
+    failurePoint: "NONE",
+    afterCommit: (_value, response) => { externalResponse = response; },
+  }), (error: unknown) => error instanceof BoundaryAttemptFailed
+    && !error.commitObserved
+    && !error.cookieEligible
+    && !error.capturedCookieDiscarded);
+  assert.deepEqual(calls, ["FIND_CREDENTIAL_ACCOUNT", "VERIFY_CURRENT_PASSWORD"]);
+  assert.equal(externalResponse, undefined);
+});
+
+test("live H5 uses controlled activation and exercises sign-in, rotation, and password-change boundaries", {
   skip: process.env.PASSVERO_PROOF_H5 !== "1",
 }, async () => {
   const generatedPath = "../generated/client/client.js";
@@ -753,11 +1067,17 @@ test("live H5 uses controlled activation and exercises sign-in rollback cases on
       verified: false,
     });
     const beforeUnverified = await providerSessionCount(prisma);
+    let unverifiedExternalResponse: Response | undefined;
     await assert.rejects(() => signIn(prisma, {
       email: unverifiedEmail,
       password: unverifiedPassword,
-    }));
+      afterCommit: (_value, response) => { unverifiedExternalResponse = response; },
+    }), (error: unknown) => error instanceof BoundaryAttemptFailed
+      && !error.commitObserved
+      && !error.cookieEligible
+      && !error.capturedCookieDiscarded);
     assert.equal(await providerSessionCount(prisma), beforeUnverified);
+    assert.equal(unverifiedExternalResponse, undefined);
 
     const validLabel = fixtureLabel();
     const email = `h5-valid-${validLabel}@invalid.example`;
@@ -768,8 +1088,16 @@ test("live H5 uses controlled activation and exercises sign-in rollback cases on
       { email, password: `${password}-wrong` },
     ]) {
       const before = await providerSessionCount(prisma);
-      await assert.rejects(() => signIn(prisma, rejected));
+      let rejectedExternalResponse: Response | undefined;
+      await assert.rejects(() => signIn(prisma, {
+        ...rejected,
+        afterCommit: (_value, response) => { rejectedExternalResponse = response; },
+      }), (error: unknown) => error instanceof BoundaryAttemptFailed
+        && !error.commitObserved
+        && !error.cookieEligible
+        && !error.capturedCookieDiscarded);
       assert.equal(await providerSessionCount(prisma), before);
+      assert.equal(rejectedExternalResponse, undefined);
     }
 
     const beforeValid = await providerSessionCount(prisma);
@@ -796,12 +1124,18 @@ test("live H5 uses controlled activation and exercises sign-in rollback cases on
     assert.equal(createdSession.selectedOrganizationId, null);
 
     const beforeCreateFailure = await providerSessionCount(prisma);
+    let createFailureExternalResponse: Response | undefined;
     await assert.rejects(() => signIn(prisma, {
       email,
       password,
       bindTransactionClient: failSessionCreate,
-    }));
+      afterCommit: (_value, response) => { createFailureExternalResponse = response; },
+    }), (error: unknown) => error instanceof BoundaryAttemptFailed
+      && !error.commitObserved
+      && !error.cookieEligible
+      && !error.capturedCookieDiscarded);
     assert.equal(await providerSessionCount(prisma), beforeCreateFailure);
+    assert.equal(createFailureExternalResponse, undefined);
 
     for (const failurePoint of ["AFTER_SESSION_WRITE", "BEFORE_COMMIT"] as const) {
       const before = await providerSessionCount(prisma);
@@ -855,8 +1189,68 @@ test("live H5 uses controlled activation and exercises sign-in rollback cases on
     assert.equal(externalResponse, undefined);
     assert.equal(await providerSessionCount(prisma), beforeDeliveryFailure + 1);
 
-    assert.equal(H5_SESSION_ROTATION_FEASIBILITY.verdict, "FAIL");
-    console.log("H5_SESSION_BOUNDARY=NOT_EXECUTED_NO_SUPPORTED_ATOMIC_SESSION_ROTATION");
+    const refreshToken = randomBytes(32).toString("base64url");
+    const refreshNow = new Date(createdSession.lastRefreshAt.getTime() + SESSION_REFRESH_MS);
+    const refreshed = await rotateSession(prisma, {
+      currentSession: createdSession,
+      presentedToken: createdSession.token,
+      rotatedToken: refreshToken,
+      now: refreshNow,
+    });
+    assert.ok(refreshed.value);
+    assert.equal(refreshed.cookie.present, true);
+    assert.equal(refreshed.cookie.secure, true);
+    assert.equal(refreshed.cookie.httpOnly, true);
+    assert.equal(refreshed.cookie.sameSite, "lax");
+    assert.equal(refreshed.cookie.hostOnly, true);
+    assert.equal(refreshed.value?.authenticatedAt.getTime(), createdSession.authenticatedAt.getTime());
+    assert.equal(refreshed.value?.selectedOrganizationId, createdSession.selectedOrganizationId);
+
+    const concurrencySeedSignIn = await signIn(prisma, { email, password });
+    const concurrencySeed = await sessionByToken(prisma, concurrencySeedSignIn.value.token);
+    const concurrencyNow = new Date(concurrencySeed.lastRefreshAt.getTime() + SESSION_REFRESH_MS);
+    const concurrent = await Promise.all([
+      rotateSession(prisma, {
+        currentSession: concurrencySeed,
+        presentedToken: concurrencySeed.token,
+        rotatedToken: randomBytes(32).toString("base64url"),
+        now: concurrencyNow,
+      }),
+      rotateSession(prisma, {
+        currentSession: concurrencySeed,
+        presentedToken: concurrencySeed.token,
+        rotatedToken: randomBytes(32).toString("base64url"),
+        now: concurrencyNow,
+      }),
+    ]);
+    const concurrencyWinners = concurrent.filter((attempt) => attempt.value !== null);
+    assert.equal(concurrencyWinners.length, 1);
+    assert.equal(concurrent.filter((attempt) => attempt.value === null).length, 1);
+    const passwordSession = concurrencyWinners[0]?.value;
+    if (!passwordSession) throw new Error("STOP_H5_CONCURRENT_ROTATION_WINNER_MISSING");
+
+    const newPassword = `H5-new-${fixtureLabel()}-Aa1!`;
+    const changed = await changePassword(prisma, {
+      currentPassword: password,
+      newPassword,
+      currentSession: passwordSession,
+      rotatedToken: randomBytes(32).toString("base64url"),
+      now: new Date(passwordSession.lastRefreshAt.getTime() + 1),
+    });
+    assert.equal(changed.value.authenticatedAt.getTime(), passwordSession.authenticatedAt.getTime());
+    assert.equal(changed.value.selectedOrganizationId, passwordSession.selectedOrganizationId);
+    assert.equal(changed.cookie.present, true);
+    assert.equal(changed.cookie.secure, true);
+    assert.equal(changed.cookie.httpOnly, true);
+    assert.equal(changed.cookie.sameSite, "lax");
+    assert.equal(changed.cookie.hostOnly, true);
+    assert.equal(await providerSessionCount(prisma, userId), 1);
+    await assert.rejects(() => signIn(prisma, { email, password }));
+    const newPasswordSignIn = await signIn(prisma, { email, password: newPassword });
+    assert.equal(newPasswordSignIn.value.providerUserId, userId);
+
+    assert.equal(H5_SESSION_ROTATION_FEASIBILITY.verdict, "SUPPORTED_STATIC");
+    console.log("H5_SESSION_BOUNDARY=NOT_EXECUTED");
   } finally {
     await prisma.$disconnect();
   }

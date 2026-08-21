@@ -12,6 +12,8 @@ const RECONCILED_REVIEW = path.join(
 );
 const EXPECTED = new Map([
   ["node_modules/@better-auth/prisma-adapter/dist/index.mjs", "166a05554f2e9fef2bf632a9aced0f328b0ffeb15e0ef2bbc8eeecc80e2ff145"],
+  ["node_modules/@better-auth/core/src/db/adapter/index.ts", "8af87bd29365918a42d8d745dcf8acb2439066a1577ac53de17a799194da48dd"],
+  ["node_modules/@better-auth/core/src/db/adapter/factory.ts", "f95d88b4f17dd39b2b932cb2649718fbad9d40ff279aa8bc46e1503d33b7cd5d"],
   ["node_modules/@better-auth/core/src/context/transaction.ts", "911e287b36b08b5ee4ca3fa2d30e926c6418f3c2ebf902bded85a577d0729117"],
   ["node_modules/@better-auth/core/package.json", "2e154d4f7ba0ca6b6acf6714c8dccf529aaace552833f114d615ce01b3db610e"],
   ["node_modules/better-auth/dist/auth/base.mjs", "64fd12c2e1857b57e9e872f6e5fbc424a909624750b9fbaf4b3d57e3869ba93a"],
@@ -35,6 +37,24 @@ const RANGE_ASSERTIONS = [
     start: 170,
     end: 202,
     patterns: [/db\[model\]\.create/, /db\[model\]\.findFirst/],
+  },
+  {
+    file: "node_modules/@better-auth/prisma-adapter/dist/index.mjs",
+    start: 361,
+    end: 382,
+    patterns: [/async incrementOne/, /const data = \{ \.\.\.set \?\? \{\} \}/, /return await db\[model\]\.update/, /return null/],
+  },
+  {
+    file: "node_modules/@better-auth/core/src/db/adapter/index.ts",
+    start: 440,
+    end: 503,
+    patterns: [/Use[\s*]+`incrementOne` when the predicate is both selector and guard/, /increment: Record<string, number>/, /set\?: Record<string, unknown>/, /Promise<T \| null>/],
+  },
+  {
+    file: "node_modules/@better-auth/core/src/db/adapter/factory.ts",
+    start: 1406,
+    end: 1481,
+    patterns: [/const hasIncrement/, /const hasSet/, /adapterInstance\.incrementOne<T>/],
   },
   {
     file: "node_modules/@better-auth/prisma-adapter/dist/index.mjs",

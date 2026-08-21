@@ -39,8 +39,8 @@ const TASK_6_ARTIFACT_HASHES = new Map([
 ]);
 
 const TASK_7_ARTIFACT_HASHES = new Map([
-  ["src/proof-boundary.ts", "065de849a757aa5b5e78e3d50b178ebeee4f9295c8dd9dda8227ea100311a600"],
-  ["test/session-boundary.test.ts", "cd9e5542fbcb24739fbf78d9a32983059ad2517f322a88f110bc99c7bde98d05"],
+  ["src/proof-boundary.ts", "0fbd71e24fbb96f646d84b2275aaa56ddf65113380a902904ac901010973a0e1"],
+  ["test/session-boundary.test.ts", "df9673d9129a6c7509c7e1c7339afc4b4c4b95b237f86b1b88d654db80c349b8"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -249,6 +249,9 @@ test("proof sources forbid direct provider writes, any, and premature cookie exp
   assert.match(boundary, /prisma: tx,\s*adapterTransaction: false/);
   assert.match(boundary, /runWithTransaction\(adapter/);
   assert.match(boundary, /pending\.capturedHeaders\.splice\(0, pending\.capturedHeaders\.length\)/);
+  assert.match(boundary, /adapter\.incrementOne<SessionProofRecord>\(\{[\s\S]*?increment: \{\},[\s\S]*?set: \{[\s\S]*?token: input\.rotatedToken,[\s\S]*?expiresAt,[\s\S]*?lastRefreshAt: input\.now/);
+  assert.match(boundary, /\{ field: "id", operator: "eq"[\s\S]*?\{ field: "token", operator: "eq"[\s\S]*?\{ field: "expiresAt", operator: "gt"[\s\S]*?\{ field: "lastRefreshAt", operator: "gt"[\s\S]*?\{ field: "authenticatedAt", operator: "gt"/);
+  assert.doesNotMatch(boundary, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
   const finalizeIndex = boundary.lastIndexOf("const finalized = finalizeAfterCommit(pending)");
   const afterCommitFailureIndex = boundary.lastIndexOf('injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK")');
   const returnIndex = boundary.lastIndexOf("return finalized");
