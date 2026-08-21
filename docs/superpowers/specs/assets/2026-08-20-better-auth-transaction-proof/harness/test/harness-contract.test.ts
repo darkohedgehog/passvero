@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { lstatSync, readFileSync } from "node:fs";
-import { chmod, mkdir, mkdtemp, rm, symlink, unlink, writeFile } from "node:fs/promises";
+import { existsSync, lstatSync, readFileSync } from "node:fs";
+import { chmod, lstat, mkdir, mkdtemp, rename, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   bootstrapRunRoot,
@@ -320,6 +320,74 @@ test("mandatory verdict derivation requires the exact seven PASS hypotheses", as
   }
 });
 
+async function assertOmittedPendingCallbackFailsClosed(
+  omittedCallback: "retirePending" | "inspectPending",
+): Promise<void> {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+  const callbackCalls: string[] = [];
+  const commitOrder: string[] = [];
+  const suppliedCallback = omittedCallback === "retirePending"
+    ? {
+        inspectPending: async (candidate: string) => {
+          callbackCalls.push("inspectPending");
+          return lstat(candidate);
+        },
+      }
+    : {
+        retirePending: async (candidate: string) => {
+          callbackCalls.push("retirePending");
+          await unlink(candidate);
+        },
+      };
+  try {
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+    const expectedJson = readFileSync(path.join(preparedPath, "fail-1111.json"), "utf8");
+    const expectedMarkdown = readFileSync(path.join(preparedPath, "fail-1111.md"), "utf8");
+    const result = await publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+      ...suppliedCallback,
+      renamePublication: async (source: string, destination: string) => {
+        commitOrder.push(path.basename(destination));
+        await rename(source, destination);
+      },
+    });
+
+    assert.deepEqual(callbackCalls, []);
+    assert.equal(result.passed, false);
+    assert.equal(result.exitCode, 1);
+    assert.equal(result.status, "FAIL_PENDING_RETAINED");
+    assert.equal(result.authoritativeCandidate, "fail-1111");
+    assert.equal(lstatSync(pendingPath).isFile(), true);
+    assert.deepEqual(commitOrder, ["evidence.md", "evidence.json"]);
+    const authoritativeJson = readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8");
+    assert.equal(readFileSync(path.join(evidenceRoot, "evidence.md"), "utf8"), expectedMarkdown);
+    assert.equal(authoritativeJson, expectedJson);
+    assert.equal(existsSync(path.join(evidenceRoot, ".evidence-publication.md")), false);
+    assert.equal(existsSync(path.join(evidenceRoot, ".evidence-publication.json")), false);
+    const authoritative = JSON.parse(authoritativeJson) as { status: string };
+    assert.equal(authoritative.status, "FAIL");
+    assert.notEqual(authoritative.status, "PASS");
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+}
+
+test("omitted pending retirement callback commits checked FAIL with JSON authoritative last", async () => {
+  await assertOmittedPendingCallbackFailsClosed("retirePending");
+});
+
+test("omitted pending inspection callback commits checked FAIL with JSON authoritative last", async () => {
+  await assertOmittedPendingCallbackFailsClosed("inspectPending");
+});
+
 test("resolved no-op pending retirement executes checked FAIL publication and discards PASS", async () => {
   const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(evidenceRoot, 0o700);
@@ -329,12 +397,6 @@ test("resolved no-op pending retirement executes checked FAIL publication and di
   try {
     await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
     await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
-    await assert.rejects(() => publishEvidenceState({
-      evidenceDirectory: evidenceRoot,
-      preparedDirectory: preparedPath,
-      pendingPath,
-      candidate: "pass-1111",
-    }), /pending retirement callbacks are required/);
     const result = await publishEvidenceState({
       evidenceDirectory: evidenceRoot,
       preparedDirectory: preparedPath,

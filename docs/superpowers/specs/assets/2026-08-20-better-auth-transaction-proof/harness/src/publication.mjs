@@ -34,9 +34,6 @@ export async function publishEvidenceState(input) {
   const preparedRoot = input.preparedDirectory;
   const pendingPath = input.pendingPath;
   if (!/^(?:pass-1111|fail-[01]{4})$/.test(input.candidate)) fail("candidate is invalid");
-  if (typeof input.retirePending !== "function" || typeof input.inspectPending !== "function") {
-    fail("pending retirement callbacks are required");
-  }
   await validateDirectory(evidenceRoot, "evidence directory");
   if (preparedRoot !== path.join(evidenceRoot, ".cleanup-evidence-prepared")) fail("prepared path is not authoritative");
   if (pendingPath !== path.join(evidenceRoot, "evidence.pending.json")) fail("pending path is not authoritative");
@@ -62,25 +59,29 @@ export async function publishEvidenceState(input) {
   }
 
   async function commit() {
-    await rename(stageMarkdown, finalMarkdown);
-    await rename(stageJson, finalJson);
+    const renamePublication = input.renamePublication ?? rename;
+    await renamePublication(stageMarkdown, finalMarkdown);
+    await renamePublication(stageJson, finalJson);
   }
 
   await stage(input.candidate);
   let pendingRetired = false;
-  try {
-    await input.retirePending(pendingPath);
+  const canRetirePending = typeof input.retirePending === "function" && typeof input.inspectPending === "function";
+  if (canRetirePending) {
     try {
-      await input.inspectPending(pendingPath);
-    } catch (error) {
-      if (error instanceof Error && Object.hasOwn(error, "code") && error.code === "ENOENT") {
-        pendingRetired = true;
-      } else {
-        throw error;
+      await input.retirePending(pendingPath);
+      try {
+        await input.inspectPending(pendingPath);
+      } catch (error) {
+        if (error instanceof Error && Object.hasOwn(error, "code") && error.code === "ENOENT") {
+          pendingRetired = true;
+        } else {
+          throw error;
+        }
       }
+    } catch {
+      pendingRetired = false;
     }
-  } catch {
-    pendingRetired = false;
   }
   if (!pendingRetired && input.candidate === "pass-1111") await stage("fail-1111");
 
