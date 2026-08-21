@@ -5,16 +5,26 @@ import { chmod, lstat, mkdir, mkdtemp, rename, rm, symlink, unlink, writeFile } 
 import path from "node:path";
 import {
   bootstrapRunRoot,
+  aggregateProofEvidence,
   buildConnectionString,
   prepareCleanupEvidence,
   PROOF_ROOT_SENTINEL,
   readAuthSecret,
   readRunIdentity,
+  recordHypothesisProcessResult,
   selectCleanupEvidenceCandidate,
   validateGeneratedSql,
   validateDisposableHarnessEnvironment,
 } from "../src/run-root.js";
-import { renderEvidenceJson, type ProofEvidence } from "../src/evidence.js";
+import {
+  aggregateHypothesisProcessResults,
+  mandatoryHypothesesPassed,
+  renderEvidenceJson,
+  renderPendingEvidenceJson,
+  REQUIRED_HYPOTHESIS_IDS as PROOF_HYPOTHESIS_IDS,
+  type HypothesisProcessResult,
+  type ProofEvidence,
+} from "../src/evidence.js";
 import { publishEvidenceState } from "../src/publication.mjs";
 
 const EMPTY_COUNTS = {
@@ -40,8 +50,17 @@ async function createSyntheticRunRoot(): Promise<string> {
   await chmod(runRoot, 0o700);
   const identityDir = path.join(runRoot, "identity");
   const socketDir = path.join(runRoot, "socket");
+  const fragmentsDir = path.join(runRoot, "evidence-fragments");
+  const harnessDir = path.join(runRoot, "harness");
+  const dataDir = path.join(runRoot, "data");
   await mkdir(identityDir, { mode: 0o700 });
   await mkdir(socketDir, { mode: 0o700 });
+  await mkdir(fragmentsDir, { mode: 0o700 });
+  await mkdir(path.join(harnessDir, "node_modules", "better-auth"), { recursive: true, mode: 0o700 });
+  await mkdir(path.join(harnessDir, "node_modules", "@better-auth", "core"), { recursive: true, mode: 0o700 });
+  await mkdir(path.join(harnessDir, "node_modules", "@better-auth", "prisma-adapter"), { recursive: true, mode: 0o700 });
+  await chmod(harnessDir, 0o700);
+  await mkdir(dataDir, { mode: 0o700 });
   const suffix = "012345abcdef";
   const values = new Map([
     ["superuser-role", `pvproof_admin_${suffix}`],
@@ -52,10 +71,19 @@ async function createSyntheticRunRoot(): Promise<string> {
     ["port", "55432"],
     ["socket-dir", socketDir],
     ["auth-secret", "C".repeat(48)],
+    ["run-id-hash", "D".repeat(64)],
+    ["system-identifier-hash", "E".repeat(64)],
   ]);
   await Promise.all(
     [...values].map(([name, value]) => writeFile(path.join(identityDir, name), value, { mode: 0o600 })),
   );
+  await Promise.all([
+    writeFile(path.join(harnessDir, "package-lock.json"), "{}\n", { mode: 0o600 }),
+    writeFile(path.join(harnessDir, "node_modules", "better-auth", "package.json"), "{}\n", { mode: 0o600 }),
+    writeFile(path.join(harnessDir, "node_modules", "@better-auth", "core", "package.json"), "{}\n", { mode: 0o600 }),
+    writeFile(path.join(harnessDir, "node_modules", "@better-auth", "prisma-adapter", "package.json"), "{}\n", { mode: 0o600 }),
+    writeFile(path.join(dataDir, "PG_VERSION"), "16\n", { mode: 0o600 }),
+  ]);
   return runRoot;
 }
 
@@ -129,6 +157,79 @@ function exactMandatoryEvidence(): ProofEvidence {
     hypotheses: REQUIRED_HYPOTHESIS_IDS.map((id) => ({ ...hypothesis, id, status: "PASS" })),
   };
 }
+
+function allPassProcessResults(): readonly HypothesisProcessResult[] {
+  return PROOF_HYPOTHESIS_IDS.map((id) => ({ id, status: "PASS", processExitCode: 0 }));
+}
+
+test("process aggregation accepts exactly seven unique successful hypothesis suites", () => {
+  const hypotheses = aggregateHypothesisProcessResults(allPassProcessResults());
+  assert.deepEqual(hypotheses.map(({ id }) => id), PROOF_HYPOTHESIS_IDS);
+  assert.equal(hypotheses.every(({ status, failureCode }) => status === "PASS" && failureCode === null), true);
+  assert.equal(mandatoryHypothesesPassed(hypotheses), true);
+});
+
+test("process aggregation rejects one explicit hypothesis failure", () => {
+  const results = allPassProcessResults().map((result, index) => index === 2
+    ? { ...result, status: "FAIL" as const, processExitCode: 1 }
+    : result);
+  const hypotheses = aggregateHypothesisProcessResults(results);
+  assert.equal(mandatoryHypothesesPassed(hypotheses), false);
+  assert.equal(hypotheses[2]?.failureCode, "STOP_HYPOTHESIS_PROCESS_FAILED");
+});
+
+test("process aggregation rejects a missing hypothesis result", () => {
+  const hypotheses = aggregateHypothesisProcessResults(allPassProcessResults().slice(0, -1));
+  assert.equal(mandatoryHypothesesPassed(hypotheses), false);
+  assert.equal(hypotheses.at(-1)?.failureCode, "STOP_HYPOTHESIS_RESULT_MISSING");
+});
+
+test("process aggregation rejects a duplicate hypothesis result", () => {
+  const results = [...allPassProcessResults(), allPassProcessResults()[0]];
+  const hypotheses = aggregateHypothesisProcessResults(results);
+  assert.equal(mandatoryHypothesesPassed(hypotheses), false);
+  assert.equal(hypotheses[0]?.failureCode, "STOP_HYPOTHESIS_RESULT_DUPLICATE");
+});
+
+test("process aggregation records a crashed hypothesis process as terminal failure", () => {
+  const results = allPassProcessResults().map((result, index) => index === 4
+    ? { ...result, status: "FAIL" as const, processExitCode: 70 }
+    : result);
+  const hypotheses = aggregateHypothesisProcessResults(results);
+  assert.equal(mandatoryHypothesesPassed(hypotheses), false);
+  assert.equal(hypotheses[4]?.failureCode, "STOP_HYPOTHESIS_PROCESS_FAILED");
+});
+
+test("process aggregation rejects malformed status and exit-code evidence", () => {
+  const results = allPassProcessResults().map((result, index) => index === 0
+    ? { ...result, processExitCode: 70 }
+    : result);
+  const hypotheses = aggregateHypothesisProcessResults(results);
+  assert.equal(mandatoryHypothesesPassed(hypotheses), false);
+  assert.equal(hypotheses[0]?.failureCode, "STOP_HYPOTHESIS_RESULT_INVALID");
+});
+
+test("protected result fragments aggregate into redacted pending evidence exactly once", async () => {
+  await withSyntheticRunRoot(async (runRoot) => {
+    for (const result of allPassProcessResults()) {
+      await recordHypothesisProcessResult(result.id, result.status, result.processExitCode);
+    }
+    await assert.rejects(
+      () => recordHypothesisProcessResult("H1_NATIVE_TRANSACTION", "PASS", 0),
+      /EEXIST/,
+    );
+    const pendingPath = path.join(runRoot, "evidence.pending.json");
+    await aggregateProofEvidence(pendingPath, runRoot);
+    const pending = readFileSync(pendingPath, "utf8");
+    assert.doesNotMatch(pending, /"cleanup"/);
+    assert.doesNotMatch(pending, /credentialToken/);
+    assert.match(pending, /"credentialRecord": 0/);
+    const parsed = JSON.parse(pending) as { readonly hypotheses: readonly { readonly id: string; readonly status: string }[] };
+    assert.deepEqual(parsed.hypotheses.map(({ id }) => id), PROOF_HYPOTHESIS_IDS);
+    assert.equal(parsed.hypotheses.every(({ status }) => status === "PASS"), true);
+    await assert.rejects(() => aggregateProofEvidence(pendingPath, runRoot), /already exists/);
+  });
+});
 
 test("static tool caches remain inside the disposable harness root", () => {
   const harnessRoot = process.cwd();
@@ -519,6 +620,13 @@ test("evidence rendering is deterministic and rejects sensitive shapes", () => {
   const serializedCookie = `${"__Host-session"}=${"opaque"}; Path=/; HttpOnly; Secure; SameSite=Lax`;
   assert.throws(
     () => renderEvidenceJson({ ...evidence, assertions: [serializedCookie] }),
+    /STOP_EVIDENCE_REDACTION/,
+  );
+  const { cleanup: _cleanup, ...pending } = evidence;
+  const renderedPending = renderPendingEvidenceJson(pending);
+  assert.doesNotMatch(renderedPending, /"cleanup"/);
+  assert.throws(
+    () => renderPendingEvidenceJson({ ...pending, assertions: [serializedCookie] }),
     /STOP_EVIDENCE_REDACTION/,
   );
 });

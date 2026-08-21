@@ -22,6 +22,7 @@ const REQUIRED_FILES = [
   "src/publication.mjs",
   "test/harness-contract.test.ts",
   "test/cluster-identity.test.ts",
+  "test/native-transaction.test.ts",
   "test/direct-boundary.test.ts",
   "test/handler-boundary.test.ts",
   "test/controlled-activation.test.ts",
@@ -54,6 +55,14 @@ const TASK_9_ARTIFACT_HASHES = new Map([
   ["src/auth.ts", "4090e54fb2b726459080b792d8469fd5f7b77c025b2d644513dee5604d13f2ab"],
   ["test/route-boundary.test.ts", "5f139b4f8aac5170dcf6690eb73ba5b1bcea88390b2a7a9b97ee3b198e153814"],
 ]);
+
+const TASK_10_ORCHESTRATION_HASHES = new Map([
+  ["src/evidence.ts", "2702d66b46d9552763e4a80ba0293f301dfe180586b0d5a76b087c85d8b49a98"],
+  ["src/run-root.ts", "d963d8cff5e77880aac203fd5ca4456acdf8c640962412bf89ffe5cc7b735a7f"],
+  ["test/harness-contract.test.ts", "3922a4d8ee07b3b4993a90184cf816727b4a95ab2300e8191ca2f7ff3f300934"],
+  ["test/native-transaction.test.ts", "2ffbcb1b2892637fc4749055af08838fbf020bd9de5985b9f174ee13f53cdcc9"],
+]);
+const TASK_10_RUNNER_HASH = "04a4f1ab7c91cf5f21a4d3709daa9c7e22bb9241784942a402b4f2d164903a97";
 
 const EXPECTED_DEPENDENCIES = {
   "@better-auth/core": "1.7.1",
@@ -177,6 +186,13 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       createHash("sha256").update(sources.get(relativePath)).digest("hex"),
       expectedHash,
       `${relativePath} drifted from the reviewed Task 9 proof`,
+    );
+  }
+  for (const [relativePath, expectedHash] of TASK_10_ORCHESTRATION_HASHES) {
+    assert.equal(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      expectedHash,
+      `${relativePath} drifted from the reviewed Task 10 orchestration`,
     );
   }
 
@@ -456,4 +472,47 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.match(runRoot, /validateGeneratedSql/);
   assert.match(runRoot, /generated SQL must contain the exact table count/);
   assert.match(runRoot, /exact quoted unqualified identifiers/);
+});
+
+test("the one-shot runner aggregates exactly one reviewed H1-H7 process verdict", async () => {
+  const runner = await readFile(path.join(PROOF_ROOT, "run-proof.sh"), "utf8");
+  const evidence = await readHarness("src/evidence.ts");
+  const runRoot = await readHarness("src/run-root.ts");
+  const contract = await readHarness("test/harness-contract.test.ts");
+  const runAll = runner.match(/run_all\(\) \{([\s\S]*?)^\}/m)?.[1];
+  const hypotheses = runner.match(/run_hypotheses\(\) \{([\s\S]*?)^\}/m)?.[1];
+  assert.ok(runAll, "run_all must remain separately reviewable");
+  assert.ok(hypotheses, "run_hypotheses must remain separately reviewable");
+  assert.equal(createHash("sha256").update(runner).digest("hex"), TASK_10_RUNNER_HASH);
+  assert.doesNotMatch(runner, /STOP_HYPOTHESES_NOT_IMPLEMENTED/);
+  assert.ok(runAll.indexOf("preflight_attempt_artifacts") < runAll.indexOf("bootstrap_root"));
+  assert.ok(runAll.indexOf("prove_cluster_identity") < runAll.indexOf("generate_apply_schema"));
+  assert.ok(runAll.indexOf("generate_apply_schema") < runAll.indexOf("run_hypotheses"));
+  assert.equal((hypotheses.match(/run_hypothesis "/g) ?? []).length, 7);
+  for (const contractPattern of [
+    /H1_NATIVE_TRANSACTION" "PASSVERO_PROOF_H1"[\s\S]*?native-transaction\.test\.ts/,
+    /H2_DIRECT_API_OUTER_TRANSACTION" "PASSVERO_PROOF_H2"[\s\S]*?direct-boundary\.test\.ts/,
+    /H3_HANDLER_CONTEXT_REPLACEMENT" "PASSVERO_PROOF_H3"[\s\S]*?handler-boundary\.test\.ts/,
+    /H4_CONTROLLED_ACTIVATION" "PASSVERO_PROOF_H4"[\s\S]*?controlled-activation\.test\.ts/,
+    /H5_SESSION_COOKIE_AFTER_COMMIT" "PASSVERO_PROOF_H5"[\s\S]*?session-boundary\.test\.ts/,
+    /H6_RECOVERY_AND_REVOCATION" "PASSVERO_PROOF_H6"[\s\S]*?recovery-boundary\.test\.ts/,
+    /H7_ROUTE_EXPOSURE" "PASSVERO_PROOF_H7"[\s\S]*?route-boundary\.test\.ts/,
+  ]) assert.match(hypotheses, contractPattern);
+  assert.match(runner, />"\$RUN_ROOT_REAL\/log\/\$id\.log" 2>&1/);
+  assert.match(runner, /aggregate-proof-evidence "\$SCRIPT_DIR\/evidence\.pending\.json" "\$SCRIPT_DIR"/);
+  assert.match(runner, /STOP_EXECUTION_ATTEMPT_EXISTS/);
+  assert.match(evidence, /REQUIRED_HYPOTHESIS_IDS/);
+  assert.match(evidence, /STOP_HYPOTHESIS_RESULT_MISSING/);
+  assert.match(evidence, /STOP_HYPOTHESIS_RESULT_DUPLICATE/);
+  assert.match(evidence, /STOP_HYPOTHESIS_PROCESS_FAILED/);
+  assert.match(runRoot, /writeProtected\(path\.join\(directory, `\$\{id\}\.json`\)/);
+  assert.match(runRoot, /renderPendingEvidenceJson\(evidence\)/);
+  for (const simulation of [
+    "accepts exactly seven unique successful hypothesis suites",
+    "rejects one explicit hypothesis failure",
+    "rejects a missing hypothesis result",
+    "rejects a duplicate hypothesis result",
+    "records a crashed hypothesis process as terminal failure",
+    "rejects malformed status and exit-code evidence",
+  ]) assert.match(contract, new RegExp(simulation));
 });

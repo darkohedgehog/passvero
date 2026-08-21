@@ -1,9 +1,19 @@
 import { createHash, randomBytes } from "node:crypto";
-import { lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { lstatSync, readFileSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { renderEvidenceJson, renderEvidenceMarkdown, type ProofEvidence } from "./evidence.js";
+import {
+  aggregateHypothesisProcessResults,
+  renderEvidenceJson,
+  renderEvidenceMarkdown,
+  renderPendingEvidenceJson,
+  REQUIRED_HYPOTHESIS_IDS,
+  type HypothesisId,
+  type HypothesisProcessResult,
+  type HypothesisStatus,
+  type ProofEvidence,
+} from "./evidence.js";
 
 const RUN_ROOT_PATTERN = /^\/private\/tmp\/passvero-stage13a-pg\.[A-Za-z0-9]+$/;
 const STATIC_HARNESS_PATTERN = /^\/private\/tmp\/passvero-stage13a-harness\.[A-Za-z0-9]+$/;
@@ -52,6 +62,7 @@ export async function bootstrapRunRoot(candidate: string): Promise<void> {
   await mkdir(socketDir, { mode: 0o700 });
   await mkdir(logDir, { mode: 0o700 });
   await mkdir(sqlDir, { mode: 0o700 });
+  await mkdir(path.join(runRoot, "evidence-fragments"), { mode: 0o700 });
 
   const runId = opaqueBase64Url(24);
   const values = new Map<string, string>([
@@ -253,6 +264,100 @@ export function selectCleanupEvidenceCandidate(
   return proofExitStatus === 0 && mandatoryHypothesesPassed && suffix === "1111" ? "pass-1111" : `fail-${suffix}`;
 }
 
+function isHypothesisId(value: string): value is HypothesisId {
+  return (REQUIRED_HYPOTHESIS_IDS as readonly string[]).includes(value);
+}
+
+export async function recordHypothesisProcessResult(
+  id: string,
+  status: string,
+  processExitCode: number,
+): Promise<void> {
+  if (!isHypothesisId(id)) fail("hypothesis result id is invalid");
+  if (status !== "PASS" && status !== "FAIL") fail("hypothesis result status is invalid");
+  if (!Number.isSafeInteger(processExitCode) || processExitCode < 0 || processExitCode > 255) {
+    fail("hypothesis result exit code is invalid");
+  }
+  if ((status === "PASS") !== (processExitCode === 0)) {
+    fail("hypothesis result status and exit code disagree");
+  }
+  const identity = readRunIdentity();
+  const directory = assertProtectedDirectory(
+    path.join(identity.runRoot, "evidence-fragments"),
+    "evidence fragments",
+  );
+  const result = { id, status, processExitCode } satisfies HypothesisProcessResult;
+  await writeProtected(path.join(directory, `${id}.json`), `${JSON.stringify(result)}\n`);
+}
+
+function sha256File(filePath: string): string {
+  const status = lstatSync(filePath);
+  if (status.isSymbolicLink() || !status.isFile()) fail("hash input must be a regular non-symlink file");
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
+}
+
+function readHypothesisProcessResults(runRoot: string): readonly unknown[] {
+  const directory = assertProtectedDirectory(
+    path.join(runRoot, "evidence-fragments"),
+    "evidence fragments",
+  );
+  return readdirSync(directory, { withFileTypes: true }).map((entry) => {
+    if (!entry.isFile() || entry.isSymbolicLink() || !entry.name.endsWith(".json")) {
+      return null;
+    }
+    const filePath = path.join(directory, entry.name);
+    assertProtectedFile(filePath, "hypothesis result");
+    try {
+      return JSON.parse(readFileSync(filePath, "utf8")) as unknown;
+    } catch {
+      return null;
+    }
+  });
+}
+
+export async function aggregateProofEvidence(
+  pendingPath: string,
+  evidenceDirectory: string,
+): Promise<void> {
+  const identity = readRunIdentity();
+  const evidenceRoot = assertOwnedRealDirectory(evidenceDirectory, "evidence directory");
+  if (pendingPath !== path.join(evidenceRoot, "evidence.pending.json")) {
+    fail("pending evidence path is not authoritative");
+  }
+  if (lstatExists(pendingPath)) fail("pending evidence already exists");
+  const harnessRoot = assertProtectedDirectory(path.join(identity.runRoot, "harness"), "harness root");
+  const hypotheses = aggregateHypothesisProcessResults(readHypothesisProcessResults(identity.runRoot));
+  const evidence: Omit<ProofEvidence, "cleanup"> = {
+    packageHashes: {
+      harnessLockfile: sha256File(path.join(harnessRoot, "package-lock.json")),
+      betterAuthPackage: sha256File(path.join(harnessRoot, "node_modules", "better-auth", "package.json")),
+      betterAuthCorePackage: sha256File(path.join(harnessRoot, "node_modules", "@better-auth", "core", "package.json")),
+      prismaAdapterPackage: sha256File(path.join(harnessRoot, "node_modules", "@better-auth", "prisma-adapter", "package.json")),
+    },
+    clusterIdHash: readProtectedFile(path.join(identity.runRoot, "identity", "run-id-hash"), "run id hash"),
+    postgresVersionHash: sha256File(path.join(identity.runRoot, "data", "PG_VERSION")),
+    systemIdentifierHash: readProtectedFile(
+      path.join(identity.runRoot, "identity", "system-identifier-hash"),
+      "system identifier hash",
+    ),
+    hypotheses,
+    assertions: [
+      "each reviewed hypothesis suite was invoked at most once in one disposable cluster",
+      "process output remained inside the disposable root and only redacted verdicts were aggregated",
+    ],
+  };
+  await writeProtected(pendingPath, renderPendingEvidenceJson(evidence));
+}
+
+function lstatExists(candidate: string): boolean {
+  try {
+    lstatSync(candidate);
+    return true;
+  } catch (error: unknown) {
+    return !(error instanceof Error && "code" in error && error.code === "ENOENT");
+  }
+}
+
 function fail(message: string): never {
   throw new Error(`STOP_RUN_ROOT_INVALID: ${message}`);
 }
@@ -389,7 +494,16 @@ async function runCli(): Promise<void> {
     await prepareCleanupEvidence(process.argv[3], process.argv[4], process.argv[5]);
     return;
   }
-  fail("usage: run-root.ts <bootstrap|validate-generated-sql|prepare-cleanup-evidence> ...");
+  if (process.argv[2] === "record-hypothesis-result" && process.argv.length === 6) {
+    const exitCode = Number(process.argv[5]);
+    await recordHypothesisProcessResult(process.argv[3], process.argv[4], exitCode);
+    return;
+  }
+  if (process.argv[2] === "aggregate-proof-evidence" && process.argv.length === 5) {
+    await aggregateProofEvidence(process.argv[3], process.argv[4]);
+    return;
+  }
+  fail("usage: run-root.ts <bootstrap|validate-generated-sql|prepare-cleanup-evidence|record-hypothesis-result|aggregate-proof-evidence> ...");
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {

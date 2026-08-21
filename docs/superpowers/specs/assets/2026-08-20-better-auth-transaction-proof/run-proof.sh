@@ -97,6 +97,19 @@ preflight_port() {
   [[ "$ready_status" -eq 2 ]] || die "STOP_PORT_IN_USE"
 }
 
+preflight_attempt_artifacts() {
+  local candidate
+  for candidate in \
+    "$SCRIPT_DIR/evidence.pending.json" \
+    "$SCRIPT_DIR/evidence.json" \
+    "$SCRIPT_DIR/evidence.md" \
+    "$SCRIPT_DIR/.cleanup-evidence-prepared" \
+    "$SCRIPT_DIR/.evidence-publication.json" \
+    "$SCRIPT_DIR/.evidence-publication.md"; do
+    [[ ! -e "$candidate" && ! -L "$candidate" ]] || die "STOP_EXECUTION_ATTEMPT_EXISTS"
+  done
+}
+
 bootstrap_root() {
   RUN_ROOT="$(mktemp -d /private/tmp/passvero-stage13a-pg.XXXXXX)"
   chmod 0700 "$RUN_ROOT"
@@ -112,12 +125,12 @@ bootstrap_root() {
     XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
     "$NPM_BIN" ci --ignore-scripts --no-audit --no-fund --loglevel=error --prefix "$RUN_ROOT_REAL/harness"
-  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
-    XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
-    npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
-    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" \
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" \
+    TMPDIR="$RUN_ROOT_REAL/harness/tmp" XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" \
+    npm_config_cache="$RUN_ROOT_REAL/harness/cache" npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" \
+    NODE_OPTIONS="--no-warnings" PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" \
     "$NODE_BIN" --import tsx \
-    "$RUN_ROOT_REAL/harness/src/run-root.ts" bootstrap "$RUN_ROOT_REAL"
+    "$RUN_ROOT_REAL/harness/src/run-root.ts" bootstrap "$RUN_ROOT_REAL")
 }
 
 protected_value() {
@@ -165,30 +178,130 @@ create_disposable_database() {
 }
 
 prove_cluster_identity() {
-  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
     XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
     PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" PASSVERO_PROOF_CLUSTER_IDENTITY=1 \
     "$NODE_BIN" --import tsx --test --test-name-pattern="live disposable cluster identity" \
-    "$RUN_ROOT_REAL/harness/test/cluster-identity.test.ts"
+    "$RUN_ROOT_REAL/harness/test/cluster-identity.test.ts")
 }
 
 prove_h6() {
-  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
     XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
     PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" PASSVERO_PROOF_H6=1 \
     "$NODE_BIN" --import tsx --test --test-name-pattern="live H6 proves recovery" \
-    "$RUN_ROOT_REAL/harness/test/recovery-boundary.test.ts"
+    "$RUN_ROOT_REAL/harness/test/recovery-boundary.test.ts")
+}
+
+record_hypothesis_result() {
+  local id="$1" status="$2" process_status="$3"
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+    XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+    npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" \
+    "$NODE_BIN" --import tsx "$RUN_ROOT_REAL/harness/src/run-root.ts" \
+    record-hypothesis-result "$id" "$status" "$process_status")
+}
+
+run_hypothesis() {
+  local id="$1" gate="$2" test_file="$3" test_pattern="$4" expected_marker="$5"
+  local process_status status
+  set +e
+  if [[ -n "$test_pattern" ]]; then
+    (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+      XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+      npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+      PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$gate=1" \
+      "$NODE_BIN" --import tsx --test --test-concurrency=1 --test-name-pattern="$test_pattern" \
+      "$RUN_ROOT_REAL/harness/test/$test_file") \
+      >"$RUN_ROOT_REAL/log/$id.log" 2>&1
+  else
+    (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+      XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+      npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+      PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$gate=1" \
+      "$NODE_BIN" --import tsx --test --test-concurrency=1 \
+      "$RUN_ROOT_REAL/harness/test/$test_file") \
+      >"$RUN_ROOT_REAL/log/$id.log" 2>&1
+  fi
+  process_status=$?
+  if [[ "$process_status" -eq 0 && -n "$expected_marker" ]] \
+    && ! /usr/bin/grep -Fq -- "$expected_marker" "$RUN_ROOT_REAL/log/$id.log"; then
+    process_status=69
+  fi
+  set -e
+  if [[ "$process_status" -eq 0 ]]; then status=PASS; else status=FAIL; fi
+  if ! record_hypothesis_result "$id" "$status" "$process_status"; then
+    printf '%s\n' "$id=FAIL_RESULT_PUBLICATION" >&2
+    return 1
+  fi
+  printf '%s\n' "$id=$status"
+  [[ "$status" == PASS ]]
+}
+
+aggregate_pending_evidence() {
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+    XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+    npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" \
+    "$NODE_BIN" --import tsx "$RUN_ROOT_REAL/harness/src/run-root.ts" \
+    aggregate-proof-evidence "$SCRIPT_DIR/evidence.pending.json" "$SCRIPT_DIR")
+}
+
+run_hypotheses() {
+  if ! run_hypothesis "H1_NATIVE_TRANSACTION" "PASSVERO_PROOF_H1" \
+    "native-transaction.test.ts" "live H1 proves native and nested transaction behavior once" \
+    "H1_NATIVE_TRANSACTION=PASS"; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  if ! run_hypothesis "H2_DIRECT_API_OUTER_TRANSACTION" "PASSVERO_PROOF_H2" \
+    "direct-boundary.test.ts" "live H2 proves direct API commit and rollback matrices once" \
+    "H2_DIRECT_API_OUTER_TRANSACTION=PASS"; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  if ! run_hypothesis "H3_HANDLER_CONTEXT_REPLACEMENT" "PASSVERO_PROOF_H3" \
+    "handler-boundary.test.ts" "live H3 demonstrates handler adapter replacement and remains rejected" \
+    "H3_HANDLER_CONTEXT_REPLACEMENT=PASS"; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  if ! run_hypothesis "H4_CONTROLLED_ACTIVATION" "PASSVERO_PROOF_H4" \
+    "controlled-activation.test.ts" "live H4 proves controlled activation and public signup rejection once" \
+    "H4_CONTROLLED_ACTIVATION=PASS"; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  if ! run_hypothesis "H5_SESSION_COOKIE_AFTER_COMMIT" "PASSVERO_PROOF_H5" \
+    "session-boundary.test.ts" "live H5 uses controlled activation and exercises sign-in, rotation, and password-change boundaries" \
+    ""; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  if ! run_hypothesis "H6_RECOVERY_AND_REVOCATION" "PASSVERO_PROOF_H6" \
+    "recovery-boundary.test.ts" "live H6 proves recovery with generated Prisma and Better Auth H2 boundaries" \
+    ""; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  if ! run_hypothesis "H7_ROUTE_EXPOSURE" "PASSVERO_PROOF_H7" \
+    "route-boundary.test.ts" "" ""; then
+    aggregate_pending_evidence
+    return 1
+  fi
+  aggregate_pending_evidence
 }
 
 validate_generated_sql() {
   local schema_file="$1"
-  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
     XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
     PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$NODE_BIN" --import tsx \
-    "$RUN_ROOT_REAL/harness/src/run-root.ts" validate-generated-sql "$schema_file" || die "STOP_SCHEMA_ALLOWLIST"
+    "$RUN_ROOT_REAL/harness/src/run-root.ts" validate-generated-sql "$schema_file") || die "STOP_SCHEMA_ALLOWLIST"
 }
 
 append_reviewed_constraints() {
@@ -377,6 +490,7 @@ cleanup() {
 }
 
 run_all() {
+  preflight_attempt_artifacts
   run_source_gate
   preflight_port
   run_static
@@ -385,7 +499,7 @@ run_all() {
   create_disposable_database
   prove_cluster_identity
   generate_apply_schema
-  die "STOP_HYPOTHESES_NOT_IMPLEMENTED"
+  run_hypotheses
 }
 
 main() {

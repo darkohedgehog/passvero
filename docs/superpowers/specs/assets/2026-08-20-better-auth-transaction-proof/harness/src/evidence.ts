@@ -9,6 +9,22 @@ export type HypothesisId =
 
 export type HypothesisStatus = "PASS" | "FAIL";
 
+export const REQUIRED_HYPOTHESIS_IDS = [
+  "H1_NATIVE_TRANSACTION",
+  "H2_DIRECT_API_OUTER_TRANSACTION",
+  "H3_HANDLER_CONTEXT_REPLACEMENT",
+  "H4_CONTROLLED_ACTIVATION",
+  "H5_SESSION_COOKIE_AFTER_COMMIT",
+  "H6_RECOVERY_AND_REVOCATION",
+  "H7_ROUTE_EXPOSURE",
+] as const satisfies readonly HypothesisId[];
+
+export interface HypothesisProcessResult {
+  readonly id: HypothesisId;
+  readonly status: HypothesisStatus;
+  readonly processExitCode: number;
+}
+
 export interface RowCounts {
   readonly providerUser: number;
   readonly providerAccount: number;
@@ -172,6 +188,98 @@ export interface ProofEvidence {
   readonly assertions: readonly string[];
 }
 
+const EMPTY_ROW_COUNTS: RowCounts = {
+  providerUser: 0,
+  providerAccount: 0,
+  providerSession: 0,
+  providerVerification: 0,
+  canonicalUser: 0,
+  authIdentity: 0,
+  activation: 0,
+  credentialToken: 0,
+  abuseBucket: 0,
+};
+
+function isHypothesisId(value: unknown): value is HypothesisId {
+  return typeof value === "string"
+    && (REQUIRED_HYPOTHESIS_IDS as readonly string[]).includes(value);
+}
+
+function parseProcessResult(value: unknown): HypothesisProcessResult | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Readonly<Record<string, unknown>>;
+  if (!isHypothesisId(record.id)) return null;
+  if (record.status !== "PASS" && record.status !== "FAIL") return null;
+  if (!Number.isSafeInteger(record.processExitCode)
+    || Number(record.processExitCode) < 0
+    || Number(record.processExitCode) > 255) return null;
+  return {
+    id: record.id,
+    status: record.status,
+    processExitCode: Number(record.processExitCode),
+  };
+}
+
+function processEvidence(
+  id: HypothesisId,
+  status: HypothesisStatus,
+  failureCode: string | null,
+): HypothesisEvidence {
+  return {
+    id,
+    status,
+    transactionIds: [],
+    before: EMPTY_ROW_COUNTS,
+    after: EMPTY_ROW_COUNTS,
+    cookie: EMPTY_DEFERRED_COOKIE,
+    assertions: status === "PASS"
+      ? [
+          "reviewed hypothesis suite completed under the disposable boundary",
+          "process aggregate retains no raw transaction identifiers or row snapshots; the reviewed suite asserted those invariants before PASS",
+        ]
+      : ["reviewed hypothesis suite did not establish its mandatory runtime contract"],
+    failureCode,
+  };
+}
+
+export function aggregateHypothesisProcessResults(
+  candidates: readonly unknown[],
+): readonly HypothesisEvidence[] {
+  const parsed = candidates.map(parseProcessResult);
+  const containsInvalid = parsed.some((candidate) => candidate === null);
+  const valid = parsed.filter((candidate): candidate is HypothesisProcessResult => candidate !== null);
+  return REQUIRED_HYPOTHESIS_IDS.map((id, index) => {
+    const matches = valid.filter((candidate) => candidate.id === id);
+    if (containsInvalid && index === 0) {
+      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_RESULT_INVALID");
+    }
+    if (matches.length === 0) {
+      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_RESULT_MISSING");
+    }
+    if (matches.length !== 1) {
+      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_RESULT_DUPLICATE");
+    }
+    const result = matches[0];
+    if ((result.status === "PASS") !== (result.processExitCode === 0)) {
+      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_RESULT_INVALID");
+    }
+    if (result.status === "FAIL") {
+      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_PROCESS_FAILED");
+    }
+    return processEvidence(id, "PASS", null);
+  });
+}
+
+export function mandatoryHypothesesPassed(
+  hypotheses: readonly HypothesisEvidence[],
+): boolean {
+  return hypotheses.length === REQUIRED_HYPOTHESIS_IDS.length
+    && new Set(hypotheses.map(({ id }) => id)).size === REQUIRED_HYPOTHESIS_IDS.length
+    && REQUIRED_HYPOTHESIS_IDS.every((id) => hypotheses.some(
+      (hypothesis) => hypothesis.id === id && hypothesis.status === "PASS",
+    ));
+}
+
 const FORBIDDEN_KEY = /token|password|secret|email|ipAddress|url|cookieValue/i;
 const FORBIDDEN_VALUE = [
   /postgres(?:ql)?:\/\//i,
@@ -220,6 +328,13 @@ export function renderEvidenceJson(evidence: ProofEvidence): string {
   const projected = projectEvidence(evidence);
   validateEvidence(projected);
   return `${JSON.stringify(projected, null, 2)}\n`;
+}
+
+export function renderPendingEvidenceJson(evidence: Omit<ProofEvidence, "cleanup">): string {
+  const projected = projectEvidence({ ...evidence, cleanup: {} }) as Readonly<Record<string, unknown>>;
+  const { cleanup: _cleanup, ...pending } = projected;
+  validateEvidence(pending);
+  return `${JSON.stringify(pending, null, 2)}\n`;
 }
 
 export function renderEvidenceMarkdown(evidence: ProofEvidence): string {
