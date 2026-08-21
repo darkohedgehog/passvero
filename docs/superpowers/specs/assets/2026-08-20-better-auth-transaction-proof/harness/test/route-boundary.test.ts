@@ -17,9 +17,49 @@ import {
   handlePassveroAuthHttpRequest,
   type RecoveryProofBoundary,
 } from "../src/auth.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type RowCounts } from "../src/evidence.js";
+import { writeHypothesisAssertionResult } from "../src/run-root.js";
 import * as authModule from "../src/auth.js";
 
 type HttpMethod = "GET" | "POST";
+
+const H7_ASSERTION_TESTS = [
+  "H7 freezes the exact HTTP and direct-call policy while runtime remains unexecuted",
+  "runtime auth.api exactly matches the pinned source endpoint registry",
+  "raw Better Auth handler proves concrete dynamic routes remain reachable negative controls",
+  "production HTTP boundary denies every native route without invoking Better Auth",
+  "all pathless activation, recovery, and native server-only spellings are handler-unreachable",
+  "production HTTP boundary denies base and alternate spellings without a catch-all delegation",
+  "direct API remains distinct, exact-allowlisted, and direct signup is rejected",
+] as const;
+const completedH7Assertions = new Set<string>();
+const ZERO_ROW_COUNTS: RowCounts = {
+  providerUser: 0, providerAccount: 0, providerSession: 0, providerVerification: 0,
+  canonicalUser: 0, authIdentity: 0, activation: 0, credentialToken: 0, abuseBucket: 0,
+};
+
+function assertionBoundH7Test(name: (typeof H7_ASSERTION_TESTS)[number], action: () => Promise<void> | void): void {
+  test(name, async () => {
+    await action();
+    completedH7Assertions.add(name);
+  });
+}
+
+test.after(async () => {
+  if (process.env.PASSVERO_PROOF_H7 !== "1") return;
+  assert.deepEqual([...completedH7Assertions].sort(), [...H7_ASSERTION_TESTS].sort());
+  await writeHypothesisAssertionResult({
+    id: "H7_ROUTE_EXPOSURE",
+    status: "PASS",
+    transactionIds: [],
+    before: ZERO_ROW_COUNTS,
+    after: ZERO_ROW_COUNTS,
+    deltas: deltaRowCounts(ZERO_ROW_COUNTS, ZERO_ROW_COUNTS),
+    cookie: EMPTY_DEFERRED_COOKIE,
+    assertions: ["H7_ROUTE_EXPOSURE_ASSERTIONS_COMPLETE"],
+    failureCode: null,
+  });
+});
 type UnknownRecord = Record<PropertyKey, unknown>;
 
 interface EndpointRegistryEntry {
@@ -311,7 +351,7 @@ async function assertProductionHttp404(input: {
   }
 }
 
-test("H7 freezes the exact HTTP and direct-call policy while runtime remains unexecuted", () => {
+assertionBoundH7Test("H7 freezes the exact HTTP and direct-call policy while runtime remains unexecuted", () => {
   assert.equal(H7_ROUTE_EXPOSURE_RUNTIME_VERDICT, "NOT_EXECUTED");
   assert.deepEqual(Reflect.get(authModule, "NATIVE_AUTH_ROUTE_ALLOWLIST"), []);
   assert.equal(Object.hasOwn(authModule, "handler"), false);
@@ -328,7 +368,7 @@ test("H7 freezes the exact HTTP and direct-call policy while runtime remains une
   });
 });
 
-test("runtime auth.api exactly matches the pinned source endpoint registry", async () => {
+assertionBoundH7Test("runtime auth.api exactly matches the pinned source endpoint registry", async () => {
   const auth = createStaticRouteAuth(BASE_FORMS[0]);
   const runtimeRegistry = runtimeEndpointRegistry(auth.api);
   assert.deepEqual(runtimeRegistry, PINNED_ENDPOINT_REGISTRY);
@@ -347,7 +387,7 @@ test("runtime auth.api exactly matches the pinned source endpoint registry", asy
   );
 });
 
-test("raw Better Auth handler proves concrete dynamic routes remain reachable negative controls", async () => {
+assertionBoundH7Test("raw Better Auth handler proves concrete dynamic routes remain reachable negative controls", async () => {
   for (const base of BASE_FORMS) {
     const raw = instrumentRawHandler(createStaticRouteAuth(base));
     for (const negativeControl of RAW_HANDLER_NEGATIVE_CONTROL) {
@@ -365,7 +405,7 @@ test("raw Better Auth handler proves concrete dynamic routes remain reachable ne
   }
 });
 
-test("production HTTP boundary denies every native route without invoking Better Auth", async () => {
+assertionBoundH7Test("production HTTP boundary denies every native route without invoking Better Auth", async () => {
   const nativeRoutes = PINNED_ENDPOINT_REGISTRY.filter(
     (entry): entry is typeof entry & { readonly path: string } => entry.path !== null,
   );
@@ -402,7 +442,7 @@ test("production HTTP boundary denies every native route without invoking Better
   assert.equal(responseCount, EXPECTED_PRODUCTION_MATRIX_COUNTS.nativeAndConcrete);
 });
 
-test("all pathless activation, recovery, and native server-only spellings are handler-unreachable", async () => {
+assertionBoundH7Test("all pathless activation, recovery, and native server-only spellings are handler-unreachable", async () => {
   const pathless = PINNED_ENDPOINT_REGISTRY.filter(({ path: endpointPath }) => endpointPath === null);
   assert.deepEqual(pathless.map(({ name }) => name), [
     "setPassword", "activatePreprovisionedCredential", ...RECOVERY_SERVER_ONLY_ENDPOINTS,
@@ -431,7 +471,7 @@ test("all pathless activation, recovery, and native server-only spellings are ha
   assert.equal(responseCount, EXPECTED_PRODUCTION_MATRIX_COUNTS.serverOnlySpellings);
 });
 
-test("production HTTP boundary denies base and alternate spellings without a catch-all delegation", async () => {
+assertionBoundH7Test("production HTTP boundary denies base and alternate spellings without a catch-all delegation", async () => {
   const spellings = [
     "/internal-auth",
     "/internal-auth/",
@@ -470,7 +510,7 @@ test("production HTTP boundary denies base and alternate spellings without a cat
   );
 });
 
-test("direct API remains distinct, exact-allowlisted, and direct signup is rejected", async () => {
+assertionBoundH7Test("direct API remains distinct, exact-allowlisted, and direct signup is rejected", async () => {
   const auth = createStaticRouteAuth(BASE_FORMS[0]);
   const registry = runtimeEndpointRegistry(auth.api);
   const runtimeNames = new Set(registry.map(({ name }) => name));

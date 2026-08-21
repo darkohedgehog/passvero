@@ -29,9 +29,9 @@ import {
   type BoundaryRootPrisma,
   type TransactionClient,
 } from "../src/proof-boundary.js";
-import type { RowCounts } from "../src/evidence.js";
+import { deltaRowCounts, type RowCounts } from "../src/evidence.js";
 import { createControlledActivationAuth, createProofAuth } from "../src/auth.js";
-import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 
@@ -147,6 +147,17 @@ function fixtureLabel(): string {
 
 async function providerSessionCount(prisma: H5TransactionClient, userId?: string): Promise<number> {
   return prisma.authProviderSession.count(userId ? { where: { userId } } : undefined);
+}
+
+async function readCounts(prisma: H5TransactionClient): Promise<RowCounts> {
+  const [providerUser, providerAccount, providerSession, providerVerification, canonicalUser,
+    authIdentity, activation, credentialToken, abuseBucket] = await Promise.all([
+    prisma.authProviderUser.count(), prisma.authProviderAccount.count(), prisma.authProviderSession.count(),
+    prisma.authProviderVerification.count(), prisma.user.count(), prisma.authIdentity.count(),
+    prisma.accountActivation.count(), prisma.authCredentialToken.count(), prisma.authAbuseBucket.count(),
+  ]);
+  return { providerUser, providerAccount, providerSession, providerVerification, canonicalUser,
+    authIdentity, activation, credentialToken, abuseBucket };
 }
 
 async function sessionByToken(prisma: H5TransactionClient, token: string): Promise<SessionProofRecord> {
@@ -1133,6 +1144,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
   try {
+    const proofBefore = await readCounts(prisma);
     const unverifiedLabel = fixtureLabel();
     const unverifiedEmail = `h5-unverified-${unverifiedLabel}@invalid.example`;
     const unverifiedPassword = `H5-${unverifiedLabel}-Aa1!`;
@@ -1369,7 +1381,18 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
     assert.equal(newPasswordSignIn.value.providerUserId, userId);
 
     assert.equal(H5_SESSION_ROTATION_FEASIBILITY.verdict, "SUPPORTED_STATIC");
-    console.log("H5_SESSION_BOUNDARY=NOT_EXECUTED");
+    const proofAfter = await readCounts(prisma);
+    await writeHypothesisAssertionResult({
+      id: "H5_SESSION_COOKIE_AFTER_COMMIT",
+      status: "PASS",
+      transactionIds: [],
+      before: proofBefore,
+      after: proofAfter,
+      deltas: deltaRowCounts(proofBefore, proofAfter),
+      cookie: changed.cookie,
+      assertions: ["H5_SESSION_AND_COOKIE_ASSERTIONS_COMPLETE"],
+      failureCode: null,
+    });
   } finally {
     await prisma.$disconnect();
   }

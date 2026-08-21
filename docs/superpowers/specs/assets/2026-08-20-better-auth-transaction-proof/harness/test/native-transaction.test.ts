@@ -7,6 +7,7 @@ import { APIError } from "better-auth/api";
 import { createProofAuth, type ProofAuth } from "../src/auth.js";
 import {
   EMPTY_DEFERRED_COOKIE,
+  deltaRowCounts,
   H1_NATIVE_TRANSACTION_RUNTIME_VERDICT,
   H1_NATIVE_TRANSACTION_SCENARIOS,
   type H1NativeTransactionEvidence,
@@ -15,7 +16,7 @@ import {
   type H1WriteObservation,
   type RowCounts,
 } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
 
 type ProviderModel = H1WriteObservation["model"];
 type DelegateAction = H1WriteObservation["action"];
@@ -569,5 +570,18 @@ test("live H1 proves native and nested transaction behavior once", {
   assert.equal(evidence.scenarios.every((scenario) => scenario.status === "PASS"), true);
   assert.equal(evidence.scenarios[0]?.acceptedArchitecture, false);
   assert.equal(evidence.scenarios.slice(1).every((scenario) => scenario.acceptedArchitecture), true);
-  console.log("H1_NATIVE_TRANSACTION=PASS");
+  const before = evidence.scenarios[0]?.before;
+  const after = evidence.scenarios.at(-1)?.after;
+  if (!before || !after) throw new Error("STOP_H1_ASSERTION_RESULT_INCOMPLETE");
+  await writeHypothesisAssertionResult({
+    id: "H1_NATIVE_TRANSACTION",
+    status: "PASS",
+    transactionIds: evidence.scenarios.flatMap(({ transactionIds }) => transactionIds),
+    before,
+    after,
+    deltas: deltaRowCounts(before, after),
+    cookie: EMPTY_DEFERRED_COOKIE,
+    assertions: ["H1_NATIVE_AND_NESTED_ASSERTIONS_COMPLETE"],
+    failureCode: null,
+  });
 });

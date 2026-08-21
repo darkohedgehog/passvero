@@ -5,13 +5,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   aggregateHypothesisProcessResults,
+  parseHypothesisAssertionResult,
   renderEvidenceJson,
   renderEvidenceMarkdown,
   renderPendingEvidenceJson,
   REQUIRED_HYPOTHESIS_IDS,
+  type HypothesisAssertionResult,
   type HypothesisId,
-  type HypothesisProcessResult,
-  type HypothesisStatus,
+  type HypothesisProcessFailure,
   type ProofEvidence,
 } from "./evidence.js";
 
@@ -22,6 +23,7 @@ const ROLE_PATTERN = /^pvproof_(?:admin|app)_[a-f0-9]{12}$/;
 const DATABASE_PATTERN = /^pvproof_test_[a-f0-9]{12}$/;
 const BASE64URL_48 = /^[A-Za-z0-9_-]{48}$/;
 export const PROOF_ROOT_SENTINEL = "PASSVERO_STAGE13A_PG_V1";
+export const ATTEMPT_STATE_NAME = ".proof-attempt-state";
 const IDENTITY_NAMES = [
   "superuser-role",
   "superuser-password",
@@ -63,6 +65,7 @@ export async function bootstrapRunRoot(candidate: string): Promise<void> {
   await mkdir(logDir, { mode: 0o700 });
   await mkdir(sqlDir, { mode: 0o700 });
   await mkdir(path.join(runRoot, "evidence-fragments"), { mode: 0o700 });
+  await mkdir(path.join(runRoot, "process-failures"), { mode: 0o700 });
 
   const runId = opaqueBase64Url(24);
   const values = new Map<string, string>([
@@ -189,7 +192,24 @@ function asEvidenceDraft(value: unknown): Omit<ProofEvidence, "cleanup"> {
     fail("pending evidence must be an object");
   }
   if (Object.hasOwn(value, "cleanup")) fail("pending evidence must not contain cleanup");
-  return value as Omit<ProofEvidence, "cleanup">;
+  const draft = value as Omit<ProofEvidence, "cleanup">;
+  const restoreCounts = (counts: unknown): unknown => {
+    if (counts === null || typeof counts !== "object" || Array.isArray(counts)) return counts;
+    const record = counts as Readonly<Record<string, unknown>>;
+    if (!Object.hasOwn(record, "credentialRecord") || Object.hasOwn(record, "credentialToken")) return counts;
+    const { credentialRecord, ...rest } = record;
+    return { ...rest, credentialToken: credentialRecord };
+  };
+  if (!Array.isArray(draft.hypotheses)) fail("pending hypotheses must be an array");
+  return {
+    ...draft,
+    hypotheses: draft.hypotheses.map((hypothesis) => ({
+      ...hypothesis,
+      before: restoreCounts(hypothesis.before),
+      after: restoreCounts(hypothesis.after),
+      deltas: restoreCounts(hypothesis.deltas),
+    })) as ProofEvidence["hypotheses"],
+  };
 }
 
 function assertOwnedRealDirectory(candidate: string, label: string): string {
@@ -215,7 +235,11 @@ export async function prepareCleanupEvidence(
   const pending = asEvidenceDraft(JSON.parse(readFileSync(pendingPath, "utf8")) as unknown);
   renderEvidenceJson({ ...pending, cleanup: {} });
   renderEvidenceMarkdown({ ...pending, cleanup: {} });
-  if (outputDirectory !== path.join(evidenceRoot, ".cleanup-evidence-prepared")) {
+  const attemptRoot = assertProtectedDirectory(
+    path.join(evidenceRoot, ATTEMPT_STATE_NAME),
+    "attempt state directory",
+  );
+  if (outputDirectory !== path.join(attemptRoot, "prepared")) {
     fail("prepared evidence path is not authoritative");
   }
   await mkdir(outputDirectory, { mode: 0o700 });
@@ -248,7 +272,7 @@ export async function prepareCleanupEvidence(
   const mandatoryPassed = pending.hypotheses.length === mandatoryIds.size
     && observedIds.size === mandatoryIds.size
     && [...mandatoryIds].every((id) => observedIds.has(id))
-    && pending.hypotheses.every((hypothesis) => hypothesis.status === "PASS");
+    && pending.hypotheses.every((hypothesis) => parseHypothesisAssertionResult(hypothesis) !== null);
   await writeProtected(path.join(preparedRoot, "mandatory-verdict"), mandatoryPassed ? "PASS" : "FAIL");
 }
 
@@ -268,25 +292,33 @@ function isHypothesisId(value: string): value is HypothesisId {
   return (REQUIRED_HYPOTHESIS_IDS as readonly string[]).includes(value);
 }
 
-export async function recordHypothesisProcessResult(
-  id: string,
-  status: string,
-  processExitCode: number,
-): Promise<void> {
-  if (!isHypothesisId(id)) fail("hypothesis result id is invalid");
-  if (status !== "PASS" && status !== "FAIL") fail("hypothesis result status is invalid");
-  if (!Number.isSafeInteger(processExitCode) || processExitCode < 0 || processExitCode > 255) {
-    fail("hypothesis result exit code is invalid");
-  }
-  if ((status === "PASS") !== (processExitCode === 0)) {
-    fail("hypothesis result status and exit code disagree");
-  }
+export async function writeHypothesisAssertionResult(result: HypothesisAssertionResult): Promise<void> {
+  const parsed = parseHypothesisAssertionResult(result);
+  if (!parsed) fail("hypothesis assertion result is invalid");
   const identity = readRunIdentity();
   const directory = assertProtectedDirectory(
     path.join(identity.runRoot, "evidence-fragments"),
     "evidence fragments",
   );
-  const result = { id, status, processExitCode } satisfies HypothesisProcessResult;
+  await writeProtected(path.join(directory, `${parsed.id}.json`), `${JSON.stringify(parsed)}\n`);
+}
+
+export async function recordHypothesisProcessFailure(id: string, processExitCode: number): Promise<void> {
+  if (!isHypothesisId(id)) fail("hypothesis result id is invalid");
+  if (!Number.isSafeInteger(processExitCode) || processExitCode <= 0 || processExitCode > 255) {
+    fail("hypothesis process exit code is invalid");
+  }
+  const identity = readRunIdentity();
+  const directory = assertProtectedDirectory(
+    path.join(identity.runRoot, "process-failures"),
+    "process failures",
+  );
+  const result = {
+    id,
+    status: "FAIL",
+    processExitCode,
+    failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED",
+  } satisfies HypothesisProcessFailure;
   await writeProtected(path.join(directory, `${id}.json`), `${JSON.stringify(result)}\n`);
 }
 
@@ -296,23 +328,29 @@ function sha256File(filePath: string): string {
   return createHash("sha256").update(readFileSync(filePath)).digest("hex");
 }
 
-function readHypothesisProcessResults(runRoot: string): readonly unknown[] {
-  const directory = assertProtectedDirectory(
-    path.join(runRoot, "evidence-fragments"),
-    "evidence fragments",
-  );
+function readProtectedJsonDirectory(runRoot: string, name: string): readonly unknown[] {
+  const directory = assertProtectedDirectory(path.join(runRoot, name), name);
   return readdirSync(directory, { withFileTypes: true }).map((entry) => {
-    if (!entry.isFile() || entry.isSymbolicLink() || !entry.name.endsWith(".json")) {
-      return null;
-    }
+    if (!entry.isFile() || entry.isSymbolicLink() || !entry.name.endsWith(".json")) return null;
     const filePath = path.join(directory, entry.name);
-    assertProtectedFile(filePath, "hypothesis result");
-    try {
-      return JSON.parse(readFileSync(filePath, "utf8")) as unknown;
-    } catch {
-      return null;
-    }
+    assertProtectedFile(filePath, name);
+    try { return JSON.parse(readFileSync(filePath, "utf8")) as unknown; } catch { return null; }
   });
+}
+
+export function validateRecordedHypothesisResult(id: string): HypothesisAssertionResult {
+  if (!isHypothesisId(id)) fail("hypothesis result id is invalid");
+  const identity = readRunIdentity();
+  const results = readProtectedJsonDirectory(identity.runRoot, "evidence-fragments");
+  const parsed = results.map(parseHypothesisAssertionResult);
+  if (parsed.some((result) => result === null)) {
+    fail("hypothesis assertion result is missing, duplicate, malformed, or conflicting");
+  }
+  const matching = parsed.filter(
+    (result): result is HypothesisAssertionResult => result !== null && result.id === id,
+  );
+  if (matching.length !== 1) fail("hypothesis assertion result is missing, duplicate, malformed, or conflicting");
+  return matching[0];
 }
 
 export async function aggregateProofEvidence(
@@ -326,7 +364,11 @@ export async function aggregateProofEvidence(
   }
   if (lstatExists(pendingPath)) fail("pending evidence already exists");
   const harnessRoot = assertProtectedDirectory(path.join(identity.runRoot, "harness"), "harness root");
-  const hypotheses = aggregateHypothesisProcessResults(readHypothesisProcessResults(identity.runRoot));
+  const candidates = [
+    ...readProtectedJsonDirectory(identity.runRoot, "evidence-fragments"),
+    ...readProtectedJsonDirectory(identity.runRoot, "process-failures"),
+  ];
+  const hypotheses = aggregateHypothesisProcessResults(candidates);
   const evidence: Omit<ProofEvidence, "cleanup"> = {
     packageHashes: {
       harnessLockfile: sha256File(path.join(harnessRoot, "package-lock.json")),
@@ -494,16 +536,19 @@ async function runCli(): Promise<void> {
     await prepareCleanupEvidence(process.argv[3], process.argv[4], process.argv[5]);
     return;
   }
-  if (process.argv[2] === "record-hypothesis-result" && process.argv.length === 6) {
-    const exitCode = Number(process.argv[5]);
-    await recordHypothesisProcessResult(process.argv[3], process.argv[4], exitCode);
+  if (process.argv[2] === "record-process-failure" && process.argv.length === 5) {
+    await recordHypothesisProcessFailure(process.argv[3], Number(process.argv[4]));
+    return;
+  }
+  if (process.argv[2] === "validate-hypothesis-result" && process.argv.length === 4) {
+    validateRecordedHypothesisResult(process.argv[3]);
     return;
   }
   if (process.argv[2] === "aggregate-proof-evidence" && process.argv.length === 5) {
     await aggregateProofEvidence(process.argv[3], process.argv[4]);
     return;
   }
-  fail("usage: run-root.ts <bootstrap|validate-generated-sql|prepare-cleanup-evidence|record-hypothesis-result|aggregate-proof-evidence> ...");
+  fail("usage: run-root.ts <bootstrap|validate-generated-sql|prepare-cleanup-evidence|record-process-failure|validate-hypothesis-result|aggregate-proof-evidence|claim-proof-attempt|finalize-proof-attempt> ...");
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {

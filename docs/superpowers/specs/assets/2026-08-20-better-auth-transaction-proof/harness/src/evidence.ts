@@ -19,12 +19,6 @@ export const REQUIRED_HYPOTHESIS_IDS = [
   "H7_ROUTE_EXPOSURE",
 ] as const satisfies readonly HypothesisId[];
 
-export interface HypothesisProcessResult {
-  readonly id: HypothesisId;
-  readonly status: HypothesisStatus;
-  readonly processExitCode: number;
-}
-
 export interface RowCounts {
   readonly providerUser: number;
   readonly providerAccount: number;
@@ -173,9 +167,32 @@ export interface HypothesisEvidence {
   readonly transactionIds: readonly string[];
   readonly before: RowCounts;
   readonly after: RowCounts;
+  readonly deltas: RowCounts;
   readonly cookie: DeferredCookie;
   readonly assertions: readonly string[];
   readonly failureCode: string | null;
+}
+
+export const HYPOTHESIS_ASSERTION_CODES = {
+  H1_NATIVE_TRANSACTION: ["H1_NATIVE_AND_NESTED_ASSERTIONS_COMPLETE"],
+  H2_DIRECT_API_OUTER_TRANSACTION: ["H2_DIRECT_BOUNDARY_ASSERTIONS_COMPLETE"],
+  H3_HANDLER_CONTEXT_REPLACEMENT: ["H3_HANDLER_REJECTION_ASSERTIONS_COMPLETE"],
+  H4_CONTROLLED_ACTIVATION: ["H4_CONTROLLED_ACTIVATION_ASSERTIONS_COMPLETE"],
+  H5_SESSION_COOKIE_AFTER_COMMIT: ["H5_SESSION_AND_COOKIE_ASSERTIONS_COMPLETE"],
+  H6_RECOVERY_AND_REVOCATION: ["H6_RECOVERY_AND_REVOCATION_ASSERTIONS_COMPLETE"],
+  H7_ROUTE_EXPOSURE: ["H7_ROUTE_EXPOSURE_ASSERTIONS_COMPLETE"],
+} as const satisfies Readonly<Record<HypothesisId, readonly string[]>>;
+
+export interface HypothesisAssertionResult extends HypothesisEvidence {
+  readonly status: "PASS";
+  readonly failureCode: null;
+}
+
+export interface HypothesisProcessFailure {
+  readonly id: HypothesisId;
+  readonly status: "FAIL";
+  readonly processExitCode: number;
+  readonly failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED";
 }
 
 export interface ProofEvidence {
@@ -205,18 +222,110 @@ function isHypothesisId(value: unknown): value is HypothesisId {
     && (REQUIRED_HYPOTHESIS_IDS as readonly string[]).includes(value);
 }
 
-function parseProcessResult(value: unknown): HypothesisProcessResult | null {
+const ROW_COUNT_KEYS = [
+  "providerUser", "providerAccount", "providerSession", "providerVerification",
+  "canonicalUser", "authIdentity", "activation", "credentialToken", "abuseBucket",
+] as const satisfies readonly (keyof RowCounts)[];
+
+const ASSERTION_RESULT_KEYS = [
+  "id", "status", "transactionIds", "before", "after", "deltas", "cookie",
+  "assertions", "failureCode",
+] as const;
+
+function hasExactKeys(record: Readonly<Record<string, unknown>>, expected: readonly string[]): boolean {
+  const actual = Object.keys(record).sort();
+  return actual.length === expected.length
+    && actual.every((key, index) => key === [...expected].sort()[index]);
+}
+
+function parseRowCounts(value: unknown, allowNegative: boolean): RowCounts | null {
   if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
   const record = value as Readonly<Record<string, unknown>>;
+  if (!hasExactKeys(record, ROW_COUNT_KEYS)) return null;
+  const parsed = Object.fromEntries(ROW_COUNT_KEYS.map((key) => [key, Number(record[key])])) as unknown;
+  if (parsed === null || typeof parsed !== "object") return null;
+  const counts = parsed as RowCounts;
+  if (!ROW_COUNT_KEYS.every((key) => Number.isSafeInteger(counts[key])
+    && (allowNegative || counts[key] >= 0))) return null;
+  return counts;
+}
+
+export function deltaRowCounts(before: RowCounts, after: RowCounts): RowCounts {
+  return Object.fromEntries(ROW_COUNT_KEYS.map((key) => [key, after[key] - before[key]])) as unknown as RowCounts;
+}
+
+function parseCookie(value: unknown): DeferredCookie | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Readonly<Record<string, unknown>>;
+  if (!hasExactKeys(record, [
+    "present", "nameHash", "secure", "httpOnly", "sameSite", "hostOnly", "maxAgeSeconds",
+  ])) return null;
+  if (typeof record.present !== "boolean" || typeof record.secure !== "boolean"
+    || typeof record.httpOnly !== "boolean" || typeof record.hostOnly !== "boolean") return null;
+  if (record.nameHash !== null && (typeof record.nameHash !== "string" || !/^[a-f0-9]{64}$/.test(record.nameHash))) return null;
+  if (record.sameSite !== null && record.sameSite !== "lax") return null;
+  if (record.maxAgeSeconds !== null
+    && (!Number.isSafeInteger(record.maxAgeSeconds) || Number(record.maxAgeSeconds) < 0)) return null;
+  if (!record.present && (record.nameHash !== null || record.secure || record.httpOnly
+    || record.sameSite !== null || !record.hostOnly || record.maxAgeSeconds !== null)) return null;
+  return {
+    present: record.present,
+    nameHash: record.nameHash as string | null,
+    secure: record.secure,
+    httpOnly: record.httpOnly,
+    sameSite: record.sameSite as "lax" | null,
+    hostOnly: record.hostOnly,
+    maxAgeSeconds: record.maxAgeSeconds as number | null,
+  };
+}
+
+export function parseHypothesisAssertionResult(value: unknown): HypothesisAssertionResult | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Readonly<Record<string, unknown>>;
+  if (!hasExactKeys(record, ASSERTION_RESULT_KEYS)) return null;
   if (!isHypothesisId(record.id)) return null;
-  if (record.status !== "PASS" && record.status !== "FAIL") return null;
-  if (!Number.isSafeInteger(record.processExitCode)
-    || Number(record.processExitCode) < 0
-    || Number(record.processExitCode) > 255) return null;
+  if (record.status !== "PASS" || record.failureCode !== null) return null;
+  if (!Array.isArray(record.transactionIds)
+    || !record.transactionIds.every((entry) => typeof entry === "string" && /^[a-f0-9]{64}$/.test(entry))) return null;
+  const before = parseRowCounts(record.before, false);
+  const after = parseRowCounts(record.after, false);
+  const deltas = parseRowCounts(record.deltas, true);
+  const cookie = parseCookie(record.cookie);
+  if (!before || !after || !deltas || !cookie) return null;
+  const computed = deltaRowCounts(before, after);
+  if (!ROW_COUNT_KEYS.every((key) => computed[key] === deltas[key])) return null;
+  const allowedAssertions = HYPOTHESIS_ASSERTION_CODES[record.id] as readonly string[];
+  const assertions = record.assertions;
+  if (!Array.isArray(assertions)
+    || assertions.length !== allowedAssertions.length
+    || new Set(assertions).size !== assertions.length
+    || !allowedAssertions.every((entry) => assertions.includes(entry))) return null;
   return {
     id: record.id,
-    status: record.status,
+    status: "PASS",
+    transactionIds: [...record.transactionIds] as string[],
+    before,
+    after,
+    deltas,
+    cookie,
+    assertions: [...assertions] as string[],
+    failureCode: null,
+  };
+}
+
+function parseProcessFailure(value: unknown): HypothesisProcessFailure | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Readonly<Record<string, unknown>>;
+  if (!hasExactKeys(record, ["id", "status", "processExitCode", "failureCode"])) return null;
+  if (!isHypothesisId(record.id) || record.status !== "FAIL"
+    || record.failureCode !== "STOP_HYPOTHESIS_PROCESS_FAILED") return null;
+  if (!Number.isSafeInteger(record.processExitCode)
+    || Number(record.processExitCode) <= 0 || Number(record.processExitCode) > 255) return null;
+  return {
+    id: record.id,
+    status: "FAIL",
     processExitCode: Number(record.processExitCode),
+    failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED",
   };
 }
 
@@ -231,13 +340,9 @@ function processEvidence(
     transactionIds: [],
     before: EMPTY_ROW_COUNTS,
     after: EMPTY_ROW_COUNTS,
+    deltas: EMPTY_ROW_COUNTS,
     cookie: EMPTY_DEFERRED_COOKIE,
-    assertions: status === "PASS"
-      ? [
-          "reviewed hypothesis suite completed under the disposable boundary",
-          "process aggregate retains no raw transaction identifiers or row snapshots; the reviewed suite asserted those invariants before PASS",
-        ]
-      : ["reviewed hypothesis suite did not establish its mandatory runtime contract"],
+    assertions: status === "PASS" ? HYPOTHESIS_ASSERTION_CODES[id] : [],
     failureCode,
   };
 }
@@ -245,9 +350,9 @@ function processEvidence(
 export function aggregateHypothesisProcessResults(
   candidates: readonly unknown[],
 ): readonly HypothesisEvidence[] {
-  const parsed = candidates.map(parseProcessResult);
+  const parsed = candidates.map((candidate) => parseHypothesisAssertionResult(candidate) ?? parseProcessFailure(candidate));
   const containsInvalid = parsed.some((candidate) => candidate === null);
-  const valid = parsed.filter((candidate): candidate is HypothesisProcessResult => candidate !== null);
+  const valid = parsed.filter((candidate): candidate is HypothesisAssertionResult | HypothesisProcessFailure => candidate !== null);
   return REQUIRED_HYPOTHESIS_IDS.map((id, index) => {
     const matches = valid.filter((candidate) => candidate.id === id);
     if (containsInvalid && index === 0) {
@@ -260,13 +365,10 @@ export function aggregateHypothesisProcessResults(
       return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_RESULT_DUPLICATE");
     }
     const result = matches[0];
-    if ((result.status === "PASS") !== (result.processExitCode === 0)) {
-      return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_RESULT_INVALID");
-    }
     if (result.status === "FAIL") {
       return processEvidence(id, "FAIL", "STOP_HYPOTHESIS_PROCESS_FAILED");
     }
-    return processEvidence(id, "PASS", null);
+    return result;
   });
 }
 
@@ -283,8 +385,13 @@ export function mandatoryHypothesesPassed(
 const FORBIDDEN_KEY = /token|password|secret|email|ipAddress|url|cookieValue/i;
 const FORBIDDEN_VALUE = [
   /postgres(?:ql)?:\/\//i,
+  /https?:\/\//i,
   /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/,
   /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
+  /(?:^|\s)\/(?:Users|private|tmp|var|opt|home)(?:\/|\s|$)/,
+  /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i,
+  /\b\d{8,}\b/,
+  /\b(?=[A-Za-z0-9_-]{32,63}\b)(?=.*[G-Zg-z_-])[A-Za-z0-9_-]+\b/,
   /set-cookie\s*:/i,
   /(?:^|\s)(?:__Host-|__Secure-)?[!#$%&'*+.^_`|~0-9A-Za-z-]+=[^;,\s]+;\s*(?:Domain|Expires|HttpOnly|Max-Age|Partitioned|Path|SameSite|Secure)\b/i,
 ];
@@ -292,6 +399,9 @@ const FORBIDDEN_VALUE = [
 function validateEvidence(value: unknown, key = "root"): void {
   if (FORBIDDEN_KEY.test(key)) throw new Error(`STOP_EVIDENCE_REDACTION: forbidden key ${key}`);
   if (typeof value === "string") {
+    if (/^(?:H[1-7]_[A-Z0-9_]+|STOP_(?:HYPOTHESIS_(?:RESULT_(?:INVALID|MISSING|DUPLICATE)|PROCESS_FAILED)|PRE_EVIDENCE_FAILURE))$/.test(value)) {
+      return;
+    }
     for (const pattern of FORBIDDEN_VALUE) {
       if (pattern.test(value)) throw new Error(`STOP_EVIDENCE_REDACTION: forbidden value at ${key}`);
     }
@@ -320,6 +430,7 @@ function projectEvidence(evidence: ProofEvidence): unknown {
       ...hypothesis,
       before: projectRowCounts(hypothesis.before),
       after: projectRowCounts(hypothesis.after),
+      deltas: projectRowCounts(hypothesis.deltas),
     })),
   };
 }
@@ -341,7 +452,9 @@ export function renderEvidenceMarkdown(evidence: ProofEvidence): string {
   validateEvidence(projectEvidence(evidence));
   const rows = evidence.hypotheses.map((item) => `| ${item.id} | ${item.status} | ${item.failureCode ?? "none"} |`);
   const markdown = [
-    "# Better Auth transaction proof evidence",
+    "# Better Auth transaction proof evidence companion",
+    "",
+    "NON-AUTHORITATIVE: evidence.json is the sole authoritative proof result.",
     "",
     "| Hypothesis | Status | Failure code |",
     "| --- | --- | --- |",

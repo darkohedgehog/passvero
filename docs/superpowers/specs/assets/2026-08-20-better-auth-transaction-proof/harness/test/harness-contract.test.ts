@@ -11,21 +11,27 @@ import {
   PROOF_ROOT_SENTINEL,
   readAuthSecret,
   readRunIdentity,
-  recordHypothesisProcessResult,
+  recordHypothesisProcessFailure,
   selectCleanupEvidenceCandidate,
+  validateRecordedHypothesisResult,
   validateGeneratedSql,
   validateDisposableHarnessEnvironment,
+  writeHypothesisAssertionResult,
 } from "../src/run-root.js";
 import {
   aggregateHypothesisProcessResults,
+  deltaRowCounts,
+  HYPOTHESIS_ASSERTION_CODES,
   mandatoryHypothesesPassed,
+  parseHypothesisAssertionResult,
   renderEvidenceJson,
   renderPendingEvidenceJson,
   REQUIRED_HYPOTHESIS_IDS as PROOF_HYPOTHESIS_IDS,
-  type HypothesisProcessResult,
+  type HypothesisAssertionResult,
   type ProofEvidence,
 } from "../src/evidence.js";
-import { publishEvidenceState } from "../src/publication.mjs";
+import { claimEvidenceAttempt, finalizeEvidenceAttempt, publishEvidenceState } from "../src/publication.mjs";
+import { planCleanup, type ProofPhase } from "../src/lifecycle.js";
 
 const EMPTY_COUNTS = {
   providerUser: 0,
@@ -51,11 +57,13 @@ async function createSyntheticRunRoot(): Promise<string> {
   const identityDir = path.join(runRoot, "identity");
   const socketDir = path.join(runRoot, "socket");
   const fragmentsDir = path.join(runRoot, "evidence-fragments");
+  const failuresDir = path.join(runRoot, "process-failures");
   const harnessDir = path.join(runRoot, "harness");
   const dataDir = path.join(runRoot, "data");
   await mkdir(identityDir, { mode: 0o700 });
   await mkdir(socketDir, { mode: 0o700 });
   await mkdir(fragmentsDir, { mode: 0o700 });
+  await mkdir(failuresDir, { mode: 0o700 });
   await mkdir(path.join(harnessDir, "node_modules", "better-auth"), { recursive: true, mode: 0o700 });
   await mkdir(path.join(harnessDir, "node_modules", "@better-auth", "core"), { recursive: true, mode: 0o700 });
   await mkdir(path.join(harnessDir, "node_modules", "@better-auth", "prisma-adapter"), { recursive: true, mode: 0o700 });
@@ -131,6 +139,7 @@ function cleanEvidence(): ProofEvidence {
         transactionIds: ["e".repeat(64)],
         before: EMPTY_COUNTS,
         after: EMPTY_COUNTS,
+        deltas: EMPTY_COUNTS,
         cookie: {
           present: false,
           nameHash: null,
@@ -140,7 +149,7 @@ function cleanEvidence(): ProofEvidence {
           hostOnly: true,
           maxAgeSeconds: null,
         },
-        assertions: ["outer rollback preserved"],
+        assertions: ["H2_DIRECT_BOUNDARY_ASSERTIONS_COMPLETE"],
         failureCode: null,
       },
     ],
@@ -151,27 +160,54 @@ function cleanEvidence(): ProofEvidence {
 
 function exactMandatoryEvidence(): ProofEvidence {
   const base = cleanEvidence();
-  const hypothesis = base.hypotheses[0];
   return {
     ...base,
-    hypotheses: REQUIRED_HYPOTHESIS_IDS.map((id) => ({ ...hypothesis, id, status: "PASS" })),
+    hypotheses: REQUIRED_HYPOTHESIS_IDS.map((id) => assertionResult(id)),
   };
 }
 
-function allPassProcessResults(): readonly HypothesisProcessResult[] {
-  return PROOF_HYPOTHESIS_IDS.map((id) => ({ id, status: "PASS", processExitCode: 0 }));
+function assertionResult(
+  id: (typeof REQUIRED_HYPOTHESIS_IDS)[number],
+  overrides: Partial<HypothesisAssertionResult> = {},
+): HypothesisAssertionResult {
+  const before = { ...EMPTY_COUNTS, providerUser: 2 };
+  const after = { ...EMPTY_COUNTS, providerUser: 3, authIdentity: 1 };
+  return {
+    id,
+    status: "PASS",
+    transactionIds: ["e".repeat(64)],
+    before,
+    after,
+    deltas: deltaRowCounts(before, after),
+    cookie: {
+      present: true,
+      nameHash: "f".repeat(64),
+      secure: true,
+      httpOnly: true,
+      sameSite: "lax",
+      hostOnly: true,
+      maxAgeSeconds: 604800,
+    },
+    assertions: [...HYPOTHESIS_ASSERTION_CODES[id]],
+    failureCode: null,
+    ...overrides,
+  };
 }
 
-test("process aggregation accepts exactly seven unique successful hypothesis suites", () => {
-  const hypotheses = aggregateHypothesisProcessResults(allPassProcessResults());
+function allPassAssertionResults(): readonly HypothesisAssertionResult[] {
+  return PROOF_HYPOTHESIS_IDS.map((id) => assertionResult(id));
+}
+
+test("process aggregation accepts exactly seven unique assertion-bound results", () => {
+  const hypotheses = aggregateHypothesisProcessResults(allPassAssertionResults());
   assert.deepEqual(hypotheses.map(({ id }) => id), PROOF_HYPOTHESIS_IDS);
   assert.equal(hypotheses.every(({ status, failureCode }) => status === "PASS" && failureCode === null), true);
   assert.equal(mandatoryHypothesesPassed(hypotheses), true);
 });
 
 test("process aggregation rejects one explicit hypothesis failure", () => {
-  const results = allPassProcessResults().map((result, index) => index === 2
-    ? { ...result, status: "FAIL" as const, processExitCode: 1 }
+  const results = allPassAssertionResults().map((result, index) => index === 2
+    ? { id: result.id, status: "FAIL" as const, processExitCode: 1, failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED" as const }
     : result);
   const hypotheses = aggregateHypothesisProcessResults(results);
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
@@ -179,43 +215,44 @@ test("process aggregation rejects one explicit hypothesis failure", () => {
 });
 
 test("process aggregation rejects a missing hypothesis result", () => {
-  const hypotheses = aggregateHypothesisProcessResults(allPassProcessResults().slice(0, -1));
+  const hypotheses = aggregateHypothesisProcessResults(allPassAssertionResults().slice(0, -1));
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
   assert.equal(hypotheses.at(-1)?.failureCode, "STOP_HYPOTHESIS_RESULT_MISSING");
 });
 
 test("process aggregation rejects a duplicate hypothesis result", () => {
-  const results = [...allPassProcessResults(), allPassProcessResults()[0]];
+  const results = [...allPassAssertionResults(), allPassAssertionResults()[0]];
   const hypotheses = aggregateHypothesisProcessResults(results);
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
   assert.equal(hypotheses[0]?.failureCode, "STOP_HYPOTHESIS_RESULT_DUPLICATE");
 });
 
 test("process aggregation records a crashed hypothesis process as terminal failure", () => {
-  const results = allPassProcessResults().map((result, index) => index === 4
-    ? { ...result, status: "FAIL" as const, processExitCode: 70 }
+  const results = allPassAssertionResults().map((result, index) => index === 4
+    ? { id: result.id, status: "FAIL" as const, processExitCode: 70, failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED" as const }
     : result);
   const hypotheses = aggregateHypothesisProcessResults(results);
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
   assert.equal(hypotheses[4]?.failureCode, "STOP_HYPOTHESIS_PROCESS_FAILED");
 });
 
-test("process aggregation rejects malformed status and exit-code evidence", () => {
-  const results = allPassProcessResults().map((result, index) => index === 0
-    ? { ...result, processExitCode: 70 }
+test("process aggregation rejects zero-exit skipped or malformed assertion evidence", () => {
+  const results: readonly unknown[] = allPassAssertionResults().map((result, index) => index === 0
+    ? { id: result.id, status: "PASS", processExitCode: 0 }
     : result);
   const hypotheses = aggregateHypothesisProcessResults(results);
   assert.equal(mandatoryHypothesesPassed(hypotheses), false);
   assert.equal(hypotheses[0]?.failureCode, "STOP_HYPOTHESIS_RESULT_INVALID");
 });
 
-test("protected result fragments aggregate into redacted pending evidence exactly once", async () => {
+test("assertion results preserve redacted facts and protected fragments aggregate exactly once", async () => {
   await withSyntheticRunRoot(async (runRoot) => {
-    for (const result of allPassProcessResults()) {
-      await recordHypothesisProcessResult(result.id, result.status, result.processExitCode);
+    for (const result of allPassAssertionResults()) {
+      await writeHypothesisAssertionResult(result);
+      assert.equal(validateRecordedHypothesisResult(result.id).id, result.id);
     }
     await assert.rejects(
-      () => recordHypothesisProcessResult("H1_NATIVE_TRANSACTION", "PASS", 0),
+      () => writeHypothesisAssertionResult(assertionResult("H1_NATIVE_TRANSACTION")),
       /EEXIST/,
     );
     const pendingPath = path.join(runRoot, "evidence.pending.json");
@@ -224,12 +261,149 @@ test("protected result fragments aggregate into redacted pending evidence exactl
     assert.doesNotMatch(pending, /"cleanup"/);
     assert.doesNotMatch(pending, /credentialToken/);
     assert.match(pending, /"credentialRecord": 0/);
+    assert.match(pending, /"providerUser": 1/);
+    assert.match(pending, /"nameHash": "f{64}"/);
     const parsed = JSON.parse(pending) as { readonly hypotheses: readonly { readonly id: string; readonly status: string }[] };
     assert.deepEqual(parsed.hypotheses.map(({ id }) => id), PROOF_HYPOTHESIS_IDS);
     assert.equal(parsed.hypotheses.every(({ status }) => status === "PASS"), true);
     await assert.rejects(() => aggregateProofEvidence(pendingPath, runRoot), /already exists/);
   });
 });
+
+test("result parser rejects malformed, conflicting, duplicate assertions and dishonest deltas", () => {
+  const valid = assertionResult("H1_NATIVE_TRANSACTION");
+  assert.deepEqual(parseHypothesisAssertionResult(valid), valid);
+  assert.equal(parseHypothesisAssertionResult({ ...valid, assertions: [] }), null);
+  assert.equal(parseHypothesisAssertionResult({ ...valid, assertions: [...valid.assertions, ...valid.assertions] }), null);
+  assert.equal(parseHypothesisAssertionResult({ ...valid, assertions: ["H2_DIRECT_BOUNDARY_ASSERTIONS_COMPLETE"] }), null);
+  assert.equal(parseHypothesisAssertionResult({ ...valid, deltas: EMPTY_COUNTS }), null);
+  assert.equal(parseHypothesisAssertionResult({ ...valid, extra: true }), null);
+});
+
+test("a process failure conflicts with any structured PASS for the same hypothesis", async () => {
+  await withSyntheticRunRoot(async () => {
+    await writeHypothesisAssertionResult(assertionResult("H1_NATIVE_TRANSACTION"));
+    await recordHypothesisProcessFailure("H1_NATIVE_TRANSACTION", 70);
+    const combined = [assertionResult("H1_NATIVE_TRANSACTION"), {
+      id: "H1_NATIVE_TRANSACTION", status: "FAIL", processExitCode: 70,
+      failureCode: "STOP_HYPOTHESIS_PROCESS_FAILED",
+    }];
+    assert.equal(aggregateHypothesisProcessResults(combined)[0]?.failureCode, "STOP_HYPOTHESIS_RESULT_DUPLICATE");
+  });
+});
+
+test("attempt claim is atomic, owner-only, durable, and rejects concurrent and sequential retries", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-attempt.");
+  await chmod(evidenceRoot, 0o700);
+  try {
+    const outcomes = await Promise.allSettled([
+      claimEvidenceAttempt(evidenceRoot),
+      claimEvidenceAttempt(evidenceRoot),
+    ]);
+    assert.equal(outcomes.filter(({ status }) => status === "fulfilled").length, 1);
+    assert.equal(outcomes.filter(({ status }) => status === "rejected").length, 1);
+    const attemptRoot = path.join(evidenceRoot, ".proof-attempt-state");
+    const claimPath = path.join(attemptRoot, "attempt-claimed.json");
+    assert.equal(lstatSync(claimPath).mode & 0o777, 0o600);
+    assert.equal(lstatSync(claimPath).isSymbolicLink(), false);
+    await assert.rejects(() => claimEvidenceAttempt(evidenceRoot), /EEXIST|attempt already exists/);
+    await finalizeEvidenceAttempt(evidenceRoot, "FAIL");
+    assert.equal(existsSync(claimPath), true);
+    assert.equal(lstatSync(path.join(attemptRoot, "final-state.json")).mode & 0o777, 0o600);
+    await assert.rejects(() => finalizeEvidenceAttempt(evidenceRoot, "PASS"), /EEXIST/);
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+test("attempt claim leaves durable prevalidated FAIL recovery material", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-attempt.");
+  await chmod(evidenceRoot, 0o700);
+  try {
+    const attemptRoot = await claimEvidenceAttempt(evidenceRoot);
+    const failureRoot = path.join(attemptRoot, "failure-material");
+    const failure = JSON.parse(readFileSync(path.join(failureRoot, "fail-1110.json"), "utf8")) as {
+      readonly status: string;
+      readonly cleanup: Readonly<Record<string, boolean>>;
+    };
+    assert.equal(failure.status, "FAIL");
+    assert.deepEqual(failure.cleanup, {
+      serverStopped: true, listenerGone: true, pidGone: true, rootGone: false,
+    });
+    assert.match(readFileSync(path.join(failureRoot, "fail-1110.md"), "utf8"), /NON-AUTHORITATIVE/);
+    const serialized = readFileSync(path.join(failureRoot, "fail-1110.json"), "utf8");
+    for (const forbidden of [
+      /https?:\/\//i,
+      /postgres(?:ql)?:\/\//i,
+      /\/(?:Users|private|tmp|var|opt|home)\//,
+      /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
+      /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i,
+    ]) assert.doesNotMatch(serialized, forbidden);
+    assert.equal(lstatSync(path.join(attemptRoot, "logs")).mode & 0o777, 0o700);
+    assert.equal(lstatSync(path.join(failureRoot, "fail-1110.json")).mode & 0o777, 0o600);
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+test("every partial startup phase retains its root and stops only a proven postmaster", () => {
+  const phases: readonly ProofPhase[] = [
+    "CLAIMED", "ROOT_CREATED", "IDENTITY_CREATED", "DATA_INITIALIZED",
+    "POSTMASTER_STARTED", "CLUSTER_IDENTITY_PROVEN", "SCHEMA_APPLIED",
+  ];
+  for (const phase of phases) {
+    const postmasterProven = phase === "POSTMASTER_STARTED"
+      || phase === "CLUSTER_IDENTITY_PROVEN"
+      || phase === "SCHEMA_APPLIED";
+    const plan = planCleanup({
+      phase,
+      rootExists: phase !== "CLAIMED",
+      postmasterProven,
+      listenerPresent: postmasterProven,
+      fullIdentityProven: phase === "CLUSTER_IDENTITY_PROVEN" || phase === "SCHEMA_APPLIED",
+      pendingPrepared: false,
+      signal: "NONE",
+    });
+    assert.equal(plan.attemptClaimRetained, true, phase);
+    assert.equal(plan.stopProvenPostmaster, postmasterProven, phase);
+    assert.equal(plan.deleteRootAfterStoppedChecks, false, phase);
+    assert.equal(plan.usePrevalidatedFailureMaterial, true, phase);
+    assert.equal(plan.forceFailure, true, phase);
+  }
+});
+
+test("unproven listener fails closed without stop or deletion", () => {
+  const plan = planCleanup({
+    phase: "DATA_INITIALIZED",
+    rootExists: true,
+    postmasterProven: false,
+    listenerPresent: true,
+    fullIdentityProven: false,
+    pendingPrepared: false,
+    signal: "NONE",
+  });
+  assert.equal(plan.stopProvenPostmaster, false);
+  assert.equal(plan.deleteRootAfterStoppedChecks, false);
+  assert.equal(plan.failureCode, "STOP_UNPROVEN_LISTENER");
+});
+
+for (const signal of ["INT", "TERM"] as const) {
+  test(`${signal} forces FAIL, retains the attempt, and never permits partial PASS`, () => {
+    const plan = planCleanup({
+      phase: "PENDING_READY",
+      rootExists: true,
+      postmasterProven: true,
+      listenerPresent: true,
+      fullIdentityProven: true,
+      pendingPrepared: true,
+      signal,
+    });
+    assert.equal(plan.attemptClaimRetained, true);
+    assert.equal(plan.stopProvenPostmaster, true);
+    assert.equal(plan.forceFailure, true);
+    assert.equal(plan.failureCode, "STOP_SIGNAL");
+  });
+}
 
 test("static tool caches remain inside the disposable harness root", () => {
   const harnessRoot = process.cwd();
@@ -362,8 +536,9 @@ test("cleanup evidence preparation rejects sensitive pending drafts before final
   const runRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(runRoot, 0o700);
   const pendingPath = path.join(runRoot, "evidence.pending.json");
-  const preparedPath = path.join(runRoot, ".cleanup-evidence-prepared");
+  const preparedPath = path.join(runRoot, ".proof-attempt-state", "prepared");
   try {
+    await claimEvidenceAttempt(runRoot);
     const { cleanup: _cleanup, ...pending } = cleanEvidence();
     await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
     await prepareCleanupEvidence(pendingPath, preparedPath, runRoot);
@@ -400,16 +575,18 @@ test("mandatory verdict derivation requires the exact seven PASS hypotheses", as
   const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(evidenceRoot, 0o700);
   const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
-  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
   const exact = exactMandatoryEvidence();
   const { cleanup: _cleanup, ...exactPending } = exact;
   const variants = [
     { evidence: exactPending, verdict: "PASS" },
     { evidence: { ...exactPending, hypotheses: exactPending.hypotheses.map((item, index) => index === 3 ? { ...item, status: "FAIL" as const } : item) }, verdict: "FAIL" },
+    { evidence: { ...exactPending, hypotheses: exactPending.hypotheses.map((item, index) => index === 2 ? { ...item, assertions: [] } : item) }, verdict: "FAIL" },
     { evidence: { ...exactPending, hypotheses: exactPending.hypotheses.slice(0, -1) }, verdict: "FAIL" },
     { evidence: { ...exactPending, hypotheses: [...exactPending.hypotheses.slice(0, -1), exactPending.hypotheses[0]] }, verdict: "FAIL" },
   ];
   try {
+    await claimEvidenceAttempt(evidenceRoot);
     for (const variant of variants) {
       await writeFile(pendingPath, JSON.stringify(variant.evidence), { mode: 0o600 });
       await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
@@ -427,7 +604,7 @@ async function assertOmittedPendingCallbackFailsClosed(
   const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(evidenceRoot, 0o700);
   const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
-  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
   const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
   const callbackCalls: string[] = [];
   const commitOrder: string[] = [];
@@ -445,6 +622,7 @@ async function assertOmittedPendingCallbackFailsClosed(
         },
       };
   try {
+    await claimEvidenceAttempt(evidenceRoot);
     await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
     await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
     const expectedJson = readFileSync(path.join(preparedPath, "fail-1111.json"), "utf8");
@@ -467,12 +645,12 @@ async function assertOmittedPendingCallbackFailsClosed(
     assert.equal(result.status, "FAIL_PENDING_RETAINED");
     assert.equal(result.authoritativeCandidate, "fail-1111");
     assert.equal(lstatSync(pendingPath).isFile(), true);
-    assert.deepEqual(commitOrder, ["evidence.md", "evidence.json"]);
+    assert.deepEqual(commitOrder, ["evidence.json", "evidence.md"]);
     const authoritativeJson = readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8");
     assert.equal(readFileSync(path.join(evidenceRoot, "evidence.md"), "utf8"), expectedMarkdown);
     assert.equal(authoritativeJson, expectedJson);
-    assert.equal(existsSync(path.join(evidenceRoot, ".evidence-publication.md")), false);
-    assert.equal(existsSync(path.join(evidenceRoot, ".evidence-publication.json")), false);
+    assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", ".evidence-publication.md")), false);
+    assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", ".evidence-publication.json")), false);
     const authoritative = JSON.parse(authoritativeJson) as { status: string };
     assert.equal(authoritative.status, "FAIL");
     assert.notEqual(authoritative.status, "PASS");
@@ -493,9 +671,10 @@ test("resolved no-op pending retirement executes checked FAIL publication and di
   const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(evidenceRoot, 0o700);
   const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
-  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
   const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
   try {
+    await claimEvidenceAttempt(evidenceRoot);
     await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
     await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
     const result = await publishEvidenceState({
@@ -523,9 +702,10 @@ test("surviving pending symlink is not treated as retired", async () => {
   const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-pg.");
   await chmod(evidenceRoot, 0o700);
   const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
-  const preparedPath = path.join(evidenceRoot, ".cleanup-evidence-prepared");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
   const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
   try {
+    await claimEvidenceAttempt(evidenceRoot);
     await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
     await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
     const result = await publishEvidenceState({
@@ -548,6 +728,113 @@ test("surviving pending symlink is not treated as retired", async () => {
     await rm(evidenceRoot, { recursive: true });
   }
 });
+
+test("PASS becomes authoritative only on the final JSON rename after checked cleanup", async () => {
+  const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-publication.");
+  await chmod(evidenceRoot, 0o700);
+  const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+  const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
+  const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+  const committed: string[] = [];
+  try {
+    await claimEvidenceAttempt(evidenceRoot);
+    await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+    await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+    const result = await publishEvidenceState({
+      evidenceDirectory: evidenceRoot,
+      preparedDirectory: preparedPath,
+      pendingPath,
+      candidate: "pass-1111",
+      retirePending: unlink,
+      inspectPending: lstat,
+      renamePublication: async (source: string, destination: string) => {
+        committed.push(`${path.basename(source)}>${path.basename(destination)}`);
+        await rename(source, destination);
+      },
+    });
+    assert.equal(result.passed, true);
+    assert.deepEqual(committed.map((entry) => entry.split(">")[1]), [
+      "evidence.json", "evidence.md", "evidence.md", "evidence.json",
+    ]);
+    assert.equal(existsSync(pendingPath), false);
+    const authoritative = JSON.parse(readFileSync(path.join(evidenceRoot, "evidence.json"), "utf8")) as { readonly status: string };
+    assert.equal(authoritative.status, "PASS");
+    assert.match(readFileSync(path.join(evidenceRoot, "evidence.md"), "utf8"), /NON-AUTHORITATIVE/);
+    assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", "attempt-claimed.json")), true);
+  } finally {
+    await rm(evidenceRoot, { recursive: true });
+  }
+});
+
+for (const failAt of [1, 2, 3, 4]) {
+  test(`PASS publication rename failure ${failAt} cannot make authoritative JSON PASS`, async () => {
+    const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-publication.");
+    await chmod(evidenceRoot, 0o700);
+    const pendingPath = path.join(evidenceRoot, "evidence.pending.json");
+    const preparedPath = path.join(evidenceRoot, ".proof-attempt-state", "prepared");
+    const { cleanup: _cleanup, ...pending } = exactMandatoryEvidence();
+    let call = 0;
+    try {
+      await claimEvidenceAttempt(evidenceRoot);
+      await writeFile(pendingPath, JSON.stringify(pending), { mode: 0o600 });
+      await prepareCleanupEvidence(pendingPath, preparedPath, evidenceRoot);
+      await assert.rejects(() => publishEvidenceState({
+        evidenceDirectory: evidenceRoot,
+        preparedDirectory: preparedPath,
+        pendingPath,
+        candidate: "pass-1111",
+        retirePending: unlink,
+        inspectPending: lstat,
+        renamePublication: async (source: string, destination: string) => {
+          call += 1;
+          if (call === failAt) throw new Error("INJECTED_RENAME_FAILURE");
+          await rename(source, destination);
+        },
+      }), /INJECTED_RENAME_FAILURE/);
+      const finalJson = path.join(evidenceRoot, "evidence.json");
+      if (existsSync(finalJson)) {
+        const evidence = JSON.parse(readFileSync(finalJson, "utf8")) as { readonly status: string };
+        assert.equal(evidence.status, "FAIL");
+      }
+      const finalMarkdown = path.join(evidenceRoot, "evidence.md");
+      if (existsSync(finalMarkdown)) assert.match(readFileSync(finalMarkdown, "utf8"), /NON-AUTHORITATIVE/);
+      assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", "attempt-claimed.json")), true);
+      assert.equal(existsSync(path.join(evidenceRoot, ".proof-attempt-state", "failure-material", "fail-1111.json")), true);
+    } finally {
+      await rm(evidenceRoot, { recursive: true });
+    }
+  });
+}
+
+for (const failAt of [1, 2]) {
+  test(`FAIL publication rename failure ${failAt} retains recoverable attempt state`, async () => {
+    const evidenceRoot = await mkdtemp("/private/tmp/passvero-stage13a-publication.");
+    await chmod(evidenceRoot, 0o700);
+    let call = 0;
+    try {
+      const attemptRoot = await claimEvidenceAttempt(evidenceRoot);
+      await assert.rejects(() => publishEvidenceState({
+        evidenceDirectory: evidenceRoot,
+        preparedDirectory: path.join(attemptRoot, "failure-material"),
+        pendingPath: null,
+        candidate: "fail-1110",
+        renamePublication: async (source: string, destination: string) => {
+          call += 1;
+          if (call === failAt) throw new Error("INJECTED_RENAME_FAILURE");
+          await rename(source, destination);
+        },
+      }), /INJECTED_RENAME_FAILURE/);
+      const finalJson = path.join(evidenceRoot, "evidence.json");
+      if (existsSync(finalJson)) {
+        const evidence = JSON.parse(readFileSync(finalJson, "utf8")) as { readonly status: string };
+        assert.equal(evidence.status, "FAIL");
+      }
+      assert.equal(existsSync(path.join(attemptRoot, "attempt-claimed.json")), true);
+    } finally {
+      await rm(evidenceRoot, { recursive: true });
+    }
+  });
+}
 
 test("run-root rejects unsafe modes, symlinks, formats, port, and socket escape", async () => {
   await withSyntheticRunRoot(async (runRoot) => {
@@ -622,6 +909,19 @@ test("evidence rendering is deterministic and rejects sensitive shapes", () => {
     () => renderEvidenceJson({ ...evidence, assertions: [serializedCookie] }),
     /STOP_EVIDENCE_REDACTION/,
   );
+  for (const sensitive of [
+    "https://invalid.example/auth/callback",
+    "/private/tmp/passvero-stage13a-pg.abcdef/log/postgres.log",
+    "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+    "opaque_authentication_material_ABC123456789",
+    "transaction 123456789012345678",
+    ["symlink target ", "Users", "operator", "private-proof.log"].join("/"),
+  ]) {
+    assert.throws(
+      () => renderEvidenceJson({ ...evidence, assertions: [sensitive] }),
+      /STOP_EVIDENCE_REDACTION/,
+    );
+  }
   const { cleanup: _cleanup, ...pending } = evidence;
   const renderedPending = renderPendingEvidenceJson(pending);
   assert.doesNotMatch(renderedPending, /"cleanup"/);

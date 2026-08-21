@@ -1,4 +1,4 @@
-import { lstat, readFile, realpath, rename, unlink, writeFile } from "node:fs/promises";
+import { lstat, mkdir, readFile, realpath, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -29,19 +29,136 @@ async function removeIfPresent(candidate) {
   }
 }
 
+const REQUIRED_HYPOTHESIS_IDS = [
+  "H1_NATIVE_TRANSACTION", "H2_DIRECT_API_OUTER_TRANSACTION", "H3_HANDLER_CONTEXT_REPLACEMENT",
+  "H4_CONTROLLED_ACTIVATION", "H5_SESSION_COOKIE_AFTER_COMMIT", "H6_RECOVERY_AND_REVOCATION",
+  "H7_ROUTE_EXPOSURE",
+];
+
+const ZERO_COUNTS = {
+  providerUser: 0, providerAccount: 0, providerSession: 0, providerVerification: 0,
+  canonicalUser: 0, authIdentity: 0, activation: 0, credentialRecord: 0, abuseBucket: 0,
+};
+
+function preEvidenceFailure(cleanup) {
+  return {
+    status: "FAIL",
+    packageHashes: { unavailableHash: "0".repeat(64) },
+    clusterIdHash: "0".repeat(64),
+    postgresVersionHash: "0".repeat(64),
+    systemIdentifierHash: "0".repeat(64),
+    hypotheses: REQUIRED_HYPOTHESIS_IDS.map((id) => ({
+      id,
+      status: "FAIL",
+      transactionIds: [],
+      before: ZERO_COUNTS,
+      after: ZERO_COUNTS,
+      deltas: ZERO_COUNTS,
+      cookie: {
+        present: false, nameHash: null, secure: false, httpOnly: false,
+        sameSite: null, hostOnly: true, maxAgeSeconds: null,
+      },
+      assertions: [],
+      failureCode: "STOP_PRE_EVIDENCE_FAILURE",
+    })),
+    cleanup,
+    assertions: ["STOP_PRE_EVIDENCE_FAILURE"],
+  };
+}
+
+function companionMarkdown(evidence) {
+  const rows = evidence.hypotheses.map((item) => `| ${item.id} | ${item.status} | ${item.failureCode ?? "none"} |`);
+  return [
+    "# Better Auth transaction proof evidence companion",
+    "",
+    "NON-AUTHORITATIVE: evidence.json is the sole authoritative proof result.",
+    "",
+    "| Hypothesis | Status | Failure code |",
+    "| --- | --- | --- |",
+    ...rows,
+    "",
+    `Cleanup checks: ${Object.values(evidence.cleanup).every(Boolean) ? "PASS" : "FAIL"}`,
+    "",
+  ].join("\n");
+}
+
+async function writeProtected(candidate, value) {
+  await writeFile(candidate, value, { encoding: "utf8", mode: 0o600, flag: "wx" });
+  await validateFile(candidate, "protected state file");
+}
+
+export async function claimEvidenceAttempt(evidenceDirectory) {
+  const evidenceRoot = evidenceDirectory;
+  await validateDirectory(evidenceRoot, "evidence directory");
+  for (const name of ["evidence.pending.json", "evidence.json", "evidence.md"]) {
+    try {
+      await lstat(path.join(evidenceRoot, name));
+      fail("an evidence attempt already exists");
+    } catch (error) {
+      if (!(error instanceof Error) || !Object.hasOwn(error, "code") || error.code !== "ENOENT") throw error;
+    }
+  }
+  const attemptRoot = path.join(evidenceRoot, ".proof-attempt-state");
+  try {
+    await mkdir(attemptRoot, { mode: 0o700 });
+  } catch (error) {
+    if (!(error instanceof Error) || !Object.hasOwn(error, "code") || error.code !== "EEXIST") throw error;
+  }
+  await validateDirectory(attemptRoot, "attempt state directory", 0o700);
+  await writeProtected(
+    path.join(attemptRoot, "attempt-claimed.json"),
+    `${JSON.stringify({ state: "CLAIMED", version: 1 })}\n`,
+  );
+  const failureRoot = path.join(attemptRoot, "failure-material");
+  await mkdir(failureRoot, { mode: 0o700 });
+  await validateDirectory(failureRoot, "failure material directory", 0o700);
+  const logRoot = path.join(attemptRoot, "logs");
+  await mkdir(logRoot, { mode: 0o700 });
+  await validateDirectory(logRoot, "attempt log directory", 0o700);
+  for (let mask = 0; mask < 16; mask += 1) {
+    const suffix = mask.toString(2).padStart(4, "0");
+    const evidence = preEvidenceFailure({
+      serverStopped: Boolean(mask & 8),
+      listenerGone: Boolean(mask & 4),
+      pidGone: Boolean(mask & 2),
+      rootGone: Boolean(mask & 1),
+    });
+    await writeProtected(path.join(failureRoot, `fail-${suffix}.json`), `${JSON.stringify(evidence, null, 2)}\n`);
+    await writeProtected(path.join(failureRoot, `fail-${suffix}.md`), companionMarkdown(evidence));
+  }
+  return attemptRoot;
+}
+
+export async function finalizeEvidenceAttempt(evidenceDirectory, status) {
+  if (status !== "PASS" && status !== "FAIL") fail("attempt final status is invalid");
+  const attemptRoot = path.join(evidenceDirectory, ".proof-attempt-state");
+  await validateDirectory(attemptRoot, "attempt state directory", 0o700);
+  await validateFile(path.join(attemptRoot, "attempt-claimed.json"), "attempt claim");
+  await writeProtected(
+    path.join(attemptRoot, "final-state.json"),
+    `${JSON.stringify({ state: "FINAL", status })}\n`,
+  );
+}
+
 export async function publishEvidenceState(input) {
   const evidenceRoot = input.evidenceDirectory;
   const preparedRoot = input.preparedDirectory;
-  const pendingPath = input.pendingPath;
+  const pendingPath = input.pendingPath ?? null;
   if (!/^(?:pass-1111|fail-[01]{4})$/.test(input.candidate)) fail("candidate is invalid");
   await validateDirectory(evidenceRoot, "evidence directory");
-  if (preparedRoot !== path.join(evidenceRoot, ".cleanup-evidence-prepared")) fail("prepared path is not authoritative");
-  if (pendingPath !== path.join(evidenceRoot, "evidence.pending.json")) fail("pending path is not authoritative");
+  const attemptRoot = path.join(evidenceRoot, ".proof-attempt-state");
+  await validateDirectory(attemptRoot, "attempt state directory", 0o700);
+  if (![path.join(attemptRoot, "prepared"), path.join(attemptRoot, "failure-material")].includes(preparedRoot)) {
+    fail("prepared path is not authoritative");
+  }
+  if (pendingPath !== null && pendingPath !== path.join(evidenceRoot, "evidence.pending.json")) {
+    fail("pending path is not authoritative");
+  }
   await validateDirectory(preparedRoot, "prepared directory", 0o700);
-  await validateFile(pendingPath, "pending evidence");
+  if (pendingPath !== null) await validateFile(pendingPath, "pending evidence");
 
-  const stageJson = path.join(evidenceRoot, ".evidence-publication.json");
-  const stageMarkdown = path.join(evidenceRoot, ".evidence-publication.md");
+  const stageJson = path.join(attemptRoot, ".evidence-publication.json");
+  const stageMarkdown = path.join(attemptRoot, ".evidence-publication.md");
   const finalJson = path.join(evidenceRoot, "evidence.json");
   const finalMarkdown = path.join(evidenceRoot, "evidence.md");
 
@@ -58,16 +175,26 @@ export async function publishEvidenceState(input) {
     await validateFile(stageJson, "staged JSON");
   }
 
-  async function commit() {
-    const renamePublication = input.renamePublication ?? rename;
-    await renamePublication(stageMarkdown, finalMarkdown);
+  const renamePublication = input.renamePublication ?? rename;
+
+  async function commitFail(candidate) {
+    await stage(candidate);
     await renamePublication(stageJson, finalJson);
+    await renamePublication(stageMarkdown, finalMarkdown);
   }
 
-  await stage(input.candidate);
+  if (input.candidate !== "pass-1111") {
+    await commitFail(input.candidate);
+    return { passed: false, exitCode: 1, status: "FAIL", authoritativeCandidate: input.candidate };
+  }
+
+  if (preparedRoot !== path.join(attemptRoot, "prepared")) fail("PASS requires prepared proof material");
+  await commitFail("fail-1111");
+
   let pendingRetired = false;
-  const canRetirePending = typeof input.retirePending === "function" && typeof input.inspectPending === "function";
-  if (canRetirePending) {
+  if (pendingPath !== null
+    && typeof input.retirePending === "function"
+    && typeof input.inspectPending === "function") {
     try {
       await input.retirePending(pendingPath);
       try {
@@ -83,26 +210,38 @@ export async function publishEvidenceState(input) {
       pendingRetired = false;
     }
   }
-  if (!pendingRetired && input.candidate === "pass-1111") await stage("fail-1111");
+  if (!pendingRetired) {
+    return {
+      passed: false,
+      exitCode: 1,
+      status: "FAIL_PENDING_RETAINED",
+      authoritativeCandidate: "fail-1111",
+    };
+  }
 
-  const authoritativeCandidate = pendingRetired ? input.candidate : input.candidate.replace(/^pass-/, "fail-");
-  await commit();
-  const passed = pendingRetired && authoritativeCandidate === "pass-1111";
-  return {
-    passed,
-    exitCode: passed ? 0 : 1,
-    status: passed ? "PASS" : pendingRetired ? "FAIL" : "FAIL_PENDING_RETAINED",
-    authoritativeCandidate,
-  };
+  await stage("pass-1111");
+  await renamePublication(stageMarkdown, finalMarkdown);
+  await renamePublication(stageJson, finalJson);
+  return { passed: true, exitCode: 0, status: "PASS", authoritativeCandidate: "pass-1111" };
 }
 
 async function runCli() {
-  if (process.argv.length !== 6) fail("usage: publication.mjs <evidence-dir> <prepared-dir> <pending> <candidate>");
+  if (process.argv[2] === "claim" && process.argv.length === 4) {
+    await claimEvidenceAttempt(process.argv[3]);
+    return;
+  }
+  if (process.argv[2] === "finalize" && process.argv.length === 5) {
+    await finalizeEvidenceAttempt(process.argv[3], process.argv[4]);
+    return;
+  }
+  if (process.argv[2] !== "publish" || process.argv.length !== 7) {
+    fail("usage: publication.mjs publish <evidence-dir> <prepared-dir> <pending-or-dash> <candidate>");
+  }
   const result = await publishEvidenceState({
-    evidenceDirectory: process.argv[2],
-    preparedDirectory: process.argv[3],
-    pendingPath: process.argv[4],
-    candidate: process.argv[5],
+    evidenceDirectory: process.argv[3],
+    preparedDirectory: process.argv[4],
+    pendingPath: process.argv[5] === "-" ? null : process.argv[5],
+    candidate: process.argv[6],
     retirePending: unlink,
     inspectPending: lstat,
   });

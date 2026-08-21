@@ -23,8 +23,8 @@ import {
   type TransactionClient,
 } from "../src/proof-boundary.js";
 import { createProofAuth } from "../src/auth.js";
-import type { RowCounts } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type RowCounts } from "../src/evidence.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 type WriteModel =
@@ -314,7 +314,7 @@ async function runMatrixCase(
   rootPrisma: H2PrismaClient,
   order: "PROVIDER_FIRST" | "CANONICAL_FIRST",
   failurePoint: FailurePoint,
-): Promise<void> {
+): Promise<readonly string[]> {
   const fixtureId = randomBytes(16).toString("hex");
   const before = await readCounts(rootPrisma);
   const observations: WriteObservation[] = [];
@@ -366,6 +366,7 @@ async function runMatrixCase(
   const transactionIds = observations.map((entry) => entry.transactionIdHash);
   transactionIds.forEach((hash) => assert.match(hash, /^[a-f0-9]{64}$/));
   assert.equal(new Set(transactionIds).size, 1, `${order}/${failurePoint} must use one write transaction`);
+  return transactionIds;
 }
 
 async function proveAdapterMode(rootPrisma: H2PrismaClient, adapterTransaction: boolean): Promise<boolean> {
@@ -570,14 +571,27 @@ test("live H2 proves direct API commit and rollback matrices once", {
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
   try {
+    const before = await readCounts(prisma);
+    const transactionIds: string[] = [];
     assert.equal(await proveAdapterMode(prisma, false), true, "transaction:false must reuse the supplied tx");
     assert.equal(await proveAdapterMode(prisma, true), false, "transaction:true must not enter a nested tx callback");
     for (const order of ["PROVIDER_FIRST", "CANONICAL_FIRST"] as const) {
       for (const failurePoint of DIRECT_BOUNDARY_FAILURE_SCENARIOS) {
-        await runMatrixCase(prisma, order, failurePoint);
+        transactionIds.push(...await runMatrixCase(prisma, order, failurePoint));
       }
     }
-    console.log("H2_DIRECT_API_OUTER_TRANSACTION=PASS");
+    const after = await readCounts(prisma);
+    await writeHypothesisAssertionResult({
+      id: "H2_DIRECT_API_OUTER_TRANSACTION",
+      status: "PASS",
+      transactionIds,
+      before,
+      after,
+      deltas: deltaRowCounts(before, after),
+      cookie: EMPTY_DEFERRED_COOKIE,
+      assertions: ["H2_DIRECT_BOUNDARY_ASSERTIONS_COMPLETE"],
+      failureCode: null,
+    });
   } finally {
     await prisma.$disconnect();
   }

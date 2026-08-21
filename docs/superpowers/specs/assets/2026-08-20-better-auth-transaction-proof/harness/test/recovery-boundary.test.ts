@@ -17,8 +17,8 @@ import {
   type TransactionClient,
   type SessionProofRecord,
 } from "../src/proof-boundary.js";
-import type { RowCounts } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
+import { deltaRowCounts, type RowCounts } from "../src/evidence.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
 
 type Purpose = "EMAIL_VERIFICATION" | "PASSWORD_RESET";
 type ResetFailurePoint =
@@ -1487,6 +1487,17 @@ test("live H6 proves recovery with generated Prisma and Better Auth H2 boundarie
       abuseAttempts: await h6AbuseAttempts(prisma, abuseBucketId),
     });
     assertH6SensitiveAbsent(JSON.stringify(runtimeEvidence), [...allCapabilities, ...allCredentials]);
+    await writeHypothesisAssertionResult({
+      id: "H6_RECOVERY_AND_REVOCATION",
+      status: "PASS",
+      transactionIds: committedStages.map(({ transactionIdHash }) => transactionIdHash),
+      before: beforeRows,
+      after: afterRows,
+      deltas: deltaRowCounts(beforeRows, afterRows),
+      cookie: resetWinner.value.cookie,
+      assertions: ["H6_RECOVERY_AND_REVOCATION_ASSERTIONS_COMPLETE"],
+      failureCode: null,
+    });
   } finally {
     await prisma.$disconnect();
   }

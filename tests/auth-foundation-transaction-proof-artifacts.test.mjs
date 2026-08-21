@@ -19,6 +19,7 @@ const REQUIRED_FILES = [
   "src/auth.ts",
   "src/proof-boundary.ts",
   "src/evidence.ts",
+  "src/lifecycle.ts",
   "src/publication.mjs",
   "test/harness-contract.test.ts",
   "test/cluster-identity.test.ts",
@@ -31,38 +32,37 @@ const REQUIRED_FILES = [
   "test/route-boundary.test.ts",
 ];
 
-const TASK_5_ARTIFACT_HASHES = new Map([
-  ["test/direct-boundary.test.ts", "82fa13b4acee46968f9ba5972241e73dcfb3e332e853576c75ab631c9f2b9e8d"],
-  ["test/handler-boundary.test.ts", "e6ce226521e12111be4e2934e7c33bc1ab77fdef9883c463a3e4dd7dca5b4801"],
-]);
+const TASK_5_ARTIFACT_HASHES = new Map([]);
 
-const TASK_6_ARTIFACT_HASHES = new Map([
-  ["test/controlled-activation.test.ts", "08a2313e55174550a728cd87c03355e7baa9d6e7679f94afd658705570ae3dac"],
-]);
+const TASK_6_ARTIFACT_HASHES = new Map([]);
 const TASK_6_CONTROLLED_AUTH_SLICE_HASH = "4358e1f3e4c262f877684073aa748395e6ede8753f966b9219624716b6b47e02";
 
 const TASK_7_ARTIFACT_HASHES = new Map([
   ["src/proof-boundary.ts", "0fbd71e24fbb96f646d84b2275aaa56ddf65113380a902904ac901010973a0e1"],
-  ["test/session-boundary.test.ts", "5ee2c2c9c0800ec6323e77974cd613775f0723511c89ae43a63b8e3514d2ee29"],
 ]);
 
-const TASK_8_ARTIFACT_HASHES = new Map([
-  ["test/recovery-boundary.test.ts", "50985a51380e2a9f82e392bdfd14820ca05f65891e6236963ae08991196a1919"],
-]);
+const TASK_8_ARTIFACT_HASHES = new Map([]);
 const TASK_8_AUTH_PREFIX_HASH = "5f62090e132f5f6ad0e379ccc8928087a562a3cf798b9bc16420bb6139efccc9";
 
 const TASK_9_ARTIFACT_HASHES = new Map([
   ["src/auth.ts", "4090e54fb2b726459080b792d8469fd5f7b77c025b2d644513dee5604d13f2ab"],
-  ["test/route-boundary.test.ts", "5f139b4f8aac5170dcf6690eb73ba5b1bcea88390b2a7a9b97ee3b198e153814"],
 ]);
 
 const TASK_10_ORCHESTRATION_HASHES = new Map([
-  ["src/evidence.ts", "2702d66b46d9552763e4a80ba0293f301dfe180586b0d5a76b087c85d8b49a98"],
-  ["src/run-root.ts", "d963d8cff5e77880aac203fd5ca4456acdf8c640962412bf89ffe5cc7b735a7f"],
-  ["test/harness-contract.test.ts", "3922a4d8ee07b3b4993a90184cf816727b4a95ab2300e8191ca2f7ff3f300934"],
-  ["test/native-transaction.test.ts", "2ffbcb1b2892637fc4749055af08838fbf020bd9de5985b9f174ee13f53cdcc9"],
+  ["src/evidence.ts", "3cf4d9761aaabff05431e8b3fabb9c04848a692ce3f30ecb04ec3eb60be06aac"],
+  ["src/run-root.ts", "318b2a9ac287f7bef5298c2a8fcbd2ddc5a716b6af45f68393f390d9744d617e"],
+  ["src/publication.mjs", "d770d64f1c736e4ecc53f799f207b99fd9f13e39a4699a2787bcfe3086e7d380"],
+  ["src/lifecycle.ts", "8d5f22bfa631d132664f6833365113e3f8638be3d06c85080a67ff03acce8f5c"],
+  ["test/harness-contract.test.ts", "e58eab7f455e51e776822afe7e761008a5bdd74a45d93508dbb556f927330d71"],
+  ["test/native-transaction.test.ts", "cf3f1c3ceb8d3faad02d67827e1e57c7eb78c8e3460e9a041db129674ec4d6ba"],
+  ["test/direct-boundary.test.ts", "a06015f3ef961e9b837c7d3b244acda1977cc42f5e1c47ac268bbfe20c733cf8"],
+  ["test/handler-boundary.test.ts", "34ca19cd9ef2b6de5df2dbcdc9d5583157d142ce5089e2ea6d214f9afa4ccce5"],
+  ["test/controlled-activation.test.ts", "24ed1affda81556ae410b84e04bbb729623a8037281c05f0c09717c9aa14f04f"],
+  ["test/session-boundary.test.ts", "96fcfbe0dbce37d465e71664fa7d5538a615d51365c560951156e40428b3ab52"],
+  ["test/recovery-boundary.test.ts", "8038a38d8b0373ee8407df12e7eeefefdcd96223aac18b11fa939b4ab9320eb9"],
+  ["test/route-boundary.test.ts", "c2319423f2bee53beee45753ee3bd7fa1df31f321beddd88f87336a0e5ab9726"],
 ]);
-const TASK_10_RUNNER_HASH = "04a4f1ab7c91cf5f21a4d3709daa9c7e22bb9241784942a402b4f2d164903a97";
+const TASK_10_RUNNER_HASH = "4b03347d880a665de199b5459b8e11d6a48ca81e3a3ade8413f12f19e99e77da";
 
 const EXPECTED_DEPENDENCIES = {
   "@better-auth/core": "1.7.1",
@@ -411,10 +411,13 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     /pg_isready" -h 127\.0\.0\.1 -p "\$PROOF_PORT"/,
     /validate_cleanup_target/,
     /trap cleanup EXIT/,
-    /CLEANUP=FAIL_RETAINED:/,
+    /trap 'exit 130' INT/,
+    /trap 'exit 143' TERM/,
+    /CLEANUP=FAIL_RETAINED/,
     /rm -rf -- "\$RUN_ROOT_REAL"/,
     /prepare-cleanup-evidence/,
-    /\.cleanup-evidence-prepared/,
+    /\.proof-attempt-state/,
+    /prove_partial_postmaster/,
     /fs\.lstatSync\(candidate\)/,
     /validate_delete_target/,
   ]) assert.match(source, contract);
@@ -425,6 +428,8 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.match(staticBody, /node_modules\/typescript\/bin\/tsc --noEmit --strict/);
   for (const task5TypeInput of [
     "src/proof-boundary.ts",
+    "src/lifecycle.ts",
+    "test/native-transaction.test.ts",
     "test/direct-boundary.test.ts",
     "test/handler-boundary.test.ts",
     "test/controlled-activation.test.ts",
@@ -447,25 +452,24 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
 
   assert.doesNotMatch(source, /RUN_ROOT_REAL\/prepared-evidence|publish_candidate[^\n]*\|\| true/);
   const publication = await readHarness("src/publication.mjs");
-  const markdownPublication = publication.indexOf("await renamePublication(stageMarkdown, finalMarkdown)");
-  const jsonPublication = publication.indexOf("await renamePublication(stageJson, finalJson)");
+  const markdownPublication = publication.lastIndexOf("await renamePublication(stageMarkdown, finalMarkdown)");
+  const jsonPublication = publication.lastIndexOf("await renamePublication(stageJson, finalJson)");
   assert.ok(markdownPublication > 0 && jsonPublication > markdownPublication, "authoritative JSON must publish last");
   assert.match(source, /"\$proof_status" -eq 0 && "\$mandatory_verdict" == PASS && "\$suffix" == 1111/);
   assert.match(source, /mandatory-verdict/);
-  assert.match(source, /prove_h6\(\)[\s\S]*?PASSVERO_PROOF_H6=1[\s\S]*?recovery-boundary\.test\.ts/);
   const runAllBody = source.match(/run_all\(\) \{([\s\S]*?)^\}/m)?.[1];
   assert.ok(runAllBody, "run_all must be a separately reviewable function");
   assert.doesNotMatch(runAllBody, /prove_h6/);
   assert.match(source, /"\$candidate" != "pass-1111"/);
   assert.match(source, /CLEANUP=FAIL_PROOF_WITH_COMPLETE_CLEANUP/);
-  assert.ok(publication.indexOf("await stage(input.candidate)") < publication.indexOf("await input.retirePending(pendingPath)"));
+  assert.ok(publication.indexOf('await commitFail("fail-1111")') < publication.indexOf("await input.retirePending(pendingPath)"));
   assert.ok(publication.indexOf("await input.retirePending(pendingPath)") < publication.indexOf("await input.inspectPending(pendingPath)"));
   assert.ok(publication.indexOf("await input.inspectPending(pendingPath)") < publication.indexOf("pendingRetired = true"));
-  assert.ok(publication.indexOf("pendingRetired = true") < publication.indexOf("await commit()"));
-  assert.match(source, /publish_checked_failure "\$candidate" "\$failure_status"/);
+  assert.ok(publication.indexOf("pendingRetired = true") < publication.lastIndexOf("await stage(\"pass-1111\")"));
+  assert.match(source, /publish_checked_failure "\$candidate" "\$material" "\$pending_arg" "\$failure_status"/);
   assert.match(publication, /FAIL_PENDING_RETAINED/);
-  assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERED/);
-  assert.match(source, /CLEANUP=FAIL_PUBLICATION_STAGED/);
+  assert.match(source, /CLEANUP=FAIL_PUBLICATION_RECOVERABLE/);
+  assert.match(publication, /attempt-claimed\.json/);
 
   const runRoot = await readHarness("src/run-root.ts");
   assert.match(runRoot, /renderEvidenceJson\(\{ \.\.\.pending, cleanup: \{\} \}\)/);
@@ -474,7 +478,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.match(runRoot, /exact quoted unqualified identifiers/);
 });
 
-test("the one-shot runner aggregates exactly one reviewed H1-H7 process verdict", async () => {
+test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 verdict", async () => {
   const runner = await readFile(path.join(PROOF_ROOT, "run-proof.sh"), "utf8");
   const evidence = await readHarness("src/evidence.ts");
   const runRoot = await readHarness("src/run-root.ts");
@@ -485,7 +489,7 @@ test("the one-shot runner aggregates exactly one reviewed H1-H7 process verdict"
   assert.ok(hypotheses, "run_hypotheses must remain separately reviewable");
   assert.equal(createHash("sha256").update(runner).digest("hex"), TASK_10_RUNNER_HASH);
   assert.doesNotMatch(runner, /STOP_HYPOTHESES_NOT_IMPLEMENTED/);
-  assert.ok(runAll.indexOf("preflight_attempt_artifacts") < runAll.indexOf("bootstrap_root"));
+  assert.ok(runAll.indexOf("claim_attempt") < runAll.indexOf("bootstrap_root"));
   assert.ok(runAll.indexOf("prove_cluster_identity") < runAll.indexOf("generate_apply_schema"));
   assert.ok(runAll.indexOf("generate_apply_schema") < runAll.indexOf("run_hypotheses"));
   assert.equal((hypotheses.match(/run_hypothesis "/g) ?? []).length, 7);
@@ -505,14 +509,18 @@ test("the one-shot runner aggregates exactly one reviewed H1-H7 process verdict"
   assert.match(evidence, /STOP_HYPOTHESIS_RESULT_MISSING/);
   assert.match(evidence, /STOP_HYPOTHESIS_RESULT_DUPLICATE/);
   assert.match(evidence, /STOP_HYPOTHESIS_PROCESS_FAILED/);
-  assert.match(runRoot, /writeProtected\(path\.join\(directory, `\$\{id\}\.json`\)/);
+  assert.match(runRoot, /writeProtected\(path\.join\(directory, `\$\{parsed\.id\}\.json`\)/);
+  assert.match(runRoot, /validateRecordedHypothesisResult/);
   assert.match(runRoot, /renderPendingEvidenceJson\(evidence\)/);
   for (const simulation of [
-    "accepts exactly seven unique successful hypothesis suites",
+    "accepts exactly seven unique assertion-bound results",
     "rejects one explicit hypothesis failure",
     "rejects a missing hypothesis result",
     "rejects a duplicate hypothesis result",
     "records a crashed hypothesis process as terminal failure",
-    "rejects malformed status and exit-code evidence",
+    "rejects zero-exit skipped or malformed assertion evidence",
+    "attempt claim is atomic",
+    "every partial startup phase retains its root",
+    "PASS publication rename failure",
   ]) assert.match(contract, new RegExp(simulation));
 });

@@ -19,8 +19,8 @@ import {
   type DirectAuthApi,
   type TransactionClient,
 } from "../src/proof-boundary.js";
-import type { RowCounts } from "../src/evidence.js";
-import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
+import { deltaRowCounts, EMPTY_DEFERRED_COOKIE, type RowCounts } from "../src/evidence.js";
+import { buildConnectionString, readRunIdentity, writeHypothesisAssertionResult } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 type ActivationFailurePoint = (typeof CONTROLLED_ACTIVATION_FAILURE_POINTS)[number];
@@ -580,6 +580,8 @@ test("live H4 proves controlled activation and public signup rejection once", {
   const adapter = new PrismaPg({ connectionString: buildConnectionString(readRunIdentity()) });
   const prisma = createGeneratedPrismaClient(generated, adapter);
   try {
+    const proofBefore = await readCounts(prisma);
+    const transactionIds: string[] = [];
     const surfaceFixture = await preprovisionActivation(prisma);
     await prisma.$transaction(async (tx) => {
       const auth = createControlledActivationAuth(tx);
@@ -631,6 +633,7 @@ test("live H4 proves controlled activation and public signup rejection once", {
     assert.equal(afterValid.providerVerification - beforeValid.providerVerification, 0);
     assert.ok(validResult.transactionIds.length >= 5);
     assert.equal(new Set(validResult.transactionIds).size, 1);
+    transactionIds.push(...validResult.transactionIds);
     await assertActivationState(prisma, valid, validResult.providerUserId);
     await assertRejectedWithoutDelta(prisma, valid);
 
@@ -681,6 +684,7 @@ test("live H4 proves controlled activation and public signup rejection once", {
     assert.equal(winners.length, 1);
     assert.equal(consumers.filter((result) => result.status === "rejected").length, 1);
     assert.equal(new Set(winners[0]?.value.transactionIds).size, 1);
+    transactionIds.push(...(winners[0]?.value.transactionIds ?? []));
     const afterConcurrent = await readCounts(prisma);
     assert.equal(afterConcurrent.providerUser - beforeConcurrent.providerUser, 1);
     assert.equal(afterConcurrent.providerAccount - beforeConcurrent.providerAccount, 1);
@@ -699,7 +703,18 @@ test("live H4 proves controlled activation and public signup rejection once", {
       assert.equal(Reflect.get(activation, "consumedAt"), null);
     }
 
-    console.log("H4_CONTROLLED_ACTIVATION=PASS");
+    const proofAfter = await readCounts(prisma);
+    await writeHypothesisAssertionResult({
+      id: "H4_CONTROLLED_ACTIVATION",
+      status: "PASS",
+      transactionIds,
+      before: proofBefore,
+      after: proofAfter,
+      deltas: deltaRowCounts(proofBefore, proofAfter),
+      cookie: EMPTY_DEFERRED_COOKIE,
+      assertions: ["H4_CONTROLLED_ACTIVATION_ASSERTIONS_COMPLETE"],
+      failureCode: null,
+    });
   } finally {
     await prisma.$disconnect();
   }
