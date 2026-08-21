@@ -173,6 +173,15 @@ prove_cluster_identity() {
     "$RUN_ROOT_REAL/harness/test/cluster-identity.test.ts"
 }
 
+prove_h6() {
+  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+    XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
+    npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
+    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" PASSVERO_PROOF_H6=1 \
+    "$NODE_BIN" --import tsx --test --test-name-pattern="live H6 proves recovery" \
+    "$RUN_ROOT_REAL/harness/test/recovery-boundary.test.ts"
+}
+
 validate_generated_sql() {
   local schema_file="$1"
   env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \

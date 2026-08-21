@@ -1,14 +1,17 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
+import type { AuthContext, BetterAuthOptions } from "@better-auth/core";
 import { createAuthEndpoint } from "better-auth/api";
 import { createLocalAccountIssuer } from "@better-auth/core/db";
 import type { DBAdapter } from "@better-auth/core/db/adapter";
 import { createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { domainToASCII } from "node:url";
 import * as z from "zod";
-import type {
-  BetterAuthCredentialAuthority,
-  BetterAuthPasswordAuthority,
+import {
+  changePasswordWithBetterAuthAuthority,
+  type SessionProofRecord,
+  type BetterAuthCredentialAuthority,
+  type BetterAuthPasswordAuthority,
 } from "./proof-boundary.js";
 import { readAuthSecret, readRunIdentity } from "./run-root.js";
 
@@ -44,6 +47,14 @@ export const AFTER_COMMIT_HOOK_CLASSIFICATION = {
   queuedHookSources: ["with-hooks.mjs:31-39", "with-hooks.mjs:67-75"],
   securityCriticalStateAllowed: false,
 } as const;
+
+export const RECOVERY_SERVER_ONLY_ENDPOINTS = [
+  "issueCredentialTokenProof",
+  "verifyEmailCredentialProof",
+  "resetPasswordCredentialProof",
+  "changePasswordCredentialProof",
+  "afterCommitCredentialProbe",
+] as const;
 
 export type CredentialTokenPurpose = "EMAIL_VERIFICATION" | "PASSWORD_RESET";
 export type ResetFailurePoint = (typeof RESET_FAILURE_POINTS)[number];
@@ -87,11 +98,43 @@ export interface CredentialTokenStore {
   }): Promise<CredentialTokenRecord | null>;
 }
 
+export type CredentialTokenPersistence = Omit<CredentialTokenStore, "lockOwner">;
+
+export type RecoveryTransactionStage =
+  | "OWNER_LOCKED"
+  | "PREDECESSORS_INVALIDATED"
+  | "TOKEN_INSERTED"
+  | "TOKEN_CONSUMED"
+  | "PROVIDER_VERIFIED"
+  | "CREDENTIAL_UPDATED"
+  | "SESSION_DELETED"
+  | "ABUSE_ADVANCED";
+
+export interface RecoveryTransactionObserver {
+  observe(stage: RecoveryTransactionStage): void | Promise<void>;
+}
+
 export type RecoveryCredentialAuthority = BetterAuthCredentialAuthority;
 export type RecoveryPasswordAuthority = Pick<BetterAuthPasswordAuthority, "hash">;
 
 export interface RecoveryAbuseAuthority {
   advance(): Promise<void>;
+}
+
+type RecoveryInternalAdapter = Pick<
+  AuthContext["internalAdapter"],
+  "findUserById" | "updateUser" | "findCredentialAccount" | "updateAccount"
+>;
+
+export interface RecoveryProofBoundary {
+  readonly persistence: CredentialTokenPersistence;
+  readonly abuse: RecoveryAbuseAuthority;
+  readonly capabilityKey: Uint8Array;
+  readonly targetEmailKey: Uint8Array;
+  readonly trustedNow: () => Date | Promise<Date>;
+  readonly resetFailurePoint?: ResetFailurePoint;
+  readonly inTransactionCallback?: () => void | Promise<void>;
+  readonly observer?: RecoveryTransactionObserver;
 }
 
 const GENERIC_CREDENTIAL_FAILURE = {
@@ -185,6 +228,165 @@ function equalCanonicalDigests(left: string, right: string): boolean {
     && timingSafeEqual(leftBytes, rightBytes);
 }
 
+function bindBetterAuthOwnerLock(
+  persistence: CredentialTokenPersistence,
+  internalAdapter: RecoveryInternalAdapter,
+  observer?: RecoveryTransactionObserver,
+): CredentialTokenStore {
+  return {
+    ...persistence,
+    lockOwner: async (providerUserId) => {
+      const current = await internalAdapter.findUserById(providerUserId);
+      if (!current) return null;
+      const locked = await internalAdapter.updateUser(providerUserId, { email: current.email });
+      if (locked.id !== current.id || locked.email !== current.email) {
+        throw new Error("STOP_H6_PROVIDER_OWNER_LOCK_INVALID");
+      }
+      await observer?.observe("OWNER_LOCKED");
+      return {
+        id: locked.id,
+        email: locked.email,
+        emailVerified: locked.emailVerified,
+      };
+    },
+  };
+}
+
+export function recoveryProofPlugin(boundary: RecoveryProofBoundary) {
+  const issueSchema = z.object({
+    providerUserId: z.string().min(1),
+    purpose: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET"]),
+  }).strict();
+  const presentationSchema = z.object({
+    deliveryCapability: z.string().min(1),
+  }).strict();
+  const resetSchema = presentationSchema.extend({
+    replacementPassword: z.string().min(8),
+  }).strict();
+  const changeSchema = z.object({
+    providerUserId: z.string().min(1),
+    currentSessionId: z.string().min(1),
+    presentedToken: z.string().min(16),
+    currentPassword: z.string().min(8),
+    newPassword: z.string().min(8),
+    rotatedToken: z.string().regex(/^[A-Za-z0-9_-]{16,}$/),
+  }).strict();
+  const probeSchema = z.object({ providerUserId: z.string().min(1) }).strict();
+
+  return {
+    id: "passvero-recovery-transaction-proof",
+    endpoints: {
+      issueCredentialTokenProof: createAuthEndpoint.serverOnly({
+        method: "POST",
+        body: issueSchema,
+      }, async (ctx) => issueCredentialToken({
+        store: bindBetterAuthOwnerLock(boundary.persistence, ctx.context.internalAdapter, boundary.observer),
+        providerUserId: ctx.body.providerUserId,
+        purpose: ctx.body.purpose,
+        now: await boundary.trustedNow(),
+        capabilityKey: boundary.capabilityKey,
+        targetEmailKey: boundary.targetEmailKey,
+        observer: boundary.observer,
+      })),
+      verifyEmailCredentialProof: createAuthEndpoint.serverOnly({
+        method: "POST",
+        body: presentationSchema,
+      }, async (ctx) => verifyEmailWithCredentialToken({
+        store: bindBetterAuthOwnerLock(boundary.persistence, ctx.context.internalAdapter, boundary.observer),
+        providerAdapter: ctx.context.adapter,
+        abuse: boundary.abuse,
+        deliveryCapability: ctx.body.deliveryCapability,
+        now: await boundary.trustedNow(),
+        capabilityKey: boundary.capabilityKey,
+        targetEmailKey: boundary.targetEmailKey,
+        inTransactionCallback: boundary.inTransactionCallback,
+        observer: boundary.observer,
+      })),
+      resetPasswordCredentialProof: createAuthEndpoint.serverOnly({
+        method: "POST",
+        body: resetSchema,
+      }, async (ctx) => resetPasswordWithCredentialToken({
+        store: bindBetterAuthOwnerLock(boundary.persistence, ctx.context.internalAdapter, boundary.observer),
+        credentialAuthority: ctx.context.internalAdapter,
+        password: ctx.context.password,
+        sessionAdapter: ctx.context.adapter,
+        abuse: boundary.abuse,
+        deliveryCapability: ctx.body.deliveryCapability,
+        replacementPassword: ctx.body.replacementPassword,
+        now: await boundary.trustedNow(),
+        capabilityKey: boundary.capabilityKey,
+        targetEmailKey: boundary.targetEmailKey,
+        failurePoint: boundary.resetFailurePoint ?? "NONE",
+        inTransactionCallback: boundary.inTransactionCallback,
+        observer: boundary.observer,
+      })),
+      changePasswordCredentialProof: createAuthEndpoint.serverOnly({
+        method: "POST",
+        body: changeSchema,
+      }, async (ctx) => {
+        const sessions = await ctx.context.adapter.findMany<SessionProofRecord>({
+          model: "session",
+          where: [
+            { field: "id", operator: "eq", value: ctx.body.currentSessionId },
+            { field: "userId", operator: "eq", value: ctx.body.providerUserId },
+            { field: "token", operator: "eq", value: ctx.body.presentedToken },
+          ],
+        });
+        const currentSession = sessions.length === 1 ? sessions[0] : undefined;
+        if (!currentSession) throw new Error("STOP_H6_CURRENT_SESSION_NOT_FOUND");
+        const now = await boundary.trustedNow();
+        const maxAgeSeconds = Math.floor((Math.min(
+          currentSession.expiresAt.getTime(),
+          currentSession.authenticatedAt.getTime() + 2_592_000_000,
+          now.getTime() + 604_800_000,
+        ) - now.getTime()) / 1_000);
+        if (!Number.isInteger(maxAgeSeconds) || maxAgeSeconds <= 0) {
+          throw new Error("STOP_H6_CURRENT_SESSION_EXPIRED");
+        }
+        const cookieResponse = new Response(null, { headers: {
+          "set-cookie": `__Host-proof=${ctx.body.rotatedToken}; Path=/; Max-Age=${maxAgeSeconds}; HttpOnly; Secure; SameSite=Lax`,
+        } });
+        const rotated = await runAuthenticatedPasswordChange({
+          mutateWithTask7Boundary: () => changePasswordWithBetterAuthAuthority({
+            credentialAuthority: ctx.context.internalAdapter,
+            password: ctx.context.password,
+            sessionAdapter: ctx.context.adapter,
+            userId: ctx.body.providerUserId,
+            currentPassword: ctx.body.currentPassword,
+            newPassword: ctx.body.newPassword,
+            currentSession,
+            rotatedToken: ctx.body.rotatedToken,
+            now,
+            cookieResponse,
+          }),
+          abuse: boundary.abuse,
+          inTransactionCallback: boundary.inTransactionCallback,
+        });
+        await boundary.observer?.observe("CREDENTIAL_UPDATED");
+        await boundary.observer?.observe("SESSION_DELETED");
+        await boundary.observer?.observe("ABUSE_ADVANCED");
+        return {
+          changed: true,
+          sessionId: rotated.id,
+          authenticatedAt: rotated.authenticatedAt,
+          lastRefreshAt: rotated.lastRefreshAt,
+          expiresAt: rotated.expiresAt,
+          selectedOrganizationId: rotated.selectedOrganizationId,
+        } as const;
+      }),
+      afterCommitCredentialProbe: createAuthEndpoint.serverOnly({
+        method: "POST",
+        body: probeSchema,
+      }, async (ctx) => {
+        const account = await ctx.context.internalAdapter.findCredentialAccount(ctx.body.providerUserId);
+        if (!account?.password) throw new Error("STOP_H6_CREDENTIAL_ACCOUNT_NOT_FOUND");
+        await ctx.context.internalAdapter.updateAccount(account.id, { password: account.password });
+        return { credentialWriteCommittedBeforeQueuedHook: true } as const;
+      }),
+    },
+  } as const;
+}
+
 export async function issueCredentialToken(input: {
   readonly store: CredentialTokenStore;
   readonly providerUserId: string;
@@ -192,6 +394,7 @@ export async function issueCredentialToken(input: {
   readonly now: Date;
   readonly capabilityKey: Uint8Array;
   readonly targetEmailKey: Uint8Array;
+  readonly observer?: RecoveryTransactionObserver;
 }): Promise<{
   readonly deliveryCapability: string;
   readonly record: CredentialTokenRecord;
@@ -207,6 +410,7 @@ export async function issueCredentialToken(input: {
     purpose: input.purpose,
     at: input.now,
   });
+  await input.observer?.observe("PREDECESSORS_INVALIDATED");
   const record: CredentialTokenRecord = {
     id: randomUUID(),
     providerUserId: owner.id,
@@ -218,7 +422,9 @@ export async function issueCredentialToken(input: {
     consumedAt: null,
     invalidatedAt: null,
   };
-  return { deliveryCapability, record: await input.store.create(record) };
+  const inserted = await input.store.create(record);
+  await input.observer?.observe("TOKEN_INSERTED");
+  return { deliveryCapability, record: inserted };
 }
 
 type ConsumeCredentialResult =
@@ -232,6 +438,7 @@ async function consumeCredentialToken(input: {
   readonly now: Date;
   readonly capabilityKey: Uint8Array;
   readonly targetEmailKey: Uint8Array;
+  readonly observer?: RecoveryTransactionObserver;
 }): Promise<ConsumeCredentialResult> {
   validateDigestKeys(input.capabilityKey, input.targetEmailKey);
   const decoded = capabilityBytes(input.deliveryCapability);
@@ -261,6 +468,7 @@ async function consumeCredentialToken(input: {
     tokenDigest: presentedDigest,
     now: input.now,
   });
+  if (consumed) await input.observer?.observe("TOKEN_CONSUMED");
   return consumed ? { accepted: true, record: consumed, owner } : { accepted: false };
 }
 
@@ -273,6 +481,7 @@ export async function verifyEmailWithCredentialToken(input: {
   readonly capabilityKey: Uint8Array;
   readonly targetEmailKey: Uint8Array;
   readonly inTransactionCallback?: () => void | Promise<void>;
+  readonly observer?: RecoveryTransactionObserver;
 }): Promise<
   | { readonly verified: true }
   | typeof GENERIC_CREDENTIAL_FAILURE
@@ -289,7 +498,9 @@ export async function verifyEmailWithCredentialToken(input: {
     update: { emailVerified: true },
   });
   if (!updated?.emailVerified) throw new Error("STOP_H6_EMAIL_VERIFICATION_UPDATE_FAILED");
+  await input.observer?.observe("PROVIDER_VERIFIED");
   await input.abuse.advance();
+  await input.observer?.observe("ABUSE_ADVANCED");
   await input.inTransactionCallback?.();
   return { verified: true };
 }
@@ -311,6 +522,7 @@ export async function resetPasswordWithCredentialToken(input: {
   readonly targetEmailKey: Uint8Array;
   readonly failurePoint: ResetFailurePoint;
   readonly inTransactionCallback?: () => void | Promise<void>;
+  readonly observer?: RecoveryTransactionObserver;
 }): Promise<
   | {
       readonly requiresSignIn: true;
@@ -327,6 +539,7 @@ export async function resetPasswordWithCredentialToken(input: {
   if (!account?.password) throw new Error("STOP_H6_CREDENTIAL_ACCOUNT_NOT_FOUND");
   const replacementHash = await input.password.hash(input.replacementPassword);
   await input.credentialAuthority.updateAccount(account.id, { password: replacementHash });
+  await input.observer?.observe("CREDENTIAL_UPDATED");
   failAt(input.failurePoint, "AFTER_CREDENTIAL_UPDATE");
   const sessions = await input.sessionAdapter.findMany<{ readonly id: string; readonly userId: string }>({
     model: "session",
@@ -347,9 +560,11 @@ export async function resetPasswordWithCredentialToken(input: {
       ],
     });
     sessionsRevoked += 1;
+    await input.observer?.observe("SESSION_DELETED");
     if (sessionsRevoked === 1) failAt(input.failurePoint, "AFTER_PARTIAL_SESSION_DELETION");
   }
   await input.abuse.advance();
+  await input.observer?.observe("ABUSE_ADVANCED");
   await input.inTransactionCallback?.();
   failAt(input.failurePoint, "IN_TRANSACTION_CALLBACK");
   return { requiresSignIn: true, sessionCreated: false, cookieEligible: false, sessionsRevoked };
@@ -515,13 +730,14 @@ export interface CreateProofAuthInput {
   readonly prisma: Parameters<typeof prismaAdapter>[0];
   readonly adapterTransaction: boolean;
   readonly disableSignUp: boolean;
+  readonly accountUpdateAfter?: () => void | Promise<void>;
 }
 
-export function createProofAuth(input: CreateProofAuthInput) {
+function proofAuthOptions(input: CreateProofAuthInput) {
   const identity = readRunIdentity();
   const now = () => new Date();
 
-  return betterAuth({
+  return {
     appName: "Passvero transaction proof",
     baseURL: "https://auth-proof.invalid/internal-auth",
     basePath: "/internal-auth",
@@ -568,6 +784,13 @@ export function createProofAuth(input: CreateProofAuthInput) {
           },
         },
       },
+      ...(input.accountUpdateAfter ? {
+        account: {
+          update: {
+            after: async () => input.accountUpdateAfter?.(),
+          },
+        },
+      } : {}),
     },
     advanced: {
       useSecureCookies: true,
@@ -578,9 +801,26 @@ export function createProofAuth(input: CreateProofAuthInput) {
         path: "/",
       },
     },
-    plugins: [controlledActivationPlugin()],
     disabledPaths: [...DISABLED_NATIVE_PATHS],
     telemetry: { enabled: false },
+  } satisfies BetterAuthOptions;
+}
+
+export function createProofAuth(input: CreateProofAuthInput) {
+  return betterAuth({
+    ...proofAuthOptions(input),
+    plugins: [controlledActivationPlugin()],
+  });
+}
+
+export interface CreateRecoveryProofAuthInput extends CreateProofAuthInput {
+  readonly recoveryBoundary: RecoveryProofBoundary;
+}
+
+export function createRecoveryProofAuth(input: CreateRecoveryProofAuthInput) {
+  return betterAuth({
+    ...proofAuthOptions(input),
+    plugins: [controlledActivationPlugin(), recoveryProofPlugin(input.recoveryBoundary)],
   });
 }
 
@@ -591,3 +831,4 @@ export function createControlledActivationAuth(prisma: CreateProofAuthInput["pri
 }
 
 export type ControlledActivationApi = ReturnType<typeof createControlledActivationAuth>["api"];
+export type RecoveryProofApi = ReturnType<typeof createRecoveryProofAuth>["api"];
