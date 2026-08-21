@@ -25,10 +25,10 @@ const REQUIRED_FILES = [
   "test/direct-boundary.test.ts",
   "test/handler-boundary.test.ts",
   "test/controlled-activation.test.ts",
+  "test/session-boundary.test.ts",
 ];
 
 const TASK_5_ARTIFACT_HASHES = new Map([
-  ["src/proof-boundary.ts", "92b659927833c7c023959be970498a667477037856d7ddde64cc7e1f531ee01f"],
   ["test/direct-boundary.test.ts", "82fa13b4acee46968f9ba5972241e73dcfb3e332e853576c75ab631c9f2b9e8d"],
   ["test/handler-boundary.test.ts", "e6ce226521e12111be4e2934e7c33bc1ab77fdef9883c463a3e4dd7dca5b4801"],
 ]);
@@ -36,6 +36,11 @@ const TASK_5_ARTIFACT_HASHES = new Map([
 const TASK_6_ARTIFACT_HASHES = new Map([
   ["src/auth.ts", "2414b3d7672b47aef1bb69cc863b3934f1c4b5580c21566b83e4f10ff2bd6080"],
   ["test/controlled-activation.test.ts", "08a2313e55174550a728cd87c03355e7baa9d6e7679f94afd658705570ae3dac"],
+]);
+
+const TASK_7_ARTIFACT_HASHES = new Map([
+  ["src/proof-boundary.ts", "6406693b3d334e328a546de9852d126694e480f6c2d8398fc03b5bff63f4a677"],
+  ["test/session-boundary.test.ts", "d750854ad0ba214c232b2211b17cd5865a192e3579b9147ad9474877a8888fa3"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -119,6 +124,13 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       createHash("sha256").update(sources.get(relativePath)).digest("hex"),
       expectedHash,
       `${relativePath} drifted from the reviewed Task 6 proof`,
+    );
+  }
+  for (const [relativePath, expectedHash] of TASK_7_ARTIFACT_HASHES) {
+    assert.equal(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      expectedHash,
+      `${relativePath} drifted from the reviewed Task 7 proof`,
     );
   }
 
@@ -216,7 +228,10 @@ test("the Better Auth factory freezes the approved security and route surface", 
 });
 
 test("proof sources forbid direct provider writes, any, and premature cookie exposure", async () => {
-  const sourceNames = ["src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts"];
+  const sourceNames = [
+    "src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts",
+    "test/session-boundary.test.ts",
+  ];
   const sources = await Promise.all(sourceNames.map(readHarness));
   for (const [index, source] of sources.entries()) {
     assert.doesNotMatch(source, /\bas\s+any\b|:\s*any\b|<any>/, `${sourceNames[index]} contains any`);
@@ -303,6 +318,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     "test/direct-boundary.test.ts",
     "test/handler-boundary.test.ts",
     "test/controlled-activation.test.ts",
+    "test/session-boundary.test.ts",
   ]) {
     assert.match(staticBody, new RegExp(task5TypeInput.replaceAll("/", "\\/\\s*")));
   }
