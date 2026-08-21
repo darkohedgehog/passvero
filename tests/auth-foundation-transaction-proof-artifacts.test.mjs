@@ -39,8 +39,8 @@ const TASK_6_ARTIFACT_HASHES = new Map([
 ]);
 
 const TASK_7_ARTIFACT_HASHES = new Map([
-  ["src/proof-boundary.ts", "6406693b3d334e328a546de9852d126694e480f6c2d8398fc03b5bff63f4a677"],
-  ["test/session-boundary.test.ts", "d750854ad0ba214c232b2211b17cd5865a192e3579b9147ad9474877a8888fa3"],
+  ["src/proof-boundary.ts", "065de849a757aa5b5e78e3d50b178ebeee4f9295c8dd9dda8227ea100311a600"],
+  ["test/session-boundary.test.ts", "cd9e5542fbcb24739fbf78d9a32983059ad2517f322a88f110bc99c7bde98d05"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {

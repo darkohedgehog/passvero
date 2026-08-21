@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import { getCurrentAdapter, runWithTransaction } from "@better-auth/core/context";
+import type { DBAdapter } from "@better-auth/core/db/adapter";
 import { createProofAuth, type ProofAuth } from "./auth.js";
 import type { DeferredCookie, RowCounts } from "./evidence.js";
 import { readRunIdentity } from "./run-root.js";
@@ -102,6 +103,18 @@ export class BoundaryAttemptFailed extends Error {
 export const H2_DIRECT_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
 export const H3_HANDLER_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
 export const H5_SESSION_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
+export const H5_SESSION_ROTATION_FEASIBILITY = {
+  accepted: false,
+  verdict: "FAIL",
+  reason: "NO_SUPPORTED_ATOMIC_SESSION_ROTATION",
+  pinnedPublicAdapter: "@better-auth/core@1.7.1 DBAdapter",
+  rejectedOperations: [
+    "DBAdapter.update: explicitly not race-safe for guarded state transitions",
+    "DBAdapter.incrementOne: requires a numeric session field to increment",
+    "non-public session helper: unexported and read-then-update",
+    "Prisma provider-session delegate: direct provider-table write",
+  ],
+} as const;
 
 export const SESSION_REFRESH_MS = 86_400_000 as const;
 export const SESSION_INACTIVITY_MS = 604_800_000 as const;
@@ -171,30 +184,14 @@ export type SessionPolicyDecision =
       readonly deleteSession: true;
     };
 
-export interface SessionAuthoritativeOperations {
-  findSession(token: string): Promise<{ readonly session: SessionProofRecord } | null>;
-  updateSession(
-    token: string,
-    data: Readonly<Record<string, unknown>>,
-  ): Promise<SessionProofRecord | null>;
-  deleteSession(token: string): Promise<void>;
-  deleteUserSessions(userId: string): Promise<void>;
-  listSessions(userId: string): Promise<readonly SessionProofRecord[]>;
-  deleteSessions(tokens: readonly string[]): Promise<void>;
-}
-
-export interface PasswordAuthoritativeOperations {
-  readonly minPasswordLength: number;
-  readonly maxPasswordLength: number;
-  findCredentialAccount(
-    userId: string,
-  ): Promise<{ readonly id: string; readonly password?: string | null } | null>;
-  verify(input: { readonly hash: string; readonly password: string }): Promise<boolean>;
-  hash(password: string): Promise<string>;
-  updateAccount(id: string, data: { readonly password: string }): Promise<void>;
-}
-
-export function serverOwnedSessionAnchors(serverInstant: Date): {
+export function serverOwnedSessionAnchors(
+  serverInstant: Date,
+  _hostileCreateInput?: Readonly<{
+    readonly authenticatedAt?: Date;
+    readonly lastRefreshAt?: Date;
+    readonly selectedOrganizationId?: string | null;
+  }>,
+): {
   readonly authenticatedAt: Date;
   readonly lastRefreshAt: Date;
 } {
@@ -229,91 +226,102 @@ export function evaluateSessionPolicy(
   };
 }
 
-export async function rotateSessionWithBetterAuthAuthority(input: {
-  readonly internalAdapter: SessionAuthoritativeOperations;
+export function requiredAtomicRotationGuards(input: {
+  readonly sessionId: string;
   readonly presentedToken: string;
   readonly now: Date;
-  readonly newToken: string;
-}): Promise<
-  | { readonly action: "ACTIVE"; readonly session: SessionProofRecord }
-  | { readonly action: "ROTATED"; readonly session: SessionProofRecord }
-  | { readonly action: "REAUTHENTICATE"; readonly reason: string }
-> {
-  const found = await input.internalAdapter.findSession(input.presentedToken);
-  if (!found) return { action: "REAUTHENTICATE", reason: "SESSION_NOT_FOUND" };
-  const session = found.session;
-  const decision = evaluateSessionPolicy(session, input.now);
-  if (decision.action === "REAUTHENTICATE") {
-    await input.internalAdapter.deleteSession(session.token);
-    return { action: "REAUTHENTICATE", reason: decision.reason };
+}): readonly Readonly<{ readonly field: string; readonly operator: string; readonly value: string | Date }>[] {
+  return [
+    { field: "id", operator: "eq", value: input.sessionId },
+    { field: "token", operator: "eq", value: input.presentedToken },
+    { field: "expiresAt", operator: "gt", value: input.now },
+    { field: "lastRefreshAt", operator: "gt", value: new Date(input.now.getTime() - SESSION_INACTIVITY_MS) },
+    { field: "authenticatedAt", operator: "gt", value: new Date(input.now.getTime() - SESSION_ABSOLUTE_MS) },
+  ];
+}
+
+export function requireSupportedAtomicSessionRotation(): never {
+  throw new Error(H5_SESSION_ROTATION_FEASIBILITY.reason);
+}
+
+function validatedSessionMaxAgeSeconds(input: {
+  readonly now: Date;
+  readonly expiresAt: Date;
+  readonly authenticatedAt: Date;
+  readonly lastRefreshAt: Date;
+}): number {
+  const cap = Math.min(
+    input.expiresAt.getTime(),
+    input.authenticatedAt.getTime() + SESSION_ABSOLUTE_MS,
+    input.lastRefreshAt.getTime() + SESSION_INACTIVITY_MS,
+  );
+  const seconds = Math.floor((cap - input.now.getTime()) / 1_000);
+  if (seconds <= 0) throw new Error("STOP_H5_ROTATED_COOKIE_EXPIRED");
+  return seconds;
+}
+
+export function stageRotatedSessionCookie(input: {
+  readonly token: string;
+  readonly response: Response;
+  readonly now: Date;
+  readonly expiresAt: Date;
+  readonly authenticatedAt: Date;
+  readonly lastRefreshAt: Date;
+}): void {
+  if (!/^[A-Za-z0-9_-]{16,}$/.test(input.token)) {
+    throw new Error("STOP_H5_ROTATED_TOKEN_INVALID");
   }
-  if (decision.action === "ACTIVE") return { action: "ACTIVE", session };
-  const updated = await input.internalAdapter.updateSession(session.token, {
-    token: input.newToken,
-    expiresAt: decision.expiresAt,
-    authenticatedAt: decision.authenticatedAt,
-    lastRefreshAt: decision.lastRefreshAt,
-    selectedOrganizationId: decision.selectedOrganizationId,
-    updatedAt: input.now,
+  const permittedMaxAge = validatedSessionMaxAgeSeconds(input);
+  const raw = input.response.headers.get(`set-${"cookie"}`);
+  if (!raw) throw new Error("STOP_H5_ROTATED_COOKIE_MISSING");
+  const [pair = "", ...segments] = raw.split(";").map((segment) => segment.trim());
+  const separator = pair.indexOf("=");
+  const value = separator < 0 ? "" : pair.slice(separator + 1);
+  const maxAgeSegment = segments.find((segment) => segment.toLowerCase().startsWith("max-age="));
+  const maxAge = maxAgeSegment ? Number(maxAgeSegment.slice("max-age=".length)) : Number.NaN;
+  if (value !== input.token || !Number.isInteger(maxAge) || maxAge <= 0 || maxAge > permittedMaxAge) {
+    throw new Error("STOP_H5_ROTATED_COOKIE_INVALID");
+  }
+  captureDirectResponseHeaders(input.response);
+}
+
+export function stageExpiredSessionCookie(response: Response): void {
+  const raw = response.headers.get(`set-${"cookie"}`);
+  if (!raw) throw new Error("STOP_H5_EXPIRING_COOKIE_MISSING");
+  const [pair = "", ...segments] = raw.split(";").map((segment) => segment.trim());
+  const separator = pair.indexOf("=");
+  const value = separator < 0 ? "invalid" : pair.slice(separator + 1);
+  const maxAgeZero = segments.some((segment) => segment.toLowerCase() === "max-age=0");
+  if (value !== "" || !maxAgeZero) throw new Error("STOP_H5_EXPIRING_COOKIE_INVALID");
+  captureDirectResponseHeaders(response);
+}
+
+export async function expireSessionWithBetterAuthAuthority(
+  adapter: Pick<DBAdapter, "delete">,
+  sessionId: string,
+  presentedToken: string,
+  expiringCookieResponse: Response,
+): Promise<void> {
+  await adapter.delete<SessionProofRecord>({
+    model: "session",
+    where: [
+      { field: "id", operator: "eq", value: sessionId },
+      { field: "token", operator: "eq", value: presentedToken },
+    ],
   });
-  if (!updated) return { action: "REAUTHENTICATE", reason: "ROTATION_RACE_LOST" };
-  return { action: "ROTATED", session: updated };
+  stageExpiredSessionCookie(expiringCookieResponse);
 }
 
 export async function revokeAllWithBetterAuthAuthority(
-  internalAdapter: SessionAuthoritativeOperations,
+  adapter: Pick<DBAdapter, "deleteMany">,
   userId: string,
+  expiringCookieResponse: Response,
 ): Promise<void> {
-  await internalAdapter.deleteUserSessions(userId);
-}
-
-export async function changePasswordWithBetterAuthAuthority(input: {
-  readonly internalAdapter: SessionAuthoritativeOperations;
-  readonly passwordAuthority: PasswordAuthoritativeOperations;
-  readonly presentedToken: string;
-  readonly currentPassword: string;
-  readonly newPassword: string;
-  readonly newToken: string;
-  readonly now: Date;
-}): Promise<SessionProofRecord> {
-  if (input.newPassword.length < input.passwordAuthority.minPasswordLength) {
-    throw new Error("STOP_H5_NEW_PASSWORD_TOO_SHORT");
-  }
-  if (input.newPassword.length > input.passwordAuthority.maxPasswordLength) {
-    throw new Error("STOP_H5_NEW_PASSWORD_TOO_LONG");
-  }
-  const found = await input.internalAdapter.findSession(input.presentedToken);
-  if (!found) throw new Error("STOP_H5_SESSION_NOT_FOUND");
-  const session = found.session;
-  const decision = evaluateSessionPolicy(session, input.now);
-  if (decision.action === "REAUTHENTICATE") {
-    await input.internalAdapter.deleteSession(session.token);
-    throw new Error("STOP_H5_SESSION_EXPIRED");
-  }
-  const account = await input.passwordAuthority.findCredentialAccount(session.userId);
-  if (!account?.password) throw new Error("STOP_H5_CREDENTIAL_ACCOUNT_MISSING");
-  const verified = await input.passwordAuthority.verify({
-    hash: account.password,
-    password: input.currentPassword,
+  await adapter.deleteMany({
+    model: "session",
+    where: [{ field: "userId", operator: "eq", value: userId }],
   });
-  if (!verified) throw new Error("STOP_H5_INVALID_CURRENT_PASSWORD");
-  const passwordHash = await input.passwordAuthority.hash(input.newPassword);
-  await input.passwordAuthority.updateAccount(account.id, { password: passwordHash });
-  const sessions = await input.internalAdapter.listSessions(session.userId);
-  const otherTokens = sessions
-    .filter((candidate) => candidate.token !== session.token)
-    .map((candidate) => candidate.token);
-  if (otherTokens.length > 0) await input.internalAdapter.deleteSessions(otherTokens);
-  const updated = await input.internalAdapter.updateSession(session.token, {
-    token: input.newToken,
-    expiresAt: session.expiresAt,
-    authenticatedAt: session.authenticatedAt,
-    lastRefreshAt: session.lastRefreshAt,
-    selectedOrganizationId: session.selectedOrganizationId,
-    updatedAt: input.now,
-  });
-  if (!updated) throw new Error("STOP_H5_PASSWORD_SESSION_ROTATION_FAILED");
-  return updated;
+  stageExpiredSessionCookie(expiringCookieResponse);
 }
 
 export const DIRECT_BOUNDARY_FAILURE_SCENARIOS = [
@@ -517,6 +525,18 @@ export async function runCapturedBoundaryAttempt<T>(
   });
 }
 
+export async function runSessionCommitStages<T>(input: {
+  readonly sessionWrite: () => Promise<T>;
+  readonly canonicalOrSupportWrite: () => void | Promise<void>;
+  readonly failurePoint: FailurePoint;
+}): Promise<T> {
+  const value = await input.sessionWrite();
+  injectFailure(input.failurePoint, "AFTER_SESSION_WRITE");
+  await input.canonicalOrSupportWrite();
+  injectFailure(input.failurePoint, "BEFORE_COMMIT");
+  return value;
+}
+
 export async function runBetterAuthBoundary<T>(input: {
   readonly rootPrisma: BoundaryRootPrisma;
   readonly invoke: (
@@ -527,6 +547,7 @@ export async function runBetterAuthBoundary<T>(input: {
   readonly failurePoint: FailurePoint;
   readonly afterCommit?: (value: T, response: Response) => void | Promise<void>;
   readonly bindTransactionClient?: (tx: TransactionClient) => TransactionClient;
+  readonly beforeCommitStage?: (tx: TransactionClient) => void | Promise<void>;
 }): Promise<BoundaryResult<T>> {
   readRunIdentity();
   return runCapturedBoundaryAttempt({
@@ -548,11 +569,18 @@ export async function runBetterAuthBoundary<T>(input: {
           await assertAdapterBound();
           return runWithTransaction(adapter, async () => {
             await assertAdapterBound();
-            const value = await input.invoke(auth.api, tx, assertAdapterBound);
-            await assertAdapterBound();
-            injectFailure(input.failurePoint, "AFTER_SESSION_WRITE");
-            injectFailure(input.failurePoint, "BEFORE_COMMIT");
-            return value;
+            return runSessionCommitStages({
+              sessionWrite: async () => {
+                const value = await input.invoke(auth.api, tx, assertAdapterBound);
+                await assertAdapterBound();
+                return value;
+              },
+              canonicalOrSupportWrite: async () => {
+                await input.beforeCommitStage?.(tx);
+                await assertAdapterBound();
+              },
+              failurePoint: input.failurePoint,
+            });
           });
         },
         { isolationLevel: "Serializable" },

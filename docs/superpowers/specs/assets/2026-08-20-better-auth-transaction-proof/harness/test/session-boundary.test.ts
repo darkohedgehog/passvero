@@ -2,8 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
+import type { DBAdapter } from "@better-auth/core/db/adapter";
 import {
   H5_SESSION_BOUNDARY_RUNTIME_VERDICT,
+  H5_SESSION_ROTATION_FEASIBILITY,
   NATIVE_SESSION_BEHAVIORS,
   SESSION_ABSOLUTE_MS,
   SESSION_INACTIVITY_MS,
@@ -12,21 +14,22 @@ import {
   BoundaryAttemptFailed,
   captureDirectResponseHeaders,
   evaluateSessionPolicy,
-  changePasswordWithBetterAuthAuthority,
+  expireSessionWithBetterAuthAuthority,
+  requiredAtomicRotationGuards,
+  requireSupportedAtomicSessionRotation,
   revokeAllWithBetterAuthAuthority,
-  rotateSessionWithBetterAuthAuthority,
   runBoundaryWithRetry,
   runBetterAuthBoundary,
   runCapturedBoundaryAttempt,
+  runSessionCommitStages,
   serverOwnedSessionAnchors,
+  stageRotatedSessionCookie,
   type SessionProofRecord,
-  type SessionAuthoritativeOperations,
-  type PasswordAuthoritativeOperations,
   type BoundaryRootPrisma,
   type TransactionClient,
 } from "../src/proof-boundary.js";
 import type { RowCounts } from "../src/evidence.js";
-import { createProofAuth } from "../src/auth.js";
+import { createControlledActivationAuth, createProofAuth } from "../src/auth.js";
 import { buildConnectionString, readRunIdentity } from "../src/run-root.js";
 
 type UnknownRecord = Record<PropertyKey, unknown>;
@@ -39,6 +42,10 @@ interface FindUniqueDelegate {
   findUnique(input: { readonly where: Readonly<Record<string, unknown>> }): Promise<unknown>;
 }
 
+interface SupportCreateDelegate {
+  create(input: { readonly data: Readonly<Record<string, unknown>> }): Promise<unknown>;
+}
+
 interface H5TransactionClient extends TransactionClient {
   readonly authProviderUser: CountDelegate;
   readonly authProviderAccount: CountDelegate;
@@ -48,7 +55,7 @@ interface H5TransactionClient extends TransactionClient {
   readonly authIdentity: CountDelegate;
   readonly accountActivation: CountDelegate;
   readonly authCredentialToken: CountDelegate;
-  readonly authAbuseBucket: CountDelegate;
+  readonly authAbuseBucket: CountDelegate & SupportCreateDelegate;
 }
 
 interface H5PrismaClient extends H5TransactionClient, BoundaryRootPrisma {
@@ -152,9 +159,15 @@ async function createCredential(
   const result = await runBetterAuthBoundary({
     rootPrisma: prisma,
     failurePoint: "NONE",
-    invoke: async (api, rawTx) => {
-      const response = await api.signUpEmail({
-        body: { name: `proof-${fixtureLabel()}`, email: input.email, password: input.password },
+    invoke: async (_api, rawTx) => {
+      const controlled = createControlledActivationAuth(rawTx);
+      const response = await controlled.api.activatePreprovisionedCredential({
+        body: {
+          credential: input.password,
+          name: `proof-${fixtureLabel()}`,
+          email: input.email,
+          providerSubject: `h5-provider-${fixtureLabel()}`,
+        },
         asResponse: true,
       });
       captureDirectResponseHeaders(response);
@@ -165,8 +178,20 @@ async function createCredential(
       if (!isRecord(user)) throw new Error("STOP_H5_CREDENTIAL_CREATE_FAILED");
       const userId = requiredString(Reflect.get(user, "id"), "STOP_H5_CREDENTIAL_CREATE_FAILED");
       if (input.verified) {
-        const auth = createProofAuth({ prisma: rawTx, adapterTransaction: false, disableSignUp: false });
-        await (await auth.$context).internalAdapter.updateUser(userId, { emailVerified: true });
+        const verificationAuth = createProofAuth({
+          prisma: rawTx,
+          adapterTransaction: false,
+          disableSignUp: true,
+        });
+        const verified = await (await verificationAuth.$context).adapter.update<{
+          readonly id: string;
+          readonly emailVerified: boolean;
+        }>({
+          model: "user",
+          where: [{ field: "id", operator: "eq", value: userId }],
+          update: { emailVerified: true },
+        });
+        if (!verified?.emailVerified) throw new Error("STOP_H5_CREDENTIAL_VERIFY_FAILED");
       }
       return userId;
     },
@@ -183,6 +208,12 @@ async function signIn(
     readonly failurePoint?: "NONE" | "AFTER_SESSION_WRITE" | "BEFORE_COMMIT";
     readonly bindTransactionClient?: (tx: TransactionClient) => TransactionClient;
     readonly afterCommit?: (value: SignInResult, response: Response) => void | Promise<void>;
+    readonly beforeCommitStage?: (tx: TransactionClient) => void | Promise<void>;
+    readonly hostileSessionAnchors?: Readonly<{
+      readonly authenticatedAt: Date;
+      readonly lastRefreshAt: Date;
+      readonly selectedOrganizationId: string;
+    }>;
   },
 ) {
   return runBetterAuthBoundary({
@@ -190,9 +221,11 @@ async function signIn(
     failurePoint: input.failurePoint ?? "NONE",
     bindTransactionClient: input.bindTransactionClient,
     afterCommit: input.afterCommit,
+    beforeCommitStage: input.beforeCommitStage,
     invoke: async (api) => {
+      const body = { email: input.email, password: input.password, ...input.hostileSessionAnchors };
       const response = await api.signInEmail({
-        body: { email: input.email, password: input.password },
+        body,
         asResponse: true,
       });
       captureDirectResponseHeaders(response);
@@ -220,40 +253,6 @@ function failSessionCreate(rawTx: TransactionClient): TransactionClient {
   });
 }
 
-async function betterAuthAuthorities(tx: TransactionClient): Promise<{
-  readonly session: SessionAuthoritativeOperations;
-  readonly password: PasswordAuthoritativeOperations;
-}> {
-  const auth = createProofAuth({ prisma: tx, adapterTransaction: false, disableSignUp: false });
-  const context = await auth.$context;
-  return {
-    session: {
-      findSession: async (token) => {
-        const found = await context.internalAdapter.findSession(token);
-        return found ? { session: proofSession(found.session) } : null;
-      },
-      updateSession: async (token, data) => proofSession(
-        await context.internalAdapter.updateSession(token, data),
-      ),
-      deleteSession: async (token) => { await context.internalAdapter.deleteSession(token); },
-      deleteUserSessions: async (userId) => { await context.internalAdapter.deleteUserSessions(userId); },
-      listSessions: async (userId) => (await context.internalAdapter.listSessions(userId)).map(proofSession),
-      deleteSessions: async (tokens) => { await context.internalAdapter.deleteSessions([...tokens]); },
-    },
-    password: {
-      minPasswordLength: context.password.config.minPasswordLength,
-      maxPasswordLength: context.password.config.maxPasswordLength,
-      findCredentialAccount: async (userId) => {
-        const account = await context.internalAdapter.findCredentialAccount(userId);
-        return account ? { id: account.id, password: account.password } : null;
-      },
-      verify: (input) => context.password.verify(input),
-      hash: (password) => context.password.hash(password),
-      updateAccount: async (id, data) => { await context.internalAdapter.updateAccount(id, data); },
-    },
-  };
-}
-
 const ZERO_DELTAS: RowCounts = {
   providerUser: 0,
   providerAccount: 0,
@@ -265,6 +264,12 @@ const ZERO_DELTAS: RowCounts = {
   credentialToken: 0,
   abuseBucket: 0,
 };
+
+function authoritativeCookieResponse(value: string, maxAgeSeconds: number): Response {
+  return new Response(null, { headers: {
+    "set-cookie": `__Host-proof=${value}; Path=/; Max-Age=${maxAgeSeconds}; HttpOnly; Secure; SameSite=Lax`,
+  } });
+}
 
 function sessionAt(input: {
   readonly authenticatedAt: Date;
@@ -325,10 +330,29 @@ test("H5 manifest records every required session case while runtime remains unex
 
 test("server-owned anchors use one instant and expose no client override input", () => {
   const serverInstant = new Date("2026-08-21T10:00:00.000Z");
-  const anchors = serverOwnedSessionAnchors(serverInstant);
+  const hostile = new Date("1999-01-01T00:00:00.000Z");
+  const anchors = serverOwnedSessionAnchors(serverInstant, {
+    authenticatedAt: hostile,
+    lastRefreshAt: hostile,
+    selectedOrganizationId: "attacker-selected-organization",
+  });
   assert.equal(anchors.authenticatedAt, serverInstant);
   assert.equal(anchors.lastRefreshAt, serverInstant);
   assert.equal(Object.keys(anchors).length, 2);
+});
+
+test("AFTER_SESSION_WRITE and BEFORE_COMMIT surround a real canonical or support stage", async () => {
+  for (const failurePoint of ["AFTER_SESSION_WRITE", "BEFORE_COMMIT"] as const) {
+    const stages: string[] = [];
+    await assert.rejects(() => runSessionCommitStages({
+      sessionWrite: async () => { stages.push("SESSION_WRITE"); return true; },
+      canonicalOrSupportWrite: async () => { stages.push("CANONICAL_OR_SUPPORT_WRITE"); },
+      failurePoint,
+    }), new RegExp(`INJECTED_FAILURE_${failurePoint}`));
+    assert.deepEqual(stages, failurePoint === "AFTER_SESSION_WRITE"
+      ? ["SESSION_WRITE"]
+      : ["SESSION_WRITE", "CANONICAL_OR_SUPPORT_WRITE"]);
+  }
 });
 
 test("session policy rotates at 24 hours and caps expiry without resetting anchors", () => {
@@ -457,6 +481,27 @@ test("all precommit failures discard captured cookies and cannot publish a respo
   }
 });
 
+test("invalid email, invalid password, unverified email, and session-create failure expose no cookie", async () => {
+  for (const namedCase of [
+    "INVALID_EMAIL",
+    "INVALID_PASSWORD",
+    "UNVERIFIED_EMAIL",
+    "SESSION_CREATE_FAILURE",
+  ] as const) {
+    let externalResponse: Response | undefined;
+    await assert.rejects(() => runCapturedBoundaryAttempt({
+      transactionalWork: async () => { throw new Error(namedCase); },
+      failurePoint: "NONE",
+      afterCommit: (_value, response) => { externalResponse = response; },
+    }), (error: unknown) => error instanceof BoundaryAttemptFailed
+      && !error.commitObserved
+      && !error.cookieEligible
+      && !error.capturedCookieDiscarded
+      && error.reauthenticationRequired);
+    assert.equal(externalResponse, undefined);
+  }
+});
+
 test("after-commit delivery failure returns no cookie, requires reauthentication, and never retries", async () => {
   const cookieHeader = ["set", "cookie"].join("-");
   let attempts = 0;
@@ -513,186 +558,185 @@ test("invalid deferred cookie attributes fail closed after commit", async () => 
 
 });
 
-test("rotation uses the Better Auth authoritative session adapter and preserves both anchors and selection", async () => {
-  const authenticatedAt = new Date("2026-08-01T00:00:00.000Z");
-  const lastRefreshAt = new Date("2026-08-20T00:00:00.000Z");
-  const session = sessionAt({ authenticatedAt, lastRefreshAt });
-  const now = new Date(lastRefreshAt.getTime() + SESSION_REFRESH_MS);
-  const updates: Array<{ readonly token: string; readonly data: Readonly<Record<string, unknown>> }> = [];
-  const adapter: SessionAuthoritativeOperations = {
-    findSession: async (token) => token === session.token ? { session } : null,
-    updateSession: async (token, data) => {
-      updates.push({ token, data });
-      return { ...session, ...data } as SessionProofRecord;
-    },
-    deleteSession: async () => {},
-    deleteUserSessions: async () => {},
-    listSessions: async () => [session],
-    deleteSessions: async () => {},
-  };
-  const result = await rotateSessionWithBetterAuthAuthority({
-    internalAdapter: adapter,
-    presentedToken: session.token,
-    now,
-    newToken: "new-session-token",
+test("pinned public adapter cannot express the required atomic session rotation", () => {
+  assert.deepEqual(H5_SESSION_ROTATION_FEASIBILITY, {
+    accepted: false,
+    verdict: "FAIL",
+    reason: "NO_SUPPORTED_ATOMIC_SESSION_ROTATION",
+    pinnedPublicAdapter: "@better-auth/core@1.7.1 DBAdapter",
+    rejectedOperations: [
+      "DBAdapter.update: explicitly not race-safe for guarded state transitions",
+      "DBAdapter.incrementOne: requires a numeric session field to increment",
+      "non-public session helper: unexported and read-then-update",
+      "Prisma provider-session delegate: direct provider-table write",
+    ],
   });
-  assert.equal(result.action, "ROTATED");
-  assert.deepEqual(updates, [{
-    token: "old-session-token",
-    data: {
-      token: "new-session-token",
-      expiresAt: new Date("2026-08-28T00:00:00.000Z"),
-      authenticatedAt,
-      lastRefreshAt: now,
-      selectedOrganizationId: "selected-organization-id",
-      updatedAt: now,
-    },
-  }]);
+  assert.throws(requireSupportedAtomicSessionRotation, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
 });
 
-test("expired session is deleted through Better Auth authority without rotation", async () => {
-  const deleted: string[] = [];
-  const session = sessionAt({
-    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
-    expiresAt: new Date("2026-08-07T00:00:00.000Z"),
+test("atomic rotation guard rejects a stale presented token", () => {
+  const guards = requiredAtomicRotationGuards({
+    sessionId: "session-id",
+    presentedToken: "stale-token",
+    now: new Date("2026-08-21T00:00:00.000Z"),
   });
-  const adapter: SessionAuthoritativeOperations = {
-    findSession: async (token) => token === session.token ? { session } : null,
-    updateSession: async () => assert.fail("expired session must not update"),
-    deleteSession: async (token) => { deleted.push(token); },
-    deleteUserSessions: async () => {},
-    listSessions: async () => [],
-    deleteSessions: async () => {},
-  };
-  const result = await rotateSessionWithBetterAuthAuthority({
-    internalAdapter: adapter,
-    presentedToken: session.token,
-    now: new Date("2026-08-07T00:00:00.000Z"),
-    newToken: "must-not-be-used",
-  });
-  assert.deepEqual(result, { action: "REAUTHENTICATE", reason: "SESSION_EXPIRED" });
-  assert.deepEqual(deleted, ["old-session-token"]);
+  assert.deepEqual(guards.slice(0, 2), [
+    { field: "id", operator: "eq", value: "session-id" },
+    { field: "token", operator: "eq", value: "stale-token" },
+  ]);
+  assert.throws(requireSupportedAtomicSessionRotation, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
 });
 
-test("revoke-all delegates to Better Auth authority for the provider user", async () => {
-  const users: string[] = [];
-  const adapter: SessionAuthoritativeOperations = {
-    findSession: async () => null,
-    updateSession: async () => null,
-    deleteSession: async () => {},
-    deleteUserSessions: async (userId) => { users.push(userId); },
-    listSessions: async () => [],
-    deleteSessions: async () => {},
-  };
-  await revokeAllWithBetterAuthAuthority(adapter, "provider-user-id");
-  assert.deepEqual(users, ["provider-user-id"]);
-});
-
-test("password change verifies and updates through Better Auth, revokes others, and rotates current without resetting anchors", async () => {
-  const authenticatedAt = new Date("2026-08-01T00:00:00.000Z");
-  const lastRefreshAt = new Date("2026-08-20T00:00:00.000Z");
-  const expiresAt = new Date("2026-08-27T00:00:00.000Z");
-  const current = sessionAt({ authenticatedAt, lastRefreshAt, expiresAt });
-  const other = { ...current, id: "other-id", token: "other-token" };
-  const operations: string[] = [];
-  const adapter: SessionAuthoritativeOperations = {
-    findSession: async (token) => {
-      operations.push(`find-session:${token}`);
-      return token === current.token ? { session: current } : null;
-    },
-    updateSession: async (token, data) => {
-      operations.push(`update-session:${token}`);
-      return { ...current, ...data } as SessionProofRecord;
-    },
-    deleteSession: async () => {},
-    deleteUserSessions: async () => {},
-    listSessions: async (userId) => {
-      operations.push(`list-sessions:${userId}`);
-      return [current, other];
-    },
-    deleteSessions: async (tokens) => { operations.push(`delete-sessions:${tokens.join(",")}`); },
-  };
-  const password: PasswordAuthoritativeOperations = {
-    minPasswordLength: 8,
-    maxPasswordLength: 128,
-    findCredentialAccount: async (userId) => {
-      operations.push(`find-account:${userId}`);
-      return { id: "credential-account-id", password: "old-password-hash" };
-    },
-    verify: async (input) => {
-      operations.push(`verify:${input.hash}:${input.password}`);
-      return input.hash === "old-password-hash" && input.password === "current-password";
-    },
-    hash: async (value) => {
-      operations.push(`hash:${value}`);
-      return "new-password-hash";
-    },
-    updateAccount: async (id, data) => {
-      operations.push(`update-account:${id}:${data.password}`);
-    },
-  };
+test("atomic rotation guard rejects exact expiry, inactivity, and absolute deadlines", () => {
   const now = new Date("2026-08-21T00:00:00.000Z");
-  const updated = await changePasswordWithBetterAuthAuthority({
-    internalAdapter: adapter,
-    passwordAuthority: password,
-    presentedToken: current.token,
-    currentPassword: "current-password",
-    newPassword: "new-password",
-    newToken: "password-change-token",
-    now,
-  });
-  assert.equal(updated.token, "password-change-token");
-  assert.equal(updated.authenticatedAt, authenticatedAt);
-  assert.equal(updated.lastRefreshAt, lastRefreshAt);
-  assert.equal(updated.expiresAt, expiresAt);
-  assert.equal(updated.selectedOrganizationId, "selected-organization-id");
-  assert.deepEqual(operations, [
-    "find-session:old-session-token",
-    "find-account:provider-user-id",
-    "verify:old-password-hash:current-password",
-    "hash:new-password",
-    "update-account:credential-account-id:new-password-hash",
-    "list-sessions:provider-user-id",
-    "delete-sessions:other-token",
-    "update-session:old-session-token",
+  const guards = requiredAtomicRotationGuards({ sessionId: "session-id", presentedToken: "token", now });
+  assert.deepEqual(guards, [
+    { field: "id", operator: "eq", value: "session-id" },
+    { field: "token", operator: "eq", value: "token" },
+    { field: "expiresAt", operator: "gt", value: now },
+    { field: "lastRefreshAt", operator: "gt", value: new Date(now.getTime() - SESSION_INACTIVITY_MS) },
+    { field: "authenticatedAt", operator: "gt", value: new Date(now.getTime() - SESSION_ABSOLUTE_MS) },
   ]);
 });
 
-test("invalid current password performs zero authoritative mutations", async () => {
-  const operations: string[] = [];
-  const session = sessionAt({ authenticatedAt: new Date("2026-08-01T00:00:00.000Z") });
-  const adapter: SessionAuthoritativeOperations = {
-    findSession: async (token) => token === session.token ? { session } : null,
-    updateSession: async () => { operations.push("update"); return session; },
-    deleteSession: async () => { operations.push("delete"); },
-    deleteUserSessions: async () => { operations.push("delete-all"); },
-    listSessions: async () => { operations.push("list"); return [session]; },
-    deleteSessions: async () => { operations.push("delete-many"); },
-  };
-  const password: PasswordAuthoritativeOperations = {
-    minPasswordLength: 8,
-    maxPasswordLength: 128,
-    findCredentialAccount: async () => ({ id: "account-id", password: "stored-hash" }),
-    verify: async () => false,
-    hash: async () => { operations.push("hash"); return "new-hash"; },
-    updateAccount: async () => { operations.push("update-account"); },
-  };
-  await assert.rejects(
-    () => changePasswordWithBetterAuthAuthority({
-      internalAdapter: adapter,
-      passwordAuthority: password,
-      presentedToken: session.token,
-      currentPassword: "wrong-password",
-      newPassword: "new-password",
-      newToken: "new-token",
-      now: new Date("2026-08-02T00:00:00.000Z"),
-    }),
-    /STOP_H5_INVALID_CURRENT_PASSWORD/,
-  );
-  assert.deepEqual(operations, []);
+test("concurrent rotation requires one conditional-update winner and remains unsupported", async () => {
+  const attempts = await Promise.allSettled([
+    Promise.resolve().then(requireSupportedAtomicSessionRotation),
+    Promise.resolve().then(requireSupportedAtomicSessionRotation),
+  ]);
+  assert.equal(attempts.every((attempt) => attempt.status === "rejected"), true);
+  assert.equal(attempts.filter((attempt) => attempt.status === "fulfilled").length, 0);
 });
 
-test("live H5 exercises sign-in, rollback, rotation, revoke-all, and password change once", {
+test("rotated cookie is deferred and capped by inactivity and absolute limits", async () => {
+  const now = new Date("2026-08-21T00:00:00.000Z");
+  const authenticatedAt = new Date("2026-08-01T00:00:00.000Z");
+  const result = await runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      stageRotatedSessionCookie({
+        token: "rotated_session_token_1234",
+        response: authoritativeCookieResponse("rotated_session_token_1234", 604800),
+        now,
+        expiresAt: new Date("2026-09-30T00:00:00.000Z"),
+        authenticatedAt,
+        lastRefreshAt: now,
+      });
+      return true;
+    },
+    failurePoint: "NONE",
+  });
+  assert.equal(result.cookie.maxAgeSeconds, 604800);
+  assert.equal(result.cookie.secure, true);
+  assert.equal(result.cookie.httpOnly, true);
+  assert.equal(result.cookie.sameSite, "lax");
+  assert.equal(result.cookie.hostOnly, true);
+  const nearAbsolute = await runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      stageRotatedSessionCookie({
+        token: "absolute_capped_token_1234",
+        response: authoritativeCookieResponse("absolute_capped_token_1234", 86400),
+        now: new Date("2026-08-30T00:00:00.000Z"),
+        expiresAt: new Date("2026-09-30T00:00:00.000Z"),
+        authenticatedAt,
+        lastRefreshAt: new Date("2026-08-30T00:00:00.000Z"),
+      });
+      return true;
+    },
+    failurePoint: "NONE",
+  });
+  assert.equal(nearAbsolute.cookie.maxAgeSeconds, 86400);
+});
+
+test("rotated cookie rollback emits none and delivery failure is never retried", async () => {
+  for (const failurePoint of ["AFTER_SESSION_WRITE", "BEFORE_COMMIT"] as const) {
+    await assert.rejects(() => runCapturedBoundaryAttempt({
+      transactionalWork: async () => {
+        stageRotatedSessionCookie({
+          token: "rotated_session_token_1234",
+          response: authoritativeCookieResponse("rotated_session_token_1234", 604800),
+          now: new Date("2026-08-21T00:00:00.000Z"),
+          expiresAt: new Date("2026-08-28T00:00:00.000Z"),
+          authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+          lastRefreshAt: new Date("2026-08-21T00:00:00.000Z"),
+        });
+        throw new Error(failurePoint);
+      },
+      failurePoint,
+    }), (error: unknown) => error instanceof BoundaryAttemptFailed
+      && error.capturedCookieDiscarded
+      && !error.cookieEligible);
+  }
+  let attempts = 0;
+  await assert.rejects(() => runBoundaryWithRetry({
+    attempt: async () => {
+      attempts += 1;
+      return runCapturedBoundaryAttempt({
+        transactionalWork: async () => {
+          stageRotatedSessionCookie({
+            token: "rotated_session_token_1234",
+            response: authoritativeCookieResponse("rotated_session_token_1234", 604800),
+            now: new Date("2026-08-21T00:00:00.000Z"),
+            expiresAt: new Date("2026-08-28T00:00:00.000Z"),
+            authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+            lastRefreshAt: new Date("2026-08-21T00:00:00.000Z"),
+          });
+          return true;
+        },
+        failurePoint: "NONE",
+        afterCommit: () => { throw new Error("DELIVERY_FAILED"); },
+      });
+    },
+    auditFailure: async () => ({ finalRowDeltas: { ...ZERO_DELTAS, providerSession: 1 } }),
+  }), (error: unknown) => Reflect.get(error as object, "reason") === "COMMIT_OBSERVED");
+  assert.equal(attempts, 1);
+});
+
+test("expiry and revoke-all use public adapter operations and publish an expiring cookie only after commit", async () => {
+  const calls: Readonly<Record<string, unknown>>[] = [];
+  const adapter: Pick<DBAdapter, "delete" | "deleteMany"> = {
+    delete: async (input) => { calls.push(input); },
+    deleteMany: async (input) => { calls.push(input); return 1; },
+  };
+  const expired = await runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      await expireSessionWithBetterAuthAuthority(
+        adapter,
+        "session-id",
+        "presented-token",
+        authoritativeCookieResponse("", 0),
+      );
+      return true;
+    },
+    failurePoint: "NONE",
+  });
+  assert.equal(expired.cookie.maxAgeSeconds, 0);
+  const revoked = await runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      await revokeAllWithBetterAuthAuthority(adapter, "provider-user-id", authoritativeCookieResponse("", 0));
+      return true;
+    },
+    failurePoint: "NONE",
+  });
+  assert.equal(revoked.cookie.maxAgeSeconds, 0);
+  assert.equal(revoked.cookie.hostOnly, true);
+  assert.deepEqual(calls.map((call) => call.model), ["session", "session"]);
+
+  await assert.rejects(() => runCapturedBoundaryAttempt({
+    transactionalWork: async () => {
+      await revokeAllWithBetterAuthAuthority(adapter, "rollback-user-id", authoritativeCookieResponse("", 0));
+      throw new Error("ROLLBACK");
+    },
+    failurePoint: "NONE",
+  }), (error: unknown) => error instanceof BoundaryAttemptFailed
+    && error.capturedCookieDiscarded
+    && !error.cookieEligible);
+});
+
+test("password change is rejected before credential mutation because current-session rotation is unsupported", () => {
+  assert.throws(requireSupportedAtomicSessionRotation, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
+});
+
+test("live H5 uses controlled activation and exercises sign-in rollback cases only", {
   skip: process.env.PASSVERO_PROOF_H5 !== "1",
 }, async () => {
   const generatedPath = "../generated/client/client.js";
@@ -729,7 +773,16 @@ test("live H5 exercises sign-in, rollback, rotation, revoke-all, and password ch
     }
 
     const beforeValid = await providerSessionCount(prisma);
-    const valid = await signIn(prisma, { email, password });
+    const hostileAnchor = new Date("1999-01-01T00:00:00.000Z");
+    const valid = await signIn(prisma, {
+      email,
+      password,
+      hostileSessionAnchors: {
+        authenticatedAt: hostileAnchor,
+        lastRefreshAt: hostileAnchor,
+        selectedOrganizationId: "attacker-selected-organization",
+      },
+    });
     assert.equal(await providerSessionCount(prisma), beforeValid + 1);
     assert.equal(valid.value.providerUserId, userId);
     assert.equal(valid.cookie.present, true);
@@ -739,6 +792,7 @@ test("live H5 exercises sign-in, rollback, rotation, revoke-all, and password ch
     assert.equal(valid.cookie.hostOnly, true);
     const createdSession = await sessionByToken(prisma, valid.value.token);
     assert.equal(createdSession.authenticatedAt.getTime(), createdSession.lastRefreshAt.getTime());
+    assert.notEqual(createdSession.authenticatedAt.getTime(), hostileAnchor.getTime());
     assert.equal(createdSession.selectedOrganizationId, null);
 
     const beforeCreateFailure = await providerSessionCount(prisma);
@@ -757,6 +811,20 @@ test("live H5 exercises sign-in, rollback, rotation, revoke-all, and password ch
           email,
           password,
           failurePoint,
+          beforeCommitStage: async (tx) => {
+            if (!isH5TransactionClient(tx)) throw new Error("STOP_H5_TRANSACTION_CLIENT_INVALID");
+            const now = new Date();
+            await tx.authAbuseBucket.create({ data: {
+              dimension: "ACCOUNT_IDENTIFIER",
+              keyDigest: randomBytes(32).toString("base64url"),
+              attemptCount: 1,
+              failureCount: 0,
+              backoffLevel: 0,
+              windowStartedAt: now,
+              backoffUpdatedAt: now,
+              expiresAt: new Date(now.getTime() + 60_000),
+            } });
+          },
           afterCommit: (_value, response) => { externalResponse = response; },
         }),
         (error: unknown) => error instanceof BoundaryAttemptFailed
@@ -787,119 +855,8 @@ test("live H5 exercises sign-in, rollback, rotation, revoke-all, and password ch
     assert.equal(externalResponse, undefined);
     assert.equal(await providerSessionCount(prisma), beforeDeliveryFailure + 1);
 
-    const rotationSignIn = await signIn(prisma, { email, password });
-    const rotationBefore = await sessionByToken(prisma, rotationSignIn.value.token);
-    const rotatedToken = randomBytes(32).toString("base64url");
-    const rotationNow = new Date(rotationBefore.lastRefreshAt.getTime() + SESSION_REFRESH_MS);
-    const rotation = await runBetterAuthBoundary({
-      rootPrisma: prisma,
-      failurePoint: "NONE",
-      invoke: async (_api, tx) => {
-        const authority = await betterAuthAuthorities(tx);
-        return rotateSessionWithBetterAuthAuthority({
-          internalAdapter: authority.session,
-          presentedToken: rotationBefore.token,
-          now: rotationNow,
-          newToken: rotatedToken,
-        });
-      },
-    });
-    assert.equal(rotation.cookie.present, false);
-    assert.equal(rotation.value.action, "ROTATED");
-    const rotationAfter = await sessionByToken(prisma, rotatedToken);
-    assert.equal(rotationAfter.authenticatedAt.getTime(), rotationBefore.authenticatedAt.getTime());
-    assert.equal(rotationAfter.selectedOrganizationId, rotationBefore.selectedOrganizationId);
-    assert.equal(rotationAfter.lastRefreshAt.getTime(), rotationNow.getTime());
-
-    for (const expiry of [
-      {
-        authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
-        lastRefreshAt: new Date("2026-08-01T00:00:00.000Z"),
-        expiresAt: new Date("2026-08-08T00:00:00.000Z"),
-        now: new Date("2026-08-08T00:00:00.000Z"),
-      },
-      {
-        authenticatedAt: new Date("2026-07-01T00:00:00.000Z"),
-        lastRefreshAt: new Date("2026-07-30T00:00:00.000Z"),
-        expiresAt: new Date("2026-07-31T00:00:00.000Z"),
-        now: new Date("2026-07-31T00:00:00.000Z"),
-      },
-    ]) {
-      const expiringSignIn = await signIn(prisma, { email, password });
-      const stored = await sessionByToken(prisma, expiringSignIn.value.token);
-      const synthetic: SessionProofRecord = {
-        ...stored,
-        authenticatedAt: expiry.authenticatedAt,
-        lastRefreshAt: expiry.lastRefreshAt,
-        expiresAt: expiry.expiresAt,
-      };
-      const expired = await runBetterAuthBoundary({
-        rootPrisma: prisma,
-        failurePoint: "NONE",
-        invoke: async (_api, tx) => {
-          const authority = await betterAuthAuthorities(tx);
-          await authority.session.updateSession(stored.token, {
-            authenticatedAt: synthetic.authenticatedAt,
-            lastRefreshAt: synthetic.lastRefreshAt,
-            expiresAt: synthetic.expiresAt,
-            updatedAt: expiry.now,
-          });
-          return rotateSessionWithBetterAuthAuthority({
-            internalAdapter: authority.session,
-            presentedToken: stored.token,
-            now: expiry.now,
-            newToken: randomBytes(32).toString("base64url"),
-          });
-        },
-      });
-      assert.equal(expired.value.action, "REAUTHENTICATE");
-      assert.equal(await prisma.authProviderSession.findUnique({ where: { token: stored.token } }), null);
-    }
-
-    await signIn(prisma, { email, password });
-    await signIn(prisma, { email, password });
-    await runBetterAuthBoundary({
-      rootPrisma: prisma,
-      failurePoint: "NONE",
-      invoke: async (_api, tx) => {
-        const authority = await betterAuthAuthorities(tx);
-        await revokeAllWithBetterAuthAuthority(authority.session, userId);
-        return true;
-      },
-    });
-    assert.equal(await providerSessionCount(prisma, userId), 0);
-
-    const passwordCurrent = await signIn(prisma, { email, password });
-    await signIn(prisma, { email, password });
-    const passwordSession = await sessionByToken(prisma, passwordCurrent.value.token);
-    const changedPassword = `${password}-changed`;
-    const passwordToken = randomBytes(32).toString("base64url");
-    const changed = await runBetterAuthBoundary({
-      rootPrisma: prisma,
-      failurePoint: "NONE",
-      invoke: async (_api, tx) => {
-        const authority = await betterAuthAuthorities(tx);
-        return changePasswordWithBetterAuthAuthority({
-          internalAdapter: authority.session,
-          passwordAuthority: authority.password,
-          presentedToken: passwordSession.token,
-          currentPassword: password,
-          newPassword: changedPassword,
-          newToken: passwordToken,
-          now: new Date(),
-        });
-      },
-    });
-    assert.equal(changed.cookie.present, false);
-    assert.equal(changed.value.authenticatedAt.getTime(), passwordSession.authenticatedAt.getTime());
-    assert.equal(changed.value.lastRefreshAt.getTime(), passwordSession.lastRefreshAt.getTime());
-    assert.equal(changed.value.expiresAt.getTime(), passwordSession.expiresAt.getTime());
-    assert.equal(changed.value.selectedOrganizationId, passwordSession.selectedOrganizationId);
-    assert.equal(await providerSessionCount(prisma, userId), 1);
-    const newPasswordSignIn = await signIn(prisma, { email, password: changedPassword });
-    assert.equal(newPasswordSignIn.value.providerUserId, userId);
-
-    console.log("H5_SESSION_BOUNDARY=PASS");
+    assert.equal(H5_SESSION_ROTATION_FEASIBILITY.verdict, "FAIL");
+    console.log("H5_SESSION_BOUNDARY=NOT_EXECUTED_NO_SUPPORTED_ATOMIC_SESSION_ROTATION");
   } finally {
     await prisma.$disconnect();
   }
