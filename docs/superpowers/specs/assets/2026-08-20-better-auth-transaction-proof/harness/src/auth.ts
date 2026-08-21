@@ -1,6 +1,72 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
+import { createAuthEndpoint } from "better-auth/api";
+import { createLocalAccountIssuer } from "@better-auth/core/db";
+import * as z from "zod";
 import { readAuthSecret, readRunIdentity } from "./run-root.js";
+
+export const H4_CONTROLLED_ACTIVATION_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
+
+export const CONTROLLED_ACTIVATION_FAILURE_POINTS = [
+  "NONE",
+  "AFTER_PROVIDER_CREDENTIAL_CREATION",
+  "AFTER_AUTH_IDENTITY_CREATION",
+] as const;
+
+export const ACTIVATION_MATRIX = [
+  "VALID_SINGLE_USE",
+  "EXPIRED_TOKEN",
+  "SUPERSEDED_TOKEN",
+  "WRONG_CANONICAL_EMAIL_DIGEST",
+  "EXISTING_PROVIDER_EMAIL",
+  "EXISTING_PROVIDER_SUBJECT",
+  "EXISTING_AUTH_IDENTITY",
+  "TWO_CONCURRENT_CONSUMERS",
+  "FAIL_AFTER_PROVIDER_CREDENTIAL_CREATION",
+  "FAIL_AFTER_AUTH_IDENTITY_CREATION",
+] as const;
+
+export const activationSchema = z.object({
+  credential: z.string().min(8),
+  email: z.email(),
+  name: z.string().min(1),
+  providerSubject: z.string().min(1),
+}).strict();
+
+export function controlledActivationPlugin() {
+  return {
+    id: "passvero-controlled-activation-proof",
+    endpoints: {
+      activatePreprovisionedCredential: createAuthEndpoint.serverOnly({
+        method: "POST",
+        body: activationSchema
+      }, async (ctx) => {
+        if (ctx.context.options.emailAndPassword?.disableSignUp !== true) {
+          throw new Error("STOP_H4_CONTROLLED_AUTH_MUST_DISABLE_SIGNUP");
+        }
+        const email = ctx.body.email.toLowerCase();
+        const passwordHash = await ctx.context.password.hash(ctx.body.credential);
+        const user = await ctx.context.internalAdapter.createUser({
+          id: ctx.body.providerSubject,
+          email,
+          emailVerified: false,
+          name: ctx.body.name,
+        }, { method: "email-password" });
+        const account = await ctx.context.internalAdapter.linkAccount({
+          userId: user.id,
+          providerId: "credential",
+          issuer: createLocalAccountIssuer("credential"),
+          accountId: user.id,
+          password: passwordHash,
+        });
+        return {
+          user: { id: user.id, email: user.email, emailVerified: user.emailVerified },
+          account: { id: account.id, providerId: account.providerId, accountId: account.accountId },
+        };
+      }),
+    },
+  } as const;
+}
 
 export const DISABLED_NATIVE_PATHS = [
   "/account-info",
@@ -102,9 +168,16 @@ export function createProofAuth(input: CreateProofAuthInput) {
         path: "/",
       },
     },
+    plugins: [controlledActivationPlugin()],
     disabledPaths: [...DISABLED_NATIVE_PATHS],
     telemetry: { enabled: false },
   });
 }
 
 export type ProofAuth = ReturnType<typeof createProofAuth>;
+
+export function createControlledActivationAuth(prisma: CreateProofAuthInput["prisma"]) {
+  return createProofAuth({ prisma, adapterTransaction: false, disableSignUp: true });
+}
+
+export type ControlledActivationApi = ReturnType<typeof createControlledActivationAuth>["api"];

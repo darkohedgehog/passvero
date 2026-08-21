@@ -24,12 +24,18 @@ const REQUIRED_FILES = [
   "test/cluster-identity.test.ts",
   "test/direct-boundary.test.ts",
   "test/handler-boundary.test.ts",
+  "test/controlled-activation.test.ts",
 ];
 
 const TASK_5_ARTIFACT_HASHES = new Map([
   ["src/proof-boundary.ts", "92b659927833c7c023959be970498a667477037856d7ddde64cc7e1f531ee01f"],
   ["test/direct-boundary.test.ts", "82fa13b4acee46968f9ba5972241e73dcfb3e332e853576c75ab631c9f2b9e8d"],
   ["test/handler-boundary.test.ts", "e6ce226521e12111be4e2934e7c33bc1ab77fdef9883c463a3e4dd7dca5b4801"],
+]);
+
+const TASK_6_ARTIFACT_HASHES = new Map([
+  ["src/auth.ts", "2414b3d7672b47aef1bb69cc863b3934f1c4b5580c21566b83e4f10ff2bd6080"],
+  ["test/controlled-activation.test.ts", "ce00f6385ac0e6f041efb0451035f8f6360ac75141c27bc5d8edb155d547d5a2"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -106,6 +112,13 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       createHash("sha256").update(sources.get(relativePath)).digest("hex"),
       expectedHash,
       `${relativePath} drifted from the reviewed Task 5 proof`,
+    );
+  }
+  for (const [relativePath, expectedHash] of TASK_6_ARTIFACT_HASHES) {
+    assert.equal(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      expectedHash,
+      `${relativePath} drifted from the reviewed Task 6 proof`,
     );
   }
 
@@ -200,10 +213,19 @@ test("the Better Auth factory freezes the approved security and route surface", 
   const list = source.match(/DISABLED_NATIVE_PATHS = \[([\s\S]*?)\] as const/)?.[1];
   assert.ok(list, "disabled native path list missing");
   assert.deepEqual([...list.matchAll(/"([^"]+)"/g)].map((match) => match[1]), EXPECTED_DISABLED_PATHS);
+
+  assert.match(source, /createAuthEndpoint\.serverOnly\(\{\s*method: "POST",\s*body: activationSchema\s*\},/);
+  assert.match(source, /ctx\.context\.internalAdapter\.createUser\(/);
+  assert.match(source, /ctx\.context\.internalAdapter\.linkAccount\(/);
+  assert.match(source, /disableSignUp: true/);
+  assert.doesNotMatch(source, /activatePreprovisionedCredential:\s*createAuthEndpoint\(\s*"\//);
 });
 
 test("proof sources forbid direct provider writes, any, and premature cookie exposure", async () => {
-  const sourceNames = ["src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts"];
+  const sourceNames = [
+    "src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts",
+    "test/controlled-activation.test.ts",
+  ];
   const sources = await Promise.all(sourceNames.map(readHarness));
   for (const [index, source] of sources.entries()) {
     assert.doesNotMatch(source, /\bas\s+any\b|:\s*any\b|<any>/, `${sourceNames[index]} contains any`);
@@ -289,6 +311,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     "src/proof-boundary.ts",
     "test/direct-boundary.test.ts",
     "test/handler-boundary.test.ts",
+    "test/controlled-activation.test.ts",
   ]) {
     assert.match(staticBody, new RegExp(task5TypeInput.replaceAll("/", "\\/\\s*")));
   }
