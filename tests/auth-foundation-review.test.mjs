@@ -268,7 +268,11 @@ test("Better Auth-backed transaction proof remains unproven after terminal failu
   assert.match(contract, /failure injection.*rollback/is);
   assert.match(contract, /provider-neutral application and domain boundary/i);
   assert.match(contract, /`run-proof\.sh --all` command was invoked exactly once/is);
-  assert.match(contract, /all\s+seven mandatory hypotheses as `FAIL` with `STOP_PRE_EVIDENCE_FAILURE`/is);
+  assert.match(contract, /all\s+seven mandatory hypotheses as `NOT_EXECUTED` with\s+reason `STOP_PRE_EVIDENCE_FAILURE`/is);
+  assert.match(contract, /retry count is zero/i);
+  assert.match(contract, /exact cause was not retained\s+in committed public evidence/is);
+  assert.match(contract, /historical cleanup status is `FAIL_RETAINED` with `rootGone=false`/is);
+  assert.match(contract, /TASK_10_LINT_GATE=BLOCKED_POST_PROOF_DISPOSITION_REQUIRED/);
   assert.match(contract, /No `BETTER_AUTH_RUNTIME_BOUNDARY` is selected/);
   assert.match(contract, /acceptance criteria only.*not an implementation plan/i);
   assert.match(contract, /no replacement integration.*selected or approved/i);

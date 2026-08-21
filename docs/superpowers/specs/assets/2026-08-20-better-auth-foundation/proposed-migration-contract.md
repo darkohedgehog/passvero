@@ -72,20 +72,41 @@ migrated.
 The operator separately authorized one disposable PostgreSQL proof attempt. The
 reviewed `run-proof.sh --all` command was invoked exactly once on 2026-08-21 and
 exited nonzero before disposable Prisma client/schema generation completed and
-before H1-H7 live execution. The authoritative redacted evidence records all
-seven mandatory hypotheses as `FAIL` with `STOP_PRE_EVIDENCE_FAILURE`.
+before H1-H7 live execution. Retry count is zero. The corrected post-execution
+redacted evidence records all seven mandatory hypotheses as `NOT_EXECUTED` with
+reason `STOP_PRE_EVIDENCE_FAILURE`; it contains no synthetic runtime row,
+transaction, or cookie observations.
+
+The most exact safe public phase is
+`PRE_HYPOTHESIS_SCHEMA_PREPARATION_INCOMPLETE`. The exact cause was not retained
+in committed public evidence and is explicitly unavailable. Protected retained
+root contents are not a permitted source for reconstructing it.
 
 The result does not disprove or approve any individual hypothesis. It proves
 only that the required end-to-end foundation contract was not established.
 Cleanup stopped the disposable server and independently confirmed the listener
-and PID were gone, but retained the exact sentinel-bound proof root; no cleanup
-authority is inferred from this document.
+and PID were gone, but retained the exact sentinel-bound proof root. The
+historical cleanup status is `FAIL_RETAINED` with `rootGone=false`. The root
+remains unchanged. Disposal requires separate explicit exact-target
+authorization and a reviewed cleanup procedure, and any later disposal MUST NOT
+rewrite that historical cleanup result. No cleanup authority is inferred from
+this document.
 
 No `BETTER_AUTH_RUNTIME_BOUNDARY` is selected. The candidate schema, ordering,
 transaction, session, recovery, and route rules below remain non-implementable
 inputs. The terminal proof MUST NOT be retried. A new attempt requires an
 architecture decision, a newly reviewed proof plan, and fresh explicit operator
 authorization.
+
+The corrected evidence JSON and Markdown are explicitly post-execution
+reconciliation artifacts pinned to the executed source commit; they were not
+emitted by the historical publisher. The executed proof source was not changed
+and the proof was not rerun.
+
+`TASK_10_LINT_GATE=BLOCKED_POST_PROOF_DISPOSITION_REQUIRED`: mandatory lint is
+not green because the reviewed executed harness retains one `prefer-const`
+error, plus 15 warnings. Changing that historical source merely to clear lint is
+forbidden in this reconciliation; a separately reviewed disposition is required.
 
 ## Exact candidate table inputs
 

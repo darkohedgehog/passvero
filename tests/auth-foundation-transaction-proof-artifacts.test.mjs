@@ -74,8 +74,8 @@ const TASK_10_ORCHESTRATION_HASHES = new Map([
 ]);
 const TASK_10_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1e302395fc75df8f8183a56";
 const TASK_10_SHELL_SIMULATION_HASH = "aeacc38f11cac1094befafb422b824bba521c1676d4e5e3bfa76e57b35bdb8a8";
-const TASK_10_FAILURE_EVIDENCE_JSON_HASH = "31925641e07c7421aec2dcecb3cd552ac07381450108bb307036fcebb48a7b68";
-const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "6d073c4af2db13d912acb7b562b10f7c4f98f12b03c08c51b96323a8bbf48379";
+const TASK_10_FAILURE_EVIDENCE_JSON_HASH = "a266b49904e2e6f6cf3d479cf9424fcc35fdbe0fd744b73d864f5e052f162b8a";
+const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "b612a1c7cdd2037035cb95fa40a68c2aaf1958faca642a1e2d2d99dcab3fd734";
 
 const REQUIRED_HYPOTHESIS_IDS = [
   "H1_NATIVE_TRANSACTION",
@@ -85,11 +85,6 @@ const REQUIRED_HYPOTHESIS_IDS = [
   "H5_SESSION_COOKIE_AFTER_COMMIT",
   "H6_RECOVERY_AND_REVOCATION",
   "H7_ROUTE_EXPOSURE",
-];
-
-const ROW_COUNT_KEYS = [
-  "providerUser", "providerAccount", "providerSession", "providerVerification",
-  "canonicalUser", "authIdentity", "activation", "credentialRecord", "abuseBucket",
 ];
 
 const EXPECTED_DEPENDENCIES = {
@@ -562,7 +557,7 @@ test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 
   ]) assert.match(contract, new RegExp(simulation));
 });
 
-test("the terminal proof failure is deterministic, redacted, and blocks persistence", async () => {
+test("the terminal proof reconciliation is deterministic, redacted, and blocks persistence", async () => {
   const [jsonSource, markdown, review, migrationContract] = await Promise.all([
     readFile(EVIDENCE_JSON, "utf8"),
     readFile(EVIDENCE_MARKDOWN, "utf8"),
@@ -581,67 +576,83 @@ test("the terminal proof failure is deterministic, redacted, and blocks persiste
   const evidence = JSON.parse(jsonSource);
   assert.equal(`${JSON.stringify(evidence, null, 2)}\n`, jsonSource);
   assert.deepEqual(Object.keys(evidence), [
-    "status", "packageHashes", "clusterIdHash", "postgresVersionHash",
-    "systemIdentifierHash", "hypotheses", "cleanup", "assertions",
+    "artifactKind", "generatedByExecutedPublisher", "executionSourceCommit",
+    "status", "invocationCount", "retryCount", "failure", "hypotheses", "cleanup",
   ]);
+  assert.equal(evidence.artifactKind, "POST_EXECUTION_RECONCILIATION");
+  assert.equal(evidence.generatedByExecutedPublisher, false);
+  assert.equal(evidence.executionSourceCommit, "d1f350627c3da72feaa18eb5416ff17e07db81a8");
   assert.equal(evidence.status, "FAIL");
-  assert.deepEqual(evidence.packageHashes, { unavailableHash: "0".repeat(64) });
-  for (const hash of [
-    evidence.clusterIdHash,
-    evidence.postgresVersionHash,
-    evidence.systemIdentifierHash,
-  ]) assert.equal(hash, "0".repeat(64));
-  assert.deepEqual(evidence.assertions, ["STOP_PRE_EVIDENCE_FAILURE"]);
+  assert.equal(evidence.invocationCount, 1);
+  assert.equal(evidence.retryCount, 0);
+  assert.deepEqual(evidence.failure, {
+    phase: "PRE_HYPOTHESIS_SCHEMA_PREPARATION_INCOMPLETE",
+    code: "STOP_PRE_EVIDENCE_FAILURE",
+    exactCause: null,
+    evidenceLimitation: "EXACT_CAUSE_NOT_RETAINED_IN_COMMITTED_PUBLIC_EVIDENCE",
+  });
   assert.deepEqual(evidence.cleanup, {
+    status: "FAIL_RETAINED",
     serverStopped: true,
     listenerGone: true,
     pidGone: true,
     rootGone: false,
+    retainedRootDisposition:
+      "RETAIN_UNCHANGED_PENDING_SEPARATE_EXPLICIT_EXACT_TARGET_AUTHORIZATION_AND_REVIEWED_CLEANUP",
+    historicalOutcomeFinal: true,
   });
   assert.deepEqual(evidence.hypotheses.map(({ id }) => id), REQUIRED_HYPOTHESIS_IDS);
 
   for (const hypothesis of evidence.hypotheses) {
-    assert.deepEqual(Object.keys(hypothesis), [
-      "id", "status", "transactionIds", "before", "after", "deltas",
-      "cookie", "assertions", "failureCode",
-    ]);
-    assert.equal(hypothesis.status, "FAIL");
-    assert.equal(hypothesis.failureCode, "STOP_PRE_EVIDENCE_FAILURE");
-    assert.deepEqual(hypothesis.transactionIds, []);
-    assert.deepEqual(hypothesis.assertions, []);
-    for (const rowCounts of [hypothesis.before, hypothesis.after, hypothesis.deltas]) {
-      assert.deepEqual(Object.keys(rowCounts), ROW_COUNT_KEYS);
-      assert.ok(Object.values(rowCounts).every((value) => value === 0));
-    }
-    for (const key of ROW_COUNT_KEYS) {
-      assert.equal(hypothesis.after[key] - hypothesis.before[key], hypothesis.deltas[key]);
-    }
-    assert.deepEqual(hypothesis.cookie, {
-      present: false,
-      nameHash: null,
-      secure: false,
-      httpOnly: false,
-      sameSite: null,
-      hostOnly: true,
-      maxAgeSeconds: null,
-    });
+    assert.deepEqual(Object.keys(hypothesis), ["id", "status", "reason", "observations"]);
+    assert.equal(hypothesis.status, "NOT_EXECUTED");
+    assert.equal(hypothesis.reason, "STOP_PRE_EVIDENCE_FAILURE");
+    assert.equal(hypothesis.observations, null);
+    for (const syntheticRuntimeKey of [
+      "transactionIds", "before", "after", "deltas", "cookie", "assertions", "failureCode",
+    ]) assert.equal(Object.hasOwn(hypothesis, syntheticRuntimeKey), false);
   }
 
   const expectedMarkdown = [
     "# Better Auth transaction proof evidence companion",
     "",
-    "NON-AUTHORITATIVE: evidence.json is the sole authoritative proof result.",
+    "POST-EXECUTION RECONCILIATION: this corrected public artifact was not generated",
+    "by the publisher executed at `d1f350627c3da72feaa18eb5416ff17e07db81a8`.",
+    "It preserves the historical execution facts without changing the executed proof",
+    "source or rerunning the proof.",
+    "The JSON file is the authoritative corrected public record; this Markdown is",
+    "its companion.",
     "",
-    "| Hypothesis | Status | Failure code |",
-    "| --- | --- | --- |",
+    "- Overall status: `FAIL`",
+    "- Invocation count: `1`",
+    "- Retry count: `0`",
+    "- Failure phase: `PRE_HYPOTHESIS_SCHEMA_PREPARATION_INCOMPLETE`",
+    "- Failure code: `STOP_PRE_EVIDENCE_FAILURE`",
+    "- Exact cause: unavailable; it was not retained in committed public evidence",
+    "",
+    "| Hypothesis | Status | Reason | Runtime observations |",
+    "| --- | --- | --- | --- |",
     ...REQUIRED_HYPOTHESIS_IDS.map(
-      (id) => `| ${id} | FAIL | STOP_PRE_EVIDENCE_FAILURE |`,
+      (id) => `| ${id} | NOT_EXECUTED | STOP_PRE_EVIDENCE_FAILURE | unavailable |`,
     ),
     "",
-    "Cleanup checks: FAIL",
+    "Cleanup status: `FAIL_RETAINED`",
+    "",
+    "- `serverStopped=true`",
+    "- `listenerGone=true`",
+    "- `pidGone=true`",
+    "- `rootGone=false`",
+    "",
+    "The retained root remains unchanged. Disposal requires separate explicit",
+    "exact-target authorization and a reviewed cleanup procedure. A future disposal",
+    "must not rewrite the historical `rootGone=false` value or `FAIL_RETAINED`",
+    "cleanup status.",
     "",
   ].join("\n");
   assert.equal(markdown, expectedMarkdown);
+
+  assert.doesNotMatch(jsonSource, /"(?:packageHashes|clusterIdHash|postgresVersionHash|systemIdentifierHash)"/);
+  assert.doesNotMatch(jsonSource, /"(?:transactionIds|before|after|deltas|cookie)"/);
 
   for (const source of [jsonSource, markdown]) {
     for (const forbidden of [
@@ -661,6 +672,13 @@ test("the terminal proof failure is deterministic, redacted, and blocks persiste
       /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW/,
     );
     assert.match(source, /STOP_PRE_EVIDENCE_FAILURE/);
+    assert.match(source, /NOT_EXECUTED/);
+    assert.match(source, /invoked exactly once/i);
+    assert.match(source, /retry count is (?:zero|0)/i);
+    assert.match(source, /FAIL_RETAINED/);
+    assert.match(source, /separate explicit exact-target\s+authorization/i);
+    assert.match(source, /TASK_10_LINT_GATE=BLOCKED_POST_PROOF_DISPOSITION_REQUIRED/);
+    assert.doesNotMatch(source, /PostgreSQL connection performed: YES, exactly once/i);
     assert.doesNotMatch(source, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVAL_READY/);
     assert.doesNotMatch(source, /BETTER_AUTH_RUNTIME_BOUNDARY=/);
   }

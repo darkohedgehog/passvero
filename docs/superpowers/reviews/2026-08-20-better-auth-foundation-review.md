@@ -25,7 +25,8 @@
 - Better Auth catch-all handler: NOT EXPORTED
 - Better Auth-backed transaction boundary: REQUIRED AND UNPROVEN
 - Direct Passvero provider-table writes: REJECTED
-- Disposable review-only PostgreSQL connection performed: YES, exactly once
+- Disposable proof command/attempt invoked exactly once: YES
+- Proof retry count: 0
 - Passvero database connection performed: NO
 - Disposable proof schema applied: NO
 - Schema or migration modified: NO
@@ -96,21 +97,40 @@ its terminal result is reconciled below.
 The separately authorized review-only proof invoked the reviewed
 `run-proof.sh --all` command exactly once on 2026-08-21. It exited nonzero before
 schema generation completed and before any H1-H7 live hypothesis executed. The
-authoritative redacted evidence therefore records every mandatory hypothesis as
-`FAIL` with `STOP_PRE_EVIDENCE_FAILURE`; it is not negative evidence about the
-individual Better Auth transaction mechanisms.
+corrected post-execution redacted evidence therefore records every mandatory
+hypothesis as `NOT_EXECUTED` with reason `STOP_PRE_EVIDENCE_FAILURE`; it is not
+negative evidence about the individual Better Auth transaction mechanisms. The
+proof invocation count is 1 and retry count is 0. The most exact safe public
+phase is `PRE_HYPOTHESIS_SCHEMA_PREPARATION_INCOMPLETE`. No exact cause was
+retained in committed public evidence, and protected retained-root contents were
+not consulted to manufacture one.
 
 Independent post-run checks confirmed that the loopback listener was absent,
 `pg_isready` returned its no-response status, and no postmaster PID file or open
 reference remained. The cleanup evidence records `serverStopped=true`,
-`listenerGone=true`, `pidGone=true`, and `rootGone=false`. The exact
+`listenerGone=true`, `pidGone=true`, `rootGone=false`, and
+`status=FAIL_RETAINED`. The exact
 owner-validated, sentinel-bound disposable root is retained for operator review
-and MUST NOT be deleted or reused under this proof authority.
+and MUST NOT be deleted, modified, moved, or reused under this proof authority.
+Future disposal requires separate explicit exact-target authorization and a
+reviewed cleanup procedure; it must not rewrite the historical
+`rootGone=false` or `FAIL_RETAINED` execution result.
 
 This terminal run does not select `BETTER_AUTH_RUNTIME_BOUNDARY`, does not make
 the candidate migration contract implementable, and cannot be retried. Any new
 proof would require an architecture decision, a newly reviewed proof plan, and
 fresh explicit operator authorization.
+
+The committed evidence JSON and Markdown were corrected after execution to
+remove synthetic runtime observations and add invocation, retry, cleanup, and
+provenance fields. They explicitly identify themselves as post-execution
+reconciliation artifacts and preserve the executed source commit. The executed
+publisher/harness source was not changed and the proof was not rerun.
+
+`TASK_10_LINT_GATE=BLOCKED_POST_PROOF_DISPOSITION_REQUIRED`: mandatory lint
+remains non-green because the reviewed executed harness contains one
+`prefer-const` error, plus 15 warnings. The harness MUST NOT be changed in place
+to make the historical proof appear clean; disposition requires separate review.
 
 ## Provider-model and canonical identity reconciliation
 
@@ -648,8 +668,10 @@ frozen authentication authority or accept only a subset of the constraints.
 
 `AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW`
 
-The one authorized disposable proof attempt failed before H1-H7 execution with
-the exact evidence code `STOP_PRE_EVIDENCE_FAILURE`. There is no
+The one authorized disposable proof attempt stopped before H1-H7 execution with
+the generic retained code `STOP_PRE_EVIDENCE_FAILURE`; every hypothesis is
+`NOT_EXECUTED`, and the exact cause is unavailable in committed public evidence.
+There is no
 persistence-contract approval question, positive runtime-boundary selection, or
 approved marker. Migration and exit approval remain deferred. This review does
 not modify the canonical Prisma schema, author or deploy a migration, connect to
