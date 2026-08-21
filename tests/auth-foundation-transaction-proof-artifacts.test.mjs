@@ -27,6 +27,7 @@ const REQUIRED_FILES = [
   "test/controlled-activation.test.ts",
   "test/session-boundary.test.ts",
   "test/recovery-boundary.test.ts",
+  "test/route-boundary.test.ts",
 ];
 
 const TASK_5_ARTIFACT_HASHES = new Map([
@@ -45,8 +46,13 @@ const TASK_7_ARTIFACT_HASHES = new Map([
 ]);
 
 const TASK_8_ARTIFACT_HASHES = new Map([
-  ["src/auth.ts", "866e785155ae5d072f5802fed147ef603f97174b4c4052aa43edce394b6f1abe"],
   ["test/recovery-boundary.test.ts", "50985a51380e2a9f82e392bdfd14820ca05f65891e6236963ae08991196a1919"],
+]);
+const TASK_8_AUTH_PREFIX_HASH = "5f62090e132f5f6ad0e379ccc8928087a562a3cf798b9bc16420bb6139efccc9";
+
+const TASK_9_ARTIFACT_HASHES = new Map([
+  ["src/auth.ts", "9c596df4f6ad767703b42ccbcfcbdb0970090fa53df677a7e84902df4e054150"],
+  ["test/route-boundary.test.ts", "daedcb3bf24f744e4f5266c712ddf39ce13bbcd5fef5f0eb9718d3694000ae6f"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -159,6 +165,20 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       `${relativePath} drifted from the reviewed Task 8 proof`,
     );
   }
+  const task8AuthEnd = sources.get("src/auth.ts").indexOf("function proofAuthOptions");
+  assert.ok(task8AuthEnd > 0, "Task 8 auth prefix end missing");
+  assert.equal(
+    createHash("sha256").update(sources.get("src/auth.ts").slice(0, task8AuthEnd)).digest("hex"),
+    TASK_8_AUTH_PREFIX_HASH,
+    "Task 8 recovery and controlled-auth prefix drifted while Task 9 extended route policy",
+  );
+  for (const [relativePath, expectedHash] of TASK_9_ARTIFACT_HASHES) {
+    assert.equal(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      expectedHash,
+      `${relativePath} drifted from the reviewed Task 9 proof`,
+    );
+  }
 
   const prismaConfig = sources.get("prisma.config.ts");
   assert.doesNotMatch(prismaConfig, /dotenv/);
@@ -257,6 +277,7 @@ test("proof sources forbid direct provider writes, any, and premature cookie exp
   const sourceNames = [
     "src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts",
     "test/session-boundary.test.ts", "test/recovery-boundary.test.ts",
+    "test/route-boundary.test.ts",
   ];
   const sources = await Promise.all(sourceNames.map(readHarness));
   for (const [index, source] of sources.entries()) {
@@ -385,6 +406,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     "test/controlled-activation.test.ts",
     "test/session-boundary.test.ts",
     "test/recovery-boundary.test.ts",
+    "test/route-boundary.test.ts",
   ]) {
     assert.match(staticBody, new RegExp(task5TypeInput.replaceAll("/", "\\/\\s*")));
   }

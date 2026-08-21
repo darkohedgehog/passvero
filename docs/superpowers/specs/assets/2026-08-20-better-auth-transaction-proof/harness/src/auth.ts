@@ -801,7 +801,7 @@ function proofAuthOptions(input: CreateProofAuthInput) {
         path: "/",
       },
     },
-    disabledPaths: [...DISABLED_NATIVE_PATHS],
+    disabledPaths: [...PRODUCTION_DISABLED_NATIVE_PATHS],
     telemetry: { enabled: false },
   } satisfies BetterAuthOptions;
 }
@@ -832,3 +832,32 @@ export function createControlledActivationAuth(prisma: CreateProofAuthInput["pri
 
 export type ControlledActivationApi = ReturnType<typeof createControlledActivationAuth>["api"];
 export type RecoveryProofApi = ReturnType<typeof createRecoveryProofAuth>["api"];
+
+export const H7_ROUTE_EXPOSURE_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
+export const NATIVE_AUTH_ROUTE_ALLOWLIST = [] as const;
+
+export const ENCODED_DYNAMIC_NATIVE_PATHS = [
+  "/callback/:id%2F",
+  "/reset-password/:token%2F",
+] as const;
+
+export const PRODUCTION_DISABLED_NATIVE_PATHS = [
+  ...DISABLED_NATIVE_PATHS,
+  ...ENCODED_DYNAMIC_NATIVE_PATHS,
+] as const;
+
+export const DIRECT_SERVER_API_ALLOWLIST = [
+  "signInEmail",
+  "activatePreprovisionedCredential",
+  "issueCredentialTokenProof",
+  "verifyEmailCredentialProof",
+  "resetPasswordCredentialProof",
+  "changePasswordCredentialProof",
+  "afterCommitCredentialProbe",
+] as const satisfies readonly (keyof RecoveryProofApi)[];
+
+export type DirectServerApiEndpoint = (typeof DIRECT_SERVER_API_ALLOWLIST)[number];
+
+export function createRecoveryRouteBoundaryPlugin(boundary: RecoveryProofBoundary) {
+  return recoveryProofPlugin(boundary);
+}

@@ -15,6 +15,7 @@ const EXPECTED = new Map([
   ["node_modules/@better-auth/core/src/db/adapter/index.ts", "8af87bd29365918a42d8d745dcf8acb2439066a1577ac53de17a799194da48dd"],
   ["node_modules/@better-auth/core/src/db/adapter/factory.ts", "f95d88b4f17dd39b2b932cb2649718fbad9d40ff279aa8bc46e1503d33b7cd5d"],
   ["node_modules/@better-auth/core/src/context/transaction.ts", "911e287b36b08b5ee4ca3fa2d30e926c6418f3c2ebf902bded85a577d0729117"],
+  ["node_modules/@better-auth/core/dist/utils/url.mjs", "2267b3ac785e7e513790b62347679e011dfea10e173c52dd32d0d1d694c664fe"],
   ["node_modules/@better-auth/core/package.json", "2e154d4f7ba0ca6b6acf6714c8dccf529aaace552833f114d615ce01b3db610e"],
   ["node_modules/better-auth/dist/auth/base.mjs", "64fd12c2e1857b57e9e872f6e5fbc424a909624750b9fbaf4b3d57e3869ba93a"],
   ["node_modules/better-auth/dist/api/to-auth-endpoints.mjs", "bdd6ee0fee9dd3c0467c26c86612f74750d1618bbec1f1421c575efb7e468ea6"],
@@ -67,6 +68,12 @@ const RANGE_ASSERTIONS = [
     start: 36,
     end: 190,
     patterns: [/getCurrentAdapter/, /runWithTransaction/, /store\?\.isTransactionActive/],
+  },
+  {
+    file: "node_modules/@better-auth/core/dist/utils/url.mjs",
+    start: 18,
+    end: 29,
+    patterns: [/new URL\(requestUrl\)\.pathname\.replace/, /basePath\.replace/, /pathname\.startsWith\(normalizedBasePath \+ "\/"\)/],
   },
   {
     file: "node_modules/@better-auth/core/package.json",

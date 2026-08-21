@@ -78,7 +78,7 @@ run_static() {
     src/evidence.ts src/auth.ts src/run-root.ts src/proof-boundary.ts \
     test/cluster-identity.test.ts test/direct-boundary.test.ts test/handler-boundary.test.ts \
     test/controlled-activation.test.ts test/session-boundary.test.ts \
-    test/recovery-boundary.test.ts); then
+    test/recovery-boundary.test.ts test/route-boundary.test.ts); then
     static_cleanup "$static_root"
     return 1
   fi
