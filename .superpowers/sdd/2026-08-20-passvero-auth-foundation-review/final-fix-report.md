@@ -1,5 +1,13 @@
 # Stage 13A Final-Fix Report
 
+> **HISTORICAL AND SUPERSEDED.** This report records an earlier rejected
+> direct-write ownership proposal and is not the current Stage 13A outcome.
+> Read [ownership-reconciliation-report.md](./ownership-reconciliation-report.md)
+> for the authoritative ownership correction and the
+> [terminal Better Auth foundation review/proof outcome](../../../docs/superpowers/reviews/2026-08-20-better-auth-foundation-review.md):
+> overall `FAIL`, H1-H7 `NOT_EXECUTED`, and
+> `AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW`.
+
 ## Scope and result
 
 - Worktree: `/private/tmp/passvero-stage13a-auth-foundation-review`.

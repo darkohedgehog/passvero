@@ -9,6 +9,7 @@ NPM_BIN=/opt/homebrew/bin/npm
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 REPOSITORY_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd -P)"
 HARNESS_SOURCE="$SCRIPT_DIR/harness"
+HARNESS_LOCKFILE_SHA256=afc199a95a6c0de4fc98a61d14f04093436dc10f1d86b2c371afef5a2815fd27
 SENTINEL_CONSTANT=PASSVERO_STAGE13A_PG_V1
 RUN_ROOT=""
 RUN_ROOT_REAL=""
@@ -90,6 +91,14 @@ static_cleanup() {
   [[ ! -e "$candidate" ]] || die "STOP_STATIC_ROOT_RETAINED"
 }
 
+verify_installed_source_integrity() {
+  local harness_root="$1" output_target="${2:-/dev/null}"
+  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" NODE_OPTIONS="--no-warnings" \
+    "$NODE_BIN" "$harness_root/src/source-integrity.mjs" verify \
+    "$harness_root" "$HARNESS_LOCKFILE_SHA256" >>"$output_target" 2>&1 \
+    || return 1
+}
+
 run_source_gate() {
   env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="/private/tmp" NODE_OPTIONS="--no-warnings" \
     "$NODE_BIN" --test \
@@ -110,6 +119,10 @@ run_static() {
     XDG_CACHE_HOME="$static_root/cache" npm_config_cache="$static_root/cache" \
     npm_config_userconfig="$static_root/npmrc" NODE_OPTIONS="--no-warnings" \
     "$NPM_BIN" ci --ignore-scripts --no-audit --no-fund --loglevel=error --prefix "$static_root"; then
+    static_cleanup "$static_root"
+    return 1
+  fi
+  if ! verify_installed_source_integrity "$static_root"; then
     static_cleanup "$static_root"
     return 1
   fi
@@ -251,6 +264,7 @@ bootstrap_root() {
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
     "$NPM_BIN" ci --ignore-scripts --no-audit --no-fund --loglevel=error --prefix "$RUN_ROOT_REAL/harness" \
     >&9 2>&1
+  verify_installed_source_integrity "$RUN_ROOT_REAL/harness" "$ATTEMPT_LOG" || die "STOP_SOURCE_DRIFT"
   (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" \
     TMPDIR="$RUN_ROOT_REAL/harness/tmp" XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" \
     npm_config_cache="$RUN_ROOT_REAL/harness/cache" npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" \
@@ -460,10 +474,11 @@ generate_apply_schema() {
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
     PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$NPM_BIN" run generate --prefix "$RUN_ROOT_REAL/harness" \
     >&9 2>&1
-  env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
+  (cd "$RUN_ROOT_REAL/harness" && env -i PATH="/opt/homebrew/bin:/usr/bin:/bin" TMPDIR="$RUN_ROOT_REAL/harness/tmp" \
     XDG_CACHE_HOME="$RUN_ROOT_REAL/harness/cache" npm_config_cache="$RUN_ROOT_REAL/harness/cache" \
     npm_config_userconfig="$RUN_ROOT_REAL/harness/npmrc" NODE_OPTIONS="--no-warnings" \
-    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$NPM_BIN" run schema:sql --prefix "$RUN_ROOT_REAL/harness" \
+    PASSVERO_PROOF_RUN_ROOT="$RUN_ROOT_REAL" "$NODE_BIN" "$RUN_ROOT_REAL/harness/node_modules/prisma/build/index.js" migrate diff \
+    --from-empty --to-schema ./prisma/schema.prisma --script --config ./prisma.config.ts) \
     >"$RUN_ROOT_REAL/sql/schema.sql" 2>&9
   chmod 0600 "$RUN_ROOT_REAL/sql/schema.sql" >&9 2>&1
   validate_generated_sql "$RUN_ROOT_REAL/sql/schema.sql"

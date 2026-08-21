@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import type { DBAdapter } from "@better-auth/core/db/adapter";
 import {
@@ -396,6 +396,30 @@ function comparable(value: unknown): unknown {
   return value instanceof Date ? value.getTime() : value;
 }
 
+function protectedAssertionShape(value: unknown): unknown {
+  if (typeof value === "string") {
+    return createHash("sha256").update(value).digest("hex");
+  }
+  if (value instanceof Date) return value.getTime();
+  if (Array.isArray(value)) return value.map(protectedAssertionShape);
+  if (isRecord(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, protectedAssertionShape(entry)]),
+    );
+  }
+  return value;
+}
+
+function assertProtectedShapeEqual(actual: unknown, expected: unknown, stopCode: string): void {
+  if (JSON.stringify(protectedAssertionShape(actual)) !== JSON.stringify(protectedAssertionShape(expected))) {
+    throw new Error(stopCode);
+  }
+}
+
+function assertSessionStateUnchanged(actual: SessionProofRecord, expected: SessionProofRecord): void {
+  assertProtectedShapeEqual(actual, expected, "STOP_H5_SESSION_STATE_DRIFT");
+}
+
 function guardedSessionIncrementAdapter(initial: SessionProofRecord): {
   readonly adapter: Pick<DBAdapter, "incrementOne">;
   readonly calls: Readonly<Record<string, unknown>>[];
@@ -469,6 +493,23 @@ test("H5 manifest records every required session case while runtime remains unex
       behavior: "deletes and recreates session",
     },
   ]);
+});
+
+test("failure reporting omits protected session values", () => {
+  const protectedToken = "protected-session-capability-never-report";
+  const expected = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    token: protectedToken,
+  });
+  let failure: unknown;
+  try {
+    assertSessionStateUnchanged({ ...expected, token: "different-protected-capability" }, expected);
+  } catch (error: unknown) {
+    failure = error;
+  }
+  assert.equal(failure instanceof Error, true);
+  assert.equal(failure instanceof Error ? failure.message : "", "STOP_H5_SESSION_STATE_DRIFT");
+  assert.doesNotMatch(String(failure), /protected-session-capability-never-report|different-protected-capability/);
 });
 
 test("server-owned anchors use one instant and expose no client override input", () => {
@@ -738,7 +779,7 @@ test("atomic rotation makes the exact pinned public adapter call and preserves a
   });
   assert.equal(rotated?.authenticatedAt, current.authenticatedAt);
   assert.equal(rotated?.selectedOrganizationId, current.selectedOrganizationId);
-  assert.deepEqual(calls, [{
+  assertProtectedShapeEqual(calls, [{
     model: "session",
     increment: {},
     set: {
@@ -751,7 +792,7 @@ test("atomic rotation makes the exact pinned public adapter call and preserves a
       presentedToken: current.token,
       now,
     }),
-  }]);
+  }], "STOP_H5_ROTATION_CALL_DRIFT");
 });
 
 test("atomic rotation invokes the database guard and returns null when its stored token is stale", async () => {
@@ -793,24 +834,24 @@ test("atomic rotation invokes the database guard and returns null when its store
   assert.equal(result.value, null);
   assert.equal(result.cookie.present, false);
   assert.equal(guarded.calls.length, 1);
-  assert.deepEqual(guarded.calls[0]?.where, requiredAtomicRotationGuards({
+  assertProtectedShapeEqual(guarded.calls[0]?.where, requiredAtomicRotationGuards({
     sessionId: callerSnapshot.id,
     presentedToken: callerSnapshot.token,
     now: new Date("2026-08-21T00:00:00.000Z"),
-  }));
-  assert.deepEqual(guarded.read(), before);
+  }), "STOP_H5_ROTATION_GUARD_DRIFT");
+  assertSessionStateUnchanged(guarded.read(), before);
 });
 
 test("atomic rotation invokes every exact-deadline database guard and preserves stored state", async () => {
   const now = new Date("2026-08-21T00:00:00.000Z");
   const guards = requiredAtomicRotationGuards({ sessionId: "session-id", presentedToken: "token", now });
-  assert.deepEqual(guards, [
+  assertProtectedShapeEqual(guards, [
     { field: "id", operator: "eq", value: "session-id" },
     { field: "token", operator: "eq", value: "token" },
     { field: "expiresAt", operator: "gt", value: now },
     { field: "lastRefreshAt", operator: "gt", value: new Date(now.getTime() - SESSION_INACTIVITY_MS) },
     { field: "authenticatedAt", operator: "gt", value: new Date(now.getTime() - SESSION_ABSOLUTE_MS) },
-  ]);
+  ], "STOP_H5_ROTATION_GUARD_DRIFT");
   const callerSnapshot = sessionAt({
     authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
     lastRefreshAt: new Date("2026-08-20T00:00:00.000Z"),
@@ -856,8 +897,8 @@ test("atomic rotation invokes every exact-deadline database guard and preserves 
     assert.equal(result.value, null, deadline);
     assert.equal(result.cookie.present, false, deadline);
     assert.equal(guarded.calls.length, 1, deadline);
-    assert.deepEqual(guarded.calls[0]?.where, guards, deadline);
-    assert.deepEqual(guarded.read(), before, deadline);
+    assertProtectedShapeEqual(guarded.calls[0]?.where, guards, `STOP_H5_${deadline}_GUARD_DRIFT`);
+    assertSessionStateUnchanged(guarded.read(), before);
   }
 });
 
@@ -1309,7 +1350,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
     assert.equal(staleGuardLoss.value, null);
     assert.equal(staleGuardLoss.cookie.present, false);
     assert.equal(await providerSessionCount(prisma, userId), staleCountBefore);
-    assert.deepEqual(await sessionByToken(prisma, refreshToken), staleStoredBefore);
+    assertSessionStateUnchanged(await sessionByToken(prisma, refreshToken), staleStoredBefore);
 
     for (const deadline of ["EXPIRY", "INACTIVITY", "ABSOLUTE"] as const) {
       const deadlineSignIn = await signIn(prisma, { email, password });
@@ -1338,7 +1379,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
       assert.equal(guardLoss.value, null, deadline);
       assert.equal(guardLoss.cookie.present, false, deadline);
       assert.equal(await providerSessionCount(prisma, userId), countBefore, deadline);
-      assert.deepEqual(await sessionByToken(prisma, callerSnapshot.token), storedBefore, deadline);
+      assertSessionStateUnchanged(await sessionByToken(prisma, callerSnapshot.token), storedBefore);
     }
 
     const concurrencySeedSignIn = await signIn(prisma, { email, password });

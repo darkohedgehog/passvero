@@ -148,6 +148,44 @@ const EXPECTED_PROOF_TABLES = [
   "AuthProviderVerification",
 ] as const;
 
+const EXPECTED_PROOF_INDEXES = new Map<string, { readonly table: string; readonly unique: boolean }>([
+  ["User_email_key", { table: "User", unique: true }],
+  ["AuthIdentity_provider_providerSubject_key", { table: "AuthIdentity", unique: true }],
+  ["AuthIdentity_userId_idx", { table: "AuthIdentity", unique: false }],
+  ["AccountActivation_tokenDigest_key", { table: "AccountActivation", unique: true }],
+  ["AccountActivation_userId_idx", { table: "AccountActivation", unique: false }],
+  ["AccountActivation_expiresAt_idx", { table: "AccountActivation", unique: false }],
+  ["AuthCredentialToken_tokenDigest_key", { table: "AuthCredentialToken", unique: true }],
+  ["AuthCredentialToken_providerUserId_purpose_idx", { table: "AuthCredentialToken", unique: false }],
+  ["AuthCredentialToken_expiresAt_idx", { table: "AuthCredentialToken", unique: false }],
+  ["AuthAbuseBucket_keyDigest_key", { table: "AuthAbuseBucket", unique: true }],
+  ["AuthAbuseBucket_dimension_blockedUntil_idx", { table: "AuthAbuseBucket", unique: false }],
+  ["AuthAbuseBucket_expiresAt_idx", { table: "AuthAbuseBucket", unique: false }],
+  ["ProofMarker_label_key", { table: "ProofMarker", unique: true }],
+  ["AuthProviderUser_email_key", { table: "AuthProviderUser", unique: true }],
+  ["AuthProviderSession_token_key", { table: "AuthProviderSession", unique: true }],
+  ["AuthProviderSession_userId_idx", { table: "AuthProviderSession", unique: false }],
+  ["AuthProviderSession_lastRefreshAt_idx", { table: "AuthProviderSession", unique: false }],
+  ["AuthProviderAccount_issuer_accountId_uidx", { table: "AuthProviderAccount", unique: true }],
+  ["AuthProviderAccount_userId_idx", { table: "AuthProviderAccount", unique: false }],
+  ["AuthProviderVerification_identifier_idx", { table: "AuthProviderVerification", unique: false }],
+]);
+
+const EXPECTED_PROOF_FOREIGN_KEYS = new Map<string, { readonly table: string; readonly references: string }>([
+  ["AuthIdentity_userId_fkey", { table: "AuthIdentity", references: "User" }],
+  ["AccountActivation_userId_fkey", { table: "AccountActivation", references: "User" }],
+  ["AuthCredentialToken_providerUserId_fkey", { table: "AuthCredentialToken", references: "AuthProviderUser" }],
+  ["AuthProviderSession_userId_fkey", { table: "AuthProviderSession", references: "AuthProviderUser" }],
+  ["AuthProviderAccount_userId_fkey", { table: "AuthProviderAccount", references: "AuthProviderUser" }],
+]);
+
+const EXPECTED_PROOF_ENUMS = new Map<string, readonly string[]>([
+  ["AuthCredentialTokenPurpose", ["EMAIL_VERIFICATION", "PASSWORD_RESET"]],
+  ["AuthAbuseDimension", [
+    "TRUSTED_NETWORK", "ACCOUNT_IDENTIFIER", "ACCOUNT_AND_TRUSTED_NETWORK", "GLOBAL_ENDPOINT",
+  ]],
+]);
+
 export function validateGeneratedSql(source: string): void {
   if (/\/\*/u.test(source) || /\*\//u.test(source)) {
     fail("generated SQL block comments are unsupported");
@@ -187,6 +225,57 @@ export function validateGeneratedSql(source: string): void {
   const expected = new Set<string>(EXPECTED_PROOF_TABLES);
   for (const name of names) if (!expected.delete(name)) fail("generated SQL contains an unexpected table");
   if (expected.size !== 0) fail("generated SQL is missing an expected table");
+
+  const terminated = normalized.trimEnd();
+  if (!terminated.endsWith(";")) fail("generated SQL must terminate every statement");
+  const statements = terminated.slice(0, -1).split(";").map((statement) => statement.trim());
+  if (statements.some((statement) => statement.length === 0)) {
+    fail("generated SQL contains an empty statement");
+  }
+  const seenIndexes = new Set<string>();
+  const seenForeignKeys = new Set<string>();
+  const seenEnums = new Set<string>();
+  for (const statement of statements) {
+    const table = statement.match(/^CREATE\s+TABLE\s+"([A-Za-z][A-Za-z0-9]*)"\s*\([\s\S]+\)$/u);
+    if (table) {
+      if (!EXPECTED_PROOF_TABLES.includes(table[1] as typeof EXPECTED_PROOF_TABLES[number])) {
+        fail("generated SQL contains an unapproved table statement");
+      }
+      continue;
+    }
+    const enumDeclaration = statement.match(/^CREATE\s+TYPE\s+"([A-Za-z][A-Za-z0-9]*)"\s+AS\s+ENUM\s*\(([\s\S]+)\)$/u);
+    if (enumDeclaration) {
+      const values = [...enumDeclaration[2].matchAll(/'([A-Z_]+)'/gu)].map((match) => match[1]);
+      const approved = EXPECTED_PROOF_ENUMS.get(enumDeclaration[1]);
+      if (!approved || seenEnums.has(enumDeclaration[1]) || values.join("|") !== approved.join("|")) {
+        fail("generated SQL contains an unapproved enum statement");
+      }
+      const residual = enumDeclaration[2].replace(/'([A-Z_]+)'/gu, "").replace(/[\s,]/gu, "");
+      if (residual.length !== 0) fail("generated SQL enum syntax is unsupported");
+      seenEnums.add(enumDeclaration[1]);
+      continue;
+    }
+    const index = statement.match(/^CREATE\s+(UNIQUE\s+)?INDEX\s+"([A-Za-z][A-Za-z0-9_]*)"\s+ON\s+"([A-Za-z][A-Za-z0-9]*)"\s*\([\s\S]+\)$/u);
+    if (index) {
+      const approved = EXPECTED_PROOF_INDEXES.get(index[2]);
+      if (!approved || seenIndexes.has(index[2]) || approved.table !== index[3] || approved.unique !== Boolean(index[1])) {
+        fail("generated SQL contains an unapproved index statement");
+      }
+      seenIndexes.add(index[2]);
+      continue;
+    }
+    const foreignKey = statement.match(/^ALTER\s+TABLE\s+"([A-Za-z][A-Za-z0-9]*)"\s+ADD\s+CONSTRAINT\s+"([A-Za-z][A-Za-z0-9_]*)"\s+FOREIGN\s+KEY\s*\([\s\S]+\)\s+REFERENCES\s+"([A-Za-z][A-Za-z0-9]*)"\s*\([\s\S]+\)(?:\s+ON\s+DELETE\s+(?:CASCADE|RESTRICT|SET\s+NULL|NO\s+ACTION))?(?:\s+ON\s+UPDATE\s+(?:CASCADE|RESTRICT|SET\s+NULL|NO\s+ACTION))?$/u);
+    if (foreignKey) {
+      const approved = EXPECTED_PROOF_FOREIGN_KEYS.get(foreignKey[2]);
+      if (!approved || seenForeignKeys.has(foreignKey[2]) || approved.table !== foreignKey[1]
+        || approved.references !== foreignKey[3]) {
+        fail("generated SQL contains an unapproved foreign-key statement");
+      }
+      seenForeignKeys.add(foreignKey[2]);
+      continue;
+    }
+    fail("generated SQL contains an unapproved preamble or statement");
+  }
 }
 
 function asEvidenceDraft(value: unknown): Omit<ProofEvidence, "cleanup"> {

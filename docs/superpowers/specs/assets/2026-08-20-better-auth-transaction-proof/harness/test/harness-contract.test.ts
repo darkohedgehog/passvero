@@ -589,6 +589,18 @@ test("generated SQL validator requires the exact quoted unqualified table set", 
   assert.throws(() => validateGeneratedSql(`${sql}\nCREATE\n-- CreateTable\nTABLE "Unexpected" (id text);`), /STOP_RUN_ROOT_INVALID/);
   assert.throws(() => validateGeneratedSql(sql.replace('CREATE TABLE "User"', 'CREATE\n-- CreateTable\nTABLE "AuthIdentity"')), /STOP_RUN_ROOT_INVALID/);
   assert.doesNotThrow(() => validateGeneratedSql(`-- CreateTable\n${sql}`));
+  assert.throws(
+    () => validateGeneratedSql(`> passvero-better-auth-transaction-proof@1.0.0 schema:sql\n${sql}`),
+    /STOP_RUN_ROOT_INVALID/,
+  );
+  assert.throws(
+    () => validateGeneratedSql(`${sql}\nSELECT 1;`),
+    /STOP_RUN_ROOT_INVALID/,
+  );
+  assert.throws(
+    () => validateGeneratedSql(`${sql}\nCREATE INDEX "unreviewed_index" ON "User" ("id");`),
+    /STOP_RUN_ROOT_INVALID/,
+  );
 });
 
 test("cleanup evidence preparation rejects sensitive pending drafts before finalization", async () => {

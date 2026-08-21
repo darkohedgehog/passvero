@@ -114,6 +114,14 @@ historical execution source remains `d1f3506`; the successor source was not
 executed and does not alter any proof, hypothesis, cleanup, or persistence
 fact.
 
+`FINAL_REVIEW_STATIC_SUCCESSOR=UNEXECUTED`: a later final-review successor
+hardens SQL capture/validation, verifies the committed lockfile and every
+reviewed installed Better Auth/core/Prisma-adapter source before cluster
+startup, protects `.proof-attempt-state/` with an anchored ignore rule, and
+uses secret-safe session-state assertions. This successor was not executed.
+It supplies no H1-H7 observation, does not change the terminal overall `FAIL`,
+and does not make this candidate contract implementable or authorize a retry.
+
 ## Exact candidate table inputs
 
 ### `AuthProviderUser`

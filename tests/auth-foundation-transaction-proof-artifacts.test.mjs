@@ -1,14 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { chmod, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { readFile } from "node:fs/promises";
 
 const HARNESS_ROOT = path.join(
   process.cwd(),
   "docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness",
 );
 const PROOF_ROOT = path.dirname(HARNESS_ROOT);
+const PROOF_ROOT_RELATIVE = path.relative(process.cwd(), PROOF_ROOT);
 const EVIDENCE_JSON = path.join(PROOF_ROOT, "evidence.json");
 const EVIDENCE_MARKDOWN = path.join(PROOF_ROOT, "evidence.md");
 const FOUNDATION_REVIEW = path.join(
@@ -31,6 +35,7 @@ const REQUIRED_FILES = [
   "src/evidence.ts",
   "src/lifecycle.ts",
   "src/publication.mjs",
+  "src/source-integrity.mjs",
   "test/harness-contract.test.ts",
   "test/cluster-identity.test.ts",
   "test/native-transaction.test.ts",
@@ -60,25 +65,33 @@ const TASK_9_ARTIFACT_HASHES = new Map([
 
 const TASK_10_ORCHESTRATION_HASHES = new Map([
   ["src/evidence.ts", "1af09dfa57c99fa5275b7310af6dfff96e6ed6be8c6c85dec903ccf082f43f44"],
-  ["src/run-root.ts", "a977c4df5c8754f02149c13852db5250cbabdf24806e3da57524a4952f33bfda"],
+  ["src/run-root.ts", "81bed5424a0890633d063d3f0a19ddc647d49a0cc9d3441561823f78641c0d08"],
   ["src/publication.mjs", "d61ffb689c6c5d437306ad0fa943546869db68099fe39e58b468b3dae350b005"],
   ["src/lifecycle.ts", "8d5f22bfa631d132664f6833365113e3f8638be3d06c85080a67ff03acce8f5c"],
-  ["test/harness-contract.test.ts", "b61eeda3136f937fb034f9612099f74da3bc7c82b4b38996f270fe87cb82d769"],
+  ["src/source-integrity.mjs", "b9b7308e458a6363041cbc65eb94eee39deda69f1c44122c502cae30492bb984"],
+  ["test/harness-contract.test.ts", "285e04f693fc5df43ef100e38b554d6f372f37d4406f4d607ce1ec24936a70c1"],
   ["test/direct-boundary.test.ts", "5f6100dbf8bd6c07d95a1ff7ba17283d371c59c108555ae04c0ad08e0cbd8dc7"],
   ["test/handler-boundary.test.ts", "e91ff34540943448e4f4cdccfa95064867c701e876921c1caec09f1c7c679501"],
   ["test/controlled-activation.test.ts", "06420fea8cfd17d9f85a0af53a20d6aed3f00c385b367a15d5358ef1dda5cd7a"],
-  ["test/session-boundary.test.ts", "7a54228f168829f72c169c48ab15dab7f916825f26897b81d79972eba6f273b7"],
+  ["test/session-boundary.test.ts", "c827336807319d5b49c0d1ffb46cfca8fb21fa3bb0d092d23cbf1a84481e6f32"],
   ["test/recovery-boundary.test.ts", "9f2c27ca7f2271c1931a30cdabddcbcc8484b86ed9c136acd3056eadf3461736"],
   ["test/route-boundary.test.ts", "43d7b7d0412b9d447431d8b6d1678e810e6f10c0e6634bf96650aee2a0d9a855"],
+]);
+const TASK_10_EXECUTED_ORCHESTRATION_HASHES = new Map([
+  ["src/run-root.ts", "a977c4df5c8754f02149c13852db5250cbabdf24806e3da57524a4952f33bfda"],
+  ["test/harness-contract.test.ts", "b61eeda3136f937fb034f9612099f74da3bc7c82b4b38996f270fe87cb82d769"],
+  ["test/session-boundary.test.ts", "7a54228f168829f72c169c48ab15dab7f916825f26897b81d79972eba6f273b7"],
 ]);
 const TASK_10_EXECUTED_NATIVE_TRANSACTION_HASH =
   "e83a2cf4537e51345781d0999bd89d58b6f29a34e83528fc4a2357065ae118ba";
 const TASK_10_POST_PROOF_LINT_SUCCESSOR_NATIVE_TRANSACTION_HASH =
   "e378998b921151c79594ba0ca0aa044b001a550173f56d9813f845cbe8143401";
-const TASK_10_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1e302395fc75df8f8183a56";
+const TASK_10_EXECUTED_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1e302395fc75df8f8183a56";
+const TASK_10_RUNNER_HASH = "7716a7d703659517d521896fa7dc5711f8bde98e64d08258d3dd9103199b81c0";
 const TASK_10_SHELL_SIMULATION_HASH = "aeacc38f11cac1094befafb422b824bba521c1676d4e5e3bfa76e57b35bdb8a8";
 const TASK_10_FAILURE_EVIDENCE_JSON_HASH = "a266b49904e2e6f6cf3d479cf9424fcc35fdbe0fd744b73d864f5e052f162b8a";
-const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "8d1d2962a6a2b0c4734c74c735a69c50784ad40b7784dd2911b3750ae2712aff";
+const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "4777abc2d84e60d8a6f7a0dae5d93d2275543aff928ee8f3e6aa747078213a43";
+const REVIEWED_HARNESS_LOCKFILE_HASH = "afc199a95a6c0de4fc98a61d14f04093436dc10f1d86b2c371afef5a2815fd27";
 
 const REQUIRED_HYPOTHESIS_IDS = [
   "H1_NATIVE_TRANSACTION",
@@ -155,6 +168,10 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
   assert.deepEqual(manifest.devDependencies, EXPECTED_DEV_DEPENDENCIES);
 
   const lockfile = JSON.parse(sources.get("package-lock.json"));
+  assert.equal(
+    createHash("sha256").update(sources.get("package-lock.json")).digest("hex"),
+    REVIEWED_HARNESS_LOCKFILE_HASH,
+  );
   assert.equal(lockfile.lockfileVersion, 3);
   assert.deepEqual(lockfile.packages[""].dependencies, EXPECTED_DEPENDENCIES);
   assert.deepEqual(lockfile.packages[""].devDependencies, EXPECTED_DEV_DEPENDENCIES);
@@ -221,6 +238,13 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       `${relativePath} drifted from the reviewed Task 10 orchestration`,
     );
   }
+  for (const [relativePath, executedHash] of TASK_10_EXECUTED_ORCHESTRATION_HASHES) {
+    assert.notEqual(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      executedHash,
+      `${relativePath} final-review successor must not be represented as historically executed`,
+    );
+  }
   const nativeTransactionSource = sources.get("test/native-transaction.test.ts");
   const nativeTransactionHash = createHash("sha256")
     .update(nativeTransactionSource)
@@ -259,6 +283,61 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       /readRunIdentity\(/,
       `${relativePath} must fail closed through readRunIdentity()`,
     );
+  }
+});
+
+test("the proof attempt state is protected by one exact anchored local ignore rule", async () => {
+  const ignore = await readFile(path.join(PROOF_ROOT, ".gitignore"), "utf8");
+  assert.equal(ignore, "/.proof-attempt-state/\n");
+  const syntheticPath = path.join(PROOF_ROOT_RELATIVE, ".proof-attempt-state", "synthetic-ignore-guard.json");
+  const ignored = spawnSync("git", ["check-ignore", "--no-index", "--verbose", syntheticPath], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+  assert.equal(ignored.status, 0, ignored.stderr);
+  assert.match(ignored.stdout, /\.gitignore:1:\/\.proof-attempt-state\/\s/);
+  assert.match(ignored.stdout, /synthetic-ignore-guard\.json\s*$/);
+});
+
+test("installed source verification fails closed on lockfile and reviewed-source drift", async () => {
+  const modulePath = path.join(HARNESS_ROOT, "src", "source-integrity.mjs");
+  const {
+    REVIEWED_HARNESS_LOCKFILE_SHA256,
+    REVIEWED_INSTALLED_SOURCE_HASHES,
+    verifyInstalledSourceContract,
+  } = await import(pathToFileURL(modulePath).href);
+  assert.equal(REVIEWED_HARNESS_LOCKFILE_SHA256, REVIEWED_HARNESS_LOCKFILE_HASH);
+  assert.equal(REVIEWED_INSTALLED_SOURCE_HASHES.size, 19);
+  assert.equal(
+    REVIEWED_INSTALLED_SOURCE_HASHES.get("node_modules/@better-auth/prisma-adapter/dist/index.mjs"),
+    "166a05554f2e9fef2bf632a9aced0f328b0ffeb15e0ef2bbc8eeecc80e2ff145",
+  );
+  const fixture = await mkdtemp("/private/tmp/passvero-stage13a-harness.");
+  await chmod(fixture, 0o700);
+  const reviewedPath = path.join(fixture, "node_modules", "reviewed", "source.mjs");
+  const lockfilePath = path.join(fixture, "package-lock.json");
+  const lockfile = "reviewed-lockfile\n";
+  const source = "export const reviewed = true;\n";
+  await mkdir(path.dirname(reviewedPath), { recursive: true, mode: 0o700 });
+  await writeFile(lockfilePath, lockfile, { mode: 0o600 });
+  await writeFile(reviewedPath, source, { mode: 0o600 });
+  const contract = {
+    lockfileSha256: createHash("sha256").update(lockfile).digest("hex"),
+    sources: new Map([
+      ["node_modules/reviewed/source.mjs", createHash("sha256").update(source).digest("hex")],
+    ]),
+  };
+  try {
+    assert.doesNotThrow(() => verifyInstalledSourceContract(fixture, contract));
+    await writeFile(lockfilePath, "drifted-lockfile\n", { mode: 0o600 });
+    assert.throws(() => verifyInstalledSourceContract(fixture, contract), /STOP_SOURCE_DRIFT/);
+    await writeFile(lockfilePath, lockfile, { mode: 0o600 });
+    await writeFile(reviewedPath, "export const reviewed = false;\n", { mode: 0o600 });
+    assert.throws(() => verifyInstalledSourceContract(fixture, contract), /STOP_SOURCE_DRIFT/);
+    await rm(reviewedPath);
+    assert.throws(() => verifyInstalledSourceContract(fixture, contract), /STOP_SOURCE_DRIFT/);
+  } finally {
+    await rm(fixture, { recursive: true });
   }
 });
 
@@ -525,6 +604,10 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
   assert.match(runRoot, /validateGeneratedSql/);
   assert.match(runRoot, /generated SQL must contain the exact table count/);
   assert.match(runRoot, /exact quoted unqualified identifiers/);
+  assert.match(source, /node_modules\/prisma\/build\/index\.js" migrate diff/);
+  assert.doesNotMatch(source, /npm[^\n]*run schema:sql/);
+  assert.match(source, /verify_installed_source_integrity/);
+  assert.match(source, /STOP_SOURCE_DRIFT/);
 });
 
 test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 verdict", async () => {
@@ -538,9 +621,17 @@ test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 
   assert.ok(runAll, "run_all must remain separately reviewable");
   assert.ok(hypotheses, "run_hypotheses must remain separately reviewable");
   assert.equal(createHash("sha256").update(runner).digest("hex"), TASK_10_RUNNER_HASH);
+  assert.notEqual(createHash("sha256").update(runner).digest("hex"), TASK_10_EXECUTED_RUNNER_HASH);
   assert.equal(createHash("sha256").update(shellSimulation).digest("hex"), TASK_10_SHELL_SIMULATION_HASH);
   assert.doesNotMatch(runner, /STOP_HYPOTHESES_NOT_IMPLEMENTED/);
   assert.ok(runAll.indexOf("claim_attempt") < runAll.indexOf("bootstrap_root"));
+  assert.ok(runAll.indexOf("bootstrap_root") < runAll.indexOf("start_cluster"));
+  const bootstrap = runner.match(/bootstrap_root\(\) \{([\s\S]*?)^\}/m)?.[1];
+  assert.ok(bootstrap, "bootstrap_root must remain separately reviewable");
+  assert.ok(
+    bootstrap.indexOf("verify_installed_source_integrity") < bootstrap.indexOf("PHASE=IDENTITY_CREATED"),
+    "installed source integrity must be proven before cluster startup can be reached",
+  );
   assert.ok(runAll.indexOf("prove_cluster_identity") < runAll.indexOf("generate_apply_schema"));
   assert.ok(runAll.indexOf("generate_apply_schema") < runAll.indexOf("run_hypotheses"));
   assert.equal((hypotheses.match(/run_hypothesis "/g) ?? []).length, 7);
@@ -574,6 +665,31 @@ test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 
     "every partial startup phase retains its root",
     "PASS publication rename failure",
   ]) assert.match(contract, new RegExp(simulation));
+});
+
+test("session-boundary assertion failures cannot serialize live token or session objects", async () => {
+  const source = await readHarness("test/session-boundary.test.ts");
+  const liveStart = source.indexOf('test("live H5 uses controlled activation');
+  assert.ok(liveStart > 0, "live H5 proof test missing");
+  const liveSource = source.slice(liveStart);
+  assert.doesNotMatch(liveSource, /assert\.deepEqual\([\s\S]{0,160}sessionByToken\(/);
+  assert.match(source, /assertSessionStateUnchanged/);
+  assert.match(source, /STOP_H5_SESSION_STATE_DRIFT/);
+  assert.match(source, /failure reporting omits protected session values/);
+});
+
+test("the historical Stage 13A fix report is prominently superseded", async () => {
+  const historicalReport = await readFile(
+    path.join(
+      process.cwd(),
+      ".superpowers/sdd/2026-08-20-passvero-auth-foundation-review/final-fix-report.md",
+    ),
+    "utf8",
+  );
+  assert.match(historicalReport.slice(0, 900), /HISTORICAL AND SUPERSEDED/);
+  assert.match(historicalReport.slice(0, 900), /ownership-reconciliation-report\.md/);
+  assert.match(historicalReport.slice(0, 900), /BLOCKED_PENDING_ARCHITECTURE_REVIEW/);
+  assert.match(historicalReport.slice(0, 900), /H1-H7.*NOT_EXECUTED/is);
 });
 
 test("the terminal proof reconciliation is deterministic, redacted, and blocks persistence", async () => {
@@ -638,7 +754,10 @@ test("the terminal proof reconciliation is deterministic, redacted, and blocks p
     "POST-EXECUTION RECONCILIATION: this corrected public artifact was not generated",
     "by the publisher executed at `d1f350627c3da72feaa18eb5416ff17e07db81a8`.",
     "Historical execution facts remain pinned to that commit. The later post-proof",
-    "`prefer-const` successor source was not executed, and the proof was not rerun.",
+    "`prefer-const` and final-review hardening successors were not executed, and the",
+    "proof was not rerun. The final-review successor adds static-only SQL-stream,",
+    "installed-source, Git-ignore, and secret-safe assertion guards; it has no",
+    "runtime observations or retry authority.",
     "The JSON file is the authoritative corrected public record; this Markdown is",
     "its companion.",
     "",
@@ -699,6 +818,7 @@ test("the terminal proof reconciliation is deterministic, redacted, and blocks p
     assert.match(source, /TASK_10_LINT_GATE=PASS_POST_PROOF_SUCCESSOR_ONLY/);
     assert.match(source, /historical execution source.*d1f3506/is);
     assert.match(source, /successor (?:source )?was not\s+executed/i);
+    assert.match(source, /FINAL_REVIEW_STATIC_SUCCESSOR=UNEXECUTED/);
     assert.doesNotMatch(source, /PostgreSQL connection performed: YES, exactly once/i);
     assert.doesNotMatch(source, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVAL_READY/);
     assert.doesNotMatch(source, /BETTER_AUTH_RUNTIME_BOUNDARY=/);

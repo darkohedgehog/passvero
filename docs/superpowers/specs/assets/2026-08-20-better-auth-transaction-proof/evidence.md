@@ -3,7 +3,10 @@
 POST-EXECUTION RECONCILIATION: this corrected public artifact was not generated
 by the publisher executed at `d1f350627c3da72feaa18eb5416ff17e07db81a8`.
 Historical execution facts remain pinned to that commit. The later post-proof
-`prefer-const` successor source was not executed, and the proof was not rerun.
+`prefer-const` and final-review hardening successors were not executed, and the
+proof was not rerun. The final-review successor adds static-only SQL-stream,
+installed-source, Git-ignore, and secret-safe assertion guards; it has no
+runtime observations or retry authority.
 The JSON file is the authoritative corrected public record; this Markdown is
 its companion.
 
