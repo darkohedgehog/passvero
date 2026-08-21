@@ -1,0 +1,363 @@
+{
+  "status": "FAIL",
+  "packageHashes": {
+    "unavailableHash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "clusterIdHash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "postgresVersionHash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "systemIdentifierHash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hypotheses": [
+    {
+      "id": "H1_NATIVE_TRANSACTION",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    },
+    {
+      "id": "H2_DIRECT_API_OUTER_TRANSACTION",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    },
+    {
+      "id": "H3_HANDLER_CONTEXT_REPLACEMENT",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    },
+    {
+      "id": "H4_CONTROLLED_ACTIVATION",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    },
+    {
+      "id": "H5_SESSION_COOKIE_AFTER_COMMIT",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    },
+    {
+      "id": "H6_RECOVERY_AND_REVOCATION",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    },
+    {
+      "id": "H7_ROUTE_EXPOSURE",
+      "status": "FAIL",
+      "transactionIds": [],
+      "before": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "after": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "deltas": {
+        "providerUser": 0,
+        "providerAccount": 0,
+        "providerSession": 0,
+        "providerVerification": 0,
+        "canonicalUser": 0,
+        "authIdentity": 0,
+        "activation": 0,
+        "credentialRecord": 0,
+        "abuseBucket": 0
+      },
+      "cookie": {
+        "present": false,
+        "nameHash": null,
+        "secure": false,
+        "httpOnly": false,
+        "sameSite": null,
+        "hostOnly": true,
+        "maxAgeSeconds": null
+      },
+      "assertions": [],
+      "failureCode": "STOP_PRE_EVIDENCE_FAILURE"
+    }
+  ],
+  "cleanup": {
+    "serverStopped": true,
+    "listenerGone": true,
+    "pidGone": true,
+    "rootGone": false
+  },
+  "assertions": [
+    "STOP_PRE_EVIDENCE_FAILURE"
+  ]
+}

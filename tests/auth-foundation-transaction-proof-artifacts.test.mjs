@@ -9,6 +9,16 @@ const HARNESS_ROOT = path.join(
   "docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness",
 );
 const PROOF_ROOT = path.dirname(HARNESS_ROOT);
+const EVIDENCE_JSON = path.join(PROOF_ROOT, "evidence.json");
+const EVIDENCE_MARKDOWN = path.join(PROOF_ROOT, "evidence.md");
+const FOUNDATION_REVIEW = path.join(
+  process.cwd(),
+  "docs/superpowers/reviews/2026-08-20-better-auth-foundation-review.md",
+);
+const MIGRATION_CONTRACT = path.join(
+  process.cwd(),
+  "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/proposed-migration-contract.md",
+);
 
 const REQUIRED_FILES = [
   "package.json",
@@ -64,6 +74,23 @@ const TASK_10_ORCHESTRATION_HASHES = new Map([
 ]);
 const TASK_10_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1e302395fc75df8f8183a56";
 const TASK_10_SHELL_SIMULATION_HASH = "aeacc38f11cac1094befafb422b824bba521c1676d4e5e3bfa76e57b35bdb8a8";
+const TASK_10_FAILURE_EVIDENCE_JSON_HASH = "31925641e07c7421aec2dcecb3cd552ac07381450108bb307036fcebb48a7b68";
+const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "6d073c4af2db13d912acb7b562b10f7c4f98f12b03c08c51b96323a8bbf48379";
+
+const REQUIRED_HYPOTHESIS_IDS = [
+  "H1_NATIVE_TRANSACTION",
+  "H2_DIRECT_API_OUTER_TRANSACTION",
+  "H3_HANDLER_CONTEXT_REPLACEMENT",
+  "H4_CONTROLLED_ACTIVATION",
+  "H5_SESSION_COOKIE_AFTER_COMMIT",
+  "H6_RECOVERY_AND_REVOCATION",
+  "H7_ROUTE_EXPOSURE",
+];
+
+const ROW_COUNT_KEYS = [
+  "providerUser", "providerAccount", "providerSession", "providerVerification",
+  "canonicalUser", "authIdentity", "activation", "credentialRecord", "abuseBucket",
+];
 
 const EXPECTED_DEPENDENCIES = {
   "@better-auth/core": "1.7.1",
@@ -533,4 +560,108 @@ test("the one-shot runner aggregates exactly one assertion-bound reviewed H1-H7 
     "every partial startup phase retains its root",
     "PASS publication rename failure",
   ]) assert.match(contract, new RegExp(simulation));
+});
+
+test("the terminal proof failure is deterministic, redacted, and blocks persistence", async () => {
+  const [jsonSource, markdown, review, migrationContract] = await Promise.all([
+    readFile(EVIDENCE_JSON, "utf8"),
+    readFile(EVIDENCE_MARKDOWN, "utf8"),
+    readFile(FOUNDATION_REVIEW, "utf8"),
+    readFile(MIGRATION_CONTRACT, "utf8"),
+  ]);
+  assert.equal(
+    createHash("sha256").update(jsonSource).digest("hex"),
+    TASK_10_FAILURE_EVIDENCE_JSON_HASH,
+  );
+  assert.equal(
+    createHash("sha256").update(markdown).digest("hex"),
+    TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH,
+  );
+
+  const evidence = JSON.parse(jsonSource);
+  assert.equal(`${JSON.stringify(evidence, null, 2)}\n`, jsonSource);
+  assert.deepEqual(Object.keys(evidence), [
+    "status", "packageHashes", "clusterIdHash", "postgresVersionHash",
+    "systemIdentifierHash", "hypotheses", "cleanup", "assertions",
+  ]);
+  assert.equal(evidence.status, "FAIL");
+  assert.deepEqual(evidence.packageHashes, { unavailableHash: "0".repeat(64) });
+  for (const hash of [
+    evidence.clusterIdHash,
+    evidence.postgresVersionHash,
+    evidence.systemIdentifierHash,
+  ]) assert.equal(hash, "0".repeat(64));
+  assert.deepEqual(evidence.assertions, ["STOP_PRE_EVIDENCE_FAILURE"]);
+  assert.deepEqual(evidence.cleanup, {
+    serverStopped: true,
+    listenerGone: true,
+    pidGone: true,
+    rootGone: false,
+  });
+  assert.deepEqual(evidence.hypotheses.map(({ id }) => id), REQUIRED_HYPOTHESIS_IDS);
+
+  for (const hypothesis of evidence.hypotheses) {
+    assert.deepEqual(Object.keys(hypothesis), [
+      "id", "status", "transactionIds", "before", "after", "deltas",
+      "cookie", "assertions", "failureCode",
+    ]);
+    assert.equal(hypothesis.status, "FAIL");
+    assert.equal(hypothesis.failureCode, "STOP_PRE_EVIDENCE_FAILURE");
+    assert.deepEqual(hypothesis.transactionIds, []);
+    assert.deepEqual(hypothesis.assertions, []);
+    for (const rowCounts of [hypothesis.before, hypothesis.after, hypothesis.deltas]) {
+      assert.deepEqual(Object.keys(rowCounts), ROW_COUNT_KEYS);
+      assert.ok(Object.values(rowCounts).every((value) => value === 0));
+    }
+    for (const key of ROW_COUNT_KEYS) {
+      assert.equal(hypothesis.after[key] - hypothesis.before[key], hypothesis.deltas[key]);
+    }
+    assert.deepEqual(hypothesis.cookie, {
+      present: false,
+      nameHash: null,
+      secure: false,
+      httpOnly: false,
+      sameSite: null,
+      hostOnly: true,
+      maxAgeSeconds: null,
+    });
+  }
+
+  const expectedMarkdown = [
+    "# Better Auth transaction proof evidence companion",
+    "",
+    "NON-AUTHORITATIVE: evidence.json is the sole authoritative proof result.",
+    "",
+    "| Hypothesis | Status | Failure code |",
+    "| --- | --- | --- |",
+    ...REQUIRED_HYPOTHESIS_IDS.map(
+      (id) => `| ${id} | FAIL | STOP_PRE_EVIDENCE_FAILURE |`,
+    ),
+    "",
+    "Cleanup checks: FAIL",
+    "",
+  ].join("\n");
+  assert.equal(markdown, expectedMarkdown);
+
+  for (const source of [jsonSource, markdown]) {
+    for (const forbidden of [
+      /(?:https?|postgres(?:ql)?):\/\//i,
+      /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
+      /\/(?:Users|private\/tmp)\//,
+      /Set-Cookie/i,
+      /\b(?:token|password|secret|credential)\s*=/i,
+      /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i,
+      /\b[A-Za-z0-9_-]{43}\b/,
+    ]) assert.doesNotMatch(source, forbidden);
+  }
+
+  for (const source of [review, migrationContract]) {
+    assert.match(
+      source,
+      /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW/,
+    );
+    assert.match(source, /STOP_PRE_EVIDENCE_FAILURE/);
+    assert.doesNotMatch(source, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVAL_READY/);
+    assert.doesNotMatch(source, /BETTER_AUTH_RUNTIME_BOUNDARY=/);
+  }
 });

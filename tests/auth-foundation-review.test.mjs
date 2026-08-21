@@ -73,7 +73,7 @@ test("authentication review records the exact candidate versions and exclusions"
   assert.match(review, /Redis: EXCLUDED/);
   assert.match(review, /Public signup: EXCLUDED/);
   assert.match(review, /Automatic linking: EXCLUDED/);
-  assert.match(review, /Database connection performed: NO/);
+  assert.match(review, /Passvero database connection performed: NO/i);
 });
 
 test("raw candidate contains the four isolated provider models", async () => {
@@ -249,11 +249,11 @@ test("runtime ownership preserves Better Auth authentication authority", async (
   assert.match(review, /provider-neutral interfaces.*application and domain/is);
 });
 
-test("Better Auth-backed transaction proof is required and unproven", async () => {
+test("Better Auth-backed transaction proof remains unproven after terminal failure", async () => {
   const contract = await readFile(migrationContractPath, "utf8");
   assert.match(
     contract,
-    /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_BETTER_AUTH_TRANSACTION_PROOF/,
+    /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW/,
   );
   assert.match(contract, /Better Auth-backed transaction boundary.*REQUIRED AND UNPROVEN/is);
   assert.match(contract, /proof is pinned to `better-auth@1\.7\.1`/i);
@@ -267,7 +267,9 @@ test("Better Auth-backed transaction proof is required and unproven", async () =
   assert.match(contract, /exact provider-row.*cookie conventions.*Better Auth.*reviewed adapter/is);
   assert.match(contract, /failure injection.*rollback/is);
   assert.match(contract, /provider-neutral application and domain boundary/i);
-  assert.match(contract, /disposable PostgreSQL environment.*separate operator authorization/is);
+  assert.match(contract, /`run-proof\.sh --all` command was invoked exactly once/is);
+  assert.match(contract, /all\s+seven mandatory hypotheses as `FAIL` with `STOP_PRE_EVIDENCE_FAILURE`/is);
+  assert.match(contract, /No `BETTER_AUTH_RUNTIME_BOUNDARY` is selected/);
   assert.match(contract, /acceptance criteria only.*not an implementation plan/i);
   assert.match(contract, /no replacement integration.*selected or approved/i);
   assert.doesNotMatch(contract, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVED/);
@@ -540,7 +542,7 @@ test("review stage leaves implementation paths unchanged", async () => {
   for (const row of matrixRows) {
     assert.ok(review.includes(row), `missing final matrix row: ${row}`);
   }
-  assert.match(review, /transaction proof.*PROOF REQUIRED\/PENDING.*outside the 13-row\s+decision count/is);
+  assert.match(review, /transaction proof.*TERMINAL FAILURE\/ARCHITECTURE REVIEW REQUIRED.*outside the 13-row\s+decision count/is);
   assert.match(review, /migration and exit approval is deferred/i);
   assert.doesNotMatch(review, /material cost is the sole unresolved operator decision/i);
 

@@ -1,8 +1,8 @@
 # Better Auth Foundation Review
 
-**Status:** Blocked pending Better Auth-backed transaction proof
+**Status:** Blocked pending architecture review after terminal Better Auth proof failure
 **Execution base:** 331f8f1cd29203ee7d8d9364c7324313b75f822f
-**Evidence date:** 2026-08-20
+**Evidence date:** 2026-08-21
 
 ## Candidate dependency baseline
 
@@ -25,7 +25,9 @@
 - Better Auth catch-all handler: NOT EXPORTED
 - Better Auth-backed transaction boundary: REQUIRED AND UNPROVEN
 - Direct Passvero provider-table writes: REJECTED
-- Database connection performed: NO
+- Disposable review-only PostgreSQL connection performed: YES, exactly once
+- Passvero database connection performed: NO
+- Disposable proof schema applied: NO
 - Schema or migration modified: NO
 
 ## Evidence sources
@@ -86,9 +88,29 @@ The proof must preserve provider-neutral interfaces for application and domain
 code: those layers receive canonical identifiers and results and must not import
 Better Auth, provider Prisma models, cookies, headers, or route types. Exact proof
 acceptance criteria are recorded in the proposed migration contract. Producing
-that proof will likely require a disposable PostgreSQL environment and separate
-operator authorization; this review performed neither a transaction spike nor a
-database connection.
+that proof required a separately authorized disposable PostgreSQL execution;
+its terminal result is reconciled below.
+
+### Terminal disposable-proof result
+
+The separately authorized review-only proof invoked the reviewed
+`run-proof.sh --all` command exactly once on 2026-08-21. It exited nonzero before
+schema generation completed and before any H1-H7 live hypothesis executed. The
+authoritative redacted evidence therefore records every mandatory hypothesis as
+`FAIL` with `STOP_PRE_EVIDENCE_FAILURE`; it is not negative evidence about the
+individual Better Auth transaction mechanisms.
+
+Independent post-run checks confirmed that the loopback listener was absent,
+`pg_isready` returned its no-response status, and no postmaster PID file or open
+reference remained. The cleanup evidence records `serverStopped=true`,
+`listenerGone=true`, `pidGone=true`, and `rootGone=false`. The exact
+owner-validated, sentinel-bound disposable root is retained for operator review
+and MUST NOT be deleted or reused under this proof authority.
+
+This terminal run does not select `BETTER_AUTH_RUNTIME_BOUNDARY`, does not make
+the candidate migration contract implementable, and cannot be retried. Any new
+proof would require an architecture decision, a newly reviewed proof plan, and
+fresh explicit operator authorization.
 
 ## Provider-model and canonical identity reconciliation
 
@@ -387,7 +409,8 @@ Backoff levels 1–12 map from 1 minute through 1,440 minutes. Success never era
 evidence. CHECK constraints cover attempt/failure counts, window/failure/decay
 timestamps, finite blocks, digest shape, and 30-day expiry. Expired rows are
 pruned within 24 hours, yielding a hard 31-day maximum after the last transition.
-No database action or connection was used to reach these review conclusions.
+These candidate review conclusions were established without a database; the
+later separately authorized terminal proof attempt is reconciled above.
 
 ## Final cumulative review matrix
 
@@ -398,9 +421,9 @@ unproven Better Auth-backed transaction boundary. `DEFERRED` means no current
 migration/exit approval is being requested. `REJECT` means the named behavior
 must not be implemented.
 
-Transaction proof status is **PROOF REQUIRED/PENDING** outside the 13-row
-decision count. Runtime ownership is already selected; there is no remaining
-transaction-integration operator choice in this review.
+Transaction proof status is **TERMINAL FAILURE/ARCHITECTURE REVIEW REQUIRED**
+outside the 13-row decision count. Runtime ownership remains selected, but the
+failed proof established no approved transaction integration boundary.
 
 | Review item | Outcome | Evidence and exact implication |
 | --- | --- | --- |
@@ -621,13 +644,13 @@ frozen authentication authority or accept only a subset of the constraints.
 
 ## Operator and proof gate
 
-**Outcome:** PROOF REQUIRED/PENDING
+**Outcome:** TERMINAL PROOF FAILURE; ARCHITECTURE REVIEW REQUIRED
 
-`AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_BETTER_AUTH_TRANSACTION_PROOF`
+`AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW`
 
-The operator has selected runtime ownership. There is no persistence-contract
-approval question or approved marker yet. Migration and exit approval is deferred until separately authorized,
-disposable PostgreSQL proof reconciles the retained candidate inputs with the
-frozen Better Auth authority. This review does not install dependencies, modify
-the canonical Prisma schema, author or deploy a migration, connect to PostgreSQL,
-generate a client or secret, run a transaction spike, or authorize Stage 13B/13E.
+The one authorized disposable proof attempt failed before H1-H7 execution with
+the exact evidence code `STOP_PRE_EVIDENCE_FAILURE`. There is no
+persistence-contract approval question, positive runtime-boundary selection, or
+approved marker. Migration and exit approval remain deferred. This review does
+not modify the canonical Prisma schema, author or deploy a migration, connect to
+a Passvero database, or authorize Stage 13B/13E.

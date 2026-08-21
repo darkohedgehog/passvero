@@ -1,12 +1,12 @@
 # Proposed Authentication Persistence Migration Contract
 
-**Status:** `BLOCKED_PENDING_BETTER_AUTH_TRANSACTION_PROOF`; candidate inputs only
+**Status:** `BLOCKED_PENDING_ARCHITECTURE_REVIEW`; candidate inputs only
 
 **Schema proposal:** `proposed-prisma-fragment.prisma`
 
 **Canonical schema and migration directories changed:** NO
 
-`AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_BETTER_AUTH_TRANSACTION_PROOF`
+`AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW`
 
 This contract retains candidate PostgreSQL inputs for a later reconciliation. It
 is not approved, implementable, executable migration SQL, or migration authority.
@@ -62,10 +62,30 @@ acceptance criteria only; this is not an implementation plan or execution:
   must not import Better Auth, provider Prisma models, cookies, headers, or route
   APIs.
 
-Proof likely needs a disposable PostgreSQL environment and separate operator
-authorization. This review authorizes neither that environment nor a transaction
-spike. Until accepted proof exists, the candidate schema and SQL below remain
-unapproved and must not be implemented or migrated.
+The proof required a separately authorized disposable PostgreSQL environment.
+Its terminal result is reconciled below. Until accepted proof exists, the
+candidate schema and SQL below remain unapproved and must not be implemented or
+migrated.
+
+### Executed proof reconciliation
+
+The operator separately authorized one disposable PostgreSQL proof attempt. The
+reviewed `run-proof.sh --all` command was invoked exactly once on 2026-08-21 and
+exited nonzero before disposable Prisma client/schema generation completed and
+before H1-H7 live execution. The authoritative redacted evidence records all
+seven mandatory hypotheses as `FAIL` with `STOP_PRE_EVIDENCE_FAILURE`.
+
+The result does not disprove or approve any individual hypothesis. It proves
+only that the required end-to-end foundation contract was not established.
+Cleanup stopped the disposable server and independently confirmed the listener
+and PID were gone, but retained the exact sentinel-bound proof root; no cleanup
+authority is inferred from this document.
+
+No `BETTER_AUTH_RUNTIME_BOUNDARY` is selected. The candidate schema, ordering,
+transaction, session, recovery, and route rules below remain non-implementable
+inputs. The terminal proof MUST NOT be retried. A new attempt requires an
+architecture decision, a newly reviewed proof plan, and fresh explicit operator
+authorization.
 
 ## Exact candidate table inputs
 
