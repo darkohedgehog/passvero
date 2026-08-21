@@ -31,6 +31,123 @@ export interface DeferredCookie {
   readonly maxAgeSeconds: number | null;
 }
 
+export const EMPTY_DEFERRED_COOKIE = {
+  present: false,
+  nameHash: null,
+  secure: false,
+  httpOnly: false,
+  sameSite: null,
+  hostOnly: true,
+  maxAgeSeconds: null,
+} as const satisfies DeferredCookie;
+
+export type H1ScenarioId =
+  | "TRANSACTION_FALSE_SPLIT_NEGATIVE_CONTROL"
+  | "TRANSACTION_TRUE_ROLLBACK"
+  | "TRANSACTION_TRUE_NESTED_REUSE"
+  | "TRANSACTION_FALSE_TX_BOUND_REUSE";
+
+export interface H1ScenarioContract {
+  readonly id: H1ScenarioId;
+  readonly adapterTransaction: boolean;
+  readonly explicitOuterTransaction: boolean;
+  readonly nestedRunWithTransaction: boolean;
+  readonly acceptedArchitecture: boolean;
+  readonly expectedProviderUserDelta: number;
+  readonly expectedProviderAccountDelta: number;
+  readonly expectedPrismaTransactionCalls: number;
+  readonly expectedSingleTransactionId: boolean;
+}
+
+export const H1_NATIVE_TRANSACTION_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
+
+export const H1_NATIVE_TRANSACTION_SCENARIOS = [
+  {
+    id: "TRANSACTION_FALSE_SPLIT_NEGATIVE_CONTROL",
+    adapterTransaction: false,
+    explicitOuterTransaction: false,
+    nestedRunWithTransaction: false,
+    acceptedArchitecture: false,
+    expectedProviderUserDelta: 1,
+    expectedProviderAccountDelta: 0,
+    expectedPrismaTransactionCalls: 0,
+    expectedSingleTransactionId: false,
+  },
+  {
+    id: "TRANSACTION_TRUE_ROLLBACK",
+    adapterTransaction: true,
+    explicitOuterTransaction: false,
+    nestedRunWithTransaction: false,
+    acceptedArchitecture: true,
+    expectedProviderUserDelta: 0,
+    expectedProviderAccountDelta: 0,
+    expectedPrismaTransactionCalls: 1,
+    expectedSingleTransactionId: true,
+  },
+  {
+    id: "TRANSACTION_TRUE_NESTED_REUSE",
+    adapterTransaction: true,
+    explicitOuterTransaction: false,
+    nestedRunWithTransaction: true,
+    acceptedArchitecture: true,
+    expectedProviderUserDelta: 0,
+    expectedProviderAccountDelta: 0,
+    expectedPrismaTransactionCalls: 1,
+    expectedSingleTransactionId: true,
+  },
+  {
+    id: "TRANSACTION_FALSE_TX_BOUND_REUSE",
+    adapterTransaction: false,
+    explicitOuterTransaction: true,
+    nestedRunWithTransaction: true,
+    acceptedArchitecture: true,
+    expectedProviderUserDelta: 0,
+    expectedProviderAccountDelta: 0,
+    expectedPrismaTransactionCalls: 1,
+    expectedSingleTransactionId: true,
+  },
+] as const satisfies readonly H1ScenarioContract[];
+
+export interface H1WriteObservation {
+  readonly model:
+    | "AuthProviderUser"
+    | "AuthProviderAccount"
+    | "AuthProviderSession"
+    | "AuthProviderVerification";
+  readonly action: "create" | "update" | "updateMany" | "delete" | "deleteMany" | "upsert";
+  readonly phase: "BEFORE" | "AFTER";
+  readonly transactionIdHash: string;
+}
+
+export interface H1ScenarioEvidence {
+  readonly id: H1ScenarioId;
+  readonly status: HypothesisStatus;
+  readonly adapterTransaction: boolean;
+  readonly explicitOuterTransaction: boolean;
+  readonly nestedRunWithTransaction: boolean;
+  readonly acceptedArchitecture: boolean;
+  readonly expectedProviderUserDelta: number;
+  readonly expectedProviderAccountDelta: number;
+  readonly prismaTransactionCalls: number;
+  readonly transactionIds: readonly string[];
+  readonly writes: readonly H1WriteObservation[];
+  readonly before: RowCounts;
+  readonly after: RowCounts;
+  readonly cookie: DeferredCookie;
+  readonly fixtureCleaned: boolean;
+  readonly successfulProviderWriteOrigin: "BETTER_AUTH_API";
+  readonly assertions: readonly string[];
+  readonly failureCode: string | null;
+}
+
+export interface H1NativeTransactionEvidence {
+  readonly id: "H1_NATIVE_TRANSACTION";
+  readonly runtimeVerdict: typeof H1_NATIVE_TRANSACTION_RUNTIME_VERDICT | HypothesisStatus;
+  readonly scenarios: readonly H1ScenarioEvidence[];
+  readonly assertions: readonly string[];
+  readonly failureCode: string | null;
+}
+
 export interface HypothesisEvidence {
   readonly id: HypothesisId;
   readonly status: HypothesisStatus;
