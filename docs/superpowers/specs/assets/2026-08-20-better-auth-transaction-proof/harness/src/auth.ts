@@ -2,8 +2,418 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { createAuthEndpoint } from "better-auth/api";
 import { createLocalAccountIssuer } from "@better-auth/core/db";
+import type { DBAdapter } from "@better-auth/core/db/adapter";
+import { createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
+import { domainToASCII } from "node:url";
 import * as z from "zod";
+import type {
+  BetterAuthCredentialAuthority,
+  BetterAuthPasswordAuthority,
+} from "./proof-boundary.js";
 import { readAuthSecret, readRunIdentity } from "./run-root.js";
+
+export const H6_RECOVERY_BOUNDARY_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
+export const CREDENTIAL_CAPABILITY_BYTES = 32 as const;
+export const EMAIL_VERIFICATION_LIFETIME_MS = 86_400_000 as const;
+export const PASSWORD_RESET_LIFETIME_MS = 1_800_000 as const;
+
+export const RECOVERY_PROOF_CASES = [
+  "EMAIL_VERIFICATION_24_HOURS",
+  "PASSWORD_RESET_30_MINUTES",
+  "PREDECESSOR_INVALIDATION",
+  "CONCURRENT_SINGLE_USE",
+  "RESET_ATOMIC_ROLLBACK",
+  "RESET_REVOKES_ALL_WITHOUT_SIGN_IN",
+  "AUTHENTICATED_CHANGE_ATOMIC_ROTATION",
+  "AUTHENTICATED_CHANGE_CONCURRENT_ONE_WINNER",
+  "IN_TRANSACTION_CALLBACK_ROLLBACK",
+  "AFTER_COMMIT_HOOK_OPERATIONAL_FAILURE",
+  "DIGEST_ONLY_REDACTED_EVIDENCE",
+] as const;
+
+export const RESET_FAILURE_POINTS = [
+  "NONE",
+  "AFTER_CONSUME",
+  "AFTER_CREDENTIAL_UPDATE",
+  "AFTER_PARTIAL_SESSION_DELETION",
+  "IN_TRANSACTION_CALLBACK",
+] as const;
+
+export const AFTER_COMMIT_HOOK_CLASSIFICATION = {
+  transactionSource: "transaction.ts:139-150",
+  queuedHookSources: ["with-hooks.mjs:31-39", "with-hooks.mjs:67-75"],
+  securityCriticalStateAllowed: false,
+} as const;
+
+export type CredentialTokenPurpose = "EMAIL_VERIFICATION" | "PASSWORD_RESET";
+export type ResetFailurePoint = (typeof RESET_FAILURE_POINTS)[number];
+
+export interface CredentialTokenRecord {
+  readonly id: string;
+  readonly providerUserId: string;
+  readonly purpose: CredentialTokenPurpose;
+  readonly tokenDigest: string;
+  readonly targetEmailDigest: string;
+  readonly expiresAt: Date;
+  readonly consumedAt: Date | null;
+  readonly invalidatedAt: Date | null;
+  readonly createdAt: Date;
+}
+
+export interface CredentialTokenOwner {
+  readonly id: string;
+  readonly email: string;
+  readonly emailVerified: boolean;
+}
+
+export interface CredentialTokenStore {
+  lockOwner(providerUserId: string): Promise<CredentialTokenOwner | null>;
+  invalidateActive(input: {
+    readonly providerUserId: string;
+    readonly purpose: CredentialTokenPurpose;
+    readonly at: Date;
+  }): Promise<number>;
+  create(record: CredentialTokenRecord): Promise<CredentialTokenRecord>;
+  findByDigest(input: {
+    readonly purpose: CredentialTokenPurpose;
+    readonly tokenDigest: string;
+  }): Promise<CredentialTokenRecord | null>;
+  invalidateById(input: { readonly id: string; readonly at: Date }): Promise<boolean>;
+  consumeActive(input: {
+    readonly id: string;
+    readonly purpose: CredentialTokenPurpose;
+    readonly tokenDigest: string;
+    readonly now: Date;
+  }): Promise<CredentialTokenRecord | null>;
+}
+
+export type RecoveryCredentialAuthority = BetterAuthCredentialAuthority;
+export type RecoveryPasswordAuthority = Pick<BetterAuthPasswordAuthority, "hash">;
+
+export interface RecoveryAbuseAuthority {
+  advance(): Promise<void>;
+}
+
+const GENERIC_CREDENTIAL_FAILURE = {
+  verified: false,
+  failure: "GENERIC_CREDENTIAL_FAILURE",
+} as const;
+
+function credentialLifetime(purpose: CredentialTokenPurpose): number {
+  return purpose === "EMAIL_VERIFICATION"
+    ? EMAIL_VERIFICATION_LIFETIME_MS
+    : PASSWORD_RESET_LIFETIME_MS;
+}
+
+function validateDigestKeys(capabilityKey: Uint8Array, targetEmailKey: Uint8Array): void {
+  if (capabilityKey.byteLength < 32 || targetEmailKey.byteLength < 32) {
+    throw new Error("STOP_H6_DIGEST_KEY_INVALID");
+  }
+  if (capabilityKey.byteLength === targetEmailKey.byteLength
+    && timingSafeEqual(Buffer.from(capabilityKey), Buffer.from(targetEmailKey))) {
+    throw new Error("STOP_H6_DIGEST_KEYS_MUST_BE_DISTINCT");
+  }
+}
+
+function lengthPrefixed(parts: readonly Uint8Array[]): Buffer {
+  const framed: Buffer[] = [];
+  for (const part of parts) {
+    const length = Buffer.alloc(4);
+    length.writeUInt32BE(part.byteLength);
+    framed.push(length, Buffer.from(part));
+  }
+  return Buffer.concat(framed);
+}
+
+function keyedDigest(key: Uint8Array, parts: readonly Uint8Array[]): string {
+  return createHmac("sha256", key).update(lengthPrefixed(parts)).digest("base64url");
+}
+
+function utf8(value: string): Buffer {
+  return Buffer.from(value, "utf8");
+}
+
+function normalizeAccountIdentifier(value: string): string {
+  if (/\p{Cc}/u.test(value)) throw new Error("STOP_H6_PROVIDER_EMAIL_INVALID");
+  const normalized = value.trim().normalize("NFC").toLowerCase();
+  if (Buffer.byteLength(normalized, "utf8") > 254) throw new Error("STOP_H6_PROVIDER_EMAIL_INVALID");
+  const parts = normalized.split("@");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) throw new Error("STOP_H6_PROVIDER_EMAIL_INVALID");
+  const domain = domainToASCII(parts[1]);
+  if (!domain) throw new Error("STOP_H6_PROVIDER_EMAIL_INVALID");
+  return `${parts[0]}@${domain.toLowerCase()}`;
+}
+
+function capabilityBytes(deliveryCapability: string): Buffer | null {
+  if (!/^[A-Za-z0-9_-]{43}$/.test(deliveryCapability)) return null;
+  const decoded = Buffer.from(deliveryCapability, "base64url");
+  if (decoded.byteLength !== CREDENTIAL_CAPABILITY_BYTES) return null;
+  return decoded.toString("base64url") === deliveryCapability ? decoded : null;
+}
+
+function tokenDigest(
+  key: Uint8Array,
+  purpose: CredentialTokenPurpose,
+  decodedCapability: Uint8Array,
+): string {
+  return keyedDigest(key, [
+    utf8("passvero-auth-credential-capability"),
+    utf8("v1"),
+    utf8(purpose),
+    decodedCapability,
+  ]);
+}
+
+function targetEmailDigest(
+  key: Uint8Array,
+  purpose: CredentialTokenPurpose,
+  normalizedEmail: string,
+): string {
+  return keyedDigest(key, [
+    utf8("passvero-auth-credential-target-email"),
+    utf8("v1"),
+    utf8(purpose),
+    utf8(normalizedEmail),
+  ]);
+}
+
+function equalCanonicalDigests(left: string, right: string): boolean {
+  if (!/^[A-Za-z0-9_-]{43}$/.test(left) || !/^[A-Za-z0-9_-]{43}$/.test(right)) return false;
+  const leftBytes = Buffer.from(left, "base64url");
+  const rightBytes = Buffer.from(right, "base64url");
+  return leftBytes.byteLength === 32 && rightBytes.byteLength === 32
+    && timingSafeEqual(leftBytes, rightBytes);
+}
+
+export async function issueCredentialToken(input: {
+  readonly store: CredentialTokenStore;
+  readonly providerUserId: string;
+  readonly purpose: CredentialTokenPurpose;
+  readonly now: Date;
+  readonly capabilityKey: Uint8Array;
+  readonly targetEmailKey: Uint8Array;
+}): Promise<{
+  readonly deliveryCapability: string;
+  readonly record: CredentialTokenRecord;
+}> {
+  validateDigestKeys(input.capabilityKey, input.targetEmailKey);
+  const owner = await input.store.lockOwner(input.providerUserId);
+  if (!owner) throw new Error("STOP_H6_PROVIDER_OWNER_NOT_FOUND");
+  const normalizedEmail = normalizeAccountIdentifier(owner.email);
+  const decodedCapability = randomBytes(CREDENTIAL_CAPABILITY_BYTES);
+  const deliveryCapability = decodedCapability.toString("base64url");
+  await input.store.invalidateActive({
+    providerUserId: owner.id,
+    purpose: input.purpose,
+    at: input.now,
+  });
+  const record: CredentialTokenRecord = {
+    id: randomUUID(),
+    providerUserId: owner.id,
+    purpose: input.purpose,
+    tokenDigest: tokenDigest(input.capabilityKey, input.purpose, decodedCapability),
+    targetEmailDigest: targetEmailDigest(input.targetEmailKey, input.purpose, normalizedEmail),
+    createdAt: input.now,
+    expiresAt: new Date(input.now.getTime() + credentialLifetime(input.purpose)),
+    consumedAt: null,
+    invalidatedAt: null,
+  };
+  return { deliveryCapability, record: await input.store.create(record) };
+}
+
+type ConsumeCredentialResult =
+  | { readonly accepted: true; readonly record: CredentialTokenRecord; readonly owner: CredentialTokenOwner }
+  | { readonly accepted: false };
+
+async function consumeCredentialToken(input: {
+  readonly store: CredentialTokenStore;
+  readonly purpose: CredentialTokenPurpose;
+  readonly deliveryCapability: string;
+  readonly now: Date;
+  readonly capabilityKey: Uint8Array;
+  readonly targetEmailKey: Uint8Array;
+}): Promise<ConsumeCredentialResult> {
+  validateDigestKeys(input.capabilityKey, input.targetEmailKey);
+  const decoded = capabilityBytes(input.deliveryCapability);
+  if (!decoded) return { accepted: false };
+  const presentedDigest = tokenDigest(input.capabilityKey, input.purpose, decoded);
+  const candidate = await input.store.findByDigest({
+    purpose: input.purpose,
+    tokenDigest: presentedDigest,
+  });
+  if (!candidate || candidate.consumedAt || candidate.invalidatedAt || candidate.expiresAt <= input.now) {
+    return { accepted: false };
+  }
+  const owner = await input.store.lockOwner(candidate.providerUserId);
+  if (!owner) return { accepted: false };
+  const currentTargetDigest = targetEmailDigest(
+    input.targetEmailKey,
+    input.purpose,
+    normalizeAccountIdentifier(owner.email),
+  );
+  if (!equalCanonicalDigests(currentTargetDigest, candidate.targetEmailDigest)) {
+    await input.store.invalidateById({ id: candidate.id, at: input.now });
+    return { accepted: false };
+  }
+  const consumed = await input.store.consumeActive({
+    id: candidate.id,
+    purpose: input.purpose,
+    tokenDigest: presentedDigest,
+    now: input.now,
+  });
+  return consumed ? { accepted: true, record: consumed, owner } : { accepted: false };
+}
+
+export async function verifyEmailWithCredentialToken(input: {
+  readonly store: CredentialTokenStore;
+  readonly providerAdapter: Pick<DBAdapter, "update">;
+  readonly abuse: RecoveryAbuseAuthority;
+  readonly deliveryCapability: string;
+  readonly now: Date;
+  readonly capabilityKey: Uint8Array;
+  readonly targetEmailKey: Uint8Array;
+  readonly inTransactionCallback?: () => void | Promise<void>;
+}): Promise<
+  | { readonly verified: true }
+  | typeof GENERIC_CREDENTIAL_FAILURE
+> {
+  const consumed = await consumeCredentialToken({ ...input, purpose: "EMAIL_VERIFICATION" });
+  if (!consumed.accepted) return GENERIC_CREDENTIAL_FAILURE;
+  const updated = await input.providerAdapter.update<CredentialTokenOwner>({
+    model: "user",
+    where: [
+      { field: "id", operator: "eq", value: consumed.owner.id },
+      { field: "email", operator: "eq", value: consumed.owner.email },
+      { field: "emailVerified", operator: "eq", value: false },
+    ],
+    update: { emailVerified: true },
+  });
+  if (!updated?.emailVerified) throw new Error("STOP_H6_EMAIL_VERIFICATION_UPDATE_FAILED");
+  await input.abuse.advance();
+  await input.inTransactionCallback?.();
+  return { verified: true };
+}
+
+function failAt(actual: ResetFailurePoint, expected: ResetFailurePoint): void {
+  if (actual === expected) throw new Error(`INJECTED_H6_${expected}`);
+}
+
+export async function resetPasswordWithCredentialToken(input: {
+  readonly store: CredentialTokenStore;
+  readonly credentialAuthority: RecoveryCredentialAuthority;
+  readonly password: RecoveryPasswordAuthority;
+  readonly sessionAdapter: Pick<DBAdapter, "findMany" | "delete">;
+  readonly abuse: RecoveryAbuseAuthority;
+  readonly deliveryCapability: string;
+  readonly replacementPassword: string;
+  readonly now: Date;
+  readonly capabilityKey: Uint8Array;
+  readonly targetEmailKey: Uint8Array;
+  readonly failurePoint: ResetFailurePoint;
+  readonly inTransactionCallback?: () => void | Promise<void>;
+}): Promise<
+  | {
+      readonly requiresSignIn: true;
+      readonly sessionCreated: false;
+      readonly cookieEligible: false;
+      readonly sessionsRevoked: number;
+    }
+  | { readonly failure: "GENERIC_CREDENTIAL_FAILURE" }
+> {
+  const consumed = await consumeCredentialToken({ ...input, purpose: "PASSWORD_RESET" });
+  if (!consumed.accepted) return { failure: "GENERIC_CREDENTIAL_FAILURE" };
+  failAt(input.failurePoint, "AFTER_CONSUME");
+  const account = await input.credentialAuthority.findCredentialAccount(consumed.owner.id);
+  if (!account?.password) throw new Error("STOP_H6_CREDENTIAL_ACCOUNT_NOT_FOUND");
+  const replacementHash = await input.password.hash(input.replacementPassword);
+  await input.credentialAuthority.updateAccount(account.id, { password: replacementHash });
+  failAt(input.failurePoint, "AFTER_CREDENTIAL_UPDATE");
+  const sessions = await input.sessionAdapter.findMany<{ readonly id: string; readonly userId: string }>({
+    model: "session",
+    where: [{ field: "userId", operator: "eq", value: consumed.owner.id }],
+    select: ["id", "userId"],
+    sortBy: { field: "id", direction: "asc" },
+  });
+  let sessionsRevoked = 0;
+  for (const session of sessions) {
+    if (session.userId !== consumed.owner.id || !session.id) {
+      throw new Error("STOP_H6_SESSION_ENUMERATION_INVALID");
+    }
+    await input.sessionAdapter.delete({
+      model: "session",
+      where: [
+        { field: "id", operator: "eq", value: session.id },
+        { field: "userId", operator: "eq", value: consumed.owner.id },
+      ],
+    });
+    sessionsRevoked += 1;
+    if (sessionsRevoked === 1) failAt(input.failurePoint, "AFTER_PARTIAL_SESSION_DELETION");
+  }
+  await input.abuse.advance();
+  await input.inTransactionCallback?.();
+  failAt(input.failurePoint, "IN_TRANSACTION_CALLBACK");
+  return { requiresSignIn: true, sessionCreated: false, cookieEligible: false, sessionsRevoked };
+}
+
+export async function runAuthenticatedPasswordChange<T>(input: {
+  readonly mutateWithTask7Boundary: () => Promise<T>;
+  readonly abuse: RecoveryAbuseAuthority;
+  readonly inTransactionCallback?: () => void | Promise<void>;
+}): Promise<T> {
+  const result = await input.mutateWithTask7Boundary();
+  await input.abuse.advance();
+  await input.inTransactionCallback?.();
+  return result;
+}
+
+export async function runRecoveryAfterCommitHook(input: {
+  readonly hook: () => void | Promise<void>;
+}): Promise<
+  | {
+      readonly committed: true;
+      readonly rolledBack: false;
+      readonly retryTransaction: false;
+      readonly status: "DELIVERED";
+    }
+  | {
+      readonly committed: true;
+      readonly rolledBack: false;
+      readonly retryTransaction: false;
+      readonly status: "OPERATIONAL_FAILURE";
+      readonly category: "RECOVERY_AFTER_COMMIT_HOOK_FAILED";
+    }
+> {
+  try {
+    await input.hook();
+    return { committed: true, rolledBack: false, retryTransaction: false, status: "DELIVERED" };
+  } catch {
+    return {
+      committed: true,
+      rolledBack: false,
+      retryTransaction: false,
+      status: "OPERATIONAL_FAILURE",
+      category: "RECOVERY_AFTER_COMMIT_HOOK_FAILED",
+    };
+  }
+}
+
+export function credentialTokenEvidence(record: CredentialTokenRecord): {
+  readonly purpose: CredentialTokenPurpose;
+  readonly capabilityDigest: string;
+  readonly targetEmailDigest: string;
+  readonly lifetimeMs: number;
+  readonly consumed: boolean;
+  readonly invalidated: boolean;
+} {
+  return {
+    purpose: record.purpose,
+    capabilityDigest: record.tokenDigest,
+    targetEmailDigest: record.targetEmailDigest,
+    lifetimeMs: record.expiresAt.getTime() - record.createdAt.getTime(),
+    consumed: record.consumedAt !== null,
+    invalidated: record.invalidatedAt !== null,
+  };
+}
 
 export const H4_CONTROLLED_ACTIVATION_RUNTIME_VERDICT = "NOT_EXECUTED" as const;
 

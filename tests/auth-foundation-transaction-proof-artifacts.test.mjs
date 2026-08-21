@@ -26,6 +26,7 @@ const REQUIRED_FILES = [
   "test/handler-boundary.test.ts",
   "test/controlled-activation.test.ts",
   "test/session-boundary.test.ts",
+  "test/recovery-boundary.test.ts",
 ];
 
 const TASK_5_ARTIFACT_HASHES = new Map([
@@ -34,13 +35,18 @@ const TASK_5_ARTIFACT_HASHES = new Map([
 ]);
 
 const TASK_6_ARTIFACT_HASHES = new Map([
-  ["src/auth.ts", "2414b3d7672b47aef1bb69cc863b3934f1c4b5580c21566b83e4f10ff2bd6080"],
   ["test/controlled-activation.test.ts", "08a2313e55174550a728cd87c03355e7baa9d6e7679f94afd658705570ae3dac"],
 ]);
+const TASK_6_AUTH_BODY_HASH = "49f203a4ceec0cc97c59e503d39998ca8f6e847347be6e225f0fea4f68725755";
 
 const TASK_7_ARTIFACT_HASHES = new Map([
   ["src/proof-boundary.ts", "0fbd71e24fbb96f646d84b2275aaa56ddf65113380a902904ac901010973a0e1"],
   ["test/session-boundary.test.ts", "5ee2c2c9c0800ec6323e77974cd613775f0723511c89ae43a63b8e3514d2ee29"],
+]);
+
+const TASK_8_ARTIFACT_HASHES = new Map([
+  ["src/auth.ts", "2d0c4415ece1884da4da24202a72715dd9f497837168315aed089f1e7233468c"],
+  ["test/recovery-boundary.test.ts", "8a84f2210a52c95d003f332e52f8b1c84d4a1234d9176134064d01c9091fbd59"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -126,11 +132,27 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       `${relativePath} drifted from the reviewed Task 6 proof`,
     );
   }
+  const task6AuthStart = sources.get("src/auth.ts").indexOf(
+    "export const H4_CONTROLLED_ACTIVATION_RUNTIME_VERDICT",
+  );
+  assert.ok(task6AuthStart >= 0, "Task 6 auth body missing");
+  assert.equal(
+    createHash("sha256").update(sources.get("src/auth.ts").slice(task6AuthStart)).digest("hex"),
+    TASK_6_AUTH_BODY_HASH,
+    "Task 6 auth body drifted while Task 8 extended the shared source",
+  );
   for (const [relativePath, expectedHash] of TASK_7_ARTIFACT_HASHES) {
     assert.equal(
       createHash("sha256").update(sources.get(relativePath)).digest("hex"),
       expectedHash,
       `${relativePath} drifted from the reviewed Task 7 proof`,
+    );
+  }
+  for (const [relativePath, expectedHash] of TASK_8_ARTIFACT_HASHES) {
+    assert.equal(
+      createHash("sha256").update(sources.get(relativePath)).digest("hex"),
+      expectedHash,
+      `${relativePath} drifted from the reviewed Task 8 proof`,
     );
   }
 
@@ -230,7 +252,7 @@ test("the Better Auth factory freezes the approved security and route surface", 
 test("proof sources forbid direct provider writes, any, and premature cookie exposure", async () => {
   const sourceNames = [
     "src/auth.ts", "src/evidence.ts", "src/proof-boundary.ts", "src/run-root.ts",
-    "test/session-boundary.test.ts",
+    "test/session-boundary.test.ts", "test/recovery-boundary.test.ts",
   ];
   const sources = await Promise.all(sourceNames.map(readHarness));
   for (const [index, source] of sources.entries()) {
@@ -258,6 +280,20 @@ test("proof sources forbid direct provider writes, any, and premature cookie exp
   assert.match(sessionBoundary, /assert\.equal\(guarded\.calls\.length, 1, deadline\)/);
   assert.match(sessionBoundary, /for \(const deadline of \["EXPIRY", "INACTIVITY", "ABSOLUTE"\] as const\)/);
   assert.match(sessionBoundary, /assert\.equal\(guardLoss\.cookie\.present, false, deadline\)/);
+  const recoveryBoundary = sources[5];
+  assert.match(recoveryBoundary, /changePasswordWithBetterAuthAuthority/);
+  assert.match(recoveryBoundary, /Promise\.all\(\[consume\(\), consume\(\)\]\)/);
+  assert.match(recoveryBoundary, /"AFTER_CONSUME", "AFTER_CREDENTIAL_UPDATE", "AFTER_PARTIAL_SESSION_DELETION", "IN_TRANSACTION_CALLBACK"/);
+  assert.match(recoveryBoundary, /requiresSignIn: true, sessionCreated: false, cookieEligible: false/);
+  assert.doesNotMatch(recoveryBoundary, /console\.(?:log|error|warn|info)/);
+  const auth = sources[0];
+  assert.match(auth, /randomBytes\(CREDENTIAL_CAPABILITY_BYTES\)/);
+  assert.match(auth, /passvero-auth-credential-capability/);
+  assert.match(auth, /passvero-auth-credential-target-email/);
+  assert.match(auth, /timingSafeEqual/);
+  assert.match(auth, /model: "session"[\s\S]*?sortBy: \{ field: "id", direction: "asc" \}/);
+  assert.match(auth, /status: "OPERATIONAL_FAILURE"[\s\S]*?category: "RECOVERY_AFTER_COMMIT_HOOK_FAILED"/);
+  assert.doesNotMatch(auth, /console\.(?:log|error|warn|info)/);
   const finalizeIndex = boundary.lastIndexOf("const finalized = finalizeAfterCommit(pending)");
   const afterCommitFailureIndex = boundary.lastIndexOf('injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK")');
   const returnIndex = boundary.lastIndexOf("return finalized");
@@ -328,6 +364,7 @@ test("the proof runner encodes a static-only mode and fail-closed PostgreSQL lif
     "test/handler-boundary.test.ts",
     "test/controlled-activation.test.ts",
     "test/session-boundary.test.ts",
+    "test/recovery-boundary.test.ts",
   ]) {
     assert.match(staticBody, new RegExp(task5TypeInput.replaceAll("/", "\\/\\s*")));
   }
