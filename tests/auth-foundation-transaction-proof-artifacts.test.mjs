@@ -40,7 +40,7 @@ const TASK_6_ARTIFACT_HASHES = new Map([
 
 const TASK_7_ARTIFACT_HASHES = new Map([
   ["src/proof-boundary.ts", "0fbd71e24fbb96f646d84b2275aaa56ddf65113380a902904ac901010973a0e1"],
-  ["test/session-boundary.test.ts", "df9673d9129a6c7509c7e1c7339afc4b4c4b95b237f86b1b88d654db80c349b8"],
+  ["test/session-boundary.test.ts", "5ee2c2c9c0800ec6323e77974cd613775f0723511c89ae43a63b8e3514d2ee29"],
 ]);
 
 const EXPECTED_DEPENDENCIES = {
@@ -252,6 +252,12 @@ test("proof sources forbid direct provider writes, any, and premature cookie exp
   assert.match(boundary, /adapter\.incrementOne<SessionProofRecord>\(\{[\s\S]*?increment: \{\},[\s\S]*?set: \{[\s\S]*?token: input\.rotatedToken,[\s\S]*?expiresAt,[\s\S]*?lastRefreshAt: input\.now/);
   assert.match(boundary, /\{ field: "id", operator: "eq"[\s\S]*?\{ field: "token", operator: "eq"[\s\S]*?\{ field: "expiresAt", operator: "gt"[\s\S]*?\{ field: "lastRefreshAt", operator: "gt"[\s\S]*?\{ field: "authenticatedAt", operator: "gt"/);
   assert.doesNotMatch(boundary, /NO_SUPPORTED_ATOMIC_SESSION_ROTATION/);
+  const sessionBoundary = sources[4];
+  assert.match(sessionBoundary, /const stored = \{ \.\.\.callerSnapshot, token: "newer-database-token" \}/);
+  assert.match(sessionBoundary, /for \(const \[deadline, stored\] of \[[\s\S]*?"EXPIRY"[\s\S]*?"INACTIVITY"[\s\S]*?"ABSOLUTE"/);
+  assert.match(sessionBoundary, /assert\.equal\(guarded\.calls\.length, 1, deadline\)/);
+  assert.match(sessionBoundary, /for \(const deadline of \["EXPIRY", "INACTIVITY", "ABSOLUTE"\] as const\)/);
+  assert.match(sessionBoundary, /assert\.equal\(guardLoss\.cookie\.present, false, deadline\)/);
   const finalizeIndex = boundary.lastIndexOf("const finalized = finalizeAfterCommit(pending)");
   const afterCommitFailureIndex = boundary.lastIndexOf('injectFailure(input.failurePoint, "AFTER_COMMIT_CALLBACK")');
   const returnIndex = boundary.lastIndexOf("return finalized");
