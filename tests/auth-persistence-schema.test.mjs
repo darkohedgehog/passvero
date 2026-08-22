@@ -68,3 +68,55 @@ test("fresh provider schema is native and contains no Passvero extensions", asyn
     /authenticatedAt|lastRefreshAt|selectedOrganizationId|AuthCredentialToken|Organization|Membership/,
   );
 });
+
+test("canonical schema isolates the exact four native provider models", async () => {
+  const schema = await readFile(schemaPath, "utf8");
+
+  assert.deepEqual(fieldNames(block(schema, "model", "AuthProviderUser")), [
+    "id", "name", "email", "emailVerified", "image", "createdAt", "updatedAt",
+    "authprovidersessions", "authprovideraccounts",
+  ]);
+  assert.deepEqual(fieldNames(block(schema, "model", "AuthProviderSession")), [
+    "id", "expiresAt", "token", "createdAt", "updatedAt", "ipAddress",
+    "userAgent", "userId", "authprovideruser",
+  ]);
+  assert.deepEqual(fieldNames(block(schema, "model", "AuthProviderAccount")), [
+    "id", "issuer", "accountId", "providerId", "userId", "authprovideruser",
+    "accessToken", "refreshToken", "idToken", "accessTokenExpiresAt",
+    "refreshTokenExpiresAt", "scope", "password", "createdAt", "updatedAt",
+  ]);
+  assert.deepEqual(fieldNames(block(schema, "model", "AuthProviderVerification")), [
+    "id", "identifier", "value", "expiresAt", "createdAt", "updatedAt",
+  ]);
+  for (const modelName of [
+    "AuthProviderUser", "AuthProviderSession", "AuthProviderAccount",
+    "AuthProviderVerification",
+  ]) {
+    assert.match(block(schema, "model", modelName), new RegExp(`@@map\\("${modelName}"\\)`));
+  }
+  assert.doesNotMatch(
+    block(schema, "model", "AuthProviderSession"),
+    /authenticatedAt|lastRefreshAt|selectedOrganizationId|organization|role|permission/,
+  );
+});
+
+test("AuthIdentity is provider-neutral, unique by subject, and explicitly revocable", async () => {
+  const schema = await readFile(schemaPath, "utf8");
+  const identity = block(schema, "model", "AuthIdentity");
+  const user = block(schema, "model", "User");
+
+  assert.match(block(schema, "enum", "AuthIdentityProvider"), /^\s*BETTER_AUTH\s*$/);
+  assert.deepEqual(fieldNames(identity).filter((field) => field !== "auditEvents"), [
+    "id", "userId", "provider", "providerSubject", "createdAt", "revokedAt",
+    "user",
+  ]);
+  assert.match(identity, /@@unique\(\[provider, providerSubject\]\)/);
+  assert.match(identity, /@@index\(\[userId\]\)/);
+  assert.match(
+    identity,
+    /user\s+User\s+@relation\("UserAuthIdentities", fields: \[userId\], references: \[id\], onDelete: Restrict, onUpdate: Cascade\)/,
+  );
+  assert.match(user, /authIdentities\s+AuthIdentity\[\]\s+@relation\("UserAuthIdentities"\)/);
+  assert.doesNotMatch(identity, /email|organization|membership|role|permission|providerUser/);
+  assert.doesNotMatch(identity, /updatedAt/);
+});
