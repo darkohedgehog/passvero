@@ -120,3 +120,48 @@ test("AuthIdentity is provider-neutral, unique by subject, and explicitly revoca
   assert.doesNotMatch(identity, /email|organization|membership|role|permission|providerUser/);
   assert.doesNotMatch(identity, /updatedAt/);
 });
+
+test("AccountActivationIntent stores only controlled activation and reconciliation state", async () => {
+  const schema = await readFile(schemaPath, "utf8");
+  const activation = block(schema, "model", "AccountActivationIntent");
+  const user = block(schema, "model", "User");
+
+  assert.match(
+    block(schema, "enum", "AccountActivationStatus"),
+    /^\s*ISSUED\s+IN_PROGRESS\s+AUTH_ACCOUNT_CREATED\s+EMAIL_VERIFIED\s+BOUND\s+EXPIRED\s+REVOKED\s+CONFLICT\s*$/,
+  );
+  assert.deepEqual(fieldNames(activation), [
+    "id", "userId", "provider", "status", "tokenDigest", "intendedEmailDigest",
+    "providerSubject", "claimId", "claimedAt", "claimExpiresAt", "expiresAt",
+    "authAccountCreatedAt", "emailVerifiedAt", "boundAt", "expiredAt",
+    "revokedAt", "conflictAt", "createdAt", "updatedAt", "user",
+  ]);
+  assert.match(activation, /tokenDigest\s+String\s+@unique\s+@db\.VarChar\(43\)/);
+  assert.match(activation, /intendedEmailDigest\s+String\s+@db\.VarChar\(43\)/);
+  assert.match(activation, /@@unique\(\[provider, providerSubject\]\)/);
+  assert.match(activation, /@@index\(\[userId\]\)/);
+  assert.match(activation, /@@index\(\[status, expiresAt\]\)/);
+  assert.match(activation, /@@index\(\[claimExpiresAt\]\)/);
+  assert.match(user, /accountActivationIntents\s+AccountActivationIntent\[\]\s+@relation\("UserAccountActivationIntents"\)/);
+  assert.doesNotMatch(activation, /password|verificationToken|resetToken|sessionToken|organizationId/);
+});
+
+test("AuthAuditEvent is minimal, append-only, and independent of organization context", async () => {
+  const schema = await readFile(schemaPath, "utf8");
+  const event = block(schema, "model", "AuthAuditEvent");
+  const user = block(schema, "model", "User");
+  const identity = block(schema, "model", "AuthIdentity");
+
+  assert.deepEqual(fieldNames(event), [
+    "id", "userId", "authIdentityId", "action", "summary", "metadata",
+    "correlationId", "occurredAt", "createdAt", "user", "authIdentity",
+  ]);
+  assert.match(user, /authAuditEvents\s+AuthAuditEvent\[\]\s+@relation\("UserAuthAuditEvents"\)/);
+  assert.match(identity, /auditEvents\s+AuthAuditEvent\[\]\s+@relation\("AuthIdentityAuditEvents"\)/);
+  assert.match(event, /@@index\(\[userId, occurredAt\]\)/);
+  assert.match(event, /@@index\(\[authIdentityId, occurredAt\]\)/);
+  assert.match(event, /@@index\(\[action, occurredAt\]\)/);
+  assert.match(event, /@@index\(\[correlationId\]\)/);
+  assert.match(event, /@@index\(\[occurredAt\]\)/);
+  assert.doesNotMatch(event, /updatedAt|organizationId|providerSubject|email|token|password|ipAddress|userAgent/);
+});

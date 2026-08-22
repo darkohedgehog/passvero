@@ -156,6 +156,17 @@ enum AuthIdentityProvider {
   BETTER_AUTH
 }
 
+enum AccountActivationStatus {
+  ISSUED
+  IN_PROGRESS
+  AUTH_ACCOUNT_CREATED
+  EMAIL_VERIFIED
+  BOUND
+  EXPIRED
+  REVOKED
+  CONFLICT
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -184,6 +195,8 @@ model User {
   auditLogs                AuditLog[]       @relation("UserAuditLogs")
   notifications            Notification[]   @relation("UserNotifications")
   authIdentities           AuthIdentity[]   @relation("UserAuthIdentities")
+  accountActivationIntents AccountActivationIntent[] @relation("UserAccountActivationIntents")
+  authAuditEvents          AuthAuditEvent[]           @relation("UserAuthAuditEvents")
 }
 
 model Organization {
@@ -887,7 +900,58 @@ model AuthIdentity {
   revokedAt       DateTime?
 
   user User @relation("UserAuthIdentities", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  auditEvents AuthAuditEvent[] @relation("AuthIdentityAuditEvents")
 
   @@unique([provider, providerSubject])
   @@index([userId])
+}
+
+model AccountActivationIntent {
+  id                   String                  @id @default(uuid()) @db.Uuid
+  userId               String                  @db.Uuid
+  provider             AuthIdentityProvider    @default(BETTER_AUTH)
+  status               AccountActivationStatus @default(ISSUED)
+  tokenDigest          String                  @unique @db.VarChar(43)
+  intendedEmailDigest  String                  @db.VarChar(43)
+  providerSubject      String?
+  claimId              String?                 @db.Uuid
+  claimedAt            DateTime?
+  claimExpiresAt       DateTime?
+  expiresAt            DateTime
+  authAccountCreatedAt DateTime?
+  emailVerifiedAt      DateTime?
+  boundAt              DateTime?
+  expiredAt             DateTime?
+  revokedAt             DateTime?
+  conflictAt            DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  user User @relation("UserAccountActivationIntents", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+  @@index([status, expiresAt])
+  @@index([claimExpiresAt])
+}
+
+model AuthAuditEvent {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String?  @db.Uuid
+  authIdentityId String?  @db.Uuid
+  action         String
+  summary        String?
+  metadata       Json?
+  correlationId  String
+  occurredAt     DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  user         User?         @relation("UserAuthAuditEvents", fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  authIdentity AuthIdentity? @relation("AuthIdentityAuditEvents", fields: [authIdentityId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([userId, occurredAt])
+  @@index([authIdentityId, occurredAt])
+  @@index([action, occurredAt])
+  @@index([correlationId])
+  @@index([occurredAt])
 }
