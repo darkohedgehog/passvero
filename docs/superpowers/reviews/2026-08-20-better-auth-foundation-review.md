@@ -1,6 +1,12 @@
 # Better Auth Foundation Review
 
-**Status:** Blocked pending architecture review after terminal Better Auth proof failure
+> **Historical evidence — not current architecture authority.** The terminal
+> proof facts in this review remain unchanged. Its cross-boundary transaction
+> gate and candidate persistence contract are superseded by the operator-approved
+> `docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`.
+> Do not execute, retry, or implement this review's candidate contract.
+
+**Status:** Historical terminal evidence; architecture disposition completed separately on 2026-08-22
 **Execution base:** 331f8f1cd29203ee7d8d9364c7324313b75f822f
 **Evidence date:** 2026-08-21
 

@@ -1,12 +1,25 @@
 # Proposed Authentication Persistence Migration Contract
 
-**Status:** `BLOCKED_PENDING_ARCHITECTURE_REVIEW`; candidate inputs only
+**Status:** Historical `BLOCKED_PENDING_ARCHITECTURE_REVIEW` evidence; now
+`SUPERSEDED_NON_IMPLEMENTABLE`; candidate inputs only
+
+> This contract was not approved and must not be used as Stage 13B input. Its
+> cross-boundary transaction, custom provider-session fields, Passvero recovery
+> tokens, and direct lifecycle assumptions are superseded by
+> `docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`.
+> This notice does not rewrite the historical proof evidence below.
 
 **Schema proposal:** `proposed-prisma-fragment.prisma`
 
 **Canonical schema and migration directories changed:** NO
 
+Historical execution marker:
+
 `AUTH_FOUNDATION_PERSISTENCE_CONTRACT=BLOCKED_PENDING_ARCHITECTURE_REVIEW`
+
+Current architecture marker:
+
+`AUTH_FOUNDATION_PERSISTENCE_CONTRACT_DISPOSITION=SUPERSEDED_NON_IMPLEMENTABLE`
 
 This contract retains candidate PostgreSQL inputs for a later reconciliation. It
 is not approved, implementable, executable migration SQL, or migration authority.

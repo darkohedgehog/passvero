@@ -10,6 +10,10 @@
 
 **Spec:** `docs/superpowers/specs/2026-08-19-passvero-auth-dashboard-design.md`
 
+**Approved authentication disposition:** `docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`
+
+**Revision:** Authentication stages reconciled to the operator-approved native-lifecycle disposition on 2026-08-22; documentation only
+
 ## Global Constraints
 
 - The approved Phase 12 specification is authoritative.
@@ -20,7 +24,15 @@
 - Email is never the permanent or runtime authentication-to-`User` binding.
 - Provider subject resolution must reach canonical `User.id` before organization context or permissions are derived.
 - Automatic same-email linking remains disabled.
+- Better Auth owns its native credentials, verification, recovery, and session
+  lifecycle; Passvero does not write provider-owned tables directly.
+- Cross-boundary ACID is not required. Identity binding uses durable states,
+  uniqueness, idempotency, fail-closed access, and reconciliation.
+- Better Auth hooks are non-authoritative.
 - Database-backed opaque sessions are authoritative; cookie cache and Redis remain disabled.
+- Better Auth session tables contain no Passvero organization state or custom
+  rolling-token implementation.
+- Better Auth recovery tokens are not duplicated in Passvero persistence.
 - No organization, role, permission, or entitlement state is trusted from cookies.
 - `proxy.ts` is not a security boundary.
 - Transactional authorization revalidation remains mandatory for business writes.
@@ -36,8 +48,8 @@
 
 | Stage | Deliverable | Requires | Locks for later stages |
 | --- | --- | --- | --- |
-| 13A | Better Auth dependency and persistence review packet | Approved Phase 12 spec | Exact packages, auth table names/fields, `AuthIdentity`, session extensions, abuse/token persistence, reviewed migration contract |
-| 13B | Reviewed auth persistence schema, migration source, and schema tests; no deployment | Approved 13A persistence contract | Canonical model/field names and immutable migration source |
+| 13A | Historical Better Auth review, failed proof, and approved architecture disposition | Approved Phase 12 spec | Native provider lifecycle, Passvero-owned binding/authorization, no cross-boundary ACID or direct provider writes |
+| 13B | Separately authorized auth persistence design, schema, migration source, and schema tests; no deployment | Approved 2026-08-22 disposition and separate plan authority | Reviewed provider schema plus exact Passvero activation, identity, selection, abuse, and necessary reconciliation persistence |
 | 13C | Controlled deployment of the single approved auth migration | Approved 13B migration source and separate deployment authority | Deployed auth persistence baseline |
 | 13D | Better Auth core, provider-neutral identity adapter, and opaque sessions | Completed 13C deployment | `AuthenticatedIdentity`, `CurrentUser`, session access/revocation APIs |
 | 13E | Controlled activation, verified credentials, recovery, password policy, and abuse controls | 13D plus approved email-delivery gate | Credential lifecycle services and shared abuse-control boundary |
@@ -52,22 +64,52 @@
 
 Detailed plan: `docs/superpowers/plans/2026-08-20-passvero-auth-foundation-review.md`
 
-This is the only detailed plan authorized by the currently known interfaces. It is review-only: it may query official package metadata and generate a candidate schema in a temporary directory, but it must not modify `prisma/schema.prisma`, create a repository migration, connect to a database, or add runtime source.
+Stage 13A is closed. Its one-shot transaction proof ended `FAIL` before H1-H7
+executed and selected no runtime or persistence boundary. The research branch and
+candidate migration contract remain historical evidence and are not implementation
+authority.
 
-Exit evidence:
+The operator-approved replacement disposition is
+`docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`.
+It locks:
 
-- exact Better Auth and Prisma-adapter versions;
-- official compatibility references captured on the execution date;
-- untouched raw generated Prisma schema candidate;
-- field-by-field reconciliation against the existing Passvero schema;
-- exact proposed names and constraints for provider tables and Passvero-owned auth support tables;
-- explicit treatment of `authenticatedAt`, server-side organization selection, activation, verification/reset token invalidation, progressive PostgreSQL abuse control, and cleanup/retention;
-- migration-risk and rollback analysis;
-- operator decision record approving or rejecting the schema contract.
+- Better Auth native ownership of credentials, verification, recovery, and
+  sessions;
+- Passvero ownership of activation intent, `AuthIdentity`, session-scoped
+  organization selection, canonical authorization, and reconciliation;
+- fail-closed tenant access for every unbound identity;
+- idempotent cross-boundary reconciliation instead of cross-boundary ACID;
+- non-authoritative Better Auth hooks;
+- no direct Better Auth provider-table writes;
+- no custom provider-session fields, organization state, or rolling-token
+  implementation;
+- no Passvero duplication of Better Auth recovery tokens.
 
 ## Stage 13B: Canonical auth schema and migration source
 
-Generate this detailed plan only after Stage 13A approves exact persistence names and constraints. It may modify `package.json`, `package-lock.json`, `prisma/schema.prisma`, schema tests, and one new migration source. It must demonstrate RED to GREEN for every model, field, relation, index, CHECK, and partial index; preserve all earlier migration hashes; and stop before database deployment.
+Stage 13B is not yet authorized. Its detailed plan requires a separate operator
+decision and must begin from the approved 2026-08-22 disposition rather than the
+blocked Stage 13A candidate migration contract.
+
+When separately authorized, Stage 13B may propose and review:
+
+- the exact Better Auth-generated provider schema required by documented native
+  lifecycle APIs;
+- provider-neutral `AuthIdentity` with unique `(provider, providerSubject)`;
+- Passvero controlled-activation intent;
+- Passvero-owned server-side organization-session selection;
+- Passvero PostgreSQL abuse-control state;
+- only reconciliation metadata justified by concrete lifecycle failures.
+
+It must exclude custom Better Auth session timestamps or organization fields,
+Passvero verification/reset-token duplication, custom rolling token rotation,
+cross-boundary transaction machinery, and direct provider-table writes.
+
+Only after the detailed plan receives separate approval may an execution stage
+modify `package.json`, `package-lock.json`, `prisma/schema.prisma`, schema tests,
+and one new migration source. It must demonstrate RED to GREEN for every approved
+model, field, relation, index, CHECK, and partial index; preserve all earlier
+migration hashes; and stop before database deployment.
 
 ## Stage 13C: Controlled auth migration deployment
 
@@ -75,7 +117,12 @@ Generate this operational plan only after Stage 13B's migration source is commit
 
 ## Stage 13D: Authentication core and identity mapping
 
-Generate this detailed plan only after Stage 13C deploys and reconciles the exact approved persistence baseline. Its independently testable deliverable is server-only Better Auth configuration with public sign-up disabled, opaque database sessions, provider-neutral identity resolution, and revoke-one/revoke-all session operations.
+Generate this detailed plan only after Stage 13C deploys and reconciles the exact
+approved persistence baseline. Its independently testable deliverable is
+server-only Better Auth configuration, controlled credential-creation exposure,
+opaque database sessions, provider-neutral identity resolution, fail-closed
+reconciliation, 30-day absolute-age enforcement, and supported revoke-one/revoke-all
+session operations.
 
 Required interfaces to lock in that plan:
 
@@ -84,6 +131,8 @@ export interface AuthenticatedIdentity {
   readonly provider: "BETTER_AUTH";
   readonly providerSubject: string;
   readonly sessionId: string;
+  // Derived from the documented provider session creation time; not a custom
+  // Better Auth session-table field.
   readonly authenticatedAt: Date;
 }
 
@@ -103,7 +152,12 @@ The plan must include boundary tests proving application/domain modules do not i
 
 ## Stage 13E: Credential lifecycle and abuse controls
 
-Generate this detailed plan only after the email provider, fixed HTTPS application origin, sender identity, bounce/complaint handling, and template languages are approved. Its deliverable includes controlled activation for preprovisioned users, mandatory verification, normal sign-in, reset/change flows, revoke behavior, password blocklists, generic responses, and the shared PostgreSQL abuse boundary.
+Generate this detailed plan only after the email provider, fixed HTTPS application
+origin, sender identity, bounce/complaint handling, and template languages are
+approved. Its deliverable includes staged controlled activation for preprovisioned
+users, idempotent binding reconciliation, mandatory Better Auth-owned verification
+and recovery, normal sign-in, reset/change flows, supported revocation, password
+blocklists, generic responses, and the separate Passvero PostgreSQL abuse boundary.
 
 The plan must preserve these exact values:
 
@@ -114,6 +168,8 @@ The plan must preserve these exact values:
 - session inactivity 7 days;
 - refresh interval 24 hours;
 - absolute session lifetime 30 days;
+- no custom rolling session-token rotation;
+- no Passvero verification/reset-token duplication;
 - risk-triggered Turnstile with server-side validation;
 - no Redis and no permanent lockout.
 
@@ -200,15 +256,18 @@ Release evidence must include:
 - tenant-isolation and transactional-authorization review;
 - redirect-loop, return-path, locale-prefix, and unauthorized-context review;
 - keyboard, screen-reader, focus, contrast, zoom/reflow, and responsive verification;
-- session expiry/rotation/revocation operational checks;
+- session inactivity/absolute-expiry/revocation operational checks;
+- activation reconciliation, hook-loss/duplication, orphan-identity, and
+  ambiguous-provider-response checks;
 - token/log/telemetry redaction review;
 - documented rollback that does not reinterpret failed authentication as authorized access.
 
 ## Planning and execution rule
 
-- [ ] Execute Stage 13A from its detailed plan in a fresh isolated worktree.
-- [ ] Obtain explicit operator approval of the Stage 13A persistence contract.
-- [ ] Write the detailed Stage 13B plan using the approved exact schema names.
+- [x] Preserve the terminal Stage 13A failed proof and historical evidence.
+- [x] Obtain operator approval of the native-lifecycle and fail-closed-reconciliation architecture disposition.
+- [ ] Obtain separate operator authority to write the revised detailed Stage 13B plan.
+- [ ] Review and approve the exact Stage 13B schema contract before any schema execution.
 - [ ] Execute and review Stage 13B, then separately authorize and execute Stage 13C deployment.
 - [ ] Write Stage 13D only after the deployed persistence baseline is reconciled.
 - [ ] Continue one independently testable stage at a time; never batch unresolved gates.

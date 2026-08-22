@@ -1,5 +1,12 @@
 # Passvero Authentication Foundation Review Implementation Plan
 
+> **Historical plan — not executable.** Stage 13A ended in a terminal failed
+> proof. Its cross-boundary transaction and candidate persistence requirements
+> are superseded by
+> `docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`.
+> Retain this file only as review provenance; it grants no schema, migration,
+> dependency, proof, implementation, database, or cleanup authority.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Produce an exact, reviewable Better Auth dependency and Prisma persistence contract for Passvero without changing the canonical schema, creating a migration, connecting to a database, or implementing authentication.

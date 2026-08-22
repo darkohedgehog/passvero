@@ -1,5 +1,11 @@
 # Passvero Better Auth Transaction Proof Implementation Plan
 
+> **Historical consumed plan — do not execute or retry.** The one authorized
+> invocation ended terminal `FAIL` before H1-H7 executed. The proof architecture
+> is superseded by
+> `docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`.
+> Retained proof state remains outside this document's authority.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Produce a fail-closed, review-only PostgreSQL proof that determines whether Better Auth 1.7.1 can remain authoritative for credentials and sessions while its provider writes and Passvero-owned identity, activation, token, and abuse writes share one atomic transaction boundary.

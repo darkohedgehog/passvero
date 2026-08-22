@@ -1,6 +1,6 @@
 # Phase 12: Authentication, Organization Context, and Dashboard Architecture
 
-**Status:** Approved by operator on 2026-08-20
+**Status:** Approved by operator on 2026-08-20; authentication-foundation disposition revised and approved on 2026-08-22
 **Date:** 2026-08-19
 **Repository base:** `4f1dd4e3bf0867b90cc9ad507dd5c7e5ef704ec6`
 **Scope:** Architecture and durable visual reference only; no application, schema, migration, dependency, environment, or production change
@@ -76,20 +76,55 @@ Authoritative references:
 - [Auth.js WebAuthn](https://authjs.dev/getting-started/authentication/webauthn)
 - [Auth.js Prisma adapter](https://authjs.dev/getting-started/adapters/prisma)
 
+### 4.2 Post-Stage 13A architecture disposition
+
+The Stage 13A disposable transaction proof ended `FAIL` before H1-H7 executed.
+It selected no runtime or persistence boundary and did not establish that Better
+Auth's documented lifecycle is unsuitable. Its cross-boundary transaction and
+candidate migration contracts are historical research inputs, not implementation
+contracts.
+
+The approved replacement is:
+
+```text
+AUTH_FOUNDATION_ARCHITECTURE=BETTER_AUTH_NATIVE_LIFECYCLE_WITH_PASSVERO_FAIL_CLOSED_RECONCILIATION
+KEEP_BETTER_AUTH=YES
+CROSS_BOUNDARY_ACID_REQUIRED=NO
+DIRECT_BETTER_AUTH_PROVIDER_TABLE_WRITES=NO
+```
+
+Better Auth owns its native credentials, verification, recovery, and session
+lifecycle. Passvero owns activation intent, provider-neutral identity binding,
+organization selection, canonical tenant authorization, and business decisions.
+Cross-boundary operations use explicit durable states, uniqueness, idempotency,
+and reconciliation. Better Auth hooks may accelerate reconciliation but are never
+authoritative.
+
+The normative disposition record is
+`docs/superpowers/reviews/2026-08-22-better-auth-native-lifecycle-disposition.md`.
+
 ## 5. Provider-neutral identity mapping
 
-Better Auth's native user table is separate from Passvero `User`. A future reviewed migration must add a dedicated provider-neutral `AuthIdentity` concept with, at minimum:
+Better Auth's native user table is separate from Passvero `User`. Better Auth
+provider tables remain provider-owned and Passvero must not mutate them directly.
+A future reviewed migration must add a dedicated provider-neutral `AuthIdentity`
+concept with, at minimum:
 
 - a stable internal identifier;
 - `provider`;
 - opaque `providerSubject` containing the stable Better Auth user identifier;
 - a required foreign key to canonical `User.id`;
 - a unique constraint on `(provider, providerSubject)`;
-- timestamps needed for lifecycle and auditability.
+- creation and explicit revocation lifecycle metadata justified by schema review.
 
 The architecture supports multiple identities per canonical user. Email is never the runtime identity key or permanent binding. It may participate in a controlled initial activation only after verified ownership.
 
-Automatic same-email linking is disabled. Linking must be explicit, controlled, transactional, and fail closed on conflicts. An authenticated but unbound identity receives no tenant access. Every authenticated request must resolve server-side in this order:
+Automatic same-email linking is disabled. Initial linking must be explicit,
+controlled, idempotent, and fail closed on conflicts. `AuthIdentity` creation or
+revocation and its Passvero audit event are transactional within Passvero-owned
+tables; the Better Auth operation is not part of that transaction. An
+authenticated but unbound identity receives no tenant access. Every authenticated
+request must resolve server-side in this order:
 
 `opaque session token → Better Auth session/user → AuthIdentity(provider, subject) → Passvero User.id → Membership/Organization → permissions`
 
@@ -105,21 +140,29 @@ Normative lifetime rules:
 
 - inactivity timeout: 7 days;
 - refresh interval: 24 hours;
-- absolute timeout: 30 days from server-owned `authenticatedAt`;
+- absolute timeout: 30 days from the documented provider session creation time,
+  enforced at the Passvero authentication-context boundary;
 - rolling expiration: enabled within the absolute limit;
-- token rotation: enabled;
-- rotation preserves `authenticatedAt`;
+- custom rolling session-token rotation: disabled;
 - the absolute limit requires full reauthentication;
 - client activity cannot bypass expiration;
 - revoke-all-sessions is required;
 - password reset revokes every session;
-- authenticated password change revokes other sessions and rotates the current session.
+- authenticated password change revokes other sessions, revokes the current
+  session, and requires normal sign-in.
 
-A future reviewed Prisma migration must persist any `authenticatedAt` extension not provided by the generated Better Auth schema. Expired or revoked sessions cannot retain organization context.
+Passvero must not add or mutate custom lifetime fields in the Better Auth session
+table. A session at or beyond the absolute boundary is denied before organization
+context is derived and is revoked through a documented Better Auth API where
+possible. Repeating the absolute-age check on every protected request preserves
+fail-closed access even if revocation is temporarily unavailable. Expired or
+revoked sessions cannot retain usable organization context.
 
 ## 7. Organization context
 
-Organization context is a server-side session selection. It is not authorization evidence.
+Organization context is a server-side session selection. It is not authorization
+evidence. Selection state belongs to Passvero-owned persistence keyed to the
+provider session identity; it must not be stored in Better Auth provider tables.
 
 Eligible membership requires both `MembershipStatus.ACTIVE` and an active organization. One eligible membership is auto-selected. Multiple eligible memberships require `/dashboard/select-organization`. No eligible membership, an unbound identity, an inactive membership, or a suspended/deactivated organization produces the safe no-access state at `/dashboard/access`.
 
@@ -137,7 +180,16 @@ Platform administration is a separate boundary from membership roles. An organiz
 
 Initial sign-in is verified email and password only. Public self-registration and tenant creation are disabled. Account creation uses controlled activation of a preprovisioned Passvero `User`.
 
-An activation capability is opaque, single-use, expiring, and bound to canonical `User.id`; email alone never authorizes activation. The user must prove control of the intended email. Credential creation and `AuthIdentity` binding are one transaction and fail closed on collisions. No session or tenant access exists before successful completion. Existing internal production accounts require a separate operator-controlled activation procedure.
+An activation capability is opaque, single-use, expiring, and bound to canonical
+`User.id`; email alone never authorizes activation. The user must prove control of
+the intended email. Passvero first claims a durable activation intent, then calls
+a documented Better Auth credential operation outside the Passvero transaction,
+then transactionally finalizes `AuthIdentity`, activation state, and the binding
+audit event. Duplicate, concurrent, ambiguous, and interrupted operations reconcile
+idempotently from durable state. A collision fails closed. An unbound Better Auth
+identity, including one with a transient provider session, receives no tenant
+access. Existing internal production accounts require a separate
+operator-controlled activation procedure.
 
 Primary threats and controls:
 
@@ -147,7 +199,7 @@ Primary threats and controls:
 | Credential stuffing | Progressive database limits, compromised-password checks, risk-triggered Turnstile |
 | Brute force | Account digest plus trusted-network and combined buckets; progressive backoff |
 | Token theft | Opaque single-use tokens, fixed HTTPS origin, no logs, referrer protection |
-| Session theft/fixation | Secure host-only cookie, rotation, database authority, revocation |
+| Session theft/fixation | Secure host-only cookie, provider database authority, absolute-age enforcement, and revocation |
 | Cross-tenant access | Canonical identity mapping and transactional tenant revalidation |
 | Link confusion | No automatic same-email linking; transactional fail-closed binding |
 | Open redirect | Allowlisted relative return paths only |
@@ -166,6 +218,11 @@ The implementation must combine:
 - progressive backoff without permanent lockout.
 
 Success must not erase all global evidence of an active attack. Retention, pruning, atomic counters, concurrency behavior, and operational visibility require implementation review. Generic responses are required across sign-in, activation, verification, and reset.
+
+Abuse-control decisions and outcomes are Passvero-owned but do not share a
+transaction with Better Auth. Failure to obtain the pre-attempt decision fails
+closed. A post-attempt telemetry write failure is operationally reconciled and
+does not roll back or reproduce a provider credential operation.
 
 ## 11. Bot protection
 
@@ -187,11 +244,23 @@ Password policy follows NIST-aligned single-factor guidance:
 - compromised, common, and contextual passwords blocked;
 - no plaintext password is transmitted to an external breach service.
 
-Better Auth owns credential hashing using its reviewed default unless a later security review approves a change. The UI must expose correct autocomplete semantics and must not interfere with password managers.
+Better Auth owns credential persistence and lifecycle. Passvero validates the
+approved password policy before calling Better Auth. If NFC compatibility requires
+a custom hash/verify callback, it must use Better Auth's documented extension
+surface and receive separate security review; the Stage 13A experimental password
+envelope is not normative. The UI must expose correct autocomplete semantics and
+must not interfere with password managers.
 
-Email verification tokens are opaque, single-use, expire after 24 hours, and a newly issued token invalidates its predecessors. Password reset tokens are opaque, single-use, expire after 30 minutes, and a newly issued token invalidates its predecessors.
+Better Auth owns email-verification and password-reset tokens. Passvero must not
+duplicate those tokens or their lifecycle in a parallel credential-token table.
+Verification tokens are opaque, single-use under the pinned provider contract,
+and expire after 24 hours. Password-reset tokens are opaque, single-use under the
+pinned provider contract, and expire after 30 minutes. Replay behavior requires
+public-contract tests. Strict predecessor invalidation may be required only through
+a documented Better Auth contract; if unavailable, implementation stops for an
+explicit security disposition rather than introducing duplicate provider tokens.
 
-Authentication links are generated only from a configured fixed HTTPS application origin; the untrusted `Host` header is forbidden. Tokens must not be logged and pages must prevent referrer leakage. Reset responses are generic. Reset revokes all sessions, does not auto-sign-in, and requires normal sign-in afterward. Password changes send a security notification. Authenticated password change requires the current password, revokes other sessions, and rotates the current session.
+Authentication links are generated only from a configured fixed HTTPS application origin; the untrusted `Host` header is forbidden. Tokens must not be logged and pages must prevent referrer leakage. Reset responses are generic. Reset revokes all sessions, does not auto-sign-in, and requires normal sign-in afterward. Password changes send a security notification. Authenticated password change requires the current password, revokes other sessions, revokes the current session, and requires normal sign-in.
 
 References: [NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html) and [OWASP Forgot Password Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html).
 
@@ -355,7 +424,12 @@ Errors are categorized as field validation, generic authentication failure, safe
 
 ## 30. Testing strategy
 
-Implementation requires unit, integration, route, component accessibility, and end-to-end coverage. Tests must cover identity resolution, unbound identities, session expiry/rotation/revocation, activation transactions, password lifecycle, membership changes, organization switching, cross-tenant resources, and each permission boundary.
+Implementation requires unit, integration, route, component accessibility, and
+end-to-end coverage. Tests must cover identity resolution, unbound identities,
+session inactivity/absolute expiry and revocation, staged activation and
+reconciliation failures, provider token replay, password lifecycle, membership
+changes, organization switching, cross-tenant resources, and each permission
+boundary.
 
 Database tests use only the repository's fail-closed `TEST_DATABASE_URL` boundary. They never fall back to `DATABASE_URL` and never target production.
 
@@ -367,9 +441,14 @@ Authentication/dashboard implementation is incomplete until review evidence conf
 - [ ] Better Auth Organization plugin, public sign-up, OAuth, magic links, MFA, and passkeys remain disabled.
 - [ ] Provider subject resolves to `AuthIdentity` and canonical `User.id`; email is not a runtime binding.
 - [ ] Automatic same-email account linking is absent and conflicts fail closed.
-- [ ] Session cookies, database authority, rotation, inactivity, absolute expiry, and revoke-all behavior match this specification.
+- [ ] No application code directly writes Better Auth provider-owned tables or injects a Passvero cross-boundary transaction.
+- [ ] Session cookies, provider database authority, inactivity, Passvero absolute-age enforcement, and revoke-all behavior match this specification.
+- [ ] No custom Better Auth session fields, organization state, or rolling-token mutation are present.
 - [ ] Password normalization, length, compromised/common/contextual blocklists, and password-manager semantics are verified.
-- [ ] Verification, activation, and reset tokens are opaque, single-use, correctly expiring, superseding, and absent from logs/referrers.
+- [ ] Better Auth owns verification/reset tokens; Passvero owns only activation capabilities and does not duplicate provider recovery tokens.
+- [ ] Verification, activation, and reset replay/expiry behavior is tested and tokens are absent from logs/referrers.
+- [ ] Interrupted, duplicate, concurrent, ambiguous-response, callback-loss, and orphan-identity reconciliation cases deny tenant access and recover idempotently.
+- [ ] Better Auth hooks are non-authoritative and loss or duplication cannot grant access.
 - [ ] Fixed HTTPS link origin is used; untrusted host headers cannot influence links.
 - [ ] Progressive PostgreSQL abuse controls cover trusted networks, normalized account digests, combined buckets, IPv6, and global volume.
 - [ ] Turnstile is risk-triggered and validated server-side.
@@ -402,7 +481,9 @@ This section establishes sequencing constraints, not an implementation plan:
 
 1. Approved design specification and durable reference.
 2. Separately approved implementation plan.
-3. Manually reviewed Better Auth, `AuthIdentity`, session-extension, and abuse-control schema proposal and migration.
+3. Manually reviewed Better Auth, `AuthIdentity`, activation-intent,
+   Passvero-owned session-selection, and abuse-control schema proposal and
+   migration; no custom provider-session or duplicate recovery-token fields.
 4. Authentication foundation, activation, verification, recovery, and abuse controls.
 5. Canonical identity and organization-context resolution with route-state tests.
 6. Passvero UI primitives and MVP dashboard routes.
@@ -414,7 +495,10 @@ No phase may consume a later phase's authority. Schema review is separate from m
 
 The following are not open placeholders; they are explicit later gates:
 
-- **Auth schema gate:** approve exact Better Auth-generated tables, names, relations, indexes, constraints, `AuthIdentity`, `authenticatedAt`, and abuse-control persistence before migration creation.
+- **Auth schema gate:** approve exact Better Auth-generated tables, names,
+  relations, indexes, and constraints plus Passvero-owned `AuthIdentity`,
+  activation-intent, session-selection, abuse-control, and only demonstrably
+  necessary reconciliation persistence before migration creation.
 - **Email gate:** select and review the transactional email provider, templates, deliverability controls, and operational handling before auth email implementation.
 - **MFA/passkey gate:** approve threat model, recovery, enrollment, schema, and UX before enabling either plugin.
 - **OAuth/linking gate:** approve provider list and explicit linking proof before any social provider.
