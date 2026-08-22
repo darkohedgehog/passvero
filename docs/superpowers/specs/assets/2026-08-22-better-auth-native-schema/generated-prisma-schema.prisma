@@ -1,0 +1,76 @@
+
+// Unmodified Better Auth 1.7.1 native-lifecycle generator output.
+// Stage 13B evidence only; never migrate this standalone file directly.
+
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AuthProviderUser {
+  id                   String                @id
+  name                 String
+  email                String
+  emailVerified        Boolean               @default(false)
+  image                String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  authprovidersessions AuthProviderSession[]
+  authprovideraccounts AuthProviderAccount[]
+
+  @@unique([email])
+  @@map("AuthProviderUser")
+}
+
+model AuthProviderSession {
+  id               String           @id
+  expiresAt        DateTime
+  token            String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  ipAddress        String?
+  userAgent        String?
+  userId           String
+  authprovideruser AuthProviderUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("AuthProviderSession")
+}
+
+model AuthProviderAccount {
+  id                    String           @id
+  issuer                String
+  accountId             String
+  providerId            String
+  userId                String
+  authprovideruser      AuthProviderUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  @@unique([issuer, accountId], map: "AuthProviderAccount_issuer_accountId_uidx")
+  @@index([userId])
+  @@map("AuthProviderAccount")
+}
+
+model AuthProviderVerification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("AuthProviderVerification")
+}

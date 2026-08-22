@@ -13,8 +13,15 @@ const migrationContractPath =
 const rawCandidatePath =
   "docs/superpowers/specs/assets/2026-08-20-better-auth-foundation/generated-prisma-schema.prisma";
 const stage13aBase = "331f8f1cd29203ee7d8d9364c7324313b75f822f";
+const stage13aFinal = "aa2244de926093fa77260c911b28ff810cca8a17";
 const rawGeneratorBodySha256 =
   "7034757e4505ccf015ca00b46c373dfdd3de2c40f0e5b20ce0608446c4b5909e";
+
+function readStage13aFile(path) {
+  return execFileSync("git", ["show", `${stage13aFinal}:${path}`], {
+    encoding: "utf8",
+  });
+}
 
 function modelBlock(schema, modelName) {
   return schema.match(new RegExp(`model ${modelName}\\s*\\{[\\s\\S]*?^\\}`, "m"))?.[0];
@@ -527,7 +534,7 @@ test("password contract preserves NFC equivalence and rejects the Better Auth de
   );
 });
 
-test("review stage leaves implementation paths unchanged", async () => {
+test("historical review stage left implementation paths unchanged", async () => {
   const review = await readFile(reviewPath, "utf8");
   const matrixRows = [
     "| Next.js 16 and React 19 compatibility | **PASS** |",
@@ -552,14 +559,14 @@ test("review stage leaves implementation paths unchanged", async () => {
   assert.match(review, /migration and exit approval is deferred/i);
   assert.doesNotMatch(review, /material cost is the sole unresolved operator decision/i);
 
-  const packageJson = await readFile("package.json", "utf8");
+  const packageJson = readStage13aFile("package.json");
   assert.doesNotMatch(packageJson, /"better-auth"/);
-  const canonicalSchema = await readFile("prisma/schema.prisma", "utf8");
+  const canonicalSchema = readStage13aFile("prisma/schema.prisma");
   assert.doesNotMatch(canonicalSchema, /model AuthProviderUser\s*\{/);
   assert.doesNotMatch(canonicalSchema, /model AuthIdentity\s*\{/);
 });
 
-test("cumulative Stage 13A diff leaves every forbidden implementation path untouched", () => {
+test("historical cumulative Stage 13A diff left forbidden implementation paths untouched", () => {
   const forbiddenPaths = [
     "package.json",
     "package-lock.json",
@@ -580,7 +587,7 @@ test("cumulative Stage 13A diff leaves every forbidden implementation path untou
   ];
   const diff = execFileSync(
     "git",
-    ["diff", "--name-only", stage13aBase, "--", ...forbiddenPaths],
+    ["diff", "--name-only", stage13aBase, stage13aFinal, "--", ...forbiddenPaths],
     { encoding: "utf8" },
   );
   assert.equal(diff, "");
