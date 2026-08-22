@@ -57,6 +57,15 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "Notification",
     "IntegrationMapping",
     "BackgroundJob",
+    "AuthProviderUser",
+    "AuthProviderSession",
+    "AuthProviderAccount",
+    "AuthProviderVerification",
+    "AuthIdentity",
+    "AccountActivationIntent",
+    "AuthAuditEvent",
+    "AuthSessionSelection",
+    "AuthAbuseBucket",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -79,6 +88,10 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "IntegrationMappingStatus",
     "BackgroundJobScope",
     "BackgroundJobStatus",
+    "AuthIdentityProvider",
+    "AccountActivationStatus",
+    "AuthAbuseDimension",
+    "AuthAbuseEndpoint",
   ]);
 });
 

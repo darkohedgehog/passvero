@@ -58,6 +58,15 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "Notification",
     "IntegrationMapping",
     "BackgroundJob",
+    "AuthProviderUser",
+    "AuthProviderSession",
+    "AuthProviderAccount",
+    "AuthProviderVerification",
+    "AuthIdentity",
+    "AccountActivationIntent",
+    "AuthAuditEvent",
+    "AuthSessionSelection",
+    "AuthAbuseBucket",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -80,6 +89,10 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "IntegrationMappingStatus",
     "BackgroundJobScope",
     "BackgroundJobStatus",
+    "AuthIdentityProvider",
+    "AccountActivationStatus",
+    "AuthAbuseDimension",
+    "AuthAbuseEndpoint",
   ]);
   assert.match(
     block(schema, "enum", "ScanDeviceType"),

@@ -208,3 +208,105 @@ test("AuthAbuseBucket stores only keyed progressive counters", async () => {
   assert.match(bucket, /@@index\(\[expiresAt\]\)/);
   assert.doesNotMatch(bucket, /email|ipAddress|network|userId|organizationId|providerSubject|token|password/);
 });
+
+test("auth migration creates exactly the approved additive objects", async () => {
+  const sql = await readStageMigration();
+  const expectedEnums = [
+    "AccountActivationStatus", "AuthAbuseDimension", "AuthAbuseEndpoint",
+    "AuthIdentityProvider",
+  ].sort();
+  const expectedTables = [
+    "AccountActivationIntent", "AuthAbuseBucket", "AuthAuditEvent", "AuthIdentity",
+    "AuthProviderAccount", "AuthProviderSession", "AuthProviderUser",
+    "AuthProviderVerification", "AuthSessionSelection",
+  ].sort();
+
+  assert.deepEqual(
+    [...sql.matchAll(/CREATE TYPE "(\w+)"/g)].map((match) => match[1]).sort(),
+    expectedEnums,
+  );
+  assert.deepEqual(
+    [...sql.matchAll(/CREATE TABLE "(\w+)"/g)].map((match) => match[1]).sort(),
+    expectedTables,
+  );
+  assert.equal([...sql.matchAll(/FOREIGN KEY/g)].length, 7);
+  assert.doesNotMatch(
+    sql,
+    /\b(DROP|TRUNCATE|INSERT INTO|UPDATE .+ SET|DELETE FROM|CREATE FUNCTION|CREATE TRIGGER|CREATE POLICY|CREATE VIEW|CREATE MATERIALIZED VIEW|PARTITION BY|GRANT|REVOKE)\b/,
+  );
+  assert.doesNotMatch(sql, /ALTER TABLE "(?:User|Organization|Membership|Invitation|Product|AuditLog)"/);
+});
+
+test("auth migration preserves provider ownership and separation", async () => {
+  const sql = await readStageMigration();
+  const providerSession = sql.match(/CREATE TABLE "AuthProviderSession" \(([\s\S]*?)\n\);/);
+  const identity = sql.match(/CREATE TABLE "AuthIdentity" \(([\s\S]*?)\n\);/);
+
+  assert.ok(providerSession);
+  assert.ok(identity);
+  assert.doesNotMatch(providerSession[1], /authenticatedAt|lastRefreshAt|selectedOrganizationId|organization|role|permission/);
+  assert.doesNotMatch(identity[1], /email|organization|membership|role|permission|AuthProviderUser/);
+  assert.doesNotMatch(sql, /AuthCredentialToken/);
+  assert.doesNotMatch(
+    sql,
+    /FOREIGN KEY \("providerSubject"\) REFERENCES "AuthProviderUser"/,
+  );
+});
+
+test("manual auth constraints enforce revocation, activation, abuse, and audit invariants", async () => {
+  const sql = await readStageMigration();
+  const requiredConstraints = [
+    "ck_auth_identity_revocation_order",
+    "ck_account_activation_intent_digests",
+    "ck_account_activation_intent_expiry",
+    "ck_account_activation_intent_claim",
+    "ck_account_activation_intent_milestones",
+    "ck_account_activation_intent_state",
+    "ck_account_activation_intent_terminal_state",
+    "ck_account_activation_intent_timestamp_order",
+    "ck_auth_abuse_bucket_digest",
+    "ck_auth_abuse_bucket_counts",
+    "ck_auth_abuse_bucket_timestamp_order",
+    "ck_auth_audit_event_action",
+    "ck_auth_audit_event_summary",
+    "ck_auth_audit_event_correlation",
+  ];
+
+  for (const name of requiredConstraints) {
+    assert.match(sql, new RegExp(`CONSTRAINT "${name}"`));
+  }
+  assert.match(
+    sql,
+    /CREATE UNIQUE INDEX "ux_account_activation_intent_one_active_per_user"[\s\S]*?WHERE "status" IN \('ISSUED', 'IN_PROGRESS', 'AUTH_ACCOUNT_CREATED', 'EMAIL_VERIFIED'\)/,
+  );
+});
+
+test("all pre-Stage 13B migration sources retain their reviewed hashes", async () => {
+  const approvedMigrations = new Map([
+    ["20260717191316_init_identity_domain", "347ada303ff4cc2495301b400955e0d89cf743fd1990dd27b9f6bb6889ecf0f6"],
+    ["20260720170638_add_product_core_and_passport", "0395328af8ebd574ed7b8ad9d3b532233ea015c5f91dd02040e3ca877cd8442d"],
+    ["20260720172426_add_product_translation", "05b0eba12925bba3d7b0ac7b6108a1e1c0057d305c233a7c90d75bcd4118e8fa"],
+    ["20260720173610_add_product_identifier", "62be095ca5f0349105281a7ac72009c306a8c72da7cd5bfdb5832c6838dce288"],
+    ["20260720175253_add_product_material", "41d4e2cc5857213ca6ccc65ce700b704fa590e375049d1dc317d6376f2b61737"],
+    ["20260720182219_add_document_asset", "cb08e7305980f907343f464ba2519e22d2c3b7ba1ed833da88b58e20c6455e3f"],
+    ["20260720184244_add_product_document", "777c2d4ccb60599235013e76868673a3b1298fe73b7a8147cb7c758af8288c74"],
+    ["20260720190323_add_product_image", "617932a5b88328541ca656b3123e66789772513a0ee67b5ebff97e48735e4525"],
+    ["20260721163104_add_qr_code", "2f1174adc82388e34225f29df56863e601c929c7a7ef2bb9749a63ae170c8dae"],
+    ["20260721173458_add_scan_event", "89e069a2e5e53c517169da6f598480e511a7253f66b738236aa643cedc9154d0"],
+    ["20260721180144_add_audit_log", "187195dc4f664e1e66f30978da4fd39a733b866c6602ba088b78863a992e4685"],
+    ["20260721182339_add_plan", "402ebb2d4fd11bf08201b080ae72fe77bd1464c9a86a0aa2f514edfb40c56761"],
+    ["20260721190547_add_subscription", "ee40fc679466c1fe484b1f208d07dac6c533ecd32b8a9d84638a066bbcaba440"],
+    ["20260722171607_add_notification", "d71c44c01edbf56e905a88cddc223716454b10a396681ee0ce14ef85fc013f5b"],
+    ["20260722180124_add_integration_mapping", "368783ae2a1895ca2aeb5f53af1dd6a2f21b29ac22127be001b30b0ea052e4ab"],
+    ["20260722184010_add_background_job", "167d74bed2928834bf0dc0ec57923702e51acecd2836c3f1c35ad96b1a3ebeda"],
+  ]);
+
+  for (const [directory, expectedHash] of approvedMigrations) {
+    const sql = await readFile(new URL(`${directory}/migration.sql`, migrationsPath), "utf8");
+    assert.equal(
+      createHash("sha256").update(sql).digest("hex"),
+      expectedHash,
+      `${directory} migration source changed`,
+    );
+  }
+});

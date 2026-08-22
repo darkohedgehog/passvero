@@ -58,6 +58,15 @@ test("Phase 4 adds only AuditLog and no enum", async () => {
     "Notification",
     "IntegrationMapping",
     "BackgroundJob",
+    "AuthProviderUser",
+    "AuthProviderSession",
+    "AuthProviderAccount",
+    "AuthProviderVerification",
+    "AuthIdentity",
+    "AccountActivationIntent",
+    "AuthAuditEvent",
+    "AuthSessionSelection",
+    "AuthAbuseBucket",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -80,6 +89,10 @@ test("Phase 4 adds only AuditLog and no enum", async () => {
     "IntegrationMappingStatus",
     "BackgroundJobScope",
     "BackgroundJobStatus",
+    "AuthIdentityProvider",
+    "AccountActivationStatus",
+    "AuthAbuseDimension",
+    "AuthAbuseEndpoint",
   ]);
   assert.doesNotMatch(schema, /^enum Audit(?:Action|EntityType|Category|Severity|ActorType)\b/m);
 });

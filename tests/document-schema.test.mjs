@@ -58,6 +58,15 @@ test("Phase 2C.1 retains Document and DocumentStatus", async () => {
     "Notification",
     "IntegrationMapping",
     "BackgroundJob",
+    "AuthProviderUser",
+    "AuthProviderSession",
+    "AuthProviderAccount",
+    "AuthProviderVerification",
+    "AuthIdentity",
+    "AccountActivationIntent",
+    "AuthAuditEvent",
+    "AuthSessionSelection",
+    "AuthAbuseBucket",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -80,6 +89,10 @@ test("Phase 2C.1 retains Document and DocumentStatus", async () => {
     "IntegrationMappingStatus",
     "BackgroundJobScope",
     "BackgroundJobStatus",
+    "AuthIdentityProvider",
+    "AccountActivationStatus",
+    "AuthAbuseDimension",
+    "AuthAbuseEndpoint",
   ]);
 });
 
