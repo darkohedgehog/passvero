@@ -167,6 +167,23 @@ enum AccountActivationStatus {
   CONFLICT
 }
 
+enum AuthAbuseDimension {
+  TRUSTED_NETWORK
+  ACCOUNT_IDENTIFIER
+  ACCOUNT_AND_TRUSTED_NETWORK
+  GLOBAL_ENDPOINT
+}
+
+enum AuthAbuseEndpoint {
+  SIGN_IN
+  ACTIVATE_ACCOUNT
+  EMAIL_VERIFICATION_REQUEST
+  EMAIL_VERIFICATION_CONSUME
+  PASSWORD_RESET_REQUEST
+  PASSWORD_RESET_CONSUME
+  PASSWORD_CHANGE
+}
+
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -228,6 +245,7 @@ model Organization {
   notifications       Notification[]       @relation("OrganizationNotifications")
   integrationMappings IntegrationMapping[] @relation("OrganizationIntegrationMappings")
   backgroundJobs      BackgroundJob[]      @relation("OrganizationBackgroundJobs")
+  authSessionSelections AuthSessionSelection[] @relation("OrganizationAuthSessionSelections")
 
   @@index([status])
   @@index([createdAt])
@@ -954,4 +972,39 @@ model AuthAuditEvent {
   @@index([action, occurredAt])
   @@index([correlationId])
   @@index([occurredAt])
+}
+
+model AuthSessionSelection {
+  id                     String               @id @default(uuid()) @db.Uuid
+  provider               AuthIdentityProvider
+  providerSessionId      String
+  selectedOrganizationId String               @db.Uuid
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  selectedOrganization Organization @relation("OrganizationAuthSessionSelections", fields: [selectedOrganizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([provider, providerSessionId])
+  @@index([selectedOrganizationId])
+}
+
+model AuthAbuseBucket {
+  id              String             @id @default(uuid()) @db.Uuid
+  dimension       AuthAbuseDimension
+  endpoint        AuthAbuseEndpoint
+  keyDigest       String             @db.VarChar(43)
+  attemptCount    Int                @default(0)
+  failureCount    Int                @default(0)
+  backoffLevel    Int                @default(0)
+  windowStartedAt DateTime
+  lastAttemptAt   DateTime
+  lastFailureAt   DateTime?
+  blockedUntil    DateTime?
+  expiresAt       DateTime
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@unique([dimension, endpoint, keyDigest])
+  @@index([endpoint, dimension, blockedUntil])
+  @@index([expiresAt])
 }

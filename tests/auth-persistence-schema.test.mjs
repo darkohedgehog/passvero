@@ -165,3 +165,46 @@ test("AuthAuditEvent is minimal, append-only, and independent of organization co
   assert.match(event, /@@index\(\[occurredAt\]\)/);
   assert.doesNotMatch(event, /updatedAt|organizationId|providerSubject|email|token|password|ipAddress|userAgent/);
 });
+
+test("AuthSessionSelection is provider-neutral selection only", async () => {
+  const schema = await readFile(schemaPath, "utf8");
+  const selection = block(schema, "model", "AuthSessionSelection");
+  const organization = block(schema, "model", "Organization");
+
+  assert.deepEqual(fieldNames(selection), [
+    "id", "provider", "providerSessionId", "selectedOrganizationId",
+    "createdAt", "updatedAt", "selectedOrganization",
+  ]);
+  assert.match(selection, /@@unique\(\[provider, providerSessionId\]\)/);
+  assert.match(selection, /@@index\(\[selectedOrganizationId\]\)/);
+  assert.match(
+    selection,
+    /selectedOrganization\s+Organization\s+@relation\("OrganizationAuthSessionSelections", fields: \[selectedOrganizationId\], references: \[id\], onDelete: Cascade, onUpdate: Cascade\)/,
+  );
+  assert.match(organization, /authSessionSelections\s+AuthSessionSelection\[\]\s+@relation\("OrganizationAuthSessionSelections"\)/);
+  assert.doesNotMatch(selection, /userId|membership|role|permission|status|entitlement|billing|token|expiresAt/);
+});
+
+test("AuthAbuseBucket stores only keyed progressive counters", async () => {
+  const schema = await readFile(schemaPath, "utf8");
+  const bucket = block(schema, "model", "AuthAbuseBucket");
+
+  assert.match(
+    block(schema, "enum", "AuthAbuseDimension"),
+    /^\s*TRUSTED_NETWORK\s+ACCOUNT_IDENTIFIER\s+ACCOUNT_AND_TRUSTED_NETWORK\s+GLOBAL_ENDPOINT\s*$/,
+  );
+  assert.match(
+    block(schema, "enum", "AuthAbuseEndpoint"),
+    /^\s*SIGN_IN\s+ACTIVATE_ACCOUNT\s+EMAIL_VERIFICATION_REQUEST\s+EMAIL_VERIFICATION_CONSUME\s+PASSWORD_RESET_REQUEST\s+PASSWORD_RESET_CONSUME\s+PASSWORD_CHANGE\s*$/,
+  );
+  assert.deepEqual(fieldNames(bucket), [
+    "id", "dimension", "endpoint", "keyDigest", "attemptCount", "failureCount",
+    "backoffLevel", "windowStartedAt", "lastAttemptAt", "lastFailureAt",
+    "blockedUntil", "expiresAt", "createdAt", "updatedAt",
+  ]);
+  assert.match(bucket, /keyDigest\s+String\s+@db\.VarChar\(43\)/);
+  assert.match(bucket, /@@unique\(\[dimension, endpoint, keyDigest\]\)/);
+  assert.match(bucket, /@@index\(\[endpoint, dimension, blockedUntil\]\)/);
+  assert.match(bucket, /@@index\(\[expiresAt\]\)/);
+  assert.doesNotMatch(bucket, /email|ipAddress|network|userId|organizationId|providerSubject|token|password/);
+});
