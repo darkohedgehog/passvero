@@ -146,6 +146,12 @@ uses secret-safe session-state assertions. This successor was not executed.
 It supplies no H1-H7 observation, does not change the terminal overall `FAIL`,
 and grants no authority to retry the one-shot proof.
 
+`EXCEPTIONAL_H5_SECRET_SAFE_ASSERTION_SUCCESSOR=UNEXECUTED`: the separately
+authorized successor replaces only two guard-loss object assertions with
+generic allowlisted stop codes and adds static regression coverage. It was not
+executed, supplies no H1-H7 observation, and does not change or retry the
+terminal proof.
+
 ## Provider-model and canonical identity reconciliation
 
 The proposed provider-compatible identity models are kept separate from

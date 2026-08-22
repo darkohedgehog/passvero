@@ -73,7 +73,7 @@ const TASK_10_ORCHESTRATION_HASHES = new Map([
   ["test/direct-boundary.test.ts", "5f6100dbf8bd6c07d95a1ff7ba17283d371c59c108555ae04c0ad08e0cbd8dc7"],
   ["test/handler-boundary.test.ts", "e91ff34540943448e4f4cdccfa95064867c701e876921c1caec09f1c7c679501"],
   ["test/controlled-activation.test.ts", "06420fea8cfd17d9f85a0af53a20d6aed3f00c385b367a15d5358ef1dda5cd7a"],
-  ["test/session-boundary.test.ts", "c827336807319d5b49c0d1ffb46cfca8fb21fa3bb0d092d23cbf1a84481e6f32"],
+  ["test/session-boundary.test.ts", "28ba17eda01245befd3196e8ef5bce779126ad9d21543ba6d5d85f8bc795ee80"],
   ["test/recovery-boundary.test.ts", "9f2c27ca7f2271c1931a30cdabddcbcc8484b86ed9c136acd3056eadf3461736"],
   ["test/route-boundary.test.ts", "43d7b7d0412b9d447431d8b6d1678e810e6f10c0e6634bf96650aee2a0d9a855"],
 ]);
@@ -82,6 +82,8 @@ const TASK_10_EXECUTED_ORCHESTRATION_HASHES = new Map([
   ["test/harness-contract.test.ts", "b61eeda3136f937fb034f9612099f74da3bc7c82b4b38996f270fe87cb82d769"],
   ["test/session-boundary.test.ts", "7a54228f168829f72c169c48ab15dab7f916825f26897b81d79972eba6f273b7"],
 ]);
+const TASK_10_FINAL_REVIEW_SUCCESSOR_SESSION_HASH =
+  "c827336807319d5b49c0d1ffb46cfca8fb21fa3bb0d092d23cbf1a84481e6f32";
 const TASK_10_EXECUTED_NATIVE_TRANSACTION_HASH =
   "e83a2cf4537e51345781d0999bd89d58b6f29a34e83528fc4a2357065ae118ba";
 const TASK_10_POST_PROOF_LINT_SUCCESSOR_NATIVE_TRANSACTION_HASH =
@@ -90,7 +92,7 @@ const TASK_10_EXECUTED_RUNNER_HASH = "214bfc8806bba13da533908a6179335592da44d9f1
 const TASK_10_RUNNER_HASH = "7716a7d703659517d521896fa7dc5711f8bde98e64d08258d3dd9103199b81c0";
 const TASK_10_SHELL_SIMULATION_HASH = "aeacc38f11cac1094befafb422b824bba521c1676d4e5e3bfa76e57b35bdb8a8";
 const TASK_10_FAILURE_EVIDENCE_JSON_HASH = "a266b49904e2e6f6cf3d479cf9424fcc35fdbe0fd744b73d864f5e052f162b8a";
-const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "4777abc2d84e60d8a6f7a0dae5d93d2275543aff928ee8f3e6aa747078213a43";
+const TASK_10_FAILURE_EVIDENCE_MARKDOWN_HASH = "c5901ffc6782f8a6ec9df1368016087c6b2daacbad0091f52dba5a42c2e1b726";
 const REVIEWED_HARNESS_LOCKFILE_HASH = "afc199a95a6c0de4fc98a61d14f04093436dc10f1d86b2c371afef5a2815fd27";
 
 const REQUIRED_HYPOTHESIS_IDS = [
@@ -245,6 +247,11 @@ test("the deterministic proof harness has the complete pinned artifact map", asy
       `${relativePath} final-review successor must not be represented as historically executed`,
     );
   }
+  assert.notEqual(
+    createHash("sha256").update(sources.get("test/session-boundary.test.ts")).digest("hex"),
+    TASK_10_FINAL_REVIEW_SUCCESSOR_SESSION_HASH,
+    "exceptional H5 assertion successor must remain distinct from the unexecuted final-review successor",
+  );
   const nativeTransactionSource = sources.get("test/native-transaction.test.ts");
   const nativeTransactionHash = createHash("sha256")
     .update(nativeTransactionSource)
@@ -673,9 +680,12 @@ test("session-boundary assertion failures cannot serialize live token or session
   assert.ok(liveStart > 0, "live H5 proof test missing");
   const liveSource = source.slice(liveStart);
   assert.doesNotMatch(liveSource, /assert\.deepEqual\([\s\S]{0,160}sessionByToken\(/);
+  assert.doesNotMatch(liveSource, /assert\.equal\(\s*staleGuardLoss\.value\s*,\s*null/);
+  assert.doesNotMatch(liveSource, /assert\.equal\(\s*guardLoss\.value\s*,\s*null/);
   assert.match(source, /assertSessionStateUnchanged/);
   assert.match(source, /STOP_H5_SESSION_STATE_DRIFT/);
   assert.match(source, /failure reporting omits protected session values/);
+  assert.match(source, /guard-loss failure reporting omits returned session values/);
 });
 
 test("the historical Stage 13A fix report is prominently superseded", async () => {
@@ -754,10 +764,10 @@ test("the terminal proof reconciliation is deterministic, redacted, and blocks p
     "POST-EXECUTION RECONCILIATION: this corrected public artifact was not generated",
     "by the publisher executed at `d1f350627c3da72feaa18eb5416ff17e07db81a8`.",
     "Historical execution facts remain pinned to that commit. The later post-proof",
-    "`prefer-const` and final-review hardening successors were not executed, and the",
-    "proof was not rerun. The final-review successor adds static-only SQL-stream,",
-    "installed-source, Git-ignore, and secret-safe assertion guards; it has no",
-    "runtime observations or retry authority.",
+    "`prefer-const`, final-review hardening, and exceptional H5 assertion successors",
+    "were not executed, and the proof was not rerun. The exceptional successor makes",
+    "only the two H5 guard-loss assertions secret-safe; it has no runtime observations",
+    "or retry authority.",
     "The JSON file is the authoritative corrected public record; this Markdown is",
     "its companion.",
     "",
@@ -819,6 +829,7 @@ test("the terminal proof reconciliation is deterministic, redacted, and blocks p
     assert.match(source, /historical execution source.*d1f3506/is);
     assert.match(source, /successor (?:source )?was not\s+executed/i);
     assert.match(source, /FINAL_REVIEW_STATIC_SUCCESSOR=UNEXECUTED/);
+    assert.match(source, /EXCEPTIONAL_H5_SECRET_SAFE_ASSERTION_SUCCESSOR=UNEXECUTED/);
     assert.doesNotMatch(source, /PostgreSQL connection performed: YES, exactly once/i);
     assert.doesNotMatch(source, /AUTH_FOUNDATION_PERSISTENCE_CONTRACT=APPROVAL_READY/);
     assert.doesNotMatch(source, /BETTER_AUTH_RUNTIME_BOUNDARY=/);

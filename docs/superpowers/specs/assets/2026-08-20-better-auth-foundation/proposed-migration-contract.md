@@ -122,6 +122,12 @@ uses secret-safe session-state assertions. This successor was not executed.
 It supplies no H1-H7 observation, does not change the terminal overall `FAIL`,
 and does not make this candidate contract implementable or authorize a retry.
 
+`EXCEPTIONAL_H5_SECRET_SAFE_ASSERTION_SUCCESSOR=UNEXECUTED`: the separately
+authorized successor replaces only two guard-loss object assertions with
+generic allowlisted stop codes and adds static regression coverage. It was not
+executed, supplies no H1-H7 observation, and does not make this candidate
+contract implementable or authorize a retry.
+
 ## Exact candidate table inputs
 
 ### `AuthProviderUser`

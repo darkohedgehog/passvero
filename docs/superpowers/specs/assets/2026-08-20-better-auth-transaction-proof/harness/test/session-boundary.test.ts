@@ -420,6 +420,15 @@ function assertSessionStateUnchanged(actual: SessionProofRecord, expected: Sessi
   assertProtectedShapeEqual(actual, expected, "STOP_H5_SESSION_STATE_DRIFT");
 }
 
+type GuardLossReason = "STALE" | "EXPIRY" | "INACTIVITY" | "ABSOLUTE";
+
+function assertGuardLossReturnedNoSession(
+  value: SessionProofRecord | null,
+  reason: GuardLossReason,
+): void {
+  if (value !== null) throw new Error(`STOP_H5_${reason}_GUARD_RETURNED_SESSION`);
+}
+
 function guardedSessionIncrementAdapter(initial: SessionProofRecord): {
   readonly adapter: Pick<DBAdapter, "incrementOne">;
   readonly calls: Readonly<Record<string, unknown>>[];
@@ -510,6 +519,25 @@ test("failure reporting omits protected session values", () => {
   assert.equal(failure instanceof Error, true);
   assert.equal(failure instanceof Error ? failure.message : "", "STOP_H5_SESSION_STATE_DRIFT");
   assert.doesNotMatch(String(failure), /protected-session-capability-never-report|different-protected-capability/);
+});
+
+test("guard-loss failure reporting omits returned session values", () => {
+  const returnedSession = sessionAt({
+    authenticatedAt: new Date("2026-08-01T00:00:00.000Z"),
+    token: "protected-returned-session-token-never-report",
+  });
+  let failure: unknown;
+  try {
+    assertGuardLossReturnedNoSession(returnedSession, "STALE");
+  } catch (error: unknown) {
+    failure = error;
+  }
+  assert.equal(failure instanceof Error, true);
+  assert.equal(failure instanceof Error ? failure.message : "", "STOP_H5_STALE_GUARD_RETURNED_SESSION");
+  assert.doesNotMatch(
+    String(failure),
+    /protected-returned-session-token-never-report|session-id|provider-user-id|selected-organization-id/,
+  );
 });
 
 test("server-owned anchors use one instant and expose no client override input", () => {
@@ -1347,7 +1375,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
       rotatedToken: randomBytes(32).toString("base64url"),
       now: refreshNow,
     });
-    assert.equal(staleGuardLoss.value, null);
+    assertGuardLossReturnedNoSession(staleGuardLoss.value, "STALE");
     assert.equal(staleGuardLoss.cookie.present, false);
     assert.equal(await providerSessionCount(prisma, userId), staleCountBefore);
     assertSessionStateUnchanged(await sessionByToken(prisma, refreshToken), staleStoredBefore);
@@ -1376,7 +1404,7 @@ test("live H5 uses controlled activation and exercises sign-in, rotation, and pa
         rotatedToken: randomBytes(32).toString("base64url"),
         now: deadlineNow,
       });
-      assert.equal(guardLoss.value, null, deadline);
+      assertGuardLossReturnedNoSession(guardLoss.value, deadline);
       assert.equal(guardLoss.cookie.present, false, deadline);
       assert.equal(await providerSessionCount(prisma, userId), countBefore, deadline);
       assertSessionStateUnchanged(await sessionByToken(prisma, callerSnapshot.token), storedBefore);

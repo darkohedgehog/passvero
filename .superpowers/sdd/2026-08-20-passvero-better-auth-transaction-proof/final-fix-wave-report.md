@@ -118,3 +118,75 @@ proof-state contents remain unchanged.
 
 Fix-wave commit: this report is committed with the cohesive successor change;
 the exact commit is returned in the final handoff.
+
+## Exceptional final H5 secret-safe assertion fix
+
+### Authorization, scope, and provenance
+
+- Operator authorization:
+  `AUTHORIZE_STAGE_13A_EXCEPTIONAL_FINAL_H5_SECRET_SAFE_ASSERTION_FIX=YES`.
+- Exceptional-fix base:
+  `5cdfb1852da7a84d7063e1a7f81452d3d74ee3ff`.
+- This is a static-only, explicitly `UNEXECUTED` successor. Historical executed
+  source remains `d1f350627c3da72feaa18eb5416ff17e07db81a8`.
+- `run-proof.sh --all` was not invoked. Permanent invocation count remains 1,
+  retry count remains 0, and the proof MUST NOT be retried.
+- Overall `FAIL`, H1-H7 `NOT_EXECUTED`, `STOP_PRE_EVIDENCE_FAILURE`, cleanup
+  `FAIL_RETAINED` with `rootGone=false`, blocked persistence, no selected
+  runtime boundary, and the non-implementable candidate migration remain
+  unchanged.
+
+### Correction and regression
+
+- Replaced only the two live H5 guard-loss assertions that passed
+  `staleGuardLoss.value` and `guardLoss.value` to `assert.equal`.
+- The replacement checks only whether a returned value is non-null and throws
+  a generic allowlisted `STOP_H5_<reason>_GUARD_RETURNED_SESSION` code; no
+  returned session object or field is passed to assertion/error formatting.
+- Added a forced non-null regression containing a distinct raw token and
+  identifying session values. It requires the exact generic stop code and
+  proves the thrown/reportable error contains none of those protected values.
+- The repository artifact contract rejects both unsafe `assert.equal` forms,
+  retains the earlier deep-assertion prohibition, requires the forced-failure
+  regression, and pins the exceptional session-test hash separately from the
+  historical executed and prior unexecuted final-review hashes.
+
+### RED and GREEN evidence
+
+- RED command:
+  `node --test --test-name-pattern='session-boundary assertion failures' tests/auth-foundation-transaction-proof-artifacts.test.mjs`.
+  Result before the H5 source correction: 0/1 PASS, 1/1 FAIL at the new
+  `staleGuardLoss.value` unsafe-form prohibition, confirming the contract
+  detected the reviewed defect.
+- Focused GREEN command: the same command after correction. Result: 1/1 PASS.
+- Coupled artifact/provenance command:
+  `node --test --test-name-pattern='complete pinned artifact map|session-boundary assertion failures|terminal proof reconciliation' tests/auth-foundation-transaction-proof-artifacts.test.mjs`.
+  Result: 3/3 PASS.
+- Full safe source/artifact command: `node --test tests/*.test.mjs`. Result:
+  189/189 PASS, 0 failures, `SOURCE_CONTRACT=PASS`.
+- Lint command: `npm run lint`. Result: exit 0, 0 errors, 15 pre-existing
+  warnings.
+- Directly coupled syntax/static command:
+  `bash -n docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/run-proof.sh && node --check docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/source-integrity.mjs && git diff --check`.
+  Result: PASS (exit 0).
+
+### Changed files and self-review
+
+- Changed the H5 session-boundary test, the repository artifact/source
+  contract, the evidence companion provenance, the foundation review, the
+  proposed migration contract, and this report only.
+- Self-review confirmed both cited unsafe live assertions are absent; the
+  helper's error text is derived only from the closed `GuardLossReason` union;
+  the forced-failure error excludes token, session ID, provider user ID, and
+  selected-organization values; current/historical successor hashes remain
+  distinct; and all terminal evidence assertions remain unchanged.
+
+### Exclusions
+
+No PostgreSQL or Prisma database command, server startup, network/package
+install, environment/secret/credential access, application runtime/config,
+canonical schema/migration, generated client, warning cleanup, or unrelated
+refactor was performed. Retained proof-state files and contents were not
+enumerated, opened, read, modified, moved, staged, or deleted. The canonical
+installer-dependent static gate and standalone dependency-requiring harness
+suite were not invoked.
