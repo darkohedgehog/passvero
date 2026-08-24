@@ -7,6 +7,11 @@ const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf
 const runtimePath = "src/infrastructure/auth/better-auth-server.ts";
 const databaseConfigPath = "src/infrastructure/auth/auth-database-config.ts";
 const serverConfigPath = "src/infrastructure/auth/better-auth-server-config.ts";
+const sessionReaderPath = "src/infrastructure/auth/better-auth-session-reader.ts";
+const identityReaderPath = "src/infrastructure/auth/prisma-auth-identity-reader.ts";
+const currentUserResolutionPath =
+  "src/infrastructure/auth/provider-neutral-session-resolution.ts";
+const applicationResolutionPath = "src/application/auth/resolve-current-user.ts";
 
 const listTypeScriptFiles = (directory) => readdirSync(
   new URL(`../${directory}`, import.meta.url),
@@ -63,4 +68,21 @@ test("adds no auth HTTP route in the foundation slice", () => {
 
   assert.equal(applicationRoutes.some((path) => /(?:^|\/)api\/auth(?:\/|$)/.test(path)), false);
   assert.equal(applicationRoutes.some((path) => /\[\.\.\..*\]/.test(path)), false);
+});
+
+test("keeps provider-session and canonical-identity persistence isolated", () => {
+  const providerSource = `${read(runtimePath)}\n${read(sessionReaderPath)}`;
+  const businessSource = read(identityReaderPath);
+  const applicationSource = read(applicationResolutionPath);
+  const compositionSource = read(currentUserResolutionPath);
+
+  assert.match(compositionSource, /^import "server-only";/);
+  assert.match(compositionSource, /getBetterAuthServer/);
+  assert.match(compositionSource, /getProductionPrismaClient/);
+  assert.doesNotMatch(providerSource, /authIdentity\.|\.user\.findUnique/);
+  assert.doesNotMatch(
+    businessSource,
+    /getBetterAuthServer|AuthProvider(?:User|Session|Account|Verification)/,
+  );
+  assert.doesNotMatch(applicationSource, /better-auth|\btoken\b|\bemail\b/i);
 });
