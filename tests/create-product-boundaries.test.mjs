@@ -58,7 +58,7 @@ test("keeps CreateProduct independent from transport and generic persistence", (
   assert.match(persistenceSource, /PRODUCT_CREATED/);
 });
 
-test("keeps generated Prisma access inside the CreateProduct adapter", () => {
+test("keeps generated Prisma access inside approved infrastructure adapters", () => {
   const sourceFiles = [
     ...listTypeScriptFiles("src/application"),
     ...listTypeScriptFiles("src/domain"),
@@ -69,6 +69,7 @@ test("keeps generated Prisma access inside the CreateProduct adapter", () => {
   ).sort();
 
   assert.deepEqual(generatedClientImporters, [
+    "src/infrastructure/auth/better-auth-server.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product.ts",
     "src/infrastructure/persistence/prisma/production-prisma-runtime.ts",
