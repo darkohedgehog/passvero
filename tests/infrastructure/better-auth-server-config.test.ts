@@ -71,12 +71,20 @@ test("never exposes candidate secrets or origins through validation errors", () 
 
 test("builds only the frozen provider models, session policy, and host-only cookie policy", () => {
   const database = (() => undefined) as NonNullable<BetterAuthOptions["database"]>;
+  const password = {
+    async hash(value: string) {
+      return `hash:${value.length}`;
+    },
+    async verify() {
+      return false;
+    },
+  };
   const config = validateBetterAuthServerConfig({
     secret: validSecret,
     baseURL: "https://passvero.eu",
   });
 
-  const options = createBetterAuthServerOptions(config, database);
+  const options = createBetterAuthServerOptions(config, database, password);
 
   assert.equal(options.appName, "Passvero");
   assert.equal(options.database, database);
@@ -101,7 +109,13 @@ test("builds only the frozen provider models, session policy, and host-only cook
     },
   });
   assert.deepEqual(options.telemetry, { enabled: false });
-  assert.equal(options.emailAndPassword, undefined);
+  assert.deepEqual(options.emailAndPassword, {
+    enabled: true,
+    disableSignUp: true,
+    minPasswordLength: 1,
+    maxPasswordLength: 256,
+    password,
+  });
   assert.equal(options.socialProviders, undefined);
   assert.equal(options.plugins, undefined);
   assert.equal(options.secondaryStorage, undefined);

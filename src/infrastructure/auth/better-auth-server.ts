@@ -7,6 +7,7 @@ import { Pool } from "pg";
 
 import { PrismaClient } from "@/src/generated/prisma/client";
 import { validateAuthDatabaseUrl } from "@/src/infrastructure/auth/auth-database-config";
+import { betterAuthPasswordCallbacks } from "@/src/infrastructure/auth/better-auth-password";
 import {
   createBetterAuthServerOptions,
   validateBetterAuthServerConfig,
@@ -53,7 +54,9 @@ function createBetterAuthServer(): BetterAuthServer {
   const prisma = getAuthPrismaLifecycle().getRuntime().client;
   const database = prismaAdapter(prisma, { provider: "postgresql" });
 
-  return betterAuth(createBetterAuthServerOptions(config, database));
+  return betterAuth(
+    createBetterAuthServerOptions(config, database, betterAuthPasswordCallbacks),
+  );
 }
 
 export function getBetterAuthServer(): BetterAuthServer {

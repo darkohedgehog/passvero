@@ -85,6 +85,9 @@ export function validateBetterAuthServerConfig(input: {
 export function createBetterAuthServerOptions(
   config: BetterAuthServerConfig,
   database: NonNullable<BetterAuthOptions["database"]>,
+  password: NonNullable<
+    NonNullable<BetterAuthOptions["emailAndPassword"]>["password"]
+  >,
 ): BetterAuthOptions {
   return {
     appName: "Passvero",
@@ -92,6 +95,13 @@ export function createBetterAuthServerOptions(
     secret: config.secret,
     baseURL: config.baseURL,
     trustedOrigins: [...config.trustedOrigins],
+    emailAndPassword: {
+      enabled: true,
+      disableSignUp: true,
+      minPasswordLength: 1,
+      maxPasswordLength: 256,
+      password,
+    },
     user: { modelName: "AuthProviderUser" },
     session: {
       modelName: "AuthProviderSession",

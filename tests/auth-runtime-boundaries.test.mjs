@@ -12,6 +12,9 @@ const identityReaderPath = "src/infrastructure/auth/prisma-auth-identity-reader.
 const currentUserResolutionPath =
   "src/infrastructure/auth/provider-neutral-session-resolution.ts";
 const applicationResolutionPath = "src/application/auth/resolve-current-user.ts";
+const passwordPolicyPath = "src/application/auth/password-policy.ts";
+const passwordCorePath = "src/infrastructure/auth/better-auth-password-core.ts";
+const passwordBoundaryPath = "src/infrastructure/auth/better-auth-password.ts";
 
 const listTypeScriptFiles = (directory) => readdirSync(
   new URL(`../${directory}`, import.meta.url),
@@ -85,4 +88,24 @@ test("keeps provider-session and canonical-identity persistence isolated", () =>
     /getBetterAuthServer|AuthProvider(?:User|Session|Account|Verification)/,
   );
   assert.doesNotMatch(applicationSource, /better-auth|\btoken\b|\bemail\b/i);
+});
+
+test("keeps password policy provider-neutral and credential callbacks server-only", () => {
+  const policySource = read(passwordPolicyPath);
+  const coreSource = read(passwordCorePath);
+  const boundarySource = read(passwordBoundaryPath);
+  const runtimeSource = read(runtimePath);
+  const serverConfigSource = read(serverConfigPath);
+  const credentialSource = `${policySource}\n${coreSource}\n${boundarySource}`;
+
+  assert.doesNotMatch(policySource, /better-auth|infrastructure\/auth|AuthProviderAccount/);
+  assert.match(boundarySource, /^import "server-only";/);
+  assert.match(runtimeSource, /betterAuthPasswordCallbacks/);
+  assert.match(serverConfigSource, /disableSignUp:\s*true/);
+  assert.match(serverConfigSource, /minPasswordLength:\s*1/);
+  assert.match(serverConfigSource, /maxPasswordLength:\s*256/);
+  assert.doesNotMatch(
+    credentialSource,
+    /AuthProviderAccount|AuthAuditEvent|PrismaClient|\bfetch\s*\(|console\.(?:log|debug|info|warn|error)/,
+  );
 });
