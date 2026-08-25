@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
@@ -26,13 +26,15 @@ test("keeps Nodemailer and environment access behind lazy server-only boundaries
   assert.doesNotMatch(core, /process\.env|rejectUnauthorized|tls:/);
 });
 
-test("adds no auth, activation, verification, reset, signup, or login HTTP route", () => {
-  const routes = readdirSync(new URL("../app", import.meta.url), {
-    recursive: true,
-  }).map(String);
+test("keeps the Stage 13C.4 lifecycle free of HTTP transport concerns", () => {
+  const lifecycle = [
+    "src/application/auth/controlled-activation.ts",
+    "src/application/auth/password-recovery.ts",
+    "src/application/auth/change-password.ts",
+    "src/infrastructure/auth/stage13c4-auth-lifecycle.ts",
+  ].map(read).join("\n");
 
-  assert.equal(routes.some((path) => /(?:auth|login|signup|activate|reset|verify)/i.test(path)), false);
-  assert.equal(routes.some((path) => /\[\.\.\./.test(path)), false);
+  assert.doesNotMatch(lifecycle, /NextRequest|NextResponse|export const (?:GET|POST)|toNextJsHandler/);
 });
 
 test("keeps provider writes inside Better Auth and business writes inside business Prisma", () => {

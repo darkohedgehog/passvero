@@ -65,13 +65,10 @@ test("keeps Better Auth and the auth Prisma boundary out of application and doma
   );
 });
 
-test("adds no auth HTTP route in the foundation slice", () => {
-  const applicationRoutes = readdirSync(new URL("../app", import.meta.url), {
-    recursive: true,
-  }).map(String);
+test("keeps the auth database foundation independent from HTTP transport", () => {
+  const foundation = `${read(runtimePath)}\n${read(databaseConfigPath)}\n${read(serverConfigPath)}`;
 
-  assert.equal(applicationRoutes.some((path) => /(?:^|\/)api\/auth(?:\/|$)/.test(path)), false);
-  assert.equal(applicationRoutes.some((path) => /\[\.\.\..*\]/.test(path)), false);
+  assert.doesNotMatch(foundation, /NextRequest|NextResponse|export const (?:GET|POST)|toNextJsHandler/);
 });
 
 test("keeps provider-session and canonical-identity persistence isolated", () => {

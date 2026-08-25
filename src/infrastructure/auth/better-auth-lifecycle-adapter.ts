@@ -128,6 +128,7 @@ export function createBetterAuthLifecycleAdapter(
 
 export function createBetterAuthLifecycleCallbacks(
   emailSender: AuthEmailSender,
+  canonicalOrigin: string,
   hooks: {
     readonly onEmailVerified?: (input: {
       readonly providerSubject: string;
@@ -147,7 +148,7 @@ export function createBetterAuthLifecycleCallbacks(
       await emailSender.send({
         type: "VERIFY_EMAIL",
         recipient: data.user.email,
-        verificationUrl: data.url,
+        verificationUrl: mapVerificationUrl(data.url, canonicalOrigin),
       });
     },
     async afterEmailVerification(user: {
@@ -166,7 +167,7 @@ export function createBetterAuthLifecycleCallbacks(
       await emailSender.send({
         type: "PASSWORD_RESET",
         recipient: data.user.email,
-        resetUrl: data.url,
+        resetUrl: mapResetPasswordUrl(data.url, canonicalOrigin),
       });
     },
     async onPasswordReset(data: {
@@ -178,4 +179,65 @@ export function createBetterAuthLifecycleCallbacks(
       });
     },
   };
+}
+
+function mapVerificationUrl(value: string, canonicalOrigin: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error("Verification email transport URL is invalid.");
+  }
+  const tokenValues = parsed.searchParams.getAll("token");
+  const callbackValues = parsed.searchParams.getAll("callbackURL");
+  const allowedParameters = [...parsed.searchParams.keys()].every(
+    (key) => key === "token" || key === "callbackURL",
+  );
+  if (
+    parsed.origin !== canonicalOrigin
+    || parsed.pathname !== "/api/auth/verify-email"
+    || parsed.username !== ""
+    || parsed.password !== ""
+    || parsed.hash !== ""
+    || tokenValues.length !== 1
+    || tokenValues[0] === ""
+    || callbackValues.length > 1
+    || !allowedParameters
+  ) {
+    throw new Error("Verification email transport URL is invalid.");
+  }
+  const target = new URL("/api/auth/verification/consume", canonicalOrigin);
+  target.searchParams.set("token", tokenValues[0]);
+  return target.toString();
+}
+
+function mapResetPasswordUrl(value: string, canonicalOrigin: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error("Password reset email transport URL is invalid.");
+  }
+  const callbackValues = parsed.searchParams.getAll("callbackURL");
+  const allowedParameters = [...parsed.searchParams.keys()].every(
+    (key) => key === "callbackURL",
+  );
+  const token = parsed.pathname.startsWith("/api/auth/reset-password/")
+    ? parsed.pathname.slice("/api/auth/reset-password/".length)
+    : "";
+  if (
+    parsed.origin !== canonicalOrigin
+    || parsed.username !== ""
+    || parsed.password !== ""
+    || parsed.hash !== ""
+    || !/^[A-Za-z0-9_-]{1,256}$/.test(token)
+    || callbackValues.length !== 1
+    || callbackValues[0] !== `${canonicalOrigin}/auth/reset-password`
+    || !allowedParameters
+  ) {
+    throw new Error("Password reset email transport URL is invalid.");
+  }
+  const target = new URL("/auth/reset-password", canonicalOrigin);
+  target.searchParams.set("token", token);
+  return target.toString();
 }

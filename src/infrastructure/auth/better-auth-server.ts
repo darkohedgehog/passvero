@@ -47,6 +47,7 @@ const runtimeGlobal = globalThis as typeof globalThis & {
 function createLifecycleCallbacks(baseURL: string) {
   return createBetterAuthLifecycleCallbacks(
     createLazyAuthEmailSender(baseURL),
+    baseURL,
     {
       async onEmailVerified(input) {
         const handler = runtimeGlobal.__passveroBetterAuthEmailVerifiedHandler;

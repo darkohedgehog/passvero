@@ -1,0 +1,2 @@
+import { getExplicitAuthHttpTransport } from "@/src/infrastructure/auth/explicit-auth-http-runtime";
+export const POST = (request: Request) => getExplicitAuthHttpTransport().signIn(request);

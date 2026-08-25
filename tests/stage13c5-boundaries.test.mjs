@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -35,13 +35,10 @@ test("contains no header trust, real Turnstile network, Redis, env, or provider-
   assert.doesNotMatch(source, /authProvider(?:User|Session|Account|Verification)\./);
 });
 
-test("adds no public auth route, server action, or UI surface", () => {
-  const appRoot = path.join(root, "app");
-  const paths = walk(appRoot).map((entry) => path.relative(root, entry));
-  assert.equal(paths.some((entry) => /auth.*route\.(?:ts|tsx)$/.test(entry)), false);
-  assert.equal(paths.some((entry) => /turnstile|captcha/i.test(entry)), false);
+test("keeps Stage 13C.5 free of HTTP handlers, server actions, and UI concerns", () => {
   for (const sourcePath of stageSources) {
     assert.doesNotMatch(read(sourcePath), /^["']use server["'];/m);
+    assert.doesNotMatch(read(sourcePath), /NextRequest|NextResponse|export const (?:GET|POST)|TurnstileWidget/);
   }
 });
 
@@ -50,10 +47,3 @@ test("keeps package, Prisma schema, migrations, and local env outside Stage 13C.
   assert.equal(stageSources.some((entry) => entry.startsWith("prisma/")), false);
   assert.equal(stageSources.some((entry) => /\.env/.test(entry)), false);
 });
-
-function walk(directory) {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const target = path.join(directory, entry.name);
-    return entry.isDirectory() ? walk(target) : [target];
-  });
-}

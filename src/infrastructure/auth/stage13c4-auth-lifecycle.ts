@@ -56,6 +56,8 @@ export function createStage13c4AuthLifecycle(input: {
       now: () => new Date(),
     }),
     passwordRecovery: createPasswordRecoveryService({ provider }),
+    requestEmailVerification: (email: string) =>
+      provider.requestEmailVerification(email),
     changePassword: createAuthenticatedPasswordChangeService({
       provider,
       emailSender,
