@@ -49,6 +49,10 @@ test("resolves an active provider subject to the canonical current user", async 
   assert.deepEqual(result, {
     status: "AUTHENTICATED",
     currentUser: { userId: "canonical-user-1" },
+    providerSession: {
+      provider: "BETTER_AUTH",
+      providerSessionId: "provider-session-1",
+    },
   });
   assert.deepEqual(harness.calls, [{
     provider: "BETTER_AUTH",

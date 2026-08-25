@@ -29,7 +29,14 @@ export type CurrentUserResolutionFailure =
   | "CANONICAL_USER_NOT_FOUND";
 
 export type CurrentUserResolution =
-  | { readonly status: "AUTHENTICATED"; readonly currentUser: CurrentUser }
+  | {
+    readonly status: "AUTHENTICATED";
+    readonly currentUser: CurrentUser;
+    readonly providerSession: Pick<
+      AuthenticatedIdentity,
+      "provider" | "providerSessionId"
+    >;
+  }
   | {
     readonly status: "UNAUTHENTICATED";
     readonly reason: CurrentUserResolutionFailure;
@@ -72,7 +79,14 @@ export function createCurrentUserResolver(dependencies: {
       return unauthenticated("CANONICAL_USER_NOT_FOUND");
     }
 
-    return { status: "AUTHENTICATED", currentUser: binding.currentUser };
+    return {
+      status: "AUTHENTICATED",
+      currentUser: binding.currentUser,
+      providerSession: {
+        provider: identity.provider,
+        providerSessionId: identity.providerSessionId,
+      },
+    };
   };
 }
 

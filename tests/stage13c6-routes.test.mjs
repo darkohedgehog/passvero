@@ -6,6 +6,7 @@ import test from "node:test";
 const root = path.resolve(import.meta.dirname, "..");
 const approved = [
   "app/api/auth/activate/route.ts",
+  "app/api/auth/context-smoke/route.ts",
   "app/api/auth/password/change/route.ts",
   "app/api/auth/password-reset/consume/route.ts",
   "app/api/auth/password-reset/request/route.ts",
@@ -15,7 +16,7 @@ const approved = [
   "app/api/auth/verification/request/route.ts",
 ].sort();
 
-test("exposes exactly the eight approved explicit auth routes", () => {
+test("exposes the eight Stage 13C.6 routes plus the one Stage 13C.7 smoke route", () => {
   assert.deepEqual(authRoutes(), approved);
   assert.equal(approved.some((entry) => entry.includes("[...")), false);
   assert.equal(approved.some((entry) => /sign-up|signup|oauth|magic|passkey|mfa/i.test(entry)), false);
@@ -23,7 +24,8 @@ test("exposes exactly the eight approved explicit auth routes", () => {
 });
 
 test("keeps routes as thin Passvero-owned handlers without catch-all capabilities", () => {
-  const source = approved.map((entry) => readFileSync(path.join(root, entry), "utf8")).join("\n");
+  const stage13c6Routes = approved.filter((entry) => !entry.includes("context-smoke"));
+  const source = stage13c6Routes.map((entry) => readFileSync(path.join(root, entry), "utf8")).join("\n");
   assert.doesNotMatch(source, /signUpEmail|AuthProvider(?:User|Session|Account|Verification)/);
   assert.doesNotMatch(source, /Organization|Membership|AuthSessionSelection|dashboard/i);
   assert.doesNotMatch(source, /\[\.\.\.|betterAuthHandler|toNextJsHandler/);

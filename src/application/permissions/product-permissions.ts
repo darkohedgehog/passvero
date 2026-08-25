@@ -24,3 +24,9 @@ export function roleHasProductPermission(
 ): boolean {
   return rolePermissions[role].includes(permission);
 }
+
+export function permissionsForMembershipRole(
+  role: MembershipRole,
+): readonly ProductPermission[] {
+  return rolePermissions[role];
+}
