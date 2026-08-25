@@ -5,7 +5,7 @@ import { createRequire } from "node:module";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const REVIEW_ROOT = "/private/tmp/passvero-better-auth-review-1-7-1";
+const REVIEW_ROOT = process.cwd();
 const RECONCILED_REVIEW = path.join(
   process.cwd(),
   "docs/superpowers/reviews/2026-08-20-better-auth-foundation-review.md",

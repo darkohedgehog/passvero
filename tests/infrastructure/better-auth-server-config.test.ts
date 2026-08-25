@@ -5,6 +5,7 @@ import type { BetterAuthOptions } from "better-auth";
 
 import {
   BetterAuthServerConfigError,
+  createControlledActivationBetterAuthServerOptions,
   createBetterAuthServerOptions,
   validateBetterAuthServerConfig,
 } from "../../src/infrastructure/auth/better-auth-server-config";
@@ -84,7 +85,18 @@ test("builds only the frozen provider models, session policy, and host-only cook
     baseURL: "https://passvero.eu",
   });
 
-  const options = createBetterAuthServerOptions(config, database, password);
+  const lifecycle = {
+    sendVerificationEmail: async () => undefined,
+    afterEmailVerification: async () => undefined,
+    sendResetPassword: async () => undefined,
+    onPasswordReset: async () => undefined,
+  };
+  const options = createBetterAuthServerOptions(
+    config,
+    database,
+    password,
+    lifecycle,
+  );
 
   assert.equal(options.appName, "Passvero");
   assert.equal(options.database, database);
@@ -112,11 +124,48 @@ test("builds only the frozen provider models, session policy, and host-only cook
   assert.deepEqual(options.emailAndPassword, {
     enabled: true,
     disableSignUp: true,
+    requireEmailVerification: true,
+    autoSignIn: false,
+    resetPasswordTokenExpiresIn: 60 * 30,
+    revokeSessionsOnPasswordReset: true,
+    sendResetPassword: lifecycle.sendResetPassword,
+    onPasswordReset: lifecycle.onPasswordReset,
     minPasswordLength: 1,
     maxPasswordLength: 256,
     password,
   });
+  assert.deepEqual(options.emailVerification, {
+    expiresIn: 60 * 60 * 24,
+    autoSignInAfterVerification: false,
+    sendOnSignUp: false,
+    sendVerificationEmail: lifecycle.sendVerificationEmail,
+    afterEmailVerification: lifecycle.afterEmailVerification,
+  });
   assert.equal(options.socialProviders, undefined);
   assert.equal(options.plugins, undefined);
   assert.equal(options.secondaryStorage, undefined);
+});
+
+test("enables signup only in the private controlled-activation composition", () => {
+  const database = (() => undefined) as NonNullable<BetterAuthOptions["database"]>;
+  const password = {
+    hash: async () => "hash",
+    verify: async () => true,
+  };
+  const config = validateBetterAuthServerConfig({
+    secret: validSecret,
+    baseURL: "https://passvero.eu",
+  });
+  const normal = createBetterAuthServerOptions(config, database, password);
+  const controlled = createControlledActivationBetterAuthServerOptions(
+    config,
+    database,
+    password,
+  );
+
+  assert.equal(normal.emailAndPassword?.disableSignUp, true);
+  assert.equal(controlled.emailAndPassword?.disableSignUp, false);
+  assert.equal(controlled.emailAndPassword?.autoSignIn, false);
+  assert.equal(controlled.emailAndPassword?.requireEmailVerification, true);
+  assert.equal(controlled.emailVerification?.sendOnSignUp, false);
 });

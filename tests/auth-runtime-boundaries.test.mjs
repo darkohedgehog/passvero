@@ -46,6 +46,7 @@ test("exports the Better Auth server and shutdown only, never the auth Prisma cl
 
   assert.deepEqual(exportedFunctions, [
     "getBetterAuthServer",
+    "getBetterAuthLifecycleProvider",
     "disconnectBetterAuthServer",
   ]);
   assert.doesNotMatch(runtimeSource, /export[^\n]*(?:PrismaClient|Pool|PrismaPg)/);

@@ -34,6 +34,21 @@ export interface BetterAuthServerConfig {
   readonly trustedOrigins: readonly [string];
 }
 
+export interface BetterAuthLifecycleCallbacks {
+  readonly sendVerificationEmail?: NonNullable<
+    BetterAuthOptions["emailVerification"]
+  >["sendVerificationEmail"];
+  readonly afterEmailVerification?: NonNullable<
+    BetterAuthOptions["emailVerification"]
+  >["afterEmailVerification"];
+  readonly sendResetPassword?: NonNullable<
+    BetterAuthOptions["emailAndPassword"]
+  >["sendResetPassword"];
+  readonly onPasswordReset?: NonNullable<
+    BetterAuthOptions["emailAndPassword"]
+  >["onPasswordReset"];
+}
+
 export function validateBetterAuthServerConfig(input: {
   readonly secret: unknown;
   readonly baseURL: unknown;
@@ -88,6 +103,7 @@ export function createBetterAuthServerOptions(
   password: NonNullable<
     NonNullable<BetterAuthOptions["emailAndPassword"]>["password"]
   >,
+  lifecycle: BetterAuthLifecycleCallbacks = {},
 ): BetterAuthOptions {
   return {
     appName: "Passvero",
@@ -98,9 +114,22 @@ export function createBetterAuthServerOptions(
     emailAndPassword: {
       enabled: true,
       disableSignUp: true,
+      requireEmailVerification: true,
+      autoSignIn: false,
+      resetPasswordTokenExpiresIn: 60 * 30,
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword: lifecycle.sendResetPassword,
+      onPasswordReset: lifecycle.onPasswordReset,
       minPasswordLength: 1,
       maxPasswordLength: 256,
       password,
+    },
+    emailVerification: {
+      expiresIn: 60 * 60 * 24,
+      autoSignInAfterVerification: false,
+      sendOnSignUp: false,
+      sendVerificationEmail: lifecycle.sendVerificationEmail,
+      afterEmailVerification: lifecycle.afterEmailVerification,
     },
     user: { modelName: "AuthProviderUser" },
     session: {
@@ -120,5 +149,32 @@ export function createBetterAuthServerOptions(
       },
     },
     telemetry: { enabled: false },
+  };
+}
+
+export function createControlledActivationBetterAuthServerOptions(
+  config: BetterAuthServerConfig,
+  database: NonNullable<BetterAuthOptions["database"]>,
+  password: NonNullable<
+    NonNullable<BetterAuthOptions["emailAndPassword"]>["password"]
+  >,
+  lifecycle: BetterAuthLifecycleCallbacks = {},
+): BetterAuthOptions {
+  const options = createBetterAuthServerOptions(
+    config,
+    database,
+    password,
+    lifecycle,
+  );
+
+  return {
+    ...options,
+    emailAndPassword: {
+      ...options.emailAndPassword,
+      enabled: true,
+      disableSignUp: false,
+      requireEmailVerification: true,
+      autoSignIn: false,
+    },
   };
 }

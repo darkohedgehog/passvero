@@ -70,6 +70,7 @@ test("keeps generated Prisma access inside approved infrastructure adapters", ()
 
   assert.deepEqual(generatedClientImporters, [
     "src/infrastructure/auth/better-auth-server.ts",
+    "src/infrastructure/auth/prisma-controlled-activation.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product.ts",
     "src/infrastructure/persistence/prisma/production-prisma-runtime.ts",
