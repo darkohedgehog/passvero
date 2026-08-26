@@ -137,7 +137,7 @@ test("auto-selects the only active membership and derives role permissions", asy
       membershipId: "membership-a",
       membershipRole: "EDITOR",
       membershipStatus: "ACTIVE",
-      permissions: ["PRODUCT_CREATE"],
+      permissions: ["PRODUCT_READ", "PRODUCT_CREATE"],
       correlationId: "correlation-1",
     },
     presentation: {
@@ -190,7 +190,7 @@ test("uses a valid selector only after revalidating the canonical membership", a
   if (result.status === "RESOLVED") {
     assert.equal(result.context.organizationId, "organization-b");
     assert.equal(result.context.membershipRole, "VIEWER");
-    assert.deepEqual(result.context.permissions, []);
+    assert.deepEqual(result.context.permissions, ["PRODUCT_READ"]);
     assert.deepEqual(result.presentation, {
       organizationName: "Organization B",
     });

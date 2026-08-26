@@ -28,7 +28,7 @@ export function createCreateProductService<Transaction>(
 
       if (
         context.membershipStatus !== "ACTIVE" ||
-        !hasProductPermission(context)
+        !hasProductPermission(context, PRODUCT_CREATE)
       ) {
         throw createProductError(
           "FORBIDDEN",

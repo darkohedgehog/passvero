@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { BrandLogo } from "@/src/components/marketing/brand-logo";
 import { Link } from "@/src/i18n/navigation";
+import { DashboardProductsNavigation } from "./dashboard-products-navigation";
 import { SignOutButton } from "./sign-out-button";
 
 export function DashboardShell({
@@ -11,6 +12,7 @@ export function DashboardShell({
   userLabel,
   organizationLabel,
   organizationName,
+  productsLabel,
   signOutLabel,
   pendingLabel,
   signOutFailureLabel,
@@ -22,6 +24,7 @@ export function DashboardShell({
   userLabel?: string;
   organizationLabel?: string;
   organizationName?: string;
+  productsLabel: string;
   signOutLabel: string;
   pendingLabel: string;
   signOutFailureLabel: string;
@@ -45,6 +48,10 @@ export function DashboardShell({
             failureLabel={signOutFailureLabel}
           />
         </header>
+        <DashboardProductsNavigation
+          productsLabel={productsLabel}
+          organizationResolved={organizationName !== undefined}
+        />
         {userLabel === undefined ? null : (
           <dl className="mt-6 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2">
             <div>

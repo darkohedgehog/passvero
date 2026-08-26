@@ -30,13 +30,16 @@ export default async function DashboardPage({ params }: PageProps) {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "Dashboard" });
+  const [t, productsT] = await Promise.all([
+    getTranslations({ locale, namespace: "Dashboard" }),
+    getTranslations({ locale, namespace: "Products" }),
+  ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
   try {
     resolution = await resolveProtectedDashboard(await headers());
   } catch {
-    return shell(t, <AccessMessage title={t("genericErrorTitle")} description={t("genericErrorDescription")} />);
+    return shell(t, productsT("productsNav"), <AccessMessage title={t("genericErrorTitle")} description={t("genericErrorDescription")} />);
   }
 
   if (
@@ -46,11 +49,12 @@ export default async function DashboardPage({ params }: PageProps) {
     redirect(getPathname({ locale, href: "/login" }));
   }
   if (resolution.status === "DENIED") {
-    return shell(t, <AccessMessage title={t("noAccessTitle")} description={t("noAccessDescription")} />);
+    return shell(t, productsT("productsNav"), <AccessMessage title={t("noAccessTitle")} description={t("noAccessDescription")} />);
   }
   if (resolution.status === "ORGANIZATION_SELECTION_REQUIRED") {
     return shell(
       t,
+      productsT("productsNav"),
       <div>
         <h2 className="text-xl font-bold text-slate-950">{t("chooseTitle")}</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">{t("chooseDescription")}</p>
@@ -70,6 +74,7 @@ export default async function DashboardPage({ params }: PageProps) {
 
   return shell(
     t,
+    productsT("productsNav"),
     <div>
       <h2 className="text-xl font-bold text-slate-950">{t("readyTitle")}</h2>
       <p className="mt-2 text-sm leading-6 text-slate-600">{t("readyDescription")}</p>
@@ -81,6 +86,7 @@ export default async function DashboardPage({ params }: PageProps) {
 
 function shell(
   t: Awaited<ReturnType<typeof getTranslations<"Dashboard">>>,
+  productsLabel: string,
   children: React.ReactNode,
   userLabel?: string,
   organizationName?: string,
@@ -93,6 +99,7 @@ function shell(
       userLabel={userLabel}
       organizationLabel={t("currentOrganization")}
       organizationName={organizationName}
+      productsLabel={productsLabel}
       signOutLabel={t("signOut")}
       pendingLabel={t("loading")}
       signOutFailureLabel={t("signOutFailure")}

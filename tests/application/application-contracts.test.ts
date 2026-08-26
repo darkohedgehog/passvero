@@ -4,6 +4,7 @@ import test from "node:test";
 import { ApplicationError } from "../../src/application/errors/application-error";
 import {
   PRODUCT_CREATE,
+  PRODUCT_READ,
   roleHasProductPermission,
 } from "../../src/application/permissions/product-permissions";
 
@@ -12,6 +13,13 @@ test("PRODUCT_CREATE is centralized and excludes VIEWER", () => {
   assert.equal(roleHasProductPermission("ADMIN", PRODUCT_CREATE), true);
   assert.equal(roleHasProductPermission("OWNER", PRODUCT_CREATE), true);
   assert.equal(roleHasProductPermission("VIEWER", PRODUCT_CREATE), false);
+});
+
+test("PRODUCT_READ is centralized for every canonical membership role", () => {
+  assert.equal(roleHasProductPermission("VIEWER", PRODUCT_READ), true);
+  assert.equal(roleHasProductPermission("EDITOR", PRODUCT_READ), true);
+  assert.equal(roleHasProductPermission("ADMIN", PRODUCT_READ), true);
+  assert.equal(roleHasProductPermission("OWNER", PRODUCT_READ), true);
 });
 
 test("ApplicationError exposes only stable safe fields", () => {
