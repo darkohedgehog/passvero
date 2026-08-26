@@ -95,9 +95,8 @@ test("forms preserve semantic labels, autocomplete, busy state, and explicit aut
   assert.doesNotMatch(all, /dangerouslySetInnerHTML|response\.text\(\)/);
 });
 
-test("Stage 13C.8 adds no dashboard, organization selection, signup, or catch-all route", () => {
+test("the explicit auth UI surface still adds no signup or catch-all route", () => {
   for (const path of [
-    "app/[locale]/dashboard",
     "app/[locale]/signup",
     "app/[locale]/register",
     "app/api/auth/[...all]",

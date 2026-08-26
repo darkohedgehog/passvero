@@ -56,7 +56,7 @@ export function LoginForm() {
 
     if (result === "SUCCESS") {
       setState("SUCCESS");
-      router.replace("/");
+      router.replace("/dashboard");
       return;
     }
     if (result === "TURNSTILE_REQUIRED") {

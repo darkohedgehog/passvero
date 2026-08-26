@@ -15,7 +15,10 @@ interface OrganizationContextPrismaClient {
         readonly status: true;
         readonly role: true;
         readonly organization: {
-          readonly select: { readonly status: true };
+          readonly select: {
+            readonly status: true;
+            readonly displayName: true;
+          };
         };
       };
     }): Promise<readonly {
@@ -26,6 +29,7 @@ interface OrganizationContextPrismaClient {
       readonly role: TenantMembership["membershipRole"];
       readonly organization: {
         readonly status: Exclude<TenantMembership["organizationStatus"], null>;
+        readonly displayName: string;
       };
     }[]>;
   };
@@ -71,7 +75,7 @@ implements OrganizationContextRepository {
         organizationId: true,
         status: true,
         role: true,
-        organization: { select: { status: true } },
+        organization: { select: { status: true, displayName: true } },
       },
     });
     return memberships.map((membership) => ({
@@ -81,6 +85,7 @@ implements OrganizationContextRepository {
       membershipStatus: membership.status,
       membershipRole: membership.role,
       organizationStatus: membership.organization.status,
+      organizationDisplayName: membership.organization.displayName,
     }));
   }
 

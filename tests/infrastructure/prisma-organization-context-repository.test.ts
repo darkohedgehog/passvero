@@ -18,7 +18,10 @@ function createHarness() {
           organizationId: "organization-a",
           status: "ACTIVE" as const,
           role: "OWNER" as const,
-          organization: { status: "ACTIVE" as const },
+          organization: {
+            status: "ACTIVE" as const,
+            displayName: "Organization A",
+          },
         }];
       },
     },
@@ -55,6 +58,7 @@ test("reads only canonical memberships and organization status for the current u
     membershipStatus: "ACTIVE",
     membershipRole: "OWNER",
     organizationStatus: "ACTIVE",
+    organizationDisplayName: "Organization A",
   }]);
   assert.deepEqual(harness.calls, [["membership.findMany", {
     where: { userId: "user-a" },
@@ -65,7 +69,7 @@ test("reads only canonical memberships and organization status for the current u
       organizationId: true,
       status: true,
       role: true,
-      organization: { select: { status: true } },
+      organization: { select: { status: true, displayName: true } },
     },
   }]]);
 });

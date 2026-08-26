@@ -35,6 +35,9 @@ test("returns only a safe success shape for a resolved tenant context", async ()
       permissions: ["PRODUCT_CREATE"],
       correlationId: "correlation-a",
     },
+    presentation: {
+      organizationName: "Organization A",
+    },
   })(new Request("https://passvero.eu/api/auth/context-smoke"));
 
   assert.equal(response.status, 200);
@@ -46,7 +49,14 @@ test("returns only a safe success shape for a resolved tenant context", async ()
 });
 
 test("exposes only safe organization-selection-required behavior", async () => {
-  const response = await handler({ status: "ORGANIZATION_SELECTION_REQUIRED" })(
+  const response = await handler({
+    status: "ORGANIZATION_SELECTION_REQUIRED",
+    currentUserId: "user-a",
+    organizations: [{
+      organizationId: "organization-a",
+      displayName: "Organization A",
+    }],
+  })(
     new Request("https://passvero.eu/api/auth/context-smoke"),
   );
 

@@ -36,6 +36,7 @@ function membership(input: Partial<TenantMembership> = {}): TenantMembership {
     membershipStatus: "ACTIVE",
     membershipRole: "EDITOR",
     organizationStatus: "ACTIVE",
+    organizationDisplayName: "Organization A",
     ...input,
   };
 }
@@ -139,6 +140,9 @@ test("auto-selects the only active membership and derives role permissions", asy
       permissions: ["PRODUCT_CREATE"],
       correlationId: "correlation-1",
     },
+    presentation: {
+      organizationName: "Organization A",
+    },
   });
   assert.equal(harness.selectedOrganizationId, "organization-a");
 });
@@ -151,12 +155,18 @@ test("requires a selector when multiple active memberships exist", async () => {
         membershipId: "membership-b",
         organizationId: "organization-b",
         membershipRole: "VIEWER",
+        organizationDisplayName: "Organization B",
       }),
     ],
   });
 
   assert.deepEqual(await harness.resolver(identity), {
     status: "ORGANIZATION_SELECTION_REQUIRED",
+    currentUserId: "user-a",
+    organizations: [
+      { organizationId: "organization-a", displayName: "Organization A" },
+      { organizationId: "organization-b", displayName: "Organization B" },
+    ],
   });
 });
 
@@ -169,6 +179,7 @@ test("uses a valid selector only after revalidating the canonical membership", a
         membershipId: "membership-b",
         organizationId: "organization-b",
         membershipRole: "VIEWER",
+        organizationDisplayName: "Organization B",
       }),
     ],
   });
@@ -180,6 +191,9 @@ test("uses a valid selector only after revalidating the canonical membership", a
     assert.equal(result.context.organizationId, "organization-b");
     assert.equal(result.context.membershipRole, "VIEWER");
     assert.deepEqual(result.context.permissions, []);
+    assert.deepEqual(result.presentation, {
+      organizationName: "Organization B",
+    });
   }
 });
 
@@ -192,12 +206,18 @@ test("clears a stale cross-tenant selector and never reuses another role", async
         membershipId: "membership-b",
         organizationId: "organization-b",
         membershipRole: "VIEWER",
+        organizationDisplayName: "Organization B",
       }),
     ],
   });
 
   assert.deepEqual(await harness.resolver(identity), {
     status: "ORGANIZATION_SELECTION_REQUIRED",
+    currentUserId: "user-a",
+    organizations: [
+      { organizationId: "organization-a", displayName: "Organization A" },
+      { organizationId: "organization-b", displayName: "Organization B" },
+    ],
   });
   assert.equal(harness.selectedOrganizationId, null);
   assert.deepEqual(harness.deletedSelections, ["provider-session-a"]);

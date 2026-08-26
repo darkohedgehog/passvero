@@ -23,6 +23,7 @@ export interface TenantMembership {
   readonly membershipStatus: MembershipStatus;
   readonly membershipRole: MembershipRole;
   readonly organizationStatus: OrganizationStatus | null;
+  readonly organizationDisplayName: string;
 }
 
 interface SessionSelector {
@@ -48,8 +49,21 @@ type TenantContextFailure =
   | "ORGANIZATION_INACTIVE";
 
 export type AuthenticatedUserContextResolution =
-  | { readonly status: "RESOLVED"; readonly context: AuthenticatedUserContext }
-  | { readonly status: "ORGANIZATION_SELECTION_REQUIRED" }
+  | {
+    readonly status: "RESOLVED";
+    readonly context: AuthenticatedUserContext;
+    readonly presentation: {
+      readonly organizationName: string;
+    };
+  }
+  | {
+    readonly status: "ORGANIZATION_SELECTION_REQUIRED";
+    readonly currentUserId: string;
+    readonly organizations: readonly {
+      readonly organizationId: string;
+      readonly displayName: string;
+    }[];
+  }
   | { readonly status: "DENIED"; readonly reason: TenantContextFailure };
 
 export type OrganizationSelectionResult =
@@ -95,7 +109,7 @@ export function createAuthenticatedUserContextResolver(
       if (!isEligible(selectedMembership)) {
         await dependencies.repository.deleteSelection(selector);
         if (eligible.length > 0) {
-          return { status: "ORGANIZATION_SELECTION_REQUIRED" };
+          return selectionRequired(currentUser.currentUser.userId, eligible);
         }
         if (
           selectedMembership !== undefined
@@ -131,7 +145,7 @@ export function createAuthenticatedUserContextResolver(
     }
 
     if (eligible.length > 1) {
-      return { status: "ORGANIZATION_SELECTION_REQUIRED" };
+      return selectionRequired(currentUser.currentUser.userId, eligible);
     }
 
     const onlyMembership = eligible[0];
@@ -208,6 +222,23 @@ function resolved(
       permissions: permissionsForMembershipRole(membership.membershipRole),
       correlationId,
     },
+    presentation: {
+      organizationName: membership.organizationDisplayName,
+    },
+  };
+}
+
+function selectionRequired(
+  currentUserId: string,
+  memberships: readonly TenantMembership[],
+): AuthenticatedUserContextResolution {
+  return {
+    status: "ORGANIZATION_SELECTION_REQUIRED",
+    currentUserId,
+    organizations: memberships.map((membership) => ({
+      organizationId: membership.organizationId,
+      displayName: membership.organizationDisplayName,
+    })),
   };
 }
 
