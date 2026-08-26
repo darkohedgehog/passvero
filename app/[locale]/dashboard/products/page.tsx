@@ -5,6 +5,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ApplicationError } from "@/src/application/errors/application-error";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
+import {
+  hasProductPermission,
+  PRODUCT_CREATE,
+} from "@/src/application/permissions/product-permissions";
 import type { ListProductsResult } from "@/src/application/products/list-products/contracts";
 import { createListProductsService } from "@/src/application/products/list-products/list-products";
 import { DashboardShell } from "@/src/components/application/dashboard/dashboard-shell";
@@ -12,6 +16,7 @@ import {
   ProductListPresentation,
   type ProductListLabels,
 } from "@/src/components/application/products/product-list-presentation";
+import { ProductListCreateAction } from "@/src/components/application/products/product-list-create-action";
 import { getPathname } from "@/src/i18n/navigation";
 import { isAppLocale } from "@/src/i18n/routing";
 import { resolveProtectedDashboard } from "@/src/infrastructure/context/organization-context-runtime";
@@ -40,9 +45,10 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
-  const [dashboardT, productsT] = await Promise.all([
+  const [dashboardT, productsT, createT] = await Promise.all([
     getTranslations({ locale, namespace: "Dashboard" }),
     getTranslations({ locale, namespace: "Products" }),
+    getTranslations({ locale, namespace: "CreateProduct" }),
   ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
@@ -106,6 +112,9 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
   }
 
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
+  const createHref = hasProductPermission(resolution.context, PRODUCT_CREATE)
+    ? getPathname({ locale, href: "/dashboard/products/new" })
+    : null;
   const nextPageHref = result.nextCursor === null
     ? null
     : getPathname({
@@ -120,9 +129,15 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
     dashboardT,
     productsT,
     <>
-      <p className="mb-6 text-sm leading-6 text-slate-600">
-        {productsT("description")}
-      </p>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-6 text-slate-600">
+          {productsT("description")}
+        </p>
+        <ProductListCreateAction
+          href={createHref}
+          label={createT("create")}
+        />
+      </div>
       <ProductListPresentation
         items={result.items}
         formattedUpdatedAt={result.items.map((item) => dateFormatter.format(item.updatedAt))}
