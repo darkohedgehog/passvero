@@ -28,12 +28,12 @@ test("maps Better Auth email callbacks to provider-neutral messages", async () =
     {
       type: "VERIFY_EMAIL",
       recipient: "person@example.com",
-      verificationUrl: "https://passvero.eu/api/auth/verification/consume?token=test-token",
+      verificationUrl: "https://passvero.eu/verify-email#token=test-token",
     },
     {
       type: "PASSWORD_RESET",
       recipient: "person@example.com",
-      resetUrl: "https://passvero.eu/auth/reset-password?token=test-token",
+      resetUrl: "https://passvero.eu/reset-password#token=test-token",
     },
   ]);
 });

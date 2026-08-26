@@ -206,8 +206,8 @@ function mapVerificationUrl(value: string, canonicalOrigin: string): string {
   ) {
     throw new Error("Verification email transport URL is invalid.");
   }
-  const target = new URL("/api/auth/verification/consume", canonicalOrigin);
-  target.searchParams.set("token", tokenValues[0]);
+  const target = new URL("/verify-email", canonicalOrigin);
+  target.hash = new URLSearchParams({ token: tokenValues[0] }).toString();
   return target.toString();
 }
 
@@ -237,7 +237,7 @@ function mapResetPasswordUrl(value: string, canonicalOrigin: string): string {
   ) {
     throw new Error("Password reset email transport URL is invalid.");
   }
-  const target = new URL("/auth/reset-password", canonicalOrigin);
-  target.searchParams.set("token", token);
+  const target = new URL("/reset-password", canonicalOrigin);
+  target.hash = new URLSearchParams({ token }).toString();
   return target.toString();
 }

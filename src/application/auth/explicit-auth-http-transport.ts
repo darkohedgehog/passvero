@@ -1,5 +1,6 @@
 import type { AuthAbuseDecision } from "./auth-abuse-policy";
 import type { AuthAbuseEndpoint } from "./auth-abuse-types";
+import { readOptionalTurnstileTokenHeader } from "./auth-turnstile-header";
 import {
   completeRiskTriggeredTurnstile,
   type TurnstileVerifier,
@@ -154,10 +155,12 @@ export function createExplicitAuthHttpTransport(
       if (!sameRequestOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
       const url = new URL(request.url);
       const token = url.searchParams.getAll("token");
-      if (token.length !== 1 || !boundedString(token[0], 1, 2048) || [...url.searchParams.keys()].some((key) => key !== "token")) {
+      const turnstileToken = readOptionalTurnstileTokenHeader(request.headers);
+      if (token.length !== 1 || !boundedString(token[0], 1, 2048) || turnstileToken === null
+        || [...url.searchParams.keys()].some((key) => key !== "token")) {
         return json({ status: "INVALID_REQUEST" }, 400);
       }
-      return protectedOperation({ request, endpoint: "EMAIL_VERIFICATION_CONSUME", operation: async () => {
+      return protectedOperation({ request, endpoint: "EMAIL_VERIFICATION_CONSUME", turnstileToken, operation: async () => {
         try { await dependencies.provider.verifyEmail({ token: token[0] }); return { success: true, response: json({ status: "VERIFIED" }, 200) }; }
         catch { return { success: false, response: json({ status: "VERIFICATION_DENIED" }, 400) }; }
       } });

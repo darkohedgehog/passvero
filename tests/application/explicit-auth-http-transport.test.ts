@@ -195,6 +195,47 @@ test("verification consume transports only one token to the provider callback", 
   assert.deepEqual(await accepted.json(), { status: "VERIFIED" });
 });
 
+test("verification consume accepts one bounded Turnstile token header when risk requires it", async () => {
+  const fixture = dependencies();
+  fixture.input.abuse.checkBeforeAttempt = async () => ({
+    status: "REQUIRE_TURNSTILE",
+    reasonCode: "ADDITIONAL_VERIFICATION_REQUIRED",
+  });
+  let observedTurnstileToken = "";
+  fixture.input.turnstileVerifier.verify = async (input) => {
+    observedTurnstileToken = input.token;
+    return { valid: true, action: input.expectedAction };
+  };
+  const transport = createExplicitAuthHttpTransport(fixture.input);
+
+  const accepted = await transport.consumeEmailVerification(
+    new Request(`${origin}/api/auth/verification/consume?token=opaque`, {
+      headers: { "x-passvero-turnstile-token": "opaque-turnstile-token" },
+    }),
+  );
+
+  assert.equal(accepted.status, 200);
+  assert.equal(observedTurnstileToken, "opaque-turnstile-token");
+  assert.deepEqual(fixture.calls, ["provider:verify-email", "abuse:post:SUCCESS"]);
+});
+
+test("verification consume rejects ambiguous or oversized Turnstile token headers before abuse", async () => {
+  const fixture = dependencies();
+  const transport = createExplicitAuthHttpTransport(fixture.input);
+
+  for (const token of ["first, second", "x".repeat(2049)]) {
+    const response = await transport.consumeEmailVerification(
+      new Request(`${origin}/api/auth/verification/consume?token=opaque`, {
+        headers: { "x-passvero-turnstile-token": token },
+      }),
+    );
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), { status: "INVALID_REQUEST" });
+  }
+
+  assert.deepEqual(fixture.calls, []);
+});
+
 test("activation delegates to the controlled lifecycle and never returns its capability", async () => {
   const fixture = dependencies();
   const response = await createExplicitAuthHttpTransport(fixture.input).activate(request("/api/auth/activate", {
