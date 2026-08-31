@@ -23,11 +23,13 @@ export interface ProductListLabels {
 export function ProductListPresentation({
   items,
   formattedUpdatedAt,
+  detailHrefs,
   nextPageHref,
   labels,
 }: Readonly<{
   items: readonly ProductListItem[];
   formattedUpdatedAt: readonly string[];
+  detailHrefs: readonly string[];
   nextPageHref: string | null;
   labels: ProductListLabels;
 }>) {
@@ -60,7 +62,10 @@ export function ProductListPresentation({
             {items.map((item, index) => (
               <tr key={item.productId}>
                 <th scope="row" className="px-4 py-4 font-semibold text-slate-950">
-                  {item.name}
+                  <ProductDetailLink
+                    href={requiredDetailHref(detailHrefs, index)}
+                    name={item.name}
+                  />
                 </th>
                 <td className="px-4 py-4 text-slate-700">{item.sku ?? labels.notAvailable}</td>
                 <td className="px-4 py-4 text-slate-700">
@@ -86,7 +91,12 @@ export function ProductListPresentation({
       <ul className="grid gap-3 md:hidden">
         {items.map((item, index) => (
           <li key={item.productId} className="rounded-xl border border-slate-200 bg-white p-4">
-            <h2 className="font-bold text-slate-950">{item.name}</h2>
+            <h2 className="font-bold text-slate-950">
+              <ProductDetailLink
+                href={requiredDetailHref(detailHrefs, index)}
+                name={item.name}
+              />
+            </h2>
             <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
               <ProductFact label={labels.sku} value={item.sku ?? labels.notAvailable} />
               <ProductFact label={labels.lifecycle} value={labels.lifecycleStatus[item.lifecycleStatus]} />
@@ -115,6 +125,25 @@ export function ProductListPresentation({
       )}
     </>
   );
+}
+
+function ProductDetailLink({ href, name }: Readonly<{ href: string; name: string }>) {
+  return (
+    <a
+      href={href}
+      className="rounded-sm text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+    >
+      {name}
+    </a>
+  );
+}
+
+function requiredDetailHref(detailHrefs: readonly string[], index: number): string {
+  const href = detailHrefs[index];
+  if (href === undefined) {
+    throw new Error("Product detail destination is missing.");
+  }
+  return href;
 }
 
 function ProductFact({ label, value }: Readonly<{ label: string; value: string }>) {

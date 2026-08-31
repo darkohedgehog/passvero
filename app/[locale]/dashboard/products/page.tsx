@@ -141,6 +141,10 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
       <ProductListPresentation
         items={result.items}
         formattedUpdatedAt={result.items.map((item) => dateFormatter.format(item.updatedAt))}
+        detailHrefs={result.items.map((item) => getPathname({
+          locale,
+          href: `/dashboard/products/${item.productId}`,
+        }))}
         nextPageHref={nextPageHref}
         labels={productListLabels(productsT)}
       />

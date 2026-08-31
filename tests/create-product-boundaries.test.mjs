@@ -74,6 +74,8 @@ test("keeps generated Prisma access inside approved infrastructure adapters", ()
     "src/infrastructure/auth/prisma-controlled-activation.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product.ts",
+    "src/infrastructure/persistence/prisma/prisma-get-product-detail-composition.ts",
+    "src/infrastructure/persistence/prisma/prisma-get-product-detail.ts",
     "src/infrastructure/persistence/prisma/prisma-list-products-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-list-products.ts",
     "src/infrastructure/persistence/prisma/production-prisma-runtime.ts",

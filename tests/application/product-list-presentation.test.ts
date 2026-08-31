@@ -42,6 +42,7 @@ test("renders the same narrow product projection as a semantic table and mobile 
       updatedAt: new Date("2026-08-26T10:00:00.000Z"),
     }],
     formattedUpdatedAt: ["26 Aug 2026"],
+    detailHrefs: ["/en/dashboard/products/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"],
     nextPageHref: "/en/dashboard/products?cursor=opaque",
     labels,
   }));
@@ -52,6 +53,10 @@ test("renders the same narrow product projection as a semantic table and mobile 
   assert.match(html, /CHAIR-1/);
   assert.match(html, /Ready for review/);
   assert.match(html, /href="\/en\/dashboard\/products\?cursor=opaque"/);
+  assert.equal(
+    html.match(/href="\/en\/dashboard\/products\/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"/g)?.length,
+    2,
+  );
   assert.doesNotMatch(html, /organizationId|publicCode|currentDraftVersionId/);
 });
 
@@ -59,6 +64,7 @@ test("renders an explicit empty state without an unimplemented create action", (
   const html = renderToStaticMarkup(createElement(ProductListPresentation, {
     items: [],
     formattedUpdatedAt: [],
+    detailHrefs: [],
     nextPageHref: null,
     labels,
   }));
@@ -103,6 +109,25 @@ test("inherits the canonical locale-prefix policy for the products route", () =>
   for (const locale of Object.keys(expectations) as Array<keyof typeof expectations>) {
     assert.equal(
       getPathname({ locale, href: "/dashboard/products" }),
+      expectations[locale],
+    );
+  }
+});
+
+test("builds protected product-detail destinations from internal productId in every locale", () => {
+  const id = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const expectations = {
+    hr: `/dashboard/products/${id}`,
+    sr: `/sr/dashboard/products/${id}`,
+    en: `/en/dashboard/products/${id}`,
+    de: `/de/dashboard/products/${id}`,
+    sl: `/sl/dashboard/products/${id}`,
+    pl: `/pl/dashboard/products/${id}`,
+  } as const;
+
+  for (const locale of Object.keys(expectations) as Array<keyof typeof expectations>) {
+    assert.equal(
+      getPathname({ locale, href: `/dashboard/products/${id}` }),
       expectations[locale],
     );
   }
