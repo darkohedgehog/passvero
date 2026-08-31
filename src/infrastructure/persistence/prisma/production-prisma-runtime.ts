@@ -5,6 +5,7 @@ import { Pool } from "pg";
 
 import { PrismaClient } from "@/src/generated/prisma/client";
 import { createPrismaCreateProductDependencies } from "@/src/infrastructure/persistence/prisma/prisma-create-product-composition";
+import { createPrismaEditProductDraftDependencies } from "@/src/infrastructure/persistence/prisma/prisma-edit-product-draft-composition";
 import { createPrismaGetProductDetailDependencies } from "@/src/infrastructure/persistence/prisma/prisma-get-product-detail-composition";
 import { createPrismaListProductsDependencies } from "@/src/infrastructure/persistence/prisma/prisma-list-products-composition";
 import { validateProductionDatabaseUrl } from "@/src/infrastructure/persistence/prisma/production-prisma-config";
@@ -42,6 +43,10 @@ export function getProductionPrismaClient(): PrismaClient {
 
 export function getProductionCreateProductDependencies() {
   return createPrismaCreateProductDependencies(getProductionPrismaClient());
+}
+
+export function getProductionEditProductDraftDependencies() {
+  return createPrismaEditProductDraftDependencies(getProductionPrismaClient());
 }
 
 export function getProductionListProductsDependencies() {

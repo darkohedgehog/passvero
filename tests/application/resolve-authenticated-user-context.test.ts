@@ -137,7 +137,7 @@ test("auto-selects the only active membership and derives role permissions", asy
       membershipId: "membership-a",
       membershipRole: "EDITOR",
       membershipStatus: "ACTIVE",
-      permissions: ["PRODUCT_READ", "PRODUCT_CREATE"],
+      permissions: ["PRODUCT_READ", "PRODUCT_CREATE", "PRODUCT_EDIT"],
       correlationId: "correlation-1",
     },
     presentation: {

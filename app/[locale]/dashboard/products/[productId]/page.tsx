@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
 import { ApplicationError } from "@/src/application/errors/application-error";
+import { canShowEditProductDraftAction } from "@/src/application/products/edit-product-draft/edit-product-draft-http";
 import { createGetProductDetailService } from "@/src/application/products/get-product-detail/get-product-detail";
 import { DashboardShell } from "@/src/components/application/dashboard/dashboard-shell";
 import {
@@ -39,10 +40,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  const [dashboardT, productsT, detailT] = await Promise.all([
+  const [dashboardT, productsT, detailT, editT] = await Promise.all([
     getTranslations({ locale, namespace: "Dashboard" }),
     getTranslations({ locale, namespace: "Products" }),
     getTranslations({ locale, namespace: "ProductDetail" }),
+    getTranslations({ locale, namespace: "EditProduct" }),
   ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
@@ -105,6 +107,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
     timeStyle: "short",
   });
   const productListHref = getPathname({ locale, href: "/dashboard/products" });
+  const editHref = canShowEditProductDraftAction(
+    resolution.context,
+    detail.lifecycleStatus,
+    detail.currentDraft?.status ?? null,
+  )
+    ? getPathname({
+        locale,
+        href: `/dashboard/products/${detail.productId}/edit`,
+      })
+    : null;
 
   return detailShell(
     dashboardT,
@@ -113,6 +125,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     <ProductDetailPresentation
       detail={detail}
       productListHref={productListHref}
+      editHref={editHref}
+      editLabel={editT("title")}
       formattedDates={{
         productCreatedAt: dateFormatter.format(detail.createdAt),
         productUpdatedAt: dateFormatter.format(detail.updatedAt),

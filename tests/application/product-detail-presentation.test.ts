@@ -127,3 +127,29 @@ test("keeps publicCode as plain identity text and exposes no future DPP controls
     /Edit product|Publish product|Upload|Documents|Materials|Identifiers|QR code|Analytics/,
   );
 });
+
+test("renders exactly one Edit action only when the server supplies an authorized href", () => {
+  const authorized = renderToStaticMarkup(createElement(ProductDetailPresentation, {
+    detail,
+    productListHref: "/en/dashboard/products",
+    editHref: "/en/dashboard/products/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/edit",
+    editLabel: "Edit product",
+    formattedDates,
+    labels,
+  }));
+  assert.match(
+    authorized,
+    /href="\/en\/dashboard\/products\/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\/edit"[^>]*>Edit product<\/a>/,
+  );
+  assert.equal((authorized.match(/>Edit product<\/a>/g) ?? []).length, 1);
+
+  const denied = renderToStaticMarkup(createElement(ProductDetailPresentation, {
+    detail,
+    productListHref: "/en/dashboard/products",
+    editHref: null,
+    editLabel: "Edit product",
+    formattedDates,
+    labels,
+  }));
+  assert.doesNotMatch(denied, /Edit product/);
+});

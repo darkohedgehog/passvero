@@ -39,11 +39,15 @@ export interface ProductDetailFormattedDates {
 export function ProductDetailPresentation({
   detail,
   productListHref,
+  editHref,
+  editLabel,
   formattedDates,
   labels,
 }: Readonly<{
   detail: ProductDetailResult;
   productListHref: string;
+  editHref?: string | null;
+  editLabel?: string;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
 }>) {
@@ -65,10 +69,20 @@ export function ProductDetailPresentation({
           </h2>
           <p className="mt-1 text-sm text-slate-600">{labels.overview}</p>
         </div>
-        <p className="inline-flex w-fit rounded-full bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-800">
-          <span className="sr-only">{labels.lifecycle}: </span>
-          {labels.lifecycleStatus[detail.lifecycleStatus]}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          {editHref !== null && editHref !== undefined && editLabel !== undefined ? (
+            <a
+              href={editHref}
+              className="inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+            >
+              {editLabel}
+            </a>
+          ) : null}
+          <p className="inline-flex w-fit rounded-full bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-800">
+            <span className="sr-only">{labels.lifecycle}: </span>
+            {labels.lifecycleStatus[detail.lifecycleStatus]}
+          </p>
+        </div>
       </header>
 
       <section aria-labelledby="product-identity-heading" className="mt-8">
