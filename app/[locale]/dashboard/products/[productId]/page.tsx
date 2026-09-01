@@ -40,11 +40,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  const [dashboardT, productsT, detailT, editT] = await Promise.all([
+  const [dashboardT, productsT, detailT, editT, contentT] = await Promise.all([
     getTranslations({ locale, namespace: "Dashboard" }),
     getTranslations({ locale, namespace: "Products" }),
     getTranslations({ locale, namespace: "ProductDetail" }),
     getTranslations({ locale, namespace: "EditProduct" }),
+    getTranslations({ locale, namespace: "DraftTranslationContent" }),
   ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
@@ -117,6 +118,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         href: `/dashboard/products/${detail.productId}/edit`,
       })
     : null;
+  const contentEditHref = editHref === null ? null : getPathname({ locale, href: `/dashboard/products/${detail.productId}/content/edit` });
 
   return detailShell(
     dashboardT,
@@ -127,6 +129,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
       productListHref={productListHref}
       editHref={editHref}
       editLabel={editT("title")}
+      contentEditHref={contentEditHref}
+      contentEditLabel={contentT("editAction")}
       formattedDates={{
         productCreatedAt: dateFormatter.format(detail.createdAt),
         productUpdatedAt: dateFormatter.format(detail.updatedAt),

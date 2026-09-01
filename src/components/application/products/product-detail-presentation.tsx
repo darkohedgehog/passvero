@@ -41,6 +41,8 @@ export function ProductDetailPresentation({
   productListHref,
   editHref,
   editLabel,
+  contentEditHref,
+  contentEditLabel,
   formattedDates,
   labels,
 }: Readonly<{
@@ -48,6 +50,8 @@ export function ProductDetailPresentation({
   productListHref: string;
   editHref?: string | null;
   editLabel?: string;
+  contentEditHref?: string | null;
+  contentEditLabel?: string;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
 }>) {
@@ -70,6 +74,7 @@ export function ProductDetailPresentation({
           <p className="mt-1 text-sm text-slate-600">{labels.overview}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          {contentEditHref && contentEditLabel ? <a href={contentEditHref} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600">{contentEditLabel}</a> : null}
           {editHref !== null && editHref !== undefined && editLabel !== undefined ? (
             <a
               href={editHref}
