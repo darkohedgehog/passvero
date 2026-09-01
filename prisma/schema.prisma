@@ -59,6 +59,7 @@ enum ProductIdentifierType {
   MPN
   SKU
   CUSTOM
+  CN
 }
 
 enum DocumentStatus {
@@ -415,6 +416,7 @@ model ProductIdentifier {
   value            String
   issuingAuthority String?
   notes            String?
+  nomenclatureYear Int?
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
 
