@@ -9,6 +9,7 @@ import { createPrismaEditProductDraftDependencies } from "@/src/infrastructure/p
 import { createPrismaDraftTranslationContentDependencies } from "@/src/infrastructure/persistence/prisma/prisma-draft-translation-content-composition";
 import { createPrismaGetProductDetailDependencies } from "@/src/infrastructure/persistence/prisma/prisma-get-product-detail-composition";
 import { createPrismaListProductsDependencies } from "@/src/infrastructure/persistence/prisma/prisma-list-products-composition";
+import { createPrismaProductMaterialsCurrentDraftDependencies } from "@/src/infrastructure/persistence/prisma/prisma-product-materials-current-draft-composition";
 import { validateProductionDatabaseUrl } from "@/src/infrastructure/persistence/prisma/production-prisma-config";
 import {
   createProductionPrismaRuntime,
@@ -60,6 +61,10 @@ export function getProductionListProductsDependencies() {
 
 export function getProductionGetProductDetailDependencies() {
   return createPrismaGetProductDetailDependencies(getProductionPrismaClient());
+}
+
+export function getProductionProductMaterialsCurrentDraftDependencies() {
+  return createPrismaProductMaterialsCurrentDraftDependencies(getProductionPrismaClient());
 }
 
 export async function disconnectProductionPrisma(): Promise<void> {

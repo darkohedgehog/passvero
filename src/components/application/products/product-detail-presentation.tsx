@@ -43,6 +43,7 @@ export function ProductDetailPresentation({
   editLabel,
   contentEditHref,
   contentEditLabel,
+  materialsSection,
   formattedDates,
   labels,
 }: Readonly<{
@@ -52,6 +53,7 @@ export function ProductDetailPresentation({
   editLabel?: string;
   contentEditHref?: string | null;
   contentEditLabel?: string;
+  materialsSection?: React.ReactNode;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
 }>) {
@@ -155,6 +157,7 @@ export function ProductDetailPresentation({
           )}
         </section>
       </div>
+      {materialsSection}
     </div>
   );
 }

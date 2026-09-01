@@ -29,18 +29,18 @@ test("derives tenant authority only from protected context and maps NOT_FOUND sa
   assert.doesNotMatch(page, /publicCode[^\n]*(href|pathname)|href[^\n]*publicCode/);
 });
 
-test("keeps detail read-only except for the authorized edit handoff and outside direct Prisma access", () => {
+test("keeps detail outside direct Prisma access and limits mutations to authorized handoffs", () => {
   const source = [
     read(pagePath),
     read("src/components/application/products/product-detail-presentation.tsx"),
   ].join("\n");
 
   assert.doesNotMatch(source, /generated\/prisma|\.product\.(create|update|delete|upsert)/);
-  assert.doesNotMatch(source, /<form|<button|PRODUCT_PUBLISH/);
+  assert.doesNotMatch(source, /PRODUCT_PUBLISH/);
   assert.match(read(pagePath), /canShowEditProductDraftAction\(/);
   assert.doesNotMatch(
     source,
-    /ProductIdentifier|ProductMaterial|ProductDocument|ProductImage|QRCode|ScanEvent|Analytics/,
+    /ProductIdentifier|ProductDocument|ProductImage|QRCode|ScanEvent|Analytics/,
   );
 });
 

@@ -153,3 +153,16 @@ test("renders exactly one Edit action only when the server supplies an authorize
   }));
   assert.doesNotMatch(denied, /Edit product/);
 });
+
+test("keeps the purpose-specific Materials section inside the Product Detail workspace", () => {
+  const html = renderToStaticMarkup(createElement(ProductDetailPresentation, {
+    detail,
+    productListHref: "/en/dashboard/products",
+    formattedDates,
+    labels,
+    materialsSection: createElement("section", { "aria-label": "Materials" }, "Current draft materials"),
+  }));
+  assert.match(html, /aria-label="Materials"/);
+  assert.match(html, /Current draft materials/);
+  assert.equal((html.match(/Current draft materials/g) ?? []).length, 1);
+});

@@ -7,15 +7,23 @@ import { dashboardDenialOutcome } from "@/src/application/context/protected-dash
 import { ApplicationError } from "@/src/application/errors/application-error";
 import { canShowEditProductDraftAction } from "@/src/application/products/edit-product-draft/edit-product-draft-http";
 import { createGetProductDetailService } from "@/src/application/products/get-product-detail/get-product-detail";
+import { createProductMaterialsCurrentDraftServices } from "@/src/application/products/product-materials-current-draft/services";
 import { DashboardShell } from "@/src/components/application/dashboard/dashboard-shell";
 import {
   ProductDetailPresentation,
   type ProductDetailLabels,
 } from "@/src/components/application/products/product-detail-presentation";
+import {
+  ProductMaterialsSection,
+  type ProductMaterialsLabels,
+} from "@/src/components/application/products/product-materials-section";
 import { getPathname } from "@/src/i18n/navigation";
 import { isAppLocale } from "@/src/i18n/routing";
 import { resolveProtectedDashboard } from "@/src/infrastructure/context/organization-context-runtime";
-import { getProductionGetProductDetailDependencies } from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
+import {
+  getProductionGetProductDetailDependencies,
+  getProductionProductMaterialsCurrentDraftDependencies,
+} from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
 
 type PageProps = Readonly<{
   params: Promise<{ locale: string; productId: string }>;
@@ -40,12 +48,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  const [dashboardT, productsT, detailT, editT, contentT] = await Promise.all([
+  const [dashboardT, productsT, detailT, editT, contentT, materialsT] = await Promise.all([
     getTranslations({ locale, namespace: "Dashboard" }),
     getTranslations({ locale, namespace: "Products" }),
     getTranslations({ locale, namespace: "ProductDetail" }),
     getTranslations({ locale, namespace: "EditProduct" }),
     getTranslations({ locale, namespace: "DraftTranslationContent" }),
+    getTranslations({ locale, namespace: "ProductMaterials" }),
   ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
@@ -119,6 +128,43 @@ export default async function ProductDetailPage({ params }: PageProps) {
       })
     : null;
   const contentEditHref = editHref === null ? null : getPathname({ locale, href: `/dashboard/products/${detail.productId}/content/edit` });
+  let materialsData: {
+    productId: string;
+    materials: readonly {
+      materialId: string;
+      materialName: string;
+      category: string | null;
+      percentage: string | null;
+      isRecycled: boolean;
+      recycledPercentage: string | null;
+      updatedAt: string;
+    }[];
+    expectedDraftVersionId: string;
+    expectedProductUpdatedAt: string;
+    expectedDraftUpdatedAt: string;
+  } | null = null;
+  let materialsLoadFailed = false;
+  if (detail.currentDraft !== null) {
+    try {
+      const service = createProductMaterialsCurrentDraftServices(
+        getProductionProductMaterialsCurrentDraftDependencies(),
+      );
+      const result = await service.get({ productId: detail.productId }, resolution.context);
+      materialsData = {
+        productId: result.productId,
+        materials: result.materials.map((material) => ({
+          ...material,
+          updatedAt: material.updatedAt.toISOString(),
+        })),
+        expectedDraftVersionId: result.expectedDraftVersionId,
+        expectedProductUpdatedAt: result.expectedProductUpdatedAt.toISOString(),
+        expectedDraftUpdatedAt: result.expectedDraftUpdatedAt.toISOString(),
+      };
+    } catch {
+      materialsLoadFailed = true;
+    }
+  }
+  const detailHref = getPathname({ locale, href: `/dashboard/products/${detail.productId}` });
 
   return detailShell(
     dashboardT,
@@ -131,6 +177,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
       editLabel={editT("title")}
       contentEditHref={contentEditHref}
       contentEditLabel={contentT("editAction")}
+      materialsSection={
+        <ProductMaterialsSection
+          data={materialsData}
+          canEdit={editHref !== null && !materialsLoadFailed}
+          labels={productMaterialsLabels(materialsT)}
+          detailHref={detailHref}
+          loadFailed={materialsLoadFailed}
+        />
+      }
       formattedDates={{
         productCreatedAt: dateFormatter.format(detail.createdAt),
         productUpdatedAt: dateFormatter.format(detail.updatedAt),
@@ -150,6 +205,44 @@ export default async function ProductDetailPage({ params }: PageProps) {
     resolution.userLabel,
     resolution.presentation.organizationName,
   );
+}
+
+function productMaterialsLabels(
+  t: Awaited<ReturnType<typeof getTranslations<"ProductMaterials">>>,
+): ProductMaterialsLabels {
+  return {
+    title: t("title"),
+    empty: t("empty"),
+    noDraft: t("noDraft"),
+    addMaterial: t("addMaterial"),
+    editMaterial: t("editMaterial"),
+    removeMaterial: t("removeMaterial"),
+    materialName: t("materialName"),
+    category: t("category"),
+    optional: t("optional"),
+    percentage: t("percentage"),
+    percentageDescription: t("percentageDescription"),
+    containsRecycled: t("containsRecycled"),
+    recycledPercentage: t("recycledPercentage"),
+    recycledPercentageDescription: t("recycledPercentageDescription"),
+    save: t("save"),
+    add: t("add"),
+    remove: t("remove"),
+    cancel: t("cancel"),
+    saving: t("saving"),
+    removing: t("removing"),
+    reload: t("reload"),
+    staleWrite: t("staleWrite"),
+    collectionInvalid: t("collectionInvalid"),
+    validationError: t("validationError"),
+    draftNotEditable: t("draftNotEditable"),
+    forbidden: t("forbidden"),
+    failure: t("failure"),
+    confirmRemove: t("confirmRemove"),
+    yes: t("yes"),
+    no: t("no"),
+    notSpecified: t("notSpecified"),
+  };
 }
 
 function productDetailLabels(
