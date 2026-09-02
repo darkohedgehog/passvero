@@ -43,6 +43,7 @@ export function ProductDetailPresentation({
   editLabel,
   contentEditHref,
   contentEditLabel,
+  cnClassificationSection,
   materialsSection,
   formattedDates,
   labels,
@@ -53,6 +54,7 @@ export function ProductDetailPresentation({
   editLabel?: string;
   contentEditHref?: string | null;
   contentEditLabel?: string;
+  cnClassificationSection?: React.ReactNode;
   materialsSection?: React.ReactNode;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
@@ -157,6 +159,7 @@ export function ProductDetailPresentation({
           )}
         </section>
       </div>
+      {cnClassificationSection}
       {materialsSection}
     </div>
   );

@@ -4,6 +4,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
 import { PrismaClient } from "@/src/generated/prisma/client";
+import { createPrismaCnClassificationCurrentDraftDependencies } from "@/src/infrastructure/persistence/prisma/prisma-cn-classification-current-draft-composition";
 import { createPrismaCreateProductDependencies } from "@/src/infrastructure/persistence/prisma/prisma-create-product-composition";
 import { createPrismaEditProductDraftDependencies } from "@/src/infrastructure/persistence/prisma/prisma-edit-product-draft-composition";
 import { createPrismaDraftTranslationContentDependencies } from "@/src/infrastructure/persistence/prisma/prisma-draft-translation-content-composition";
@@ -65,6 +66,10 @@ export function getProductionGetProductDetailDependencies() {
 
 export function getProductionProductMaterialsCurrentDraftDependencies() {
   return createPrismaProductMaterialsCurrentDraftDependencies(getProductionPrismaClient());
+}
+
+export function getProductionCnClassificationCurrentDraftDependencies() {
+  return createPrismaCnClassificationCurrentDraftDependencies(getProductionPrismaClient());
 }
 
 export async function disconnectProductionPrisma(): Promise<void> {

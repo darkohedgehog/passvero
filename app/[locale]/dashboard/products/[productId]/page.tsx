@@ -5,10 +5,15 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
 import { ApplicationError } from "@/src/application/errors/application-error";
+import { createCnClassificationCurrentDraftServices } from "@/src/application/products/cn-classification-current-draft/services";
 import { canShowEditProductDraftAction } from "@/src/application/products/edit-product-draft/edit-product-draft-http";
 import { createGetProductDetailService } from "@/src/application/products/get-product-detail/get-product-detail";
 import { createProductMaterialsCurrentDraftServices } from "@/src/application/products/product-materials-current-draft/services";
 import { DashboardShell } from "@/src/components/application/dashboard/dashboard-shell";
+import {
+  CnClassificationSection,
+  type CnClassificationLabels,
+} from "@/src/components/application/products/cn-classification-section";
 import {
   ProductDetailPresentation,
   type ProductDetailLabels,
@@ -21,6 +26,7 @@ import { getPathname } from "@/src/i18n/navigation";
 import { isAppLocale } from "@/src/i18n/routing";
 import { resolveProtectedDashboard } from "@/src/infrastructure/context/organization-context-runtime";
 import {
+  getProductionCnClassificationCurrentDraftDependencies,
   getProductionGetProductDetailDependencies,
   getProductionProductMaterialsCurrentDraftDependencies,
 } from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
@@ -48,13 +54,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  const [dashboardT, productsT, detailT, editT, contentT, materialsT] = await Promise.all([
+  const [dashboardT, productsT, detailT, editT, contentT, materialsT, cnT] = await Promise.all([
     getTranslations({ locale, namespace: "Dashboard" }),
     getTranslations({ locale, namespace: "Products" }),
     getTranslations({ locale, namespace: "ProductDetail" }),
     getTranslations({ locale, namespace: "EditProduct" }),
     getTranslations({ locale, namespace: "DraftTranslationContent" }),
     getTranslations({ locale, namespace: "ProductMaterials" }),
+    getTranslations({ locale, namespace: "CnClassification" }),
   ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
@@ -144,12 +151,27 @@ export default async function ProductDetailPage({ params }: PageProps) {
     expectedDraftUpdatedAt: string;
   } | null = null;
   let materialsLoadFailed = false;
+  let cnData: {
+    productId: string;
+    cn: null | { identifierId: string; value: string; nomenclatureYear: number; updatedAt: string };
+    expectedDraftVersionId: string;
+    expectedProductUpdatedAt: string;
+    expectedDraftUpdatedAt: string;
+  } | null = null;
+  let cnLoadFailed = false;
   if (detail.currentDraft !== null) {
-    try {
-      const service = createProductMaterialsCurrentDraftServices(
-        getProductionProductMaterialsCurrentDraftDependencies(),
-      );
-      const result = await service.get({ productId: detail.productId }, resolution.context);
+    const materialsService = createProductMaterialsCurrentDraftServices(
+      getProductionProductMaterialsCurrentDraftDependencies(),
+    );
+    const cnService = createCnClassificationCurrentDraftServices(
+      getProductionCnClassificationCurrentDraftDependencies(),
+    );
+    const [materialsResult, cnResult] = await Promise.allSettled([
+      materialsService.get({ productId: detail.productId }, resolution.context),
+      cnService.get({ productId: detail.productId }, resolution.context),
+    ]);
+    if (materialsResult.status === "fulfilled") {
+      const result = materialsResult.value;
       materialsData = {
         productId: result.productId,
         materials: result.materials.map((material) => ({
@@ -160,8 +182,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
         expectedProductUpdatedAt: result.expectedProductUpdatedAt.toISOString(),
         expectedDraftUpdatedAt: result.expectedDraftUpdatedAt.toISOString(),
       };
-    } catch {
+    } else {
       materialsLoadFailed = true;
+    }
+    if (cnResult.status === "fulfilled") {
+      const result = cnResult.value;
+      cnData = {
+        productId: result.productId,
+        cn: result.cn === null ? null : { ...result.cn, updatedAt: result.cn.updatedAt.toISOString() },
+        expectedDraftVersionId: result.expectedDraftVersionId,
+        expectedProductUpdatedAt: result.expectedProductUpdatedAt.toISOString(),
+        expectedDraftUpdatedAt: result.expectedDraftUpdatedAt.toISOString(),
+      };
+    } else {
+      cnLoadFailed = true;
     }
   }
   const detailHref = getPathname({ locale, href: `/dashboard/products/${detail.productId}` });
@@ -177,6 +211,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
       editLabel={editT("title")}
       contentEditHref={contentEditHref}
       contentEditLabel={contentT("editAction")}
+      cnClassificationSection={
+        <CnClassificationSection
+          data={cnData}
+          canEdit={editHref !== null && !cnLoadFailed}
+          labels={cnClassificationLabels(cnT)}
+          detailHref={detailHref}
+          currentUtcYear={new Date().getUTCFullYear()}
+          loadFailed={cnLoadFailed}
+        />
+      }
       materialsSection={
         <ProductMaterialsSection
           data={materialsData}
@@ -205,6 +249,37 @@ export default async function ProductDetailPage({ params }: PageProps) {
     resolution.userLabel,
     resolution.presentation.organizationName,
   );
+}
+
+function cnClassificationLabels(
+  t: Awaited<ReturnType<typeof getTranslations<"CnClassification">>>,
+): CnClassificationLabels {
+  return {
+    title: t("title"),
+    code: t("code"),
+    year: t("year"),
+    addClassification: t("addClassification"),
+    editClassification: t("editClassification"),
+    removeClassification: t("removeClassification"),
+    save: t("save"),
+    add: t("add"),
+    remove: t("remove"),
+    cancel: t("cancel"),
+    saving: t("saving"),
+    removing: t("removing"),
+    reload: t("reload"),
+    empty: t("empty"),
+    noDraft: t("noDraft"),
+    invalidCode: t("invalidCode"),
+    invalidYear: t("invalidYear"),
+    conflict: t("conflict"),
+    staleWrite: t("staleWrite"),
+    draftNotEditable: t("draftNotEditable"),
+    forbidden: t("forbidden"),
+    failure: t("failure"),
+    helper: t("helper"),
+    confirmRemove: t("confirmRemove"),
+  };
 }
 
 function productMaterialsLabels(
