@@ -86,6 +86,7 @@ test("keeps generated Prisma access inside approved infrastructure adapters", ()
     "src/infrastructure/persistence/prisma/prisma-list-products.ts",
     "src/infrastructure/persistence/prisma/prisma-product-materials-current-draft-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-product-materials-current-draft.ts",
+    "src/infrastructure/persistence/prisma/prisma-public-dpp.ts",
     "src/infrastructure/persistence/prisma/prisma-publish-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-publish-product.ts",
     "src/infrastructure/persistence/prisma/production-prisma-runtime.ts",
