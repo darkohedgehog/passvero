@@ -50,14 +50,14 @@
       "@hono/node-server": "1.19.15",
       "@prisma/streams-local": {
         "ajv": {
-          "fast-uri": "3.1.5"
+          "fast-uri": "3.1.6"
         }
       },
       "hono": "4.12.34",
       "valibot": "1.4.2"
     },
     "prisma": {
-      "mysql2": "3.22.0"
+      "mysql2": "3.23.1"
     },
     "next": {
       "postcss": "8.5.23",

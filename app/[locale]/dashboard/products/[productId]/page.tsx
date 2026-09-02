@@ -9,6 +9,7 @@ import { createCnClassificationCurrentDraftServices } from "@/src/application/pr
 import { canShowEditProductDraftAction } from "@/src/application/products/edit-product-draft/edit-product-draft-http";
 import { createGetProductDetailService } from "@/src/application/products/get-product-detail/get-product-detail";
 import { createProductMaterialsCurrentDraftServices } from "@/src/application/products/product-materials-current-draft/services";
+import { canShowPublishProductAction } from "@/src/application/products/publish-product/http";
 import { DashboardShell } from "@/src/components/application/dashboard/dashboard-shell";
 import {
   CnClassificationSection,
@@ -22,6 +23,7 @@ import {
   ProductMaterialsSection,
   type ProductMaterialsLabels,
 } from "@/src/components/application/products/product-materials-section";
+import { PublishProductSection, type PublishProductLabels } from "@/src/components/application/products/publish-product-section";
 import { getPathname } from "@/src/i18n/navigation";
 import { isAppLocale } from "@/src/i18n/routing";
 import { resolveProtectedDashboard } from "@/src/infrastructure/context/organization-context-runtime";
@@ -54,7 +56,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!isAppLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  const [dashboardT, productsT, detailT, editT, contentT, materialsT, cnT] = await Promise.all([
+  const [dashboardT, productsT, detailT, editT, contentT, materialsT, cnT, publishT] = await Promise.all([
     getTranslations({ locale, namespace: "Dashboard" }),
     getTranslations({ locale, namespace: "Products" }),
     getTranslations({ locale, namespace: "ProductDetail" }),
@@ -62,6 +64,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     getTranslations({ locale, namespace: "DraftTranslationContent" }),
     getTranslations({ locale, namespace: "ProductMaterials" }),
     getTranslations({ locale, namespace: "CnClassification" }),
+    getTranslations({ locale, namespace: "PublishProduct" }),
   ]);
 
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
@@ -199,6 +202,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
     }
   }
   const detailHref = getPathname({ locale, href: `/dashboard/products/${detail.productId}` });
+  const canPublish = canShowPublishProductAction(
+    resolution.context,
+    detail.lifecycleStatus,
+    detail.currentDraft?.status ?? null,
+  );
 
   return detailShell(
     dashboardT,
@@ -211,6 +219,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
       editLabel={editT("title")}
       contentEditHref={contentEditHref}
       contentEditLabel={contentT("editAction")}
+      publishSection={canPublish && detail.currentDraft !== null ? (
+        <PublishProductSection
+          data={{
+            productId: detail.productId,
+            expectedDraftVersionId: detail.currentDraft.productVersionId,
+            expectedProductUpdatedAt: detail.updatedAt.toISOString(),
+            expectedDraftUpdatedAt: detail.currentDraft.updatedAt.toISOString(),
+            expectedCurrentPublishedVersionId: detail.currentPublished?.productVersionId ?? null,
+          }}
+          labels={publishProductLabels(publishT)}
+        />
+      ) : null}
       cnClassificationSection={
         <CnClassificationSection
           data={cnData}
@@ -249,6 +269,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
     resolution.userLabel,
     resolution.presentation.organizationName,
   );
+}
+
+function publishProductLabels(
+  t: Awaited<ReturnType<typeof getTranslations<"PublishProduct">>>,
+): PublishProductLabels {
+  return {
+    title: t("title"), publish: t("publish"), confirm: t("confirm"), publishing: t("publishing"),
+    success: t("success"), noChange: t("noChange"), staleWrite: t("staleWrite"),
+    notReady: t("notReady"), sourceTranslation: t("sourceTranslation"), productName: t("productName"),
+    publicAsset: t("publicAsset"), invalidState: t("invalidState"), forbidden: t("forbidden"),
+    failure: t("failure"), reload: t("reload"),
+  };
 }
 
 function cnClassificationLabels(

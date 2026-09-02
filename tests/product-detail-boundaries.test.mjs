@@ -36,7 +36,8 @@ test("keeps detail outside direct Prisma access and limits mutations to authoriz
   ].join("\n");
 
   assert.doesNotMatch(source, /generated\/prisma|\.product\.(create|update|delete|upsert)/);
-  assert.doesNotMatch(source, /PRODUCT_PUBLISH/);
+  assert.match(source, /canShowPublishProductAction/);
+  assert.match(source, /PublishProductSection/);
   assert.match(read(pagePath), /canShowEditProductDraftAction\(/);
   assert.doesNotMatch(
     source,
