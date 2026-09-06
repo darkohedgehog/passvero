@@ -24,6 +24,7 @@ import {
   type ProductMaterialsLabels,
 } from "@/src/components/application/products/product-materials-section";
 import { PublishProductSection, type PublishProductLabels } from "@/src/components/application/products/publish-product-section";
+import { ProductQrServerSection } from "@/src/components/application/products/product-qr-server-section";
 import { getPathname } from "@/src/i18n/navigation";
 import { isAppLocale } from "@/src/i18n/routing";
 import { resolveProtectedDashboard } from "@/src/infrastructure/context/organization-context-runtime";
@@ -214,6 +215,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     detailT("title"),
     <ProductDetailPresentation
       detail={detail}
+      qrSection={<ProductQrServerSection productId={detail.productId} context={resolution.context} locale={locale} />}
       productListHref={productListHref}
       editHref={editHref}
       editLabel={editT("title")}

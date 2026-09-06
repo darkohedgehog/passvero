@@ -235,5 +235,25 @@
       "company": {"title": "Tvrtka", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatražite rani pristup"},
       "legal": {"title": "Pravno", "privacy": "Pravila privatnosti", "cookies": "Pravila o kolačićima", "terms": "Uvjeti korištenja"}
     }
+  },
+  "ProductQr": {
+    "title": "QR kod",
+    "pending": "Na čekanju",
+    "active": "Aktivan",
+    "revoked": "Opozvan",
+    "activate": "Aktiviraj QR kod",
+    "confirm": "Aktivirati QR kod za preuzimanje, ispis i upotrebu?",
+    "activating": "Aktivacija…",
+    "success": "QR kod je aktiviran.",
+    "stale": "Podaci su se promijenili. Osvježite stranicu prije ponovnog pokušaja.",
+    "forbidden": "Nemate dopuštenje za ovu radnju.",
+    "unavailable": "QR kod trenutačno nije dostupan.",
+    "previewAlt": "Pregled QR koda za javnu digitalnu putovnicu proizvoda",
+    "downloadSvg": "Preuzmi SVG",
+    "downloadPng": "Preuzmi PNG",
+    "publicationRequired": "Objavite proizvod kako biste mogli aktivirati QR kod.",
+    "noLongerAvailable": "QR kod više nije dostupan za pregled ili preuzimanje.",
+    "helper": "Aktivacija omogućuje upotrebu, preuzimanje i ispis QR koda za već objavljeni proizvod.",
+    "reload": "Osvježi stranicu"
   }
 }

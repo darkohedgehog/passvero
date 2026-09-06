@@ -46,6 +46,7 @@ export function ProductDetailPresentation({
   cnClassificationSection,
   materialsSection,
   publishSection,
+  qrSection,
   formattedDates,
   labels,
 }: Readonly<{
@@ -58,6 +59,7 @@ export function ProductDetailPresentation({
   cnClassificationSection?: React.ReactNode;
   materialsSection?: React.ReactNode;
   publishSection?: React.ReactNode;
+  qrSection?: React.ReactNode;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
 }>) {
@@ -164,6 +166,7 @@ export function ProductDetailPresentation({
       </div>
       {cnClassificationSection}
       {materialsSection}
+      {qrSection}
     </div>
   );
 }

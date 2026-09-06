@@ -7,18 +7,20 @@ export const PRODUCT_CREATE = "PRODUCT_CREATE" as const;
 export const PRODUCT_EDIT = "PRODUCT_EDIT" as const;
 export const PRODUCT_READ = "PRODUCT_READ" as const;
 export const PRODUCT_PUBLISH = "PRODUCT_PUBLISH" as const;
+export const QRCODE_ACTIVATE = "QRCODE_ACTIVATE" as const;
 
 export type ProductPermission =
   | typeof PRODUCT_CREATE
   | typeof PRODUCT_EDIT
   | typeof PRODUCT_READ
-  | typeof PRODUCT_PUBLISH;
+  | typeof PRODUCT_PUBLISH
+  | typeof QRCODE_ACTIVATE;
 
 const rolePermissions: Readonly<Record<MembershipRole, readonly ProductPermission[]>> = {
   VIEWER: [PRODUCT_READ],
   EDITOR: [PRODUCT_READ, PRODUCT_CREATE, PRODUCT_EDIT],
-  ADMIN: [PRODUCT_READ, PRODUCT_CREATE, PRODUCT_EDIT, PRODUCT_PUBLISH],
-  OWNER: [PRODUCT_READ, PRODUCT_CREATE, PRODUCT_EDIT, PRODUCT_PUBLISH],
+  ADMIN: [PRODUCT_READ, PRODUCT_CREATE, PRODUCT_EDIT, PRODUCT_PUBLISH, QRCODE_ACTIVATE],
+  OWNER: [PRODUCT_READ, PRODUCT_CREATE, PRODUCT_EDIT, PRODUCT_PUBLISH, QRCODE_ACTIVATE],
 };
 
 export function hasProductPermission(

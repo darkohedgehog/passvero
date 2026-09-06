@@ -166,3 +166,11 @@ test("keeps the purpose-specific Materials section inside the Product Detail wor
   assert.match(html, /Current draft materials/);
   assert.equal((html.match(/Current draft materials/g) ?? []).length, 1);
 });
+
+test("QR section remains visible without an editable draft", () => {
+  const html = renderToStaticMarkup(createElement(ProductDetailPresentation, {
+    detail: { ...detail, currentDraft: null }, productListHref: "/dashboard/products", formattedDates, labels,
+    qrSection: createElement("section", null, "QR lifecycle and downloads"),
+  }));
+  assert.match(html, /QR lifecycle and downloads/);
+});
