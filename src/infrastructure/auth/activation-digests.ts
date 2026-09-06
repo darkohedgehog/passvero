@@ -44,6 +44,14 @@ export function createActivationDigesters(input: {
       },
     },
     intendedEmailDigester: {
+      async digest(canonicalEmail: string): Promise<string> {
+        const bytes = Buffer.from(canonicalEmail, "utf8");
+        try {
+          return digest(emailKey, EMAIL_NAMESPACE, bytes).toString("base64url");
+        } finally {
+          bytes.fill(0);
+        }
+      },
       async matches(matchInput: {
         readonly canonicalEmail: string;
         readonly persistedDigest: string;
