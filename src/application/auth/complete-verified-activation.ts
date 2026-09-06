@@ -17,6 +17,8 @@ export interface VerifiedActivationDependencies<Transaction> {
       readonly userId: string;
       readonly status: "AUTH_ACCOUNT_CREATED" | "EMAIL_VERIFIED" | "BOUND";
       readonly intendedEmailDigest: string;
+      readonly providerSubject: string;
+      readonly expiresAt: Date;
       readonly canonicalEmail: string;
     } | null>;
     findIdentityByProviderSubject(
@@ -68,8 +70,11 @@ export interface VerifiedActivationDependencies<Transaction> {
 
 export type VerifiedActivationResult =
   | { readonly status: "DENIED" }
+  | { readonly status: "CONFLICT" }
   | { readonly status: "BOUND"; readonly userId: string }
   | { readonly status: "ALREADY_BOUND"; readonly userId: string };
+
+export class VerifiedActivationConflict extends Error {}
 
 const rollback = Symbol("verified-activation-rollback");
 
@@ -93,6 +98,10 @@ export function createVerifiedActivationCompletionService<Transaction>(
         if (
           activation === null
           || activation.canonicalEmail !== provider.email
+          || activation.providerSubject !== provider.providerSubject
+          || !["AUTH_ACCOUNT_CREATED", "EMAIL_VERIFIED", "BOUND"].includes(activation.status)
+          || !Number.isFinite(activation.expiresAt.getTime())
+          || activation.expiresAt.getTime() <= dependencies.now().getTime()
         ) {
           return { status: "DENIED" } as const;
         }
@@ -110,12 +119,18 @@ export function createVerifiedActivationCompletionService<Transaction>(
             transaction,
             provider.providerSubject,
           );
+        const userIdentity = await dependencies.persistence
+          .findIdentityForUser(transaction, activation.userId);
         if (subjectIdentity !== null) {
           if (
             subjectIdentity.revokedAt !== null
             || subjectIdentity.userId !== activation.userId
+            || userIdentity === null
+            || userIdentity.id !== subjectIdentity.id
+            || userIdentity.providerSubject !== provider.providerSubject
+            || userIdentity.revokedAt !== null
           ) {
-            return { status: "DENIED" } as const;
+            return { status: "CONFLICT" } as const;
           }
           if (activation.status === "BOUND") {
             return {
@@ -123,20 +138,12 @@ export function createVerifiedActivationCompletionService<Transaction>(
               userId: activation.userId,
             } as const;
           }
-          return finalizeBinding(
-            dependencies,
-            transaction,
-            activation,
-            subjectIdentity.id,
-            provider.providerSubject,
-            correlationId,
-          );
+          return { status: "CONFLICT" } as const;
         }
+        if (activation.status === "BOUND") return { status: "DENIED" } as const;
 
-        const userIdentity = await dependencies.persistence
-          .findIdentityForUser(transaction, activation.userId);
         if (userIdentity !== null) {
-          return { status: "DENIED" } as const;
+          return { status: "CONFLICT" } as const;
         }
 
         const identity = await dependencies.persistence.createIdentity(
@@ -156,6 +163,7 @@ export function createVerifiedActivationCompletionService<Transaction>(
         );
       });
     } catch (error) {
+      if (error instanceof VerifiedActivationConflict) return { status: "CONFLICT" };
       if (error === rollback) {
         return { status: "DENIED" };
       }

@@ -1,8 +1,9 @@
 import type {
   ControlledActivationDependencies,
 } from "@/src/application/auth/controlled-activation";
-import type {
-  VerifiedActivationDependencies,
+import {
+  VerifiedActivationConflict,
+  type VerifiedActivationDependencies,
 } from "@/src/application/auth/complete-verified-activation";
 import {
   Prisma,
@@ -154,10 +155,17 @@ export class PrismaAuthTransactionRunner
 implements VerifiedTransactionRunner {
   constructor(private readonly prisma: PrismaClient) {}
 
-  run<Result>(
+  async run<Result>(
     work: (transaction: Prisma.TransactionClient) => Promise<Result>,
   ): Promise<Result> {
-    return this.prisma.$transaction((transaction) => work(transaction));
+    try {
+      return await this.prisma.$transaction((transaction) => work(transaction));
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        throw new VerifiedActivationConflict("Identity binding conflict.");
+      }
+      throw error;
+    }
   }
 }
 
@@ -167,6 +175,18 @@ implements VerifiedPersistence {
     transaction: Prisma.TransactionClient,
     providerSubject: string,
   ) {
+    const candidate = await transaction.accountActivationIntent.findFirst({
+      where: { provider: "BETTER_AUTH", providerSubject },
+      select: { id: true, userId: true },
+    });
+    if (candidate === null) return null;
+    // Every completion path locks User -> Intent -> existing identities, then re-reads.
+    // The User lock also serializes attempts from distinct intents for that User.
+    await transaction.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${candidate.userId}::uuid FOR UPDATE`;
+    await transaction.$queryRaw`SELECT "id" FROM "AccountActivationIntent" WHERE "id" = ${candidate.id}::uuid FOR UPDATE`;
+    await transaction.$queryRaw`SELECT "id" FROM "AuthIdentity"
+      WHERE "provider" = 'BETTER_AUTH' AND ("userId" = ${candidate.userId}::uuid OR "providerSubject" = ${providerSubject})
+      ORDER BY "id" FOR UPDATE`;
     const activation = await transaction.accountActivationIntent.findFirst({
       where: { provider: "BETTER_AUTH", providerSubject },
       select: {
@@ -174,11 +194,16 @@ implements VerifiedPersistence {
         userId: true,
         status: true,
         intendedEmailDigest: true,
+        providerSubject: true,
+        expiresAt: true,
         user: { select: { email: true } },
       },
     });
     if (
       activation === null
+      || activation.id !== candidate.id
+      || activation.userId !== candidate.userId
+      || activation.providerSubject !== providerSubject
       || ![
         "AUTH_ACCOUNT_CREATED",
         "EMAIL_VERIFIED",
@@ -196,6 +221,8 @@ implements VerifiedPersistence {
         | "BOUND",
       intendedEmailDigest: activation.intendedEmailDigest,
       canonicalEmail: activation.user.email,
+      providerSubject,
+      expiresAt: activation.expiresAt,
     };
   }
 
@@ -214,15 +241,18 @@ implements VerifiedPersistence {
     });
   }
 
-  findIdentityForUser(
+  async findIdentityForUser(
     transaction: Prisma.TransactionClient,
     userId: string,
   ) {
-    return transaction.authIdentity.findFirst({
-      where: { provider: "BETTER_AUTH", userId, revokedAt: null },
+    const identities = await transaction.authIdentity.findMany({
+      where: { provider: "BETTER_AUTH", userId },
+      take: 2,
       select: { id: true, providerSubject: true, revokedAt: true },
-      orderBy: { createdAt: "asc" },
+      orderBy: { id: "asc" },
     });
+    if (identities.length > 1) throw new VerifiedActivationConflict("Identity binding conflict.");
+    return identities[0] ?? null;
   }
 
   async createIdentity(
@@ -254,6 +284,7 @@ implements VerifiedPersistence {
         provider: "BETTER_AUTH",
         providerSubject: input.providerSubject,
         status: { in: ["AUTH_ACCOUNT_CREATED", "EMAIL_VERIFIED"] },
+        expiresAt: { gt: input.boundAt },
       },
       data: {
         status: "BOUND",

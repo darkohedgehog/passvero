@@ -339,3 +339,11 @@ test("post-attempt persistence failure returns a secret-safe reconciliation resu
   assert.deepEqual(await response.json(), { status: "OPERATIONAL_FAILURE" });
   assert.match(response.headers.get("set-cookie") ?? "", /HttpOnly/);
 });
+
+for (const failed of [false,true]) test(`verification reconciliation ${failed ? "failure cannot show VERIFIED" : "success retains safe presentation"}`, async()=>{
+ const fixture=dependencies();
+ fixture.input.provider.verifyEmail=async()=>{if(failed)throw new Error("private unresolved business binding");};
+ const response=await createExplicitAuthHttpTransport(fixture.input).consumeEmailVerification(new Request(`${origin}/api/auth/verification/consume?token=synthetic`));
+ assert.equal(response.status,failed?400:200);assert.deepEqual(await response.json(),{status:failed?"VERIFICATION_DENIED":"VERIFIED"});
+ assert.equal(response.headers.get("set-cookie"),null);
+});

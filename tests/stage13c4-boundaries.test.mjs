@@ -48,7 +48,7 @@ test("keeps provider writes inside Better Auth and business writes inside busine
   assert.match(business, /authAuditEvent\./);
 });
 
-test("binds identity only from the Better Auth verified-email callback", () => {
+test("binds identity only from the verified-email callback or token-validated consume reconciliation", () => {
   const server = read("src/infrastructure/auth/better-auth-server.ts");
   const composition = read("src/infrastructure/auth/stage13c4-auth-lifecycle.ts");
   const completion = read("src/application/auth/complete-verified-activation.ts");
@@ -56,6 +56,15 @@ test("binds identity only from the Better Auth verified-email callback", () => {
   assert.match(server, /onEmailVerified/);
   assert.doesNotMatch(composition, /completeVerifiedActivation\s*:/);
   assert.doesNotMatch(completion, /emailVerified/);
+  assert.match(composition, /createVerificationBindingRecovery/);
+  const recovery = read("src/infrastructure/auth/verification-binding-recovery.ts");
+  assert.match(recovery, /verifyJWT/);
+  assert.doesNotMatch(recovery, /generated\/prisma|signUpEmail|createSession|sendVerificationEmail/);
+  const runtime = read("src/infrastructure/auth/explicit-auth-http-runtime.ts");
+  assert.match(runtime, /await lifecycle\.verifyEmail\(input\)/);
+  for (const file of ["src/infrastructure/auth/provider-neutral-session-resolution.ts", "scripts/provision-controlled-customer.ts"]) {
+    assert.doesNotMatch(read(file), /createVerificationBindingRecovery|completeVerifiedActivation/);
+  }
 });
 
 test("declares only the approved SMTP dependency additions", () => {

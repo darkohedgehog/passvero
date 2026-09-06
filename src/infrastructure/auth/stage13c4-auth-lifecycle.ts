@@ -1,5 +1,7 @@
 import "server-only";
 
+import { createVerificationBindingRecovery } from "./verification-binding-recovery";
+
 import { randomUUID } from "node:crypto";
 
 import { createAuthenticatedPasswordChangeService } from "@/src/application/auth/change-password";
@@ -8,7 +10,7 @@ import { createControlledActivationService } from "@/src/application/auth/contro
 import { createPasswordRecoveryService } from "@/src/application/auth/password-recovery";
 import { createActivationDigesters } from "@/src/infrastructure/auth/activation-digests";
 import { createLazyAuthEmailSender } from "@/src/infrastructure/auth/auth-email-runtime";
-import { getBetterAuthLifecycleProvider } from "@/src/infrastructure/auth/better-auth-server";
+import { getBetterAuthLifecycleProvider, getBetterAuthServer } from "@/src/infrastructure/auth/better-auth-server";
 import { validateBetterAuthServerConfig } from "@/src/infrastructure/auth/better-auth-server-config";
 import {
   PrismaAuthTransactionRunner,
@@ -42,12 +44,25 @@ export function createStage13c4AuthLifecycle(input: {
       verifiedIdentity,
       randomUUID(),
     );
-    if (result.status === "DENIED") {
+    if (result.status !== "BOUND" && result.status !== "ALREADY_BOUND") {
       throw new Error("Verified activation completion was denied.");
     }
   });
 
+  const auth = getBetterAuthServer();
+  const verifyEmail = createVerificationBindingRecovery({
+    secret: config.secret,
+    verifyEmail: (token) => auth.api.verifyEmail({ query: { token } }),
+    async findUserByEmail(email) {
+      const context = await auth.$context;
+      const found = await context.internalAdapter.findUserByEmail(email, { includeAccounts: false });
+      return found?.user ?? null;
+    },
+    complete: (identity) => completeVerifiedActivation(identity, randomUUID()),
+  });
+
   return {
+    verifyEmail,
     activate: createControlledActivationService({
       ...digesters,
       activationRepository: new PrismaControlledActivationRepository(prisma),

@@ -33,6 +33,7 @@ function createRuntime(): Transport {
   });
   const auth = getBetterAuthServer();
 
+
   return createExplicitAuthHttpTransport({
     canonicalOrigin: config.baseURL,
     trustedClientAddress: () => undefined,
@@ -48,7 +49,7 @@ function createRuntime(): Transport {
         return { headers: result.headers };
       },
       async verifyEmail(input) {
-        await auth.api.verifyEmail({ query: { token: input.token } });
+        await lifecycle.verifyEmail(input);
       },
       async signOut(input) {
         const result = await auth.api.signOut({
