@@ -9,7 +9,7 @@ const evidence = { expectedDraftVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb
 
 test("accepts only content and concurrency keys while product authority comes from route", async () => {
   let received: unknown;
-  const handler = createDraftTranslationContentHttpHandler({ canonicalOrigin: "https://passvero.test", resolveContext: async () => ({ status: "RESOLVED" as const, context, userLabel: "User", presentation: { organizationName: "Org" } }), update: async (command) => { received = command; return { productId: command.productId, status: "UPDATED" }; } });
+  const handler = createDraftTranslationContentHttpHandler({ verifyProxy: () => true, canonicalOrigin: "https://passvero.test", resolveContext: async () => ({ status: "RESOLVED" as const, context, userLabel: "User", presentation: { organizationName: "Org" } }), update: async (command) => { received = command; return { productId: command.productId, status: "UPDATED" }; } });
   const response = await handler(new Request("https://passvero.test/api/products/route-id/draft-translation-content", { method: "POST", headers: { origin: "https://passvero.test", "content-type": "application/json" }, body: JSON.stringify({ ...fields, ...evidence }) }), "route-id");
   assert.equal(response.status, 200);
   assert.deepEqual(received, { productId: "route-id", ...fields, ...evidence });

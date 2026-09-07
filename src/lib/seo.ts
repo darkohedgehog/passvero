@@ -1,12 +1,12 @@
+import { getAbsoluteUrl } from "./canonical-site";
+import { parseCanonicalAppOrigin } from "@/src/application/config/canonical-app-origin";
 import type { Metadata } from "next";
 
 import { routing, type AppLocale } from "@/src/i18n/routing";
 import {
-  getAbsoluteUrl,
   OG_IMAGE_PATH,
   openGraphLocales,
   SITE_NAME,
-  SITE_URL,
 } from "@/src/lib/site";
 
 type LocalizedMetadataInput = {
@@ -17,12 +17,12 @@ type LocalizedMetadataInput = {
   pathname?: string;
 };
 
-export function getLanguageAlternates(pathname = "/") {
+export function getLanguageAlternates(canonicalOrigin: string, pathname = "/") {
   return {
     ...Object.fromEntries(
-      routing.locales.map((locale) => [locale, getAbsoluteUrl(locale, pathname)]),
+      routing.locales.map((locale) => [locale, getAbsoluteUrl(canonicalOrigin, locale, pathname)]),
     ),
-    "x-default": new URL(pathname === "/" ? "/" : pathname, SITE_URL).toString(),
+    "x-default": new URL(pathname === "/" ? "/" : pathname, canonicalOrigin).toString(),
   };
 }
 
@@ -32,16 +32,17 @@ export function createLocalizedMetadata({
   description,
   imageAlt,
   pathname = "/",
-}: LocalizedMetadataInput): Metadata {
-  const canonical = getAbsoluteUrl(locale, pathname);
+}: LocalizedMetadataInput, origin: string): Metadata {
+  const canonicalOrigin = parseCanonicalAppOrigin(origin);
+  const canonical = getAbsoluteUrl(canonicalOrigin, locale, pathname);
 
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(canonicalOrigin),
     title,
     description,
     alternates: {
       canonical,
-      languages: getLanguageAlternates(pathname),
+      languages: getLanguageAlternates(canonicalOrigin, pathname),
     },
     openGraph: {
       type: "website",

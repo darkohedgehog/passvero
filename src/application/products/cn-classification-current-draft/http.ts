@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
 import { ApplicationError } from "@/src/application/errors/application-error";
@@ -8,13 +9,15 @@ const MAX_BODY_LENGTH = 4_096;
 
 export function createCnClassificationHttpHandler(dependencies: {
   readonly canonicalOrigin: string;
+  readonly verifyProxy: (headers: Headers) => boolean;
   readonly resolveContext: (headers: Headers) => Promise<AuthenticatedUserContextResolution>;
   readonly add: AddCnClassification;
   readonly edit: EditCnClassification;
   readonly remove: RemoveCnClassification;
 }) {
   return async (request: Request, productId: string): Promise<Response> => {
-    if (request.method !== "POST" || request.headers.get("origin") !== dependencies.canonicalOrigin || new URL(request.url).origin !== dependencies.canonicalOrigin) return json({ status: "FORBIDDEN" }, 403);
+    const denied = canonicalProxyDenial(request, dependencies, "FORBIDDEN");
+    if (denied) return denied;
     const payload = await readPayload(request);
     if (payload === null) return json({ status: "VALIDATION_ERROR" }, 400);
     let resolution: AuthenticatedUserContextResolution;

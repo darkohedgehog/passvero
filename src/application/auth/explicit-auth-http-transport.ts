@@ -1,3 +1,4 @@
+import { canonicalProxyDenial, providerFacingHeaders } from "@/src/application/http/canonical-proxy";
 import type { AuthAbuseDecision } from "./auth-abuse-policy";
 import type { AuthAbuseEndpoint } from "./auth-abuse-types";
 import { readOptionalTurnstileTokenHeader } from "./auth-turnstile-header";
@@ -14,6 +15,7 @@ type SafeOperationResult = Readonly<{ status: string }>;
 
 export type ExplicitAuthHttpDependencies = Readonly<{
   canonicalOrigin: string;
+  verifyProxy(headers: Headers): boolean;
   trustedClientAddress(request: Request): string | undefined;
   abuse: {
     checkBeforeAttempt(input: {
@@ -107,7 +109,8 @@ export function createExplicitAuthHttpTransport(
 
   return {
     async signIn(request: Request): Promise<Response> {
-      if (!validPostOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+      const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+      if (denied) return denied;
       const body = await readPost(request, dependencies.canonicalOrigin, ["email", "password", "turnstileToken"]);
       if (body === null || !boundedString(body.email, 1, 254) || !boundedString(body.password, 1, 256)
         || !optionalString(body.turnstileToken, 2048)) return json({ status: "INVALID_REQUEST" }, 400);
@@ -121,7 +124,7 @@ export function createExplicitAuthHttpTransport(
             const provider = await dependencies.provider.signIn({
               email: body.email as string,
               password: body.password as string,
-              headers: request.headers,
+              headers: providerFacingHeaders(request.headers),
             });
             return { success: true, response: json({ status: "AUTHENTICATED" }, 200, provider.headers), headers: provider.headers };
           } catch {
@@ -132,7 +135,8 @@ export function createExplicitAuthHttpTransport(
     },
 
     async activate(request: Request): Promise<Response> {
-      if (!validPostOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+      const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+      if (denied) return denied;
       const body = await readPost(request, dependencies.canonicalOrigin, ["capability", "password", "turnstileToken"]);
       if (body === null || !boundedString(body.capability, 43, 43) || !boundedString(body.password, 1, 256)
         || !optionalString(body.turnstileToken, 2048)) return json({ status: "INVALID_REQUEST" }, 400);
@@ -152,7 +156,8 @@ export function createExplicitAuthHttpTransport(
     },
 
     async consumeEmailVerification(request: Request): Promise<Response> {
-      if (!sameRequestOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+      const denied = canonicalProxyDenial(request, dependencies, "DENIED", true);
+      if (denied) return denied;
       const url = new URL(request.url);
       const token = url.searchParams.getAll("token");
       const turnstileToken = readOptionalTurnstileTokenHeader(request.headers);
@@ -174,7 +179,8 @@ export function createExplicitAuthHttpTransport(
     },
 
     async consumePasswordReset(request: Request): Promise<Response> {
-      if (!validPostOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+      const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+      if (denied) return denied;
       const body = await readPost(request, dependencies.canonicalOrigin, ["token", "newPassword", "turnstileToken"]);
       if (body === null || !boundedString(body.token, 1, 2048) || !boundedString(body.newPassword, 1, 256)
         || !optionalString(body.turnstileToken, 2048)) return json({ status: "INVALID_REQUEST" }, 400);
@@ -187,11 +193,12 @@ export function createExplicitAuthHttpTransport(
     },
 
     async changePassword(request: Request): Promise<Response> {
-      if (!validPostOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+      const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+      if (denied) return denied;
       const body = await readPost(request, dependencies.canonicalOrigin, ["currentPassword", "newPassword", "turnstileToken"]);
       if (body === null || !boundedString(body.currentPassword, 1, 256) || !boundedString(body.newPassword, 1, 256)
         || !optionalString(body.turnstileToken, 2048)) return json({ status: "INVALID_REQUEST" }, 400);
-      const actor = await dependencies.resolvePasswordChangeActor(request.headers);
+      const actor = await dependencies.resolvePasswordChangeActor(providerFacingHeaders(request.headers));
       if (actor === null) return json({ status: "UNAUTHENTICATED" }, 401);
       return protectedOperation({ request, endpoint: "PASSWORD_CHANGE", accountIdentifier: actor.email,
         turnstileToken: body.turnstileToken as string | undefined, operation: async () => {
@@ -202,16 +209,18 @@ export function createExplicitAuthHttpTransport(
     },
 
     async signOut(request: Request): Promise<Response> {
-      if (!validPostOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+      const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+      if (denied) return denied;
       try {
-        const provider = await dependencies.provider.signOut({ headers: request.headers });
+        const provider = await dependencies.provider.signOut({ headers: providerFacingHeaders(request.headers) });
         return json({ status: "SIGNED_OUT" }, 200, provider.headers);
       } catch { return json({ status: "SIGNED_OUT" }, 200); }
     },
   };
 
   async function genericRequest(request: Request, endpoint: AuthAbuseEndpoint, operation: (email: string) => Promise<boolean>) {
-    if (!validPostOrigin(request, dependencies.canonicalOrigin)) return json({ status: "DENIED" }, 403);
+    const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+    if (denied) return denied;
     const body = await readPost(request, dependencies.canonicalOrigin, ["email", "turnstileToken"]);
     if (body === null || !boundedString(body.email, 1, 254) || !optionalString(body.turnstileToken, 2048)) {
       return json({ status: "INVALID_REQUEST" }, 400);
@@ -238,10 +247,7 @@ async function readPost(request: Request, origin: string, allowed: readonly stri
 }
 
 function validPostOrigin(request: Request, origin: string): boolean {
-  return request.method === "POST" && sameRequestOrigin(request, origin) && request.headers.get("origin") === origin;
-}
-function sameRequestOrigin(request: Request, origin: string): boolean {
-  try { return new URL(request.url).origin === origin; } catch { return false; }
+  return request.method === "POST" && request.headers.get("origin") === origin;
 }
 function boundedString(value: unknown, minimum: number, maximum: number): value is string {
   return typeof value === "string" && [...value].length >= minimum && [...value].length <= maximum;

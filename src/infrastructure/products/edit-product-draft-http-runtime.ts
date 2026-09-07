@@ -1,8 +1,9 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { createEditProductDraftService } from "@/src/application/products/edit-product-draft/edit-product-draft";
 import { createEditProductDraftHttpHandler } from "@/src/application/products/edit-product-draft/edit-product-draft-http";
-import { validateBetterAuthServerConfig } from "@/src/infrastructure/auth/better-auth-server-config";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 import { resolveAuthenticatedUserContext } from "@/src/infrastructure/context/organization-context-runtime";
 import { getProductionEditProductDraftDependencies } from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
 
@@ -18,12 +19,9 @@ export function getEditProductDraftHttpHandler(): Handler {
 }
 
 function createRuntime(): Handler {
-  const config = validateBetterAuthServerConfig({
-    secret: process.env.BETTER_AUTH_SECRET,
-    baseURL: process.env.BETTER_AUTH_URL,
-  });
+  const config = { baseURL: getCanonicalAppOrigin() };
   const edit = createEditProductDraftService(getProductionEditProductDraftDependencies());
-  return createEditProductDraftHttpHandler({
+  return createEditProductDraftHttpHandler({ verifyProxy: verifyRuntimeProxy,
     canonicalOrigin: config.baseURL,
     resolveContext: resolveAuthenticatedUserContext,
     edit,

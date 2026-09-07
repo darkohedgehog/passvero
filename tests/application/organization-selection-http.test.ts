@@ -24,6 +24,7 @@ test("persists only one server-validated target organization", async () => {
   const calls: unknown[] = [];
   const handler = createOrganizationSelectionHttpHandler({
     canonicalOrigin,
+    verifyProxy: () => true,
     async select(headers, targetOrganizationId) {
       calls.push({
         cookie: headers.get("cookie"),
@@ -54,6 +55,7 @@ test("denies unauthenticated and cross-tenant selection without exposing reasons
   ]) {
     const handler = createOrganizationSelectionHttpHandler({
       canonicalOrigin,
+    verifyProxy: () => true,
       select: async () => fixture.result,
     });
 
@@ -70,6 +72,7 @@ test("rejects noncanonical origin, non-POST, malformed IDs, and extra client aut
   let calls = 0;
   const handler = createOrganizationSelectionHttpHandler({
     canonicalOrigin,
+    verifyProxy: () => true,
     async select() {
       calls += 1;
       return { status: "SELECTED" };
@@ -100,6 +103,7 @@ test("rejects noncanonical origin, non-POST, malformed IDs, and extra client aut
 test("fails closed with a generic response when selection persistence fails", async () => {
   const handler = createOrganizationSelectionHttpHandler({
     canonicalOrigin,
+    verifyProxy: () => true,
     async select() {
       throw new Error("database detail");
     },

@@ -1,3 +1,4 @@
+import { CanonicalOriginError, parseCanonicalAppOrigin } from "@/src/application/config/canonical-app-origin";
 import type { BetterAuthOptions } from "better-auth";
 
 export type BetterAuthServerConfigErrorCode =
@@ -62,39 +63,12 @@ export function validateBetterAuthServerConfig(input: {
   if (input.secret.length < 32) {
     throw new BetterAuthServerConfigError("SECRET_LENGTH");
   }
-  if (typeof input.baseURL !== "string" || input.baseURL.length === 0) {
-    throw new BetterAuthServerConfigError("ORIGIN_MISSING");
+  let baseURL: string;
+  try { baseURL = parseCanonicalAppOrigin(input.baseURL); } catch (error) {
+    if (error instanceof CanonicalOriginError) throw new BetterAuthServerConfigError(error.code);
+    throw error;
   }
-  if (input.baseURL !== input.baseURL.trim()) {
-    throw new BetterAuthServerConfigError("ORIGIN_PADDED");
-  }
-
-  let parsed: URL;
-  try {
-    parsed = new URL(input.baseURL);
-  } catch {
-    throw new BetterAuthServerConfigError("ORIGIN_MALFORMED");
-  }
-
-  if (parsed.protocol !== "https:") {
-    throw new BetterAuthServerConfigError("ORIGIN_SCHEME");
-  }
-  if (
-    parsed.username.length > 0
-    || parsed.password.length > 0
-    || parsed.port.length > 0
-    || parsed.pathname !== "/"
-    || parsed.search.length > 0
-    || parsed.hash.length > 0
-  ) {
-    throw new BetterAuthServerConfigError("ORIGIN_SHAPE");
-  }
-
-  return {
-    secret: input.secret,
-    baseURL: parsed.origin,
-    trustedOrigins: [parsed.origin],
-  };
+  return { secret: input.secret, baseURL, trustedOrigins: [baseURL] };
 }
 
 export function createBetterAuthServerOptions(

@@ -15,7 +15,7 @@ const body = { expectedDraftVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", e
 function request(payload: unknown = body, requestOrigin = origin) { return new Request(`${origin}/api/products/${productId}/publish`, { method: "POST", headers: { origin: requestOrigin, "content-type": "application/json" }, body: JSON.stringify(payload) }); }
 function fixture(publish?: PublishProduct) {
   const calls: unknown[] = [];
-  return { calls, handler: createPublishProductHttpHandler({ canonicalOrigin: origin, async resolveContext() { return { status: "RESOLVED" as const, context, presentation: { organizationName: "Org" } }; }, publish: publish ?? (async (command, received) => { calls.push({ command, received }); return { productId, status: "PUBLISHED", versionNumber: 1 }; }) }) };
+  return { calls, handler: createPublishProductHttpHandler({ verifyProxy: () => true, canonicalOrigin: origin, async resolveContext() { return { status: "RESOLVED" as const, context, presentation: { organizationName: "Org" } }; }, publish: publish ?? (async (command, received) => { calls.push({ command, received }); return { productId, status: "PUBLISHED", versionNumber: 1 }; }) }) };
 }
 
 test("accepts only the evidence payload and returns the publication result", async () => {

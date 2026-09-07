@@ -193,3 +193,18 @@ test("uses documented Better Auth APIs with only fixed-origin callback targets",
     { name: "revokeSessions", input: { headers } },
   ]);
 });
+
+test("password change and revocation strip proxy credential before provider API calls", async () => {
+  let calls = 0;
+  const inspect = async (input: { headers: Headers }) => {
+    calls++;
+    assert.equal(input.headers.has("x-passvero-proxy-token"), false);
+    assert.equal(input.headers.get("cookie"), "session=fixture");
+  };
+  const unused = async (): Promise<never> => { assert.fail("Unexpected provider operation"); };
+  const adapter = createBetterAuthLifecycleAdapter({ signUpEmail: unused, sendVerificationEmail: unused,
+    requestPasswordReset: unused, resetPassword: unused, changePassword: inspect, revokeSessions: inspect }, "https://acceptance.example.test");
+  assert.deepEqual(await adapter.changePassword({ headers: new Headers({ cookie: "session=fixture", "x-passvero-proxy-token": "private-fixture" }),
+    currentPassword: "fixture-old", newPassword: "fixture-new" }), { sessionStatus: "REVOKED" });
+  assert.equal(calls, 2);
+});

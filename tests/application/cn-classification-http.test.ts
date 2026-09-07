@@ -20,7 +20,7 @@ function fixture(error?: ApplicationError, resolvedContext: AuthenticatedUserCon
   return {
     calls,
     handler: createCnClassificationHttpHandler({
-      canonicalOrigin: "https://passvero.test",
+      verifyProxy: () => true, canonicalOrigin: "https://passvero.test",
       resolveContext: async () => resolvedContext === null ? { status: "DENIED", reason: "NO_PROVIDER_SESSION" } : { status: "RESOLVED", context: resolvedContext, userLabel: "User", presentation: { organizationName: "Org" } },
       add: (command) => complete("ADD", command), edit: (command) => complete("EDIT", command), remove: (command) => complete("REMOVE", command),
     }),

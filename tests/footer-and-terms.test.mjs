@@ -158,7 +158,7 @@ test("footer anchors and Terms sitemap entries resolve", async () => {
   const features = await read("src/components/marketing/hero-section.tsx");
   const howItWorks = await read("src/components/marketing/how-it-works-section.tsx");
   const industries = await read("src/components/marketing/industries-section.tsx");
-  const sitemap = await read("app/sitemap.ts");
+  const sitemap = await read("src/lib/canonical-site.ts");
 
   assert.match(features, /id="features"/);
   assert.match(howItWorks, /id="how-it-works"/);
@@ -230,8 +230,8 @@ test("public navigation and footer use localized About and Contact routes", asyn
 });
 
 test("sitemap and structured data include public company pages and supplied ownership", async () => {
-  const sitemap = await read("app/sitemap.ts");
-  const layout = await read("app/[locale]/layout.tsx");
+  const sitemap = await read("src/lib/canonical-site.ts");
+  const layout = await read("src/lib/canonical-site.ts");
   const site = await read("src/lib/site.ts");
 
   assert.match(sitemap, /"\/about"/);
@@ -239,7 +239,7 @@ test("sitemap and structured data include public company pages and supplied owne
   assert.match(site, /Živić-elektro j\.d\.o\.o\./);
   assert.match(site, /https:\/\/www\.zivic-elektro\.com/);
   assert.match(layout, /"@type": "Brand"/);
-  assert.match(layout, /publisher: \{ "@id": `\$\{SITE_URL\}\/\#organization` \}/);
+  assert.match(layout, /publisher: \{ "@id": `\$\{canonicalOrigin\}\/\#organization` \}/);
 });
 
 test("Pricing preview is localized and avoids unvalidated commercial claims", async () => {

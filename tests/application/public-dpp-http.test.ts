@@ -306,3 +306,18 @@ test("maps route parameter resolution rejection through the same outer boundary"
   );
   await assertGenericRuntimeUnavailable(response, "PARAMETER_PRIVATE_DETAIL");
 });
+
+test("Public DPP canonical metadata follows configured staging origin, never request Host", async () => {
+  const staging = "https://acceptance.example.test";
+  const subject = createPublicDppHttpHandler({ canonicalOrigin: staging, getLabels: () => labels,
+    getPublicDpp: async () => ({ kind: "PUBLIC", dpp }) });
+  const response = await subject(new Request(`http://127.0.0.1:3000/p/${publicCode}`, {
+    headers: { host: "attacker.example.test", "x-forwarded-host": "attacker.example.test" },
+  }), publicCode);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.ok(html.includes(`rel="canonical" href="${staging}/p/${publicCode}"`));
+  assert.ok(!html.includes("https://passvero.eu"));
+  assert.ok(!html.includes("attacker.example.test"));
+  assert.equal(response.headers.get("cache-control"), "no-store");
+});

@@ -1,4 +1,5 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { createExplicitAuthHttpTransport } from "@/src/application/auth/explicit-auth-http-transport";
 import { createBusinessAuthAbuseService } from "@/src/infrastructure/auth/auth-abuse-runtime";
@@ -36,6 +37,7 @@ function createRuntime(): Transport {
 
   return createExplicitAuthHttpTransport({
     canonicalOrigin: config.baseURL,
+    verifyProxy: verifyRuntimeProxy,
     trustedClientAddress: () => undefined,
     abuse,
     turnstileVerifier: createRuntimeTurnstileVerifier(),

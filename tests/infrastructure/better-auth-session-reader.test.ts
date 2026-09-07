@@ -77,3 +77,14 @@ test("fails closed when provider user and session subjects disagree", async () =
 
   assert.equal(await reader.read(headers), null);
 });
+
+test("session reader strips private proxy credential before Better Auth", async () => {
+  const incoming = new Headers({ cookie: "session=fixture", "x-passvero-proxy-token": "private-fixture" });
+  const reader = createBetterAuthSessionReader(async input => {
+    assert.equal(input.headers.has("x-passvero-proxy-token"), false);
+    assert.equal(input.headers.get("cookie"), "session=fixture");
+    return null;
+  });
+  assert.equal(await reader.read(incoming), null);
+  assert.equal(incoming.has("x-passvero-proxy-token"), true);
+});

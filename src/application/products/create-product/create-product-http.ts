@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
 import { ApplicationError } from "@/src/application/errors/application-error";
@@ -39,15 +40,15 @@ export function classifyCreateProductPageAccess(
 
 export function createCreateProductHttpHandler(dependencies: {
   readonly canonicalOrigin: string;
+  readonly verifyProxy: (headers: Headers) => boolean;
   readonly resolveContext: (
     headers: Headers,
   ) => Promise<AuthenticatedUserContextResolution>;
   readonly create: CreateProduct;
 }) {
   return async (request: Request): Promise<Response> => {
-    if (!validPostOrigin(request, dependencies.canonicalOrigin)) {
-      return json({ status: "FORBIDDEN" }, 403);
-    }
+    const denied = canonicalProxyDenial(request, dependencies, "FORBIDDEN");
+    if (denied) return denied;
 
     const command = await readCommand(request);
     if (command === null) {
@@ -144,16 +145,6 @@ function optionalStructuralString(
     || structuralString(value, maximum);
 }
 
-function validPostOrigin(request: Request, origin: string): boolean {
-  if (request.method !== "POST" || request.headers.get("origin") !== origin) {
-    return false;
-  }
-  try {
-    return new URL(request.url).origin === origin;
-  } catch {
-    return false;
-  }
-}
 
 function mapCreateProductError(error: unknown): Response {
   if (error instanceof ApplicationError) {

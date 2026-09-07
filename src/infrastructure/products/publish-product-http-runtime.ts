@@ -1,9 +1,10 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { randomUUID } from "node:crypto";
 import { createPublishProductHttpHandler } from "@/src/application/products/publish-product/http";
 import { createPublishProductService } from "@/src/application/products/publish-product/publish-product";
-import { validateBetterAuthServerConfig } from "@/src/infrastructure/auth/better-auth-server-config";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 import { resolveAuthenticatedUserContext } from "@/src/infrastructure/context/organization-context-runtime";
 import { getProductionPublishProductDependencies } from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
 
@@ -12,8 +13,8 @@ const state = globalThis as typeof globalThis & { __passveroPublishProductHandle
 
 export function getPublishProductHttpHandler(): Handler {
   state.__passveroPublishProductHandler ??= (() => {
-    const config = validateBetterAuthServerConfig({ secret: process.env.BETTER_AUTH_SECRET, baseURL: process.env.BETTER_AUTH_URL });
-    return createPublishProductHttpHandler({
+    const config = { baseURL: getCanonicalAppOrigin() };
+    return createPublishProductHttpHandler({ verifyProxy: verifyRuntimeProxy,
       canonicalOrigin: config.baseURL,
       resolveContext: resolveAuthenticatedUserContext,
       publish: createPublishProductService({ ...getProductionPublishProductDependencies(), now: () => new Date(), generateQrCode: () => randomUUID().toUpperCase(), canonicalOrigin: config.baseURL }),

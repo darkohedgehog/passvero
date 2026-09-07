@@ -56,7 +56,7 @@ function fixture(overrides: {
     return { productId, status: operation === "ADD" ? "ADDED" : operation === "EDIT" ? "UPDATED" : "REMOVED" } as never;
   };
   const handler = createProductMaterialsHttpHandler({
-    canonicalOrigin: "https://passvero.test",
+    verifyProxy: () => true, canonicalOrigin: "https://passvero.test",
     resolveContext: async () => resolved,
     add: (command) => complete("ADD", command),
     edit: (command) => complete("EDIT", command),

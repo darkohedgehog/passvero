@@ -1,4 +1,5 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { randomUUID } from "node:crypto";
 
@@ -39,7 +40,7 @@ export function getContextSmokeHandler(): ContextSmokeHandler {
 
 export function getOrganizationSelectionHandler(): OrganizationSelectionHandler {
   runtimeGlobal.__passveroOrganizationSelectionHandler ??=
-    createOrganizationSelectionHttpHandler({
+    createOrganizationSelectionHttpHandler({ verifyProxy: verifyRuntimeProxy,
       canonicalOrigin: validateBetterAuthServerConfig({
         secret: process.env.BETTER_AUTH_SECRET,
         baseURL: process.env.BETTER_AUTH_URL,

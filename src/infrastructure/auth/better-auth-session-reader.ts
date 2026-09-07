@@ -1,3 +1,4 @@
+import { providerFacingHeaders } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedIdentity } from "@/src/application/auth/resolve-current-user";
 
 interface BetterAuthSessionResult {
@@ -36,7 +37,7 @@ export function createBetterAuthSessionReader(
   return {
     async read(headers: Headers): Promise<AuthenticatedIdentity | null> {
       const result = await getSession({
-        headers,
+        headers: providerFacingHeaders(headers),
         query: { disableCookieCache: true, disableRefresh: true },
       });
       if (result === null) {

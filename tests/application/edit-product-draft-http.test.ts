@@ -55,6 +55,7 @@ function harness(input: {
   let resolutionCalls = 0;
   const handler = createEditProductDraftHttpHandler({
     canonicalOrigin,
+    verifyProxy: () => true,
     async resolveContext() {
       resolutionCalls += 1;
       return input.resolution ?? resolved;

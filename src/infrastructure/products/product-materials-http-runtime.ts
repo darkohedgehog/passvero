@@ -1,8 +1,9 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { createProductMaterialsHttpHandler } from "@/src/application/products/product-materials-current-draft/http";
 import { createProductMaterialsCurrentDraftServices } from "@/src/application/products/product-materials-current-draft/services";
-import { validateBetterAuthServerConfig } from "@/src/infrastructure/auth/better-auth-server-config";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 import { resolveAuthenticatedUserContext } from "@/src/infrastructure/context/organization-context-runtime";
 import { getProductionProductMaterialsCurrentDraftDependencies } from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
 
@@ -11,14 +12,11 @@ const state = globalThis as typeof globalThis & { __passveroProductMaterialsHand
 
 export function getProductMaterialsHttpHandler(): Handler {
   state.__passveroProductMaterialsHandler ??= (() => {
-    const config = validateBetterAuthServerConfig({
-      secret: process.env.BETTER_AUTH_SECRET,
-      baseURL: process.env.BETTER_AUTH_URL,
-    });
+    const config = { baseURL: getCanonicalAppOrigin() };
     const services = createProductMaterialsCurrentDraftServices(
       getProductionProductMaterialsCurrentDraftDependencies(),
     );
-    return createProductMaterialsHttpHandler({
+    return createProductMaterialsHttpHandler({ verifyProxy: verifyRuntimeProxy,
       canonicalOrigin: config.baseURL,
       resolveContext: resolveAuthenticatedUserContext,
       add: services.add,

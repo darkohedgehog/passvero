@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
 import { ApplicationError } from "@/src/application/errors/application-error";
@@ -15,9 +16,10 @@ export function canShowPublishProductAction(context: AuthenticatedUserContext, l
     && (currentDraftStatus === "DRAFT" || currentDraftStatus === "READY_FOR_REVIEW");
 }
 
-export function createPublishProductHttpHandler(dependencies: { canonicalOrigin: string; resolveContext(headers: Headers): Promise<AuthenticatedUserContextResolution>; publish: PublishProduct }) {
+export function createPublishProductHttpHandler(dependencies: { canonicalOrigin: string; verifyProxy(headers: Headers): boolean; resolveContext(headers: Headers): Promise<AuthenticatedUserContextResolution>; publish: PublishProduct }) {
   return async (request: Request, productId: string): Promise<Response> => {
-    if (!validOrigin(request, dependencies.canonicalOrigin)) return json({ status: "FORBIDDEN" }, 403);
+    const denied = canonicalProxyDenial(request, dependencies, "FORBIDDEN");
+    if (denied) return denied;
     const payload = await readPayload(request);
     if (payload === null) return json({ status: "VALIDATION_ERROR" }, 400);
     let resolution: AuthenticatedUserContextResolution;
@@ -58,7 +60,6 @@ function mapError(error: unknown): Response {
   return json({ status: "OPERATIONAL_FAILURE" }, 503);
 }
 
-function validOrigin(request: Request, origin: string) { try { return request.method === "POST" && request.headers.get("origin") === origin && new URL(request.url).origin === origin; } catch { return false; } }
 function record(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
 function bounded(value: unknown): value is string { return typeof value === "string" && value.length > 0 && value.length <= EVIDENCE; }
 function json(body: unknown, status: number) { return Response.json(body, { status, headers: { "cache-control": "no-store" } }); }

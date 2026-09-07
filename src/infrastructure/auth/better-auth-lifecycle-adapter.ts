@@ -1,3 +1,4 @@
+import { providerFacingHeaders } from "@/src/application/http/canonical-proxy";
 import type { AuthEmailSender } from "@/src/application/auth/auth-email";
 
 interface BetterAuthLifecycleApi {
@@ -109,7 +110,7 @@ export function createBetterAuthLifecycleAdapter(
     },
     async changePassword(input) {
       await api.changePassword({
-        headers: input.headers,
+        headers: providerFacingHeaders(input.headers),
         body: {
           currentPassword: input.currentPassword,
           newPassword: input.newPassword,
@@ -117,7 +118,7 @@ export function createBetterAuthLifecycleAdapter(
         },
       });
       try {
-        await api.revokeSessions({ headers: input.headers });
+        await api.revokeSessions({ headers: providerFacingHeaders(input.headers) });
         return { sessionStatus: "REVOKED" };
       } catch {
         return { sessionStatus: "RECONCILIATION_REQUIRED" };

@@ -5,13 +5,8 @@ import { notFound } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { isAppLocale, routing } from "@/src/i18n/routing";
-import {
-  COMPANY_NAME,
-  COMPANY_URL,
-  CONTACT_EMAIL,
-  SITE_NAME,
-  SITE_URL,
-} from "@/src/lib/site";
+import { getAppStructuredData } from "@/src/lib/canonical-site";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 
 import "../globals.css";
 
@@ -53,33 +48,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages({ locale });
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}/#organization`,
-        name: COMPANY_NAME,
-        url: COMPANY_URL,
-        email: CONTACT_EMAIL,
-      },
-      {
-        "@type": "Brand",
-        "@id": `${SITE_URL}/#brand`,
-        name: SITE_NAME,
-        url: SITE_URL,
-      },
-      {
-        "@type": "WebSite",
-        "@id": `${SITE_URL}/#website`,
-        name: SITE_NAME,
-        url: SITE_URL,
-        brand: { "@id": `${SITE_URL}/#brand` },
-        publisher: { "@id": `${SITE_URL}/#organization` },
-        inLanguage: [...routing.locales],
-      },
-    ],
-  };
+  const structuredData = getAppStructuredData(getCanonicalAppOrigin());
 
   return (
     <html

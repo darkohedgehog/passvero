@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
@@ -55,15 +56,15 @@ export function canShowEditProductDraftAction(
 
 export function createEditProductDraftHttpHandler(dependencies: {
   readonly canonicalOrigin: string;
+  readonly verifyProxy: (headers: Headers) => boolean;
   readonly resolveContext: (
     headers: Headers,
   ) => Promise<AuthenticatedUserContextResolution>;
   readonly edit: EditProductDraft;
 }) {
   return async (request: Request, productId: string): Promise<Response> => {
-    if (!validPostOrigin(request, dependencies.canonicalOrigin)) {
-      return json({ status: "FORBIDDEN" }, 403);
-    }
+    const denied = canonicalProxyDenial(request, dependencies, "FORBIDDEN");
+    if (denied) return denied;
 
     const payload = await readPayload(request);
     if (payload === null) return json({ status: "INVALID_REQUEST" }, 400);
@@ -168,14 +169,6 @@ function mapEditProductDraftError(error: unknown): Response {
   }
 }
 
-function validPostOrigin(request: Request, origin: string): boolean {
-  if (request.method !== "POST" || request.headers.get("origin") !== origin) return false;
-  try {
-    return new URL(request.url).origin === origin;
-  } catch {
-    return false;
-  }
-}
 
 function structuralString(value: unknown, maximum: number): value is string {
   return typeof value === "string" && Array.from(value).length <= maximum;

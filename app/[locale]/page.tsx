@@ -12,7 +12,7 @@ import { PricingSection } from "@/src/components/marketing/pricing-section";
 import { SiteFooter } from "@/src/components/marketing/site-footer";
 import { SiteHeader } from "@/src/components/marketing/site-header";
 import { isAppLocale } from "@/src/i18n/routing";
-import { createLocalizedMetadata } from "@/src/lib/seo";
+import { createLocalizedMetadata } from "@/src/infrastructure/config/canonical-metadata";
 
 type HomePageProps = Readonly<{
   params: Promise<{ locale: string }>;

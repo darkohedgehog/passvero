@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
 import type { ActivateProductQr, QrFailure, QrFormat, RenderProductQrArtifact } from "./contracts";
@@ -12,6 +13,7 @@ export function qrHttpFailure(error: unknown): Response {
 
 export function createProductQrHttpHandlers(dependencies: {
   canonicalOrigin: string;
+  verifyProxy(headers: Headers): boolean;
   resolveContext(headers: Headers): Promise<AuthenticatedUserContextResolution>;
   activate: ActivateProductQr;
   render: RenderProductQrArtifact;
@@ -26,7 +28,8 @@ export function createProductQrHttpHandlers(dependencies: {
     async activate(request: Request, productId: string): Promise<Response> {
       try {
         const url = new URL(request.url);
-        if (request.method !== "POST" || request.headers.get("origin") !== dependencies.canonicalOrigin || url.origin !== dependencies.canonicalOrigin) throw new ProductQrError("FORBIDDEN");
+        const denied = canonicalProxyDenial(request, dependencies, "FORBIDDEN");
+        if (denied) return denied;
         if (url.search) throw new ProductQrError("VALIDATION");
         const activationEvidence = await readEvidence(request);
         const result = await dependencies.activate({ productId, activationEvidence }, await context(request));

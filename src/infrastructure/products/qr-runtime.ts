@@ -1,4 +1,5 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { createProductQrServices } from "@/src/application/products/qr/services";
 import { createProductQrHttpHandlers } from "@/src/application/products/qr/http";
@@ -17,7 +18,7 @@ function createRuntime() {
     transactionRunner: new PrismaProductQrTransactionRunner(getProductionPrismaClient()),
     renderer: { render: renderQrArtifact },
   });
-  return { services, http: createProductQrHttpHandlers({ canonicalOrigin: config.baseURL, resolveContext: resolveAuthenticatedUserContext, activate: services.activate, render: services.render }) };
+  return { services, http: createProductQrHttpHandlers({ verifyProxy: verifyRuntimeProxy, canonicalOrigin: config.baseURL, resolveContext: resolveAuthenticatedUserContext, activate: services.activate, render: services.render }) };
 }
 let runtime: ReturnType<typeof createRuntime> | undefined;
 export function getProductQrRuntime() {

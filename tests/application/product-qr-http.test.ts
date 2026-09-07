@@ -7,7 +7,7 @@ const origin = "https://passvero.eu", id = "11111111-1111-4111-8111-111111111111
 const context = { userId: "user", membershipId: "member", organizationId: "org", membershipRole: "ADMIN" as const, membershipStatus: "ACTIVE" as const, permissions: ["PRODUCT_READ" as const, "QRCODE_ACTIVATE" as const], correlationId: "correlation" };
 function fixture(error?: unknown) {
   const calls: unknown[] = [];
-  const handlers = createProductQrHttpHandlers({ canonicalOrigin: origin,
+  const handlers = createProductQrHttpHandlers({ verifyProxy: () => true, canonicalOrigin: origin,
     async resolveContext() { return { status: "RESOLVED", context, presentation: { organizationName: "Org" } }; },
     async activate(command, received) { calls.push({ command, received }); if (error) throw error; return { status: "ACTIVATED" }; },
     async render(query, received) { calls.push({ query, received }); if (error) throw error; return { body: new Uint8Array([1, 2]), contentType: query.format === "SVG" ? "image/svg+xml; charset=utf-8" : "image/png", filename: `passvero-AbCdEfGhIjKlMnOpQrStUv.${query.format.toLowerCase()}` }; },
@@ -58,7 +58,7 @@ test("unexpected error text and artifact query authority are never exposed", asy
 });
 
 test("missing session returns safe 401 before any QR service invocation", async () => {
-  const handlers = createProductQrHttpHandlers({ canonicalOrigin: origin,
+  const handlers = createProductQrHttpHandlers({ verifyProxy: () => true, canonicalOrigin: origin,
     async resolveContext() { return { status: "DENIED", reason: "NO_PROVIDER_SESSION" }; },
     async activate() { assert.fail("Unauthenticated activation"); },
     async render() { assert.fail("Unauthenticated artifact"); },

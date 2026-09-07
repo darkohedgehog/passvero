@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { LegalDocument } from "@/src/components/legal/legal-document";
 import { isAppLocale } from "@/src/i18n/routing";
-import { createLocalizedMetadata } from "@/src/lib/seo";
+import { createLocalizedMetadata } from "@/src/infrastructure/config/canonical-metadata";
 
 type TermsPageProps = Readonly<{ params: Promise<{ locale: string }> }>;
 

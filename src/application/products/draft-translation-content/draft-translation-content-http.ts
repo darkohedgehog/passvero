@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
 import { ApplicationError } from "@/src/application/errors/application-error";
@@ -10,9 +11,10 @@ export function classifyDraftTranslationContentPageAccess(resolution: Authentica
   return resolution.context.membershipStatus === "ACTIVE" && hasProductPermission(resolution.context, PRODUCT_EDIT) ? "FORM" as const : "FORBIDDEN" as const;
 }
 
-export function createDraftTranslationContentHttpHandler(dependencies: { canonicalOrigin: string; resolveContext(headers: Headers): Promise<AuthenticatedUserContextResolution>; update: UpdateDraftTranslationContent }) {
+export function createDraftTranslationContentHttpHandler(dependencies: { canonicalOrigin: string; verifyProxy(headers: Headers): boolean; resolveContext(headers: Headers): Promise<AuthenticatedUserContextResolution>; update: UpdateDraftTranslationContent }) {
   return async (request: Request, productId: string) => {
-    if (request.method !== "POST" || request.headers.get("origin") !== dependencies.canonicalOrigin || new URL(request.url).origin !== dependencies.canonicalOrigin) return json({ status: "FORBIDDEN" }, 403);
+    const denied = canonicalProxyDenial(request, dependencies, "FORBIDDEN");
+    if (denied) return denied;
     const payload = await readPayload(request);
     if (payload === null) return json({ status: "INVALID_REQUEST" }, 400);
     let resolution;

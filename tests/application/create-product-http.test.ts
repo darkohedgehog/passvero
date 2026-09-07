@@ -60,6 +60,7 @@ function harness(input: {
   });
   const handler = createCreateProductHttpHandler({
     canonicalOrigin,
+    verifyProxy: () => true,
     async resolveContext() {
       resolutionCalls += 1;
       return input.resolution ?? resolved;

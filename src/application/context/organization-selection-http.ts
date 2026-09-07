@@ -1,3 +1,4 @@
+import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { OrganizationSelectionResult } from "./resolve-authenticated-user-context";
 
 const AUTHENTICATION_FAILURES = new Set([
@@ -10,15 +11,15 @@ const AUTHENTICATION_FAILURES = new Set([
 
 export function createOrganizationSelectionHttpHandler(dependencies: {
   readonly canonicalOrigin: string;
+  readonly verifyProxy: (headers: Headers) => boolean;
   readonly select: (
     headers: Headers,
     targetOrganizationId: string,
   ) => Promise<OrganizationSelectionResult>;
 }) {
   return async (request: Request): Promise<Response> => {
-    if (!validPostOrigin(request, dependencies.canonicalOrigin)) {
-      return json({ status: "DENIED" }, 403);
-    }
+    const denied = canonicalProxyDenial(request, dependencies, "DENIED");
+    if (denied) return denied;
 
     const body = await readBody(request);
     if (body === null) {
@@ -82,16 +83,6 @@ async function readBody(
   return { targetOrganizationId: record.targetOrganizationId };
 }
 
-function validPostOrigin(request: Request, origin: string): boolean {
-  if (request.method !== "POST" || request.headers.get("origin") !== origin) {
-    return false;
-  }
-  try {
-    return new URL(request.url).origin === origin;
-  } catch {
-    return false;
-  }
-}
 
 function json(body: object, status: number): Response {
   return Response.json(body, {

@@ -1,14 +1,6 @@
-import type { MetadataRoute } from "next";
+import { getCanonicalRobots } from "@/src/lib/canonical-site";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 
-import { SITE_URL } from "@/src/lib/site";
-
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
-  };
+export default function robots() {
+  return getCanonicalRobots(getCanonicalAppOrigin());
 }

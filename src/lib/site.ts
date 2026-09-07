@@ -1,7 +1,6 @@
 import type { AppLocale } from "@/src/i18n/routing";
 
 export const SITE_NAME = "Passvero";
-export const SITE_URL = "https://passvero.eu";
 export const CONTACT_EMAIL = "contact@passvero.eu";
 export const COMPANY_NAME = "Živić-elektro j.d.o.o.";
 export const COMPANY_URL = "https://www.zivic-elektro.com";
@@ -21,10 +20,6 @@ export function getLocalizedPath(locale: AppLocale, pathname = "/") {
   return locale === "hr"
     ? normalizedPath || "/"
     : `/${locale}${normalizedPath}`;
-}
-
-export function getAbsoluteUrl(locale: AppLocale, pathname = "/") {
-  return new URL(getLocalizedPath(locale, pathname), SITE_URL).toString();
 }
 
 export function createMailtoHref(subject: string) {

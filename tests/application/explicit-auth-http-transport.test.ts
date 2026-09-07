@@ -20,6 +20,7 @@ function dependencies() {
   const calls: string[] = [];
   const input: ExplicitAuthHttpDependencies = {
     canonicalOrigin: origin,
+    verifyProxy: () => true,
     trustedClientAddress: () => undefined,
     abuse: {
       async checkBeforeAttempt() {
@@ -346,4 +347,66 @@ for (const failed of [false,true]) test(`verification reconciliation ${failed ? 
  const response=await createExplicitAuthHttpTransport(fixture.input).consumeEmailVerification(new Request(`${origin}/api/auth/verification/consume?token=synthetic`));
  assert.equal(response.status,failed?400:200);assert.deepEqual(await response.json(),{status:failed?"VERIFICATION_DENIED":"VERIFIED"});
  assert.equal(response.headers.get("set-cookie"),null);
+});
+
+test("proxy provenance rejection precedes even malformed auth input", async () => {
+  const fixture = dependencies();
+  const transport = createExplicitAuthHttpTransport({ ...fixture.input, verifyProxy: () => false });
+  const response = await transport.signIn(request("/api/auth/sign-in", {}));
+  assert.equal(response.status, 403);
+  assert.deepEqual(fixture.calls, []);
+});
+
+test("verified proxy accepts internal high-port request URL before body validation", async () => {
+  const fixture = dependencies();
+  const transport = createExplicitAuthHttpTransport({ ...fixture.input, verifyProxy: () => true });
+  const response = await transport.signIn(new Request("http://127.0.0.1:3000/api/auth/sign-in", {
+    method: "POST", headers: { origin, "content-type": "application/json" }, body: "{}",
+  }));
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { status: "INVALID_REQUEST" });
+  assert.deepEqual(fixture.calls, []);
+});
+
+test("every protected auth operation rejects provenance before provider, risk or recovery", async () => {
+  const fixture = dependencies();
+  let actorCalls = 0;
+  const transport = createExplicitAuthHttpTransport({ ...fixture.input, verifyProxy: () => false,
+    async resolvePasswordChangeActor() { actorCalls++; return null; } });
+  for (const operation of [transport.signIn, transport.activate, transport.requestEmailVerification,
+    transport.requestPasswordReset, transport.consumePasswordReset, transport.changePassword, transport.signOut]) {
+    assert.equal((await operation(request("/api/auth/test", {}))).status, 403);
+  }
+  const response = await transport.consumeEmailVerification(new Request("http://127.0.0.1:3000/api/auth/verification/consume"));
+  assert.equal(response.status, 403);
+  assert.equal(actorCalls, 0);
+  assert.deepEqual(fixture.calls, []);
+});
+
+test("verification GET checks optional Origin before token validation and recovery", async () => {
+  const fixture = dependencies();
+  const transport = createExplicitAuthHttpTransport(fixture.input);
+  for (const suppliedOrigin of [undefined, origin, "https://wrong.example.test"]) {
+    const response = await transport.consumeEmailVerification(new Request("http://127.0.0.1:3000/api/auth/verification/consume", {
+      headers: suppliedOrigin === undefined ? {} : { origin: suppliedOrigin },
+    }));
+    assert.equal(response.status, suppliedOrigin === "https://wrong.example.test" ? 403 : 400);
+  }
+  assert.deepEqual(fixture.calls, []);
+});
+
+test("sign in and sign out never forward the private proxy header to the provider", async () => {
+  const fixture = dependencies();
+  let providerCalls = 0;
+  const inspect = async (input: { headers: Headers }) => {
+    providerCalls++;
+    assert.equal(input.headers.has("x-passvero-proxy-token"), false);
+    assert.equal(input.headers.get("origin"), origin);
+    return { headers: new Headers() };
+  };
+  const transport = createExplicitAuthHttpTransport({ ...fixture.input,
+    provider: { ...fixture.input.provider, signIn: inspect, signOut: inspect } });
+  assert.equal((await transport.signIn(request("/api/auth/sign-in", { email: "qa@example.test", password: "fixture" }, { "x-passvero-proxy-token": "private-fixture" }))).status, 200);
+  assert.equal((await transport.signOut(request("/api/auth/sign-out", {}, { "x-passvero-proxy-token": "private-fixture" }))).status, 200);
+  assert.equal(providerCalls, 2);
 });

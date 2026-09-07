@@ -1,4 +1,5 @@
 import "server-only";
+import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { performance } from "node:perf_hooks";
 
@@ -6,7 +7,7 @@ import { createCreateProductService } from "@/src/application/products/create-pr
 import { createCreateProductHttpHandler } from "@/src/application/products/create-product/create-product-http";
 import type { CreateProductTelemetry } from "@/src/application/products/create-product/ports";
 import { NodeProductPublicCodeGenerator } from "@/src/infrastructure/crypto/node-product-public-code-generator";
-import { validateBetterAuthServerConfig } from "@/src/infrastructure/auth/better-auth-server-config";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 import { resolveAuthenticatedUserContext } from "@/src/infrastructure/context/organization-context-runtime";
 import { getProductionCreateProductDependencies } from "@/src/infrastructure/persistence/prisma/production-prisma-runtime";
 
@@ -29,10 +30,7 @@ export function getCreateProductHttpHandler(): Handler {
 }
 
 function createRuntime(): Handler {
-  const config = validateBetterAuthServerConfig({
-    secret: process.env.BETTER_AUTH_SECRET,
-    baseURL: process.env.BETTER_AUTH_URL,
-  });
+  const config = { baseURL: getCanonicalAppOrigin() };
   const create = createCreateProductService({
     ...getProductionCreateProductDependencies(),
     publicCodeGenerator: new NodeProductPublicCodeGenerator(),
@@ -40,7 +38,7 @@ function createRuntime(): Handler {
     telemetry: silentTelemetry,
   });
 
-  return createCreateProductHttpHandler({
+  return createCreateProductHttpHandler({ verifyProxy: verifyRuntimeProxy,
     canonicalOrigin: config.baseURL,
     resolveContext: resolveAuthenticatedUserContext,
     create,

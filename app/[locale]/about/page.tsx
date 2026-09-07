@@ -7,7 +7,7 @@ import { MarketingContainer } from "@/src/components/marketing/marketing-contain
 import { SiteFooter } from "@/src/components/marketing/site-footer";
 import { SiteHeader } from "@/src/components/marketing/site-header";
 import { isAppLocale } from "@/src/i18n/routing";
-import { createLocalizedMetadata } from "@/src/lib/seo";
+import { createLocalizedMetadata } from "@/src/infrastructure/config/canonical-metadata";
 import {
   COMPANY_NAME,
   COMPANY_URL,
