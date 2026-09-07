@@ -6,37 +6,37 @@ import {
   validateProductionDatabaseUrl,
 } from "../../src/infrastructure/persistence/prisma/production-prisma-config";
 
-const validUrl = "postgresql://passvero_app:not-a-real-secret@localhost:5432/passvero";
+const validUrl = "postgresql://passvero_app:not-a-real-secret@127.0.0.1:5432/passvero";
 
 function expectCode(value: unknown, code: string): void {
   assert.throws(
-    () => validateProductionDatabaseUrl(value),
+    () => validateProductionDatabaseUrl(value, "production"),
     (error: unknown) =>
       error instanceof ProductionDatabaseConfigError && error.code === code,
   );
 }
 
 test("accepts only the production runtime role and database over direct PostgreSQL", () => {
-  assert.deepEqual(validateProductionDatabaseUrl(validUrl), {
+  assert.deepEqual(validateProductionDatabaseUrl(validUrl, "production"), {
     connectionString: validUrl,
   });
   assert.equal(
     validateProductionDatabaseUrl(
-      "postgres://passvero_app:not-a-real-secret@localhost/passvero",
+      "postgres://passvero_app:not-a-real-secret@127.0.0.1:5432/passvero", "production",
     ).connectionString,
-    "postgres://passvero_app:not-a-real-secret@localhost/passvero",
+    "postgres://passvero_app:not-a-real-secret@127.0.0.1:5432/passvero",
   );
   assert.equal(
     validateProductionDatabaseUrl(
-      "postgresql://passvero%5Fapp:not-a-real-secret@localhost/passvero",
+      "postgresql://passvero%5Fapp:not-a-real-secret@127.0.0.1:5432/passvero", "production",
     ).connectionString,
-    "postgresql://passvero%5Fapp:not-a-real-secret@localhost/passvero",
+    "postgresql://passvero%5Fapp:not-a-real-secret@127.0.0.1:5432/passvero",
   );
   assert.equal(
     validateProductionDatabaseUrl(
-      "postgresql://passvero_app:not-a-real-secret@localhost/pass%76ero",
+      "postgresql://passvero_app:not-a-real-secret@127.0.0.1:5432/pass%76ero", "production",
     ).connectionString,
-    "postgresql://passvero_app:not-a-real-secret@localhost/pass%76ero",
+    "postgresql://passvero_app:not-a-real-secret@127.0.0.1:5432/pass%76ero",
   );
 });
 
@@ -46,17 +46,17 @@ test("rejects missing, padded, malformed, hosted, test, and migrator configurati
   expectCode(` ${validUrl}`, "PADDED");
   expectCode(`${validUrl} `, "PADDED");
   expectCode("not a url", "MALFORMED");
-  expectCode("https://passvero_app:not-a-real-secret@localhost/passvero", "SCHEME");
+  expectCode("https://passvero_app:not-a-real-secret@127.0.0.1:5432/passvero", "SCHEME");
   expectCode("prisma+postgres://accelerate.prisma-data.net/?api_key=redacted", "SCHEME");
-  expectCode("postgresql://passvero_migrator:not-a-real-secret@localhost/passvero", "ROLE");
-  expectCode("postgresql://passvero_test:not-a-real-secret@localhost/passvero", "ROLE");
-  expectCode("postgresql://passvero_app:not-a-real-secret@localhost/passvero_test", "DATABASE");
-  expectCode("postgresql://passvero_app:not-a-real-secret@localhost/other", "DATABASE");
+  expectCode("postgresql://passvero_migrator:not-a-real-secret@127.0.0.1:5432/passvero", "ROLE");
+  expectCode("postgresql://passvero_test:not-a-real-secret@127.0.0.1:5432/passvero", "ROLE");
+  expectCode("postgresql://passvero_app:not-a-real-secret@127.0.0.1:5432/passvero_test", "DATABASE");
+  expectCode("postgresql://passvero_app:not-a-real-secret@127.0.0.1:5432/other", "DATABASE");
   expectCode(
-    "postgresql://passvero_app:not-a-real-secret@localhost/passvero%2Fextra",
+    "postgresql://passvero_app:not-a-real-secret@127.0.0.1:5432/passvero%2Fextra",
     "DATABASE",
   );
-  expectCode("postgresql://passvero%ZZ:not-a-real-secret@localhost/passvero", "MALFORMED");
+  expectCode("postgresql://passvero%ZZ:not-a-real-secret@127.0.0.1:5432/passvero", "MALFORMED");
 });
 
 test("rejects decoded user query parameters with a stable secret-free role error", () => {
@@ -67,7 +67,7 @@ test("rejects decoded user query parameters with a stable secret-free role error
   ];
 
   for (const candidate of candidates) {
-    assert.throws(() => validateProductionDatabaseUrl(candidate), (error: unknown) => {
+    assert.throws(() => validateProductionDatabaseUrl(candidate, "production"), (error: unknown) => {
       assert.ok(error instanceof ProductionDatabaseConfigError);
       assert.equal(error.code, "ROLE");
       assert.equal(
@@ -85,7 +85,7 @@ test("never exposes candidate secrets through validation errors", () => {
   const secret = "phase-prerequisite-secret-value";
   const candidate = `postgresql://passvero_migrator:${secret}@remote.example/passvero_test?token=${secret}`;
 
-  assert.throws(() => validateProductionDatabaseUrl(candidate), (error: unknown) => {
+  assert.throws(() => validateProductionDatabaseUrl(candidate, "production"), (error: unknown) => {
     assert.ok(error instanceof ProductionDatabaseConfigError);
     assert.doesNotMatch(error.message, new RegExp(secret));
     assert.doesNotMatch(error.message, /remote\.example|passvero_test|token=/);

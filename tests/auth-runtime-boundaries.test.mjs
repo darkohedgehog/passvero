@@ -26,7 +26,8 @@ test("keeps auth environment and Prisma construction inside one server-only boun
   const pureConfigSource = `${read(databaseConfigPath)}\n${read(serverConfigPath)}`;
 
   assert.match(runtimeSource, /^import "server-only";/);
-  assert.match(runtimeSource, /process\.env\.AUTH_DATABASE_URL/);
+  assert.match(runtimeSource, /getRuntimeDatabaseConfig\("auth"\)/);
+  assert.match(read("src/infrastructure/config/runtime-database-config.ts"), /process\.env\.AUTH_DATABASE_URL/);
   assert.match(runtimeSource, /process\.env\.BETTER_AUTH_SECRET/);
   assert.match(runtimeSource, /process\.env\.BETTER_AUTH_URL/);
   assert.doesNotMatch(runtimeSource, /process\.env\.(?:DATABASE_URL|TEST_DATABASE_URL)/);

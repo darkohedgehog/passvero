@@ -48,7 +48,7 @@ test("client import graph contains no server origin accessor or proxy credential
     if (seen.has(file)) return;
     seen.add(file);
     const source = read(file);
-    assert.doesNotMatch(source, /import ["']server-only["']|PASSVERO_TRUSTED_PROXY_SECRET|timingSafeEqual|process\.env\.BETTER_AUTH_URL/, file);
+    assert.doesNotMatch(source, /import ["']server-only["']|PASSVERO_TRUSTED_PROXY_SECRET|PASSVERO_RUNTIME_ENV|runtime-database-config|runtime-environment|timingSafeEqual|process\.env\.BETTER_AUTH_URL/, file);
     const imports = source.matchAll(/(?:import|export)\s+(?!type\b)[^;]*?\bfrom\s*["']([^"']+)["']/g);
     for (const [, target] of imports) {
       const base = target.startsWith("@/") ? target.slice(2) : target.startsWith(".") ? path.join(path.dirname(file), target) : null;

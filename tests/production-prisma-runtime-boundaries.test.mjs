@@ -48,7 +48,8 @@ test("marks the production wrapper server-only and isolates environment access",
   const coreSource = read(corePath);
 
   assert.match(runtimeSource, /^import "server-only";/);
-  assert.match(runtimeSource, /process\.env\.DATABASE_URL/);
+  assert.match(runtimeSource, /getRuntimeDatabaseConfig\("business"\)/);
+  assert.match(read("src/infrastructure/config/runtime-database-config.ts"), /process\.env\.DATABASE_URL/);
   assert.doesNotMatch(runtimeSource, /TEST_DATABASE_URL/);
   assert.doesNotMatch(`${configSource}\n${coreSource}`, /process\.env|TEST_DATABASE_URL|server-only/);
   assert.match(runtimeSource, /new PrismaPg\(pool, \{ disposeExternalPool: true \}\)/);

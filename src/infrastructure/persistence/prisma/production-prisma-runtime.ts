@@ -12,7 +12,7 @@ import { createPrismaGetProductDetailDependencies } from "@/src/infrastructure/p
 import { createPrismaListProductsDependencies } from "@/src/infrastructure/persistence/prisma/prisma-list-products-composition";
 import { createPrismaProductMaterialsCurrentDraftDependencies } from "@/src/infrastructure/persistence/prisma/prisma-product-materials-current-draft-composition";
 import { createPrismaPublishProductDependencies } from "@/src/infrastructure/persistence/prisma/prisma-publish-product-composition";
-import { validateProductionDatabaseUrl } from "@/src/infrastructure/persistence/prisma/production-prisma-config";
+import { getRuntimeDatabaseConfig } from "@/src/infrastructure/config/runtime-database-config";
 import {
   createProductionPrismaRuntime,
   createProductionPrismaRuntimeLifecycle,
@@ -26,7 +26,7 @@ const runtimeGlobal = globalThis as typeof globalThis & {
 };
 
 function createLifecycle(): ProductionLifecycle {
-  const config = validateProductionDatabaseUrl(process.env.DATABASE_URL);
+  const config = getRuntimeDatabaseConfig("business");
   return createProductionPrismaRuntimeLifecycle(() =>
     createProductionPrismaRuntime(config.connectionString, {
       createPool: (poolConfig) => new Pool(poolConfig),

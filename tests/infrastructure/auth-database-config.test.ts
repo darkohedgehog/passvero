@@ -11,19 +11,19 @@ const validUrl =
 
 function expectCode(value: unknown, code: string): void {
   assert.throws(
-    () => validateAuthDatabaseUrl(value),
+    () => validateAuthDatabaseUrl(value, "production"),
     (error: unknown) =>
       error instanceof AuthDatabaseConfigError && error.code === code,
   );
 }
 
 test("accepts only the dedicated auth role on the local production database", () => {
-  assert.deepEqual(validateAuthDatabaseUrl(validUrl), {
+  assert.deepEqual(validateAuthDatabaseUrl(validUrl, "production"), {
     connectionString: validUrl,
   });
   assert.equal(
     validateAuthDatabaseUrl(
-      "postgres://passvero%5Fauth:not-a-real-secret@127.0.0.1:5432/pass%76ero",
+      "postgres://passvero%5Fauth:not-a-real-secret@127.0.0.1:5432/pass%76ero", "production",
     ).connectionString,
     "postgres://passvero%5Fauth:not-a-real-secret@127.0.0.1:5432/pass%76ero",
   );
@@ -68,7 +68,7 @@ test("rejects query parameters without exposing candidate configuration", () => 
   ];
 
   for (const candidate of candidates) {
-    assert.throws(() => validateAuthDatabaseUrl(candidate), (error: unknown) => {
+    assert.throws(() => validateAuthDatabaseUrl(candidate, "production"), (error: unknown) => {
       assert.ok(error instanceof AuthDatabaseConfigError);
       assert.equal(error.code, "MALFORMED");
       assert.doesNotMatch(error.message, new RegExp(secret));

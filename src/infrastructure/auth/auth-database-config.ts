@@ -1,3 +1,5 @@
+import { getRuntimeDatabaseEndpoint, parseRuntimeEnvironment } from "@/src/infrastructure/config/runtime-environment";
+
 export type AuthDatabaseConfigErrorCode =
   | "MISSING"
   | "PADDED"
@@ -14,7 +16,7 @@ const messages: Record<AuthDatabaseConfigErrorCode, string> = {
   MALFORMED: "Authentication database configuration is invalid.",
   SCHEME: "Authentication database configuration must use direct PostgreSQL.",
   ROLE: "Authentication database configuration must use the dedicated auth role.",
-  DATABASE: "Authentication database configuration must target the production database.",
+  DATABASE: "Authentication database configuration must target the selected runtime database.",
   HOST: "Authentication database configuration must use the local database host.",
   PORT: "Authentication database configuration must use the local database port.",
 };
@@ -30,7 +32,8 @@ export interface AuthDatabaseConfig {
   readonly connectionString: string;
 }
 
-export function validateAuthDatabaseUrl(value: unknown): AuthDatabaseConfig {
+export function validateAuthDatabaseUrl(value: unknown, runtimeEnvironment: unknown): AuthDatabaseConfig {
+  const endpoint = getRuntimeDatabaseEndpoint(parseRuntimeEnvironment(runtimeEnvironment));
   if (typeof value !== "string" || value.length === 0) {
     throw new AuthDatabaseConfigError("MISSING");
   }
@@ -51,7 +54,7 @@ export function validateAuthDatabaseUrl(value: unknown): AuthDatabaseConfig {
   if (parsed.password.length === 0) {
     throw new AuthDatabaseConfigError("MALFORMED");
   }
-  if (parsed.search.length > 0) {
+  if (value.includes("?") || value.includes("#") || /[\s\\]/u.test(value)) {
     throw new AuthDatabaseConfigError("MALFORMED");
   }
 
@@ -67,13 +70,13 @@ export function validateAuthDatabaseUrl(value: unknown): AuthDatabaseConfig {
   if (user !== "passvero_auth") {
     throw new AuthDatabaseConfigError("ROLE");
   }
-  if (database !== "passvero") {
+  if (database !== endpoint.database) {
     throw new AuthDatabaseConfigError("DATABASE");
   }
-  if (parsed.hostname !== "127.0.0.1") {
+  if (parsed.hostname !== endpoint.host) {
     throw new AuthDatabaseConfigError("HOST");
   }
-  if (parsed.port !== "5432") {
+  if (parsed.port !== endpoint.port) {
     throw new AuthDatabaseConfigError("PORT");
   }
 

@@ -64,3 +64,6 @@ token must reach existing token validation without consuming any token.
 No account creation, email, real token, database write or login is part of this
 proof. Production/staging metadata, frontend assets and deployment configuration
 must be checked before opening manual acceptance.
+
+Runtime database access additionally requires the explicit deployment
+discriminator and fixed endpoint rules in [Runtime database contract](runtime-database-contract.md).

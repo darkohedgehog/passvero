@@ -6,7 +6,7 @@ import { betterAuth } from "better-auth";
 import { Pool } from "pg";
 
 import { PrismaClient } from "@/src/generated/prisma/client";
-import { validateAuthDatabaseUrl } from "@/src/infrastructure/auth/auth-database-config";
+import { getRuntimeDatabaseConfig } from "@/src/infrastructure/config/runtime-database-config";
 import { createLazyAuthEmailSender } from "@/src/infrastructure/auth/auth-email-runtime";
 import {
   createBetterAuthLifecycleAdapter,
@@ -61,7 +61,7 @@ function createLifecycleCallbacks(baseURL: string) {
 }
 
 function createAuthPrismaLifecycle(): AuthPrismaLifecycle {
-  const config = validateAuthDatabaseUrl(process.env.AUTH_DATABASE_URL);
+  const config = getRuntimeDatabaseConfig("auth");
   return createProductionPrismaRuntimeLifecycle(() =>
     createProductionPrismaRuntime(config.connectionString, {
       createPool: (poolConfig) => new Pool(poolConfig),
