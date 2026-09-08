@@ -153,6 +153,7 @@ export class PrismaAuthAbuseRepository implements AuthAbuseRepository {
             windowStartedAt: windowExpired
               ? operationNow
               : locked.windowStartedAt,
+            lastAttemptAt: operationNow,
             lastFailureAt: operationNow,
             blockedUntil: laterDate(
               activeBlock(locked.blockedUntil, operationNow),

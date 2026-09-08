@@ -279,6 +279,39 @@ test("successful outcomes preserve failure and backoff evidence", async () => {
   assert.equal(updated?.backoffLevel, 2);
 });
 
+for (const delayMilliseconds of [500, 61_000, -500]) {
+  test(`failure outcome preserves timestamp ordering with ${delayMilliseconds}ms clock offset`, async () => {
+    const value = row("GLOBAL_ENDPOINT", {
+      attemptCount: 1,
+      windowStartedAt: now,
+      lastAttemptAt: now,
+      expiresAt: new Date(now.getTime() + 120_000),
+    });
+    const fake = createFakePrisma([value]);
+    const repository = new PrismaAuthAbuseRepository(fake.prisma);
+
+    await repository.recordOutcome({
+      keys: [key(value)],
+      policy: authAbusePolicyByEndpoint.SIGN_IN,
+      outcome: "FAILURE",
+      now: new Date(now.getTime() + delayMilliseconds),
+    });
+
+    const updated = fake.rows.get("GLOBAL_ENDPOINT");
+    assert.ok(updated);
+    assert.ok(updated.lastFailureAt);
+    assert.ok(updated.windowStartedAt <= updated.lastFailureAt);
+    assert.ok(updated.lastFailureAt <= updated.lastAttemptAt);
+    assert.ok(updated.lastAttemptAt >= now);
+    assert.ok(updated.expiresAt > updated.lastAttemptAt);
+    assert.equal(updated.lastFailureAt.getTime(), now.getTime() + Math.max(0, delayMilliseconds));
+    assert.equal(updated.attemptCount, 1);
+    assert.equal(updated.failureCount, 1);
+    assert.equal(updated.backoffLevel, 0);
+    assert.equal(updated.blockedUntil, null);
+  });
+}
+
 test("rejects a post-attempt outcome when no persisted pre-attempt bucket exists", async () => {
   const value = row("ACCOUNT_IDENTIFIER");
   const fake = createFakePrisma([]);
