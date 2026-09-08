@@ -313,10 +313,10 @@ function minimumSchemaSql(): string {
         AND "failureCount" <= "attemptCount"
         AND "backoffLevel" >= 0
       ),
-    CONSTRAINT "AuthAbuseBucket_time_check"
+    CONSTRAINT "ck_auth_abuse_bucket_timestamp_order"
       CHECK (
         "lastAttemptAt" >= "windowStartedAt"
-        AND ("lastFailureAt" IS NULL OR "lastFailureAt" >= "windowStartedAt")
+        AND ("lastFailureAt" IS NULL OR "lastFailureAt" <= "lastAttemptAt")
         AND ("blockedUntil" IS NULL OR "blockedUntil" >= "lastAttemptAt")
         AND "expiresAt" > "lastAttemptAt"
       )
