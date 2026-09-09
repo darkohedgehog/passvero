@@ -2,6 +2,36 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { publishProductFromDashboard } from "../../src/application/products/publish-product/ui-client";
 
+test("allowlists publication evidence from a broader caller-owned UI object", async () => {
+  const productId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  for (const publishedId of [null, "cccccccc-cccc-4ccc-8ccc-cccccccccccc"]) {
+    const evidence = {
+      expectedDraftVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      expectedProductUpdatedAt: "2026-09-02T08:00:00.000Z",
+      expectedDraftUpdatedAt: "2026-09-02T08:01:00.000Z",
+      expectedCurrentPublishedVersionId: publishedId,
+    };
+    const input = Object.freeze({ ...evidence, productId: "ui-only-product-id", uiState: "ready", optionalUiState: undefined });
+    const original = { ...input };
+    let receivedUrl: unknown;
+    let receivedBody: unknown;
+    let calls = 0;
+    const result = await publishProductFromDashboard(async (url, init) => {
+      calls += 1;
+      receivedUrl = url;
+      assert.equal(typeof init?.body, "string");
+      receivedBody = JSON.parse(String(init?.body));
+      return Response.json({ status: "PUBLISHED", versionNumber: 1 });
+    }, productId, input);
+
+    assert.deepEqual(result, { status: "PUBLISHED", versionNumber: 1 });
+    assert.equal(calls, 1);
+    assert.equal(receivedUrl, `/api/products/${productId}/publish`);
+    assert.deepEqual(receivedBody, evidence);
+    assert.deepEqual(input, original);
+  }
+});
+
 test("posts only publication evidence and accepts bounded results", async () => {
   let received: RequestInit | undefined;
   const result = await publishProductFromDashboard(async (_input, init) => { received = init; return new Response(JSON.stringify({ status: "PUBLISHED", versionNumber: 2 }), { status: 200, headers: { "content-type": "application/json" } }); }, "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", { expectedDraftVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", expectedProductUpdatedAt: "2026-09-02T08:00:00.000Z", expectedDraftUpdatedAt: "2026-09-02T08:01:00.000Z", expectedCurrentPublishedVersionId: null });

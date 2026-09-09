@@ -36,6 +36,14 @@ test("rejects cross-origin and client authority before invoking the service", as
   }
 });
 
+test("rejects a body productId even when it matches the route identity", async () => {
+  const subject = fixture();
+  const response = await subject.handler(request({ ...body, productId }), productId);
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { status: "VALIDATION_ERROR" });
+  assert.equal(subject.calls.length, 0);
+});
+
 test("shows Publish only for active Admin or Owner products with an editable source status", () => {
   const canShow = (publishProductHttp as Record<string, unknown>).canShowPublishProductAction;
   assert.equal(typeof canShow, "function");

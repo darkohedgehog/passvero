@@ -70,6 +70,6 @@ test("binds identity only from the verified-email callback or token-validated co
 test("declares only the approved SMTP dependency additions", () => {
   const packageJson = JSON.parse(read("package.json"));
 
-  assert.equal(packageJson.dependencies.nodemailer, "9.0.5");
+  assert.equal(packageJson.dependencies.nodemailer, "9.1.1");
   assert.equal(packageJson.devDependencies["@types/nodemailer"], "8.0.1");
 });

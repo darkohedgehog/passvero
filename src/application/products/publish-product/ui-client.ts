@@ -5,7 +5,13 @@ export type PublishProductUiResult =
 
 export async function publishProductFromDashboard(fetcher: typeof fetch, productId: string, payload: { expectedDraftVersionId: string; expectedProductUpdatedAt: string; expectedDraftUpdatedAt: string; expectedCurrentPublishedVersionId: string | null }): Promise<PublishProductUiResult> {
   try {
-    const response = await fetcher(`/api/products/${encodeURIComponent(productId)}/publish`, { method: "POST", credentials: "same-origin", cache: "no-store", referrerPolicy: "no-referrer", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+    const body = {
+      expectedDraftVersionId: payload.expectedDraftVersionId,
+      expectedProductUpdatedAt: payload.expectedProductUpdatedAt,
+      expectedDraftUpdatedAt: payload.expectedDraftUpdatedAt,
+      expectedCurrentPublishedVersionId: payload.expectedCurrentPublishedVersionId,
+    };
+    const response = await fetcher(`/api/products/${encodeURIComponent(productId)}/publish`, { method: "POST", credentials: "same-origin", cache: "no-store", referrerPolicy: "no-referrer", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
     const value: unknown = await response.json();
     if (!record(value) || typeof value.status !== "string") return { status: "FAILURE" };
     if (response.ok && (value.status === "PUBLISHED" || value.status === "NO_CHANGE") && Number.isSafeInteger(value.versionNumber) && Number(value.versionNumber) > 0) return { status: value.status, versionNumber: Number(value.versionNumber) };
