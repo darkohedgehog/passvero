@@ -108,7 +108,7 @@ export function ActivationForm() {
         name="password"
         type="password"
         label={t("common.newPassword")}
-        hint={t("common.passwordGuidance")}
+        hint={`${t("common.passwordGuidance")} ${t("common.passwordContextGuidance")}`}
         autoComplete="new-password"
         required
         maxLength={256}

@@ -2,8 +2,8 @@
   "PublishProduct": {"title":"Objavi proizvod","publish":"Objavi","confirm":"Objaviti ovaj proizvod? Objavljeni sadržaj nije moguće uređivati.","publishing":"Objavljivanje…","success":"Proizvod je objavljen.","noChange":"Ova je verzija već objavljena.","staleWrite":"Proizvod je promijenjen. Ponovno ga učitajte prije objave.","notReady":"Dovršite obvezne podatke o proizvodu prije objave.","sourceTranslation":"Dodajte valjani izvorni prijevod.","productName":"Dodajte valjani naziv proizvoda.","publicAsset":"Omogućite dostupnost svih javnih datoteka.","invalidState":"Ovaj proizvod nije moguće objaviti.","forbidden":"Nemate dopuštenje za objavu ovog proizvoda.","failure":"Proizvod nije moguće objaviti. Pokušajte ponovno.","reload":"Ponovno učitaj proizvod"},
   "Auth": {
     "brand": "Početna stranica Passvera",
-    "common": {"email": "Adresa e-pošte", "password": "Lozinka", "newPassword": "Nova lozinka", "confirmPassword": "Potvrdite lozinku", "pending": "Pričekajte…", "backToLogin": "Natrag na prijavu", "passwordGuidance": "Upotrijebite 15–128 znakova. Razmaci su značajni.", "passwordMismatch": "Lozinke se ne podudaraju.", "turnstilePrompt": "Dovršite sigurnosnu provjeru za nastavak.", "turnstileFailure": "Sigurnosna provjera nije uspjela. Pokušajte ponovno.", "genericFailure": "Zahtjev nije moguće dovršiti. Pokušajte ponovno."},
-    "login": {"metadataTitle": "Prijava | Passvero", "metadataDescription": "Sigurno se prijavite u Passvero.", "title": "Prijava", "description": "Pristupite svojem Passvero radnom prostoru.", "submit": "Prijavite se", "failure": "Prijava nije uspjela. Provjerite podatke ili pokušajte ponovno.", "success": "Prijavljeni ste.", "forgotPassword": "Zaboravili ste lozinku?"},
+    "common": {"email": "Adresa e-pošte", "password": "Lozinka", "newPassword": "Nova lozinka", "confirmPassword": "Potvrdite lozinku", "pending": "Pričekajte…", "backToLogin": "Natrag na prijavu", "showPassword": "Prikaži polje: {field}", "hidePassword": "Sakrij polje: {field}", "passwordContextGuidance": "Lozinka ne smije biti jednaka dijelu vaše adrese e-pošte prije znaka @ ni vašem prikaznom imenu.", "passwordGuidance": "Upotrijebite 15–128 znakova. Velika i mala slova, brojevi i posebni znakovi nisu obvezni. Razmaci se čuvaju i računaju. Izbjegavajte česte ili kompromitirane lozinke i riječ Passvero.", "passwordMismatch": "Lozinke se ne podudaraju.", "turnstilePrompt": "Dovršite sigurnosnu provjeru za nastavak.", "turnstileFailure": "Sigurnosna provjera nije uspjela. Pokušajte ponovno.", "genericFailure": "Zahtjev nije moguće dovršiti. Pokušajte ponovno."},
+    "login": {"metadataTitle": "Prijava | Passvero", "metadataDescription": "Sigurno se prijavite u Passvero.", "title": "Prijava", "description": "Pristupite svojem Passvero radnom prostoru.", "submit": "Prijavite se", "failure": "Prijava nije uspjela. Provjerite podatke ili pokušajte ponovno.", "success": "Prijavljeni ste.", "forgotPassword": "Zaboravili ste lozinku?", "newUser": "Novi korisnik?", "requestAccess": "Zatražite pristup"},
     "activation": {"metadataTitle": "Aktivacija računa | Passvero", "metadataDescription": "Dovršite aktivaciju Passvero računa.", "title": "Aktivirajte račun", "description": "Odaberite lozinku kako biste dovršili pozivnicu.", "checking": "Provjeravamo aktivacijsku poveznicu…", "invalid": "Aktivacijska poveznica nije valjana ili je istekla.", "failure": "Račun nije moguće aktivirati. Pokušajte ponovno.", "success": "Račun je aktiviran. Provjerite e-poštu radi potvrde adrese.", "submit": "Aktivirajte račun"},
     "verification": {"metadataTitle": "Potvrda e-pošte | Passvero", "metadataDescription": "Potvrdite adresu e-pošte za Passvero.", "title": "Potvrdite e-poštu", "description": "Sigurno provjeravamo vašu poveznicu za potvrdu.", "verifying": "Potvrđujemo adresu e-pošte…", "success": "Adresa e-pošte je potvrđena. Sada se možete prijaviti.", "invalid": "Poveznica za potvrdu nije valjana ili je istekla.", "failure": "E-poštu nije moguće potvrditi. Pokušajte ponovno.", "loginLink": "Nastavite na prijavu", "resendTitle": "Trebate novu poveznicu?", "resendDescription": "Unesite adresu e-pošte. Ako ispunjava uvjete, poslat ćemo novu poveznicu.", "resendSubmit": "Zatražite poruku za potvrdu", "resendSuccess": "Ako adresa ispunjava uvjete, nova poruka za potvrdu je poslana."},
     "forgot": {"metadataTitle": "Zaboravljena lozinka | Passvero", "metadataDescription": "Zatražite poništavanje Passvero lozinke.", "title": "Zaboravili ste lozinku?", "description": "Unesite adresu e-pošte za zahtjev poveznice za poništavanje.", "submit": "Zatražite poveznicu", "success": "Ako adresa ispunjava uvjete, poruka za poništavanje je poslana.", "failure": "Zahtjev nije moguće dovršiti. Pokušajte ponovno."},
@@ -27,7 +27,7 @@
     "resources": "Resursi",
     "about": "O nama",
     "signIn": "Prijava",
-    "earlyAccess": "Zatražite rani pristup"
+    "earlyAccess": "Zatraži pristup"
   },
   "Common": {
     "language": "Jezik",
@@ -47,7 +47,7 @@
     "title": "Provjerene putovnice proizvoda.",
     "description": "Jednostavna platforma za izradu i upravljanje digitalnim putovnicama proizvoda."
   },
-  "MarketingNavigation": {
+  "MarketingNavigation": {"login": "Prijava",
     "brand": "Passvero",
     "product": "Proizvod",
     "solutions": "Rješenja",
@@ -55,7 +55,7 @@
     "resources": "Resursi",
     "about": "O nama",
     "contact": "Kontakt",
-    "earlyAccess": "Zatražite rani pristup",
+    "earlyAccess": "Zatraži pristup",
     "menu": "Otvori izbornik",
     "closeMenu": "Zatvori izbornik"
   },
@@ -64,7 +64,7 @@
     "title": "Provjerene putovnice proizvoda.",
     "highlight": "putovnice proizvoda.",
     "description": "Cjelovita platforma za digitalne putovnice proizvoda. Strukturirajte podatke, gradite povjerenje i svakom proizvodu dajte transparentan digitalni identitet.",
-    "primaryAction": "Zatražite rani pristup",
+    "primaryAction": "Zatraži pristup",
     "secondaryAction": "Pogledajte pregled",
     "visualAlt": "Digitalna putovnica proizvoda prikazana uz mobilni prikaz i QR karticu",
     "features": {
@@ -116,7 +116,7 @@
     },
     "status": "Detalji stižu uskoro",
     "featured": "Stiže pri lansiranju",
-    "action": "Zatražite rani pristup",
+    "action": "Zatraži pristup",
     "note": "Za slanje zahtjeva za pristup nije potrebno plaćanje."
   },
   "Benefits": {
@@ -132,7 +132,7 @@
   "CTA": {
     "title": "Spremni za početak?",
     "description": "Pridružite se budućnosti transparentnosti proizvoda.",
-    "primaryAction": "Zatražite rani pristup",
+    "primaryAction": "Zatraži pristup",
     "noteOne": "Bez obveze",
     "noteTwo": "Postavljanje u nekoliko minuta",
     "visualAlt": "Tirkizni štit s kvačicom koji predstavlja provjerene podatke"
@@ -156,14 +156,14 @@
     },
     "audience": {"eyebrow": "Za koga gradimo", "title": "Za poduzeća koja proizvode, uvoze i distribuiraju proizvode diljem Europe.", "description": "Passvero je usmjeren na timove kojima treba jasan sustav za podatke o proizvodima, bez nepotrebne složenosti.", "items": {"manufacturers": "Proizvođači", "importers": "Uvoznici", "distributors": "Distributeri", "privateLabel": "Robne marke privatne etikete", "smallBusiness": "Mala i srednja poduzeća"}},
     "company": {"eyebrow": "Vlasništvo i povjerenje", "title": "Razvijen uz praktično poslovno iskustvo.", "body": "Passvero razvija i njime upravlja {company}, etablirana hrvatska tvrtka s praktičnim iskustvom u radu s tehničkim proizvodima i poslovnim korisnicima.", "linkLabel": "Posjetite web-stranicu Živić-elektro"},
-    "cta": {"eyebrow": "Rani pristup", "title": "Želite jednostavnije upravljati podacima o proizvodima?", "description": "Javite nam što vašem timu treba i zatražite rani pristup Passveru.", "action": "Zatražite rani pristup"}
+    "cta": {"eyebrow": "Rani pristup", "title": "Želite jednostavnije upravljati podacima o proizvodima?", "description": "Javite nam što vašem timu treba i zatražite rani pristup Passveru.", "action": "Zatraži pristup"}
   },
   "ContactPage": {
     "metadata": {"title": "Kontakt | Passvero", "description": "Kontaktirajte Passvero za pitanja o podacima o proizvodima, digitalnim putovnicama proizvoda i ranom pristupu."},
     "hero": {"eyebrow": "Kontakt", "title": "Razgovarajmo o vašim podacima o proizvodima.", "description": "Imate pitanje o Passveru, digitalnim putovnicama proizvoda ili ranom pristupu? Obratite nam se izravno i rado ćemo pomoći."},
     "email": {"eyebrow": "Izravan kontakt", "title": "Pošaljite nam e-poruku", "description": "Za opća pitanja i razgovor o vašim potrebama javite nam se na:"},
     "company": {"eyebrow": "Tvrtka", "title": "Tko stoji iza Passvera", "body": "Passvero razvija i njime upravlja {company}.", "linkLabel": "Posjetite web-stranicu Živić-elektro"},
-    "earlyAccess": {"eyebrow": "Rani pristup", "title": "Zainteresirani ste za Passvero?", "description": "Pošaljite nam zahtjev za rani pristup i ukratko opišite potrebe svojeg tima.", "action": "Zatražite rani pristup"},
+    "earlyAccess": {"eyebrow": "Rani pristup", "title": "Zainteresirani ste za Passvero?", "description": "Pošaljite nam zahtjev za rani pristup i ukratko opišite potrebe svojeg tima.", "action": "Zatraži pristup"},
     "responseNote": "Odgovorit ćemo u najkraćem mogućem roku."
   },
   "Legal": {
@@ -232,7 +232,7 @@
     "legalLabel": "Pravne informacije",
     "groups": {
       "product": {"title": "Proizvod", "features": "Mogućnosti", "howItWorks": "Kako funkcionira", "industries": "Industrije", "pricing": "Cijene"},
-      "company": {"title": "Tvrtka", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatražite rani pristup"},
+      "company": {"title": "Tvrtka", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatraži pristup"},
       "legal": {"title": "Pravno", "privacy": "Pravila privatnosti", "cookies": "Pravila o kolačićima", "terms": "Uvjeti korištenja"}
     }
   },

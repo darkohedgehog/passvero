@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import { FormEvent, useCallback, useRef, useState } from "react";
 
+import { createMailtoHref } from "@/src/lib/site";
 import { signIn } from "@/src/application/auth/auth-ui-client";
 import { Link } from "@/src/i18n/navigation";
 import {
@@ -17,6 +18,7 @@ type LoginState = "IDLE" | "ERROR" | "TURNSTILE_REQUIRED" | "TURNSTILE_FAILURE" 
 
 export function LoginForm() {
   const t = useTranslations("Auth");
+  const contact = useTranslations("Contact");
   const router = useRouter();
   const [state, setState] = useState<LoginState>("IDLE");
   const [pending, setPending] = useState(false);
@@ -116,6 +118,12 @@ export function LoginForm() {
           {t("login.forgotPassword")}
         </Link>
       </div>
+      <p className="text-center text-sm text-slate-600">
+        {t("login.newUser")} {" "}
+        <a href={createMailtoHref(contact("earlyAccessSubject"))} className="inline-flex min-h-11 items-center rounded-md font-semibold text-teal-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+          {t("login.requestAccess")}
+        </a>
+      </p>
     </form>
   );
 }

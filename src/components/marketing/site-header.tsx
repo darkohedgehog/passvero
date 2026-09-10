@@ -2,16 +2,12 @@ import { getTranslations } from "next-intl/server";
 
 import { LanguageSwitcher } from "@/src/components/language-switcher";
 import { BrandLogo } from "@/src/components/marketing/brand-logo";
-import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { MobileNavigation } from "@/src/components/marketing/mobile-navigation";
 import { Link } from "@/src/i18n/navigation";
-import { createMailtoHref } from "@/src/lib/site";
 
 export async function SiteHeader() {
   const t = await getTranslations("MarketingNavigation");
-  const contact = await getTranslations("Contact");
-  const earlyAccessHref = createMailtoHref(contact("earlyAccessSubject"));
   const links = [
     { href: "/#product", label: t("product") },
     { href: "/#solutions", label: t("solutions") },
@@ -41,14 +37,14 @@ export async function SiteHeader() {
 
         <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher />
-          <MarketingButton href={earlyAccessHref}>{t("earlyAccess")}</MarketingButton>
+          <Link href="/login" className="inline-flex min-h-11 items-center justify-center rounded-[10px] border border-blue-600 bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-blue-700 hover:bg-blue-700">{t("login")}</Link>
         </div>
 
         <MobileNavigation
           brand={t("brand")}
           closeLabel={t("closeMenu")}
-          ctaLabel={t("earlyAccess")}
-          ctaHref={earlyAccessHref}
+          ctaLabel={t("login")}
+          ctaHref="/login"
           links={links}
           menuLabel={t("menu")}
         />

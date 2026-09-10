@@ -5,12 +5,12 @@ import test from "node:test";
 const locales = ["hr", "sr", "en", "de", "sl", "pl"];
 const root = new URL("../", import.meta.url);
 const earlyAccessLabels = {
-  hr: "Zatražite rani pristup",
-  sr: "Zatražite rani pristup",
-  en: "Request Early Access",
-  de: "Frühzeitigen Zugang anfragen",
-  sl: "Zaprosite za zgodnji dostop",
-  pl: "Poproś o wczesny dostęp",
+  hr: "Zatraži pristup",
+  sr: "Zatraži pristup",
+  en: "Request access",
+  de: "Zugang anfragen",
+  sl: "Zaprosi za dostop",
+  pl: "Poproś o dostęp",
 };
 const earlyAccessSubjects = {
   hr: "Zahtjev za rani pristup Passveru",
@@ -65,7 +65,7 @@ test("all locales expose the same Early Access, Terms, and footer message schema
   }
 });
 
-test("public navigation and CTAs contain no sign-in or demo actions", async () => {
+test("public navigation offers login while access CTAs preserve mail actions and exclude demo actions", async () => {
   const paths = [
     "src/components/marketing/site-header.tsx",
     "src/components/marketing/mobile-navigation.tsx",
@@ -79,7 +79,8 @@ test("public navigation and CTAs contain no sign-in or demo actions", async () =
   for (const forbidden of ["signInLabel", 't("signIn")', "#demo", "demoSubject", "salesSubject", "bookDemo"])
     assert.doesNotMatch(source, new RegExp(forbidden.replace(/[()"#]/g, "\\$&")));
   assert.match(source, /#early-access/);
-  assert.equal(source.match(/contact\("earlyAccessSubject"\)/g)?.length, 4);
+  assert.equal(source.match(/contact\("earlyAccessSubject"\)/g)?.length, 3);
+  assert.match(source, /href="\/login"/);
 });
 
 test("public legal copy contains no draft or professional-review disclaimer", async () => {
