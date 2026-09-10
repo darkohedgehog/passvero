@@ -146,5 +146,6 @@
     "noLongerAvailable": "Kod QR nie jest już dostępny do podglądu ani pobrania.",
     "helper": "Aktywacja umożliwia używanie, pobieranie i drukowanie kodu QR dla już opublikowanego produktu.",
     "reload": "Odśwież stronę"
-  }
+  },
+  "CreateDraftFromPublished": {"edit":"Edytuj produkt","continueEditing":"Kontynuuj edycję","pending":"Otwieranie wersji roboczej…","imagesUnsupported":"Edycja opublikowanych produktów ze zdjęciami nie jest jeszcze obsługiwana. Opublikowany produkt pozostaje bez zmian; spróbuj ponownie, gdy ta funkcja będzie dostępna.","conflict":"Produkt został zmieniony. Odśwież stronę, aby kontynuować edycję.","forbidden":"Nie masz uprawnień do edycji tego produktu.","failure":"Nie udało się otworzyć wersji roboczej. Odśwież stronę i sprawdź stan produktu przed ponowną próbą.","reload":"Odśwież stronę"}
 }

@@ -289,3 +289,18 @@ for (const locale of ["hr", "en", "de", "sr", "sl", "pl"]) {
     assert.doesNotMatch(html, /undefined|ProductDetail\./);
   });
 }
+
+test("published-only creation slot appears only on active published Product without draft", () => {
+  for (const [changes, visible] of [
+    [{ currentDraft: null }, true],
+    [{ currentDraft: null, lifecycleStatus: "ARCHIVED" }, false],
+    [{ currentDraft: null, currentPublished: null }, false],
+    [{}, false],
+  ] as const) {
+    const html = renderToStaticMarkup(createElement(ProductDetailPresentation, {
+      detail: { ...detail, ...changes }, productListHref: "/dashboard/products", formattedDates, labels, contentLabels: en.PublicDpp,
+      createDraftAction: createElement("button", null, "Create private draft"),
+    }));
+    assert.equal(html.includes("Create private draft"), visible);
+  }
+});

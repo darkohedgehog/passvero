@@ -153,5 +153,6 @@
     "noLongerAvailable": "The QR code is no longer available for preview or download.",
     "helper": "Activation enables use, download and printing of the QR code for the already published product.",
     "reload": "Reload page"
-  }
+  },
+  "CreateDraftFromPublished": {"edit":"Edit product","continueEditing":"Continue editing","pending":"Opening draft…","imagesUnsupported":"Editing published products with images is not supported yet. The published product remains unchanged; try again when this capability becomes available.","conflict":"The product changed. Reload the page to continue editing.","forbidden":"You do not have permission to edit this product.","failure":"The draft could not be opened. Reload the page and check the product state before trying again.","reload":"Reload page"}
 }

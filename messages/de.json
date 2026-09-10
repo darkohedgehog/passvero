@@ -146,5 +146,6 @@
     "noLongerAvailable": "Der QR-Code steht nicht mehr zur Vorschau oder zum Herunterladen bereit.",
     "helper": "Die Aktivierung ermöglicht die Verwendung, das Herunterladen und den Druck des QR-Codes für das bereits veröffentlichte Produkt.",
     "reload": "Seite neu laden"
-  }
+  },
+  "CreateDraftFromPublished": {"edit":"Produkt bearbeiten","continueEditing":"Bearbeitung fortsetzen","pending":"Entwurf wird geöffnet…","imagesUnsupported":"Veröffentlichte Produkte mit Bildern können noch nicht bearbeitet werden. Das veröffentlichte Produkt bleibt unverändert. Versuchen Sie es erneut, sobald diese Funktion verfügbar ist.","conflict":"Das Produkt wurde geändert. Laden Sie die Seite neu, um die Bearbeitung fortzusetzen.","forbidden":"Sie haben keine Berechtigung, dieses Produkt zu bearbeiten.","failure":"Der Entwurf konnte nicht geöffnet werden. Laden Sie die Seite neu und prüfen Sie den Produktstatus, bevor Sie es erneut versuchen.","reload":"Seite neu laden"}
 }

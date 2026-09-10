@@ -1,3 +1,5 @@
+import { canCreateDraftFromPublished } from "@/src/application/products/create-draft-from-published/http";
+import { CreateDraftFromPublishedAction } from "@/src/components/application/products/create-draft-from-published-action";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
@@ -124,6 +126,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     );
   }
 
+  const createDraftT = await getTranslations({ locale, namespace: "CreateDraftFromPublished" });
+  const createDraftLabels = { edit: createDraftT("edit"), continueEditing: createDraftT("continueEditing"), pending: createDraftT("pending"), imagesUnsupported: createDraftT("imagesUnsupported"), conflict: createDraftT("conflict"), forbidden: createDraftT("forbidden"), failure: createDraftT("failure"), reload: createDraftT("reload") };
   const dateFormatter = new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -225,7 +229,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
       qrSection={<ProductQrServerSection productId={detail.productId} context={resolution.context} locale={locale} />}
       productListHref={productListHref}
       editHref={editHref}
-      editLabel={editT("title")}
+      editLabel={detail.currentPublished !== null ? createDraftLabels.continueEditing : editT("title")}
+      createDraftAction={canCreateDraftFromPublished(resolution.context, detail.lifecycleStatus, detail.currentPublished !== null, detail.currentDraft !== null) && detail.currentPublished !== null ? (
+        <CreateDraftFromPublishedAction data={{ productId: detail.productId, expectedCurrentPublishedVersionId: detail.currentPublished.productVersionId, expectedProductUpdatedAt: detail.updatedAt.toISOString() }} labels={createDraftLabels} />
+      ) : null}
       contentEditHref={contentEditHref}
       contentEditLabel={contentT("editAction")}
       publishSection={canPublish && detail.currentDraft !== null ? (

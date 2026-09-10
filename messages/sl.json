@@ -146,5 +146,6 @@
     "noLongerAvailable": "Koda QR ni več na voljo za predogled ali prenos.",
     "helper": "Aktivacija omogoča uporabo, prenos in tiskanje kode QR za že objavljeni izdelek.",
     "reload": "Osveži stran"
-  }
+  },
+  "CreateDraftFromPublished": {"edit":"Uredi izdelek","continueEditing":"Nadaljuj urejanje","pending":"Odpiranje osnutka…","imagesUnsupported":"Urejanje objavljenih izdelkov s slikami še ni podprto. Objavljeni izdelek ostane nespremenjen; poskusite znova, ko bo ta možnost na voljo.","conflict":"Izdelek se je spremenil. Osvežite stran in nadaljujte urejanje.","forbidden":"Nimate dovoljenja za urejanje tega izdelka.","failure":"Osnutka ni bilo mogoče odpreti. Osvežite stran in preverite stanje izdelka, preden poskusite znova.","reload":"Osveži stran"}
 }

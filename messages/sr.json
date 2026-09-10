@@ -146,5 +146,6 @@
     "noLongerAvailable": "QR kod više nije dostupan za pregled ili preuzimanje.",
     "helper": "Aktivacija omogućava upotrebu, preuzimanje i štampanje QR koda za već objavljeni proizvod.",
     "reload": "Osveži stranicu"
-  }
+  },
+  "CreateDraftFromPublished": {"edit":"Uredi proizvod","continueEditing":"Nastavi uređivanje","pending":"Otvaranje nacrta…","imagesUnsupported":"Uređivanje objavljenih proizvoda sa slikama još nije podržano. Objavljeni proizvod ostaje nepromenjen; pokušajte ponovo kada ova mogućnost bude dostupna.","conflict":"Proizvod se promenio. Osvežite stranicu i nastavite uređivanje.","forbidden":"Nemate ovlašćenje za uređivanje ovog proizvoda.","failure":"Nacrt nije moguće otvoriti. Osvežite stranicu i proverite stanje proizvoda pre ponovnog pokušaja.","reload":"Osveži stranicu"}
 }

@@ -58,6 +58,7 @@ export function ProductDetailPresentation({
   cnClassificationSection,
   materialsSection,
   publishSection,
+  createDraftAction,
   qrSection,
   formattedDates,
   labels,
@@ -72,6 +73,7 @@ export function ProductDetailPresentation({
   cnClassificationSection?: React.ReactNode;
   materialsSection?: React.ReactNode;
   publishSection?: React.ReactNode;
+  createDraftAction?: React.ReactNode;
   qrSection?: React.ReactNode;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
@@ -96,6 +98,7 @@ export function ProductDetailPresentation({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {detail.publicAvailability.status === "PUBLIC" ? <a href={detail.publicAvailability.url} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">{labels.viewPublicDpp}</a> : null}
+          {detail.lifecycleStatus === "ACTIVE" && published !== null && draft === null ? createDraftAction : null}
           {editable ? publishSection : null}
           {editable && contentEditHref && contentEditLabel ? <a href={contentEditHref} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600">{contentEditLabel}</a> : null}
           {editable && editHref && editLabel ? <a href={editHref} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600">{editLabel}</a> : null}
