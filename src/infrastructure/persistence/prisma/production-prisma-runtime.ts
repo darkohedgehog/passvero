@@ -12,6 +12,7 @@ import { createPrismaGetProductDetailDependencies } from "@/src/infrastructure/p
 import { createPrismaListProductsDependencies } from "@/src/infrastructure/persistence/prisma/prisma-list-products-composition";
 import { createPrismaProductMaterialsCurrentDraftDependencies } from "@/src/infrastructure/persistence/prisma/prisma-product-materials-current-draft-composition";
 import { createPrismaPublishProductDependencies } from "@/src/infrastructure/persistence/prisma/prisma-publish-product-composition";
+import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app-origin";
 import { getRuntimeDatabaseConfig } from "@/src/infrastructure/config/runtime-database-config";
 import {
   createProductionPrismaRuntime,
@@ -62,7 +63,7 @@ export function getProductionListProductsDependencies() {
 }
 
 export function getProductionGetProductDetailDependencies() {
-  return createPrismaGetProductDetailDependencies(getProductionPrismaClient());
+  return createPrismaGetProductDetailDependencies(getProductionPrismaClient(), getCanonicalAppOrigin());
 }
 
 export function getProductionProductMaterialsCurrentDraftDependencies() {

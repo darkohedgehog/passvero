@@ -2,12 +2,23 @@ import type {
   GetProductDetailPersistence,
   ProductDetailVersionRecord,
 } from "@/src/application/products/get-product-detail/ports";
-import type { PrismaClient } from "@/src/generated/prisma/client";
+import type { Prisma, PrismaClient } from "@/src/generated/prisma/client";
 
 const translationProjection = {
   productVersionId: true,
   locale: true,
   productName: true,
+  shortDescription: true,
+  description: true,
+  technicalDescription: true,
+  repairInstructions: true,
+  sparePartsInformation: true,
+  recyclingInstructions: true,
+  disposalInstructions: true,
+  packagingInformation: true,
+  safetyInformation: true,
+  warrantyInformation: true,
+  publicNotes: true,
 } as const;
 
 const versionProjection = {
@@ -21,7 +32,18 @@ const versionProjection = {
   updatedAt: true,
   publishedAt: true,
   translations: { select: translationProjection },
-} as const;
+  identifiers: {
+    where: { type: "CN" },
+    select: { productVersionId: true, value: true, nomenclatureYear: true },
+  },
+  materials: {
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    select: {
+      productVersionId: true, materialName: true, category: true,
+      percentage: true, isRecycled: true, recycledPercentage: true,
+    },
+  },
+} satisfies Prisma.ProductVersionSelect;
 
 const productDetailProjection = {
   organizationId: true,
@@ -73,18 +95,7 @@ implements GetProductDetailPersistence {
 }
 
 function mapVersion(
-  version: {
-    readonly id: string;
-    readonly productId: string;
-    readonly organizationId: string;
-    readonly status: ProductDetailVersionRecord["status"];
-    readonly sourceLocale: string;
-    readonly versionNumber: number | null;
-    readonly createdAt: Date;
-    readonly updatedAt: Date;
-    readonly publishedAt: Date | null;
-    readonly translations: ProductDetailVersionRecord["translations"];
-  } | null,
+  version: Prisma.ProductVersionGetPayload<{ select: typeof versionProjection }> | null,
 ): ProductDetailVersionRecord | null {
   if (version === null) return null;
   return {
@@ -98,5 +109,14 @@ function mapVersion(
     updatedAt: version.updatedAt,
     publishedAt: version.publishedAt,
     translations: version.translations,
+    cnRows: version.identifiers,
+    materials: version.materials.map((row) => ({
+      productVersionId: row.productVersionId,
+      materialName: row.materialName,
+      category: row.category,
+      percentage: row.percentage === null ? null : row.percentage.toFixed(2),
+      isRecycled: row.isRecycled,
+      recycledPercentage: row.recycledPercentage === null ? null : row.recycledPercentage.toFixed(2),
+    })),
   };
 }

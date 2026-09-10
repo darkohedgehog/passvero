@@ -65,6 +65,10 @@ test("all six locales expose the same complete ProductDetail message contract", 
   assert.ok(messages[0]);
   const keys = flattenKeys(messages[0]);
   assert.deepEqual(keys, [
+    "technicalDetails", "viewPublicDpp", "publication", "publicAvailability",
+    "noDraftChanges", "contentTitle", "readOnly", "draftPrivate",
+    "publicationState.DRAFT", "publicationState.PUBLISHED", "publicationState.CHANGES_IN_DRAFT",
+    "availabilityStatus.PUBLIC", "availabilityStatus.NOT_PUBLIC", "availabilityStatus.WITHDRAWN",
     "backToProducts",
     "created",
     "draftEmpty",

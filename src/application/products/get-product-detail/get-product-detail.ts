@@ -1,3 +1,6 @@
+import { parseCanonicalAppOrigin } from "@/src/application/config/canonical-app-origin";
+import type { GetPublicDpp } from "@/src/application/public-dpp/contracts";
+import { isPassveroLocale } from "@/src/domain/values/passvero-locale";
 import { ApplicationError } from "@/src/application/errors/application-error";
 import {
   hasProductPermission,
@@ -7,6 +10,8 @@ import type {
   GetProductDetail,
   ProductDetailDraft,
   ProductDetailPublished,
+  ProductDetailResult,
+  ProductDetailSnapshot,
 } from "@/src/application/products/get-product-detail/contracts";
 import type {
   GetProductDetailPersistence,
@@ -18,6 +23,8 @@ const CANONICAL_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab]
 
 export function createGetProductDetailService(dependencies: {
   readonly persistence: GetProductDetailPersistence;
+  readonly canonicalOrigin: string;
+  readonly getPublicDpp: GetPublicDpp;
 }): GetProductDetail {
   return async (query, context) => {
     if (context === null) {
@@ -71,20 +78,52 @@ export function createGetProductDetailService(dependencies: {
       throw internalProductDetailError(context.correlationId);
     }
 
-    const currentDraft = mapCurrentDraft(record, context.correlationId);
-    const currentPublished = mapCurrentPublished(record, context.correlationId);
-
-    return {
-      productId: record.productId,
-      internalName: record.internalName,
-      organizationSku: record.sku,
-      publicCode: record.publicCode,
-      lifecycleStatus: record.lifecycleStatus,
-      currentDraft,
-      currentPublished,
-      createdAt: record.createdAt,
-      updatedAt: record.updatedAt,
-    };
+    try {
+      if (!/^[A-Za-z0-9_-]{22}$/.test(record.publicCode)) {
+        throw internalProductDetailError(context.correlationId);
+      }
+      const currentDraft = mapCurrentDraft(record, context.correlationId);
+      const currentPublished = mapCurrentPublished(record, context.correlationId);
+      // Reuse anonymous eligibility without exposing its DTO as private detail.
+      // A changed publication between reads must not produce a misleading link.
+      const publicResult = await dependencies.getPublicDpp({
+        publicCode: record.publicCode,
+        requestedLocale: currentPublished?.sourceLocale,
+        acceptLanguage: null,
+      });
+      let publicAvailability: ProductDetailResult["publicAvailability"];
+      if (publicResult.kind === "TEMPORARILY_UNAVAILABLE") {
+        throw internalProductDetailError(context.correlationId);
+      } else if (publicResult.kind === "PUBLIC") {
+        if (record.lifecycleStatus !== "ACTIVE" || currentPublished === null
+          || publicResult.dpp.version.number !== currentPublished.versionNumber
+          || publicResult.dpp.version.publishedAt !== currentPublished.publishedAt.toISOString()
+          || publicResult.dpp.locale !== currentPublished.sourceLocale) {
+          throw internalProductDetailError(context.correlationId);
+        }
+        const origin = parseCanonicalAppOrigin(dependencies.canonicalOrigin);
+        publicAvailability = { status: "PUBLIC", url: new URL(`/p/${record.publicCode}`, origin).toString() };
+      } else {
+        publicAvailability = { status: publicResult.kind === "WITHDRAWN" ? "WITHDRAWN" : "NOT_PUBLIC" };
+      }
+      return {
+        productId: record.productId,
+        internalName: record.internalName,
+        organizationSku: record.sku,
+        publicCode: record.publicCode,
+        lifecycleStatus: record.lifecycleStatus,
+        publicationState: currentPublished !== null
+          ? currentDraft !== null ? "CHANGES_IN_DRAFT" : "PUBLISHED"
+          : currentDraft !== null ? "DRAFT" : null,
+        publicAvailability,
+        currentDraft,
+        currentPublished,
+        createdAt: record.createdAt,
+        updatedAt: record.updatedAt,
+      };
+    } catch {
+      throw internalProductDetailError(context.correlationId);
+    }
   };
 }
 
@@ -101,11 +140,14 @@ function mapCurrentDraft(
   );
   if (version === null) return null;
 
+  const snapshot = mapSnapshot(version, correlationId);
   return {
+    ...snapshot,
+    kind: "CURRENT_DRAFT",
     productVersionId: version.productVersionId,
     status: version.status as ProductDetailDraft["status"],
     sourceLocale: version.sourceLocale,
-    sourceProductName: sourceProductName(version, correlationId),
+    sourceProductName: snapshot.content.productName,
     createdAt: version.createdAt,
     updatedAt: version.updatedAt,
   };
@@ -123,12 +165,20 @@ function mapCurrentPublished(
     correlationId,
   );
   if (version === null) return null;
+  if (version.versionNumber === null || !Number.isSafeInteger(version.versionNumber)
+    || version.versionNumber < 1 || version.publishedAt === null
+    || !Number.isFinite(version.publishedAt.getTime())) {
+    throw internalProductDetailError(correlationId);
+  }
 
+  const snapshot = mapSnapshot(version, correlationId);
   return {
+    ...snapshot,
+    kind: "CURRENT_PUBLISHED",
     productVersionId: version.productVersionId,
     status: "PUBLISHED",
     sourceLocale: version.sourceLocale,
-    sourceProductName: sourceProductName(version, correlationId),
+    sourceProductName: snapshot.content.productName,
     versionNumber: version.versionNumber,
     publishedAt: version.publishedAt,
   };
@@ -148,6 +198,7 @@ function validatePointedVersion(
     || version.productVersionId !== pointerId
     || version.productId !== record.productId
     || version.organizationId !== record.organizationId
+    || !isPassveroLocale(version.sourceLocale)
     || !allowedStatuses.includes(version.status)
   ) {
     throw internalProductDetailError(correlationId);
@@ -155,18 +206,42 @@ function validatePointedVersion(
   return version;
 }
 
-function sourceProductName(
-  version: ProductDetailVersionRecord,
-  correlationId: string,
-): string {
-  const translation = version.translations.find((candidate) =>
-    candidate.productVersionId === version.productVersionId
-    && candidate.locale === version.sourceLocale
-  );
-  if (translation === undefined) {
+function mapSnapshot(version: ProductDetailVersionRecord, correlationId: string): ProductDetailSnapshot {
+  const translations = version.translations.filter((row) => row.locale === version.sourceLocale);
+  const translation = translations[0];
+  if (translations.length !== 1 || translation.productVersionId !== version.productVersionId
+    || !translation.productName.trim() || version.cnRows.length > 1
+    || version.materials.some((row) => row.productVersionId !== version.productVersionId)) {
     throw internalProductDetailError(correlationId);
   }
-  return translation.productName;
+  const cn = version.cnRows[0];
+  if (cn !== undefined && (cn.productVersionId !== version.productVersionId
+    || !/^[0-9]{8}$/.test(cn.value) || cn.nomenclatureYear === null
+    || !Number.isInteger(cn.nomenclatureYear) || cn.nomenclatureYear < 1988)) {
+    throw internalProductDetailError(correlationId);
+  }
+  return {
+    content: {
+      productName: translation.productName,
+      shortDescription: translation.shortDescription,
+      description: translation.description,
+      technicalDescription: translation.technicalDescription,
+      repairInstructions: translation.repairInstructions,
+      sparePartsInformation: translation.sparePartsInformation,
+      recyclingInstructions: translation.recyclingInstructions,
+      disposalInstructions: translation.disposalInstructions,
+      packagingInformation: translation.packagingInformation,
+      safetyInformation: translation.safetyInformation,
+      warrantyInformation: translation.warrantyInformation,
+      publicNotes: translation.publicNotes,
+    },
+    cn: cn === undefined ? null : { code: cn.value, nomenclatureYear: cn.nomenclatureYear! },
+    materials: version.materials.map((row) => ({
+      materialName: row.materialName, category: row.category,
+      percentage: row.percentage, isRecycled: row.isRecycled,
+      recycledPercentage: row.recycledPercentage,
+    })),
+  };
 }
 
 function internalProductDetailError(correlationId: string): ApplicationError {

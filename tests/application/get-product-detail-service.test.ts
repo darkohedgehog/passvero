@@ -10,6 +10,10 @@ import type {
   ProductDetailVersionRecord,
 } from "../../src/application/products/get-product-detail/ports";
 
+import type { GetPublicDppResult } from "../../src/application/public-dpp/contracts";
+
+const emptyContent = { shortDescription: null, description: null, technicalDescription: null, repairInstructions: null, sparePartsInformation: null, recyclingInstructions: null, disposalInstructions: null, packagingInformation: null, safetyInformation: null, warrantyInformation: null, publicNotes: null };
+
 const organizationId = "11111111-1111-4111-8111-111111111111";
 const foreignOrganizationId = "99999999-9999-4999-8999-999999999999";
 const productId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
@@ -47,7 +51,10 @@ function version(
       ? "2026-08-30T11:00:00.000Z"
       : "2026-08-20T12:00:00.000Z"),
     publishedAt: isDraft ? null : new Date("2026-08-20T12:00:00.000Z"),
+    cnRows: [],
+    materials: [],
     translations: [{
+      ...emptyContent,
       productVersionId: id,
       locale: sourceLocale,
       productName: isDraft ? "Industrijska stolica" : "Industrial chair",
@@ -74,7 +81,7 @@ function record(overrides: Partial<ProductDetailRecord> = {}): ProductDetailReco
   };
 }
 
-function harness(result: ProductDetailRecord | null = record()) {
+function harness(result: ProductDetailRecord | null = record(), publicResult: GetPublicDppResult = { kind: "NOT_FOUND" }) {
   const calls: Parameters<GetProductDetailPersistence["findByIdAndOrganization"]>[0][] = [];
   const persistence: GetProductDetailPersistence = {
     async findByIdAndOrganization(input) {
@@ -84,7 +91,7 @@ function harness(result: ProductDetailRecord | null = record()) {
   };
   return {
     calls,
-    getProductDetail: createGetProductDetailService({ persistence }),
+    getProductDetail: createGetProductDetailService({ persistence, canonicalOrigin: "https://catalog.example", getPublicDpp: async () => publicResult }),
   };
 }
 
@@ -115,9 +122,14 @@ test("returns only the authorized product projection from trusted tenant context
     organizationSku: "CHAIR-1",
     publicCode: "AbCdEfGhIjKlMnOpQrStUv",
     lifecycleStatus: "ACTIVE",
+    publicationState: "CHANGES_IN_DRAFT",
+    publicAvailability: { status: "NOT_PUBLIC" },
     currentDraft: {
       productVersionId: draftId,
       status: "DRAFT",
+      kind: "CURRENT_DRAFT",
+      content: { ...emptyContent, productName: "Industrijska stolica" },
+      cn: null, materials: [],
       sourceLocale: "hr",
       sourceProductName: "Industrijska stolica",
       createdAt: new Date("2026-08-30T10:00:00.000Z"),
@@ -126,6 +138,9 @@ test("returns only the authorized product projection from trusted tenant context
     currentPublished: {
       productVersionId: publishedId,
       status: "PUBLISHED",
+      kind: "CURRENT_PUBLISHED",
+      content: { ...emptyContent, productName: "Industrial chair" },
+      cn: null, materials: [],
       sourceLocale: "en",
       sourceProductName: "Industrial chair",
       versionNumber: 1,
@@ -271,8 +286,8 @@ test("selects the exact source-locale translation for each pointed version", asy
   const fixture = harness(record({
     currentDraftVersion: version("draft", {
       translations: [
-        { productVersionId: draftId, locale: "en", productName: "Chair" },
-        { productVersionId: draftId, locale: "hr", productName: "Izvorna stolica" },
+        { ...emptyContent, productVersionId: draftId, locale: "en", productName: "Chair" },
+        { ...emptyContent, productVersionId: draftId, locale: "hr", productName: "Izvorna stolica" },
       ],
     }),
   }));
@@ -285,8 +300,8 @@ test("selects the exact source-locale translation for each pointed version", asy
 
 test("fails closed when the source translation is missing or belongs to another version", async () => {
   for (const translations of [
-    [{ productVersionId: draftId, locale: "en", productName: "Chair" }],
-    [{ productVersionId: publishedId, locale: "hr", productName: "Foreign" }],
+    [{ ...emptyContent, productVersionId: draftId, locale: "en", productName: "Chair" }],
+    [{ ...emptyContent, productVersionId: publishedId, locale: "hr", productName: "Foreign" }],
   ]) {
     const fixture = harness(record({
       currentDraftVersion: version("draft", { translations }),
@@ -305,10 +320,105 @@ test("maps persistence failures to one safe internal error", async () => {
       throw new Error(`database failure for ${productId}`);
     },
   };
-  const getProductDetail = createGetProductDetailService({ persistence });
+  const getProductDetail = createGetProductDetailService({ persistence, canonicalOrigin: "https://catalog.example", getPublicDpp: async () => ({ kind: "NOT_FOUND" }) });
 
   await assert.rejects(
     getProductDetail({ productId }, context),
     (error) => assertApplicationError(error, "INTERNAL", "GET_PRODUCT_DETAIL_INTERNAL"),
   );
+});
+
+function authoredVersion(kind: "draft" | "published"): ProductDetailVersionRecord {
+  const base = version(kind);
+  return { ...base,
+    translations: [{ ...base.translations[0], description: `${kind} content`, publicNotes: `${kind} note` }],
+    cnRows: [{ productVersionId: base.productVersionId, value: kind === "draft" ? "01012100" : "01012900", nomenclatureYear: 2026 }],
+    materials: [{ productVersionId: base.productVersionId, materialName: `${kind} wood`, category: null, percentage: "100.00", isRecycled: false, recycledPercentage: null }],
+  };
+}
+
+function publicResult(): GetPublicDppResult {
+  return { kind: "PUBLIC", dpp: {
+    locale: "en", availableLocales: ["en"], passport: { status: "ACTIVE", firstPublishedAt: "2026-08-20T12:00:00.000Z" },
+    organization: { displayName: "Company" }, version: { number: 1, publishedAt: "2026-08-20T12:00:00.000Z" },
+    content: { ...emptyContent, productName: "Industrial chair" }, materials: [], cn: null,
+  } };
+}
+
+test("published-only detail keeps published content CN and materials without a draft", async () => {
+  const result = await harness(record({ currentDraftVersionId: null, currentDraftVersion: null, currentPublishedVersion: authoredVersion("published") }), publicResult()).getProductDetail({ productId }, context);
+  assert.equal(result.currentDraft, null);
+  assert.equal(result.publicationState, "PUBLISHED");
+  assert.equal(result.currentPublished?.content.description, "published content");
+  assert.equal(result.currentPublished?.content.publicNotes, "published note");
+  assert.deepEqual(result.currentPublished?.cn, { code: "01012900", nomenclatureYear: 2026 });
+  assert.deepEqual(result.currentPublished?.materials, [{ materialName: "published wood", category: null, percentage: "100.00", isRecycled: false, recycledPercentage: null }]);
+  assert.deepEqual(result.publicAvailability, { status: "PUBLIC", url: "https://catalog.example/p/AbCdEfGhIjKlMnOpQrStUv" });
+});
+
+test("both pointer snapshots stay separate while a Viewer reads private draft content", async () => {
+  const result = await harness(record({ currentDraftVersion: authoredVersion("draft"), currentPublishedVersion: authoredVersion("published") }), publicResult()).getProductDetail({ productId }, context);
+  assert.equal(result.publicationState, "CHANGES_IN_DRAFT");
+  assert.equal(result.currentDraft?.kind, "CURRENT_DRAFT");
+  assert.equal(result.currentPublished?.kind, "CURRENT_PUBLISHED");
+  assert.equal(result.currentDraft?.content.description, "draft content");
+  assert.equal(result.currentPublished?.content.description, "published content");
+  assert.equal(result.currentDraft?.cn?.code, "01012100");
+  assert.equal(result.currentPublished?.cn?.code, "01012900");
+  assert.equal(result.currentDraft?.materials[0].materialName, "draft wood");
+  assert.equal(result.currentPublished?.materials[0].materialName, "published wood");
+});
+
+test("never-published draft displays private snapshot and no public action", async () => {
+  const result = await harness(record({ currentDraftVersion: authoredVersion("draft"), currentPublishedVersionId: null, currentPublishedVersion: null })).getProductDetail({ productId }, context);
+  assert.equal(result.publicationState, "DRAFT");
+  assert.equal(result.currentDraft?.content.description, "draft content");
+  assert.equal(result.currentDraft?.cn?.code, "01012100");
+  assert.equal(result.currentDraft?.materials[0].materialName, "draft wood");
+  assert.deepEqual(result.publicAvailability, { status: "NOT_PUBLIC" });
+});
+
+for (const [kind, status] of [["NOT_FOUND", "NOT_PUBLIC"], ["WITHDRAWN", "WITHDRAWN"]] as const) {
+  test(`${kind} eligibility never returns a public-content URL`, async () => {
+    const result = await harness(record(), kind === "WITHDRAWN" ? { kind, publicMessage: "private to public service" } : { kind }).getProductDetail({ productId }, context);
+    assert.deepEqual(result.publicAvailability, { status });
+    assert.doesNotMatch(JSON.stringify(result), /private to public service/);
+  });
+}
+
+test("archived detail retains snapshots without claiming public availability", async () => {
+  const result = await harness(record({ lifecycleStatus: "ARCHIVED" })).getProductDetail({ productId }, context);
+  assert.equal(result.lifecycleStatus, "ARCHIVED");
+  assert.equal(result.currentPublished?.versionNumber, 1);
+  assert.deepEqual(result.publicAvailability, { status: "NOT_PUBLIC" });
+});
+
+for (const [name, published] of [
+  ["foreign CN", { ...authoredVersion("published"), cnRows: [{ productVersionId: draftId, value: "01012900", nomenclatureYear: 2026 }] }],
+  ["foreign material", { ...authoredVersion("published"), materials: [{ productVersionId: draftId, materialName: "Foreign", category: null, percentage: null, isRecycled: false, recycledPercentage: null }] }],
+  ["missing version number", version("published", { versionNumber: null })],
+  ["missing publication time", version("published", { publishedAt: null })],
+  ["unsupported source locale", version("published", { sourceLocale: "fr" })],
+  ["duplicate CN", { ...authoredVersion("published"), cnRows: [...authoredVersion("published").cnRows, ...authoredVersion("published").cnRows] }],
+] satisfies ReadonlyArray<readonly [string, ProductDetailVersionRecord]>) {
+  test(`rejects ${name} instead of exposing a mixed or invalid snapshot`, async () => {
+    await assert.rejects(harness(record({ currentPublishedVersion: published })).getProductDetail({ productId }, context), (error) => assertApplicationError(error, "INTERNAL", "GET_PRODUCT_DETAIL_INTERNAL"));
+  });
+}
+
+test("public-read failure and publication changes fail safely rather than generating an enabled link", async () => {
+  const changed = publicResult();
+  assert.equal(changed.kind, "PUBLIC");
+  if (changed.kind !== "PUBLIC") return;
+  for (const result of [{ kind: "TEMPORARILY_UNAVAILABLE" } as const, { ...changed, dpp: { ...changed.dpp, version: { ...changed.dpp.version, number: 2 } } }]) {
+    await assert.rejects(harness(record(), result).getProductDetail({ productId }, context), (error) => assertApplicationError(error, "INTERNAL", "GET_PRODUCT_DETAIL_INTERNAL"));
+  }
+});
+
+test("canonical origin and public code are validated before returning a public action", async () => {
+  for (const canonicalOrigin of ["http://catalog.example", "https://catalog.example/evil", "https://catalog.example?x=1"]) {
+    const service = createGetProductDetailService({ persistence: { findByIdAndOrganization: async () => record() }, canonicalOrigin, getPublicDpp: async () => publicResult() });
+    await assert.rejects(service({ productId }, context), (error) => assertApplicationError(error, "INTERNAL", "GET_PRODUCT_DETAIL_INTERNAL"));
+  }
+  await assert.rejects(harness(record({ publicCode: "../../evil" }), publicResult()).getProductDetail({ productId }, context), (error) => assertApplicationError(error, "INTERNAL", "GET_PRODUCT_DETAIL_INTERNAL"));
 });

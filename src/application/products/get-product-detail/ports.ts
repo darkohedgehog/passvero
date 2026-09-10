@@ -1,9 +1,10 @@
+import type { PublicDppMaterial, PublicDppTranslation } from "@/src/application/public-dpp/contracts";
 import type {
   ProductLifecycleStatus,
   ProductVersionStatus,
 } from "@/src/application/products/list-products/contracts";
 
-export interface ProductDetailTranslationRecord {
+export interface ProductDetailTranslationRecord extends PublicDppTranslation {
   readonly productVersionId: string;
   readonly locale: string;
   readonly productName: string;
@@ -20,6 +21,12 @@ export interface ProductDetailVersionRecord {
   readonly updatedAt: Date;
   readonly publishedAt: Date | null;
   readonly translations: readonly ProductDetailTranslationRecord[];
+  readonly cnRows: readonly {
+    readonly productVersionId: string;
+    readonly value: string;
+    readonly nomenclatureYear: number | null;
+  }[];
+  readonly materials: readonly (PublicDppMaterial & { readonly productVersionId: string })[];
 }
 
 export interface ProductDetailRecord {

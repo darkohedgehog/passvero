@@ -1,4 +1,5 @@
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
+import type { PublicDppCn, PublicDppMaterial, PublicDppTranslation } from "@/src/application/public-dpp/contracts";
 import type {
   ProductLifecycleStatus,
   ProductVersionStatus,
@@ -8,7 +9,14 @@ export interface GetProductDetailQuery {
   readonly productId: string;
 }
 
-export interface ProductDetailDraft {
+export interface ProductDetailSnapshot {
+  readonly content: PublicDppTranslation;
+  readonly cn: PublicDppCn | null;
+  readonly materials: readonly PublicDppMaterial[];
+}
+
+export interface ProductDetailDraft extends ProductDetailSnapshot {
+  readonly kind: "CURRENT_DRAFT";
   readonly productVersionId: string;
   readonly status: Extract<ProductVersionStatus, "DRAFT" | "READY_FOR_REVIEW">;
   readonly sourceLocale: string;
@@ -17,13 +25,14 @@ export interface ProductDetailDraft {
   readonly updatedAt: Date;
 }
 
-export interface ProductDetailPublished {
+export interface ProductDetailPublished extends ProductDetailSnapshot {
+  readonly kind: "CURRENT_PUBLISHED";
   readonly productVersionId: string;
   readonly status: Extract<ProductVersionStatus, "PUBLISHED">;
   readonly sourceLocale: string;
   readonly sourceProductName: string;
-  readonly versionNumber: number | null;
-  readonly publishedAt: Date | null;
+  readonly versionNumber: number;
+  readonly publishedAt: Date;
 }
 
 export interface ProductDetailResult {
@@ -32,6 +41,10 @@ export interface ProductDetailResult {
   readonly organizationSku: string | null;
   readonly publicCode: string;
   readonly lifecycleStatus: ProductLifecycleStatus;
+  readonly publicationState: "DRAFT" | "PUBLISHED" | "CHANGES_IN_DRAFT" | null;
+  readonly publicAvailability:
+    | { readonly status: "PUBLIC"; readonly url: string }
+    | { readonly status: "NOT_PUBLIC" | "WITHDRAWN" };
   readonly currentDraft: ProductDetailDraft | null;
   readonly currentPublished: ProductDetailPublished | null;
   readonly createdAt: Date;

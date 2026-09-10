@@ -13,6 +13,9 @@ const translationProjection = {
   productVersionId: true,
   locale: true,
   productName: true,
+  shortDescription: true, description: true, technicalDescription: true, repairInstructions: true,
+  sparePartsInformation: true, recyclingInstructions: true, disposalInstructions: true,
+  packagingInformation: true, safetyInformation: true, warrantyInformation: true, publicNotes: true,
 };
 
 const versionProjection = {
@@ -26,6 +29,8 @@ const versionProjection = {
   updatedAt: true,
   publishedAt: true,
   translations: { select: translationProjection },
+  identifiers: { where: { type: "CN" }, select: { productVersionId: true, value: true, nomenclatureYear: true } },
+  materials: { orderBy: [{ createdAt: "asc" }, { id: "asc" }], select: { productVersionId: true, materialName: true, category: true, percentage: true, isRecycled: true, recycledPercentage: true } },
 };
 
 const productProjection = {
@@ -72,6 +77,7 @@ test("queries one product by productId and trusted organization without version 
             createdAt: draftCreatedAt,
             updatedAt,
             publishedAt: null,
+            identifiers: [], materials: [],
             translations: [{
               productVersionId: draftId,
               locale: "hr",
@@ -88,6 +94,7 @@ test("queries one product by productId and trusted organization without version 
             createdAt,
             updatedAt: publishedAt,
             publishedAt,
+            identifiers: [], materials: [],
             translations: [{
               productVersionId: publishedId,
               locale: "en",
@@ -127,6 +134,7 @@ test("queries one product by productId and trusted organization without version 
       createdAt: draftCreatedAt,
       updatedAt,
       publishedAt: null,
+      cnRows: [], materials: [],
       translations: [{
         productVersionId: draftId,
         locale: "hr",
@@ -143,6 +151,7 @@ test("queries one product by productId and trusted organization without version 
       createdAt,
       updatedAt: publishedAt,
       publishedAt,
+      cnRows: [], materials: [],
       translations: [{
         productVersionId: publishedId,
         locale: "en",
@@ -165,4 +174,28 @@ test("preserves a missing tenant-scoped product as null", async () => {
     await persistence.findByIdAndOrganization({ productId, organizationId }),
     null,
   );
+});
+
+
+test("reads published-only child ownership and decimal values without selecting private metadata", async () => {
+  let query: unknown;
+  const prisma = { product: { findFirst: async (input: unknown) => {
+    query = input;
+    return {
+      id: productId, organizationId, internalName: "Chair", sku: null, publicCode: "AbCdEfGhIjKlMnOpQrStUv", lifecycleStatus: "ACTIVE",
+      currentDraftVersionId: null, currentDraftVersion: null, currentPublishedVersionId: publishedId,
+      createdAt: new Date(), updatedAt: new Date(),
+      currentPublishedVersion: { id: publishedId, productId, organizationId, status: "PUBLISHED", sourceLocale: "hr", versionNumber: 1, createdAt: new Date(), updatedAt: new Date(), publishedAt: new Date(),
+        translations: [{ productVersionId: publishedId, locale: "hr", productName: "Stolica", description: "Published description" }],
+        identifiers: [{ productVersionId: publishedId, value: "01012100", nomenclatureYear: 2026 }],
+        materials: [{ productVersionId: publishedId, materialName: "Wood", category: null, percentage: { toFixed: () => "75.50" }, isRecycled: true, recycledPercentage: { toFixed: () => "20.00" } }],
+      },
+    };
+  } } } as unknown as PrismaClient;
+  const result = await new PrismaGetProductDetailPersistence(prisma).findByIdAndOrganization({ productId, organizationId });
+  assert.equal(result?.currentDraftVersion, null);
+  assert.equal(result?.currentPublishedVersion?.translations[0].description, "Published description");
+  assert.deepEqual(result?.currentPublishedVersion?.cnRows, [{ productVersionId: publishedId, value: "01012100", nomenclatureYear: 2026 }]);
+  assert.deepEqual(result?.currentPublishedVersion?.materials, [{ productVersionId: publishedId, materialName: "Wood", category: null, percentage: "75.50", isRecycled: true, recycledPercentage: "20.00" }]);
+  assert.doesNotMatch(JSON.stringify(query), /"supplier"|"notes"|storage|createdBy|images|documents/i);
 });

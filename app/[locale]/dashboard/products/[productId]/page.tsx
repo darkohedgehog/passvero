@@ -24,6 +24,7 @@ import {
   type ProductMaterialsLabels,
 } from "@/src/components/application/products/product-materials-section";
 import { PublishProductSection, type PublishProductLabels } from "@/src/components/application/products/publish-product-section";
+import { getPublicDppLabels } from "@/src/components/public-dpp/public-dpp-labels";
 import { ProductQrServerSection } from "@/src/components/application/products/product-qr-server-section";
 import { getPathname } from "@/src/i18n/navigation";
 import { isAppLocale } from "@/src/i18n/routing";
@@ -163,7 +164,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     expectedDraftUpdatedAt: string;
   } | null = null;
   let cnLoadFailed = false;
-  if (detail.currentDraft !== null) {
+  if (detail.currentDraft !== null && detail.lifecycleStatus === "ACTIVE") {
     const materialsService = createProductMaterialsCurrentDraftServices(
       getProductionProductMaterialsCurrentDraftDependencies(),
     );
@@ -174,7 +175,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
       materialsService.get({ productId: detail.productId }, resolution.context),
       cnService.get({ productId: detail.productId }, resolution.context),
     ]);
-    if (materialsResult.status === "fulfilled") {
+    if (materialsResult.status === "fulfilled"
+      && materialsResult.value.expectedDraftVersionId === detail.currentDraft.productVersionId
+      && materialsResult.value.expectedProductUpdatedAt.getTime() === detail.updatedAt.getTime()
+      && materialsResult.value.expectedDraftUpdatedAt.getTime() === detail.currentDraft.updatedAt.getTime()) {
       const result = materialsResult.value;
       materialsData = {
         productId: result.productId,
@@ -189,7 +193,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     } else {
       materialsLoadFailed = true;
     }
-    if (cnResult.status === "fulfilled") {
+    if (cnResult.status === "fulfilled"
+      && cnResult.value.expectedDraftVersionId === detail.currentDraft.productVersionId
+      && cnResult.value.expectedProductUpdatedAt.getTime() === detail.updatedAt.getTime()
+      && cnResult.value.expectedDraftUpdatedAt.getTime() === detail.currentDraft.updatedAt.getTime()) {
       const result = cnResult.value;
       cnData = {
         productId: result.productId,
@@ -267,6 +274,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           : dateFormatter.format(detail.currentPublished.publishedAt),
       }}
       labels={productDetailLabels(detailT)}
+      contentLabels={getPublicDppLabels(locale)}
     />,
     resolution.userLabel,
     resolution.presentation.organizationName,
@@ -358,6 +366,24 @@ function productDetailLabels(
   t: Awaited<ReturnType<typeof getTranslations<"ProductDetail">>>,
 ): ProductDetailLabels {
   return {
+    technicalDetails: t("technicalDetails"),
+    viewPublicDpp: t("viewPublicDpp"),
+    publication: t("publication"),
+    publicAvailability: t("publicAvailability"),
+    noDraftChanges: t("noDraftChanges"),
+    contentTitle: t("contentTitle"),
+    readOnly: t("readOnly"),
+    draftPrivate: t("draftPrivate"),
+    publicationState: {
+      DRAFT: t("publicationState.DRAFT"),
+      PUBLISHED: t("publicationState.PUBLISHED"),
+      CHANGES_IN_DRAFT: t("publicationState.CHANGES_IN_DRAFT"),
+    },
+    availabilityStatus: {
+      PUBLIC: t("availabilityStatus.PUBLIC"),
+      NOT_PUBLIC: t("availabilityStatus.NOT_PUBLIC"),
+      WITHDRAWN: t("availabilityStatus.WITHDRAWN"),
+    },
     backToProducts: t("backToProducts"),
     overview: t("overview"),
     lifecycle: t("lifecycle"),
