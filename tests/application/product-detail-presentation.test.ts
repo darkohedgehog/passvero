@@ -304,3 +304,23 @@ test("published-only creation slot appears only on active published Product with
     assert.equal(html.includes("Create private draft"), visible);
   }
 });
+
+for (const locale of ["hr", "en", "de", "sr", "sl", "pl"]) test(`${locale} UI labels preserve Croatian draft/published content and the public target`, () => {
+  const messages = JSON.parse(readFileSync(new URL(`../../messages/${locale}.json`, import.meta.url), "utf8")) as typeof en;
+  const product: ProductDetailResult = {
+    ...detail,
+    currentPublished: { ...detail.currentPublished!, sourceLocale: "hr", sourceProductName: "Objavljena stolica", content: { ...content, productName: "Objavljena stolica" } },
+  };
+  const before = structuredClone(product);
+  const html = renderToStaticMarkup(createElement(ProductDetailPresentation, {
+    detail: product, productListHref: locale === "hr" ? "/dashboard/products" : `/${locale}/dashboard/products`,
+    formattedDates, labels: messages.ProductDetail, contentLabels: messages.PublicDpp,
+  }));
+  assert.ok(html.includes(messages.ProductDetail.readOnly));
+  assert.ok(html.includes(messages.ProductDetail.draftPrivate));
+  assert.match(html, /Objavljena stolica/);
+  assert.match(html, /Industrijska stolica/);
+  assert.match(html, /href="https:\/\/catalog.example\/p\/AbCdEfGhIjKlMnOpQrStUv"/);
+  assert.doesNotMatch(html, /\?lang=/);
+  assert.deepEqual(product, before);
+});

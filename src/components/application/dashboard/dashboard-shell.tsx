@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { BrandLogo } from "@/src/components/marketing/brand-logo";
+import { LanguageSwitcher } from "@/src/components/language-switcher";
 import { Link } from "@/src/i18n/navigation";
 import { DashboardProductsNavigation } from "./dashboard-products-navigation";
 import { SignOutButton } from "./sign-out-button";
@@ -42,11 +43,14 @@ export function DashboardShell({
               {title}
             </h1>
           </div>
-          <SignOutButton
-            label={signOutLabel}
-            pendingLabel={pendingLabel}
-            failureLabel={signOutFailureLabel}
-          />
+          <div className="flex max-w-full flex-wrap items-start gap-3">
+            <LanguageSwitcher variant="dashboard" />
+            <SignOutButton
+              label={signOutLabel}
+              pendingLabel={pendingLabel}
+              failureLabel={signOutFailureLabel}
+            />
+          </div>
         </header>
         <DashboardProductsNavigation
           productsLabel={productsLabel}
