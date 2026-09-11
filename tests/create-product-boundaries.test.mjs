@@ -77,6 +77,7 @@ test("keeps generated Prisma access inside approved infrastructure adapters", ()
     "src/infrastructure/persistence/prisma/prisma-create-draft-from-published.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-create-product.ts",
+    "src/infrastructure/persistence/prisma/prisma-document-assets.ts",
     "src/infrastructure/persistence/prisma/prisma-draft-translation-content-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-draft-translation-content.ts",
     "src/infrastructure/persistence/prisma/prisma-edit-product-draft-composition.ts",
