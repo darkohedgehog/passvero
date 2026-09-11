@@ -43,7 +43,7 @@ export interface PublishProductPersistence<Transaction> {
   readEligibility(transaction: Transaction, input: { organizationId: string; userId: string; membershipId: string }): Promise<null | { organizationStatus: "ACTIVE" | "SUSPENDED" | "DEACTIVATED" | "PENDING_DELETION"; membershipStatus: MembershipStatus; membershipRole: MembershipRole }>;
   readProductForPublication(transaction: Transaction, input: { productId: string; organizationId: string }): Promise<PublicationProductRecord | null>;
   readVersion(transaction: Transaction, input: { productVersionId: string; productId: string; organizationId: string }): Promise<PublicationVersionRecord | null>;
-  readReadiness(transaction: Transaction, input: { productVersionId: string; organizationId: string; sourceLocale: string; currentUtcYear: number }): Promise<{ sourceTranslationExists: boolean; sourceProductName: string | null; unavailablePublicAsset: boolean; invalidAuthoredAggregate: boolean }>;
+  readReadiness(transaction: Transaction, input: { productVersionId: string; organizationId: string; sourceLocale: string; currentUtcYear: number }): Promise<{ sourceTranslationExists: boolean; invalidTranslations: boolean; sourceProductName: string | null; unavailablePublicAsset: boolean; invalidAuthoredAggregate: boolean }>;
   readPassport(transaction: Transaction, input: { productId: string; organizationId: string }): Promise<PublicationPassportRecord | null>;
   nextVersionNumber(transaction: Transaction, input: { productId: string; organizationId: string }): Promise<number>;
   applyPublication(transaction: Transaction, input: {

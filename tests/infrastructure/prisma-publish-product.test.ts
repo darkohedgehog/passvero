@@ -81,13 +81,13 @@ test("serializes the exact tenant scoped Product row before publication decision
 test("validates existing material and CN invariants as part of publication readiness", async () => {
   const persistence = new PrismaPublishProductPersistence({} as never);
   const base = {
-    productTranslation: { async findUnique() { return { productName: "Chair" }; } },
+    productTranslation: { findMany: async () => [{ locale: "hr", productName: "Chair" }], async findUnique() { return { productName: "Chair" }; } },
     productDocument: { async findFirst() { return null; } },
     productImage: { async findFirst() { return null; } },
     productMaterial: { async findMany() { return [{ materialName: "Steel", category: null, percentage: "60.00", isRecycled: true, recycledPercentage: "20.00" }, { materialName: "Wood", category: "Wood", percentage: "40.00", isRecycled: false, recycledPercentage: null }]; } },
     productIdentifier: { async findMany() { return [{ type: "CN", value: "01234567", nomenclatureYear: 2026, issuingAuthority: null, notes: null }]; } },
   };
-  assert.deepEqual(await persistence.readReadiness(base as never, { productVersionId: ids.draftVersionId, organizationId: ids.organizationId, sourceLocale: "hr", currentUtcYear: 2026 }), { sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: false, invalidAuthoredAggregate: false });
+  assert.deepEqual(await persistence.readReadiness(base as never, { productVersionId: ids.draftVersionId, organizationId: ids.organizationId, sourceLocale: "hr", currentUtcYear: 2026 }), { sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: false, invalidAuthoredAggregate: false, invalidTranslations: false });
   const invalid = { ...base, productMaterial: { async findMany() { return [{ materialName: "Steel", category: null, percentage: "70.00", isRecycled: false, recycledPercentage: null }, { materialName: "Wood", category: null, percentage: "40.00", isRecycled: false, recycledPercentage: null }]; } } };
   assert.equal((await persistence.readReadiness(invalid as never, { productVersionId: ids.draftVersionId, organizationId: ids.organizationId, sourceLocale: "hr", currentUtcYear: 2026 })).invalidAuthoredAggregate, true);
 });

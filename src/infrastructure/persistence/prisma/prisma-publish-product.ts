@@ -1,3 +1,4 @@
+import { isPassveroLocale } from "@/src/domain/values/passvero-locale";
 import type { PublishProductPersistence } from "@/src/application/products/publish-product/ports";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 
@@ -34,15 +35,17 @@ export class PrismaPublishProductPersistence implements PublishProductPersistenc
   }
 
   async readReadiness(tx: PublishProductPrismaTransaction, input: { productVersionId: string; organizationId: string; sourceLocale: string; currentUtcYear: number }) {
-    const [translation, unavailableDocument, unavailableImage, materials, cnRows] = await Promise.all([
+    const [translation, unavailableDocument, unavailableImage, materials, cnRows, translations] = await Promise.all([
       tx.productTranslation.findUnique({ where: { productVersionId_locale: { productVersionId: input.productVersionId, locale: input.sourceLocale } }, select: { productName: true } }),
       tx.productDocument.findFirst({ where: { productVersionId: input.productVersionId, isPublic: true, OR: [{ document: { organizationId: { not: input.organizationId } } }, { document: { status: { not: "AVAILABLE" } } }] }, select: { id: true } }),
       tx.productImage.findFirst({ where: { productVersionId: input.productVersionId, isPublic: true, uploadedAt: null }, select: { id: true } }),
       tx.productMaterial.findMany({ where: { productVersionId: input.productVersionId }, select: { materialName: true, category: true, percentage: true, isRecycled: true, recycledPercentage: true } }),
       tx.productIdentifier.findMany({ where: { productVersionId: input.productVersionId, type: "CN" }, select: { type: true, value: true, nomenclatureYear: true, issuingAuthority: true, notes: true } }),
+      tx.productTranslation.findMany({ where: { productVersionId: input.productVersionId }, select: { locale: true, productName: true } }),
     ]);
     return {
       sourceTranslationExists: translation !== null,
+      invalidTranslations: translations.some(row => !isPassveroLocale(row.locale) || !canonicalText(row.productName, 200)),
       sourceProductName: translation?.productName ?? null,
       unavailablePublicAsset: unavailableDocument !== null || unavailableImage !== null,
       invalidAuthoredAggregate: !validMaterials(materials) || !validCnRows(cnRows, input.currentUtcYear),

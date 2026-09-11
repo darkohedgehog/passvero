@@ -59,6 +59,7 @@ test("shows Publish only for active Admin or Owner products with an editable sou
 test("maps safe publication outcomes without leaking errors", async () => {
   for (const [error, status, payload] of [
     [new ApplicationError("CONFLICT", "PUBLISH_PRODUCT_STALE_WRITE", "hidden", false), 409, { status: "STALE_WRITE" }],
+    [new ApplicationError("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_TRANSLATIONS", "hidden", false), 409, { status: "NOT_READY", reason: "TRANSLATIONS" }],
     [new ApplicationError("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_SOURCE_TRANSLATION", "hidden", false), 409, { status: "NOT_READY", reason: "SOURCE_TRANSLATION" }],
     [new ApplicationError("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME", "hidden", false), 409, { status: "NOT_READY", reason: "PRODUCT_NAME" }],
     [new ApplicationError("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_PUBLIC_ASSET", "hidden", false), 409, { status: "NOT_READY", reason: "PUBLIC_ASSET" }],

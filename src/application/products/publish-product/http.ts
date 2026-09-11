@@ -50,6 +50,7 @@ async function readPayload(request: Request): Promise<Payload | null> {
 function mapError(error: unknown): Response {
   if (!(error instanceof ApplicationError)) return json({ status: "OPERATIONAL_FAILURE" }, 503);
   if (error.code === "PUBLISH_PRODUCT_STALE_WRITE") return json({ status: "STALE_WRITE" }, 409);
+  if (error.code === "PUBLISH_PRODUCT_NOT_READY_TRANSLATIONS") return json({ status: "NOT_READY", reason: "TRANSLATIONS" }, 409);
   if (error.code === "PUBLISH_PRODUCT_NOT_READY_SOURCE_TRANSLATION") return json({ status: "NOT_READY", reason: "SOURCE_TRANSLATION" }, 409);
   if (error.code === "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME") return json({ status: "NOT_READY", reason: "PRODUCT_NAME" }, 409);
   if (error.code === "PUBLISH_PRODUCT_NOT_READY_PUBLIC_ASSET") return json({ status: "NOT_READY", reason: "PUBLIC_ASSET" }, 409);

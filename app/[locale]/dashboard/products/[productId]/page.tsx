@@ -1,3 +1,4 @@
+import { ProductTranslationServerSection } from "@/src/components/application/products/product-translation-server-section";
 import { canCreateDraftFromPublished } from "@/src/application/products/create-draft-from-published/http";
 import { CreateDraftFromPublishedAction } from "@/src/components/application/products/create-draft-from-published-action";
 import type { Metadata } from "next";
@@ -226,6 +227,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     detailT("title"),
     <ProductDetailPresentation
       detail={detail}
+      publishedTranslations={detail.currentPublished === null ? null : <ProductTranslationServerSection productId={detail.productId} versionId={detail.currentPublished.productVersionId} productUpdatedAt={detail.updatedAt.toISOString()} context={resolution.context} locale={locale} published={true} baseEditHref={editHref ?? detailHref} />}
+      draftTranslations={detail.currentDraft === null ? null : <ProductTranslationServerSection productId={detail.productId} versionId={detail.currentDraft.productVersionId} productUpdatedAt={detail.updatedAt.toISOString()} draftUpdatedAt={detail.currentDraft.updatedAt.toISOString()} context={resolution.context} locale={locale} published={false} baseEditHref={editHref ?? detailHref} />}
       qrSection={<ProductQrServerSection productId={detail.productId} context={resolution.context} locale={locale} />}
       productListHref={productListHref}
       editHref={editHref}
@@ -294,7 +297,7 @@ function publishProductLabels(
   return {
     title: t("title"), publish: t("publish"), confirm: t("confirm"), publishing: t("publishing"),
     success: t("success"), noChange: t("noChange"), staleWrite: t("staleWrite"),
-    notReady: t("notReady"), sourceTranslation: t("sourceTranslation"), productName: t("productName"),
+    notReady: t("notReady"), sourceTranslation: t("sourceTranslation"), productName: t("productName"), translations: t("translations"),
     publicAsset: t("publicAsset"), invalidState: t("invalidState"), forbidden: t("forbidden"),
     failure: t("failure"), reload: t("reload"),
   };

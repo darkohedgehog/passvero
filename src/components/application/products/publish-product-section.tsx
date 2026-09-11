@@ -7,7 +7,7 @@ export interface PublishProductLabels {
   readonly title: string;
   readonly publish: string; readonly confirm: string; readonly publishing: string;
   readonly success: string; readonly noChange: string; readonly staleWrite: string;
-  readonly notReady: string; readonly sourceTranslation: string; readonly productName: string;
+  readonly notReady: string; readonly sourceTranslation: string; readonly productName: string; readonly translations: string;
   readonly publicAsset: string; readonly invalidState: string; readonly forbidden: string;
   readonly failure: string; readonly reload: string;
 }
@@ -29,7 +29,7 @@ export function PublishProductSection({ data, labels }: Readonly<{ data: { produ
     setResult(next); setPending(false); inFlight.current = false;
     if (next.status === "PUBLISHED" || next.status === "NO_CHANGE") window.location.reload();
   }
-  const message = result === null ? "" : result.status === "PUBLISHED" ? labels.success : result.status === "NO_CHANGE" ? labels.noChange : result.status === "STALE_WRITE" ? labels.staleWrite : result.status === "NOT_READY" ? `${labels.notReady} ${result.reason === "SOURCE_TRANSLATION" ? labels.sourceTranslation : result.reason === "PRODUCT_NAME" ? labels.productName : labels.publicAsset}` : result.status === "INVALID_STATE" || result.status === "NOT_FOUND" ? labels.invalidState : result.status === "FORBIDDEN" ? labels.forbidden : labels.failure;
+  const message = result === null ? "" : result.status === "PUBLISHED" ? labels.success : result.status === "NO_CHANGE" ? labels.noChange : result.status === "STALE_WRITE" ? labels.staleWrite : result.status === "NOT_READY" ? `${labels.notReady} ${result.reason === "TRANSLATIONS" ? labels.translations : result.reason === "SOURCE_TRANSLATION" ? labels.sourceTranslation : result.reason === "PRODUCT_NAME" ? labels.productName : labels.publicAsset}` : result.status === "INVALID_STATE" || result.status === "NOT_FOUND" ? labels.invalidState : result.status === "FORBIDDEN" ? labels.forbidden : labels.failure;
   return (
     <div aria-busy={pending} className="flex flex-col items-start gap-2">
       <span className="sr-only">{labels.title}</span>

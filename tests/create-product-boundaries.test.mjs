@@ -92,6 +92,7 @@ test("keeps generated Prisma access inside approved infrastructure adapters", ()
     "src/infrastructure/persistence/prisma/prisma-public-dpp.ts",
     "src/infrastructure/persistence/prisma/prisma-publish-product-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-publish-product.ts",
+    "src/infrastructure/persistence/prisma/prisma-translation-management.ts",
     "src/infrastructure/persistence/prisma/production-prisma-runtime.ts",
   ]);
 });

@@ -60,6 +60,8 @@ export function ProductDetailPresentation({
   publishSection,
   createDraftAction,
   qrSection,
+  publishedTranslations,
+  draftTranslations,
   formattedDates,
   labels,
   contentLabels,
@@ -75,6 +77,8 @@ export function ProductDetailPresentation({
   publishSection?: React.ReactNode;
   createDraftAction?: React.ReactNode;
   qrSection?: React.ReactNode;
+  publishedTranslations?: React.ReactNode;
+  draftTranslations?: React.ReactNode;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
   contentLabels: PublicDppLabels;
@@ -127,6 +131,7 @@ export function ProductDetailPresentation({
               <Fact label={labels.versionNumber} value={published.versionNumber.toString()} />
               <Fact label={labels.publishedAt} value={formattedDates.publishedAt ?? labels.notAvailable} />
             </dl>
+            {publishedTranslations}
             <ProductDetailSnapshotContent snapshot={published} sourceLocale={published.sourceLocale} contentTitle={labels.contentTitle} labels={contentLabels} />
           </>
         )}
@@ -144,6 +149,7 @@ export function ProductDetailPresentation({
               <Fact label={labels.created} value={formattedDates.draftCreatedAt ?? labels.notAvailable} />
               <Fact label={labels.updated} value={formattedDates.draftUpdatedAt ?? labels.notAvailable} />
             </dl>
+            {draftTranslations}
             <ProductDetailSnapshotContent snapshot={draft} sourceLocale={draft.sourceLocale} contentTitle={labels.contentTitle} labels={contentLabels}
               cnSection={editable ? cnClassificationSection : undefined}
               materialsSection={editable ? materialsSection : undefined} />

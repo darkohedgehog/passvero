@@ -77,6 +77,7 @@ export function createPublishProductService<Transaction>(
         if (!readiness.sourceTranslationExists) throw fail("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_SOURCE_TRANSLATION", context.correlationId);
         if (!validProductName(readiness.sourceProductName)) throw fail("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME", context.correlationId);
         if (readiness.unavailablePublicAsset) throw fail("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_PUBLIC_ASSET", context.correlationId);
+        if (readiness.invalidTranslations !== false) throw fail("INVALID_STATE", "PUBLISH_PRODUCT_NOT_READY_TRANSLATIONS", context.correlationId);
         if (readiness.invalidAuthoredAggregate) throw fail("INVALID_STATE", "PUBLISH_PRODUCT_INVALID_STATE", context.correlationId);
         const passport = await dependencies.persistence.readPassport(transaction, { productId: product.productId, organizationId: product.organizationId });
         if (passport !== null && (passport.productId !== product.productId || passport.organizationId !== product.organizationId)) throw fail("INTERNAL", "PUBLISH_PRODUCT_INVARIANT_FAILURE", context.correlationId);

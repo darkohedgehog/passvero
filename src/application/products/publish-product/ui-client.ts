@@ -1,6 +1,6 @@
 export type PublishProductUiResult =
   | { readonly status: "PUBLISHED" | "NO_CHANGE"; readonly versionNumber: number }
-  | { readonly status: "NOT_READY"; readonly reason: "SOURCE_TRANSLATION" | "PRODUCT_NAME" | "PUBLIC_ASSET" }
+  | { readonly status: "NOT_READY"; readonly reason: "SOURCE_TRANSLATION" | "PRODUCT_NAME" | "PUBLIC_ASSET" | "TRANSLATIONS" }
   | { readonly status: "STALE_WRITE" | "INVALID_STATE" | "NOT_FOUND" | "FORBIDDEN" | "FAILURE" };
 
 export async function publishProductFromDashboard(fetcher: typeof fetch, productId: string, payload: { expectedDraftVersionId: string; expectedProductUpdatedAt: string; expectedDraftUpdatedAt: string; expectedCurrentPublishedVersionId: string | null }): Promise<PublishProductUiResult> {
@@ -16,7 +16,7 @@ export async function publishProductFromDashboard(fetcher: typeof fetch, product
     if (!record(value) || typeof value.status !== "string") return { status: "FAILURE" };
     if (response.ok && (value.status === "PUBLISHED" || value.status === "NO_CHANGE") && Number.isSafeInteger(value.versionNumber) && Number(value.versionNumber) > 0) return { status: value.status, versionNumber: Number(value.versionNumber) };
     if (value.status === "NOT_READY") {
-      if (value.reason === "SOURCE_TRANSLATION" || value.reason === "PRODUCT_NAME" || value.reason === "PUBLIC_ASSET") return { status: "NOT_READY", reason: value.reason };
+      if (value.reason === "SOURCE_TRANSLATION" || value.reason === "PRODUCT_NAME" || value.reason === "PUBLIC_ASSET" || value.reason === "TRANSLATIONS") return { status: "NOT_READY", reason: value.reason };
       return { status: "FAILURE" };
     }
     if (["STALE_WRITE", "INVALID_STATE", "NOT_FOUND", "FORBIDDEN"].includes(value.status)) return { status: value.status as "STALE_WRITE" | "INVALID_STATE" | "NOT_FOUND" | "FORBIDDEN" };

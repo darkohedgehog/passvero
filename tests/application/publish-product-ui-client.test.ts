@@ -53,7 +53,7 @@ test("never retries and rejects a success payload carried by a failed response",
 
 test("accepts only bounded publication readiness reasons", async () => {
   const payload = { expectedDraftVersionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", expectedProductUpdatedAt: "2026-09-02T08:00:00.000Z", expectedDraftUpdatedAt: "2026-09-02T08:01:00.000Z", expectedCurrentPublishedVersionId: null };
-  for (const reason of ["SOURCE_TRANSLATION", "PRODUCT_NAME", "PUBLIC_ASSET"] as const) {
+  for (const reason of ["SOURCE_TRANSLATION", "PRODUCT_NAME", "PUBLIC_ASSET", "TRANSLATIONS"] as const) {
     const result = await publishProductFromDashboard(async () => new Response(JSON.stringify({ status: "NOT_READY", reason }), { status: 409 }), "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", payload);
     assert.deepEqual(result, { status: "NOT_READY", reason });
   }

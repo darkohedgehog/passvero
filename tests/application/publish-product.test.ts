@@ -58,7 +58,7 @@ function fixture(overrides: Partial<{
     async readEligibility(received, input) { assert.strictEqual(received, tx); calls.push({ name: "eligibility", input }); return overrides.eligibility === undefined ? { organizationStatus: "ACTIVE", membershipStatus: "ACTIVE", membershipRole: "ADMIN" } : overrides.eligibility; },
     async readProductForPublication(received, input) { assert.strictEqual(received, tx); calls.push({ name: "product", input }); return product; },
     async readVersion(received, input) { assert.strictEqual(received, tx); calls.push({ name: "version", input }); return input.productVersionId === draftId ? draft : (overrides.previous ?? null); },
-    async readReadiness(received, input) { assert.strictEqual(received, tx); calls.push({ name: "readiness", input }); return overrides.readiness ?? { sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: false, invalidAuthoredAggregate: false }; },
+    async readReadiness(received, input) { assert.strictEqual(received, tx); calls.push({ name: "readiness", input }); return overrides.readiness ?? { sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: false, invalidAuthoredAggregate: false, invalidTranslations: false }; },
     async readPassport(received, input) { assert.strictEqual(received, tx); calls.push({ name: "passport", input }); return overrides.passport ?? null; },
     async nextVersionNumber(received, input) { assert.strictEqual(received, tx); calls.push({ name: "number", input }); return overrides.previous === undefined ? 1 : 2; },
     async applyPublication(received, input) { assert.strictEqual(received, tx); calls.push({ name: "apply", input }); return overrides.mutationResult ?? "APPLIED"; },
@@ -144,10 +144,10 @@ test("maps every changed aggregate evidence to STALE_WRITE", async () => {
 
 test("requires source translation product name and available public assets", async () => {
   for (const [readiness, code] of [
-    [{ sourceTranslationExists: false, sourceProductName: null, unavailablePublicAsset: false, invalidAuthoredAggregate: false }, "PUBLISH_PRODUCT_NOT_READY_SOURCE_TRANSLATION"],
-    [{ sourceTranslationExists: true, sourceProductName: "   ", unavailablePublicAsset: false, invalidAuthoredAggregate: false }, "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME"],
-    [{ sourceTranslationExists: true, sourceProductName: " Chair ", unavailablePublicAsset: false, invalidAuthoredAggregate: false }, "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME"],
-    [{ sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: true, invalidAuthoredAggregate: false }, "PUBLISH_PRODUCT_NOT_READY_PUBLIC_ASSET"],
+    [{ sourceTranslationExists: false, sourceProductName: null, unavailablePublicAsset: false, invalidAuthoredAggregate: false, invalidTranslations: false }, "PUBLISH_PRODUCT_NOT_READY_SOURCE_TRANSLATION"],
+    [{ sourceTranslationExists: true, sourceProductName: "   ", unavailablePublicAsset: false, invalidAuthoredAggregate: false, invalidTranslations: false }, "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME"],
+    [{ sourceTranslationExists: true, sourceProductName: " Chair ", unavailablePublicAsset: false, invalidAuthoredAggregate: false, invalidTranslations: false }, "PUBLISH_PRODUCT_NOT_READY_PRODUCT_NAME"],
+    [{ sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: true, invalidAuthoredAggregate: false, invalidTranslations: false }, "PUBLISH_PRODUCT_NOT_READY_PUBLIC_ASSET"],
   ] as const) {
     const subject = fixture({ readiness });
     await assert.rejects(subject.publish(command, context), (error) => isError(error, "INVALID_STATE", code));
@@ -155,7 +155,7 @@ test("requires source translation product name and available public assets", asy
 });
 
 test("rejects invalid stored authored invariants and malformed public identity", async () => {
-  const invalidAggregate = fixture({ readiness: { sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: false, invalidAuthoredAggregate: true } as unknown as Awaited<ReturnType<PublishProductPersistence<Tx>["readReadiness"]>> });
+  const invalidAggregate = fixture({ readiness: { sourceTranslationExists: true, sourceProductName: "Chair", unavailablePublicAsset: false, invalidAuthoredAggregate: true, invalidTranslations: false } as unknown as Awaited<ReturnType<PublishProductPersistence<Tx>["readReadiness"]>> });
   await assert.rejects(invalidAggregate.publish(command, context), (error) => isError(error, "INVALID_STATE", "PUBLISH_PRODUCT_INVALID_STATE"));
 
   const invalidPublicCode = fixture({ product: { productId, organizationId, lifecycleStatus: "ACTIVE", publicCode: "not valid", currentDraftVersionId: draftId, currentPublishedVersionId: null, updatedAt: productUpdatedAt } });
