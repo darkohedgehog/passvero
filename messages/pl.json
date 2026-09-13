@@ -148,5 +148,55 @@
     "helper": "Aktywacja umożliwia używanie, pobieranie i drukowanie kodu QR dla już opublikowanego produktu.",
     "reload": "Odśwież stronę"
   },
-  "CreateDraftFromPublished": {"edit":"Edytuj produkt","continueEditing":"Kontynuuj edycję","pending":"Otwieranie wersji roboczej…","imagesUnsupported":"Edycja opublikowanych produktów ze zdjęciami nie jest jeszcze obsługiwana. Opublikowany produkt pozostaje bez zmian; spróbuj ponownie, gdy ta funkcja będzie dostępna.","conflict":"Produkt został zmieniony. Odśwież stronę, aby kontynuować edycję.","forbidden":"Nie masz uprawnień do edycji tego produktu.","failure":"Nie udało się otworzyć wersji roboczej. Odśwież stronę i sprawdź stan produktu przed ponowną próbą.","reload":"Odśwież stronę"}
+  "CreateDraftFromPublished": {"edit":"Edytuj produkt","continueEditing":"Kontynuuj edycję","pending":"Otwieranie wersji roboczej…","imagesUnsupported":"Edycja opublikowanych produktów ze zdjęciami nie jest jeszcze obsługiwana. Opublikowany produkt pozostaje bez zmian; spróbuj ponownie, gdy ta funkcja będzie dostępna.","conflict":"Produkt został zmieniony. Odśwież stronę, aby kontynuować edycję.","forbidden":"Nie masz uprawnień do edycji tego produktu.","failure":"Nie udało się otworzyć wersji roboczej. Odśwież stronę i sprawdź stan produktu przed ponowną próbą.","reload":"Odśwież stronę"},
+  "ProductDocuments": {
+    "publishedTitle": "Opublikowane dokumenty i certyfikaty",
+    "draftTitle": "Dokumenty i certyfikaty wersji roboczej",
+    "privateNotice": "Dokumenty są dostępne tylko dla zalogowanych uprawnionych użytkowników. Publiczne pobieranie nie jest jeszcze włączone.",
+    "empty": "Brak załączonych dokumentów.",
+    "untitled": "Dokument bez tytułu",
+    "download": "Pobierz",
+    "edit": "Edytuj",
+    "remove": "Usuń",
+    "add": "Dodaj dokument",
+    "unavailable": "Ten dokument jest obecnie niedostępny.",
+    "publicIntended": "Przeznaczony do przyszłego publicznego DPP",
+    "privateIntended": "Tylko do użytku prywatnego",
+    "confirmRemove": "Usunąć ten załącznik z wersji roboczej? Plik pozostanie zapisany.",
+    "file": "Plik PDF",
+    "fileHint": "PDF, maksymalnie 10 MiB.",
+    "category": "Typ dokumentu",
+    "label": "Tytuł wyświetlany",
+    "language": "Język dokumentu",
+    "neutral": "Neutralny językowo",
+    "description": "Opis (opcjonalnie)",
+    "order": "Kolejność",
+    "publicCheckbox": "Pokaż w publicznym DPP po publikacji",
+    "retained": "Plik jest zapisany prywatnie. Możesz ponowić dołączenie go do tej wersji roboczej.",
+    "retry": "Ponów dołączenie",
+    "save": "Zapisz",
+    "pending": "Zapisywanie…",
+    "cancel": "Anuluj",
+    "confirmDiscard": "Opuścić formularz? Niezapisane zmiany zostaną utracone; przesłany plik pozostanie prywatny.",
+    "errors": {
+      "UPLOAD_FAILED": "Przesłanie nie zostało potwierdzone. Nie przesyłaj ponownie; poproś o sprawdzenie stanu.",
+      "ATTACH_FAILED": "Dołączenie nie zostało potwierdzone. Sprawdź wersję roboczą przed ponowieniem próby.",
+      "STALE_WRITE": "Wersja robocza została zmieniona lub załącznik już istnieje. Odśwież widok i sprawdź stan.",
+      "VALIDATION_ERROR": "Sprawdź tytuł (1–200 znaków), opis (do 2000 znaków), PDF i pozostałe pola."
+    },
+    "categories": {
+      "CERTIFICATE": "Certyfikat",
+      "DECLARATION": "Deklaracja zgodności",
+      "MANUAL": "Instrukcja obsługi",
+      "OTHER": "Inne"
+    },
+    "languages": {
+      "hr": "Hrvatski",
+      "en": "English",
+      "de": "Deutsch",
+      "sr": "Srpski",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  }
 }

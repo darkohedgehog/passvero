@@ -1,3 +1,4 @@
+import { attachmentDto } from "../document-attachments/contracts";
 import { parseCanonicalAppOrigin } from "@/src/application/config/canonical-app-origin";
 import type { GetPublicDpp } from "@/src/application/public-dpp/contracts";
 import { isPassveroLocale } from "@/src/domain/values/passvero-locale";
@@ -221,6 +222,7 @@ function mapSnapshot(version: ProductDetailVersionRecord, correlationId: string)
     throw internalProductDetailError(correlationId);
   }
   return {
+    documents: version.documents.map(row => attachmentDto(row, version.productVersionId, version.organizationId)),
     content: {
       productName: translation.productName,
       shortDescription: translation.shortDescription,

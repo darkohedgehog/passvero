@@ -21,7 +21,10 @@ const translationProjection = {
   publicNotes: true,
 } as const;
 
+import { attachmentSelect } from "./prisma-document-attachments";
+
 const versionProjection = {
+  productDocuments: { select: attachmentSelect, orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
   id: true,
   productId: true,
   organizationId: true,
@@ -108,6 +111,7 @@ function mapVersion(
     createdAt: version.createdAt,
     updatedAt: version.updatedAt,
     publishedAt: version.publishedAt,
+    documents: version.productDocuments,
     translations: version.translations,
     cnRows: version.identifiers,
     materials: version.materials.map((row) => ({

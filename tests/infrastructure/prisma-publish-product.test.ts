@@ -82,7 +82,7 @@ test("validates existing material and CN invariants as part of publication readi
   const persistence = new PrismaPublishProductPersistence({} as never);
   const base = {
     productTranslation: { findMany: async () => [{ locale: "hr", productName: "Chair" }], async findUnique() { return { productName: "Chair" }; } },
-    productDocument: { async findFirst() { return null; } },
+    productDocument: { async findMany() { return []; } },
     productImage: { async findFirst() { return null; } },
     productMaterial: { async findMany() { return [{ materialName: "Steel", category: null, percentage: "60.00", isRecycled: true, recycledPercentage: "20.00" }, { materialName: "Wood", category: "Wood", percentage: "40.00", isRecycled: false, recycledPercentage: null }]; } },
     productIdentifier: { async findMany() { return [{ type: "CN", value: "01234567", nomenclatureYear: 2026, issuingAuthority: null, notes: null }]; } },

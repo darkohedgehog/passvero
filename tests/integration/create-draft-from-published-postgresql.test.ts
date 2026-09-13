@@ -36,7 +36,7 @@ async function seed(images = 0) {
     identifiers: { create: [{ type: "CN", value: "00123456", nomenclatureYear: 2026 }, { type: "MPN", value: "Preserved-MPN" }] },
   } });
   const document = await prisma.document.create({ data: { organizationId: org.id, originalFilename: "proof.pdf", storageProvider: "test", storageBucket: "test", storageKey: randomUUID(), mimeType: "application/pdf", sizeBytes: BigInt(10), checksumSha256: "a".repeat(64), status: "AVAILABLE", uploadedAt: new Date() } });
-  await prisma.productDocument.create({ data: { productVersionId: version.id, documentId: document.id, category: "manual", displayLabel: "Manual", sortOrder: 3 } });
+  await prisma.productDocument.create({ data: { productVersionId: version.id, documentId: document.id, category: "MANUAL", displayLabel: "Manual", sortOrder: 3 } });
   const pointed = await prisma.product.update({ where: { id: product.id }, data: { currentDraftVersionId: version.id } });
   await publish({ productId: product.id, expectedDraftVersionId: version.id, expectedProductUpdatedAt: pointed.updatedAt.toISOString(), expectedDraftUpdatedAt: version.updatedAt.toISOString(), expectedCurrentPublishedVersionId: null }, context);
   const passport = await prisma.passport.findUniqueOrThrow({ where: { productId: product.id } });

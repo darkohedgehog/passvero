@@ -38,10 +38,11 @@ test("keeps detail outside direct Prisma access and limits mutations to authoriz
   assert.doesNotMatch(source, /generated\/prisma|\.product\.(create|update|delete|upsert)/);
   assert.match(source, /canShowPublishProductAction/);
   assert.match(source, /PublishProductSection/);
+  assert.match(source, /ProductDocumentsSection/);
   assert.match(read(pagePath), /canShowEditProductDraftAction\(/);
   assert.doesNotMatch(
     source,
-    /ProductIdentifier|ProductDocument|ProductImage|QRCode|ScanEvent|Analytics/,
+    /ProductIdentifier|ProductImage|QRCode|ScanEvent|Analytics/,
   );
 });
 

@@ -19,6 +19,7 @@ const translationProjection = {
 };
 
 const versionProjection = {
+  productDocuments: { select: { id:true, productVersionId:true, documentId:true, category:true, locale:true, displayLabel:true, description:true, isPublic:true, isPrimary:true, sortOrder:true, updatedAt:true, document:{select:{organizationId:true,status:true}} }, orderBy:[{sortOrder:"asc"},{id:"asc"}] },
   id: true,
   productId: true,
   organizationId: true,
@@ -77,7 +78,7 @@ test("queries one product by productId and trusted organization without version 
             createdAt: draftCreatedAt,
             updatedAt,
             publishedAt: null,
-            identifiers: [], materials: [],
+            identifiers: [], materials: [], productDocuments: [],
             translations: [{
               productVersionId: draftId,
               locale: "hr",
@@ -94,7 +95,7 @@ test("queries one product by productId and trusted organization without version 
             createdAt,
             updatedAt: publishedAt,
             publishedAt,
-            identifiers: [], materials: [],
+            identifiers: [], materials: [], productDocuments: [],
             translations: [{
               productVersionId: publishedId,
               locale: "en",
@@ -134,7 +135,7 @@ test("queries one product by productId and trusted organization without version 
       createdAt: draftCreatedAt,
       updatedAt,
       publishedAt: null,
-      cnRows: [], materials: [],
+      cnRows: [], materials: [], documents: [],
       translations: [{
         productVersionId: draftId,
         locale: "hr",
@@ -151,7 +152,7 @@ test("queries one product by productId and trusted organization without version 
       createdAt,
       updatedAt: publishedAt,
       publishedAt,
-      cnRows: [], materials: [],
+      cnRows: [], materials: [], documents: [],
       translations: [{
         productVersionId: publishedId,
         locale: "en",
@@ -188,6 +189,7 @@ test("reads published-only child ownership and decimal values without selecting 
       currentPublishedVersion: { id: publishedId, productId, organizationId, status: "PUBLISHED", sourceLocale: "hr", versionNumber: 1, createdAt: new Date(), updatedAt: new Date(), publishedAt: new Date(),
         translations: [{ productVersionId: publishedId, locale: "hr", productName: "Stolica", description: "Published description" }],
         identifiers: [{ productVersionId: publishedId, value: "01012100", nomenclatureYear: 2026 }],
+        productDocuments: [],
         materials: [{ productVersionId: publishedId, materialName: "Wood", category: null, percentage: { toFixed: () => "75.50" }, isRecycled: true, recycledPercentage: { toFixed: () => "20.00" } }],
       },
     };
@@ -197,5 +199,5 @@ test("reads published-only child ownership and decimal values without selecting 
   assert.equal(result?.currentPublishedVersion?.translations[0].description, "Published description");
   assert.deepEqual(result?.currentPublishedVersion?.cnRows, [{ productVersionId: publishedId, value: "01012100", nomenclatureYear: 2026 }]);
   assert.deepEqual(result?.currentPublishedVersion?.materials, [{ productVersionId: publishedId, materialName: "Wood", category: null, percentage: "75.50", isRecycled: true, recycledPercentage: "20.00" }]);
-  assert.doesNotMatch(JSON.stringify(query), /"supplier"|"notes"|storage|createdBy|images|documents/i);
+  assert.doesNotMatch(JSON.stringify(query), /"supplier"|"notes"|storage|createdBy|images/i);
 });

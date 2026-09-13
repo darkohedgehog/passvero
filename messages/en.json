@@ -155,5 +155,55 @@
     "helper": "Activation enables use, download and printing of the QR code for the already published product.",
     "reload": "Reload page"
   },
-  "CreateDraftFromPublished": {"edit":"Edit product","continueEditing":"Continue editing","pending":"Opening draft…","imagesUnsupported":"Editing published products with images is not supported yet. The published product remains unchanged; try again when this capability becomes available.","conflict":"The product changed. Reload the page to continue editing.","forbidden":"You do not have permission to edit this product.","failure":"The draft could not be opened. Reload the page and check the product state before trying again.","reload":"Reload page"}
+  "CreateDraftFromPublished": {"edit":"Edit product","continueEditing":"Continue editing","pending":"Opening draft…","imagesUnsupported":"Editing published products with images is not supported yet. The published product remains unchanged; try again when this capability becomes available.","conflict":"The product changed. Reload the page to continue editing.","forbidden":"You do not have permission to edit this product.","failure":"The draft could not be opened. Reload the page and check the product state before trying again.","reload":"Reload page"},
+  "ProductDocuments": {
+    "publishedTitle": "Published documents and certificates",
+    "draftTitle": "Draft documents and certificates",
+    "privateNotice": "Documents are available only to signed-in authorized users. Public downloads are not enabled yet.",
+    "empty": "No documents attached.",
+    "untitled": "Untitled document",
+    "download": "Download",
+    "edit": "Edit",
+    "remove": "Remove",
+    "add": "Add document",
+    "unavailable": "This document is currently unavailable.",
+    "publicIntended": "Intended for the future public DPP",
+    "privateIntended": "Private use only",
+    "confirmRemove": "Remove this attachment from the draft? The file will be retained.",
+    "file": "PDF file",
+    "fileHint": "PDF, up to 10 MiB.",
+    "category": "Document type",
+    "label": "Display label",
+    "language": "Document language",
+    "neutral": "Language neutral",
+    "description": "Description (optional)",
+    "order": "Sort order",
+    "publicCheckbox": "Display on public DPP after publication",
+    "retained": "The file is stored privately. You may retry attaching it to this draft.",
+    "retry": "Retry attachment",
+    "save": "Save",
+    "pending": "Saving…",
+    "cancel": "Cancel",
+    "confirmDiscard": "Leave this form? Unsaved changes will be lost; the uploaded file remains private.",
+    "errors": {
+      "UPLOAD_FAILED": "Upload was not confirmed. Do not upload again; request a status check.",
+      "ATTACH_FAILED": "Attachment was not confirmed. Check the draft before retrying.",
+      "STALE_WRITE": "The draft changed or the attachment already exists. Refresh and check its state.",
+      "VALIDATION_ERROR": "Check the label (1–200 characters), description (up to 2,000 characters), PDF and other fields."
+    },
+    "categories": {
+      "CERTIFICATE": "Certificate",
+      "DECLARATION": "Declaration of Conformity",
+      "MANUAL": "User Manual",
+      "OTHER": "Other"
+    },
+    "languages": {
+      "hr": "Hrvatski",
+      "en": "English",
+      "de": "Deutsch",
+      "sr": "Srpski",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  }
 }

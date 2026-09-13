@@ -1,3 +1,4 @@
+import { attachmentMetadataSchema, sortOrderSchema } from "@/src/application/products/document-attachments/contracts";
 import { isPassveroLocale } from "@/src/domain/values/passvero-locale";
 import type { PublishProductPersistence } from "@/src/application/products/publish-product/ports";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
@@ -35,9 +36,9 @@ export class PrismaPublishProductPersistence implements PublishProductPersistenc
   }
 
   async readReadiness(tx: PublishProductPrismaTransaction, input: { productVersionId: string; organizationId: string; sourceLocale: string; currentUtcYear: number }) {
-    const [translation, unavailableDocument, unavailableImage, materials, cnRows, translations] = await Promise.all([
+    const [translation, documents, unavailableImage, materials, cnRows, translations] = await Promise.all([
       tx.productTranslation.findUnique({ where: { productVersionId_locale: { productVersionId: input.productVersionId, locale: input.sourceLocale } }, select: { productName: true } }),
-      tx.productDocument.findFirst({ where: { productVersionId: input.productVersionId, isPublic: true, OR: [{ document: { organizationId: { not: input.organizationId } } }, { document: { status: { not: "AVAILABLE" } } }] }, select: { id: true } }),
+      tx.productDocument.findMany({ where: { productVersionId: input.productVersionId }, select: { category: true, locale: true, displayLabel: true, description: true, isPublic: true, sortOrder: true, document: { select: { organizationId: true, status: true } } } }),
       tx.productImage.findFirst({ where: { productVersionId: input.productVersionId, isPublic: true, uploadedAt: null }, select: { id: true } }),
       tx.productMaterial.findMany({ where: { productVersionId: input.productVersionId }, select: { materialName: true, category: true, percentage: true, isRecycled: true, recycledPercentage: true } }),
       tx.productIdentifier.findMany({ where: { productVersionId: input.productVersionId, type: "CN" }, select: { type: true, value: true, nomenclatureYear: true, issuingAuthority: true, notes: true } }),
@@ -47,8 +48,13 @@ export class PrismaPublishProductPersistence implements PublishProductPersistenc
       sourceTranslationExists: translation !== null,
       invalidTranslations: translations.some(row => !isPassveroLocale(row.locale) || !canonicalText(row.productName, 200)),
       sourceProductName: translation?.productName ?? null,
-      unavailablePublicAsset: unavailableDocument !== null || unavailableImage !== null,
-      invalidAuthoredAggregate: !validMaterials(materials) || !validCnRows(cnRows, input.currentUtcYear),
+      unavailablePublicAsset: documents.some(row => row.document.organizationId !== input.organizationId || row.document.status !== "AVAILABLE") || unavailableImage !== null,
+      invalidAuthoredAggregate: documents.some(row => {
+        const metadata = { category: row.category, locale: row.locale, displayLabel: row.displayLabel, description: row.description, isPublic: row.isPublic };
+        const parsed = attachmentMetadataSchema.safeParse(metadata);
+        return !parsed.success || !sortOrderSchema.safeParse(row.sortOrder).success
+          || Object.entries(parsed.data).some(([key, value]) => metadata[key as keyof typeof metadata] !== value);
+      }) || !validMaterials(materials) || !validCnRows(cnRows, input.currentUtcYear),
     };
   }
 

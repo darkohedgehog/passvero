@@ -148,5 +148,55 @@
     "helper": "Aktivacija omogoča uporabo, prenos in tiskanje kode QR za že objavljeni izdelek.",
     "reload": "Osveži stran"
   },
-  "CreateDraftFromPublished": {"edit":"Uredi izdelek","continueEditing":"Nadaljuj urejanje","pending":"Odpiranje osnutka…","imagesUnsupported":"Urejanje objavljenih izdelkov s slikami še ni podprto. Objavljeni izdelek ostane nespremenjen; poskusite znova, ko bo ta možnost na voljo.","conflict":"Izdelek se je spremenil. Osvežite stran in nadaljujte urejanje.","forbidden":"Nimate dovoljenja za urejanje tega izdelka.","failure":"Osnutka ni bilo mogoče odpreti. Osvežite stran in preverite stanje izdelka, preden poskusite znova.","reload":"Osveži stran"}
+  "CreateDraftFromPublished": {"edit":"Uredi izdelek","continueEditing":"Nadaljuj urejanje","pending":"Odpiranje osnutka…","imagesUnsupported":"Urejanje objavljenih izdelkov s slikami še ni podprto. Objavljeni izdelek ostane nespremenjen; poskusite znova, ko bo ta možnost na voljo.","conflict":"Izdelek se je spremenil. Osvežite stran in nadaljujte urejanje.","forbidden":"Nimate dovoljenja za urejanje tega izdelka.","failure":"Osnutka ni bilo mogoče odpreti. Osvežite stran in preverite stanje izdelka, preden poskusite znova.","reload":"Osveži stran"},
+  "ProductDocuments": {
+    "publishedTitle": "Objavljeni dokumenti in certifikati",
+    "draftTitle": "Dokumenti in certifikati v osnutku",
+    "privateNotice": "Dokumenti so na voljo samo prijavljenim pooblaščenim uporabnikom. Javni prenosi še niso omogočeni.",
+    "empty": "Ni priloženih dokumentov.",
+    "untitled": "Dokument brez naslova",
+    "download": "Prenesi",
+    "edit": "Uredi",
+    "remove": "Odstrani",
+    "add": "Dodaj dokument",
+    "unavailable": "Dokument trenutno ni na voljo.",
+    "publicIntended": "Namenjeno prihodnjemu javnemu DPP",
+    "privateIntended": "Samo zasebna uporaba",
+    "confirmRemove": "Odstraniti to prilogo iz osnutka? Datoteka bo ostala shranjena.",
+    "file": "Datoteka PDF",
+    "fileHint": "PDF, največ 10 MiB.",
+    "category": "Vrsta dokumenta",
+    "label": "Prikazni naslov",
+    "language": "Jezik dokumenta",
+    "neutral": "Jezikovno nevtralno",
+    "description": "Opis (neobvezno)",
+    "order": "Vrstni red",
+    "publicCheckbox": "Prikaži na javnem DPP po objavi",
+    "retained": "Datoteka je zasebno shranjena. Lahko znova poskusite s pripenjanjem temu osnutku.",
+    "retry": "Znova poskusi pripeti",
+    "save": "Shrani",
+    "pending": "Shranjevanje…",
+    "cancel": "Prekliči",
+    "confirmDiscard": "Zapustiti obrazec? Neshranjene spremembe bodo izgubljene; naložena datoteka ostane zasebna.",
+    "errors": {
+      "UPLOAD_FAILED": "Nalaganje ni potrjeno. Ne nalagajte znova; zahtevajte preverjanje stanja.",
+      "ATTACH_FAILED": "Pripenjanje ni potrjeno. Pred ponovnim poskusom preverite osnutek.",
+      "STALE_WRITE": "Osnutek se je spremenil ali priloga že obstaja. Osvežite prikaz in preverite stanje.",
+      "VALIDATION_ERROR": "Preverite naslov (1–200 znakov), opis (do 2.000 znakov), PDF in druga polja."
+    },
+    "categories": {
+      "CERTIFICATE": "Certifikat",
+      "DECLARATION": "Izjava o skladnosti",
+      "MANUAL": "Navodila za uporabo",
+      "OTHER": "Drugo"
+    },
+    "languages": {
+      "hr": "Hrvatski",
+      "en": "English",
+      "de": "Deutsch",
+      "sr": "Srpski",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  }
 }

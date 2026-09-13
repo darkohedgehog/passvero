@@ -29,7 +29,7 @@ test("detail composition uses real public eligibility for active withdrawn archi
   const versionId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
   const at = new Date("2026-09-01T10:00:00.000Z");
   const translation = { productVersionId: versionId, locale: "hr", productName: "Stolica", shortDescription: null, description: "Published content", technicalDescription: null, repairInstructions: null, sparePartsInformation: null, recyclingInstructions: null, disposalInstructions: null, packagingInformation: null, safetyInformation: null, warrantyInformation: null, publicNotes: null };
-  const version = { id: versionId, productId, organizationId, status: "PUBLISHED", sourceLocale: "hr", versionNumber: 1, createdAt: at, updatedAt: at, publishedAt: at, translations: [translation], identifiers: [], materials: [] };
+  const version = { id: versionId, productId, organizationId, status: "PUBLISHED", sourceLocale: "hr", versionNumber: 1, createdAt: at, updatedAt: at, publishedAt: at, translations: [translation], identifiers: [], materials: [], productDocuments: [] };
   for (const [passportStatus, lifecycleStatus, expected] of [
     ["ACTIVE", "ACTIVE", "PUBLIC"], ["WITHDRAWN", "ACTIVE", "WITHDRAWN"],
     ["ARCHIVED", "ACTIVE", "NOT_PUBLIC"], [null, "ACTIVE", "NOT_PUBLIC"],

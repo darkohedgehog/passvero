@@ -11,6 +11,7 @@ export interface ProductDetailTranslationRecord extends PublicDppTranslation {
 }
 
 export interface ProductDetailVersionRecord {
+  readonly documents: readonly import("../document-attachments/contracts").AttachmentRow[];
   readonly productVersionId: string;
   readonly productId: string;
   readonly organizationId: string;

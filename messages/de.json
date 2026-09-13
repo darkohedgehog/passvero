@@ -148,5 +148,55 @@
     "helper": "Die Aktivierung ermöglicht die Verwendung, das Herunterladen und den Druck des QR-Codes für das bereits veröffentlichte Produkt.",
     "reload": "Seite neu laden"
   },
-  "CreateDraftFromPublished": {"edit":"Produkt bearbeiten","continueEditing":"Bearbeitung fortsetzen","pending":"Entwurf wird geöffnet…","imagesUnsupported":"Veröffentlichte Produkte mit Bildern können noch nicht bearbeitet werden. Das veröffentlichte Produkt bleibt unverändert. Versuchen Sie es erneut, sobald diese Funktion verfügbar ist.","conflict":"Das Produkt wurde geändert. Laden Sie die Seite neu, um die Bearbeitung fortzusetzen.","forbidden":"Sie haben keine Berechtigung, dieses Produkt zu bearbeiten.","failure":"Der Entwurf konnte nicht geöffnet werden. Laden Sie die Seite neu und prüfen Sie den Produktstatus, bevor Sie es erneut versuchen.","reload":"Seite neu laden"}
+  "CreateDraftFromPublished": {"edit":"Produkt bearbeiten","continueEditing":"Bearbeitung fortsetzen","pending":"Entwurf wird geöffnet…","imagesUnsupported":"Veröffentlichte Produkte mit Bildern können noch nicht bearbeitet werden. Das veröffentlichte Produkt bleibt unverändert. Versuchen Sie es erneut, sobald diese Funktion verfügbar ist.","conflict":"Das Produkt wurde geändert. Laden Sie die Seite neu, um die Bearbeitung fortzusetzen.","forbidden":"Sie haben keine Berechtigung, dieses Produkt zu bearbeiten.","failure":"Der Entwurf konnte nicht geöffnet werden. Laden Sie die Seite neu und prüfen Sie den Produktstatus, bevor Sie es erneut versuchen.","reload":"Seite neu laden"},
+  "ProductDocuments": {
+    "publishedTitle": "Veröffentlichte Dokumente und Zertifikate",
+    "draftTitle": "Dokumente und Zertifikate im Entwurf",
+    "privateNotice": "Dokumente sind nur für angemeldete, berechtigte Nutzer verfügbar. Öffentliche Downloads sind noch nicht freigeschaltet.",
+    "empty": "Keine Dokumente angehängt.",
+    "untitled": "Dokument ohne Titel",
+    "download": "Herunterladen",
+    "edit": "Bearbeiten",
+    "remove": "Entfernen",
+    "add": "Dokument hinzufügen",
+    "unavailable": "Dieses Dokument ist derzeit nicht verfügbar.",
+    "publicIntended": "Für den zukünftigen öffentlichen DPP vorgesehen",
+    "privateIntended": "Nur private Nutzung",
+    "confirmRemove": "Diesen Anhang aus dem Entwurf entfernen? Die Datei bleibt gespeichert.",
+    "file": "PDF-Datei",
+    "fileHint": "PDF, höchstens 10 MiB.",
+    "category": "Dokumenttyp",
+    "label": "Anzeigetitel",
+    "language": "Dokumentsprache",
+    "neutral": "Sprachneutral",
+    "description": "Beschreibung (optional)",
+    "order": "Sortierreihenfolge",
+    "publicCheckbox": "Nach Veröffentlichung im öffentlichen DPP anzeigen",
+    "retained": "Die Datei ist privat gespeichert. Sie können das Anhängen an diesen Entwurf erneut versuchen.",
+    "retry": "Anhängen erneut versuchen",
+    "save": "Speichern",
+    "pending": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "confirmDiscard": "Formular verlassen? Ungespeicherte Änderungen gehen verloren; die hochgeladene Datei bleibt privat.",
+    "errors": {
+      "UPLOAD_FAILED": "Upload nicht bestätigt. Nicht erneut hochladen; lassen Sie den Status prüfen.",
+      "ATTACH_FAILED": "Anhängen nicht bestätigt. Prüfen Sie den Entwurf vor einem erneuten Versuch.",
+      "STALE_WRITE": "Der Entwurf wurde geändert oder der Anhang existiert bereits. Laden Sie die Ansicht neu und prüfen Sie den Status.",
+      "VALIDATION_ERROR": "Prüfen Sie Titel (1–200 Zeichen), Beschreibung (bis 2.000 Zeichen), PDF und weitere Felder."
+    },
+    "categories": {
+      "CERTIFICATE": "Zertifikat",
+      "DECLARATION": "Konformitätserklärung",
+      "MANUAL": "Gebrauchsanleitung",
+      "OTHER": "Sonstiges"
+    },
+    "languages": {
+      "hr": "Hrvatski",
+      "en": "English",
+      "de": "Deutsch",
+      "sr": "Srpski",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  }
 }

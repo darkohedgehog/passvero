@@ -257,5 +257,55 @@
     "helper": "Aktivacija omogućuje upotrebu, preuzimanje i ispis QR koda za već objavljeni proizvod.",
     "reload": "Osvježi stranicu"
   },
-  "CreateDraftFromPublished": {"edit":"Uredi proizvod","continueEditing":"Nastavi uređivanje","pending":"Otvaranje nacrta…","imagesUnsupported":"Uređivanje objavljenih proizvoda sa slikama još nije podržano. Objavljeni proizvod ostaje nepromijenjen; pokušajte ponovno kada ova mogućnost bude dostupna.","conflict":"Proizvod se promijenio. Osvježite stranicu i nastavite uređivanje.","forbidden":"Nemate ovlasti za uređivanje ovog proizvoda.","failure":"Nacrt nije moguće otvoriti. Osvježite stranicu i provjerite stanje proizvoda prije ponovnog pokušaja.","reload":"Osvježi stranicu"}
+  "CreateDraftFromPublished": {"edit":"Uredi proizvod","continueEditing":"Nastavi uređivanje","pending":"Otvaranje nacrta…","imagesUnsupported":"Uređivanje objavljenih proizvoda sa slikama još nije podržano. Objavljeni proizvod ostaje nepromijenjen; pokušajte ponovno kada ova mogućnost bude dostupna.","conflict":"Proizvod se promijenio. Osvježite stranicu i nastavite uređivanje.","forbidden":"Nemate ovlasti za uređivanje ovog proizvoda.","failure":"Nacrt nije moguće otvoriti. Osvježite stranicu i provjerite stanje proizvoda prije ponovnog pokušaja.","reload":"Osvježi stranicu"},
+  "ProductDocuments": {
+    "publishedTitle": "Objavljeni dokumenti i certifikati",
+    "draftTitle": "Dokumenti i certifikati u nacrtu",
+    "privateNotice": "Dokumenti su dostupni samo prijavljenim ovlaštenim korisnicima. Javno preuzimanje još nije omogućeno.",
+    "empty": "Nema priloženih dokumenata.",
+    "untitled": "Dokument bez naziva",
+    "download": "Preuzmi",
+    "edit": "Uredi",
+    "remove": "Ukloni",
+    "add": "Dodaj dokument",
+    "unavailable": "Dokument trenutačno nije dostupan.",
+    "publicIntended": "Namijenjeno budućem javnom DPP-u",
+    "privateIntended": "Samo privatna uporaba",
+    "confirmRemove": "Ukloniti ovaj prilog iz nacrta? Datoteka ostaje sačuvana.",
+    "file": "PDF datoteka",
+    "fileHint": "PDF, najviše 10 MiB.",
+    "category": "Vrsta dokumenta",
+    "label": "Naziv za prikaz",
+    "language": "Jezik dokumenta",
+    "neutral": "Jezično neutralno",
+    "description": "Opis (neobavezno)",
+    "order": "Redoslijed",
+    "publicCheckbox": "Prikaži na javnom DPP-u nakon objave",
+    "retained": "Datoteka je sačuvana privatno. Možete ponovno pokušati povezivanje s ovim nacrtom.",
+    "retry": "Ponovno pokušaj povezivanje",
+    "save": "Spremi",
+    "pending": "Spremanje…",
+    "cancel": "Odustani",
+    "confirmDiscard": "Napustiti obrazac? Nespremljene promjene bit će izgubljene; prenesena datoteka ostaje privatna.",
+    "errors": {
+      "UPLOAD_FAILED": "Prijenos nije potvrđen. Nemojte ponavljati prijenos; zatražite provjeru statusa.",
+      "ATTACH_FAILED": "Povezivanje nije potvrđeno. Provjerite nacrt prije ponovnog pokušaja.",
+      "STALE_WRITE": "Nacrt se promijenio ili prilog već postoji. Osvježite prikaz i provjerite stanje.",
+      "VALIDATION_ERROR": "Provjerite naziv (1–200 znakova), opis (do 2.000 znakova), PDF i ostala polja."
+    },
+    "categories": {
+      "CERTIFICATE": "Certifikat",
+      "DECLARATION": "Izjava o sukladnosti",
+      "MANUAL": "Upute za uporabu",
+      "OTHER": "Ostalo"
+    },
+    "languages": {
+      "hr": "Hrvatski",
+      "en": "English",
+      "de": "Deutsch",
+      "sr": "Srpski",
+      "sl": "Slovenščina",
+      "pl": "Polski"
+    }
+  }
 }

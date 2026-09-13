@@ -1,3 +1,4 @@
+import { ProductDocumentsSection } from "@/src/components/application/products/product-documents-section";
 import { ProductTranslationServerSection } from "@/src/components/application/products/product-translation-server-section";
 import { canCreateDraftFromPublished } from "@/src/application/products/create-draft-from-published/http";
 import { CreateDraftFromPublishedAction } from "@/src/components/application/products/create-draft-from-published-action";
@@ -227,6 +228,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     detailT("title"),
     <ProductDetailPresentation
       detail={detail}
+      publishedDocuments={detail.currentPublished === null ? null : <ProductDocumentsSection productId={detail.productId} documents={detail.currentPublished.documents} evidence={null} canEdit={false} published={true} />}
+      draftDocuments={detail.currentDraft === null ? null : <ProductDocumentsSection key={detail.currentDraft.productVersionId} productId={detail.productId} documents={detail.currentDraft.documents} evidence={{ expectedDraftVersionId: detail.currentDraft.productVersionId, expectedProductUpdatedAt: detail.updatedAt.toISOString(), expectedDraftUpdatedAt: detail.currentDraft.updatedAt.toISOString() }} canEdit={editHref !== null} published={false} />}
       publishedTranslations={detail.currentPublished === null ? null : <ProductTranslationServerSection productId={detail.productId} versionId={detail.currentPublished.productVersionId} productUpdatedAt={detail.updatedAt.toISOString()} context={resolution.context} locale={locale} published={true} baseEditHref={editHref ?? detailHref} />}
       draftTranslations={detail.currentDraft === null ? null : <ProductTranslationServerSection productId={detail.productId} versionId={detail.currentDraft.productVersionId} productUpdatedAt={detail.updatedAt.toISOString()} draftUpdatedAt={detail.currentDraft.updatedAt.toISOString()} context={resolution.context} locale={locale} published={false} baseEditHref={editHref ?? detailHref} />}
       qrSection={<ProductQrServerSection productId={detail.productId} context={resolution.context} locale={locale} />}

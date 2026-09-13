@@ -10,6 +10,7 @@ export interface GetProductDetailQuery {
 }
 
 export interface ProductDetailSnapshot {
+  readonly documents: readonly import("../document-attachments/contracts").AttachmentDto[];
   readonly content: PublicDppTranslation;
   readonly cn: PublicDppCn | null;
   readonly materials: readonly PublicDppMaterial[];
