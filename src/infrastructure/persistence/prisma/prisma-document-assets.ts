@@ -5,7 +5,7 @@ import { DocumentError, type DocumentPersistence, type DocumentRecord } from "@/
 import { MAX_DOCUMENT_PDF_SIZE } from "@/src/application/documents/pdf";
 type Tx = Prisma.TransactionClient;
 
-async function authorize(tx: Tx, context: AuthenticatedUserContext, permission: ProductPermission) {
+export async function authorizeDocumentActor(tx: Tx, context: AuthenticatedUserContext, permission: ProductPermission) {
   if (!context.permissions.includes(permission) || context.membershipStatus !== "ACTIVE") throw new DocumentError("FORBIDDEN");
   const rows = await tx.$queryRaw<Array<{ role: MembershipRole; membershipStatus: string; organizationStatus: string }>>(Prisma.sql`
     SELECT m."role", m."status" AS "membershipStatus", o."status" AS "organizationStatus"
@@ -32,10 +32,10 @@ export class PrismaDocumentPersistence implements DocumentPersistence {
     try { return await this.prisma.$transaction(work); }
     catch (error) { if (error instanceof DocumentError) throw error; throw new DocumentError("OPERATIONAL_FAILURE"); }
   }
-  authorize(context: AuthenticatedUserContext, permission: ProductPermission) { return this.run(tx => authorize(tx, context, permission)); }
+  authorize(context: AuthenticatedUserContext, permission: ProductPermission) { return this.run(tx => authorizeDocumentActor(tx, context, permission)); }
   createPending(context: AuthenticatedUserContext, data: Omit<DocumentRecord, "id" | "status">) {
     return this.run(async tx => {
-      await authorize(tx, context, "PRODUCT_EDIT");
+      await authorizeDocumentActor(tx, context, "PRODUCT_EDIT");
       return record(await tx.document.create({ data: {
         organizationId: context.organizationId, originalFilename: data.originalFilename, displayName: data.displayName,
         fileExtension: "pdf", mimeType: "application/pdf", sizeBytes: BigInt(data.sizeBytes), checksumSha256: data.checksumSha256,
@@ -45,11 +45,11 @@ export class PrismaDocumentPersistence implements DocumentPersistence {
     });
   }
   read(context: AuthenticatedUserContext, id: string, permission: ProductPermission) {
-    return this.run(async tx => { await authorize(tx, context, permission); return record(await owned(tx, context, id)); });
+    return this.run(async tx => { await authorizeDocumentActor(tx, context, permission); return record(await owned(tx, context, id)); });
   }
   finalize(context: AuthenticatedUserContext, id: string) {
     return this.run(async tx => {
-      await authorize(tx, context, "PRODUCT_EDIT");
+      await authorizeDocumentActor(tx, context, "PRODUCT_EDIT");
       const row = await owned(tx, context, id, true);
       if (row.status === "AVAILABLE") return;
       if (row.status !== "PENDING_UPLOAD") throw new DocumentError("NOT_AVAILABLE");
@@ -59,7 +59,7 @@ export class PrismaDocumentPersistence implements DocumentPersistence {
   }
   fail(context: AuthenticatedUserContext, id: string) {
     return this.run(async tx => {
-      await authorize(tx, context, "PRODUCT_EDIT");
+      await authorizeDocumentActor(tx, context, "PRODUCT_EDIT");
       const row = await owned(tx, context, id, true);
       if (row.status !== "PENDING_UPLOAD") return;
       await tx.document.update({ where: { id: row.id }, data: { status: "FAILED", failedAt: new Date(), failureCode: "STORAGE_FAILURE", updatedById: context.userId } });

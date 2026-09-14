@@ -8,7 +8,8 @@ export interface StorageIdentity { readonly provider: string; readonly bucket: s
 export interface PrivateDocumentStorage {
   identity(): StorageIdentity;
   put(identity: StorageIdentity, bytes: Uint8Array): Promise<void>;
-  read(identity: StorageIdentity): Promise<Uint8Array>;
+  /** Enforce the byte cap during consumption, and cancel the source on abort/overflow. */
+  read(identity: StorageIdentity, options?: { readonly signal: AbortSignal; readonly limit: number }): Promise<Uint8Array>;
 }
 export interface DocumentRecord {
   readonly id: string;

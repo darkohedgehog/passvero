@@ -9,7 +9,7 @@ export async function readDocumentBytes(stream: ReadableStream<Uint8Array> | nul
   const abort = () => { void reader.cancel().catch(() => undefined); };
   signal?.addEventListener("abort", abort, { once: true });
   try {
-    if (signal?.aborted) throw new DocumentError("OPERATIONAL_FAILURE");
+    if (signal?.aborted) { await reader.cancel(); throw new DocumentError("OPERATIONAL_FAILURE"); }
     while (true) {
       const chunk = await reader.read();
       if (signal?.aborted) throw new DocumentError("OPERATIONAL_FAILURE");

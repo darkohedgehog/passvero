@@ -41,15 +41,15 @@ export class SupabaseDocumentStorage implements PrivateDocumentStorage {
   }
   private async request(path: string, init: RequestInit = {}) {
     try {
-      const response = await this.transport(`${this.config.url}/storage/v1/${path}`, { ...init, headers: this.headers(init.headers), redirect: "error", cache: "no-store", signal: AbortSignal.timeout(60_000) });
+      const response = await this.transport(`${this.config.url}/storage/v1/${path}`, { ...init, headers: this.headers(init.headers), redirect: "error", cache: "no-store", signal: init.signal ? AbortSignal.any([init.signal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000) });
       if (!response.ok) { await response.body?.cancel(); throw new DocumentError("OPERATIONAL_FAILURE"); }
       return response;
     } catch { throw new DocumentError("OPERATIONAL_FAILURE"); }
   }
-  private async assertPrivateBucket() {
-    const response = await this.request(`bucket/${encodeURIComponent(this.config.bucket)}`);
+  private async assertPrivateBucket(signal?: AbortSignal) {
+    const response = await this.request(`bucket/${encodeURIComponent(this.config.bucket)}`, { signal });
     try {
-      const bytes = await readDocumentBytes(response.body, AbortSignal.timeout(10_000), 16384);
+      const bytes = await readDocumentBytes(response.body, signal ? AbortSignal.any([signal, AbortSignal.timeout(10_000)]) : AbortSignal.timeout(10_000), 16384);
       const value: unknown = JSON.parse(new TextDecoder().decode(bytes));
       if (!z.object({ id: z.literal(this.config.bucket), public: z.literal(false) }).safeParse(value).success) throw new Error();
     } catch { throw new DocumentError("OPERATIONAL_FAILURE"); }
@@ -61,11 +61,11 @@ export class SupabaseDocumentStorage implements PrivateDocumentStorage {
     const response = await this.request(`object/${identity.bucket}/${identity.key}`, { method: "POST", headers: { "content-type": "application/pdf", "x-upsert": "false", "cache-control": "no-store" }, body: new Uint8Array(bytes) });
     await response.body?.cancel();
   }
-  async read(identity: StorageIdentity): Promise<Uint8Array> {
+  async read(identity: StorageIdentity, options?: { readonly signal: AbortSignal; readonly limit: number }): Promise<Uint8Array> {
     this.validate(identity);
-    await this.assertPrivateBucket();
-    const response = await this.request(`object/authenticated/${identity.bucket}/${identity.key}`);
-    try { return await readDocumentBytes(response.body, AbortSignal.timeout(60_000)); }
+    await this.assertPrivateBucket(options?.signal);
+    const response = await this.request(`object/authenticated/${identity.bucket}/${identity.key}`, { signal: options?.signal });
+    try { return await readDocumentBytes(response.body, options ? AbortSignal.any([options.signal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000), options ? Math.min(options.limit, MAX_DOCUMENT_PDF_SIZE) : MAX_DOCUMENT_PDF_SIZE); }
     catch { throw new DocumentError("OPERATIONAL_FAILURE"); }
   }
 }

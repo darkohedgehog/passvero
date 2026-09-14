@@ -38,3 +38,18 @@ test("oversized provider response is bounded and cancelled",async()=>{
  const storage=new SupabaseDocumentStorage(parseDocumentStorageConfig(config),async(url)=>String(url).includes("/bucket/")?Response.json({id:config.bucket,public:false}):new Response(new ReadableStream({start(c){c.enqueue(new Uint8Array(10*1024*1024+1));},cancel(){cancelled=true;}})));
  await assert.rejects(storage.read(storage.identity()));assert.equal(cancelled,true);
 });
+test("scan-specific byte limit cancels overflow; caller abort cancels body and reaches request", async () => {
+ const c = new AbortController(); let cancelled = false; let entered!: () => void;
+ const ready = new Promise<void>(resolve => { entered = resolve; });
+ const storage = new SupabaseDocumentStorage(parseDocumentStorageConfig(config), async(url, init) => {
+  assert.ok(init?.signal);
+  if (String(url).includes("/bucket/")) return Response.json({id:config.bucket,public:false});
+  return new Response(new ReadableStream({pull(){entered();},cancel(){cancelled=true;}}));
+ });
+ const reading = storage.read(storage.identity(), { signal: c.signal, limit: 10_485_760 });
+ await ready; c.abort(); await assert.rejects(reading); assert.equal(cancelled,true);
+ let overflowCancelled = false;
+ const small = new SupabaseDocumentStorage(parseDocumentStorageConfig(config), async url => String(url).includes("/bucket/") ? Response.json({id:config.bucket,public:false}) : new Response(new ReadableStream({start(s){s.enqueue(new Uint8Array(5));},cancel(){overflowCancelled=true;}})));
+ await assert.rejects(small.read(small.identity(), {signal:new AbortController().signal,limit:4}));
+ assert.equal(overflowCancelled,true);
+});
