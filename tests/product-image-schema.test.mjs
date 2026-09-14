@@ -77,6 +77,7 @@ test("Phase 2C.3 adds only ProductImage and no enum", async () => {
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

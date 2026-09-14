@@ -77,6 +77,7 @@ test("Phase 5B adds only Subscription and its two approved enums", async () => {
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

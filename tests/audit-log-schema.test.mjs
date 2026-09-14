@@ -77,6 +77,7 @@ test("Phase 4 adds only AuditLog and no enum", async () => {
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

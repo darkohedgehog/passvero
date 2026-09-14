@@ -69,6 +69,14 @@ enum DocumentStatus {
   ARCHIVED
 }
 
+enum DocumentMalwareScanStatus {
+  UNSCANNED
+  PENDING
+  CLEAN
+  INFECTED
+  ERROR
+}
+
 enum PassportStatus {
   ACTIVE
   WITHDRAWN
@@ -468,6 +476,18 @@ model Document {
   archivedById     String?        @db.Uuid
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+
+  /// Current security verdict only; state consistency and digest binding have manual CHECK constraints.
+  malwareScanStatus       DocumentMalwareScanStatus @default(UNSCANNED)
+  malwareScanAttemptId     String?                  @db.Uuid
+  malwareScanStartedAt     DateTime?
+  malwareScannedAt         DateTime?
+  malwareScanSha256        String?                  @db.VarChar(64)
+  malwareScanner          String?                  @db.VarChar(32)
+  malwareEngineVersion    String?                  @db.VarChar(64)
+  malwareSignatureVersion String?                  @db.VarChar(256)
+  malwarePolicyVersion    Int?
+  malwareFailureCode      String?                  @db.VarChar(64)
 
   organization     Organization      @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   createdBy        User?             @relation("DocumentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: Cascade)

@@ -77,6 +77,7 @@ test("Phase 6B adds exactly IntegrationMapping and its approved status enum", as
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

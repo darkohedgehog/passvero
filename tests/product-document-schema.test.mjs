@@ -77,6 +77,7 @@ test("Phase 2C.2 adds only ProductDocument and no enum", async () => {
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

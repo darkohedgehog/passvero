@@ -76,6 +76,7 @@ test("Phase 2B.3 retains ProductMaterial without a ProductMaterial enum", async 
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

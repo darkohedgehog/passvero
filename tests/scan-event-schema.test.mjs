@@ -77,6 +77,7 @@ test("Phase 3 adds only ScanEvent and the two approved enums", async () => {
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

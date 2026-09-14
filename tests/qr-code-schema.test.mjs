@@ -77,6 +77,7 @@ test("Phase 2D adds only QRCode and QRCodeStatus", async () => {
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

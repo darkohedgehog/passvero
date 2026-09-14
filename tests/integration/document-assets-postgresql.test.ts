@@ -66,3 +66,20 @@ test("existing Product and draft rows remain byte-for-byte unchanged after uploa
  const state=()=>prisma.product.findUniqueOrThrow({where:{id:product.id},include:{versions:{include:{translations:true,productDocuments:true}},passport:{include:{qrCode:true}}}});
  const before=await state();await f.services.upload(input,f.context);assert.deepEqual(await state(),before);
 });
+
+test("malware persistence fields do not leak into existing records or private download responses", async () => {
+ const f = await fixture();
+ const uploaded = await f.services.upload(input, f.context);
+ assert.deepEqual(Object.keys(uploaded).sort(), ["documentId", "status"]);
+ const row = await prisma.document.findUniqueOrThrow({where:{id:uploaded.documentId}});
+ assert.equal(row.malwareScanStatus, "UNSCANNED");
+ const started = new Date();
+ // Database fixture only: no scanner invocation and no claim that bytes were scanned.
+ await prisma.document.update({where:{id:row.id},data:{malwareScanStatus:"ERROR",malwareScanAttemptId:randomUUID(),malwareScanStartedAt:started,malwarePolicyVersion:1,malwareFailureCode:"TIMEOUT"}});
+ const record = await f.persistence.read(f.context,row.id,"PRODUCT_READ");
+ assert.deepEqual(Object.keys(record).sort(),["checksumSha256","displayName","id","originalFilename","sizeBytes","status","storage"]);
+ const downloaded = await f.services.download(row.id,f.context);
+ assert.deepEqual(Object.keys(downloaded).sort(),["bytes","filename","sizeBytes"]);
+ assert.deepEqual(Buffer.from(downloaded.bytes!),input.bytes);
+ // This schema-only slice intentionally leaves private download behavior unchanged.
+});

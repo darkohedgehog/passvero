@@ -77,6 +77,7 @@ test("Phase 6C adds exactly BackgroundJob and its two approved enums", async () 
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",

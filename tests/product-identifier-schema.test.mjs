@@ -86,6 +86,7 @@ test("Phase 2B.2 retains ProductIdentifier and ProductIdentifierType", async () 
     "ProductVersionStatus",
     "ProductIdentifierType",
     "DocumentStatus",
+    "DocumentMalwareScanStatus",
     "PassportStatus",
     "QRCodeStatus",
     "ScanDeviceType",
