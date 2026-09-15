@@ -1,8 +1,9 @@
 import { signatureHealthEvidenceSchema, trustedProvenance } from "@/src/application/documents/malware-scan";
-import { diskManifest, parseDaemonVersion, parseFreshclamEvidence, type DiskArtifact } from "./freshclam-evidence";
+import { diskManifest, parseDaemonVersion, parseFreshclamEvidence, validateDaemonEvidence, type EvidenceTimeZone, type DiskArtifact } from "./freshclam-evidence";
 
 export interface ProducerObservation {
   /** Stable root/operator-approved source capture. Never application/request data. */
+  timeZone: EvidenceTimeZone;
   updaterLog: string;
   daemonLog: string;
   components: DiskArtifact[];
@@ -41,12 +42,11 @@ export function createSignatureHealthProducer(socketPath: string, io: ProducerIO
       };
       work = (async () => {
         const first = await io.collect(controller.signal); check();
-        const before = parseDaemonVersion(await io.version(controller.signal)); check();
-        const updater = parseFreshclamEvidence(first.updaterLog, first.components, observedAt); check();
-        // Conservative: a retained daemon error remains untrusted until an operator establishes a fresh log baseline.
-        if (/ERROR|WARNING|failed|failure|RELOADING/i.test(first.daemonLog)) throw new Error("UNTRUSTED");
+        const before = parseDaemonVersion(await io.version(controller.signal), first.timeZone); check();
+        const updater = parseFreshclamEvidence(first.updaterLog, first.components, observedAt, first.timeZone); check();
+        validateDaemonEvidence(first.daemonLog, observedAt, first.timeZone); check();
         const second = await io.collect(controller.signal); check();
-        const after = parseDaemonVersion(await io.version(controller.signal)); check();
+        const after = parseDaemonVersion(await io.version(controller.signal), first.timeZone); check();
         if (JSON.stringify(first) !== JSON.stringify(second) || JSON.stringify(before) !== JSON.stringify(after)) throw new Error("UNTRUSTED");
         const evidence = signatureHealthEvidenceSchema.parse({ observedAt, expiresAt: Math.min(observedAt + 60_000, updater.completedAt + 86_400_000), observationSequence: sequence,
           updater, disk: { components: first.components, manifestSha256: diskManifest(first.components) }, daemon: after });

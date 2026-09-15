@@ -8,6 +8,7 @@ import { trustedScanPathSchema } from "./document-scan-config";
 import type { ProducerIO } from "./signature-health-producer";
 
 export const producerConfigSchema = z.object({
+  timeZone: z.enum(["UTC", "Europe/Zagreb"]),
   socketPath: trustedScanPathSchema.max(100), outputPath: trustedScanPathSchema,
   updaterLog: trustedScanPathSchema, daemonLog: trustedScanPathSchema, databaseDirectory: trustedScanPathSchema,
   updaterConfig: trustedScanPathSchema, updaterConfigSha256: z.string().regex(/^[a-f0-9]{64}$/),
@@ -117,6 +118,11 @@ export function createProducerIO(input: unknown, ownerUid = 0): ProducerIO {
       const testing = directives.filter(line => /^TestDatabases(?:\s|$)/.test(line));
       if (config.sha256 !== c.updaterConfigSha256 || testing.length !== 1 || testing[0] !== "TestDatabases yes"
         || directives.some(line => /^(DatabaseCustomURL|ExtraDatabase|ExcludeDatabase|PrivateMirror)\b/.test(line))) throw new Error("CONFIGURATION_CHANGED");
+      // The grammar's completion boundary is valid only for the standard three databases.
+      for (const [key, value] of [["Bytecode", "yes"], ["LogVerbose", "no"], ["LogTime", "true"]]) {
+        const rows = directives.filter(line => new RegExp(`^${key}(?:\\s|$)`).test(line));
+        if (rows.length !== 1 || rows[0] !== `${key} ${value}`) throw new Error("CONFIGURATION_CHANGED");
+      }
       const owners = [0, ownerUid, c.scannerUid];
       const updater = await readStable(c.updaterLog, owners, 1_048_576, signal);
       const daemon = await readStable(c.daemonLog, owners, 1_048_576, signal);
@@ -130,14 +136,10 @@ export function createProducerIO(input: unknown, ownerUid = 0): ProducerIO {
         if (files.length !== 1) throw new Error("DATABASE_SET_UNCERTAIN");
         const file = await readStable(`${c.databaseDirectory}/${files[0]}`, owners, 536870912, signal, true);
         const header = file.text.split(":"); const version = Number(header[2]);
-        if (header[0] !== "ClamAV-VDB" || !/^[a-fA-F0-9]{32}$/.test(header[5] ?? "") || header[5].toLowerCase() !== file.payloadMd5 || !Number.isSafeInteger(version) || version < 1) throw new Error("DATABASE_INVALID");
-        if (!entries.includes(`${name}-${version}.${files[0].split(".")[1]}.sign`)) throw new Error("DATABASE_INVALID");
+        if (header.length < 9 || header[0] !== "ClamAV-VDB" || !/^\d+$/.test(header[2]) || !/^\d+$/.test(header[3]) || !/^\d+$/.test(header[4]) || (files[0].endsWith(".cvd") && (!/^[a-fA-F0-9]{32}$/.test(header[5] ?? "") || header[5].toLowerCase() !== file.payloadMd5)) || !Number.isSafeInteger(version) || version < 1) throw new Error("DATABASE_INVALID");
         components.push({ name, version, sha256: file.sha256 });
       }
-      if (!/Loaded \d+ signatures\./.test(daemon.text)) throw new Error("DAEMON_UNCERTAIN");
-      const reading = daemon.text.lastIndexOf("Reading databases from ");
-      if (reading > Math.max(daemon.text.lastIndexOf("Loaded "), daemon.text.lastIndexOf("Activating the newly loaded database..."))) throw new Error("DAEMON_UNCERTAIN");
-      return { updaterLog: updater.text, daemonLog: daemon.text, components,
+      return { timeZone: c.timeZone, updaterLog: updater.text, daemonLog: daemon.text, components,
         sourceIdentity: `${config.sha256}:${updater.sha256}:${daemon.sha256}` };
     },
     version: signal => readDaemonVersion(c.socketPath, signal),

@@ -14,13 +14,14 @@ const names = ["main", "daily", "bytecode"] as const;
 const versions = [63, 28123, 339];
 // SYNTHETIC transcript using upstream 1.5.3 format strings. Not captured staging evidence.
 function cycle(current = false) {
-  return [prefix + `ClamAV update process started at ${stamp}`,
-    ...names.map((name, i) => prefix + `${name}.cvd ${current ? "database is up-to-date" : "updated"} (version: ${versions[i]}, sigs: 1, f-level: 90, builder: synthetic)`),
-    prefix + "--------------------------------------", ""].join("\n");
+  return [ ...(current ? [] : [prefix + "--------------------------------------"]),
+    ...[1, 0, 2].flatMap(i => [
+      ...(current ? [] : [prefix + `${names[i]} database available for download (remote version: ${versions[i]})`]),
+      prefix + `${names[i]}.cvd ${current ? "database is up-to-date" : "updated"} (version: ${versions[i]}, sigs: 1, f-level: 90, builder: synthetic)`]), ""].join("\n");
 }
 function fixture() {
   let sequence = 0; let locked = false; let invalidations = 0; let published: Uint8Array | undefined;
-  let observation: ProducerObservation = { updaterLog: cycle(), daemonLog: "Loaded 3 signatures.", components: healthFixture(now).disk.components, sourceIdentity: "synthetic" };
+  let observation: ProducerObservation = { timeZone: "UTC", updaterLog: cycle(), daemonLog: prefix + "+++ Started at " + stamp + "\n" + prefix + "Reading databases from /synthetic\n" + prefix + "Loaded 3 signatures.\n", components: healthFixture(now).disk.components, sourceIdentity: "synthetic" };
   const io: ProducerIO = {
     async acquire() { if (locked) return false; locked = true; return true; }, async release() { locked = false; },
     async nextSequence() { return ++sequence; }, async collect() { return structuredClone(observation); },
@@ -47,7 +48,7 @@ test("healthy UPDATED and verified ALREADY_CURRENT reach actual reader; timestam
 });
 test("future/expired, missing, partial and unsupported evidence never publishes healthy", async () => {
   const f = fixture();
-  for (const log of ["", cycle().slice(0, -1), cycle().replace("--------------------------------------", "WARNING: secret-path"), cycle().replace("ClamAV update process started", "unknown"), "x".repeat(1_048_577)]) {
+  for (const log of ["", cycle().slice(0, -1), cycle().replace("--------------------------------------", "WARNING: secret-path"), cycle().replace("daily database available", "unknown"), "x".repeat(1_048_577)]) {
     f.set({ ...f.observation, updaterLog: log }); assert.equal(await f.run(), "UNTRUSTED"); await settle(); assert.equal(f.bytes(), undefined);
   }
   assert.throws(() => parseFreshclamEvidence(cycle(), f.observation.components, now - 60_001));
@@ -95,7 +96,7 @@ test("real atomic filesystem publication and lock; actual protected reader; stal
   const directory = await mkdtemp(join(process.cwd(), "producer-fixture-"));
   try {
     const outputPath = join(directory, "health.json");
-    const config = { socketPath: "/run/clamav/clamd.ctl", outputPath, updaterLog: join(directory, "updater.log"), daemonLog: join(directory, "daemon.log"), databaseDirectory: join(directory, "db"), updaterConfig: join(directory, "freshclam.conf"), updaterConfigSha256: "a".repeat(64), scannerUid: 999, outputGid: process.getgid!() };
+    const config = { timeZone: "UTC", socketPath: "/run/clamav/clamd.ctl", outputPath, updaterLog: join(directory, "updater.log"), daemonLog: join(directory, "daemon.log"), databaseDirectory: join(directory, "db"), updaterConfig: join(directory, "freshclam.conf"), updaterConfigSha256: "a".repeat(64), scannerUid: 999, outputGid: process.getgid!() };
     const io = createProducerIO(config, process.getuid!()); const other = createProducerIO(config, process.getuid!());
     const f = fixture(); io.collect = f.io.collect; io.version = f.io.version;
     assert.equal(await io.acquire(), true); assert.equal(await other.acquire(), false); await io.release();
@@ -119,8 +120,8 @@ test("bounded source capture uses configured files and hashes actual synthetic d
   const directory = await mkdtemp(join(process.cwd(), "producer-fixture-"));
   try {
     const db = join(directory, "db"); await fs.mkdir(db, { mode: 0o700 });
-    const configText = "TestDatabases yes\n";
-    const config = { socketPath: "/run/clamav/clamd.ctl", outputPath: join(directory, "out"), updaterLog: join(directory, "u"), daemonLog: join(directory, "d"), databaseDirectory: db, updaterConfig: join(directory, "c"), updaterConfigSha256: createHash("sha256").update(configText).digest("hex"), scannerUid: 999, outputGid: process.getgid!() };
+    const configText = "TestDatabases yes\nBytecode yes\nLogVerbose no\nLogTime true\n";
+    const config = { timeZone: "UTC", socketPath: "/run/clamav/clamd.ctl", outputPath: join(directory, "out"), updaterLog: join(directory, "u"), daemonLog: join(directory, "d"), databaseDirectory: db, updaterConfig: join(directory, "c"), updaterConfigSha256: createHash("sha256").update(configText).digest("hex"), scannerUid: 999, outputGid: process.getgid!() };
     await writeFile(config.updaterConfig, configText, { mode: 0o600 });
     await writeFile(config.updaterLog, cycle(), { mode: 0o600 });
     await writeFile(config.daemonLog, "Loaded 3 signatures.\n", { mode: 0o600 });
@@ -135,6 +136,22 @@ test("bounded source capture uses configured files and hashes actual synthetic d
     const capture = await io.collect(new AbortController().signal);
     assert.equal(capture.components.length, 3);
     assert.equal(capture.components[0].sha256, createHash("sha256").update(await readFile(join(db, "main.cvd"))).digest("hex"));
+    // Synthetic legitimate CLD shape: no standalone .sign or payload-MD5 requirement.
+    await fs.unlink(join(db, "daily.cvd"));
+    await fs.unlink(join(db, "daily-28123.cvd.sign"));
+    await writeFile(join(db, "daily.cld"), Buffer.from(`ClamAV-VDB:synthetic:28123:1:90:X:X:synthetic:0`.padEnd(512, " ") + "SYNTHETIC-CLD"), { mode: 0o600 });
+    assert.equal((await io.collect(new AbortController().signal)).components[1].version, 28123);
+    // Identity changes are observed; this is not cryptographic authentication.
+    await fs.appendFile(join(db, "daily.cld"), "changed");
+    assert.notEqual((await io.collect(new AbortController().signal)).components[1].sha256, capture.components[1].sha256);
+    await fs.chmod(directory, 0o770);
+    await assert.rejects(io.collect(new AbortController().signal), /PRIVATE_INPUT_REQUIRED/);
+    await fs.chmod(directory, 0o700);
+    await fs.rename(config.updaterLog, config.updaterLog + ".real");
+    await fs.symlink(config.updaterLog + ".real", config.updaterLog);
+    await assert.rejects(io.collect(new AbortController().signal), /PRIVATE_INPUT_REQUIRED/);
+    await fs.unlink(config.updaterLog);
+    await fs.rename(config.updaterLog + ".real", config.updaterLog);
     await fs.appendFile(join(db, "main.cvd"), "corruption");
     await assert.rejects(io.collect(new AbortController().signal), /DATABASE_INVALID/);
     // This verifies integrity plumbing only; it does not validate synthetic signatures.
