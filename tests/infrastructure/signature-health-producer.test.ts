@@ -120,7 +120,8 @@ test("bounded source capture uses configured files and hashes actual synthetic d
   const directory = await mkdtemp(join(process.cwd(), "producer-fixture-"));
   try {
     const db = join(directory, "db"); await fs.mkdir(db, { mode: 0o700 });
-    const configText = "TestDatabases yes\nBytecode yes\nLogVerbose no\nLogTime true\n";
+    // Relevant actual staging directives; synthetic databases below are integrity fixtures only.
+    const configText = "TestDatabases yes\nBytecode true\nLogVerbose no\nLogTime true\n";
     const config = { timeZone: "UTC", socketPath: "/run/clamav/clamd.ctl", outputPath: join(directory, "out"), updaterLog: join(directory, "u"), daemonLog: join(directory, "d"), databaseDirectory: db, updaterConfig: join(directory, "c"), updaterConfigSha256: createHash("sha256").update(configText).digest("hex"), scannerUid: 999, outputGid: process.getgid!() };
     await writeFile(config.updaterConfig, configText, { mode: 0o600 });
     await writeFile(config.updaterLog, cycle(), { mode: 0o600 });

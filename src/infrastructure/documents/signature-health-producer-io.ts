@@ -15,6 +15,20 @@ export const producerConfigSchema = z.object({
   scannerUid: z.number().int().positive(), outputGid: z.number().int().nonnegative(),
 }).strict();
 export type ProducerConfig = z.infer<typeof producerConfigSchema>;
+/** ClamAV 1.5.3 common/optparser.c: MATCH_BOOL and CLOPT_TYPE_BOOL.
+ * Values are case-insensitive; directive names and duplicate rejection stay strict.
+ * Inline comments/quoted values remain outside this bounded producer grammar.
+ */
+export function validateProducerBooleanConfiguration(text: string): void {
+  const directives = text.split("\n").map(line => line.trim()).filter(line => line && !line.startsWith("#"));
+  if (directives.some(line => /^(DatabaseCustomURL|ExtraDatabase|ExcludeDatabase|PrivateMirror)\b/.test(line))) throw new Error("CONFIGURATION_CHANGED");
+  for (const [key, expected] of [["TestDatabases", true], ["Bytecode", true], ["LogVerbose", false], ["LogTime", true]] as const) {
+    const rows = directives.filter(line => new RegExp(`^${key}(?:\\s|$)`).test(line));
+    if (rows.length !== 1) throw new Error("CONFIGURATION_CHANGED");
+    const value = rows[0].slice(key.length).trim();
+    if (!/^(yes|true|1|no|false|0)$/i.test(value) || /^(yes|true|1)$/i.test(value) !== expected) throw new Error("CONFIGURATION_CHANGED");
+  }
+}
 const missing = (e: unknown) => (e as NodeJS.ErrnoException).code === "ENOENT";
 async function parents(path: string, owners: readonly number[]) {
   let parent = dirname(path);
@@ -114,15 +128,8 @@ export function createProducerIO(input: unknown, ownerUid = 0): ProducerIO {
     },
     async collect(signal) {
       const config = await readStable(c.updaterConfig, [0, ownerUid], 65536, signal);
-      const directives = config.text.split("\n").map(line => line.trim()).filter(line => line && !line.startsWith("#"));
-      const testing = directives.filter(line => /^TestDatabases(?:\s|$)/.test(line));
-      if (config.sha256 !== c.updaterConfigSha256 || testing.length !== 1 || testing[0] !== "TestDatabases yes"
-        || directives.some(line => /^(DatabaseCustomURL|ExtraDatabase|ExcludeDatabase|PrivateMirror)\b/.test(line))) throw new Error("CONFIGURATION_CHANGED");
-      // The grammar's completion boundary is valid only for the standard three databases.
-      for (const [key, value] of [["Bytecode", "yes"], ["LogVerbose", "no"], ["LogTime", "true"]]) {
-        const rows = directives.filter(line => new RegExp(`^${key}(?:\\s|$)`).test(line));
-        if (rows.length !== 1 || rows[0] !== `${key} ${value}`) throw new Error("CONFIGURATION_CHANGED");
-      }
+      if (config.sha256 !== c.updaterConfigSha256) throw new Error("CONFIGURATION_CHANGED");
+      validateProducerBooleanConfiguration(config.text);
       const owners = [0, ownerUid, c.scannerUid];
       const updater = await readStable(c.updaterLog, owners, 1_048_576, signal);
       const daemon = await readStable(c.daemonLog, owners, 1_048_576, signal);
