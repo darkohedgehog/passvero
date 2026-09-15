@@ -1,3 +1,4 @@
+import { healthFixture, snapshotFixture } from "../helpers/signature-health-fixture";
 import assert from "node:assert/strict";
 import { randomUUID, createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -14,14 +15,13 @@ function fixture() {
   const count = { persistence: 0, storage: 0, pdf: 0, scanner: 0, health: 0, scan: 0 };
   const bytes = Buffer.from("%PDF synthetic composition"); const identity = { sizeBytes: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") };
   const results: TerminalScan[] = [];
-  const provenance = { scanner: "clamav", engineVersion: "1", signatureVersion: "1", databaseIdentity: "db-1", daemonIdentity: "epoch-1" };
-  let epoch = "epoch-1";
+  let epoch = "1.5.3"; let sequence = 0;
   const factories: DocumentScanRuntimeFactories = {
-    persistence() { count.persistence++; return { async claim(actor, id) { assert.equal(actor, context); return { documentId: id, organizationId: actor.organizationId, actorId: actor.userId, attemptId: randomUUID(), startedAt: Date.now(), policyVersion: 1, identity, storage: { provider: "fake", bucket: "private", key: "private" } }; }, async finalize(actor, _claim, result) { assert.equal(actor, context); results.push(result); } }; },
+    persistence() { count.persistence++; return { async claim(actor, id) { assert.equal(actor, context); return { documentId: id, organizationId: actor.organizationId, actorId: actor.userId, attemptId: randomUUID(), startedAt: Date.now(), policyVersion: 2, identity, storage: { provider: "fake", bucket: "private", key: "private" } }; }, async finalize(actor, _claim, result) { assert.equal(actor, context); results.push(result); } }; },
     storage() { count.storage++; return { identity: () => ({ provider: "fake", bucket: "private", key: "private" }), async put() {}, async read() { return bytes; } }; },
     pdf(actual) { count.pdf++; assert.deepEqual(actual, { executablePath: config.qpdfLauncherPath, temporaryRoot: config.qpdfTemporaryRoot }); return { async validate() { return { kind: "VALID", identity }; } }; },
     scanner(path, signatures) { count.scanner++; assert.equal(path, config.clamavSocketPath); assert.deepEqual([...signatures], config.malwareSignatures); return { async scan() { count.scan++; return { kind: "OK", complete: true, identity }; } }; },
-    health(actual) { count.health++; return createSignatureHealthProvider(actual, { async read(path) { assert.equal(path, config.healthEvidencePath); const now = Date.now(); return Buffer.from(JSON.stringify({ schemaVersion: 1, socketPath: config.clamavSocketPath, capturedAt: now, expiresAt: now + 1000, evidence: { lastSuccessfulVerifiedCheckAt: now, checkResult: "ALREADY_CURRENT", databasesValidated: true, unresolvedError: false, validated: { ...provenance, daemonIdentity: epoch }, loaded: { ...provenance, daemonIdentity: epoch } } })); } }); },
+    health(actual) { count.health++; return createSignatureHealthProvider(actual, { async read(path) { assert.equal(path, config.healthEvidencePath); const now = Date.now(); return Buffer.from(JSON.stringify({ ...snapshotFixture(now, config.clamavSocketPath), observationSequence: ++sequence, evidence: { ...snapshotFixture(now, config.clamavSocketPath).evidence, daemon: { ...healthFixture(now).daemon, engineVersion: epoch, dailyPublishedAt: 1 } } })); } }); },
   };
   return { factories, count, results, setEpoch: (next: string) => { epoch = next; } };
 }
@@ -45,7 +45,7 @@ test("missing config and constructor errors are normalized without accessing oth
   await assert.rejects(createDocumentScanRuntimeCore(config, f.factories).scan(randomUUID(), context, options()), e => e instanceof DocumentError && e.message === "OPERATIONAL_FAILURE");
   assert.doesNotMatch(readFileSync("src/infrastructure/documents/document-runtime.ts", "utf8"), /document-scan-runtime/);
 });
-test("missing evidence and changed producer epoch fail closed", async () => {
+test("missing evidence and changed observed version fail closed", async () => {
   const f = fixture(); f.factories.health = () => createSignatureHealthProvider({ path: config.healthEvidencePath, socketPath: config.clamavSocketPath }, { async read() { throw new Error("missing private source"); } });
   assert.equal((await createDocumentScanRuntimeCore(config, f.factories).scan(randomUUID(), context, options())).status, "ERROR"); assert.equal(f.count.scan, 0);
   const g = fixture(); const original = g.factories.scanner;

@@ -1,3 +1,4 @@
+import { healthFixture } from "../helpers/signature-health-fixture";
 import assert from "node:assert/strict";
 import { randomUUID, createHash } from "node:crypto";
 import test from "node:test";
@@ -9,11 +10,11 @@ import type { PdfValidationResult } from "../../src/application/documents/pdf-va
 const now = 2_000_000_000;
 const bytes = Buffer.from("%PDF synthetic unit input");
 const identity = { sizeBytes: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") };
-const provenance = { scanner: "clamav", engineVersion: "1.5.3", signatureVersion: "daily:28123;main:63;bytecode:339", databaseIdentity: "validated-generation-1", daemonIdentity: "loaded-generation-1" };
-const health = () => ({ lastSuccessfulVerifiedCheckAt: now - 1, checkResult: "ALREADY_CURRENT", databasesValidated: true, unresolvedError: false, validated: { ...provenance }, loaded: { ...provenance } });
+const health = () => healthFixture(now);
+const provenance = trustedProvenance(health(), now)!;
 const context: AuthenticatedUserContext = { userId: randomUUID(), organizationId: randomUUID(), membershipId: randomUUID(), membershipRole: "EDITOR", membershipStatus: "ACTIVE", permissions: ["PRODUCT_EDIT"], correlationId: randomUUID() };
 function fixture() {
-  const claim: DocumentScanClaim = { documentId: randomUUID(), organizationId: context.organizationId, actorId: context.userId, attemptId: randomUUID(), startedAt: now, policyVersion: 1, storage: { provider: "fake", bucket: "private", key: "secret" }, identity };
+  const claim: DocumentScanClaim = { documentId: randomUUID(), organizationId: context.organizationId, actorId: context.userId, attemptId: randomUUID(), startedAt: now, policyVersion: 2, storage: { provider: "fake", bucket: "private", key: "secret" }, identity };
   const events: string[] = [];
   const results: TerminalScan[] = [];
   const controller = new AbortController();
@@ -56,15 +57,15 @@ test("malware normalized evidence persists INFECTED", async () => {
   assert.equal((await f.run()).status, "INFECTED");
 });
 test("24h freshness is exclusive; future, missing, failed and incomplete evidence rejected", () => {
-  for (const age of [0, 1, 86_399_999]) assert.deepEqual(trustedProvenance({ ...health(), lastSuccessfulVerifiedCheckAt: now - age }, now), provenance);
-  for (const age of [-1, 86_400_000, 86_400_001]) assert.equal(trustedProvenance({ ...health(), lastSuccessfulVerifiedCheckAt: now - age }, now), null);
+  for (const age of [0, 1, 86_399_999]) assert.deepEqual(trustedProvenance({ ...health(), updater: { ...health().updater, completedAt: now - age }, expiresAt: Math.min(now + 60000, now - age + 86400000) }, now), provenance);
+  for (const age of [-1, 86_400_000, 86_400_001]) assert.equal(trustedProvenance({ ...health(), updater: { ...health().updater, completedAt: now - age }, expiresAt: Math.min(now + 60000, now - age + 86400000) }, now), null);
   for (const h of [null, {}, { ...health(), unresolvedError: true }, { ...health(), databasesValidated: false }, { ...health(), checkResult: "FAILED" }, { ...health(), loaded: {} }, { ...health(), loaded: { ...provenance, engineVersion: "changed" } }]) assert.equal(trustedProvenance(h, now), null);
 });
 test("missing health skips scanner, changed provenance discards verdict", async () => {
   const f = fixture(); f.deps.health.read = async () => null; await f.run(); assert.ok(!f.events.includes("scan"));
   assert.deepEqual(f.results, [{ status: "ERROR", failureCode: "SIGNATURES_UNTRUSTED" }]);
   const g = fixture(); let calls = 0;
-  g.deps.health.read = async () => ++calls === 1 ? health() : { ...health(), loaded: { ...provenance, daemonIdentity: "changed" }, validated: { ...provenance, daemonIdentity: "changed" } };
+  g.deps.health.read = async () => ++calls === 1 ? health() : { ...health(), daemon: { ...health().daemon, engineVersion: "changed" } };
   await g.run(); assert.deepEqual(g.results, f.results);
 });
 test("cancellation before claim does not write; mid-processing finalizes INTERRUPTED under persistence authority", async () => {
@@ -80,7 +81,7 @@ test("strict lease and exact minimized audit metadata", () => {
   assert.equal(scanLeaseActive(now, now + 119_999), true);
   assert.equal(scanLeaseActive(now, now + 120_000), false);
   assert.equal(scanLeaseActive(now, now + 120_001), false);
-  const f = fixture(); const common = { attemptId: f.claim.attemptId, policyVersion: 1 };
+  const f = fixture(); const common = { attemptId: f.claim.attemptId, policyVersion: 2 };
   for (const status of ["CLEAN", "INFECTED"] as const) assert.deepEqual(scanAuditMetadata(f.claim, { status, identity, provenance }), common);
   assert.deepEqual(scanAuditMetadata(f.claim, { status: "ERROR", failureCode: "TIMEOUT" }), { ...common, failureCode: "TIMEOUT" });
 });
@@ -93,7 +94,7 @@ test("malformed/parser-invalid results, thrown ports and corrupted scanner ident
     { mutate: f => { f.deps.health.read = async () => { throw new Error("private updater log"); }; }, code: "SIGNATURES_UNTRUSTED" },
     { mutate: f => { f.deps.scanner.scan = async () => { throw new Error("raw scanner response"); }; }, code: "SCANNER_UNAVAILABLE" },
     { mutate: f => { f.deps.scanner.scan = async () => ({ kind: "OK", complete: true, identity: { ...identity, sizeBytes: 1 } }); }, code: "INTEGRITY_MISMATCH" },
-    { mutate: f => { f.deps.health.read = async () => ({ ...health(), lastSuccessfulVerifiedCheckAt: now - 86_400_000 }); }, code: "SIGNATURES_UNTRUSTED" },
+    { mutate: f => { f.deps.health.read = async () => ({ ...health(), updater: { ...health().updater, completedAt: now - 86_400_000 } }); }, code: "SIGNATURES_UNTRUSTED" },
   ];
   for (const { mutate, code } of cases) { const f = fixture(); mutate(f); assert.deepEqual(await f.run(), { documentId: f.claim.documentId, status: "ERROR", failureCode: code }); }
 });
@@ -119,4 +120,16 @@ test("already cancelled bounded stream is released without reading", async () =>
   const stream = new ReadableStream<Uint8Array>({ cancel() { cancelled = true; } });
   await assert.rejects(readDocumentBytes(stream, controller.signal));
   assert.equal(cancelled, true); assert.equal(stream.locked, false);
+});
+
+test("policy 2 records observable disk/version summary; same-version unseen reload is deliberately unclaimed", async () => {
+  const f = fixture(); await f.run();
+  const result = f.results[0]; assert.notEqual(result.status, "ERROR");
+  if (result.status !== "ERROR") {
+    assert.match(result.provenance.signatureVersion, /^obs2:daily:28123;disksha256:[a-f0-9]{64}$/);
+    assert.ok(!("daemonIdentity" in result.provenance));
+    assert.ok(!("databaseIdentity" in result.provenance));
+  }
+  // Identical observations cannot expose an intervening same-version reload; no generation claim.
+  const g = fixture(); g.deps.health.read = async () => health(); assert.equal((await g.run()).status, "CLEAN");
 });

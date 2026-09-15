@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { constants, type Stats } from "node:fs";
 import { lstat, open, type FileHandle } from "node:fs/promises";
 import { dirname, parse } from "node:path";
@@ -11,12 +12,14 @@ export interface PrivateHealthSnapshotReader {
   /** Return only a stable, private snapshot; enforce the cap before returning bytes. */
   read(path: string, options: { readonly signal: AbortSignal; readonly limit: number }): Promise<Uint8Array>;
 }
-const snapshotSchema = z.object({
-  schemaVersion: z.literal(1),
+export const snapshotSchema = z.object({
+  schemaVersion: z.literal(2),
   socketPath: trustedScanPathSchema.max(100),
-  capturedAt: z.number().int().nonnegative().safe(),
+  status: z.literal("HEALTHY"),
+  observedAt: z.number().int().nonnegative().safe(),
   expiresAt: z.number().int().nonnegative().safe(),
-  evidence: signatureHealthEvidenceSchema,
+  observationSequence: z.number().int().nonnegative().safe(),
+  evidence: signatureHealthEvidenceSchema.omit({ observedAt: true, expiresAt: true, observationSequence: true }),
 }).strict();
 
 /** Root producer in deployment. The optional owner seam is for isolated local fixtures. */
@@ -72,6 +75,9 @@ export function createSignatureHealthProvider(config: {
 }, reader: PrivateHealthSnapshotReader = createPrivateHealthSnapshotReader(), now: () => number = Date.now): SignatureHealthPort {
   const path = config.path; const socketPath = config.socketPath;
   let reading = false;
+  let newest = -1;
+  let newestObserved = -1;
+  let newestText = "";
   return {
     async read({ signal }) {
       if (signal.aborted || reading) return null;
@@ -94,12 +100,16 @@ export function createSignatureHealthProvider(config: {
         const parsed = snapshotSchema.safeParse(decoded);
         if (!parsed.success) return null;
         const snapshot = parsed.data; const current = now();
-        if (snapshot.socketPath !== socketPath || !Number.isFinite(current)
-          || snapshot.capturedAt > current || snapshot.capturedAt < snapshot.evidence.lastSuccessfulVerifiedCheckAt
-          || snapshot.expiresAt <= current || snapshot.expiresAt <= snapshot.capturedAt
-          || snapshot.expiresAt > snapshot.evidence.lastSuccessfulVerifiedCheckAt + 86_400_000
-          || !trustedProvenance(snapshot.evidence, current)) return null;
-        return snapshot.evidence;
+        const evidence = { ...snapshot.evidence, observedAt: snapshot.observedAt, expiresAt: snapshot.expiresAt, observationSequence: snapshot.observationSequence };
+        if (snapshot.socketPath !== socketPath || snapshot.observationSequence < newest
+          || snapshot.observedAt < newestObserved
+          || (snapshot.observationSequence === newest && text !== newestText)
+          || createHash("sha256").update(JSON.stringify(snapshot.evidence.disk.components)).digest("hex") !== snapshot.evidence.disk.manifestSha256
+          || !trustedProvenance(evidence, current)) return null;
+        newestText = text;
+        newest = snapshot.observationSequence;
+        newestObserved = snapshot.observedAt;
+        return evidence;
       } catch { return null; }
       finally { clearTimeout(timer); signal.removeEventListener("abort", finish); }
     },

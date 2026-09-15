@@ -70,9 +70,9 @@ test("CLEAN/INFECTED and other ERROR outcomes preserved", async () => {
   }
 });
 test("expired completion cannot write; recovered attempt rejects late verdict; stale recovery cannot affect explicit new claim", async () => {
-  const f = await fixture(1);
-  const claim: DocumentScanClaim = { documentId: f.row.id, organizationId: f.context.organizationId, actorId: f.context.userId, attemptId: f.row.malwareScanAttemptId!, startedAt: f.row.malwareScanStartedAt!.getTime(), policyVersion: 1, identity: { sizeBytes: 1, sha256: f.row.checksumSha256 }, storage: { provider: f.row.storageProvider, bucket: f.row.storageBucket, key: f.row.storageKey } };
-  const clean: TerminalScan = { status: "CLEAN", identity: claim.identity, provenance: { scanner: "fake", engineVersion: "1", signatureVersion: "1", databaseIdentity: "db", daemonIdentity: "load" } };
+  const f = await fixture(2);
+  const claim: DocumentScanClaim = { documentId: f.row.id, organizationId: f.context.organizationId, actorId: f.context.userId, attemptId: f.row.malwareScanAttemptId!, startedAt: f.row.malwareScanStartedAt!.getTime(), policyVersion: 2, identity: { sizeBytes: 1, sha256: f.row.checksumSha256 }, storage: { provider: f.row.storageProvider, bucket: f.row.storageBucket, key: f.row.storageKey } };
+  const clean: TerminalScan = { status: "CLEAN", identity: claim.identity, provenance: { scanner: "fake", engineVersion: "1", signatureVersion: "1", diskManifestSha256: "db", daemonVersionTime: "load" } };
   await assert.rejects(f.persistence.finalize(f.context, claim, clean), isCode("RECOVERY_REQUIRED")); assert.deepEqual(await f.audits(), []);
   await f.recover(); const recovered = await f.read();
   await assert.rejects(f.persistence.finalize(f.context, claim, clean), isCode("RECOVERY_REQUIRED"));

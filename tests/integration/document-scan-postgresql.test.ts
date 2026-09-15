@@ -1,3 +1,5 @@
+import { healthFixture } from "../helpers/signature-health-fixture";
+import { trustedProvenance } from "../../src/application/documents/malware-scan";
 import assert from "node:assert/strict";
 import { randomUUID, createHash } from "node:crypto";
 import test from "node:test";
@@ -12,7 +14,8 @@ const prisma = createTestPrismaClient(requireSafeTestDatabaseConfig(process.env)
 test.after(() => prisma.$disconnect());
 const bytes = Buffer.from("%PDF isolated workflow proof");
 const identity = { sizeBytes: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") };
-const provenance = { scanner: "clamav", engineVersion: "1", signatureVersion: "1", databaseIdentity: "generation1", daemonIdentity: "epoch1" };
+const proofHealth = healthFixture(Date.now());
+const provenance = trustedProvenance(proofHealth, Date.now())!;
 const clean: TerminalScan = { status: "CLEAN", identity, provenance };
 const error: TerminalScan = { status: "ERROR", failureCode: "TIMEOUT" };
 const isCode = (code: string) => (e: unknown) => e instanceof DocumentError && e.code === code;
@@ -33,12 +36,12 @@ test("workflow scans another uploader's same-tenant unattached asset, exact audi
   const service = createDocumentScanner({ persistence: f.persistence,
     storage: { identity: () => ({ provider: "fake", bucket: "private", key: f.doc.storageKey }), async put() {}, async read(_id, opts) { assert.equal(opts?.limit, 10_485_760); return bytes; } },
     pdf: { async validate() { return { kind: "VALID", identity }; } }, scanner: { async scan() { return { kind: "OK", complete: true, identity }; } },
-    health: { async read() { return { lastSuccessfulVerifiedCheckAt: Date.now(), checkResult: "ALREADY_CURRENT", databasesValidated: true, unresolvedError: false, validated: provenance, loaded: provenance }; } },
+    health: { async read() { return proofHealth; } },
   });
   assert.deepEqual(await service(f.doc.id, f.context, { signal: new AbortController().signal }), { documentId: f.doc.id, status: "CLEAN" });
   const row = await f.row(); assert.equal(row.malwareScanSha256, identity.sha256);
-  assert.deepEqual((await f.audits())[0].metadata, { attemptId: row.malwareScanAttemptId, policyVersion: 1 });
-  const claim: DocumentScanClaim = { documentId: row.id, organizationId: row.organizationId, actorId: f.context.userId, startedAt: row.malwareScanStartedAt!.getTime(), attemptId: row.malwareScanAttemptId!, policyVersion: 1, identity, storage: { provider: row.storageProvider, bucket: row.storageBucket, key: row.storageKey } };
+  assert.deepEqual((await f.audits())[0].metadata, { attemptId: row.malwareScanAttemptId, policyVersion: 2 });
+  const claim: DocumentScanClaim = { documentId: row.id, organizationId: row.organizationId, actorId: f.context.userId, startedAt: row.malwareScanStartedAt!.getTime(), attemptId: row.malwareScanAttemptId!, policyVersion: 2, identity, storage: { provider: row.storageProvider, bucket: row.storageBucket, key: row.storageKey } };
   await Promise.all([f.finalize(claim), f.finalize(claim)]); assert.equal((await f.audits()).length, 1); assert.deepEqual(await f.row(), row);
 });
 test("concurrent claims have one winner, active PENDING rejects without mutation/audit", async () => {
@@ -58,7 +61,7 @@ test("mismatched completion cannot finalize; newer rescan cannot be overwritten"
   const f = await fixture(); const first = await f.claim();
   await assert.rejects(f.finalize({ ...first, attemptId: randomUUID() }), isCode("RECOVERY_REQUIRED"));
   assert.deepEqual(await f.audits(), []); await f.finalize(first, error);
-  assert.deepEqual((await f.audits())[0].metadata, { attemptId: first.attemptId, policyVersion: 1, failureCode: "TIMEOUT" });
+  assert.deepEqual((await f.audits())[0].metadata, { attemptId: first.attemptId, policyVersion: 2, failureCode: "TIMEOUT" });
   const next = await f.claim(); assert.notEqual(next.attemptId, first.attemptId); const pending = await f.row();
   await assert.rejects(f.finalize(first), isCode("RECOVERY_REQUIRED")); assert.deepEqual(await f.row(), pending);
   await f.finalize(next); const third = await f.claim(); assert.notEqual(third.attemptId, next.attemptId);
@@ -68,7 +71,7 @@ test("INFECTED ordinary rescan is denied and terminal metadata satisfies constra
   const f = await fixture(); const claim = await f.claim(); await f.finalize(claim, { ...clean, status: "INFECTED" });
   const before = await f.row(); assert.equal(before.malwareFailureCode, null);
   await assert.rejects(f.claim(), isCode("NOT_AVAILABLE")); assert.deepEqual(await f.row(), before);
-  assert.deepEqual((await f.audits())[0].metadata, { attemptId: claim.attemptId, policyVersion: 1 });
+  assert.deepEqual((await f.audits())[0].metadata, { attemptId: claim.attemptId, policyVersion: 2 });
 });
 test("missing permission, membership and organization inactivity rejected in claim and finalization", async () => {
   for (const revoke of ["context", "membership", "organization", "role"] as const) {
@@ -101,4 +104,12 @@ test("audit insertion failure rolls back verdict; duplicate ERROR creates no sec
   assert.deepEqual(await f.row(), before); assert.deepEqual(await f.audits(), []);
   await f.finalize(claim, error); await f.finalize(claim, error);
   assert.equal((await f.audits()).length, 1); const row = await f.row(); assert.equal(row.malwareFailureCode, "TIMEOUT"); assert.equal(row.malwareScannedAt, null);
+});
+
+test("policy 2 claim never migrates an old terminal verdict without explicit claim", async () => {
+  const f = await fixture();
+  await prisma.document.update({ where: { id: f.doc.id }, data: { malwareScanStatus: "ERROR", malwareScanAttemptId: randomUUID(), malwareScanStartedAt: new Date(0), malwarePolicyVersion: 1, malwareFailureCode: "TIMEOUT" } });
+  const before = await f.row(); assert.equal(before.malwarePolicyVersion, 1);
+  const claim = await f.persistence.claim(f.context, f.doc.id);
+  assert.equal(claim.policyVersion, 2); assert.equal((await f.row()).malwarePolicyVersion, 2);
 });

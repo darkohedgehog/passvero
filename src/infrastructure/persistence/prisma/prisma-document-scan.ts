@@ -1,3 +1,4 @@
+import { DOCUMENT_SECURITY_POLICY_VERSION } from "@/src/application/documents/document-security-policy";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { Prisma, type PrismaClient, type Document } from "@/src/generated/prisma/client";
@@ -38,7 +39,7 @@ function matches(row: Document, claim: DocumentScanClaim, context: Authenticated
   return claim.actorId === context.userId && claim.organizationId === context.organizationId
     && row.id === claim.documentId && row.malwareScanAttemptId === claim.attemptId
     && row.malwareScanStartedAt?.getTime() === claim.startedAt && row.malwarePolicyVersion === claim.policyVersion
-    && claim.policyVersion === 1 && row.checksumSha256 === claim.identity.sha256
+    && claim.policyVersion === DOCUMENT_SECURITY_POLICY_VERSION && row.checksumSha256 === claim.identity.sha256
     && Number(row.sizeBytes) === claim.identity.sizeBytes && row.storageProvider === claim.storage.provider
     && row.storageBucket === claim.storage.bucket && row.storageKey === claim.storage.key;
 }
@@ -65,11 +66,11 @@ export class PrismaDocumentScanPersistence implements DocumentScanPersistence, D
       const bytes = identity(row);
       const attemptId = randomUUID();
       await tx.document.update({ where: { id: row.id }, data: {
-        malwareScanStatus: "PENDING", malwareScanAttemptId: attemptId, malwareScanStartedAt: new Date(now), malwarePolicyVersion: 1,
+        malwareScanStatus: "PENDING", malwareScanAttemptId: attemptId, malwareScanStartedAt: new Date(now), malwarePolicyVersion: DOCUMENT_SECURITY_POLICY_VERSION,
         malwareScannedAt: null, malwareScanSha256: null, malwareScanner: null, malwareEngineVersion: null,
         malwareSignatureVersion: null, malwareFailureCode: null,
       } });
-      return Object.freeze({ documentId, organizationId: context.organizationId, actorId: context.userId, attemptId, startedAt: now, policyVersion: 1 as const,
+      return Object.freeze({ documentId, organizationId: context.organizationId, actorId: context.userId, attemptId, startedAt: now, policyVersion: DOCUMENT_SECURITY_POLICY_VERSION,
         identity: Object.freeze(bytes), storage: Object.freeze({ provider: row.storageProvider, bucket: row.storageBucket, key: row.storageKey }) });
     });
   }

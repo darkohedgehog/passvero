@@ -17,9 +17,9 @@ const clean = () => ({
 const error = (failureCode: string) => ({ kind: "ERROR", failureCode });
 
 test("complete matching evidence produces only a policy-bound candidate", () => {
-  assert.deepEqual(decideDocumentSecurity(clean()), { kind: "CLEAN_CANDIDATE", policyVersion: 1, identity });
+  assert.deepEqual(decideDocumentSecurity(clean()), { kind: "CLEAN_CANDIDATE", policyVersion: 2, identity });
   assert.deepEqual(decideDocumentSecurity({ ...clean(), scanner: { kind: "MALWARE_DETECTED", complete: true, identity } }), {
-    kind: "INFECTED_CANDIDATE", policyVersion: 1, identity,
+    kind: "INFECTED_CANDIDATE", policyVersion: 2, identity,
   });
 });
 
@@ -84,7 +84,7 @@ test("untrusted or absent signature health excludes both trustworthy verdicts", 
 
 test("precedence is policy envelope, integrity, PDF, signatures, scanner", () => {
   const conflicting = { ...clean(), pdf: { kind: "ENCRYPTED" }, signatureHealth: "UNTRUSTED", scanner: { kind: "TIMEOUT" } };
-  assert.deepEqual(decideDocumentSecurity({ ...conflicting, policyVersion: 2, integrity: undefined }), error("INVALID_RESPONSE"));
+  assert.deepEqual(decideDocumentSecurity({ ...conflicting, policyVersion: 1, integrity: undefined }), error("INVALID_RESPONSE"));
   assert.deepEqual(decideDocumentSecurity({ ...conflicting, integrity: undefined }), error("INTEGRITY_MISMATCH"));
   assert.deepEqual(decideDocumentSecurity(conflicting), error("PDF_ENCRYPTED"));
   assert.deepEqual(decideDocumentSecurity({ ...conflicting, pdf: clean().pdf }), error("SIGNATURES_UNTRUSTED"));

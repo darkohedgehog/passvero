@@ -2,7 +2,7 @@ import { z } from "zod";
 import { documentBytesIdentitySchema, pdfValidationResultSchema, type DocumentBytesIdentity } from "./pdf-validation";
 
 // Initial, unreleased combined PDF-validation + malware policy, not an upgrade of stored verdicts.
-export const DOCUMENT_SECURITY_POLICY_VERSION = 1;
+export const DOCUMENT_SECURITY_POLICY_VERSION = 2;
 
 export const documentMalwareFailureCodeSchema = z.enum([
   "SCANNER_UNAVAILABLE", "TIMEOUT", "INVALID_RESPONSE", "SCANNER_INTERRUPTED",

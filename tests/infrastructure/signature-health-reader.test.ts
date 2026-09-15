@@ -1,3 +1,4 @@
+import { healthFixture, snapshotFixture } from "../helpers/signature-health-fixture";
 import assert from "node:assert/strict";
 import { chmod, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -5,41 +6,33 @@ import test from "node:test";
 import { createPrivateHealthSnapshotReader, createSignatureHealthProvider, type PrivateHealthSnapshotReader } from "../../src/infrastructure/documents/signature-health-reader";
 const now = 2_000_000_000;
 const socketPath = "/run/clamav/clamd.ctl";
-const provenance = { scanner: "clamav", engineVersion: "1", signatureVersion: "1", databaseIdentity: "verified-generation-1", daemonIdentity: "load-epoch-1" };
-function snapshot() {
-  return { schemaVersion: 1, socketPath, capturedAt: now - 1, expiresAt: now + 1000,
-    evidence: { lastSuccessfulVerifiedCheckAt: now - 100, checkResult: "ALREADY_CURRENT", databasesValidated: true, unresolvedError: false, validated: { ...provenance }, loaded: { ...provenance } } };
-}
+function snapshot() { return snapshotFixture(now, socketPath); }
 const config = { path: "/var/lib/passvero/health.json", socketPath };
 const encode = (value: unknown) => Buffer.from(JSON.stringify(value));
 function provider(value: unknown) {
   return createSignatureHealthProvider(config, { async read(path, options) { assert.equal(path, config.path); assert.equal(options.limit, 16384); return encode(value); } }, () => now);
 }
 const options = () => ({ signal: new AbortController().signal });
-test("complete verified already-current evidence is returned without fabricated timestamps", async () => {
-  const source = snapshot(); assert.deepEqual(await provider(source).read(options()), source.evidence);
-  assert.deepEqual(await provider({ ...source, evidence: { ...source.evidence, checkResult: "UPDATED" } }).read(options()), { ...source.evidence, checkResult: "UPDATED" });
+test("verified current and updated v2 evidence", async () => {
+  const source = snapshot(); assert.deepEqual(await provider(source).read(options()), healthFixture(now));
+  const evidence = { ...source.evidence, updater: { ...source.evidence.updater, result: "UPDATED" } };
+  assert.deepEqual(await provider({ ...source, evidence }).read(options()), { ...healthFixture(now), ...evidence });
 });
-test("strict 24h freshness plus producer validity window", async () => {
+test("strict updater and observation boundaries", async () => {
   const source = snapshot();
-  assert.ok(await provider({ ...source, capturedAt: now, expiresAt: now + 1, evidence: { ...source.evidence, lastSuccessfulVerifiedCheckAt: now - 86_399_999 } }).read(options()));
-  for (const patch of [
-    { capturedAt: now + 1 }, { capturedAt: now - 101 }, { expiresAt: now },
-    { expiresAt: now + 86_400_000 },
-    { evidence: { ...source.evidence, lastSuccessfulVerifiedCheckAt: now - 86_400_000 } },
-    { evidence: { ...source.evidence, lastSuccessfulVerifiedCheckAt: now + 1 } },
-  ]) assert.equal(await provider({ ...source, ...patch }).read(options()), null);
+  assert.ok(await provider({ ...source, expiresAt: now + 1, evidence: { ...source.evidence, updater: { ...source.evidence.updater, completedAt: now - 86_399_999 } } }).read(options()));
+  for (const patch of [{ observedAt: now + 1 }, { expiresAt: now }, { expiresAt: now + 60_001 },
+    { evidence: { ...source.evidence, updater: { ...source.evidence.updater, completedAt: now - 86_400_000 } } },
+    { evidence: { ...source.evidence, updater: { ...source.evidence.updater, completedAt: now + 1 } } }]) {
+    assert.equal(await provider({ ...source, ...patch }).read(options()), null);
+  }
 });
-test("reject missing, incomplete, mismatched, failed, unresolved and unknown evidence", async () => {
+test("v1, unhealthy, unknown, incomplete and contradictory evidence rejected", async () => {
   const source = snapshot();
-  for (const value of [null, {}, { ...source, schemaVersion: 2 }, { ...source, extra: true }, { ...source, socketPath: "/run/other.sock" },
-    { ...source, evidence: { ...source.evidence, extra: true } },
-    { ...source, evidence: { ...source.evidence, unresolvedError: true } },
-    { ...source, evidence: { ...source.evidence, databasesValidated: false } },
-    { ...source, evidence: { ...source.evidence, checkResult: "FAILED" } },
-    { ...source, evidence: { ...source.evidence, loaded: { ...provenance, daemonIdentity: "other" } } },
-    { ...source, evidence: { ...source.evidence, validated: {} } },
-    { ...source, capturedAt: "2026-09-15" },
+  for (const value of [null, {}, { ...source, schemaVersion: 1 }, { ...source, status: "UNTRUSTED" },
+    { ...source, extra: true }, { ...source, socketPath: "/run/other.sock" },
+    { ...source, evidence: { ...source.evidence, disk: {} } },
+    { ...source, evidence: { ...source.evidence, daemon: { ...source.evidence.daemon, dailyVersion: 0 } } },
   ]) assert.equal(await provider(value).read(options()), null);
 });
 test("malformed, duplicate keys, invalid UTF-8, oversized and private errors are sanitized", async () => {
@@ -101,4 +94,14 @@ test("replaced snapshot during read is rejected instead of mixing generations", 
     });
     await assert.rejects(createPrivateHealthSnapshotReader(process.getuid!()).read(path, { ...options(), limit: 16384 }), /HEALTH_UNAVAILABLE/);
   } finally { t.mock.restoreAll(); await rm(directory, { recursive: true }); }
+});
+
+test("same sequence cannot change content; manifest digest must match components", async () => {
+  let value = snapshot();
+  const p = createSignatureHealthProvider(config, { async read() { return encode(value); } }, () => now);
+  assert.ok(await p.read(options()));
+  value = { ...value, evidence: { ...value.evidence, daemon: { ...value.evidence.daemon, engineVersion: "changed" } } };
+  assert.equal(await p.read(options()), null);
+  value = { ...snapshot(), observationSequence: 2, evidence: { ...snapshot().evidence, disk: { ...snapshot().evidence.disk, manifestSha256: "d".repeat(64) } } };
+  assert.equal(await p.read(options()), null);
 });
