@@ -4,8 +4,10 @@ import { Prisma, type PrismaClient, type Document } from "@/src/generated/prisma
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
 import { DocumentError } from "@/src/application/documents/contracts";
 import { documentBytesIdentitySchema } from "@/src/application/documents/pdf-validation";
-import { scanAuditMetadata, scanLeaseActive, terminalScanSchema, type DocumentScanClaim, type DocumentScanPersistence, type TerminalScan } from "@/src/application/documents/malware-scan";
+import { scanAuditMetadata, scanLeaseActive, scanLeaseExpired, terminalScanSchema, type DocumentScanClaim, type DocumentScanPersistence, type TerminalScan } from "@/src/application/documents/malware-scan";
 import { authorizeDocumentActor } from "./prisma-document-assets";
+
+import type { DocumentScanRecoveryPersistence } from "@/src/application/documents/recover-document-scan";
 
 type Tx = Prisma.TransactionClient;
 async function authority(tx: Tx, context: AuthenticatedUserContext) {
@@ -46,7 +48,7 @@ function duplicate(row: Document, result: TerminalScan) {
     : row.malwareScanSha256 === result.identity.sha256 && row.malwareScanner === result.provenance.scanner
       && row.malwareEngineVersion === result.provenance.engineVersion && row.malwareSignatureVersion === result.provenance.signatureVersion;
 }
-export class PrismaDocumentScanPersistence implements DocumentScanPersistence {
+export class PrismaDocumentScanPersistence implements DocumentScanPersistence, DocumentScanRecoveryPersistence {
   constructor(private readonly prisma: PrismaClient) {}
   private async run<T>(work: (tx: Tx) => Promise<T>): Promise<T> {
     try { return await this.prisma.$transaction(work); }
@@ -69,6 +71,30 @@ export class PrismaDocumentScanPersistence implements DocumentScanPersistence {
       } });
       return Object.freeze({ documentId, organizationId: context.organizationId, actorId: context.userId, attemptId, startedAt: now, policyVersion: 1 as const,
         identity: Object.freeze(bytes), storage: Object.freeze({ provider: row.storageProvider, bucket: row.storageBucket, key: row.storageKey }) });
+    });
+  }
+  recover(context: AuthenticatedUserContext, documentId: string, expectedAttemptId: string): Promise<"UPDATED" | "NO_CHANGE"> {
+    if (![documentId, expectedAttemptId].every(id => z.string().uuid().safeParse(id).success)) throw new DocumentError("VALIDATION_ERROR");
+    return this.run(async tx => {
+      await authority(tx, context);
+      const row = await owned(tx, context, documentId);
+      if (row.malwareScanAttemptId !== expectedAttemptId) throw new DocumentError("RECOVERY_REQUIRED");
+      // Persisted evidence cannot distinguish prior recovery from normal TIMEOUT finalization.
+      if (row.malwareScanStatus === "ERROR" && row.malwareFailureCode === "TIMEOUT") return "NO_CHANGE";
+      if (row.malwareScanStatus !== "PENDING") throw new DocumentError("NOT_AVAILABLE");
+      const now = await currentTime(tx);
+      if (!row.malwareScanStartedAt || !scanLeaseExpired(row.malwareScanStartedAt.getTime(), now)) throw new DocumentError("NOT_AVAILABLE");
+      await tx.document.update({ where: { id: row.id }, data: {
+        malwareScanStatus: "ERROR", malwareFailureCode: "TIMEOUT",
+        malwareScannedAt: null, malwareScanSha256: null, malwareScanner: null,
+        malwareEngineVersion: null, malwareSignatureVersion: null,
+      } });
+      await tx.auditLog.create({ data: {
+        organizationId: context.organizationId, actorId: context.userId, action: "DOCUMENT_MALWARE_SCAN_ERROR",
+        entityType: "DOCUMENT", entityId: row.id, summary: "Document scan attempt lease expired.", correlationId: context.correlationId,
+        metadata: scanAuditMetadata({ attemptId: expectedAttemptId, policyVersion: row.malwarePolicyVersion! }, { status: "ERROR", failureCode: "TIMEOUT" }),
+      } });
+      return "UPDATED";
     });
   }
   finalize(context: AuthenticatedUserContext, claim: DocumentScanClaim, input: TerminalScan): Promise<void> {
