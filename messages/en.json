@@ -205,5 +205,23 @@
       "sl": "Slovenščina",
       "pl": "Polski"
     }
+  },
+  "DocumentScan": {
+    "statuses": {
+      "UNSCANNED": "Document not checked",
+      "PENDING": "Checks in progress",
+      "CLEAN": "Checks passed",
+      "INFECTED": "Infected document detected",
+      "ERROR": "Checks failed"
+    },
+    "scan": "Scan document",
+    "recover": "Recover expired attempt",
+    "download": "Download PDF",
+    "refresh": "Refresh status",
+    "loading": "Loading status…",
+    "working": "Processing request…",
+    "blocked": "Download is unavailable until the document passes the checks.",
+    "expired": "The document needs a new scan.",
+    "failure": "The request did not complete. Refresh the status; scanning will not retry automatically."
   }
 }

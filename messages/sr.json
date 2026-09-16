@@ -198,5 +198,23 @@
       "sl": "Slovenščina",
       "pl": "Polski"
     }
+  },
+  "DocumentScan": {
+    "statuses": {
+      "UNSCANNED": "Dokument nije proveren",
+      "PENDING": "Provera je u toku",
+      "CLEAN": "Provere prošle",
+      "INFECTED": "Otkriven zaražen dokument",
+      "ERROR": "Provera nije uspela"
+    },
+    "scan": "Skeniraj dokument",
+    "recover": "Oporavi istekli pokušaj",
+    "download": "Preuzmi PDF",
+    "refresh": "Osveži status",
+    "loading": "Učitavanje statusa…",
+    "working": "Obrada zahteva…",
+    "blocked": "Preuzimanje nije dostupno dok dokument ne prođe provere.",
+    "expired": "Potrebna je nova provera dokumenta.",
+    "failure": "Zahtev nije dovršen. Osvežite status; skeniranje se neće automatski ponoviti."
   }
 }

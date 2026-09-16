@@ -198,5 +198,23 @@
       "sl": "Slovenščina",
       "pl": "Polski"
     }
+  },
+  "DocumentScan": {
+    "statuses": {
+      "UNSCANNED": "Dokument ungeprüft",
+      "PENDING": "Prüfung läuft",
+      "CLEAN": "Prüfungen bestanden",
+      "INFECTED": "Infiziertes Dokument erkannt",
+      "ERROR": "Prüfung fehlgeschlagen"
+    },
+    "scan": "Dokument prüfen",
+    "recover": "Abgelaufenen Versuch beenden",
+    "download": "PDF herunterladen",
+    "refresh": "Status aktualisieren",
+    "loading": "Status wird geladen…",
+    "working": "Anfrage wird verarbeitet…",
+    "blocked": "Der Download ist erst nach bestandenen Prüfungen verfügbar.",
+    "expired": "Das Dokument muss erneut geprüft werden.",
+    "failure": "Die Anfrage wurde nicht abgeschlossen. Aktualisieren Sie den Status; die Prüfung wird nicht automatisch wiederholt."
   }
 }

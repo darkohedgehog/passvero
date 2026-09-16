@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { DocumentScanControls } from "./document-scan-controls";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { attachmentMetadataSchema, DOCUMENT_CATEGORIES, DOCUMENT_LOCALES, type AttachmentDto, type AttachmentCommand } from "@/src/application/products/document-attachments/contracts";
@@ -38,8 +39,9 @@ export function ProductDocumentsSection({ productId, documents, evidence, canEdi
         <p className="mt-1 text-sm">{DOCUMENT_CATEGORIES.includes(row.category as typeof DOCUMENT_CATEGORIES[number]) ? t(`categories.${row.category as typeof DOCUMENT_CATEGORIES[number]}`) : t("categories.OTHER")} · {row.locale?.toUpperCase() ?? t("neutral")} · PDF</p>
         {row.description ? <p className="mt-2 whitespace-pre-wrap break-words text-sm">{row.description}</p> : null}
         <p className="mt-2 text-sm">{t(row.isPublic ? "publicIntended" : "privateIntended")}</p>
+        <DocumentScanControls documentId={row.documentId} canEdit={canEdit} />
         <div className="mt-3 flex flex-wrap gap-2">
-          {row.downloadUrl ? <a className={button} href={row.downloadUrl}>{t("download")}</a> : <span>{t("unavailable")}</span>}
+          {/* Binary delivery is controlled by the scan-aware server endpoint. */}
           {editable ? <><button type="button" className={button} disabled={pending || editor !== null} onClick={() => { setError(null); setEditor(row); }}>{t("edit")}</button>
             <button type="button" className={button} disabled={pending || editor !== null} onClick={() => void remove(row)}>{t("remove")}</button></> : null}
         </div>

@@ -1,3 +1,4 @@
+import { healthFixture } from "../helpers/signature-health-fixture";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import test from "node:test";
@@ -6,6 +7,7 @@ import { DocumentError, type DocumentPersistence, type DocumentRecord, type Priv
 import type { AuthenticatedUserContext } from "../../src/application/context/authenticated-user-context";
 const context:AuthenticatedUserContext={userId:randomUUID(),organizationId:randomUUID(),membershipId:randomUUID(),membershipRole:"EDITOR",membershipStatus:"ACTIVE",permissions:["PRODUCT_EDIT","PRODUCT_READ"],correlationId:randomUUID()};
 const input={filename:"proof.pdf",mimeType:"application/pdf",bytes:Buffer.from("%PDF-1.7 fixture")};
+const now = 1789500000000;
 function fixture() {
  const rows=new Map<string,DocumentRecord>();const objects=new Map<string,Uint8Array>();let audits=0;let failPut=false;let failFinalize=false;
  const persistence:DocumentPersistence={
@@ -16,13 +18,13 @@ function fixture() {
   async fail(c,id){await this.authorize(c,"PRODUCT_EDIT");const row=rows.get(id)!;if(row.status==="PENDING_UPLOAD")rows.set(id,{...row,status:"FAILED"});}
  };
  const storage:PrivateDocumentStorage={identity:()=>({provider:"fake",bucket:"private",key:`documents/${randomUUID()}.pdf`}),async put(i,b){if(failPut)throw new Error("SECRET provider detail");if(objects.has(i.key))throw new Error("overwrite");objects.set(i.key,b.slice());},async read(i){const b=objects.get(i.key);if(!b)throw new Error("absent");return b.slice();}};
- return {rows,objects,services:createDocumentServices({persistence,storage}),audits:()=>audits,setPutFailure:()=>{failPut=true;},setFinalizeFailure:(v:boolean)=>{failFinalize=v;}};
+ return {rows,objects,services:createDocumentServices({persistence,storage,now:()=>now,health:{async read(){return healthFixture(now);}}}),audits:()=>audits,setPutFailure:()=>{failPut=true;},setFinalizeFailure:(v:boolean)=>{failFinalize=v;}};
 }
 test("upload creates private AVAILABLE asset, safe DTO, distinct immutable keys; no dedup",async()=>{
  const f=fixture();const first=await f.services.upload(input,context);const old=[...f.objects.values()][0].slice();const second=await f.services.upload(input,context);
  assert.deepEqual(Object.keys(first).sort(),["documentId","status"]);assert.notEqual(first.documentId,second.documentId);assert.equal(f.objects.size,2);assert.equal(f.audits(),2);assert.deepEqual([...f.objects.values()][0],old);
  for(const key of f.objects.keys())assert.ok(!key.includes(input.filename));
- const file=await f.services.download(first.documentId,context);assert.deepEqual(Buffer.from(file.bytes!),input.bytes);assert.equal(file.filename,"proof.pdf");
+ await assert.rejects(f.services.download(first.documentId,context),e=>e instanceof DocumentError&&e.code==="NOT_AVAILABLE");
 });
 test("invalid input and viewer cannot create rows or objects",async()=>{
  const f=fixture();await assert.rejects(f.services.upload({...input,filename:"bad.exe"},context));
@@ -37,6 +39,7 @@ test("finalization failure is recoverable; repeated finalization produces one au
 });
 test("cross-tenant denied; viewer may read; HEAD returns no bytes",async()=>{
  const f=fixture();const row=await f.services.upload(input,context);await assert.rejects(f.services.download(row.documentId,{...context,organizationId:randomUUID()}));
+ const saved=f.rows.get(row.documentId)!; f.rows.set(saved.id,{...saved,scan:{status:"CLEAN",attemptId:randomUUID(),startedAt:now-1000,scannedAt:now,sha256:saved.checksumSha256,policyVersion:2}});
  const file=await f.services.download(row.documentId,{...context,permissions:["PRODUCT_READ"],membershipRole:"VIEWER"},true);assert.equal(file.bytes,null);
 });
 test("upload snapshots a Buffer before async metadata persistence",async()=>{

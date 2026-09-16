@@ -12,6 +12,7 @@ export interface PrivateDocumentStorage {
   read(identity: StorageIdentity, options?: { readonly signal: AbortSignal; readonly limit: number }): Promise<Uint8Array>;
 }
 export interface DocumentRecord {
+  readonly scan?: import("./access-policy").DocumentScanState;
   readonly id: string;
   readonly originalFilename: string;
   readonly displayName: string | null;
@@ -32,5 +33,5 @@ export interface DocumentServices {
   authorizeUpload(context: AuthenticatedUserContext): Promise<void>;
   upload(input: UploadDocumentInput, context: AuthenticatedUserContext): Promise<{status:"AVAILABLE"; documentId:string}>;
   recoverPending(id: string, context: AuthenticatedUserContext): Promise<{status:"AVAILABLE"; documentId:string}>;
-  download(id: string, context: AuthenticatedUserContext, head?: boolean): Promise<{filename:string; sizeBytes:number; bytes:Uint8Array | null}>;
+  download(id: string, context: AuthenticatedUserContext, head?: boolean, options?: { readonly signal: AbortSignal }): Promise<{filename:string; sizeBytes:number; bytes:Uint8Array | null}>;
 }

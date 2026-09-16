@@ -5,7 +5,9 @@ After=passvero-qpdf-broker.socket
 
 [Service]
 Type=simple
-User=root
+# System service defaults to UID 0. Explicit User=root on systemd 255
+# can drop CAP_SETUID during seccomp setup with NoNewPrivileges=yes.
+# Keep the existing bounding set; do not add ambient capabilities.
 Group=root
 ExecStartPre=+/usr/bin/python3 -I /usr/local/libexec/passvero-qpdf-broker-setup.py
 ExecStart=/usr/bin/python3 -I /usr/local/libexec/passvero-qpdf-broker.py

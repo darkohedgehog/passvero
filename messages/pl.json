@@ -198,5 +198,23 @@
       "sl": "Slovenščina",
       "pl": "Polski"
     }
+  },
+  "DocumentScan": {
+    "statuses": {
+      "UNSCANNED": "Dokument niesprawdzony",
+      "PENDING": "Trwa sprawdzanie",
+      "CLEAN": "Kontrole zakończone pomyślnie",
+      "INFECTED": "Wykryto zainfekowany dokument",
+      "ERROR": "Sprawdzanie nie powiodło się"
+    },
+    "scan": "Sprawdź dokument",
+    "recover": "Zakończ wygasłą próbę",
+    "download": "Pobierz PDF",
+    "refresh": "Odśwież status",
+    "loading": "Ładowanie statusu…",
+    "working": "Przetwarzanie żądania…",
+    "blocked": "Pobieranie jest niedostępne, dopóki dokument nie przejdzie kontroli.",
+    "expired": "Dokument wymaga ponownego sprawdzenia.",
+    "failure": "Żądanie nie zostało ukończone. Odśwież status; sprawdzanie nie zostanie automatycznie ponowione."
   }
 }

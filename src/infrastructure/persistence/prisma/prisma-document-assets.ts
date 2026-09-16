@@ -18,7 +18,9 @@ export async function authorizeDocumentActor(tx: Tx, context: AuthenticatedUserC
 }
 function record(row: Document): DocumentRecord {
   if (row.sizeBytes <= BigInt(0) || row.sizeBytes > BigInt(MAX_DOCUMENT_PDF_SIZE)) throw new DocumentError("NOT_AVAILABLE");
-  return { id: row.id, originalFilename: row.originalFilename, displayName: row.displayName, sizeBytes: Number(row.sizeBytes), checksumSha256: row.checksumSha256, status: row.status, storage: { provider: row.storageProvider, bucket: row.storageBucket, key: row.storageKey } };
+  return { scan: { status: row.malwareScanStatus, attemptId: row.malwareScanAttemptId,
+    startedAt: row.malwareScanStartedAt?.getTime() ?? null, scannedAt: row.malwareScannedAt?.getTime() ?? null,
+    sha256: row.malwareScanSha256, policyVersion: row.malwarePolicyVersion }, id: row.id, originalFilename: row.originalFilename, displayName: row.displayName, sizeBytes: Number(row.sizeBytes), checksumSha256: row.checksumSha256, status: row.status, storage: { provider: row.storageProvider, bucket: row.storageBucket, key: row.storageKey } };
 }
 async function owned(tx: Tx, context: AuthenticatedUserContext, id: string, lock = false) {
   if (lock) await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Document" WHERE "id" = ${id}::uuid AND "organizationId" = ${context.organizationId}::uuid FOR UPDATE`);

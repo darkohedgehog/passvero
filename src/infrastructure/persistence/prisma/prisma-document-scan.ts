@@ -27,8 +27,11 @@ async function owned(tx: Tx, context: AuthenticatedUserContext, id: string) {
 }
 async function currentTime(tx: Tx): Promise<number> {
   // Read after row-lock acquisition: transaction start time could predate a lock wait.
-  const [row] = await tx.$queryRaw<{ now: Date }[]>`SELECT date_trunc('milliseconds', clock_timestamp()) AS now`;
-  return row.now.getTime();
+  // Numeric epoch avoids adapter/session timezone reinterpretation of SQL timestamps.
+  const [row] = await tx.$queryRaw<{ milliseconds: bigint }[]>`SELECT floor(extract(epoch FROM clock_timestamp()) * 1000)::bigint AS milliseconds`;
+  const now = Number(row.milliseconds);
+  if (!Number.isSafeInteger(now) || now < 0) throw new DocumentError("OPERATIONAL_FAILURE");
+  return now;
 }
 function identity(row: Document) {
   const parsed = documentBytesIdentitySchema.safeParse({ sizeBytes: Number(row.sizeBytes), sha256: row.checksumSha256 });

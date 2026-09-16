@@ -1,3 +1,6 @@
+import { healthFixture } from "../helpers/signature-health-fixture";
+import { trustedProvenance } from "../../src/application/documents/malware-scan";
+import { PrismaDocumentScanPersistence } from "../../src/infrastructure/persistence/prisma/prisma-document-scan";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import test from "node:test";
@@ -17,7 +20,7 @@ async function fixture() {
  const objects=new Map<string,Uint8Array>();let fail=false;
  const storage:PrivateDocumentStorage={identity:()=>({provider:"fake",bucket:"isolated",key:randomUUID()}),async put(i,b){if(fail)throw new Error("storage failed");assert.ok(!objects.has(i.key));objects.set(i.key,b.slice());},async read(i){const b=objects.get(i.key);if(!b)throw new Error("missing");return b;}};
  const persistence=new PrismaDocumentPersistence(prisma);
- return {context,objects,persistence,storage,services:createDocumentServices({persistence,storage}),failStorage:()=>{fail=true;}};
+ return {context,objects,persistence,storage,services:createDocumentServices({persistence,storage,health:{async read(){return healthFixture(Date.now());}}}),failStorage:()=>{fail=true;}};
 }
 test("AVAILABLE CHECKs and one audit, no Product/version/link mutation; concurrent finalization idempotent",async()=>{
  const f=await fixture();const before=await Promise.all([prisma.product.count(),prisma.productVersion.count(),prisma.productDocument.count()]);
@@ -34,8 +37,13 @@ test("storage failure produces FAILED timestamp and no success audit",async()=>{
 test("database-authoritative viewer and cross tenant checks; authorized viewer download",async()=>{
  const f=await fixture();const g=await fixture();const row=await f.services.upload(input,f.context);
  await assert.rejects(f.services.download(row.documentId,g.context));await assert.rejects(f.services.recoverPending(row.documentId,g.context));
+ await assert.rejects(f.services.download(row.documentId,f.context),e=>e instanceof DocumentError&&e.code==="NOT_AVAILABLE");
+ const scans=new PrismaDocumentScanPersistence(prisma); const claim=await scans.claim(f.context,row.documentId);
+ await scans.finalize(f.context,claim,{status:"CLEAN",identity:claim.identity,provenance:trustedProvenance(healthFixture(Date.now()),Date.now())!});
  await prisma.membership.update({where:{id:f.context.membershipId},data:{role:"VIEWER"}});
  await assert.rejects(f.services.upload(input,f.context),e=>e instanceof DocumentError&&e.code==="FORBIDDEN");
+ const deliveryRow=await f.persistence.read(f.context,row.documentId,"PRODUCT_READ");
+ assert.equal(deliveryRow.scan?.policyVersion,2); assert.ok(deliveryRow.scan?.scannedAt && deliveryRow.scan.scannedAt <= Date.now(),JSON.stringify({scan:deliveryRow.scan,now:Date.now()}));
  assert.deepEqual(Buffer.from((await f.services.download(row.documentId,f.context)).bytes!),input.bytes);
  await prisma.organization.update({where:{id:f.context.organizationId},data:{status:"SUSPENDED"}});
  await assert.rejects(f.services.download(row.documentId,f.context));
@@ -67,7 +75,7 @@ test("existing Product and draft rows remain byte-for-byte unchanged after uploa
  const before=await state();await f.services.upload(input,f.context);assert.deepEqual(await state(),before);
 });
 
-test("malware persistence fields do not leak into existing records or private download responses", async () => {
+test("upload DTO stays minimal and ERROR cannot download despite AVAILABLE lifecycle", async () => {
  const f = await fixture();
  const uploaded = await f.services.upload(input, f.context);
  assert.deepEqual(Object.keys(uploaded).sort(), ["documentId", "status"]);
@@ -77,9 +85,7 @@ test("malware persistence fields do not leak into existing records or private do
  // Database fixture only: no scanner invocation and no claim that bytes were scanned.
  await prisma.document.update({where:{id:row.id},data:{malwareScanStatus:"ERROR",malwareScanAttemptId:randomUUID(),malwareScanStartedAt:started,malwarePolicyVersion:1,malwareFailureCode:"TIMEOUT"}});
  const record = await f.persistence.read(f.context,row.id,"PRODUCT_READ");
- assert.deepEqual(Object.keys(record).sort(),["checksumSha256","displayName","id","originalFilename","sizeBytes","status","storage"]);
- const downloaded = await f.services.download(row.id,f.context);
- assert.deepEqual(Object.keys(downloaded).sort(),["bytes","filename","sizeBytes"]);
- assert.deepEqual(Buffer.from(downloaded.bytes!),input.bytes);
- // This schema-only slice intentionally leaves private download behavior unchanged.
+ assert.deepEqual(Object.keys(record).sort(),["checksumSha256","displayName","id","originalFilename","scan","sizeBytes","status","storage"]);
+ assert.equal(record.scan?.status,"ERROR");
+ await assert.rejects(f.services.download(row.id,f.context),e=>e instanceof DocumentError&&e.code==="NOT_AVAILABLE");
 });

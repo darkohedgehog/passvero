@@ -60,7 +60,7 @@ export function createDocumentHttpHandlers(deps: {
         if (new URL(request.url).search) throw new DocumentError("VALIDATION_ERROR");
         if (active >= 4) throw new DocumentError("OPERATIONAL_FAILURE");
         active++; acquired = true;
-        const file = await deps.services.download(id, ctx, head);
+        const file = await deps.services.download(id, ctx, head, { signal: request.signal });
         const ascii = file.filename.replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 200) || "document.pdf";
         const encoded = encodeURIComponent(file.filename).replace(/['()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
         return new Response(head || !file.bytes ? null : new Uint8Array(file.bytes), { headers: {
