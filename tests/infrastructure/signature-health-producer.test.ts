@@ -37,7 +37,7 @@ test("healthy UPDATED and verified ALREADY_CURRENT reach actual reader; timestam
   const f = fixture();
   for (const current of [false, true]) {
     f.set({ ...f.observation, updaterLog: cycle() + (current ? cycle(true) : "") });
-    assert.equal(await f.run(), "PUBLISHED"); await settle();
+    assert.equal((await f.run()).result, "PUBLISHED"); await settle();
     const reader = createSignatureHealthProvider({ path: "/private/snapshot", socketPath: "/run/clamav/clamd.ctl" }, { async read() { return f.bytes()!; } }, () => now);
     const value = await reader.read({ signal: new AbortController().signal });
     assert.ok(value); const snapshot = JSON.parse(Buffer.from(f.bytes()!).toString());
@@ -49,27 +49,27 @@ test("healthy UPDATED and verified ALREADY_CURRENT reach actual reader; timestam
 test("future/expired, missing, partial and unsupported evidence never publishes healthy", async () => {
   const f = fixture();
   for (const log of ["", cycle().slice(0, -1), cycle().replace("--------------------------------------", "WARNING: secret-path"), cycle().replace("daily database available", "unknown"), "x".repeat(1_048_577)]) {
-    f.set({ ...f.observation, updaterLog: log }); assert.equal(await f.run(), "UNTRUSTED"); await settle(); assert.equal(f.bytes(), undefined);
+    f.set({ ...f.observation, updaterLog: log }); assert.equal((await f.run()).result, "UNTRUSTED"); await settle(); assert.equal(f.bytes(), undefined);
   }
   assert.throws(() => parseFreshclamEvidence(cycle(), f.observation.components, now - 60_001));
   assert.throws(() => parseFreshclamEvidence(cycle(), f.observation.components, now - 60_000 + 86_400_000));
 });
 test("failed updater or later validation/reload error invalidates without renewing timestamp or leaking raw text", async () => {
-  const f = fixture(); assert.equal(await f.run(), "PUBLISHED"); await settle();
+  const f = fixture(); assert.equal((await f.run()).result, "PUBLISHED"); await settle();
   f.set({ ...f.observation, updaterLog: cycle() + prefix + "ERROR: SECRET_SENTINEL\n" });
-  assert.equal(await f.run(), "UNTRUSTED"); await settle(); assert.equal(f.bytes(), undefined);
+  assert.equal((await f.run()).result, "UNTRUSTED"); await settle(); assert.equal(f.bytes(), undefined);
   f.set({ ...f.observation, daemonLog: "WARNING: reload failed SECRET_SENTINEL" });
-  assert.equal(await f.run(), "UNTRUSTED"); await settle(); assert.equal(f.invalidations(), 2);
+  assert.equal((await f.run()).result, "UNTRUSTED"); await settle(); assert.equal(f.invalidations(), 2);
 });
 test("observed mismatch/change and malformed/unavailable daemon rejected", async () => {
   for (const reply of ["PONG\0", `ClamAV 1.5.3/2/${stamp}\0`, `ClamAV 1.5.3/28123/${stamp}\0trailing`]) {
-    const f = fixture(); f.io.version = async () => reply; assert.equal(await f.run(), "UNTRUSTED"); await settle();
+    const f = fixture(); f.io.version = async () => reply; assert.equal((await f.run()).result, "UNTRUSTED"); await settle();
   }
   const f = fixture(); let calls = 0;
   f.io.collect = async () => ({ ...f.observation, sourceIdentity: String(++calls) });
-  assert.equal(await f.run(), "UNTRUSTED"); await settle();
+  assert.equal((await f.run()).result, "UNTRUSTED"); await settle();
   f.io.version = async () => { throw new Error("private socket"); };
-  assert.equal(await f.run(), "UNTRUSTED");
+  assert.equal((await f.run()).result, "UNTRUSTED");
   assert.throws(() => parseDaemonVersion("x".repeat(4097)));
 });
 test("five seconds includes collection and validation; stalled collector cannot publish later or overlap", async t => {
@@ -78,19 +78,19 @@ test("five seconds includes collection and validation; stalled collector cannot 
   t.mock.timers.enable({ apis: ["setTimeout"] });
   try {
     const pending = f.run(); for (let i = 0; i < 5; i++) await Promise.resolve();
-    assert.equal(await f.run(), "BUSY"); t.mock.timers.tick(5000);
-    assert.equal(await pending, "UNTRUSTED"); assert.equal(await f.run(), "BUSY");
+    assert.equal((await f.run()).result, "BUSY"); t.mock.timers.tick(5000);
+    assert.equal((await pending).result, "UNTRUSTED"); assert.equal((await f.run()).result, "BUSY");
     release(f.observation); await settle(); assert.equal(f.bytes(), undefined);
   } finally { t.mock.timers.reset(); }
   let monotonic = 0; const g = fixture();
   g.io.version = async () => { monotonic = 5000; return `ClamAV 1.5.3/28123/${stamp}\0`; };
-  assert.equal(await createSignatureHealthProducer("/run/clamav/clamd.ctl", g.io, { now: () => now, monotonic: () => monotonic })(), "UNTRUSTED");
+  assert.equal((await createSignatureHealthProducer("/run/clamav/clamd.ctl", g.io, { now: () => now, monotonic: () => monotonic })()).result, "UNTRUSTED");
 });
 test("publication/invalidation failure explicit; no HEALTHY success on failed rename", async () => {
   const f = fixture(); f.io.publish = async () => { throw new Error("private path"); };
-  assert.equal(await f.run(), "OPERATIONAL_FAILURE"); await settle(); assert.equal(f.bytes(), undefined);
+  assert.equal((await f.run()).result, "OPERATIONAL_FAILURE"); await settle(); assert.equal(f.bytes(), undefined);
   f.io.collect = async () => { throw new Error(); }; f.io.invalidate = async () => { throw new Error(); };
-  assert.equal(await f.run(), "OPERATIONAL_FAILURE");
+  assert.equal((await f.run()).result, "OPERATIONAL_FAILURE");
 });
 test("real atomic filesystem publication and lock; actual protected reader; stale sequence rejected", async () => {
   const directory = await mkdtemp(join(process.cwd(), "producer-fixture-"));
@@ -101,11 +101,11 @@ test("real atomic filesystem publication and lock; actual protected reader; stal
     const f = fixture(); io.collect = f.io.collect; io.version = f.io.version;
     assert.equal(await io.acquire(), true); assert.equal(await other.acquire(), false); await io.release();
     const run = createSignatureHealthProducer(config.socketPath, io, { now: () => now, monotonic: () => 0 });
-    assert.equal(await run(), "PUBLISHED"); await settle();
+    assert.equal((await run()).result, "PUBLISHED"); await settle();
     const older = await readFile(outputPath);
     const reader = createSignatureHealthProvider({ path: outputPath, socketPath: config.socketPath }, createPrivateHealthSnapshotReader(process.getuid!()), () => now);
     assert.ok(await reader.read({ signal: new AbortController().signal }));
-    assert.equal(await run(), "PUBLISHED"); await settle(); assert.ok(await reader.read({ signal: new AbortController().signal }));
+    assert.equal((await run()).result, "PUBLISHED"); await settle(); assert.ok(await reader.read({ signal: new AbortController().signal }));
     await writeFile(outputPath, older); assert.equal(await reader.read({ signal: new AbortController().signal }), null);
     await io.invalidate(); assert.equal(await reader.read({ signal: new AbortController().signal }), null);
   } finally { await rm(directory, { recursive: true, force: true }); }
@@ -157,4 +157,52 @@ test("bounded source capture uses configured files and hashes actual synthetic d
     await assert.rejects(io.collect(new AbortController().signal), /DATABASE_INVALID/);
     // This verifies integrity plumbing only; it does not validate synthetic signatures.
   } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test("known collection failures preserve exact allowlisted reason; unknown errors never leak", async () => {
+  for (const reason of ["CANCELLED", "CONFIGURATION_CHANGED", "CONFIGURATION_INVALID", "DAEMON_LOG_INCOMPLETE", "DAEMON_UNAVAILABLE", "DATABASE_INVALID", "DATABASE_SET_UNCERTAIN", "INPUT_BOUND", "INPUT_CHANGED", "LOCK_REQUIRED", "OWNER_REQUIRED", "PRIVATE_INPUT_REQUIRED", "PUBLICATION_INVALID", "SEQUENCE_INVALID", "SEQUENCE_LOST"] as const) {
+    const f = fixture(); f.io.collect = async () => { throw new Error(reason); };
+    assert.deepEqual(await f.run(), {result:"UNTRUSTED", reason, phase:"COLLECT", durationMs:0});
+    assert.equal(f.invalidations(),1); assert.equal(f.bytes(),undefined);
+  }
+  for (const error of [new Error("SECRET_SENTINEL /private/path"), "SECRET_SENTINEL", {message:"INPUT_CHANGED SECRET_SENTINEL"}]) {
+    const f=fixture(); f.io.collect=async()=>{throw error;};
+    const report=await f.run(); assert.equal(report.reason,"UNKNOWN_FAILURE");
+    assert.ok(!JSON.stringify(report).includes("SECRET_SENTINEL"));
+  }
+  const f=fixture(); f.io.collect=async()=>{throw Object.assign(new Error("SECRET_SENTINEL"),{code:"ENOENT"});};
+  assert.equal((await f.run()).reason,"INPUT_UNAVAILABLE");
+});
+test("actual evidence and comparison branches have bounded reasons and phases", async () => {
+  for (const [log,reason] of [["bad\n","EVIDENCE_INVALID"],[cycle(true),"EVIDENCE_CONTINUITY_REQUIRED"]]) {
+    const f=fixture(); f.set({...f.observation,updaterLog:log});
+    const report=await f.run(); assert.equal(report.reason,reason);assert.equal(report.phase,"UPDATER");
+  }
+  const d=fixture();d.set({...d.observation,daemonLog:"bad\n"});assert.equal((await d.run()).reason,"DAEMON_UNCERTAIN");
+  const c=fixture();let calls=0;c.io.collect=async()=>({...c.observation,sourceIdentity:String(++calls)});
+  assert.equal((await c.run()).reason,"OBSERVATION_CHANGED");
+  const v=fixture();v.io.version=async()=>`ClamAV 1.5.3/2/${stamp}\0`;
+  assert.equal((await v.run()).reason,"HEALTH_IDENTITY_INVALID");
+});
+test("operational errors override rejection; acquire and cleanup are classified without changing outcomes", async () => {
+  const f=fixture();f.io.publish=async()=>{throw new Error("SECRET");};
+  assert.equal((await f.run()).reason,"PUBLICATION_FAILED");
+  f.io.invalidate=async()=>{throw new Error("SECRET");};
+  assert.deepEqual(await f.run(),{result:"OPERATIONAL_FAILURE",reason:"INVALIDATION_FAILED",phase:"INVALIDATE",durationMs:0});
+  f.io.release=async()=>{throw new Error("SECRET");};
+  assert.equal((await f.run()).reason,"INVALIDATION_FAILED");
+  const a=fixture();a.io.acquire=async()=>{throw new Error("SECRET");};
+  assert.deepEqual(await a.run(),{result:"OPERATIONAL_FAILURE",reason:"UNKNOWN_FAILURE",phase:"ACQUIRE",durationMs:0});
+  const r=fixture();r.io.release=async()=>{throw new Error("SECRET");};
+  assert.equal((await r.run()).reason,"RELEASE_FAILED");
+  const b=fixture();b.io.acquire=async()=>false;
+  assert.deepEqual(await b.run(),{result:"BUSY",reason:null,phase:"ACQUIRE",durationMs:0});
+  const p=fixture();assert.deepEqual(await p.run(),{result:"PUBLISHED",reason:null,phase:"COMPLETE",durationMs:0});
+});
+test("deadline and clock rejection retain original budget and invalidation", async () => {
+  const f=fixture();let elapsed=0;f.io.collect=async()=>{elapsed=5000;return f.observation;};
+  const report=await createSignatureHealthProducer("/run/clamav/clamd.ctl",f.io,{now:()=>now,monotonic:()=>elapsed})();
+  assert.equal(report.reason,"DEADLINE_EXCEEDED");assert.equal(report.durationMs,5000);assert.equal(f.invalidations(),1);
+  const c=fixture();let wall=now;c.io.collect=async()=>{wall--;return c.observation;};
+  assert.equal((await createSignatureHealthProducer("/run/clamav/clamd.ctl",c.io,{now:()=>wall,monotonic:()=>0})()).reason,"CLOCK_MOVED_BACKWARDS");
 });
