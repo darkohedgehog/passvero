@@ -53,3 +53,23 @@ test("scan-specific byte limit cancels overflow; caller abort cancels body and r
  await assert.rejects(small.read(small.identity(), {signal:new AbortController().signal,limit:4}));
  assert.equal(overflowCancelled,true);
 });
+
+test("acceptance removal refuses production and arbitrary paths; deletes one exact staging key", async () => {
+  const { randomUUID } = await import("node:crypto");
+  const calls: { url: string; init?: RequestInit }[] = [];
+  const transport: typeof fetch = async (url, init) => {
+    calls.push({ url: String(url), init });
+    return new Response(JSON.stringify(init?.method === "DELETE" ? [] : { id: "passvero-staging-documents", public: false }), { status: 200 });
+  };
+  const config = parseDocumentStorageConfig({ url: "https://abcdefghijklmnopqrst.supabase.co", key: "sb_secret_" + "a".repeat(32), bucket: "passvero-staging-documents", environment: "staging" });
+  const storage = new SupabaseDocumentStorage(config, transport);
+  await assert.rejects(storage.removeAcceptanceObject("documents/"));
+  assert.equal(calls.length, 0);
+  const key = `documents/${randomUUID()}.pdf`;
+  await storage.removeAcceptanceObject(key);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].init?.method, "DELETE");
+  assert.deepEqual(JSON.parse(String(calls[1].init?.body)), { prefixes: [key] });
+  const production = new SupabaseDocumentStorage({ ...config, environment: "production", bucket: "passvero-production-documents" }, transport);
+  await assert.rejects(production.removeAcceptanceObject(key), /FORBIDDEN/);
+});

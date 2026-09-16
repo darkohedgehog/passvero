@@ -1,0 +1,42 @@
+[Unit]
+Description=Passvero staging fixed PDF validation broker
+Requires=passvero-qpdf-broker.socket
+After=passvero-qpdf-broker.socket
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStartPre=+/usr/bin/python3 -I /usr/local/libexec/passvero-qpdf-broker-setup.py
+ExecStart=/usr/bin/python3 -I /usr/local/libexec/passvero-qpdf-broker.py
+Sockets=passvero-qpdf-broker.socket
+Delegate=memory pids
+DelegateSubgroup=adapter
+MemoryMax=768M
+MemorySwapMax=0
+CPUQuota=100%
+CPUWeight=10
+TasksMax=64
+PrivateNetwork=yes
+RestrictAddressFamilies=AF_UNIX
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=CAP_CHOWN CAP_DAC_OVERRIDE CAP_SETUID CAP_SETGID CAP_KILL
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=no
+RuntimeDirectory=passvero-qpdf
+RuntimeDirectoryMode=0711
+ReadWritePaths=/run/passvero-qpdf /sys/fs/cgroup/system.slice/passvero-qpdf-acceptance.service
+InaccessiblePaths=/var/www /etc/passvero /etc/passvero-staging /etc/postgresql /var/lib/postgresql /run/postgresql /var/lib/passvero-clamav-install-20260914 /var/lib/passvero-signature-trust /var/lib/passvero-signature-health
+WorkingDirectory=/
+Restart=no
+TimeoutStopSec=3s
+KillMode=control-group
+OOMPolicy=stop
+UMask=0077
+StandardOutput=null
+StandardError=null

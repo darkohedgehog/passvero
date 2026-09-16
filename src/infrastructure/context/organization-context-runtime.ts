@@ -1,4 +1,5 @@
 import "server-only";
+import { readOnlyContextRepository } from "./read-only-context-repository";
 import { verifyRuntimeProxy } from "@/src/infrastructure/http/trusted-proxy-runtime";
 
 import { randomUUID } from "node:crypto";
@@ -78,7 +79,12 @@ export async function selectOrganizationForCurrentSession(
   return services.selectOrganization(identity, targetOrganizationId);
 }
 
-function createServices() {
+export async function resolveReadOnlyAuthenticatedUserContext(headers: Headers) {
+  const services = createServices(true);
+  return services.resolveContext(await services.readSession(headers));
+}
+
+function createServices(readOnly = false) {
   const auth = getBetterAuthServer();
   const sessionReader = createBetterAuthSessionReader((input) =>
     auth.api.getSession(input)
@@ -100,7 +106,7 @@ function createServices() {
     readSession: (headers: Headers) => sessionReader.read(headers),
     resolveContext: createAuthenticatedUserContextResolver({
       resolveCurrentUser,
-      repository,
+      repository: readOnly ? readOnlyContextRepository(repository) : repository,
       correlationId: randomUUID,
     }),
     selectOrganization: createOrganizationSelectionService({

@@ -61,6 +61,18 @@ export class SupabaseDocumentStorage implements PrivateDocumentStorage {
     const response = await this.request(`object/${identity.bucket}/${identity.key}`, { method: "POST", headers: { "content-type": "application/pdf", "x-upsert": "false", "cache-control": "no-store" }, body: new Uint8Array(bytes) });
     await response.body?.cancel();
   }
+  /** Exact-object staging acceptance cleanup only; never prefix/tenant deletion. */
+  async removeAcceptanceObject(key: string): Promise<void> {
+    if (this.config.environment !== "staging") throw new DocumentError("FORBIDDEN");
+    this.validate({ provider: "supabase", bucket: this.config.bucket, key });
+    await this.assertPrivateBucket();
+    const response = await this.request(`object/${this.config.bucket}`, {
+      method: "DELETE", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ prefixes: [key] }),
+    });
+    // Storage's remove API is exact-key and idempotent for absent objects.
+    await response.body?.cancel();
+  }
   async read(identity: StorageIdentity, options?: { readonly signal: AbortSignal; readonly limit: number }): Promise<Uint8Array> {
     this.validate(identity);
     await this.assertPrivateBucket(options?.signal);
