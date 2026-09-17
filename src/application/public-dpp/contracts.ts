@@ -3,6 +3,7 @@ export const PUBLIC_DPP_LOCALES = ["hr", "sr", "en", "de", "sl", "pl"] as const;
 export type PublicDppLocale = (typeof PUBLIC_DPP_LOCALES)[number];
 
 export interface PublicDpp {
+  readonly manufacturer?: import("../products/manufacturer/contracts").Manufacturer | null;
   readonly documents?: readonly import("./documents").PublicDocumentItem[];
   readonly locale: PublicDppLocale;
   readonly availableLocales: readonly PublicDppLocale[];

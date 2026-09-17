@@ -219,5 +219,32 @@
     "blocked": "Pobieranie jest niedostępne, dopóki dokument nie przejdzie kontroli.",
     "expired": "Dokument wymaga ponownego sprawdzenia.",
     "failure": "Żądanie nie zostało ukończone. Odśwież status; sprawdzanie nie zostanie automatycznie ponowione."
+  },
+  "Manufacturer": {
+    "title": "Producent",
+    "notice": "Te dane będą publiczne po publikacji. Zmiany w katalogu nie aktualizują kopii danych produktów.",
+    "snapshot": "Dane do publikacji",
+    "empty": "Nie wybrano producenta",
+    "directory": "Katalog",
+    "choose": "Wybierz producenta",
+    "create": "Utwórz producenta",
+    "save": "Zapisz zmiany katalogu",
+    "apply": "Zastosuj wybraną wersję do szkicu",
+    "remove": "Usuń ze szkicu",
+    "success": "Zapisano. Wybierz i jawnie zastosuj wersję.",
+    "failure": "Żądanie nie powiodło się. Odśwież stronę i spróbuj ponownie.",
+    "reload": "Odśwież",
+    "name": "Nazwa",
+    "addressLine1": "Adres, wiersz 1",
+    "addressLine2": "Adres, wiersz 2",
+    "city": "Miasto",
+    "region": "Region",
+    "postalCode": "Kod pocztowy",
+    "countryCode": "Kod kraju (ISO, dwie litery)",
+    "publicEmail": "Publiczny e-mail (opcjonalnie)",
+    "website": "Strona internetowa (opcjonalnie)",
+    "new": "Nowy producent",
+    "published": "Opublikowane dane",
+    "pending": "Zapisywanie…"
   }
 }

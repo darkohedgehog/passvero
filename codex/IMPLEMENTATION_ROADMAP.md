@@ -102,7 +102,7 @@ Ova ograničenja ne poništavaju potvrđeni staging UI tok. Razvoj i realni unos
 na stagingu. **Nema production aktivacije dok aplikacija nije završena i proverena;
 rollout zahteva zasebno odobrenje.** Ranija production infrastruktura postoji.
 
-## Tačno jedan preporučeni sledeći zadatak
+## Tada preporučeni sledeći zadatak (istorijski)
 
 **Economic Operator / Manufacturer** — zasebno odobriti minimalan korisnički tok
 odgovornog proizvođača/operatora, odvojen od tenant i billing identiteta. Ne započinje
@@ -135,3 +135,24 @@ poruke u šest jezika: 41 relevantnih presentation testova i novi build PASS;
 prikaz poruke i prazan anonimni DPP potvrđeni na završnom buildu. Nije ponovljena
 nepromenjena infra acceptance serija. Production i svi raniji NOT_PROVEN statusi
 ostaju nepromenjeni. Detalji: malware ugovor, odeljak Public DPP staging evidence.
+
+## Dopuna: Manufacturer — staging tok završen (2026-09-17)
+
+Tenant adresar EconomicOperator i eksplicitni ProductVersion manufacturer
+snapshot implementirani su i prihvaćeni na staging buildu `SG9637exSQVmIY3ePYVb2`
+(baza `880b34501b96830c8d94df601d654949a0512842` plus pregledani diff).
+Aditivna migracija i stvarni UI create/select/apply/publish tok prošli su.
+Anonimna v1 sa Zagrebom ostala je nepromenjena posle izmene adresara na Split;
+novi draft nasledio je stari snapshot, pa je eksplicitno osvežen i objavljen kao
+v2 sa Splitom na istom javnom linku. Read-only staging SQL potvrđuje očuvanu v1.
+Sintetički `DPP-MFR-20260917-01`, operator, obe verzije i audit namerno ostaju.
+
+Lokalno: 56 fokusiranih i 18 disposable PostgreSQL testova, TypeScript, lint,
+whitespace i webpack PASS; dve stare statičke assertion greške reprodukovane su
+na čistoj bazi i nisu nov regresijski nalaz. Cross-tenant/CAS dokazi su lokalni.
+Detalji i rollback: `codex/MANUFACTURER_IMPLEMENTATION.md`.
+
+Sledeći predlog je zasebno odobren GTIN/GS1 opseg. Slika proizvoda, pretraga i CSV
+export/import ostaju u roadmapu; ništa od toga nije započeto. Aplikacijski
+signature allowlist ostaje ograničen; svi raniji NOT_PROVEN statusi ostaju.
+Production aktivacija nije odobrena. Diff ostaje necommitovan.

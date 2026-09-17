@@ -378,3 +378,21 @@ readiness assessment, and documentation synchronization.
 This deliberate process was chosen to maximize long-term maintainability,
 correctness, and production stability rather than short-term implementation
 speed.
+## Approved bounded addendum — manufacturer snapshots (2026-09-17)
+
+Authorized by `PRODUCT_MANUFACTURER_ECONOMIC_OPERATOR_STAGING_IMPLEMENTATION`.
+The original freeze remains a historical baseline; this additive extension adds
+`EconomicOperator` and `ProductVersionManufacturer`, not a redesign of the
+Product/Passport/QRCode chain. Only MANUFACTURER is implemented (implicit in the
+version relation). EconomicOperator belongs to one Organization; composite FKs
+bind the operator and ProductVersion snapshot to that same tenant. No billing
+backfill, global matching, additional operator roles or hard-delete API.
+
+The explicit APPLY operation creates/replaces a draft snapshot using the exact
+operator updatedAt shown in the editor. CREATE/UPDATE change only the address
+book. REMOVE affects only an editable draft. Product/draft CAS and atomic audit
+remain mandatory. Published/superseded snapshots are never mutated by these
+services. Cloning copies the reference and old snapshot, not current directory
+values. The anonymous DTO selects only snapshot public fields. Absence remains
+compatible with publication. See `MANUFACTURER_IMPLEMENTATION.md` for evidence
+and staging migration/rollback boundaries.

@@ -1,3 +1,4 @@
+import { manufacturerSchema } from "../products/manufacturer/contracts";
 import type {
   GetPublicDpp,
   GetPublicDppResult,
@@ -101,6 +102,7 @@ export function createGetPublicDppService(dependencies: {
           version: { number: content.versionNumber, publishedAt: content.publishedAt.toISOString() },
           content: publicTranslation,
           materials: content.materials,
+          manufacturer: content.manufacturer ? manufacturerSchema.parse(content.manufacturer) : null,
           cn: cnRow === undefined ? null : { code: cnRow.value, nomenclatureYear: cnRow.nomenclatureYear! },
         },
       } satisfies GetPublicDppResult;

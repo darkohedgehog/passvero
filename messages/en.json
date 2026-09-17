@@ -226,5 +226,32 @@
     "blocked": "Download is unavailable until the document passes the checks.",
     "expired": "The document needs a new scan.",
     "failure": "The request did not complete. Refresh the status; scanning will not retry automatically."
+  },
+  "Manufacturer": {
+    "title": "Manufacturer",
+    "notice": "These details will be public after publication. Address book changes do not update product snapshots.",
+    "snapshot": "Snapshot to publish",
+    "empty": "No manufacturer selected",
+    "directory": "Address book",
+    "choose": "Choose manufacturer",
+    "create": "Create manufacturer",
+    "save": "Save address book changes",
+    "apply": "Apply selected revision to draft",
+    "remove": "Remove from draft",
+    "success": "Saved. Select and apply the revision explicitly.",
+    "failure": "Request failed. Reload and try again.",
+    "reload": "Reload",
+    "name": "Name",
+    "addressLine1": "Address line 1",
+    "addressLine2": "Address line 2",
+    "city": "City",
+    "region": "Region",
+    "postalCode": "Postal code",
+    "countryCode": "Country code (ISO, two letters)",
+    "publicEmail": "Public email (optional)",
+    "website": "Website (optional)",
+    "new": "New manufacturer",
+    "published": "Published snapshot",
+    "pending": "Saving…"
   }
 }

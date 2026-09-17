@@ -219,5 +219,32 @@
     "blocked": "Der Download ist erst nach bestandenen Prüfungen verfügbar.",
     "expired": "Das Dokument muss erneut geprüft werden.",
     "failure": "Die Anfrage wurde nicht abgeschlossen. Aktualisieren Sie den Status; die Prüfung wird nicht automatisch wiederholt."
+  },
+  "Manufacturer": {
+    "title": "Hersteller",
+    "notice": "Diese Angaben werden nach Veröffentlichung öffentlich. Änderungen im Adressbuch ändern keine Produktschnappschüsse.",
+    "snapshot": "Angaben zur Veröffentlichung",
+    "empty": "Kein Hersteller ausgewählt",
+    "directory": "Adressbuch",
+    "choose": "Hersteller auswählen",
+    "create": "Hersteller anlegen",
+    "save": "Adressbuchänderungen speichern",
+    "apply": "Ausgewählte Revision auf Entwurf anwenden",
+    "remove": "Aus Entwurf entfernen",
+    "success": "Gespeichert. Revision ausdrücklich auswählen und anwenden.",
+    "failure": "Anfrage fehlgeschlagen. Seite neu laden und erneut versuchen.",
+    "reload": "Neu laden",
+    "name": "Name",
+    "addressLine1": "Adresszeile 1",
+    "addressLine2": "Adresszeile 2",
+    "city": "Ort",
+    "region": "Region",
+    "postalCode": "Postleitzahl",
+    "countryCode": "Ländercode (ISO, zwei Buchstaben)",
+    "publicEmail": "Öffentliche E-Mail (optional)",
+    "website": "Website (optional)",
+    "new": "Neuer Hersteller",
+    "published": "Veröffentlichte Angaben",
+    "pending": "Wird gespeichert…"
   }
 }

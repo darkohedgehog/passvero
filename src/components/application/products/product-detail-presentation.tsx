@@ -64,6 +64,7 @@ export function ProductDetailPresentation({
   draftDocuments,
   publishedTranslations,
   draftTranslations,
+  manufacturerSection,
   formattedDates,
   labels,
   contentLabels,
@@ -83,6 +84,7 @@ export function ProductDetailPresentation({
   draftDocuments?: React.ReactNode;
   publishedTranslations?: React.ReactNode;
   draftTranslations?: React.ReactNode;
+  manufacturerSection?: React.ReactNode;
   formattedDates: ProductDetailFormattedDates;
   labels: ProductDetailLabels;
   contentLabels: PublicDppLabels;
@@ -162,6 +164,7 @@ export function ProductDetailPresentation({
           </>
         )}
       </section>
+      <div className="mt-8">{manufacturerSection}</div>
       {qrSection}
       <details className="mt-8 rounded-xl border border-slate-200 p-4">
         <summary className="cursor-pointer rounded text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600">{labels.technicalDetails}</summary>

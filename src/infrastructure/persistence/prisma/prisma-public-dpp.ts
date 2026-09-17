@@ -1,3 +1,4 @@
+import { manufacturerSelect } from "@/src/application/products/manufacturer/contracts";
 import type { PublicDppPersistence } from "@/src/application/public-dpp/ports";
 import { PUBLIC_DPP_LOCALES } from "@/src/application/public-dpp/contracts";
 import type { PrismaClient } from "@/src/generated/prisma/client";
@@ -85,6 +86,7 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
           where: { locale: { in: [...PUBLIC_DPP_LOCALES] } },
           select: translationSelect,
         },
+        manufacturer: { select: manufacturerSelect },
         materials: {
           orderBy: [{ createdAt: "asc" }, { id: "asc" }],
           select: {
@@ -123,6 +125,7 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
         recycledPercentage: decimalString(material.recycledPercentage),
       })),
       cnRows: version.identifiers,
+      manufacturer: version.manufacturer,
     };
   }
 }

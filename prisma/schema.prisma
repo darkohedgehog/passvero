@@ -243,6 +243,7 @@ model Organization {
   updatedAt     DateTime           @updatedAt
   archivedAt    DateTime?
 
+  economicOperators   EconomicOperator[]
   memberships         Membership[]         @relation("OrganizationMemberships")
   invitations         Invitation[]         @relation("OrganizationInvitations")
   products            Product[]            @relation("OrganizationProducts")
@@ -379,8 +380,10 @@ model ProductVersion {
   identifiers                ProductIdentifier[]  @relation("ProductVersionIdentifiers")
   materials                  ProductMaterial[]    @relation("ProductVersionMaterials")
   productDocuments           ProductDocument[]    @relation("ProductVersionDocuments")
+  manufacturer               ProductVersionManufacturer?
   images                     ProductImage[]       @relation("ProductVersionImages")
 
+  @@unique([id, organizationId])
   @@unique([productId, versionNumber])
   @@index([productId, status])
   @@index([organizationId, status])
@@ -1029,4 +1032,46 @@ model AuthAbuseBucket {
   @@unique([dimension, endpoint, keyDigest])
   @@index([endpoint, dimension, blockedUntil])
   @@index([expiresAt])
+}
+
+/// Tenant-owned address book; no automatic propagation to version snapshots.
+model EconomicOperator {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @db.Uuid
+  name        String @db.VarChar(200)
+  addressLine1 String @db.VarChar(200)
+  addressLine2 String? @db.VarChar(200)
+  city        String @db.VarChar(100)
+  region      String? @db.VarChar(100)
+  postalCode  String? @db.VarChar(32)
+  countryCode String @db.VarChar(2)
+  publicEmail String? @db.VarChar(254)
+  website     String? @db.VarChar(2048)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  manufacturers ProductVersionManufacturer[]
+  @@unique([id, organizationId])
+  @@index([organizationId, name, id])
+}
+
+/// MANUFACTURER only. Copied explicitly to a draft, never read through the operator publicly.
+model ProductVersionManufacturer {
+  productVersionId String @id @db.Uuid
+  organizationId String @db.Uuid
+  economicOperatorId String @db.Uuid
+  name        String @db.VarChar(200)
+  addressLine1 String @db.VarChar(200)
+  addressLine2 String? @db.VarChar(200)
+  city        String @db.VarChar(100)
+  region      String? @db.VarChar(100)
+  postalCode  String? @db.VarChar(32)
+  countryCode String @db.VarChar(2)
+  publicEmail String? @db.VarChar(254)
+  website     String? @db.VarChar(2048)
+  productVersion ProductVersion @relation(fields: [productVersionId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  economicOperator EconomicOperator @relation(fields: [economicOperatorId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  @@unique([productVersionId, organizationId])
+
+  @@index([economicOperatorId, organizationId])
 }

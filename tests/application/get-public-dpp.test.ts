@@ -118,6 +118,7 @@ test("returns the exact allowlisted DTO from the pointed publication", async () 
         publicNotes: null,
       },
       materials: content.materials,
+      manufacturer: null,
       cn: { code: "01012100", nomenclatureYear: 2026 },
     },
   });

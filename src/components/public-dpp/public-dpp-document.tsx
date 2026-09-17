@@ -1,3 +1,4 @@
+import { manufacturerTitles } from "@/src/components/application/products/manufacturer-labels";
 /* eslint-disable @next/next/no-head-element -- This route handler renders a complete server-only HTML document so it can return exact 404/410/503 statuses. */
 import type { ReactNode } from "react";
 
@@ -128,6 +129,14 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
           <div><dt>{labels.published}</dt><dd>{formatDate(dpp.version.publishedAt, dpp.locale)}</dd></div>
         </dl>
       </section>
+
+      {dpp.manufacturer ? <section aria-labelledby="manufacturer-heading">
+        <h2 id="manufacturer-heading">{manufacturerTitles[dpp.locale]}</h2>
+        <p>{dpp.manufacturer.name}</p>
+        <address style={{fontStyle:"normal"}}>{[dpp.manufacturer.addressLine1, dpp.manufacturer.addressLine2, dpp.manufacturer.postalCode, dpp.manufacturer.city, dpp.manufacturer.region, dpp.manufacturer.countryCode].filter(Boolean).join(", ")}</address>
+        {dpp.manufacturer.publicEmail ? <p>{dpp.manufacturer.publicEmail}</p> : null}
+        {dpp.manufacturer.website ? <p><a href={dpp.manufacturer.website} rel="noopener noreferrer nofollow">{dpp.manufacturer.website}</a></p> : null}
+      </section> : null}
 
       {contentSections.map(([heading, value]) => present(value) ? (
         <section key={heading}>

@@ -328,5 +328,32 @@
     "blocked": "Preuzimanje nije dostupno dok dokument ne prođe provjere.",
     "expired": "Potrebna je nova provjera dokumenta.",
     "failure": "Zahtjev nije dovršen. Osvježite status; skeniranje se neće automatski ponoviti."
+  },
+  "Manufacturer": {
+    "title": "Proizvođač",
+    "notice": "Ovi podaci bit će javni nakon objave. Izmjene adresara ne osvježavaju snimke proizvoda.",
+    "snapshot": "Podaci za objavu",
+    "empty": "Proizvođač nije odabran",
+    "directory": "Adresar",
+    "choose": "Odaberite proizvođača",
+    "create": "Kreiraj proizvođača",
+    "save": "Spremi izmjene adresara",
+    "apply": "Primijeni odabranu verziju na nacrt",
+    "remove": "Ukloni iz nacrta",
+    "success": "Spremljeno. Izričito odaberite i primijenite verziju.",
+    "failure": "Zahtjev nije uspio. Osvježite stranicu i pokušajte ponovno.",
+    "reload": "Osvježi",
+    "name": "Naziv",
+    "addressLine1": "Adresa, redak 1",
+    "addressLine2": "Adresa, redak 2",
+    "city": "Grad",
+    "region": "Regija",
+    "postalCode": "Poštanski broj",
+    "countryCode": "Oznaka države (ISO, dva slova)",
+    "publicEmail": "Javni email (neobavezno)",
+    "website": "Web stranica (neobavezno)",
+    "new": "Novi proizvođač",
+    "published": "Objavljeni podaci",
+    "pending": "Spremanje…"
   }
 }

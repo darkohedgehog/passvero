@@ -219,5 +219,32 @@
     "blocked": "Prenos ni na voljo, dokler dokument ne prestane preverjanj.",
     "expired": "Dokument je treba znova preveriti.",
     "failure": "Zahteva ni bila dokončana. Osvežite stanje; preverjanje se ne bo samodejno ponovilo."
+  },
+  "Manufacturer": {
+    "title": "Proizvajalec",
+    "notice": "Ti podatki bodo po objavi javni. Spremembe imenika ne osvežijo posnetkov izdelkov.",
+    "snapshot": "Podatki za objavo",
+    "empty": "Proizvajalec ni izbran",
+    "directory": "Imenik",
+    "choose": "Izberite proizvajalca",
+    "create": "Ustvari proizvajalca",
+    "save": "Shrani spremembe imenika",
+    "apply": "Uporabi izbrano različico v osnutku",
+    "remove": "Odstrani iz osnutka",
+    "success": "Shranjeno. Izrecno izberite in uporabite različico.",
+    "failure": "Zahteva ni uspela. Osvežite stran in poskusite znova.",
+    "reload": "Osveži",
+    "name": "Naziv",
+    "addressLine1": "Naslov, vrstica 1",
+    "addressLine2": "Naslov, vrstica 2",
+    "city": "Kraj",
+    "region": "Regija",
+    "postalCode": "Poštna številka",
+    "countryCode": "Koda države (ISO, dve črki)",
+    "publicEmail": "Javni e-naslov (neobvezno)",
+    "website": "Spletna stran (neobvezno)",
+    "new": "Nov proizvajalec",
+    "published": "Objavljeni podatki",
+    "pending": "Shranjevanje…"
   }
 }

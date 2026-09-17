@@ -19,6 +19,7 @@ export interface PublicDppAuthorityRecord {
 }
 
 export interface PublicDppContentRecord {
+  readonly manufacturer?: import("../products/manufacturer/contracts").Manufacturer | null;
   readonly ownershipConsistent: boolean;
   readonly versionNumber: number | null;
   readonly publishedAt: Date | null;

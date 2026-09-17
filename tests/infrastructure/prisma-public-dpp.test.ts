@@ -129,6 +129,7 @@ test("content read targets only the pointed PUBLISHED version and maps the exact
     }],
     materials: [{ materialName: "Steel", category: "Metal", percentage: "0.00", isRecycled: false, recycledPercentage: null }],
     cnRows: [{ value: "01012100", nomenclatureYear: 2026 }],
+    manufacturer: undefined,
   });
 
   const query = input as {

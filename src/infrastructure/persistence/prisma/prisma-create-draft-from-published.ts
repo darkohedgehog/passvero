@@ -1,3 +1,4 @@
+import { manufacturerSelect } from "@/src/application/products/manufacturer/contracts";
 import { DraftCreationConflict, type CreateDraftFromPublishedPersistence } from "@/src/application/products/create-draft-from-published/ports";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import { PrismaPublishProductPersistence } from "./prisma-publish-product";
@@ -41,6 +42,8 @@ export class PrismaCreateDraftFromPublishedPersistence extends PrismaPublishProd
       status: "DRAFT", versionNumber: null, clonedFromVersionId: input.sourceVersionId,
       createdById: input.actorId, updatedById: input.actorId,
     }, select: { id: true, createdAt: true } });
+    const manufacturer = await tx.productVersionManufacturer.findFirst({ where: { productVersionId: input.sourceVersionId, organizationId: input.organizationId }, select: { ...manufacturerSelect, economicOperatorId: true } });
+    if (manufacturer) await tx.productVersionManufacturer.create({ data: { productVersionId: draft.id, organizationId: input.organizationId, ...manufacturer } });
     if (translations.length) await tx.productTranslation.createMany({ data: translations.map(row => ({ ...row, productVersionId: draft.id })) });
     // Materials have no sortOrder: preserve their established createdAt/id ordering
     // with distinct fresh timestamps, without retaining old row creation metadata.
