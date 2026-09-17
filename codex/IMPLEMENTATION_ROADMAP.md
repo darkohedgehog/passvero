@@ -29,7 +29,7 @@ njegovo odsustvo ne blokira sledeći zadatak niti zahteva novi test.
 | Product list/detail, create/edit | Zaštićena lista/detail, kreiranje i uređivanje nacrta; cursor paginacija po 25. Servisi i testovi implementirani. | Noviji stvarni poslovni unos: završni report nedostaje. Pretraga i dokaz rada sa velikim katalogom nisu izvedeni iz paginacije. |
 | Prevodi, materijali, CN | Upravljanje draft prevodima, materijalima i CN klasifikacijom; šest UI jezika; lokalni testovi. | Source završenih sliceova postoji; konkretan obuhvat najnovijeg real-data acceptancea nepoznat. |
 | Draft/published lifecycle | Publish, published snapshot, novi privatni draft iz objavljene verzije i ponovno objavljivanje; CAS i tranzicije u servisima/testovima. | Nova poslovna provera nije dostupna. Arhiviranje/brisanje objavljenog Product-a ne smatra se implementiranim zbog lifecycle enum-a. |
-| Public DPP, Passport/QR | Javni DTO sa allowlistom, lokalizovani objavljeni sadržaj, materijali/CN; stabilan passport/public code i QR artefakti. | Ranija istorijska staging provera Product/QR je zaseban dokaz; nije novi real-data rezultat. Javni dokumenti/slike nisu u trenutnom PublicDpp DTO-u. |
+| Public DPP, Passport/QR | Javni DTO sa allowlistom, lokalizovani objavljeni sadržaj, materijali/CN; stabilan passport/public code i QR artefakti. | Ranija istorijska staging provera Product/QR je zaseban dokaz; nije novi real-data rezultat. Javni podobni PDF prilozi aktuelne objavljene verzije sada su implementirani i staging-provereni; slike ostaju otvorene. |
 | Privatni PDF i veze sa verzijama | Privatni upload/finalizacija, vezivanje/uklanjanje priloga na draftu i očuvanje veza pri verzionisanju; integracioni testovi. | Sintetički upload i uklanjanje priloga na stvarnom staging proizvodu potvrđeni. AVAILABLE sam po sebi ne znači CLEAN. |
 | PDF, malware, signature health | qpdf struktura, ClamAV Unix adapter, policy 2 opažena provenijencija, producer/reader, claim/finalization i audit. | Stvarni staging CLEAN i INFECTED potvrđeni; postoje bootstrap/producer dokazi. Bez tvrdnje o tačnoj engine generaciji skena ili novoj runtime izolaciji. |
 | Scan/status/privatni download | Eksplicitni scan, ograničeno status polling osvežavanje i server-side kontrola preuzimanja; lokalni auth/integrity/freshness testovi. | Realni staging UI i transport prošli sintetički tok: neproveren odbijen, CLEAN bajtovi podudarni, INFECTED i anoniman download odbijeni. |
@@ -69,7 +69,7 @@ Ovo je preporuka za zasebno odobravane sliceove, ne nalog za implementaciju.
 
 | Redosled / stvarno stanje | Konkretan korisnički ishod i zavisnost |
 |---|---|
-| 1. Public DPP dokumenti — nisu implementirani | Posetilac vidi dozvoljene priloge aktuelne objavljene verzije i dobija samo podoban, proveren dokument kroz kontrolisan endpoint; oslanja se na postojeću privatnu validaciju i lifecycle. |
+| Završeno na stagingu: Public DPP dokumenti | Javni CLEAN PDF prikaz i identični bajtovi potvrđeni; privatni/nacrtni i stari link posle nove objave odbijeni. Produkcija nije aktivirana. |
 | 2. Economic Operator / Manufacturer — nema zasebnog korisničkog toka | Proizvod ima odgovornog proizvođača/operatora, odvojenog od tenant i billing identiteta; prethodi širenju javnog identiteta proizvoda. |
 | 3. GTIN / GS1 / barcode — generički identifier model/GTIN enum nisu gotov tok | Korisnik unosi i proverava identifikator i koristi dogovoreni barcode prikaz; ne tvrditi GS1 verifikaciju bez odgovarajućeg izvora. |
 | 4. **Slika proizvoda** — ProductImage model postoji, upload/prikaz tok nije završen | Korisnik dodaje sliku; draft izmene ne menjaju objavljenu sliku, a asset/version veze ostaju očuvane pri novoj verziji i objavi. |
@@ -104,21 +104,9 @@ rollout zahteva zasebno odobrenje.** Ranija production infrastruktura postoji.
 
 ## Tačno jedan preporučeni sledeći zadatak
 
-**PUBLIC_DPP_DOCUMENT_PRESENTATION_AND_CONTROLLED_DELIVERY_STAGING**
-
-Ishod: javni posetilac otvara samo izričito javni, podobni PDF vezan za trenutno
-objavljenu verziju proizvoda. Opseg: minimalni javni DTO/prikaz i kontrolisana
-isporuka preko aplikacije, uz postojeću scan politiku, integritet i privatni storage.
-
-Acceptance kriterijumi za buduće odobrenje:
-- prikaz samo javnih priloga aktuelnog aktivnog objavljenog passporta;
-- direktni endpoint odbija privatne/draft/nepovezane i nepodobne dokumente;
-- CLEAN, policy, svežina, integritet i lifecycle provereni server-side pre bajtova;
-- promena publikacije/povlačenje ne ostavlja trajni URL koji zaobilazi proveru;
-- lokalni auth/lifecycle testovi i jedan odobren staging UI tok sa tačnim cleanupom.
-
-Nisu u opsegu: javni bucket, trajni signed URL, automatski scan/recovery, slike,
-onboarding, nova parser dijagnostika ili production. Ovaj zadatak **nije izvršen**.
+**Economic Operator / Manufacturer** — zasebno odobriti minimalan korisnički tok
+odgovornog proizvođača/operatora, odvojen od tenant i billing identiteta. Ne započinje
+se u ovom zadatku. Slika proizvoda i CSV export/import ostaju u planu.
 
 Korisnik je potvrdio završetak real-data zadatka. Detaljni završni izveštaj nije
 dostupan u pregledanim izvorima, pa konkretni scenariji ostaju nepotvrđeni ovim
@@ -126,3 +114,24 @@ dokumentom. Ako postojeći izveštaj naknadno postane dostupan, uključiti njego
 nalaze. Njegovo odsustvo samo po sebi ne zahteva ponovno testiranje niti blokira
 sledeći zadatak; konkretan korisnički prijavljen problem rešava se prema svom
 uticaju.
+
+## Dopuna: Public DPP PDF staging acceptance — 2026-09-17
+
+Prethodni pregled iznad ostaje istorijski kontekst. Ova dopuna beleži novu lokalnu
+implementaciju i live staging proveru na bazi `7a24d9b0e0c5f84ff032b341da2fd71153115715`
+sa necommitovanim pregledanim diffom. Završni build: `wA5ayzKlxxjctjVWwKVhc`.
+
+Namenski proizvod `DPP-PDF-20260917-01` prošao je UI upload, jedan eksplicitni scan,
+objavu v1 i prikaz u anonimnom browseru. Kontrolisani endpoint isporučio je tačnih
+629 bajtova čistog PDF-a (SHA-256 i direktno poređenje identični). Privatan nacrt
+vratio je 404; v2 bez priloga uklonila je javni prikaz i stari link vraća 404.
+Cross-tenant/nepovezani i nepodobni scan statusi dokazani su lokalno/disposable,
+ne novim live antivirus testovima. Retencija je eksplicitna: označen sintetički
+proizvod, istorija v1/v2, privatni PDF i audit ostaju; PVA-001 nije menjan.
+
+Lokalno: 40 fokusiranih, 29 disposable PostgreSQL, TypeScript, lint bez grešaka
+(15 postojećih upozorenja), whitespace i webpack PASS. Posle korekcije zastarele
+poruke u šest jezika: 41 relevantnih presentation testova i novi build PASS;
+prikaz poruke i prazan anonimni DPP potvrđeni na završnom buildu. Nije ponovljena
+nepromenjena infra acceptance serija. Production i svi raniji NOT_PROVEN statusi
+ostaju nepromenjeni. Detalji: malware ugovor, odeljak Public DPP staging evidence.

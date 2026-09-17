@@ -1,4 +1,5 @@
 import "server-only";
+import { getPublicDocumentService, publicDocumentDeliveryEnabled } from "./public-document-runtime";
 
 import { createGetPublicDppService } from "@/src/application/public-dpp/get-public-dpp";
 import { createPublicDppHttpHandler } from "@/src/application/public-dpp/http";
@@ -16,6 +17,10 @@ export function getPublicDppHttpHandler(): Handler {
     getLabels: getPublicDppLabels,
     getPublicDpp: createGetPublicDppService({
       persistence: new PrismaPublicDppPersistence(getProductionPrismaClient()),
+      documents: { async list(code, version) {
+        try { return publicDocumentDeliveryEnabled() ? await getPublicDocumentService().list(code, version) : []; }
+        catch { return []; }
+      } },
     }),
   });
   return state.__passveroPublicDppHandler;

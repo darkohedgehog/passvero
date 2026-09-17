@@ -1,0 +1,46 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { PrismaPublicDocuments } from "../../src/infrastructure/persistence/prisma/prisma-public-documents";
+import { createPublicDocumentService } from "../../src/application/public-dpp/documents";
+import { sha256 } from "../../src/application/documents/pdf";
+import { healthFixture } from "../helpers/signature-health-fixture";
+import { createTestPrismaClient, requireSafeTestDatabaseConfig } from "../helpers/test-database";
+const prisma=createTestPrismaClient(requireSafeTestDatabaseConfig(process.env));
+test.after(()=>prisma.$disconnect());
+test("real persistence binds current publication, public intent, ownership, document eligibility and old links",async()=>{
+ const org=await prisma.organization.create({data:{displayName:"Public documents proof"}});
+ const other=await prisma.organization.create({data:{displayName:"Other tenant"}});
+ const code=randomUUID().replaceAll('-','').slice(0,22),now=new Date(),bytes=Buffer.from('%PDF-1.7 synthetic public proof');
+ const product=await prisma.product.create({data:{organizationId:org.id,internalName:"Synthetic",publicCode:code}});
+ const version=await prisma.productVersion.create({data:{productId:product.id,organizationId:org.id,status:"PUBLISHED",sourceLocale:"hr",versionNumber:1,publishedAt:now}});
+ await prisma.product.update({where:{id:product.id},data:{currentPublishedVersionId:version.id,lastPublishedAt:now}});
+ await prisma.passport.create({data:{productId:product.id,organizationId:org.id,firstPublishedAt:now,lastPublishedAt:now}});
+ const doc=await prisma.document.create({data:{organizationId:org.id,originalFilename:"private.pdf",mimeType:"application/pdf",storageProvider:"fake",storageBucket:"private",storageKey:randomUUID(),sizeBytes:BigInt(bytes.length),checksumSha256:sha256(bytes),status:"AVAILABLE",uploadedAt:now,
+ malwareScanStatus:"CLEAN",malwareScanAttemptId:randomUUID(),malwareScanStartedAt:now,malwareScannedAt:now,malwareScanSha256:sha256(bytes),malwareScanner:"clamav",malwareEngineVersion:"1.5.3",malwareSignatureVersion:"test",malwarePolicyVersion:2}});
+ const link=await prisma.productDocument.create({data:{productVersionId:version.id,documentId:doc.id,category:"MANUAL",displayLabel:"Public manual",isPublic:true}});
+ const persistence=new PrismaPublicDocuments(prisma);
+ const service=createPublicDocumentService({persistence,health:{async read(){return healthFixture(Date.now());}},storage:{identity:()=>({provider:"fake",bucket:"private",key:doc.storageKey}),async put(){throw new Error();},async read(){return bytes;}}});
+ const list=()=>service.list(code,{number:1,publishedAt:now.toISOString()});
+ const download=()=>service.download(code,link.id,false,new AbortController().signal);
+ assert.equal((await list()).length,1);assert.deepEqual((await download()).bytes,bytes);
+ await prisma.productDocument.update({where:{id:link.id},data:{isPublic:false}});assert.deepEqual(await list(),[]);await assert.rejects(download());
+ await prisma.productDocument.update({where:{id:link.id},data:{isPublic:true}});
+ await prisma.document.update({where:{id:doc.id},data:{organizationId:other.id}});assert.deepEqual(await persistence.read(code),[]);await assert.rejects(download());
+ await prisma.document.update({where:{id:doc.id},data:{organizationId:org.id}});
+ const draft=await prisma.productVersion.create({data:{productId:product.id,organizationId:org.id,status:"DRAFT",sourceLocale:"hr"}});
+ const draftLink=await prisma.productDocument.create({data:{productVersionId:draft.id,documentId:doc.id,category:"MANUAL",isPublic:true}});
+ assert.deepEqual(await persistence.read(code,draftLink.id),[]);
+ assert.deepEqual(await persistence.read('z'.repeat(22),link.id),[]);
+ await prisma.productDocument.delete({where:{id:link.id}});await assert.rejects(download());
+ const newLink=await prisma.productDocument.create({data:{productVersionId:version.id,documentId:doc.id,category:"MANUAL",isPublic:true}});
+ await prisma.$transaction(async tx=>{
+  await tx.productVersion.update({where:{id:version.id},data:{status:"SUPERSEDED"}});
+  await tx.productVersion.update({where:{id:draft.id},data:{status:"PUBLISHED",versionNumber:2,publishedAt:now}});
+  await tx.product.update({where:{id:product.id},data:{currentPublishedVersionId:draft.id}});
+ });
+ assert.deepEqual(await persistence.read(code,newLink.id),[]);
+ assert.equal((await persistence.read(code,draftLink.id)).length,1);
+ await prisma.passport.update({where:{productId:product.id},data:{status:"WITHDRAWN",withdrawnAt:new Date(),withdrawalReasonCode:"TEST"}});
+ assert.deepEqual(await persistence.read(code),[]);
+});

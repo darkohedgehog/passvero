@@ -16,6 +16,8 @@ const privateValues = [
 ];
 
 const labels: PublicDppLabels = {
+  documentCategories: { MANUAL: "Manual", OTHER: "Other" },
+  documents: "Documents", download: "Download", untitledDocument: "Document",
   documentTitle: "Digital Product Passport",
   active: "Active",
   organization: "Organization",
@@ -320,4 +322,28 @@ test("Public DPP canonical metadata follows configured staging origin, never req
   assert.ok(!html.includes("https://passvero.eu"));
   assert.ok(!html.includes("attacker.example.test"));
   assert.equal(response.headers.get("cache-control"), "no-store");
+});
+
+
+test("public document section escapes labels, uses app link and disappears when empty", async () => {
+  const empty = await handler({ kind: "PUBLIC", dpp: { ...dpp, documents: [] } })(request(), publicCode);
+  assert.ok(!(await empty.text()).includes('id="documents-heading"'));
+  const response = await handler({ kind: "PUBLIC", dpp: { ...dpp, documents: [{ label: "<secret>", category: "MANUAL", locale: "hr", sizeBytes: 123, downloadPath: `/p/${publicCode}/documents/123` }] } })(request(),publicCode);
+  const html=await response.text();assert.ok(html.includes('&lt;secret&gt;'));assert.ok(html.includes('Manual'));assert.ok(html.includes('Hrvatski'));assert.ok(html.includes(`/p/${publicCode}/documents/123`));
+});
+
+test("public document labels and null-label fallback render in all six supported locales", async () => {
+  const { getPublicDppLabels } = await import("../../src/components/public-dpp/public-dpp-labels");
+  for (const locale of ["hr", "en", "de", "sr", "sl", "pl"] as const) {
+    const localized = getPublicDppLabels(locale);
+    const subject = createPublicDppHttpHandler({ canonicalOrigin: "https://staging.passvero.eu", getLabels: getPublicDppLabels,
+      getPublicDpp: async () => ({ kind: "PUBLIC", dpp: { ...dpp, locale, documents: [{ label: null, category: "MANUAL", locale: null, sizeBytes: 123, downloadPath: `/p/${publicCode}/documents/123` }] } }) });
+    const response = await subject(request(`/p/${publicCode}?lang=${locale}`), publicCode);
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.ok(html.includes(localized.documents));
+    assert.ok(html.includes(localized.untitledDocument));
+    assert.ok(html.includes(localized.download));
+    assert.ok(html.includes(localized.documentCategories!.MANUAL));
+  }
 });

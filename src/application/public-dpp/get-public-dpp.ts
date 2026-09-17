@@ -11,6 +11,7 @@ const CN_CODE = /^\d{8}$/;
 
 export function createGetPublicDppService(dependencies: {
   readonly persistence: PublicDppPersistence;
+  readonly documents?: Pick<ReturnType<typeof import("./documents").createPublicDocumentService>, "list">;
 }): GetPublicDpp {
   return async (query) => {
     if (!PUBLIC_CODE.test(query.publicCode)) return { kind: "NOT_FOUND" };
@@ -92,6 +93,7 @@ export function createGetPublicDppService(dependencies: {
       return {
         kind: "PUBLIC",
         dpp: {
+          ...(dependencies.documents ? { documents: await dependencies.documents.list(query.publicCode, { number: content.versionNumber, publishedAt: content.publishedAt.toISOString() }) } : {}),
           locale,
           availableLocales,
           passport: { status: "ACTIVE", firstPublishedAt: passport.firstPublishedAt.toISOString() },

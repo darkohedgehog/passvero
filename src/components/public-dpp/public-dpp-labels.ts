@@ -8,12 +8,12 @@ import sl from "@/messages/sl.json";
 import sr from "@/messages/sr.json";
 
 const labels = {
-  hr: hr.PublicDpp,
-  sr: sr.PublicDpp,
-  en: en.PublicDpp,
-  de: de.PublicDpp,
-  sl: sl.PublicDpp,
-  pl: pl.PublicDpp,
+  hr: { ...hr.PublicDpp, documentCategories: hr.ProductDocuments.categories },
+  sr: { ...sr.PublicDpp, documentCategories: sr.ProductDocuments.categories },
+  en: { ...en.PublicDpp, documentCategories: en.ProductDocuments.categories },
+  de: { ...de.PublicDpp, documentCategories: de.ProductDocuments.categories },
+  sl: { ...sl.PublicDpp, documentCategories: sl.ProductDocuments.categories },
+  pl: { ...pl.PublicDpp, documentCategories: pl.ProductDocuments.categories },
 } satisfies Record<PublicDppLocale, PublicDppLabels>;
 
 export function getPublicDppLabels(locale: PublicDppLocale): PublicDppLabels {

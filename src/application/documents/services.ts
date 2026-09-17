@@ -1,5 +1,5 @@
-import { cleanDocumentEligible } from "./access-policy";
-import { trustedProvenance, type SignatureHealthPort } from "./malware-scan";
+import { verifiedDocumentDownload } from "./verified-download";
+import { type SignatureHealthPort } from "./malware-scan";
 import type { AuthenticatedUserContext } from "../context/authenticated-user-context";
 import { DocumentError, type DocumentPersistence, type DocumentRecord, type DocumentServices, type PrivateDocumentStorage } from "./contracts";
 import { documentId, sha256, validatePdf } from "./pdf";
@@ -44,29 +44,11 @@ export function createDocumentServices(deps: { persistence: DocumentPersistence;
       return finalize(row, context);
     },
     async download(id, context, head = false, options) {
-      const now = deps.now ?? Date.now;
-      const signal = options ? AbortSignal.any([options.signal, AbortSignal.timeout(30_000)]) : AbortSignal.timeout(30_000);
-      const allowed = async (row: DocumentRecord) => {
-        if (!cleanDocumentEligible(row, now())) throw new DocumentError("NOT_AVAILABLE");
-        let trusted = false;
-        try { trusted = !!deps.health && !!trustedProvenance(await deps.health.read({ signal }), now()); }
-        catch { /* Delivery fails closed without exposing dependency output. */ }
-        if (!trusted) throw new DocumentError("NOT_AVAILABLE");
-      };
-      const row = await persistence.read(context, documentId(id), "PRODUCT_READ");
-      await allowed(row);
-      let bytes: Uint8Array;
-      try {
-        bytes = await storage.read(row.storage, { signal, limit: row.sizeBytes });
-        if (bytes.byteLength !== row.sizeBytes || sha256(bytes) !== row.checksumSha256) throw new Error();
-      } catch { throw new DocumentError("OPERATIONAL_FAILURE"); }
-      // Revalidate authority, verdict, lifecycle and exact object identity after I/O.
-      const current = await persistence.read(context, row.id, "PRODUCT_READ");
-      await allowed(current);
-      if (current.sizeBytes !== row.sizeBytes || current.checksumSha256 !== row.checksumSha256
-        || current.storage.provider !== row.storage.provider || current.storage.bucket !== row.storage.bucket
-        || current.storage.key !== row.storage.key || signal.aborted) throw new DocumentError("NOT_AVAILABLE");
-      return { filename: current.originalFilename, sizeBytes: bytes.byteLength, bytes: head ? null : bytes };
+      const normalizedId = documentId(id);
+      return verifiedDocumentDownload({
+        readAuthorized: () => persistence.read(context, normalizedId, "PRODUCT_READ"),
+        storage, health: deps.health, now: deps.now,
+      }, head, options?.signal);
     },
   };
 }

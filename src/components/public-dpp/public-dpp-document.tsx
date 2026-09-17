@@ -8,6 +8,10 @@ import type {
 } from "@/src/application/public-dpp/contracts";
 
 export interface PublicDppLabels {
+  readonly documentCategories?: Readonly<Record<string, string>>;
+  readonly documents: string;
+  readonly download: string;
+  readonly untitledDocument: string;
   readonly documentTitle: string;
   readonly active: string;
   readonly organization: string;
@@ -145,6 +149,21 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
                   <Fact label={labels.recycledStatus}>{material.isRecycled ? labels.yes : labels.no}</Fact>
                   {material.recycledPercentage !== null ? <Fact label={labels.recycledWithinMaterial}>{`${material.recycledPercentage}%`}</Fact> : null}
                 </dl>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {(dpp.documents?.length ?? 0) > 0 ? (
+        <section aria-labelledby="documents-heading">
+          <h2 id="documents-heading">{labels.documents}</h2>
+          <ul className="materials">
+            {dpp.documents!.map(document => (
+              <li key={document.downloadPath}>
+                <h3>{document.label || labels.untitledDocument}</h3>
+                <p>{labels.documentCategories?.[document.category] ?? labels.documentCategories?.OTHER ?? labels.untitledDocument}{document.locale ? ` · ${labels.languageNames[document.locale as PublicDppLocale] ?? document.locale}` : ""}</p>
+                <a href={document.downloadPath}>{labels.download} · PDF</a>
               </li>
             ))}
           </ul>
