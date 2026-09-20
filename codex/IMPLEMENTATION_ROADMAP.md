@@ -156,3 +156,19 @@ Sledeći predlog je zasebno odobren GTIN/GS1 opseg. Slika proizvoda, pretraga i 
 export/import ostaju u roadmapu; ništa od toga nije započeto. Aplikacijski
 signature allowlist ostaje ograničen; svi raniji NOT_PROVEN statusi ostaju.
 Production aktivacija nije odobrena. Diff ostaje necommitovan.
+
+## Dopuna: GTIN/barcode — staging tok prihvaćen (2026-09-20)
+
+Na bazi `97199377c07dbe6eff4d2584d6c3be89cdcc9981` implementiran je jedan opcionalni
+GTIN po ProductVersion: draft SET/REMOVE, server validacija, CAS/audit, parcijalni
+unique indeks samo za GTIN i Public DPP barcode u šest jezika. Migracija staje na
+postojećim višestrukim GTIN zapisima bez brisanja. Lokalni PostgreSQL dokaz čuva
+objavljenu V1 pri izmeni/objavi V2; nezavisni softverski dekoder čita sve četiri
+simbologije. Staging migracija i deploy `wgtuXd933MYwDwiVUjVt4` su PASS.
+UI unos, odbijanje neispravnog broja, nasleđivanje, izolacija V1 i objava V2
+na istom javnom linku su PASS. Anonimni V1/V2 barkodovi nezavisno dekodirani.
+Sintetički proizvod `DPP-GTIN-20260920-01`, obe verzije i audit su zadržani.
+Nema GS1 registry verifikacije, fizičkog skeniranja, production promene ili commita/pusha.
+Detalji: `PRODUCT_GTIN_VALIDATION_AND_BARCODE_STAGING.md`.
+Sledeća celina je slika proizvoda; pretraga,
+CSV export i CSV import ostaju u planu i nisu započeti.

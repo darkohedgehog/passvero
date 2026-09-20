@@ -420,6 +420,7 @@ model ProductTranslation {
   @@index([productVersionId])
 }
 
+/// Partial unique indexes enforce at most one CN and one GTIN per version.
 model ProductIdentifier {
   id               String                @id @default(uuid()) @db.Uuid
   productVersionId String                @db.Uuid

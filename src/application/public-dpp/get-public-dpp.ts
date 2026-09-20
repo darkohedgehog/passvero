@@ -1,3 +1,4 @@
+import { gtinSchema } from "../products/gtin/validation";
 import { manufacturerSchema } from "../products/manufacturer/contracts";
 import type {
   GetPublicDpp,
@@ -77,6 +78,9 @@ export function createGetPublicDppService(dependencies: {
         return unavailable();
       }
 
+      const gtins = content.gtinRows ?? [];
+      if (gtins.length > 1 || (gtins[0] && !gtinSchema.safeParse(gtins[0].value).success)) return unavailable();
+
       const publicTranslation = {
         productName: translation.productName,
         shortDescription: translation.shortDescription,
@@ -95,6 +99,7 @@ export function createGetPublicDppService(dependencies: {
         kind: "PUBLIC",
         dpp: {
           ...(dependencies.documents ? { documents: await dependencies.documents.list(query.publicCode, { number: content.versionNumber, publishedAt: content.publishedAt.toISOString() }) } : {}),
+          gtin: gtins[0]?.value ?? null,
           locale,
           availableLocales,
           passport: { status: "ACTIVE", firstPublishedAt: passport.firstPublishedAt.toISOString() },

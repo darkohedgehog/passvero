@@ -253,5 +253,21 @@
     "new": "New manufacturer",
     "published": "Published snapshot",
     "pending": "Saving…"
+  },
+  "Gtin": {
+    "title": "GTIN",
+    "number": "GTIN number",
+    "barcode": "Barcode",
+    "published": "Published version",
+    "empty": "No GTIN entered.",
+    "save": "Save GTIN",
+    "remove": "Remove GTIN",
+    "pending": "Saving…",
+    "success": "GTIN saved.",
+    "invalid": "Enter 8, 12, 13 or 14 digits without spaces, with a valid check digit.",
+    "stale": "The data has changed. Refresh the page and try again.",
+    "failure": "The GTIN cannot be saved or loaded right now.",
+    "notice": "One optional GTIN for the trade item described by this product. We check format and check digit, not GS1 registration or ownership. The barcode is an in-app display, without print quality certification. The separate QR links to the DPP.",
+    "help": "Keep leading zeroes. No spaces or hyphens."
   }
 }

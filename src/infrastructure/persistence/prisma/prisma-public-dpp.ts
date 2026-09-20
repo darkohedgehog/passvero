@@ -98,9 +98,8 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
           },
         },
         identifiers: {
-          where: { type: "CN" },
-          take: 2,
-          select: { value: true, nomenclatureYear: true },
+          where: { type: { in: ["CN", "GTIN"] } },
+          select: { type: true, value: true, nomenclatureYear: true },
         },
       },
     });
@@ -124,7 +123,8 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
         isRecycled: material.isRecycled,
         recycledPercentage: decimalString(material.recycledPercentage),
       })),
-      cnRows: version.identifiers,
+      cnRows: version.identifiers.filter(row => row.type === "CN").map(({ value, nomenclatureYear }) => ({ value, nomenclatureYear })),
+      gtinRows: version.identifiers.filter(row => row.type === "GTIN").map(({ value }) => ({ value })),
       manufacturer: version.manufacturer,
     };
   }

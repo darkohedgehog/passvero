@@ -347,3 +347,16 @@ test("public document labels and null-label fallback render in all six supported
     assert.ok(html.includes(localized.documentCategories!.MANUAL));
   }
 });
+
+for (const locale of ["hr", "en", "de", "sr", "sl", "pl"] as const) test(`GTIN public HTML has a local barcode and unchanged number in ${locale}`, async()=>{
+  const response=await handler({kind:"PUBLIC",dpp:{...dpp,locale,gtin:"012345000058"}})(request(),publicCode);
+  assert.equal(response.status,200);
+  const html=await response.text();
+  assert.match(html, /src="data:image\/svg\+xml;base64,/);
+  assert.match(html, /<figcaption[^>]*>012345000058<\/figcaption>/);
+  assert.doesNotMatch(html, /api\.bwip|GS1 verified|issuingAuthority/);
+});
+test("missing GTIN produces no empty barcode",async()=>{
+  const response=await handler({kind:"PUBLIC",dpp:{...dpp,gtin:null}})(request(),publicCode);
+  assert.doesNotMatch(await response.text(), /gtin-heading|data:image\/svg/);
+});

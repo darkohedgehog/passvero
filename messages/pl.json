@@ -246,5 +246,21 @@
     "new": "Nowy producent",
     "published": "Opublikowane dane",
     "pending": "Zapisywanie…"
+  },
+  "Gtin": {
+    "title": "GTIN",
+    "number": "Numer GTIN",
+    "barcode": "Kod kreskowy",
+    "published": "Opublikowana wersja",
+    "empty": "Nie podano GTIN.",
+    "save": "Zapisz GTIN",
+    "remove": "Usuń GTIN",
+    "pending": "Zapisywanie…",
+    "success": "Zapisano GTIN.",
+    "invalid": "Wpisz 8, 12, 13 lub 14 cyfr bez spacji, z prawidłową cyfrą kontrolną.",
+    "stale": "Dane zostały zmienione. Odśwież stronę i spróbuj ponownie.",
+    "failure": "Nie można teraz zapisać ani wczytać GTIN.",
+    "notice": "Jeden opcjonalny GTIN dla opisanej jednostki handlowej. Sprawdzamy format i cyfrę kontrolną, a nie rejestrację GS1 ani własność. Kod kreskowy służy do wyświetlania w aplikacji, bez certyfikacji jakości druku. Osobny kod QR prowadzi do DPP.",
+    "help": "Zachowaj zera wiodące. Bez spacji i łączników."
   }
 }

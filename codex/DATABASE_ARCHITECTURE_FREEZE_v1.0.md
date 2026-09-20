@@ -396,3 +396,14 @@ services. Cloning copies the reference and old snapshot, not current directory
 values. The anonymous DTO selects only snapshot public fields. Absence remains
 compatible with publication. See `MANUFACTURER_IMPLEMENTATION.md` for evidence
 and staging migration/rollback boundaries.
+
+## Approved bounded addendum — optional version GTIN (2026-09-20)
+
+`PRODUCT_GTIN_VALIDATION_AND_BARCODE_STAGING` explicitly approves at most one
+optional GTIN per ProductVersion, for the described trade item. The partial
+unique index applies only to GTIN; other identifier cardinalities remain as-is.
+Migration aborts on existing multiple GTIN records without choosing/deleting
+values. No new fields, global uniqueness, packaging model or backfill. Current
+editable draft authority/CAS and immutable publication/cloning rules apply.
+See `PRODUCT_GTIN_VALIDATION_AND_BARCODE_STAGING.md` for the approved contract,
+exact migration scope, local evidence and pending staging operator boundary.

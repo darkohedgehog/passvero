@@ -100,7 +100,7 @@ test("content read targets only the pointed PUBLISHED version and maps the exact
             isRecycled: false,
             recycledPercentage: null,
           }],
-          identifiers: [{ value: "01012100", nomenclatureYear: 2026 }],
+          identifiers: [{ type: "CN", value: "01012100", nomenclatureYear: 2026 }, { type: "GTIN", value: "012345000058", nomenclatureYear: null }],
         };
       },
     },
@@ -129,6 +129,7 @@ test("content read targets only the pointed PUBLISHED version and maps the exact
     }],
     materials: [{ materialName: "Steel", category: "Metal", percentage: "0.00", isRecycled: false, recycledPercentage: null }],
     cnRows: [{ value: "01012100", nomenclatureYear: 2026 }],
+    gtinRows: [{ value: "012345000058" }],
     manufacturer: undefined,
   });
 
@@ -136,7 +137,7 @@ test("content read targets only the pointed PUBLISHED version and maps the exact
     where: unknown;
     select: {
       materials: { orderBy: unknown; select: unknown };
-      identifiers: { where: unknown; take: number; select: unknown };
+      identifiers: { where: unknown; select: unknown };
     };
   };
   assert.deepEqual(query.where, {
@@ -144,8 +145,7 @@ test("content read targets only the pointed PUBLISHED version and maps the exact
     currentPublishedForProduct: { is: { publicCode } },
   });
   assert.deepEqual(query.select.materials.orderBy, [{ createdAt: "asc" }, { id: "asc" }]);
-  assert.deepEqual(query.select.identifiers.where, { type: "CN" });
-  assert.equal(query.select.identifiers.take, 2);
+  assert.deepEqual(query.select.identifiers.where, { type: { in: ["CN", "GTIN"] } });
   const serializedInput = JSON.stringify(input);
   assert.doesNotMatch(serializedInput, /currentDraftVersion|versions|supplier|notes|ProductDocument|ProductImage|QRCode|AuditLog|createdBy|updatedBy|publishedBy/);
   assert.doesNotMatch(JSON.stringify(result), /aaaaaaaa|bbbbbbbb|cccccccc|eeeeeeee|productVersionId|identifierId/);

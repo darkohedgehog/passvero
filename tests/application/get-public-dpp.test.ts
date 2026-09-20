@@ -119,6 +119,7 @@ test("returns the exact allowlisted DTO from the pointed publication", async () 
       },
       materials: content.materials,
       manufacturer: null,
+      gtin: null,
       cn: { code: "01012100", nomenclatureYear: 2026 },
     },
   });
@@ -218,4 +219,15 @@ test("rereads the current publication on every request for a stable public ident
   assert.equal(before.kind === "PUBLIC" ? before.dpp.content.productName : null, "Stari objavljeni sadržaj");
   assert.equal(after.kind === "PUBLIC" ? after.dpp.content.productName : null, "Novi objavljeni sadržaj");
   assert.equal(after.kind === "PUBLIC" ? after.dpp.version.number : null, 2);
+});
+
+for (const rows of [[{value:"012345000059"}], [{value:"012345000058"},{value:"6291041500213"}]]) test("invalid or ambiguous GTIN fails closed", async()=>{
+  const {getPublicDpp}=fixture({content:{...content,gtinRows:rows}});
+  assert.equal((await getPublicDpp({publicCode,requestedLocale:"hr",acceptLanguage:null})).kind,"TEMPORARILY_UNAVAILABLE");
+});
+test("public GTIN is a string alone, preserving leading zeroes",async()=>{
+  const {getPublicDpp}=fixture({content:{...content,gtinRows:[{value:"012345000058"}]}});
+  const result=await getPublicDpp({publicCode,requestedLocale:"hr",acceptLanguage:null});
+  assert.equal(result.kind,"PUBLIC"); if(result.kind!=="PUBLIC")throw new Error();
+  assert.equal(result.dpp.gtin,"012345000058");
 });

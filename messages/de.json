@@ -246,5 +246,21 @@
     "new": "Neuer Hersteller",
     "published": "Veröffentlichte Angaben",
     "pending": "Wird gespeichert…"
+  },
+  "Gtin": {
+    "title": "GTIN",
+    "number": "GTIN-Nummer",
+    "barcode": "Strichcode",
+    "published": "Veröffentlichte Version",
+    "empty": "Keine GTIN eingetragen.",
+    "save": "GTIN speichern",
+    "remove": "GTIN entfernen",
+    "pending": "Wird gespeichert…",
+    "success": "GTIN gespeichert.",
+    "invalid": "Geben Sie 8, 12, 13 oder 14 Ziffern ohne Leerzeichen und mit gültiger Prüfziffer ein.",
+    "stale": "Die Daten wurden geändert. Laden Sie die Seite neu und versuchen Sie es erneut.",
+    "failure": "Die GTIN kann derzeit nicht gespeichert oder geladen werden.",
+    "notice": "Eine optionale GTIN für den beschriebenen Handelsartikel. Geprüft werden Format und Prüfziffer, nicht die GS1-Registrierung oder Inhaberschaft. Der Strichcode dient zur Anzeige in der Anwendung, ohne Zertifizierung der Druckqualität. Der separate QR-Code führt zum DPP.",
+    "help": "Führende Nullen beibehalten. Keine Leerzeichen oder Bindestriche."
   }
 }

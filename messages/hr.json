@@ -355,5 +355,21 @@
     "new": "Novi proizvođač",
     "published": "Objavljeni podaci",
     "pending": "Spremanje…"
+  },
+  "Gtin": {
+    "title": "GTIN",
+    "number": "GTIN broj",
+    "barcode": "Barkod",
+    "published": "Objavljena verzija",
+    "empty": "Nije unesen GTIN.",
+    "save": "Spremi GTIN",
+    "remove": "Ukloni GTIN",
+    "pending": "Spremanje…",
+    "success": "GTIN je spremljen.",
+    "invalid": "Unesite 8, 12, 13 ili 14 znamenki bez razmaka, s ispravnom kontrolnom znamenkom.",
+    "stale": "Podaci su promijenjeni. Osvježite stranicu i pokušajte ponovno.",
+    "failure": "GTIN trenutačno nije moguće spremiti ili učitati.",
+    "notice": "Jedan neobavezni GTIN za trgovačku jedinicu koju ovaj proizvod opisuje. Provjeravamo format i kontrolnu znamenku, ne GS1 registraciju ili vlasništvo. Barkod je prikaz u aplikaciji, bez potvrde kvalitete za tisak. QR zasebno vodi na DPP.",
+    "help": "Zadržite vodeće nule. Bez razmaka ili crtica."
   }
 }

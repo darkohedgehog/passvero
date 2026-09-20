@@ -1,3 +1,5 @@
+import { GtinBarcode } from "@/src/components/application/products/gtin-barcode";
+import { gtinPublicLabels } from "@/src/components/application/products/gtin-labels";
 import { manufacturerTitles } from "@/src/components/application/products/manufacturer-labels";
 /* eslint-disable @next/next/no-head-element -- This route handler renders a complete server-only HTML document so it can return exact 404/410/503 statuses. */
 import type { ReactNode } from "react";
@@ -129,6 +131,12 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
           <div><dt>{labels.published}</dt><dd>{formatDate(dpp.version.publishedAt, dpp.locale)}</dd></div>
         </dl>
       </section>
+
+      {dpp.gtin ? <section aria-labelledby="gtin-heading">
+        <h2 id="gtin-heading">GTIN</h2>
+        <GtinBarcode value={dpp.gtin} label={gtinPublicLabels[dpp.locale].barcode} />
+        <p>{gtinPublicLabels[dpp.locale].notice}</p>
+      </section> : null}
 
       {dpp.manufacturer ? <section aria-labelledby="manufacturer-heading">
         <h2 id="manufacturer-heading">{manufacturerTitles[dpp.locale]}</h2>

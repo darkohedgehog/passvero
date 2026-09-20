@@ -246,5 +246,21 @@
     "new": "Nov proizvajalec",
     "published": "Objavljeni podatki",
     "pending": "Shranjevanje…"
+  },
+  "Gtin": {
+    "title": "GTIN",
+    "number": "Številka GTIN",
+    "barcode": "Črtna koda",
+    "published": "Objavljena različica",
+    "empty": "GTIN ni vnesen.",
+    "save": "Shrani GTIN",
+    "remove": "Odstrani GTIN",
+    "pending": "Shranjevanje…",
+    "success": "GTIN je shranjen.",
+    "invalid": "Vnesite 8, 12, 13 ali 14 števk brez presledkov in z veljavno kontrolno števko.",
+    "stale": "Podatki so se spremenili. Osvežite stran in poskusite znova.",
+    "failure": "GTIN trenutno ni mogoče shraniti ali naložiti.",
+    "notice": "En neobvezen GTIN za opisano trgovsko enoto. Preverjamo obliko in kontrolno števko, ne registracije GS1 ali lastništva. Črtna koda je prikaz v aplikaciji, brez potrditve kakovosti tiska. Ločena koda QR vodi do DPP.",
+    "help": "Ohranite vodilne ničle. Brez presledkov ali vezajev."
   }
 }
