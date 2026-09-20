@@ -41,7 +41,7 @@ async function seed(images = 0) {
   await publish({ productId: product.id, expectedDraftVersionId: version.id, expectedProductUpdatedAt: pointed.updatedAt.toISOString(), expectedDraftUpdatedAt: version.updatedAt.toISOString(), expectedCurrentPublishedVersionId: null }, context);
   const passport = await prisma.passport.findUniqueOrThrow({ where: { productId: product.id } });
   await prisma.qRCode.update({ where: { passportId: passport.id }, data: { status: "ACTIVE", activatedAt: new Date() } });
-  for (let i = 0; i < images; i++) await prisma.productImage.create({ data: { productVersionId: version.id, originalFilename: "test.png", storageProvider: "test", storageBucket: "test", storageKey: randomUUID(), mimeType: "image/png", sizeBytes: BigInt(1), checksumSha256: "b".repeat(64), width: 1, height: 1, uploadedAt: new Date() } });
+  for (let i = 0; i < images; i++) await prisma.productImage.create({ data: { productVersion: { connect: { id: version.id } }, asset: { create: { organizationId: context.organizationId, state: "LEGACY", originalFilename: "test.png", storageProvider: "test", storageBucket: "test", storageKey: randomUUID(), mimeType: "image/png", sizeBytes: BigInt(1), checksumSha256: "b".repeat(64), width: 1, height: 1, uploadedAt: new Date() } } } });
   const current = await prisma.product.findUniqueOrThrow({ where: { id: product.id } });
   return { product: current, context, sourceId: version.id, command: { productId: product.id, expectedCurrentPublishedVersionId: version.id, expectedProductUpdatedAt: current.updatedAt.toISOString() } };
 }
@@ -49,11 +49,16 @@ async function state(productId: string) {
   return prisma.product.findUniqueOrThrow({ where: { id: productId }, include: { versions: { orderBy: { id: "asc" }, include: { translations: { orderBy: { locale: "asc" } }, materials: { orderBy: [{ createdAt: "asc" }, { id: "asc" }] }, identifiers: { orderBy: { type: "asc" } }, productDocuments: true, images: true } }, passport: { include: { qrCode: true } } } });
 }
 async function audits(productId: string) { return prisma.auditLog.findMany({ where: { entityId: productId }, orderBy: { occurredAt: "asc" } }); }
-for (const imageCount of [1, 2]) test(`image gate with ${imageCount} images preserves the entire aggregate audit public DPP Passport and QR`, async () => {
-  const f = await seed(imageCount); const before = await state(f.product.id); const beforeAudit = await audits(f.product.id);
+for (const imageCount of [1, 2]) test(`clone preserves all ${imageCount} legacy image references and published aggregate`, async () => {
+  const f = await seed(imageCount); const before = await state(f.product.id);
   const publicBefore = await publicDpp({ publicCode: f.product.publicCode, requestedLocale: "hr", acceptLanguage: null });
-  await assert.rejects(clone(f.command, f.context), e => e instanceof ApplicationError && e.code === "CREATE_DRAFT_IMAGES_UNSUPPORTED");
-  assert.deepEqual(await state(f.product.id), before); assert.deepEqual(await audits(f.product.id), beforeAudit);
+  await clone(f.command, f.context);
+  const after = await state(f.product.id);
+  assert.deepEqual(after.versions.find(v=>v.id===f.sourceId), before.versions.find(v=>v.id===f.sourceId));
+  const copied = after.versions.find(v=>v.id===after.currentDraftVersionId)!;
+  assert.equal(copied.images.length,imageCount);
+  assert.deepEqual(copied.images.map(i=>i.assetId).sort(),before.versions.find(v=>v.id===f.sourceId)!.images.map(i=>i.assetId).sort());
+  assert.deepEqual(after.passport,before.passport);
   assert.deepEqual(await publicDpp({ publicCode: f.product.publicCode, requestedLocale: "hr", acceptLanguage: null }), publicBefore);
 });
 test("concurrent creation copies isolated children once and republication keeps public identity", async () => {
@@ -113,8 +118,8 @@ test("concurrent creation copies isolated children once and republication keeps 
   const publicAfter = await publicDpp({ publicCode: f.product.publicCode, requestedLocale: "hr", acceptLanguage: null });
   assert.equal(publicAfter.kind, "PUBLIC"); if (publicAfter.kind === "PUBLIC") { assert.equal(publicAfter.dpp.version.number, 2); assert.equal(publicAfter.dpp.content.description, "Private changes"); assert.equal(publicAfter.dpp.cn?.code, "01012100"); assert.equal(publicAfter.dpp.materials[0].materialName, "Private steel"); }
 });
-for (const model of ["productTranslation", "productMaterial", "productIdentifier", "productDocument", "auditLog"] as const) test(`failure at ${model} rolls back version children pointer and audit`, async () => {
-  const f = await seed(); const before = await state(f.product.id); const beforeAudit = await audits(f.product.id);
+for (const model of ["productTranslation", "productMaterial", "productIdentifier", "productDocument", "productImage", "auditLog"] as const) test(`failure at ${model} rolls back version children pointer and audit`, async () => {
+  const f = await seed(1); const before = await state(f.product.id); const beforeAudit = await audits(f.product.id);
   const dependencies = createPrismaCreateDraftFromPublishedDependencies(prisma);
   const run = dependencies.transactionRunner.run.bind(dependencies.transactionRunner);
   dependencies.transactionRunner.run = work => run(tx => work(new Proxy(tx, { get(target, key) {

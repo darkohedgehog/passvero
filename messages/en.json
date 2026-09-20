@@ -269,5 +269,21 @@
     "failure": "The GTIN cannot be saved or loaded right now.",
     "notice": "One optional GTIN for the trade item described by this product. We check format and check digit, not GS1 registration or ownership. The barcode is an in-app display, without print quality certification. The separate QR links to the DPP.",
     "help": "Keep leading zeroes. No spaces or hyphens."
+  },
+  "ProductImage": {
+    "title": "Main image",
+    "published": "Published version",
+    "empty": "No image added.",
+    "help": "JPEG or PNG up to 8 MiB, at most 8192 px per side and 24 megapixels. Images are resized to 2048 px and metadata is removed. Drafts are private.",
+    "file": "Choose image",
+    "alt": "Short image description (alt text)",
+    "pending": "Saving…",
+    "save": "Save image",
+    "remove": "Remove image from draft",
+    "success": "Image updated.",
+    "invalid": "Invalid image or image limits exceeded. Choose a JPEG or PNG.",
+    "stale": "The product changed. Refresh the page and try again.",
+    "failure": "Image unavailable. Please try again.",
+    "ambiguous": "Multiple primary images exist. Data review is required before editing."
   }
 }

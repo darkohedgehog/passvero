@@ -99,123 +99,26 @@ test("Phase 2C.3 adds only ProductImage and no enum", async () => {
   assert.doesNotMatch(schema, /^enum Image\w*Status \{/m);
 });
 
-test("ProductImage contains exactly the approved fields and defaults", async () => {
+test("ProductImage stores version presentation and an asset reference", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const image = block(schema, "model", "ProductImage");
-
-  assert.deepEqual(fieldNames(image), [
-    "id",
-    "productVersionId",
-    "originalFilename",
-    "fileExtension",
-    "storageProvider",
-    "storageBucket",
-    "storageKey",
-    "mimeType",
-    "sizeBytes",
-    "checksumSha256",
-    "width",
-    "height",
-    "altText",
-    "caption",
-    "isPublic",
-    "isPrimary",
-    "sortOrder",
-    "uploadedAt",
-    "createdAt",
-    "updatedAt",
-    "productVersion",
-  ]);
-  assert.match(image, /id\s+String\s+@id\s+@default\(uuid\(\)\)\s+@db\.Uuid/);
-  assert.match(image, /productVersionId\s+String\s+@db\.Uuid/);
-  for (const field of [
-    "originalFilename",
-    "storageProvider",
-    "storageBucket",
-    "storageKey",
-    "mimeType",
-    "checksumSha256",
-  ]) {
-    assert.match(image, new RegExp(`^\\s*${field}\\s+String(?:\\s|$)`, "m"));
-  }
-  assert.match(image, /sizeBytes\s+BigInt(?:\s|$)/);
-  assert.match(image, /width\s+Int(?:\s|$)/);
-  assert.match(image, /height\s+Int(?:\s|$)/);
+  assert.deepEqual(fieldNames(image), ["id", "productVersionId", "assetId", "altText", "caption", "isPublic", "isPrimary", "sortOrder", "createdAt", "updatedAt", "productVersion", "asset"]);
+  assert.match(image, /onDelete: Restrict/);
+  assert.match(image, /@relation\("ProductVersionImages"/);
+  assert.doesNotMatch(image, /@@unique/);
   assert.match(image, /isPublic\s+Boolean\s+@default\(true\)/);
   assert.match(image, /isPrimary\s+Boolean\s+@default\(false\)/);
-  assert.match(image, /sortOrder\s+Int\s+@default\(0\)/);
-  assert.match(image, /createdAt\s+DateTime\s+@default\(now\(\)\)/);
-  assert.match(image, /updatedAt\s+DateTime\s+@updatedAt/);
-  assert.match(image, /manual PostgreSQL CHECK constraints/);
+  assert.match(image, /altText\s+String\?/);
+  assert.match(image, /caption\s+String\?/);
 });
 
-test("ProductImage optional fields have the approved nullability", async () => {
+test("immutable asset preserves storage identity uniqueness and byte metadata", async () => {
   const schema = await readFile(schemaPath, "utf8");
-  const image = block(schema, "model", "ProductImage");
-
-  for (const field of ["altText", "caption", "fileExtension"]) {
-    assert.match(image, new RegExp(`^\\s*${field}\\s+String\\?\\s*$`, "m"));
-  }
-  assert.match(image, /^\s*uploadedAt\s+DateTime\?\s*$/m);
-});
-
-test("ProductImage belongs only to ProductVersion through ProductVersionImages", async () => {
-  const schema = await readFile(schemaPath, "utf8");
-  const version = block(schema, "model", "ProductVersion");
-  const image = block(schema, "model", "ProductImage");
-
-  assert.match(
-    image,
-    /productVersion\s+ProductVersion\s+@relation\("ProductVersionImages", fields: \[productVersionId\], references: \[id\], onDelete: Cascade, onUpdate: Cascade\)/,
-  );
-  assert.match(version, /images\s+ProductImage\[\]\s+@relation\("ProductVersionImages"\)/);
-  assert.deepEqual(
-    fieldNames(image).filter((field) =>
-      ![
-        "id",
-        "productVersionId",
-        "originalFilename",
-        "fileExtension",
-        "storageProvider",
-        "storageBucket",
-        "storageKey",
-        "mimeType",
-        "sizeBytes",
-        "checksumSha256",
-        "width",
-        "height",
-        "altText",
-        "caption",
-        "isPublic",
-        "isPrimary",
-        "sortOrder",
-        "uploadedAt",
-        "createdAt",
-        "updatedAt",
-      ].includes(field)
-    ),
-    ["productVersion"],
-  );
-});
-
-test("ProductImage has only storage uniqueness and the four approved indexes", async () => {
-  const schema = await readFile(schemaPath, "utf8");
-  const image = block(schema, "model", "ProductImage");
-
-  assert.match(image, /@@unique\(\[storageProvider, storageBucket, storageKey\]\)/);
-  for (const index of [
-    "productVersionId",
-    "productVersionId, isPublic, sortOrder",
-    "productVersionId, isPrimary",
-    "checksumSha256",
-  ]) {
-    assert.match(image, new RegExp(`@@index\\(\\[${index}\\]\\)`));
-  }
-  assert.equal([...image.matchAll(/@@index\(/g)].length, 4);
-  assert.equal([...image.matchAll(/@@unique\(/g)].length, 1);
-  assert.doesNotMatch(image, /checksumSha256\s+String\s+@unique/);
-  assert.doesNotMatch(image, /storageKey\s+String\s+@unique/);
-  assert.doesNotMatch(image, /@@unique\(\[productVersionId,/);
+  const asset = block(schema, "model", "ProductImageAsset");
+  for (const field of ["storageProvider", "storageBucket", "storageKey", "checksumSha256", "mimeType", "width", "height", "sizeBytes", "organizationId", "policyVersion", "state"]) assert.ok(fieldNames(asset).includes(field));
+  assert.match(asset, /@@unique\(\[storageProvider, storageBucket, storageKey\], map: "ProductImage_storageProvider_storageBucket_storageKey_key"\)/);
+  assert.match(asset, /uploadedAt\s+DateTime\?/);
+  assert.match(asset, /fileExtension\s+String\?/);
 });
 
 test("ProductImage excludes ownership, document, URL, actor, and processing fields", async () => {

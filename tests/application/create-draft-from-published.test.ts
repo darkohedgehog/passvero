@@ -14,7 +14,7 @@ const command = { productId, expectedCurrentPublishedVersionId: sourceId, expect
 function harness() {
   const product = { productId, organizationId: "org", lifecycleStatus: "ACTIVE" as "ACTIVE" | "ARCHIVED", publicCode: "AbCdEfGhIjKlMnOpQrStUv", currentDraftVersionId: null as string | null, currentPublishedVersionId: sourceId as string | null, updatedAt: at };
   const version = { productVersionId: sourceId, productId, organizationId: "org", status: "PUBLISHED" as const, sourceLocale: "hr", versionNumber: 1, updatedAt: at, reviewReadyAt: null, publishedAt: at, publishedById: "actor", supersededAt: null, discardedAt: null, clonedFromVersionId: null as string | null };
-  const copy = { imageCount: 0, sourceTranslationValid: true, documentOwnershipValid: true };
+  const copy = { imageCount: 0, imageReferencesValid: true, sourceTranslationValid: true, documentOwnershipValid: true };
   let writes = 0;
   const persistence: CreateDraftFromPublishedPersistence<null> = {
     readEligibility: async () => ({ organizationStatus: "ACTIVE", membershipStatus: "ACTIVE", membershipRole: "ADMIN" }),
@@ -29,9 +29,9 @@ const code = (expected: string) => (error: unknown) => error instanceof Applicat
 test("image-free published Product creates one private draft from trusted authority", async () => {
   const f = harness(); assert.deepEqual(await f.run(), { status: "CREATED_NEW_DRAFT" }); assert.equal(f.writes(), 1);
 });
-for (const imageCount of [1, 2]) test(`${imageCount} published images reject before any business write`, async () => {
+for (const imageCount of [1, 2]) test(`${imageCount} published images with valid immutable references clone`, async () => {
   const f = harness(); f.copy.imageCount = imageCount;
-  await assert.rejects(f.run(), code("CREATE_DRAFT_IMAGES_UNSUPPORTED")); assert.equal(f.writes(), 0);
+  assert.deepEqual(await f.run(), { status: "CREATED_NEW_DRAFT" }); assert.equal(f.writes(), 1);
 });
 test("compatible repeated request resumes existing draft even with old product timestamp", async () => {
   const f = harness(); f.product.currentDraftVersionId = draftId; f.product.updatedAt = new Date(at.getTime() + 1);
@@ -77,3 +77,5 @@ for (const mutation of ["missing-version", "foreign-version-org", "unsupported-l
   });
   await assert.rejects(f.run(), code("CREATE_DRAFT_INVALID_STATE")); assert.equal(f.writes(), 0);
 });
+
+test("invalid image ownership/reference rejects before writes", async () => { const f=harness();f.copy.imageReferencesValid=false;await assert.rejects(f.run(),code("CREATE_DRAFT_INVALID_STATE"));assert.equal(f.writes(),0); });

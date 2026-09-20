@@ -99,6 +99,10 @@ export function createGetPublicDppService(dependencies: {
         kind: "PUBLIC",
         dpp: {
           ...(dependencies.documents ? { documents: await dependencies.documents.list(query.publicCode, { number: content.versionNumber, publishedAt: content.publishedAt.toISOString() }) } : {}),
+          image: content.imageRows?.length === 1 ? {
+            url: `/api/public/products/${encodeURIComponent(query.publicCode)}/images/${encodeURIComponent(content.imageRows[0].id)}`,
+            altText: content.imageRows[0].altText, width: content.imageRows[0].width, height: content.imageRows[0].height,
+          } : null,
           gtin: gtins[0]?.value ?? null,
           locale,
           availableLocales,

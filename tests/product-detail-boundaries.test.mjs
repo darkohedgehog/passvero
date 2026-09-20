@@ -42,7 +42,7 @@ test("keeps detail outside direct Prisma access and limits mutations to authoriz
   assert.match(read(pagePath), /canShowEditProductDraftAction\(/);
   assert.doesNotMatch(
     source,
-    /ProductIdentifier|ProductImage|QRCode|ScanEvent|Analytics/,
+    /ProductIdentifier|QRCode|ScanEvent|Analytics/,
   );
 });
 
@@ -117,3 +117,10 @@ function flattenKeys(value, prefix = "") {
       : [path];
   }).sort();
 }
+
+// Main-image composition is now an authorized handoff; persistence remains outside the page.
+test("detail composes the server-only main-image section", async () => {
+  const source = read(pagePath);
+  assert.match(source, /ProductImageServerSection/);
+  assert.doesNotMatch(source, /productImage\.(?:create|update|delete|find)|getImageServices/);
+});

@@ -47,8 +47,8 @@ export function createDraftFromPublishedService<T>(dependencies: CreateDraftFrom
           || source.versionNumber === null || !Number.isSafeInteger(source.versionNumber) || source.versionNumber < 1
           || source.publishedAt === null || source.publishedById === null || source.supersededAt !== null || source.discardedAt !== null) throw fail("INVALID_STATE", "INVALID_STATE");
         const copy = await dependencies.persistence.readCopyEligibility(tx, { productVersionId: source.productVersionId, organizationId: source.organizationId, sourceLocale: source.sourceLocale });
-        // Temporary limitation until a separate image asset/version strategy is approved.
-        if (copy.imageCount > 0) throw fail("INVALID_STATE", "IMAGES_UNSUPPORTED");
+        // All image associations clone onto immutable, tenant-owned assets.
+        if (!copy.imageReferencesValid) throw fail("INVALID_STATE", "INVALID_STATE");
         if (!Number.isSafeInteger(copy.imageCount) || copy.imageCount < 0 || !copy.sourceTranslationValid || !copy.documentOwnershipValid) throw fail("INVALID_STATE", "INVALID_STATE");
         if (product.currentDraftVersionId !== null) {
           const draft = await dependencies.persistence.readVersion(tx, { ...versionInput, productVersionId: product.currentDraftVersionId });

@@ -262,5 +262,21 @@
     "failure": "Die GTIN kann derzeit nicht gespeichert oder geladen werden.",
     "notice": "Eine optionale GTIN für den beschriebenen Handelsartikel. Geprüft werden Format und Prüfziffer, nicht die GS1-Registrierung oder Inhaberschaft. Der Strichcode dient zur Anzeige in der Anwendung, ohne Zertifizierung der Druckqualität. Der separate QR-Code führt zum DPP.",
     "help": "Führende Nullen beibehalten. Keine Leerzeichen oder Bindestriche."
+  },
+  "ProductImage": {
+    "title": "Hauptbild",
+    "published": "Veröffentlichte Version",
+    "empty": "Kein Bild hinzugefügt.",
+    "help": "JPEG oder PNG bis 8 MiB, höchstens 8192 px je Seite und 24 Megapixel. Bilder werden auf 2048 px verkleinert und Metadaten entfernt. Entwürfe sind privat.",
+    "file": "Bild auswählen",
+    "alt": "Kurze Bildbeschreibung (Alternativtext)",
+    "pending": "Wird gespeichert…",
+    "save": "Bild speichern",
+    "remove": "Bild aus Entwurf entfernen",
+    "success": "Bild aktualisiert.",
+    "invalid": "Ungültiges Bild oder Grenzwerte überschritten. Wählen Sie JPEG oder PNG.",
+    "stale": "Das Produkt wurde geändert. Laden Sie die Seite neu und versuchen Sie es erneut.",
+    "failure": "Bild nicht verfügbar. Bitte erneut versuchen.",
+    "ambiguous": "Mehrere Hauptbilder vorhanden. Vor der Bearbeitung ist eine Datenprüfung erforderlich."
   }
 }

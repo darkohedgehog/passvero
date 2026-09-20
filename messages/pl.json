@@ -262,5 +262,21 @@
     "failure": "Nie można teraz zapisać ani wczytać GTIN.",
     "notice": "Jeden opcjonalny GTIN dla opisanej jednostki handlowej. Sprawdzamy format i cyfrę kontrolną, a nie rejestrację GS1 ani własność. Kod kreskowy służy do wyświetlania w aplikacji, bez certyfikacji jakości druku. Osobny kod QR prowadzi do DPP.",
     "help": "Zachowaj zera wiodące. Bez spacji i łączników."
+  },
+  "ProductImage": {
+    "title": "Zdjęcie główne",
+    "published": "Opublikowana wersja",
+    "empty": "Nie dodano zdjęcia.",
+    "help": "JPEG lub PNG do 8 MiB, maksymalnie 8192 px na bok i 24 megapiksele. Zdjęcia są zmniejszane do 2048 px, a metadane usuwane. Wersje robocze są prywatne.",
+    "file": "Wybierz zdjęcie",
+    "alt": "Krótki opis zdjęcia (tekst alternatywny)",
+    "pending": "Zapisywanie…",
+    "save": "Zapisz zdjęcie",
+    "remove": "Usuń zdjęcie z wersji roboczej",
+    "success": "Zdjęcie zaktualizowano.",
+    "invalid": "Nieprawidłowe zdjęcie lub przekroczone limity. Wybierz JPEG lub PNG.",
+    "stale": "Produkt został zmieniony. Odśwież stronę i spróbuj ponownie.",
+    "failure": "Zdjęcie niedostępne. Spróbuj ponownie.",
+    "ambiguous": "Istnieje kilka zdjęć głównych. Przed edycją wymagany jest przegląd danych."
   }
 }

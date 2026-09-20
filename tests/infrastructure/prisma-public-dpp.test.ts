@@ -131,6 +131,7 @@ test("content read targets only the pointed PUBLISHED version and maps the exact
     cnRows: [{ value: "01012100", nomenclatureYear: 2026 }],
     gtinRows: [{ value: "012345000058" }],
     manufacturer: undefined,
+    imageRows: [],
   });
 
   const query = input as {

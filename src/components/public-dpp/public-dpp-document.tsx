@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- Authenticated delivery must bypass the image optimizer cache. */
 import { GtinBarcode } from "@/src/components/application/products/gtin-barcode";
 import { gtinPublicLabels } from "@/src/components/application/products/gtin-labels";
 import { manufacturerTitles } from "@/src/components/application/products/manufacturer-labels";
@@ -110,6 +111,7 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
         <div className="brand">Passvero</div>
         <p className="eyebrow">{labels.documentTitle}</p>
         <h1>{dpp.content.productName}</h1>
+        {dpp.image ? <img src={dpp.image.url} alt={dpp.image.altText ?? dpp.content.productName} width={dpp.image.width} height={dpp.image.height} style={{ maxWidth: "100%", height: "auto", display: "block", marginTop: "1rem" }} /> : null}
         <p className="status"><span aria-hidden="true" />{labels.active}</p>
       </header>
 

@@ -39,7 +39,7 @@ export class PrismaPublishProductPersistence implements PublishProductPersistenc
     const [translation, documents, unavailableImage, materials, cnRows, translations] = await Promise.all([
       tx.productTranslation.findUnique({ where: { productVersionId_locale: { productVersionId: input.productVersionId, locale: input.sourceLocale } }, select: { productName: true } }),
       tx.productDocument.findMany({ where: { productVersionId: input.productVersionId }, select: { category: true, locale: true, displayLabel: true, description: true, isPublic: true, sortOrder: true, document: { select: { organizationId: true, status: true } } } }),
-      tx.productImage.findFirst({ where: { productVersionId: input.productVersionId, isPublic: true, uploadedAt: null }, select: { id: true } }),
+      tx.productImage.findFirst({ where: { productVersionId: input.productVersionId, isPublic: true, OR: [{ asset: { uploadedAt: null } }, { asset: { organizationId: { not: input.organizationId } } }, { asset: { state: { notIn: ["READY", "LEGACY"] } } }] }, select: { id: true } }),
       tx.productMaterial.findMany({ where: { productVersionId: input.productVersionId }, select: { materialName: true, category: true, percentage: true, isRecycled: true, recycledPercentage: true } }),
       tx.productIdentifier.findMany({ where: { productVersionId: input.productVersionId, type: "CN" }, select: { type: true, value: true, nomenclatureYear: true, issuingAuthority: true, notes: true } }),
       tx.productTranslation.findMany({ where: { productVersionId: input.productVersionId }, select: { locale: true, productName: true } }),

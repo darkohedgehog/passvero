@@ -407,3 +407,13 @@ values. No new fields, global uniqueness, packaging model or backfill. Current
 editable draft authority/CAS and immutable publication/cloning rules apply.
 See `PRODUCT_GTIN_VALIDATION_AND_BARCODE_STAGING.md` for the approved contract,
 exact migration scope, local evidence and pending staging operator boundary.
+
+## Approved product-image asset normalization (2026-09-20)
+
+The user-authorized image/version staging slice adds ProductImageAsset and turns
+ProductImage into a version-owned reference. The storage unique constraint is
+preserved on the asset, not removed to permit shared mutable storage. Existing
+image rows and extra primary rows are preserved. Immutable asset and tenant
+reference triggers complement application draft authority. See
+PRODUCT_IMAGE_UPLOAD_VERSIONING_AND_PUBLIC_DPP_STAGING.md. No unrelated schema
+or Document/scanner changes are included.

@@ -39,19 +39,18 @@ It does not change publication, anonymous Public DPP, or QR lifecycle rules.
   audit commit together. Audit metadata contains only the operation discriminator
   CREATE_DRAFT_FROM_PUBLISHED; child content and storage metadata are excluded.
 
-## Temporary image limitation
+## Image asset/version cloning
 
-A validated current published version containing any ProductImage row is rejected
-with `CREATE_DRAFT_IMAGES_UNSUPPORTED` before any business write. This applies to
-public and private images, regardless of upload status or count. The UI explains
-that editing published products with images is not supported yet and that the
-published product remains unchanged.
-
-Images are never silently skipped, moved, assigned a reused storage identity, or
-copied through object storage by this operation. This is a temporary lifecycle
-limitation, not the final image architecture. A future Product image slice must
-approve an explicit asset/version strategy before enabling this operation for
-published versions containing images.
+ProductImage is now a version-owned association to an immutable ProductImageAsset.
+New drafts copy every association and its presentation metadata atomically; storage
+objects are not copied, moved or overwritten. Replacement/removal edits only the
+current draft association. Historical links and bytes remain unchanged. Foreign
+asset ownership or non-ready/non-legacy references abort the entire clone.
+Existing legacy rows remain retained and clonable; they are not silently certified
+as normalized or exposed through the new image transport. See
+`PRODUCT_IMAGE_UPLOAD_VERSIONING_AND_PUBLIC_DPP_STAGING.md` for migration,
+normalization, delivery and cleanup rules. The temporary image-count rejection
+is removed only together with this reference model and integration proof.
 
 ## UI and republication
 
@@ -68,3 +67,9 @@ is retained and its lastPublishedAt changes under the existing publication
 contract. QR identity/status/target and Product publicCode remain unchanged.
 Public DPP continues serving the old published version until that transaction
 commits.
+
+Image staging acceptance (2026-09-20, build `uXHDuXfdNBCLINFdIWQ0m`): a new
+draft inherited A through a separate image association; replacing it with B left
+public V1/A unchanged. V2 publishes B on the same DPP identity. Operator read-only
+verification confirmed historical V1/A and current V2/B references and bytes.
+See `PRODUCT_IMAGE_UPLOAD_VERSIONING_AND_PUBLIC_DPP_STAGING.md` for evidence.

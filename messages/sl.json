@@ -262,5 +262,21 @@
     "failure": "GTIN trenutno ni mogoče shraniti ali naložiti.",
     "notice": "En neobvezen GTIN za opisano trgovsko enoto. Preverjamo obliko in kontrolno števko, ne registracije GS1 ali lastništva. Črtna koda je prikaz v aplikaciji, brez potrditve kakovosti tiska. Ločena koda QR vodi do DPP.",
     "help": "Ohranite vodilne ničle. Brez presledkov ali vezajev."
+  },
+  "ProductImage": {
+    "title": "Glavna slika",
+    "published": "Objavljena različica",
+    "empty": "Slika ni dodana.",
+    "help": "JPEG ali PNG do 8 MiB, največ 8192 px na stran in 24 milijonov slikovnih pik. Slika se zmanjša na 2048 px in metapodatki se odstranijo. Osnutki niso javni.",
+    "file": "Izberite sliko",
+    "alt": "Kratek opis slike (nadomestno besedilo)",
+    "pending": "Shranjevanje…",
+    "save": "Shrani sliko",
+    "remove": "Odstrani sliko iz osnutka",
+    "success": "Slika je posodobljena.",
+    "invalid": "Neveljavna slika ali presežene omejitve. Izberite JPEG ali PNG.",
+    "stale": "Izdelek je spremenjen. Osvežite stran in poskusite znova.",
+    "failure": "Slika ni na voljo. Poskusite znova.",
+    "ambiguous": "Obstaja več glavnih slik. Pred urejanjem je potreben pregled podatkov."
   }
 }

@@ -87,6 +87,10 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
           select: translationSelect,
         },
         manufacturer: { select: manufacturerSelect },
+        images: { where: { isPrimary: true }, take: 2, select: {
+          id: true, altText: true, isPublic: true,
+          asset: { select: { organizationId: true, state: true, policyVersion: true, width: true, height: true } },
+        } },
         materials: {
           orderBy: [{ createdAt: "asc" }, { id: "asc" }],
           select: {
@@ -126,6 +130,7 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
       cnRows: version.identifiers.filter(row => row.type === "CN").map(({ value, nomenclatureYear }) => ({ value, nomenclatureYear })),
       gtinRows: version.identifiers.filter(row => row.type === "GTIN").map(({ value }) => ({ value })),
       manufacturer: version.manufacturer,
+      imageRows: (version.images ?? []).length === 1 ? (version.images ?? []).filter(row => row.isPublic && row.asset.organizationId === version.organizationId && row.asset.state === "READY" && row.asset.policyVersion === 1).map(row => ({ id: row.id, altText: row.altText, width: row.asset.width, height: row.asset.height })) : [],
     };
   }
 }

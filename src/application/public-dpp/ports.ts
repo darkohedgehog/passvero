@@ -19,6 +19,7 @@ export interface PublicDppAuthorityRecord {
 }
 
 export interface PublicDppContentRecord {
+  readonly imageRows?: readonly { readonly id: string; readonly altText: string | null; readonly width: number; readonly height: number }[];
   readonly gtinRows?: readonly { readonly value: string }[];
   readonly manufacturer?: import("../products/manufacturer/contracts").Manufacturer | null;
   readonly ownershipConsistent: boolean;

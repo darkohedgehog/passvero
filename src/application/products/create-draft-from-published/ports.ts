@@ -3,7 +3,7 @@ import type { PublicationVersionRecord, PublishProductPersistence } from "@/src/
 export class DraftCreationConflict extends Error {}
 export interface CreateDraftFromPublishedPersistence<T> extends Pick<PublishProductPersistence<T>, "readEligibility" | "readProductForPublication"> {
   readVersion(transaction: T, input: { productVersionId: string; productId: string; organizationId: string }): Promise<(PublicationVersionRecord & { clonedFromVersionId: string | null }) | null>;
-  readCopyEligibility(transaction: T, input: { productVersionId: string; organizationId: string; sourceLocale: string }): Promise<{ imageCount: number; sourceTranslationValid: boolean; documentOwnershipValid: boolean }>;
+  readCopyEligibility(transaction: T, input: { productVersionId: string; organizationId: string; sourceLocale: string }): Promise<{ imageCount: number; imageReferencesValid: boolean; sourceTranslationValid: boolean; documentOwnershipValid: boolean }>;
   createDraft(transaction: T, input: {
     productId: string; organizationId: string; sourceVersionId: string; sourceLocale: string;
     expectedProductUpdatedAt: Date; actorId: string; correlationId: string;

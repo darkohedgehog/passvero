@@ -262,5 +262,21 @@
     "failure": "GTIN trenutno nije moguće sačuvati ili učitati.",
     "notice": "Jedan opcioni GTIN za trgovačku jedinicu koju ovaj proizvod opisuje. Proveravamo format i kontrolnu cifru, ne GS1 registraciju ili vlasništvo. Barkod je prikaz u aplikaciji, bez potvrde kvaliteta za štampu. QR odvojeno vodi na DPP.",
     "help": "Sačuvajte vodeće nule. Bez razmaka ili crtica."
+  },
+  "ProductImage": {
+    "title": "Glavna slika",
+    "published": "Objavljena verzija",
+    "empty": "Slika nije dodata.",
+    "help": "JPEG ili PNG do 8 MiB, najviše 8192 px po strani i 24 megapiksela. Slika se prilagođava do 2048 px i metapodaci se uklanjaju. Nacrt nije javan.",
+    "file": "Izaberite sliku",
+    "alt": "Kratak opis slike (alt tekst)",
+    "pending": "Čuvanje…",
+    "save": "Sačuvaj sliku",
+    "remove": "Ukloni sliku iz nacrta",
+    "success": "Slika je ažurirana.",
+    "invalid": "Slika nije ispravna ili prelazi dozvoljena ograničenja. Izaberite JPEG ili PNG.",
+    "stale": "Proizvod je izmenjen. Osvežite stranicu i pokušajte ponovo.",
+    "failure": "Slika trenutno nije dostupna. Pokušajte ponovo.",
+    "ambiguous": "Postoji više glavnih slika. Potreban je pregled podataka pre izmene."
   }
 }

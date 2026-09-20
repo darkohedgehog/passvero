@@ -172,3 +172,16 @@ Nema GS1 registry verifikacije, fizičkog skeniranja, production promene ili com
 Detalji: `PRODUCT_GTIN_VALIDATION_AND_BARCODE_STAGING.md`.
 Sledeća celina je slika proizvoda; pretraga,
 CSV export i CSV import ostaju u planu i nisu započeti.
+
+## Product image staging work (2026-09-20)
+
+GTIN base `b223b109111f62e5f86ca720b887095ac42b2348` is clean and confirmed.
+Main JPEG/PNG upload, immutable assets and version associations, draft/private and
+current-public delivery are implemented and locally verified. Operator-reported
+staging migration/deployment passed for build `uXHDuXfdNBCLINFdIWQ0m`.
+Minimal staging runtime grants resolved the first upload failure. Live A/V1 ->
+inherited draft/B -> V2 and invalid upload checks passed. Final historical
+asset/reference read-only proof passed: V1/A and V2/B bytes verified, zero
+unreferenced assets, two image-set audits. Image staging acceptance is complete.
+See PRODUCT_IMAGE_UPLOAD_VERSIONING_AND_PUBLIC_DPP_STAGING.md.
+After this slice: product search, CSV export, CSV import; none started here.

@@ -120,6 +120,7 @@ test("returns the exact allowlisted DTO from the pointed publication", async () 
       materials: content.materials,
       manufacturer: null,
       gtin: null,
+      image: null,
       cn: { code: "01012100", nomenclatureYear: 2026 },
     },
   });
@@ -230,4 +231,11 @@ test("public GTIN is a string alone, preserving leading zeroes",async()=>{
   const result=await getPublicDpp({publicCode,requestedLocale:"hr",acceptLanguage:null});
   assert.equal(result.kind,"PUBLIC"); if(result.kind!=="PUBLIC")throw new Error();
   assert.equal(result.dpp.gtin,"012345000058");
+});
+test("image DTO contains only bounded public delivery presentation", async () => {
+  const row={id:"00000000-0000-4000-8000-000000000001",altText:"Main image",width:60,height:40};
+  const {getPublicDpp}=fixture({content:{...content,imageRows:[row]}});
+  const result=await getPublicDpp({publicCode,requestedLocale:"hr",acceptLanguage:null});
+  assert.equal(result.kind,"PUBLIC"); if(result.kind!=="PUBLIC")throw new Error();
+  assert.deepEqual(result.dpp.image,{url:`/api/public/products/${publicCode}/images/${row.id}`,altText:row.altText,width:60,height:40});
 });

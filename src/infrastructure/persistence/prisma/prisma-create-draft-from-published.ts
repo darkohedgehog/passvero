@@ -14,18 +14,22 @@ export class PrismaCreateDraftFromPublishedPersistence extends PrismaPublishProd
   }
 
   async readCopyEligibility(tx: Transaction, input: { productVersionId: string; organizationId: string; sourceLocale: string }) {
-    const [imageCount, source, foreignDocuments] = await Promise.all([
+    const [imageCount, source, foreignDocuments, invalidImages] = await Promise.all([
       tx.productImage.count({ where: { productVersionId: input.productVersionId } }),
       tx.productTranslation.findUnique({ where: { productVersionId_locale: { productVersionId: input.productVersionId, locale: input.sourceLocale } }, select: { productName: true } }),
       tx.productDocument.count({ where: { productVersionId: input.productVersionId, document: { organizationId: { not: input.organizationId } } } }),
+      tx.productImage.count({ where: { productVersionId: input.productVersionId, OR: [
+        { asset: { organizationId: { not: input.organizationId } } },
+        { asset: { state: { notIn: ["READY", "LEGACY"] } } },
+      ] } }),
     ]);
-    return { imageCount, sourceTranslationValid: source !== null && source.productName === source.productName.trim() && source.productName.length > 0 && Array.from(source.productName).length <= 200, documentOwnershipValid: foreignDocuments === 0 };
+    return { imageCount, imageReferencesValid: invalidImages === 0, sourceTranslationValid: source !== null && source.productName === source.productName.trim() && source.productName.length > 0 && Array.from(source.productName).length <= 200, documentOwnershipValid: foreignDocuments === 0 };
   }
 
   async createDraft(tx: Transaction, input: Parameters<CreateDraftFromPublishedPersistence<Transaction>["createDraft"]>[1]) {
     const where = { productVersionId: input.sourceVersionId };
     // Explicit authoring allowlists. No row IDs or lifecycle/actor history are copied.
-    const [translations, materials, identifiers, documents] = await Promise.all([
+    const [translations, materials, identifiers, documents, images] = await Promise.all([
       tx.productTranslation.findMany({ where, select: {
         locale: true, productName: true, shortDescription: true, description: true, technicalDescription: true,
         repairInstructions: true, sparePartsInformation: true, recyclingInstructions: true,
@@ -36,6 +40,7 @@ export class PrismaCreateDraftFromPublishedPersistence extends PrismaPublishProd
       } }),
       tx.productIdentifier.findMany({ where, select: { type: true, value: true, issuingAuthority: true, notes: true, nomenclatureYear: true } }),
       tx.productDocument.findMany({ where, select: { documentId: true, category: true, locale: true, displayLabel: true, description: true, isPublic: true, isPrimary: true, sortOrder: true } }),
+      tx.productImage.findMany({ where, select: { assetId: true, altText: true, caption: true, isPublic: true, isPrimary: true, sortOrder: true } }),
     ]);
     const draft = await tx.productVersion.create({ data: {
       productId: input.productId, organizationId: input.organizationId, sourceLocale: input.sourceLocale,
@@ -50,6 +55,7 @@ export class PrismaCreateDraftFromPublishedPersistence extends PrismaPublishProd
     if (materials.length) await tx.productMaterial.createMany({ data: materials.map((row, index) => ({ ...row, productVersionId: draft.id, createdAt: new Date(draft.createdAt.getTime() + index) })) });
     if (identifiers.length) await tx.productIdentifier.createMany({ data: identifiers.map(row => ({ ...row, productVersionId: draft.id })) });
     if (documents.length) await tx.productDocument.createMany({ data: documents.map(row => ({ ...row, productVersionId: draft.id })) });
+    if (images.length) await tx.productImage.createMany({ data: images.map(row => ({ ...row, productVersionId: draft.id })) });
     const assigned = await tx.product.updateMany({ where: {
       id: input.productId, organizationId: input.organizationId, lifecycleStatus: "ACTIVE",
       currentDraftVersionId: null, currentPublishedVersionId: input.sourceVersionId, updatedAt: input.expectedProductUpdatedAt,

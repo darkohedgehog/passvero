@@ -330,7 +330,7 @@ async function createUnavailableDocument(fixture: Awaited<ReturnType<typeof seed
 }
 
 async function createUnavailableImage(fixture: Awaited<ReturnType<typeof seedDraftFixture>>) {
-  await prisma.productImage.create({ data: { productVersionId: fixture.draftId, originalFilename: "draft.png", fileExtension: "png", storageProvider: "test", storageBucket: "publication", storageKey: randomUUID(), mimeType: "image/png", sizeBytes: BigInt(1), checksumSha256: "b".repeat(64), width: 1, height: 1, isPublic: true, uploadedAt: null } });
+  await prisma.productImage.create({ data: { productVersion: { connect: { id: fixture.draftId } }, isPublic: true, asset: { create: { organizationId: fixture.organizationId, state: "LEGACY", originalFilename: "draft.png", fileExtension: "png", storageProvider: "test", storageBucket: "publication", storageKey: randomUUID(), mimeType: "image/png", sizeBytes: BigInt(1), checksumSha256: "b".repeat(64), width: 1, height: 1, uploadedAt: null } } } });
 }
 
 async function createInvalidMaterials(productVersionId: string) {
