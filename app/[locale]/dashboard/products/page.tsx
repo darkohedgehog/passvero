@@ -1,3 +1,4 @@
+import { CatalogImport } from "@/src/components/application/products/catalog-import";
 import { CatalogExportAction } from "@/src/components/application/products/catalog-export-action";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -149,6 +150,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           {search ? <a href={getPathname({ locale, href: "/dashboard/products" })} className="rounded-lg border px-4 py-2 text-sm">{productsT("searchClear")}</a> : null}
         </div>
       </form>
+      {hasProductPermission(resolution.context, PRODUCT_CREATE) && hasProductPermission(resolution.context, "PRODUCT_EDIT") ? <details className="mb-6"><summary className="cursor-pointer rounded-lg border px-4 py-2 text-sm">{productsT("import")}</summary><CatalogImport /></details> : null}
       <CatalogExportAction search={search} labels={{ button: productsT("export.button"), pending: productsT("export.pending"), all: productsT("export.all"), filtered: productsT("export.filtered"), versionHelp: productsT("export.versionHelp"), textHelp: productsT("export.textHelp"), failure: productsT("export.failure"), limit: productsT("export.limit") }} />
       <ProductListPresentation
         items={result.items}

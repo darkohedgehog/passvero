@@ -194,6 +194,7 @@ enum AuthAbuseEndpoint {
 }
 
 model User {
+  csvImportBatches CatalogImportBatch[]
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
   email           String   @unique
@@ -226,6 +227,7 @@ model User {
 }
 
 model Organization {
+  csvImportBatches CatalogImportBatch[]
   imageAssets ProductImageAsset[]
   id            String             @id @default(uuid()) @db.Uuid
   displayName   String
@@ -1090,4 +1092,34 @@ model ProductVersionManufacturer {
   @@unique([productVersionId, organizationId])
 
   @@index([economicOperatorId, organizationId])
+}
+
+/// Hashes and outcomes only. Raw CSV and normalized product payloads are never persisted.
+model CatalogImportBatch {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @db.Uuid
+  userId String @db.Uuid
+  contentHash String @db.VarChar(64)
+  selectionHash String @db.VarChar(64)
+  acceptGtinMatches Boolean
+  status String @default("ACTIVE") @db.VarChar(16)
+  totalRows Int
+  createdAt DateTime @default(now())
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  rows CatalogImportRow[]
+  @@unique([organizationId, userId, contentHash])
+}
+
+model CatalogImportRow {
+  batchId String @db.Uuid
+  rowNumber Int
+  rowHash String @db.VarChar(64)
+  status String @default("PENDING") @db.VarChar(16)
+  /// Retained result reference, never accepted as write authority.
+  productId String? @db.Uuid
+  error String? @db.VarChar(64)
+  batch CatalogImportBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  @@id([batchId, rowNumber])
+  @@index([batchId, status])
 }

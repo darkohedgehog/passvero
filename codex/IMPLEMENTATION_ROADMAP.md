@@ -210,3 +210,19 @@ Spreadsheet UI NOT_PERFORMED. No migration, data mutation or production changes.
 See `PRODUCT_CATALOG_CSV_EXPORT_STAGING.md` for column contract, limits, spreadsheet
 protection and round-trip limitations. Next: separately authorized CSV import with
 mapping, preview, validation and duplicates; no import implementation in this slice.
+
+## Product catalog CSV import (2026-09-21)
+
+Create-only mapping/preview/validation/explicit selection and resumable 25-row
+execution implemented from `33adf1cfbc443ad2980df13ead995a27ea00feb5`. Existing
+CreateProduct/GTIN/CN services share one transaction per row with audit and receipt.
+Local 5,000-row, concurrency/replay, tenant/auth, rollback and cancel proofs PASS;
+staging migration/deploy/UI acceptance PASS. Build `bO73SDxjxPBddEzd4Q2nd`.
+Live five-row preview wrote nothing; explicit three-row selection created three
+HR drafts, two invalid/conflicting rows excluded. Replayed batch kept same IDs
+and eight catalog products. Three synthetic drafts/receipts/audits retained; raw
+test CSV removed. Large-scale/concurrency/rollback/auth evidence remains local.
+Additive receipt tables retain hashes/outcomes, never raw CSV. Apostrophes preserved;
+not a full export round-trip (no manufacturer/translations/materials/images/PDF/history).
+See PRODUCT_CATALOG_CSV_IMPORT_STAGING.md. No commit/push or production changes.
+Controlled onboarding and later features remain separate, unstarted work.
