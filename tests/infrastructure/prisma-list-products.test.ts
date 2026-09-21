@@ -103,3 +103,15 @@ test("uses the updatedAt and id cursor without weakening organization scope", as
     select: projection,
   }]);
 });
+
+test("literal substring search remains under tenant and cursor constraints", async () => {
+  const fixture = harness();
+  await fixture.persistence.listPage({ organizationId, after: { productId, updatedAt }, take: 26, search: "50%_\\" });
+  const query = fixture.calls[0] as { where: { organizationId: string; AND: unknown[]; OR: unknown[] } };
+  assert.equal(query.where.organizationId, organizationId);
+  assert.deepEqual(query.where.AND, [{ OR: [
+    { internalName: { contains: "50\\%\\_\\\\", mode: "insensitive" } },
+    { sku: { contains: "50\\%\\_\\\\", mode: "insensitive" } },
+  ] }]);
+  assert.equal(query.where.OR.length, 2);
+});

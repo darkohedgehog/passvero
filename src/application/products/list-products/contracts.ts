@@ -20,6 +20,7 @@ export interface ProductListItem {
 
 export interface ListProductsQuery {
   readonly cursor?: string | null;
+  readonly search?: string | null;
 }
 
 export interface ListProductsResult {

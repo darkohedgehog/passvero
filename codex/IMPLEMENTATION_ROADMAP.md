@@ -185,3 +185,14 @@ asset/reference read-only proof passed: V1/A and V2/B bytes verified, zero
 unreferenced assets, two image-set audits. Image staging acceptance is complete.
 See PRODUCT_IMAGE_UPLOAD_VERSIONING_AND_PUBLIC_DPP_STAGING.md.
 After this slice: product search, CSV export, CSV import; none started here.
+
+## Product catalog search (2026-09-21)
+
+Existing server-side product list now supports literal name/SKU substrings and
+whole equivalent GTINs in current draft/published versions, with tenant isolation
+and query-bound cursor pagination. Local 5000-product pilot query review passed;
+no migration/index required. Staging UI name/SKU/GTIN, no-results/reset and
+refresh/back/detail acceptance passed on build `F1RgM647Gr7wlY2TCJpsT`. Live
+pagination was not exercised (five products); local three-page integration passed.
+See PRODUCT_CATALOG_SEARCH_STAGING.md. Next: CSV export, then CSV import with
+preview/validation/duplicates; neither started here.

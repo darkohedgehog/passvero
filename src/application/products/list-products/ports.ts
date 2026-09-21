@@ -29,5 +29,6 @@ export interface ListProductsPersistence {
     readonly organizationId: string;
     readonly after: ProductListCursor | null;
     readonly take: 26;
+    readonly search?: string;
   }): Promise<readonly ProductListRecord[]>;
 }

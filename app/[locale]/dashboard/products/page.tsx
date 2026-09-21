@@ -10,7 +10,7 @@ import {
   PRODUCT_CREATE,
 } from "@/src/application/permissions/product-permissions";
 import type { ListProductsResult } from "@/src/application/products/list-products/contracts";
-import { createListProductsService } from "@/src/application/products/list-products/list-products";
+import { createListProductsService, MAX_PRODUCT_SEARCH_LENGTH } from "@/src/application/products/list-products/list-products";
 import { DashboardShell } from "@/src/components/application/dashboard/dashboard-shell";
 import {
   ProductListPresentation,
@@ -24,7 +24,7 @@ import { getProductionListProductsDependencies } from "@/src/infrastructure/pers
 
 type PageProps = Readonly<{
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ cursor?: string | readonly string[] }>;
+  searchParams: Promise<{ cursor?: string | readonly string[]; q?: string | readonly string[] }>;
 }>;
 
 export const dynamic = "force-dynamic";
@@ -90,12 +90,13 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
     : query.cursor === undefined
       ? null
       : "";
+  const search = typeof query.q === "string" ? query.q.trim() : query.q === undefined ? "" : "\0";
   let result: ListProductsResult;
   try {
     const listProducts = createListProductsService(
       getProductionListProductsDependencies(),
     );
-    result = await listProducts({ cursor }, resolution.context);
+    result = await listProducts({ cursor, search: typeof query.q === "string" ? query.q : search }, resolution.context);
   } catch (error) {
     const denied = error instanceof ApplicationError
       && (error.category === "FORBIDDEN" || error.category === "UNAUTHENTICATED");
@@ -121,7 +122,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
       locale,
       href: {
         pathname: "/dashboard/products",
-        query: { cursor: result.nextCursor },
+        query: { cursor: result.nextCursor, ...(search ? { q: search } : {}) },
       },
     });
 
@@ -138,6 +139,15 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           label={createT("create")}
         />
       </div>
+      <form method="get" action={getPathname({ locale, href: "/dashboard/products" })} className="mb-6 space-y-2" role="search">
+        <label htmlFor="product-search" className="block text-sm font-medium text-slate-900">{productsT("searchLabel")}</label>
+        <p id="product-search-help" className="text-sm text-slate-600">{productsT("searchHelp")}</p>
+        <div className="flex flex-wrap gap-2">
+          <input id="product-search" name="q" type="search" defaultValue={search} maxLength={MAX_PRODUCT_SEARCH_LENGTH} aria-describedby="product-search-help" className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2" />
+          <button type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white">{productsT("searchSubmit")}</button>
+          {search ? <a href={getPathname({ locale, href: "/dashboard/products" })} className="rounded-lg border px-4 py-2 text-sm">{productsT("searchClear")}</a> : null}
+        </div>
+      </form>
       <ProductListPresentation
         items={result.items}
         formattedUpdatedAt={result.items.map((item) => dateFormatter.format(item.updatedAt))}
@@ -146,7 +156,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           href: `/dashboard/products/${item.productId}`,
         }))}
         nextPageHref={nextPageHref}
-        labels={productListLabels(productsT)}
+        labels={{ ...productListLabels(productsT), ...(search ? { emptyTitle: productsT("searchEmptyTitle"), emptyDescription: productsT("searchEmptyDescription") } : {}) }}
       />
     </>,
     resolution.userLabel,

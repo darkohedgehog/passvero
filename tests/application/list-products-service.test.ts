@@ -179,3 +179,24 @@ test("fails closed before projection if persistence returns a cross-tenant row",
     (error) => assertApplicationError(error, "INTERNAL", "LIST_PRODUCTS_INTERNAL"),
   );
 });
+
+test("normalizes bounded search and binds a cursor to that exact normalized query", async () => {
+  const fixture = harness(Array.from({ length: 26 }, (_, index) => record(index + 1)));
+  const first = await fixture.listProducts({ search: "  Chair  " }, context);
+  assert.equal(fixture.calls[0]?.search, "Chair");
+  assert.ok(first.nextCursor);
+  await fixture.listProducts({ search: "Chair", cursor: first.nextCursor }, context);
+  for (const search of ["Other", "", undefined]) {
+    await assert.rejects(fixture.listProducts({ search, cursor: first.nextCursor }, context), error =>
+      assertApplicationError(error, "VALIDATION", "LIST_PRODUCTS_CURSOR_INVALID"));
+  }
+  const empty = await fixture.listProducts({ search: "   " }, context);
+  assert.equal(fixture.calls.at(-1)?.search, undefined);
+  await assert.rejects(fixture.listProducts({ search: "Chair", cursor: empty.nextCursor }, context), error =>
+    assertApplicationError(error, "VALIDATION", "LIST_PRODUCTS_CURSOR_INVALID"));
+  for (const search of ["x".repeat(201), "bad\0query"]) {
+    await assert.rejects(fixture.listProducts({ search }, context), error =>
+      assertApplicationError(error, "VALIDATION", "LIST_PRODUCTS_SEARCH_INVALID"));
+  }
+  await fixture.listProducts({ search: "x".repeat(200) }, context);
+});
