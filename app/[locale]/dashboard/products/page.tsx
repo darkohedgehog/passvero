@@ -1,3 +1,4 @@
+import { CatalogExportAction } from "@/src/components/application/products/catalog-export-action";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
@@ -148,6 +149,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           {search ? <a href={getPathname({ locale, href: "/dashboard/products" })} className="rounded-lg border px-4 py-2 text-sm">{productsT("searchClear")}</a> : null}
         </div>
       </form>
+      <CatalogExportAction search={search} labels={{ button: productsT("export.button"), pending: productsT("export.pending"), all: productsT("export.all"), filtered: productsT("export.filtered"), versionHelp: productsT("export.versionHelp"), textHelp: productsT("export.textHelp"), failure: productsT("export.failure"), limit: productsT("export.limit") }} />
       <ProductListPresentation
         items={result.items}
         formattedUpdatedAt={result.items.map((item) => dateFormatter.format(item.updatedAt))}

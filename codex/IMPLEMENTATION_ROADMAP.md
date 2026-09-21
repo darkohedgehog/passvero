@@ -196,3 +196,17 @@ refresh/back/detail acceptance passed on build `F1RgM647Gr7wlY2TCJpsT`. Live
 pagination was not exercised (five products); local three-page integration passed.
 See PRODUCT_CATALOG_SEARCH_STAGING.md. Next: CSV export, then CSV import with
 preview/validation/duplicates; neither started here.
+
+## Product catalog CSV export (2026-09-21)
+
+CSV v1 source complete from `7af8874c1f38f911938af7b55fe7b39c3a158655`:
+read-only whole-catalog/all-search-results export with tenant scope, one current
+draft-or-published version per product, snapshot manufacturer and string identifiers.
+Local disposable 5,000-product proof passed; local evidence is not live acceptance.
+Staging build `1jeAIT6a93SlibJBd8Wm0` deployed and accepted: real UI full export
+(5 products), filtered export (1), empty header-only export and anonymous 403 PASS.
+All-pages/5,000-product and special-value proofs remain local, not live load evidence.
+Spreadsheet UI NOT_PERFORMED. No migration, data mutation or production changes.
+See `PRODUCT_CATALOG_CSV_EXPORT_STAGING.md` for column contract, limits, spreadsheet
+protection and round-trip limitations. Next: separately authorized CSV import with
+mapping, preview, validation and duplicates; no import implementation in this slice.

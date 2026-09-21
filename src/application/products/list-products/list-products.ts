@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
-import { z } from "zod";
+import { productSearchSchema } from "../product-search";
+export { MAX_PRODUCT_SEARCH_LENGTH } from "../product-search";
 import { Buffer } from "node:buffer";
 
 import { ApplicationError } from "@/src/application/errors/application-error";
@@ -14,8 +15,6 @@ import type {
   ProductListRecord,
 } from "@/src/application/products/list-products/ports";
 
-export const MAX_PRODUCT_SEARCH_LENGTH = 200;
-const searchSchema = z.string().max(MAX_PRODUCT_SEARCH_LENGTH).refine(value => !/[\u0000-\u001f\u007f]/.test(value)).transform(value => value.trim());
 const PAGE_SIZE = 25;
 const CURSOR_VERSION = 1;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -45,7 +44,7 @@ export function createListProductsService(dependencies: {
       );
     }
 
-    const parsed = searchSchema.safeParse(query.search ?? "");
+    const parsed = productSearchSchema.safeParse(query.search ?? "");
     if (!parsed.success) throw listProductsError("VALIDATION", "LIST_PRODUCTS_SEARCH_INVALID", context.correlationId);
     const search = parsed.data;
     const searchHash = createHash("sha256").update(search).digest("hex");
