@@ -1,5 +1,28 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-22 — kontrolirani Early Access
+
+`CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING`: source COMPLETE, staging NOT_PROVEN.
+Baza izvornog koda `2cb9d6ec55a48a7efdc55c48e79c18a4202dd744`; diff nije commitovan.
+Implementirani su lokalizirana javna forma, minimalna evidencija zahtjeva, operator CLI
+pregled/odobrenje/odbijanje, atomski postojeći provisioning i kontrolirana dostava aktivacije.
+Lokalni auth testovi i disposable PostgreSQL dokazuju idempotentnost i verified organization
+context; stvarni staging email/aktivacija/prijava još nisu izvedeni. Nema otvorenog signup-a,
+Platform Admina, billing implementacije ni production promjena.
+
+Detalji, dokazi, retencija i rollout/rollback:
+[CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING](CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING.md).
+Operator preflight je potvrdio staging build `bO73SDxjxPBddEzd4Q2nd`, bazu na portu
+5433 i urednu povijest migracija. Pregledani staging paket je pripremljen; sljedeći
+migracija `20260922120000_controlled_access_requests` sada je operator-potvrđeni PASS
+(0 zahtjeva, postojeći podaci/ACL nepromijenjeni, Prisma UP_TO_DATE). Sljedeći
+aplikacijski deploy je također operator-potvrđeni PASS: build
+`GSumULnTFFOyxN9Mn6MiK`, 1122 provjerena artefakta, bez startup grešaka.
+Sljedeći korak je jedan stvarni onboarding tok na korisnički odobrenoj testnoj adresi. Nakon onboardinga slijede podaci
+firme za billing, potom Platform Admin i ručno upravljanje godišnjim pretplatama.
+Donji pregled je raniji checkpoint i nije zamjena za ovu aktualizaciju.
+
+
 Pregled: **2026-09-17**. Source: **`24c07b113d1efa91c284ea8a1868bd625bd2c9e9`**, branch `main`.
 Radno stablo i index bili su čisti pre ovog dokumentacionog pregleda. Lokalni
 `origin/main` pokazuje isti commit; remote nije kontaktiran. Korisnik navodi da je
@@ -226,3 +249,22 @@ Additive receipt tables retain hashes/outcomes, never raw CSV. Apostrophes prese
 not a full export round-trip (no manufacturer/translations/materials/images/PDF/history).
 See PRODUCT_CATALOG_CSV_IMPORT_STAGING.md. No commit/push or production changes.
 Controlled onboarding and later features remain separate, unstarted work.
+
+## Controlled early access onboarding (2026-09-22)
+
+Source complete; staging form, explicit approval, email receipt, activation and login
+PASS from operator output and user confirmation. Repeated approval returns
+ALREADY_APPROVED/SENT with one delivery attempt and retained outcome references.
+The user also confirmed the expected authenticated organization display and product
+creation availability. CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING is complete.
+
+Staging build `GSumULnTFFOyxN9Mn6MiK` plus CLI patch
+`caac6bbc4fe5604c23837527c65aff1e35717580d7c079f7002f08406c87eda5`.
+IPC inheritance and INSERT-only provisioning fixes are installed and verified. Local
+PostgreSQL 10/10, focused tests 53/53, TypeScript and targeted lint PASS. Existing ACLs
+preserved. Test identities/organization/audit are deliberately retained; see
+`CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING.md` for IDs and evidence limits.
+
+No public self-service signup, Platform Admin, billing, production changes or commit/push.
+Retention duration remains a pre-production decision. Next product phases remain billing
+company details, then Platform Admin and manual annual subscriptions; not started here.

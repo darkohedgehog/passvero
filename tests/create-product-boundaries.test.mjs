@@ -72,6 +72,7 @@ test("keeps generated Prisma access inside approved infrastructure adapters", ()
     "src/infrastructure/auth/better-auth-server.ts",
     "src/infrastructure/auth/prisma-auth-abuse-repository.ts",
     "src/infrastructure/auth/prisma-controlled-activation.ts",
+    "src/infrastructure/persistence/prisma/prisma-access-requests.ts",
     "src/infrastructure/persistence/prisma/prisma-cn-classification-current-draft-composition.ts",
     "src/infrastructure/persistence/prisma/prisma-cn-classification-current-draft.ts",
     "src/infrastructure/persistence/prisma/prisma-create-draft-from-published.ts",

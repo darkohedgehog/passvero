@@ -362,5 +362,17 @@
       "ROW_FAILED": "Nieprawidłowy wiersz — ",
       "INVALID_ROW": "Nieprawidłowy wiersz — "
     }
+  },
+  "RequestAccess": {
+    "title": "Poproś o dostęp",
+    "description": "Poproś o kontrolowany wczesny dostęp do Passvero.",
+    "contactName": "Imię i nazwisko osoby kontaktowej",
+    "email": "E-mail",
+    "organization": "Nazwa organizacji",
+    "language": "Język",
+    "notice": "Wnioski rozpatrujemy ręcznie. Wysłanie nie tworzy konta ani nie przyznaje dostępu do istniejącej organizacji. Po zatwierdzeniu wysyłamy instrukcje aktywacji i weryfikacji adresu e-mail.",
+    "submit": "Wyślij wniosek",
+    "success": "Dziękujemy. Twój wniosek został przyjęty do rozpatrzenia. Wysłanie nie oznacza natychmiastowego zatwierdzenia.",
+    "error": "Nie udało się potwierdzić wniosku. Sprawdź dane i spróbuj ponownie później."
   }
 }

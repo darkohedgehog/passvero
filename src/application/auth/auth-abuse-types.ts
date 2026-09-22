@@ -1,4 +1,5 @@
 export const authAbuseEndpoints = [
+  "REQUEST_ACCESS",
   "SIGN_IN",
   "ACTIVATE_ACCOUNT",
   "EMAIL_VERIFICATION_REQUEST",

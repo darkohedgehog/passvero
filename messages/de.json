@@ -362,5 +362,17 @@
       "ROW_FAILED": "Ungültige Zeile — ",
       "INVALID_ROW": "Ungültige Zeile — "
     }
+  },
+  "RequestAccess": {
+    "title": "Zugang anfragen",
+    "description": "Beantragen Sie kontrollierten frühzeitigen Zugang zu Passvero.",
+    "contactName": "Name der Kontaktperson",
+    "email": "E-Mail",
+    "organization": "Name der Organisation",
+    "language": "Sprache",
+    "notice": "Wir prüfen Anfragen manuell. Das Absenden erstellt kein Konto und gewährt keinen Zugang zu einer bestehenden Organisation. Nach der Genehmigung erhalten Sie Anweisungen zur Aktivierung und E-Mail-Bestätigung.",
+    "submit": "Anfrage senden",
+    "success": "Vielen Dank. Ihre Anfrage wurde zur Prüfung entgegengenommen. Dies bedeutet keine sofortige Genehmigung.",
+    "error": "Ihre Anfrage konnte nicht bestätigt werden. Prüfen Sie Ihre Angaben und versuchen Sie es später erneut."
   }
 }

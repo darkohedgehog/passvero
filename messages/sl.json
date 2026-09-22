@@ -362,5 +362,17 @@
       "ROW_FAILED": "Neveljavna vrstica — ",
       "INVALID_ROW": "Neveljavna vrstica — "
     }
+  },
+  "RequestAccess": {
+    "title": "Zaprosite za dostop",
+    "description": "Pošljite zahtevo za nadzorovan zgodnji dostop do Passvera.",
+    "contactName": "Ime kontaktne osebe",
+    "email": "E-pošta",
+    "organization": "Ime organizacije",
+    "language": "Jezik",
+    "notice": "Zahteve pregledamo ročno. Oddaja ne ustvari računa in ne omogoča dostopa do obstoječe organizacije. Po odobritvi pošljemo navodila za aktivacijo in potrditev e-pošte.",
+    "submit": "Pošlji zahtevo",
+    "success": "Hvala. Vašo zahtevo smo prejeli v pregled. Oddaja ne pomeni takojšnje odobritve.",
+    "error": "Zahteve ni bilo mogoče potrditi. Preverite podatke in poskusite znova pozneje."
   }
 }

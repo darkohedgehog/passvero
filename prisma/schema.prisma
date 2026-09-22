@@ -184,6 +184,7 @@ enum AuthAbuseDimension {
 }
 
 enum AuthAbuseEndpoint {
+  REQUEST_ACCESS
   SIGN_IN
   ACTIVATE_ACCOUNT
   EMAIL_VERIFICATION_REQUEST
@@ -194,6 +195,7 @@ enum AuthAbuseEndpoint {
 }
 
 model User {
+  accessRequest AccessRequest?
   csvImportBatches CatalogImportBatch[]
   id              String   @id @default(uuid()) @db.Uuid
   /// Application services must normalize email before persistence.
@@ -227,6 +229,7 @@ model User {
 }
 
 model Organization {
+  accessRequest AccessRequest?
   csvImportBatches CatalogImportBatch[]
   imageAssets ProductImageAsset[]
   id            String             @id @default(uuid()) @db.Uuid
@@ -968,6 +971,7 @@ model AuthIdentity {
 }
 
 model AccountActivationIntent {
+  accessRequest AccessRequest?
   id                   String                  @id @default(uuid()) @db.Uuid
   userId               String                  @db.Uuid
   provider             AuthIdentityProvider    @default(BETTER_AUTH)
@@ -1122,4 +1126,31 @@ model CatalogImportRow {
   batch CatalogImportBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
   @@id([batchId, rowNumber])
   @@index([batchId, status])
+}
+
+/// Operator-only PII. A public request never grants tenant authority.
+model AccessRequest {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique @db.VarChar(254)
+  contactName String @db.VarChar(120)
+  organizationDisplayName String @db.VarChar(200)
+  locale String @db.VarChar(2)
+  status String @default("PENDING") @db.VarChar(16)
+  deliveryStatus String @default("NOT_STARTED") @db.VarChar(24)
+  decidedAt DateTime?
+  /// Operator reference, not a tenant user authority.
+  decidedBy String? @db.VarChar(80)
+  organizationId String? @unique @db.Uuid
+  userId String? @unique @db.Uuid
+  activationId String? @unique @db.Uuid
+  deliveryAttempts Int @default(0)
+  deliveryAttemptId String? @db.Uuid
+  deliveryStartedAt DateTime?
+  deliveredAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
+  activation AccountActivationIntent? @relation(fields: [activationId], references: [id], onDelete: Restrict)
+  @@index([status, createdAt, id])
 }

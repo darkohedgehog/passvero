@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { BrandLogo } from "@/src/components/marketing/brand-logo";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { Link } from "@/src/i18n/navigation";
-import { CONTACT_EMAIL, createMailtoHref } from "@/src/lib/site";
+import { CONTACT_EMAIL } from "@/src/lib/site";
 
 type FooterLink =
   | { key: string; href: string; kind: "mailto" }
@@ -41,7 +41,6 @@ function FooterLinkList({ links, mobile = false }: Readonly<{ links: FooterGroup
 export async function SiteFooter() {
   const t = await getTranslations("Footer");
   const navigation = await getTranslations("MarketingNavigation");
-  const contact = await getTranslations("Contact");
   const groups: readonly FooterGroup[] = [
     {
       key: "product",
@@ -59,7 +58,7 @@ export async function SiteFooter() {
       links: [
         { key: "about", label: t("groups.company.about"), href: "/about", kind: "route" },
         { key: "contact", label: t("groups.company.contact"), href: "/contact", kind: "route" },
-        { key: "earlyAccess", label: t("groups.company.earlyAccess"), href: createMailtoHref(contact("earlyAccessSubject")), kind: "mailto" },
+        { key: "earlyAccess", label: t("groups.company.earlyAccess"), href: "/request-access", kind: "route" },
       ],
     },
     {

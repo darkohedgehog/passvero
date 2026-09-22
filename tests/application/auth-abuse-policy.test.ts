@@ -28,6 +28,7 @@ function state(
 
 test("maps every approved endpoint to an explicit isolated policy", () => {
   const endpoints: readonly AuthAbuseEndpoint[] = [
+    "REQUEST_ACCESS",
     "SIGN_IN",
     "ACTIVATE_ACCOUNT",
     "EMAIL_VERIFICATION_REQUEST",

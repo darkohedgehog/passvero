@@ -46,6 +46,12 @@ function createEndpointPolicy(): AuthAbuseEndpointPolicy {
 export const authAbusePolicyByEndpoint: Readonly<
   Record<AuthAbuseEndpoint, AuthAbuseEndpointPolicy>
 > = {
+  REQUEST_ACCESS: {
+    GLOBAL_ENDPOINT: { metric: "ATTEMPTS", windowSeconds: 60, challengeThreshold: 20, blockThreshold: 50 },
+    TRUSTED_NETWORK: { metric: "ATTEMPTS", windowSeconds: 3600, challengeThreshold: 5, blockThreshold: 10 },
+    ACCOUNT_IDENTIFIER: { metric: "ATTEMPTS", windowSeconds: 3600, challengeThreshold: 2, blockThreshold: 5 },
+    ACCOUNT_AND_TRUSTED_NETWORK: { metric: "ATTEMPTS", windowSeconds: 3600, challengeThreshold: 2, blockThreshold: 5 },
+  },
   SIGN_IN: createEndpointPolicy(),
   ACTIVATE_ACCOUNT: createEndpointPolicy(),
   EMAIL_VERIFICATION_REQUEST: createEndpointPolicy(),

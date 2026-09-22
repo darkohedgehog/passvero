@@ -2,6 +2,7 @@ import type { AuthAbuseDecision } from "./auth-abuse-policy";
 import type { AuthAbuseEndpoint } from "./auth-abuse-types";
 
 const actions: Readonly<Record<AuthAbuseEndpoint, string>> = {
+  REQUEST_ACCESS: "auth_request_access",
   SIGN_IN: "auth_sign_in",
   ACTIVATE_ACCOUNT: "auth_activate_account",
   EMAIL_VERIFICATION_REQUEST: "auth_email_verification_request",

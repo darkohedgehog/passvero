@@ -1,0 +1,229 @@
+{
+  "base_head": "2cb9d6ec55a48a7efdc55c48e79c18a4202dd744",
+  "scope": "controlled early access onboarding",
+  "file_count": 36,
+  "self_excluded": "codex/CONTROLLED_EARLY_ACCESS_FINAL_MANIFEST.json",
+  "staging_build_id": "GSumULnTFFOyxN9Mn6MiK",
+  "staging_review_sha256": "f3ba4e7c78f4483912d929455bc1372ebb38f96396b60501e9de650260bda816",
+  "accepted_cli_sha256": "caac6bbc4fe5604c23837527c65aff1e35717580d7c079f7002f08406c87eda5",
+  "final_local_build_id": "oiHAOh46tsz4SEqrzX2j9",
+  "local_build_deployed": false,
+  "files": [
+    {
+      "path": "app/[locale]/request-access/page.tsx",
+      "sha256": "8757d06702d3f9b2fe2265288683e59cbc01e5eb923ddf7c1b548b080b7bf261",
+      "bytes": 1143,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "app/api/access-requests/route.ts",
+      "sha256": "c8030d6d7e3212cdb0f999956f16e30c3034430c2a227a84ff63b7e79a61ab02",
+      "bytes": 129,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "codex/CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING.md",
+      "sha256": "6be5e9bff1fbf4e5776a642175c8308dc98740dfd08db7900d3aed84fdb5c04d",
+      "bytes": 21113,
+      "staging_source_relation": "final_documentation"
+    },
+    {
+      "path": "codex/IMPLEMENTATION_ROADMAP.md",
+      "sha256": "9d330ad9d1f53c7a81991d6654d48c5f38b5d4c7575d40833a7023c1b809397a",
+      "bytes": 21314,
+      "staging_source_relation": "final_documentation"
+    },
+    {
+      "path": "messages/de.json",
+      "sha256": "2f14a0393f481be9f0ec32afed60083bc637de395a0bee6a2abfe8ed20ff8766",
+      "bytes": 53000,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "55dde14794da79439e8d9b25a055b8ed741aa6851ba0f6ecaf526563bead91c0",
+      "bytes": 46819,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "messages/hr.json",
+      "sha256": "3e9f470a8e77c8260e82471c22546df70e3d2b8bb413d61bdbbebb4c4862d759",
+      "bytes": 49418,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "messages/pl.json",
+      "sha256": "c673416cb62a77f0e942759b20ff65190f66661907e48ea4cebb11fd8ef92039",
+      "bytes": 50978,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "messages/sl.json",
+      "sha256": "15df2814d79fdd67ea67812486d170375578402d3bd9e49d9b11e229efea5330",
+      "bytes": 48438,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "messages/sr.json",
+      "sha256": "a60b8002ed27bfde29f2ceec747195c322ff5cabc3120520798d24568d1b15a8",
+      "bytes": 48190,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "prisma/migrations/20260922120000_controlled_access_requests/migration.sql",
+      "sha256": "97941e589e7cbc452bff4d4dec9eac70b848855005ae83f7651776b36db0ac97",
+      "bytes": 2617,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "bb94543e2b9a2a8435002f52b907ea1199d9cc1c7d3fff8e799dcc04d7224ee7",
+      "bytes": 43409,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "scripts/review-access-requests.ts",
+      "sha256": "eb342b1b8dd5e5b6fb4e4d405b3d0044aaa6da8f4ab5816f036ef4274f491168",
+      "bytes": 2463,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/access-request-cli.ts",
+      "sha256": "2a232863f5bc658b0d555e0accb33cb923e6ecf7c8d5d72a00771639a4c87817",
+      "bytes": 1010,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/access-request-http.ts",
+      "sha256": "72b1c3b0bd51a0d780df1fdd9eab53644d071dd30feaa7073d7fe090053d21a3",
+      "bytes": 2910,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/access-request.ts",
+      "sha256": "02b9360ed71f55e35358dd04a241f5bb7168e0d315d329f62f5668eaad3b3eaf",
+      "bytes": 595,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/auth-abuse-policy.ts",
+      "sha256": "a673be559a0940a399232eb7725842fc1dd28ad578fb328f3051521ee8281323",
+      "bytes": 4058,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/auth-abuse-types.ts",
+      "sha256": "a21bffd74c54187f64a686668fa1cbfb6b3f1b5a47558d98cc07288bd45d80af",
+      "bytes": 665,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/auth-email.ts",
+      "sha256": "e611d1ecfb5c406faf7027c8da4b55d75daac90e9278883015c229df060aa2d0",
+      "bytes": 781,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/application/auth/turnstile.ts",
+      "sha256": "1f7d54693b53c67c473bf6d249eca34fb8edcc29effa13e14bfb9a7368e4257f",
+      "bytes": 1965,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/components/application/auth/request-access-form.tsx",
+      "sha256": "336deab263495240fd44635aee29719818c59659bdc98d07a8bea18561cc91ef",
+      "bytes": 3814,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/components/marketing/final-cta-section.tsx",
+      "sha256": "a306bacceb6b5bdadc0e8996609a721511036dacf0ee586ab9b9ed47a8e4ccf9",
+      "bytes": 2604,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/components/marketing/hero-section.tsx",
+      "sha256": "374cc724bf7784644e3620b2586de091eeba301af016d274631604c189a9530b",
+      "bytes": 3963,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/components/marketing/pricing-section.tsx",
+      "sha256": "5ecf845467fccb8393ea65b246f3d3d55ba8f09561ee9c7f31f80892e635720a",
+      "bytes": 2707,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/components/marketing/site-footer.tsx",
+      "sha256": "abe47ad5342fcbb92f5a129fab02fbbe7cf30ef63852d44b58d0f57859e5815e",
+      "bytes": 5156,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/infrastructure/auth/access-request-runtime.ts",
+      "sha256": "a2c2c74397214a419e6e5a1a59964fbf37ac3fc82cd4daac0fd4173b05e824aa",
+      "bytes": 1497,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/infrastructure/auth/auth-email-templates.ts",
+      "sha256": "aa213b13cf8037da0bf27de79f1a6a431d0dbc0f44fe92cf35ad26975b01ebd8",
+      "bytes": 3438,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "src/infrastructure/persistence/prisma/prisma-access-requests.ts",
+      "sha256": "2fd04d1123165e85408ac3ec3c87e5aa5f6b0191989a4a511f19009fea742e54",
+      "bytes": 7718,
+      "staging_source_relation": "accepted_cli_fix"
+    },
+    {
+      "path": "src/infrastructure/persistence/prisma/prisma-operator-provisioning.ts",
+      "sha256": "2bd77545d4e7372d6b9a1f1d9a15f565bc559e4f9b726da34d3bc2a558fcce0a",
+      "bytes": 2548,
+      "staging_source_relation": "accepted_cli_fix"
+    },
+    {
+      "path": "tests/application/access-request.test.ts",
+      "sha256": "7c7e4dc43b4604be94d965ab5f5757330dceb0887a46230a865261f51b3b1a1f",
+      "bytes": 4023,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "tests/application/auth-abuse-policy.test.ts",
+      "sha256": "1f9fbfd21c40cd0cb44ac87b526aefd72415d6eb26a16d3a2c83768a5421e1ac",
+      "bytes": 4209,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "tests/auth-persistence-schema.test.mjs",
+      "sha256": "27768dd81e1cf2a53698c86e2d954948d7ab848da71600a6337c2b7a0d03797c",
+      "bytes": 15435,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "tests/create-product-boundaries.test.mjs",
+      "sha256": "b636b6c05a1a25cb8587d5e0f64a8140a8890c50108e758d521c2524300580cd",
+      "bytes": 5772,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "tests/footer-and-terms.test.mjs",
+      "sha256": "85b3f2658a75a255d08144e2f803652ad65602aa2a399fea655360da9bd6e700",
+      "bytes": 13579,
+      "staging_source_relation": "identical_to_base_build"
+    },
+    {
+      "path": "tests/integration/access-requests-postgresql.test.ts",
+      "sha256": "66c90a138599cf4b64717fd3ba3b79465da2fca2509ab0a220b69218d7068778",
+      "bytes": 15649,
+      "staging_source_relation": "cli_fix_regression_test"
+    },
+    {
+      "path": "tests/proofs/access-requests-postgresql.mjs",
+      "sha256": "daf80c5224cb5ccebac0e73fc8eac1dd4c867527470c756275bdcb35d34d8b56",
+      "bytes": 2347,
+      "staging_source_relation": "identical_to_base_build"
+    }
+  ]
+}

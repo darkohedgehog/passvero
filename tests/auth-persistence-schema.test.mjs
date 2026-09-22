@@ -131,6 +131,7 @@ test("AccountActivationIntent stores only controlled activation and reconciliati
     /^\s*ISSUED\s+IN_PROGRESS\s+AUTH_ACCOUNT_CREATED\s+EMAIL_VERIFIED\s+BOUND\s+EXPIRED\s+REVOKED\s+CONFLICT\s*$/,
   );
   assert.deepEqual(fieldNames(activation), [
+    "accessRequest",
     "id", "userId", "provider", "status", "tokenDigest", "intendedEmailDigest",
     "providerSubject", "claimId", "claimedAt", "claimExpiresAt", "expiresAt",
     "authAccountCreatedAt", "emailVerifiedAt", "boundAt", "expiredAt",
@@ -195,7 +196,7 @@ test("AuthAbuseBucket stores only keyed progressive counters", async () => {
   );
   assert.match(
     block(schema, "enum", "AuthAbuseEndpoint"),
-    /^\s*SIGN_IN\s+ACTIVATE_ACCOUNT\s+EMAIL_VERIFICATION_REQUEST\s+EMAIL_VERIFICATION_CONSUME\s+PASSWORD_RESET_REQUEST\s+PASSWORD_RESET_CONSUME\s+PASSWORD_CHANGE\s*$/,
+    /^\s*REQUEST_ACCESS\s+SIGN_IN\s+ACTIVATE_ACCOUNT\s+EMAIL_VERIFICATION_REQUEST\s+EMAIL_VERIFICATION_CONSUME\s+PASSWORD_RESET_REQUEST\s+PASSWORD_RESET_CONSUME\s+PASSWORD_CHANGE\s*$/,
   );
   assert.deepEqual(fieldNames(bucket), [
     "id", "dimension", "endpoint", "keyDigest", "attemptCount", "failureCount",

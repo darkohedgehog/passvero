@@ -1,15 +1,15 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
 import { BenefitsSection } from "@/src/components/marketing/benefits-section";
-import { createMailtoHref } from "@/src/lib/site";
+import { getPathname } from "@/src/i18n/navigation";
 
 export async function FinalCtaSection() {
   const t = await getTranslations("CTA");
-  const contact = await getTranslations("Contact");
+  const accessHref = getPathname({ locale: await getLocale(), href: "/request-access" });
 
   return (
     <section id="early-access" className="bg-slate-50 py-12 md:py-16">
@@ -21,7 +21,7 @@ export async function FinalCtaSection() {
               <h2 className="text-3xl font-bold tracking-[-0.035em] text-navy-950 md:text-4xl">{t("title")}</h2>
               <p className="mt-4 text-base text-slate-600">{t("description")}</p>
               <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-                <MarketingButton href={createMailtoHref(contact("earlyAccessSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
+                <MarketingButton href={accessHref} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
               </div>
               <div className="mt-6 flex flex-col gap-3 text-xs text-slate-600 sm:flex-row sm:gap-7">
                 <span className="flex items-center gap-2"><MarketingIcon name="check" className="size-4 text-teal-500" />{t("noteOne")}</span>

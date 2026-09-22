@@ -65,7 +65,7 @@ test("all locales expose the same Early Access, Terms, and footer message schema
   }
 });
 
-test("public navigation offers login while access CTAs preserve mail actions and exclude demo actions", async () => {
+test("public navigation offers login while access CTAs open the controlled request form and exclude demo actions", async () => {
   const paths = [
     "src/components/marketing/site-header.tsx",
     "src/components/marketing/mobile-navigation.tsx",
@@ -79,7 +79,7 @@ test("public navigation offers login while access CTAs preserve mail actions and
   for (const forbidden of ["signInLabel", 't("signIn")', "#demo", "demoSubject", "salesSubject", "bookDemo"])
     assert.doesNotMatch(source, new RegExp(forbidden.replace(/[()"#]/g, "\\$&")));
   assert.match(source, /#early-access/);
-  assert.equal(source.match(/contact\("earlyAccessSubject"\)/g)?.length, 3);
+  assert.equal(source.match(/"\/request-access"/g)?.length, 3);
   assert.match(source, /href="\/login"/);
 });
 
@@ -151,7 +151,7 @@ test("footer links only to real routes, anchors, and mail actions", async () => 
   for (const value of forbidden) assert.doesNotMatch(footer, new RegExp(value));
   for (const href of ["#features", "#how-it-works", "#industries", "/privacy", "/cookies", "/terms"])
     assert.match(footer, new RegExp(href.replace("/", "\\/")));
-  assert.match(footer, /createMailtoHref\(contact\("earlyAccessSubject"\)\)/);
+  assert.match(footer, /href: "\/request-access", kind: "route"/);
   assert.match(footer, /mailto:\$\{CONTACT_EMAIL\}/);
 });
 
@@ -276,7 +276,7 @@ test("Pricing section has one stable anchor and locale-aware public links", asyn
   const packageJson = await read("package.json");
 
   assert.equal(pricing.match(/id="pricing"/g)?.length, 1);
-  assert.match(pricing, /createMailtoHref\(contact\("earlyAccessSubject"\)\)/);
+  assert.match(pricing, /getPathname\(\{ locale: await getLocale\(\), href: "\/request-access" \}\)/);
   assert.doesNotMatch(pricing, /<form\b|\/api\/|checkout|stripe/i);
   assert.match(homepage, /<PricingSection \/>/);
   assert.ok(homepage.indexOf("<PricingSection />") < homepage.indexOf("<FinalCtaSection />"));

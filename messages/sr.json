@@ -362,5 +362,17 @@
       "ROW_FAILED": "Nevalidan red — ",
       "INVALID_ROW": "Nevalidan red — "
     }
+  },
+  "RequestAccess": {
+    "title": "Zatražite pristup",
+    "description": "Pošaljite zahtev za kontrolisani rani pristup Passveru.",
+    "contactName": "Ime kontakt osobe",
+    "email": "Email",
+    "organization": "Naziv organizacije",
+    "language": "Jezik",
+    "notice": "Zahteve pregledamo ručno. Slanje ne otvara nalog niti daje pristup postojećoj organizaciji. Nakon odobrenja šaljemo uputstva za aktivaciju i potvrdu emaila.",
+    "submit": "Pošalji zahtev",
+    "success": "Hvala. Vaš zahtev je primljen na pregled. Slanje ne znači trenutno odobrenje.",
+    "error": "Zahtev nije moguće potvrditi. Proverite podatke i pokušajte ponovo kasnije."
   }
 }

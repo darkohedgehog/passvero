@@ -36,7 +36,14 @@ export function renderAuthEmail(
   message: AuthEmailMessage,
   canonicalOrigin: string,
 ): RenderedAuthEmail {
-  const language = copy[message.locale ?? "en"];
+  const locale = message.locale ?? "en";
+  const language = copy[locale === "hr" ? "hr" : "en"];
+  if (message.type === "CONTROLLED_ACTIVATION") {
+    const labels = { hr: "Odobren vam je pristup Passveru. Aktivirajte račun u roku od 72 sata", en: "Your Passvero access is approved. Activate your account within 72 hours", de: "Ihr Passvero-Zugang wurde genehmigt. Aktivieren Sie Ihr Konto innerhalb von 72 Stunden", sr: "Odobren vam je pristup Passveru. Aktivirajte nalog u roku od 72 sata", sl: "Vaš dostop do Passvera je odobren. Aktivirajte račun v 72 urah", pl: "Twój dostęp do Passvero został zatwierdzony. Aktywuj konto w ciągu 72 godzin" };
+    const label = labels[locale];
+    const url = assertCanonicalUrl(message.activationUrl, canonicalOrigin);
+    return { subject: label, text: `${label}:\n${url.href}`, html: `<p>${label}:</p><p><a href="${escapeHtml(url.href)}">${label}</a></p>` };
+  }
 
   if (message.type === "PASSWORD_CHANGED") {
     return {

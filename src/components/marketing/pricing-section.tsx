@@ -1,14 +1,14 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
-import { createMailtoHref } from "@/src/lib/site";
+import { getPathname } from "@/src/i18n/navigation";
 
 const plans = ["starter", "growth", "business"] as const;
 
 export async function PricingSection() {
   const t = await getTranslations("Pricing");
-  const contact = await getTranslations("Contact");
+  const accessHref = getPathname({ locale: await getLocale(), href: "/request-access" });
 
   return (
     <section id="pricing" className="scroll-mt-6 border-t border-slate-100 bg-white py-16 md:py-24">
@@ -56,7 +56,7 @@ export async function PricingSection() {
         </div>
 
         <div className="mt-10 flex flex-col items-center text-center">
-          <MarketingButton href={createMailtoHref(contact("earlyAccessSubject"))}>
+          <MarketingButton href={accessHref}>
             {t("action")}
           </MarketingButton>
           <p className="mt-4 text-sm text-slate-500">{t("note")}</p>

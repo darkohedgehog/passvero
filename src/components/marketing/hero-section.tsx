@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { MarketingIcon, type MarketingIconName } from "@/src/components/marketing/marketing-icons";
-import { createMailtoHref } from "@/src/lib/site";
+import { getPathname } from "@/src/i18n/navigation";
 
 const featureItems: ReadonlyArray<{ key: "ready" | "secure" | "interoperable" | "scalable"; icon: MarketingIconName }> = [
   { key: "ready", icon: "compliance" },
@@ -15,7 +15,7 @@ const featureItems: ReadonlyArray<{ key: "ready" | "secure" | "interoperable" | 
 
 export async function HeroSection() {
   const t = await getTranslations("Hero");
-  const contact = await getTranslations("Contact");
+  const accessHref = getPathname({ locale: await getLocale(), href: "/request-access" });
   const title = t("title");
   const highlight = t("highlight");
   const highlightIndex = title.indexOf(highlight);
@@ -37,7 +37,7 @@ export async function HeroSection() {
               {t("description")}
             </p>
             <div className="mt-7 grid gap-3 sm:flex sm:flex-wrap">
-              <MarketingButton href={createMailtoHref(contact("earlyAccessSubject"))} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
+              <MarketingButton href={accessHref} variant="primary" className="w-full sm:w-auto">{t("primaryAction")}</MarketingButton>
               <MarketingButton href="#solutions" variant="secondary" className="w-full gap-2 sm:w-auto">
                 <MarketingIcon name="play" className="size-4" />
                 {t("secondaryAction")}

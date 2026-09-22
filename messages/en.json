@@ -369,5 +369,17 @@
       "ROW_FAILED": "Invalid row — ",
       "INVALID_ROW": "Invalid row — "
     }
+  },
+  "RequestAccess": {
+    "title": "Request access",
+    "description": "Request controlled early access to Passvero.",
+    "contactName": "Contact name",
+    "email": "Email",
+    "organization": "Organization name",
+    "language": "Language",
+    "notice": "We review requests manually. Submitting does not create an account or grant access to an existing organization. After approval, we send activation and email verification instructions.",
+    "submit": "Submit request",
+    "success": "Thank you. Your request has been received for review. Submission does not mean immediate approval.",
+    "error": "We could not confirm your request. Check your details and try again later."
   }
 }
