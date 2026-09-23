@@ -116,7 +116,7 @@ test("renders the allowlisted product identity and semantic back navigation", ()
 
   assert.match(html, /<nav[^>]*aria-label="Product overview"/);
   assert.match(html, /href="\/en\/dashboard\/products"/);
-  assert.match(html, />← Back to Products<\/a>/);
+  assert.match(html, />Back to Products<\/a>/);
   assert.match(html, /<h2[^>]*>Industrial chair<\/h2>/);
   assert.match(html, /Active/);
   assert.match(html, /CHAIR-1/);
@@ -151,7 +151,7 @@ test("keeps publicCode in collapsed technical details and links through server-d
   const html = render();
   assert.match(html, /<details[^>]*><summary[^>]*>Technical details<\/summary>[\s\S]*AbCdEfGhIjKlMnOpQrStUv[\s\S]*<\/details>/);
   assert.doesNotMatch(html, /<details[^>]*open/);
-  assert.match(html, /href="https:\/\/catalog.example\/p\/AbCdEfGhIjKlMnOpQrStUv"[^>]*>View public DPP<\/a>/);
+  assert.match(html, /href="https:\/\/catalog.example\/p\/AbCdEfGhIjKlMnOpQrStUv"[^>]*><svg[^>]*aria-hidden="true"[^>]*focusable="false"[^>]*>[\s\S]*?<\/svg>View public DPP<\/a>/);
   assert.doesNotMatch(html, /<a[^>]*>AbCdEfGhIjKlMnOpQrStUv<\/a>/);
 });
 
@@ -167,7 +167,7 @@ test("renders exactly one Edit action only when the server supplies an authorize
   }));
   assert.match(
     authorized,
-    /href="\/en\/dashboard\/products\/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\/edit"[^>]*>Edit product<\/a>/,
+    /href="\/en\/dashboard\/products\/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\/edit"[^>]*><svg[^>]*aria-hidden="true"[^>]*focusable="false"[^>]*>[\s\S]*?<\/svg>Edit product<\/a>/,
   );
   assert.equal((authorized.match(/>Edit product<\/a>/g) ?? []).length, 1);
 

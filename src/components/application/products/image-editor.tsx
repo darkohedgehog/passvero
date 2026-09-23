@@ -1,4 +1,7 @@
 "use client";
+
+import { ProductActionIcon, editorPrimaryAction, editorDangerAction, editorInput } from "./product-editor-ui";
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -25,16 +28,16 @@ export function ProductImageEditor({ state, canEdit, published = false }: { stat
       } catch { setMessage(t("failure")); }
     });
   }
-  return <section className="space-y-3 rounded-xl border border-slate-200 p-5">
+  return <section className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
     <h3 className="font-semibold">{t("title")} {published ? `— ${t("published")}` : ""}</h3>
-    {image ? <img src={`/api/products/${state.productId}/images/${image.id}`} alt={image.altText ?? ""} width={image.width} height={image.height} className="block h-auto max-h-96 max-w-full object-contain" /> : <p>{t("empty")}</p>}
+    {image ? <img src={`/api/products/${state.productId}/images/${image.id}`} alt={image.altText ?? ""} width={image.width} height={image.height} className="block h-auto max-h-96 max-w-full object-contain" /> : <p className="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">{t("empty")}</p>}
     {!published ? <p className="text-sm text-slate-600">{t("help")}</p> : null}
     {!published && state.draft?.ambiguous ? <p role="alert">{t("ambiguous")}</p> : null}
     {!published && canEdit && !state.draft?.ambiguous ? <form className="space-y-3" onSubmit={event => { event.preventDefault(); submit(false); }}>
       <label className="block text-sm">{t("file")}<input className="mt-1 block w-full min-w-0 text-sm" type="file" accept="image/jpeg,image/png" disabled={pending} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>
-      <label className="block text-sm">{t("alt")}<input className="mt-1 block w-full rounded border p-2" value={altText} maxLength={300} disabled={pending} onChange={event => setAltText(event.target.value)} /></label>
-      <div className="flex flex-wrap gap-2"><button className="rounded-lg border px-3 py-2 text-sm disabled:opacity-50" disabled={pending} type="submit">{pending ? t("pending") : t("save")}</button>
-        {image ? <button className="rounded-lg border px-3 py-2 text-sm disabled:opacity-50" disabled={pending} type="button" onClick={() => submit(true)}>{t("remove")}</button> : null}</div>
+      <label className="block text-sm">{t("alt")}<input className={editorInput} value={altText} maxLength={300} disabled={pending} onChange={event => setAltText(event.target.value)} /></label>
+      <div className="flex flex-wrap gap-2"><button className={editorPrimaryAction} disabled={pending} type="submit"><ProductActionIcon name="upload" />{pending ? t("pending") : t("save")}</button>
+        {image ? <button className={editorDangerAction} disabled={pending} type="button" onClick={() => submit(true)}><ProductActionIcon name="remove" />{t("remove")}</button> : null}</div>
     </form> : null}
     {message ? <p role="status">{message}</p> : null}
   </section>;

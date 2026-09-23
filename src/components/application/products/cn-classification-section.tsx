@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductActionIcon } from "./product-editor-ui";
+
 import { type FormEvent, useRef, useState } from "react";
 
 import type { CnClassificationEditableField } from "@/src/application/products/cn-classification-current-draft/contracts";
@@ -51,26 +53,26 @@ export function CnClassificationSection({ data, canEdit, labels, detailHref, cur
 }>) {
   const cn = data?.cn ?? null;
   return (
-    <section aria-labelledby="cn-classification-heading" className="mt-8 rounded-xl border border-slate-200 p-4 sm:p-5">
+    <section aria-labelledby="cn-classification-heading" className="mt-8 min-w-0 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 id="cn-classification-heading" className="text-lg font-bold text-slate-950">{labels.title}</h3>
         {canEdit && data !== null && !loadFailed ? cn === null ? (
           <details className="group relative">
-            <summary className={summaryClassName}>{labels.addClassification}</summary>
-            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 sm:min-w-[28rem]">
+            <summary className={summaryClassName}><ProductActionIcon name="add" />{labels.addClassification}</summary>
+            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 w-full sm:w-96 sm:max-w-full">
               <CnForm data={data} labels={labels} detailHref={detailHref} currentUtcYear={currentUtcYear} />
             </div>
           </details>
         ) : (
           <div className="flex flex-wrap gap-3">
             <details>
-              <summary className={summaryClassName}>{labels.editClassification}</summary>
-              <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 sm:min-w-[28rem]">
+              <summary className={summaryClassName}><ProductActionIcon name="edit" />{labels.editClassification}</summary>
+              <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 w-full sm:w-96 sm:max-w-full">
                 <CnForm data={data} cn={cn} labels={labels} detailHref={detailHref} currentUtcYear={currentUtcYear} />
               </div>
             </details>
             <details>
-              <summary className={removeSummaryClassName}>{labels.removeClassification}</summary>
+              <summary className={removeSummaryClassName}><ProductActionIcon name="remove" />{labels.removeClassification}</summary>
               <RemoveForm data={data} cn={cn} labels={labels} detailHref={detailHref} />
             </details>
           </div>
@@ -79,7 +81,7 @@ export function CnClassificationSection({ data, canEdit, labels, detailHref, cur
       {loadFailed ? <p role="alert" className="mt-4 text-sm text-red-700">{labels.failure}</p> : data === null ? (
         <p className="mt-4 text-sm text-slate-600">{labels.noDraft}</p>
       ) : cn === null ? (
-        <p className="mt-4 text-sm text-slate-600">{labels.empty}</p>
+        <p className="mt-4 rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">{labels.empty}</p>
       ) : (
         <dl className="mt-4 grid gap-4 rounded-lg bg-slate-50 p-4 sm:grid-cols-2">
           <Fact label={labels.code} value={cn.value} mono />
@@ -140,7 +142,7 @@ function CnForm({ data, cn, labels, detailHref, currentUtcYear }: Readonly<{ dat
       <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm text-slate-600">{pending ? labels.saving : ""}</p>
       <div className="mt-3 flex flex-wrap justify-end gap-3">
         <button type="button" disabled={pending} onClick={closeDetails} className={secondaryButtonClassName}>{labels.cancel}</button>
-        <button type="submit" disabled={pending} aria-disabled={pending} className={primaryButtonClassName}>{cn === undefined ? labels.add : labels.save}</button>
+        <button type="submit" disabled={pending} aria-disabled={pending} className={primaryButtonClassName}><ProductActionIcon name="save" />{cn === undefined ? labels.add : labels.save}</button>
       </div>
     </form>
   );
@@ -172,7 +174,7 @@ function RemoveForm({ data, cn, labels, detailHref }: Readonly<{ data: CnViewDat
       <p role="status" aria-live="polite" className="mt-2 min-h-5">{pending ? labels.removing : ""}</p>
       <div className="mt-2 flex flex-wrap justify-end gap-2">
         <button type="button" disabled={pending} onClick={closeDetails} className={secondaryButtonClassName}>{labels.cancel}</button>
-        <button type="button" disabled={pending} aria-disabled={pending} onClick={remove} className={dangerButtonClassName}>{labels.remove}</button>
+        <button type="button" disabled={pending} aria-disabled={pending} onClick={remove} className={dangerButtonClassName}><ProductActionIcon name="remove" />{labels.remove}</button>
       </div>
     </div>
   );
@@ -192,8 +194,8 @@ function resultMessage(result: CnClassificationMutationUiResult | null, labels: 
 function closeDetails(event: React.MouseEvent<HTMLButtonElement>) { event.currentTarget.closest("details")?.removeAttribute("open"); }
 
 const inputClassName = "mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-950 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600";
-const summaryClassName = "inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-lg border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2";
-const removeSummaryClassName = "inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-lg border border-red-700 px-4 py-2 text-sm font-bold text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2";
-const primaryButtonClassName = "min-h-11 rounded-lg bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:opacity-60";
-const secondaryButtonClassName = "min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-60";
-const dangerButtonClassName = "min-h-11 rounded-lg bg-red-700 px-4 py-2 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-red-600 disabled:opacity-60";
+const summaryClassName = "inline-flex max-w-full items-center gap-2 whitespace-normal [overflow-wrap:anywhere] min-h-11 cursor-pointer list-none items-center justify-center rounded-lg border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2";
+const removeSummaryClassName = "inline-flex max-w-full items-center gap-2 whitespace-normal [overflow-wrap:anywhere] min-h-11 cursor-pointer list-none items-center justify-center rounded-lg border border-red-700 px-4 py-2 text-sm font-bold text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2";
+const primaryButtonClassName = "inline-flex max-w-full items-center justify-center gap-2 whitespace-normal [overflow-wrap:anywhere] min-h-11 rounded-lg bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:opacity-60";
+const secondaryButtonClassName = "inline-flex max-w-full items-center justify-center gap-2 whitespace-normal [overflow-wrap:anywhere] min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-60";
+const dangerButtonClassName = "inline-flex max-w-full items-center justify-center gap-2 whitespace-normal [overflow-wrap:anywhere] min-h-11 rounded-lg bg-red-700 px-4 py-2 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-red-600 disabled:opacity-60";

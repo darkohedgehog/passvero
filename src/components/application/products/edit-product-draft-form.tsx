@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductActionIcon } from "./product-editor-ui";
+
 import {
   type FormEvent,
   useRef,
@@ -158,7 +160,7 @@ export function EditProductDraftForm({
           : "";
 
   return (
-    <form onSubmit={submit} aria-busy={pending} className="space-y-6" noValidate>
+    <form onSubmit={submit} aria-busy={pending} className="space-y-6 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-6" noValidate>
       <div
         ref={summaryRef}
         role={summary.length === 0 ? undefined : "alert"}
@@ -234,7 +236,7 @@ export function EditProductDraftForm({
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <a
           href={detailHref}
-          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-900 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+          className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-900 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
         >
           {labels.cancel}
         </a>
@@ -242,8 +244,9 @@ export function EditProductDraftForm({
           type="submit"
           disabled={pending}
           aria-disabled={pending}
-          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-70"
+          className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-70"
         >
+          <ProductActionIcon name="save" />
           {pending ? labels.saving : labels.save}
         </button>
       </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductActionIcon } from "./product-editor-ui";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { z } from "zod";
@@ -9,7 +11,7 @@ const statusSchema = z.object({
   available: z.boolean(), cleanEligible: z.boolean(), recoverable: z.boolean(),
   expectedAttemptId: z.string().uuid().nullable(),
 }).strict();
-const button = "inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50";
+const button = "inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50";
 
 export function DocumentScanControls({ documentId, canEdit }: Readonly<{ documentId: string; canEdit: boolean }>) {
   const t = useTranslations("DocumentScan");
@@ -65,7 +67,7 @@ export function DocumentScanControls({ documentId, canEdit }: Readonly<{ documen
         ? <button type="button" className={button} disabled={busy} onClick={() => void act("SCAN")}>{t("scan")}</button> : null}
       {canEdit && state?.recoverable && state.expectedAttemptId
         ? <button type="button" className={button} disabled={busy} onClick={() => void act("RECOVER")}>{t("recover")}</button> : null}
-      {state?.cleanEligible ? <a className={button} href={`/api/documents/${encodeURIComponent(documentId)}`}>{t("download")}</a>
+      {state?.cleanEligible ? <a className={button} href={`/api/documents/${encodeURIComponent(documentId)}`}><ProductActionIcon name="download" />{t("download")}</a>
         : <span className="text-sm">{t("blocked")}</span>}
       <button type="button" className={button} disabled={busy} onClick={() => { setError(false); void read().catch(() => setError(true)); }}>{t("refresh")}</button>
     </div>

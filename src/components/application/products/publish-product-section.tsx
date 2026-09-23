@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductActionIcon } from "./product-editor-ui";
+
 import { useEffect, useRef, useState } from "react";
 import { publishProductFromDashboard, type PublishProductUiResult } from "@/src/application/products/publish-product/ui-client";
 
@@ -33,7 +35,7 @@ export function PublishProductSection({ data, labels }: Readonly<{ data: { produ
   return (
     <div aria-busy={pending} className="flex flex-col items-start gap-2">
       <span className="sr-only">{labels.title}</span>
-      <button type="button" disabled={pending} onClick={publish} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600 disabled:cursor-wait disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">{pending ? labels.publishing : labels.publish}</button>
+      <button type="button" disabled={pending} onClick={publish} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600 disabled:cursor-wait disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"><ProductActionIcon name="publish" />{pending ? labels.publishing : labels.publish}</button>
       <p ref={resultRef} tabIndex={-1} aria-live="polite" className="text-sm text-slate-700 focus:outline-none">{message}</p>
       {result?.status === "STALE_WRITE" ? <button type="button" onClick={() => window.location.reload()} className="text-sm font-bold text-teal-800 underline">{labels.reload}</button> : null}
     </div>

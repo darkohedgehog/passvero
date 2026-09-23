@@ -1,3 +1,4 @@
+import { ProductActionIcon } from "./product-editor-ui";
 import type { PublicDppLabels } from "@/src/components/public-dpp/public-dpp-document";
 import { ProductDetailSnapshotContent } from "./product-detail-snapshot";
 import type { ProductDetailResult } from "@/src/application/products/get-product-detail/contracts";
@@ -93,25 +94,25 @@ export function ProductDetailPresentation({
   const published = detail.currentPublished;
   const editable = detail.lifecycleStatus === "ACTIVE" && draft !== null;
   return (
-    <div>
+    <div className="min-w-0">
       <nav aria-label={labels.overview}>
-        <a href={productListHref} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">← {labels.backToProducts}</a>
+        <a href={productListHref} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center rounded-md text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"><ProductActionIcon name="back" />{labels.backToProducts}</a>
       </nav>
-      <header className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <header className="mt-5 flex min-w-0 flex-col gap-5 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
         <div>
-          <h2 className="text-2xl font-bold tracking-[-0.025em] text-slate-950">{detail.internalName}</h2>
+          <h2 className="break-words text-2xl font-bold tracking-[-0.025em] text-slate-950">{detail.internalName}</h2>
           <div className="mt-3 space-y-2">
-            {detail.publicationState === null ? null : <p className="font-semibold text-slate-950"><span className="sr-only">{labels.publication}: </span>{labels.publicationState[detail.publicationState]}</p>}
+            {detail.publicationState === null ? null : <p className="inline-flex rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-sm font-semibold text-teal-900"><span className="sr-only">{labels.publication}: </span>{labels.publicationState[detail.publicationState]}</p>}
             <p className="text-sm font-semibold text-slate-700"><span className="sr-only">{labels.publicAvailability}: </span>{labels.availabilityStatus[detail.publicAvailability.status]}</p>
             <p className="text-sm text-slate-600">{labels.lifecycle}: {labels.lifecycleStatus[detail.lifecycleStatus]}</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          {detail.publicAvailability.status === "PUBLIC" ? <a href={detail.publicAvailability.url} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">{labels.viewPublicDpp}</a> : null}
+          {detail.publicAvailability.status === "PUBLIC" ? <a href={detail.publicAvailability.url} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"><ProductActionIcon name="preview" />{labels.viewPublicDpp}</a> : null}
           {detail.lifecycleStatus === "ACTIVE" && published !== null && draft === null ? createDraftAction : null}
           {editable ? publishSection : null}
-          {editable && contentEditHref && contentEditLabel ? <a href={contentEditHref} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600">{contentEditLabel}</a> : null}
-          {editable && editHref && editLabel ? <a href={editHref} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600">{editLabel}</a> : null}
+          {editable && contentEditHref && contentEditLabel ? <a href={contentEditHref} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600"><ProductActionIcon name="edit" />{contentEditLabel}</a> : null}
+          {editable && editHref && editLabel ? <a href={editHref} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800 focus:ring-2 focus:ring-teal-600"><ProductActionIcon name="edit" />{editLabel}</a> : null}
         </div>
       </header>
 
@@ -125,9 +126,9 @@ export function ProductDetailPresentation({
         </dl>
       </section>
 
-      <section aria-labelledby="current-published-heading" className="mt-8 rounded-xl border border-slate-200 p-4 sm:p-5">
+      <section aria-labelledby="current-published-heading" className="mt-8 min-w-0 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
         <h3 id="current-published-heading" className="text-lg font-bold text-slate-950">{labels.publishedTitle}</h3>
-        {published === null ? <p className="mt-3 text-sm leading-6 text-slate-600">{labels.publishedEmpty}</p> : (
+        {published === null ? <p className="mt-3 rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">{labels.publishedEmpty}</p> : (
           <>
             <p className="mt-1 text-sm text-slate-600">{labels.readOnly}</p>
             <dl className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -144,9 +145,9 @@ export function ProductDetailPresentation({
         )}
       </section>
 
-      <section aria-labelledby="current-draft-heading" className="mt-8 rounded-xl border border-slate-200 p-4 sm:p-5">
+      <section aria-labelledby="current-draft-heading" className="mt-8 min-w-0 rounded-xl border border-teal-200 bg-teal-50/30 p-4 sm:p-5">
         <h3 id="current-draft-heading" className="text-lg font-bold text-slate-950">{labels.draftTitle}</h3>
-        {draft === null ? <p className="mt-3 text-sm leading-6 text-slate-600">{published === null ? labels.draftEmpty : labels.noDraftChanges}</p> : (
+        {draft === null ? <p className="mt-3 rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">{published === null ? labels.draftEmpty : labels.noDraftChanges}</p> : (
           <>
             <p className="mt-1 text-sm text-slate-600">{labels.draftPrivate}</p>
             <dl className="mt-4 grid gap-4 sm:grid-cols-2">

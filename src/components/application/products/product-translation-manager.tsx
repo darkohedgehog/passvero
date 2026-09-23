@@ -1,4 +1,7 @@
 "use client";
+
+import { ProductActionIcon, editorPrimaryAction, editorDangerAction } from "./product-editor-ui";
+
 import { useId, useRef, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PASSVERO_LOCALES, type PassveroLocale } from "@/src/domain/values/passvero-locale";
@@ -18,7 +21,7 @@ export interface TranslationManagerData {
   translations: readonly (Omit<TranslationRow,"updatedAt"> & {updatedAt:string})[];
   evidence: TranslationEvidence;
 }
-const button = "inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:opacity-50";
+const button = "inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:opacity-50";
 export function ProductTranslationManager({data,labels,baseEditHref}: Readonly<{data:TranslationManagerData;labels:TranslationLabels;baseEditHref:string}>) {
   const [selected,setSelected] = useState(data.sourceLocale);
   const [dirty,setDirty] = useState(false);
@@ -52,7 +55,7 @@ export function ProductTranslationManager({data,labels,baseEditHref}: Readonly<{
     } catch { setError(labels.failure); }
     finally { inFlight.current=false; setBusy(false); }
   }
-  return <div className="mt-6 space-y-4" aria-busy={pending}>
+  return <div className="mt-6 min-w-0 space-y-4 rounded-xl border border-slate-200 bg-white p-4" aria-busy={pending}>
     <h4 className="text-base font-bold">{labels.title}</h4>
     <p className="text-sm text-slate-600">{data.published?labels.readOnly:labels.privateDraft}</p>
     <div role="group" aria-label={labels.title} className="flex flex-wrap gap-2">
@@ -63,10 +66,10 @@ export function ProductTranslationManager({data,labels,baseEditHref}: Readonly<{
       })}
     </div>
     {error?<div role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error} <button type="button" className="min-h-11 underline" onClick={()=>{if(canLeaveTranslation(dirty,()=>window.confirm(labels.discard))) window.location.reload();}}>{labels.reload}</button></div>:null}
-    {!row?<div><p className="text-sm">{labels.empty}</p>{editable?<button type="button" disabled={pending} className={`${button} mt-3`} onClick={()=>void mutate("ADD")}>{labels.add}</button>:null}</div>:
+    {!row?<div><p className="text-sm">{labels.empty}</p>{editable?<button type="button" disabled={pending} className={`${button} mt-3`} onClick={()=>void mutate("ADD")}><ProductActionIcon name="add" />{labels.add}</button>:null}</div>:
       editable?<TranslationForm key={`${selected}:${row.id}:${row.updatedAt}`} row={row} source={source} dirty={dirty} labels={labels} pending={pending} baseEditHref={baseEditHref} onDirty={()=>setDirty(true)} onSave={content=>mutate("EDIT",content)} />:
       <dl lang={selected} className="space-y-3">{(["productName",...TRANSLATION_TEXT_FIELDS] as const).map(field=>row[field]?<div key={field}><dt className="text-sm font-semibold">{field==="productName"?labels.productName:labels.fields[field]}</dt><dd className="whitespace-pre-wrap break-words text-sm">{row[field]}</dd></div>:null)}</dl>}
-    {row && editable && !source?<button type="button" disabled={pending} className={`${button} text-red-700`} onClick={()=>void mutate("REMOVE")}>{labels.remove}</button>:null}
+    {row && editable && !source?<button type="button" disabled={pending} className={editorDangerAction} onClick={()=>void mutate("REMOVE")}><ProductActionIcon name="remove" />{labels.remove}</button>:null}
     <p role="status" aria-live="polite" className="text-sm">{pending?labels.pending:""}</p>
   </div>;
 }
@@ -83,8 +86,8 @@ export function TranslationForm({row,source,dirty,labels,pending,baseEditHref,on
   return <form onSubmit={submit} onChange={onDirty} className="space-y-4">
     <label className="block text-sm font-semibold" htmlFor={`${id}-name`}>{labels.productName}</label>
     <input id={`${id}-name`} name="productName" lang={row.locale} defaultValue={row.productName} readOnly={source} disabled={pending} className="min-h-11 w-full rounded-lg border border-slate-300 p-3 focus:ring-2 focus:ring-teal-600" />
-    {source?<a href={baseEditHref} onClick={event=>{if(!canLeaveTranslation(dirty,()=>window.confirm(labels.discard))) event.preventDefault();}} className="inline-flex min-h-11 items-center text-sm text-teal-800 underline">{labels.sourceName}</a>:<p className="text-sm text-slate-600">{translationReady(row)?labels.ready:labels.incomplete}</p>}
+    {source?<a href={baseEditHref} onClick={event=>{if(!canLeaveTranslation(dirty,()=>window.confirm(labels.discard))) event.preventDefault();}} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center text-sm text-teal-800 underline"><ProductActionIcon name="edit" />{labels.sourceName}</a>:<p className="text-sm text-slate-600">{translationReady(row)?labels.ready:labels.incomplete}</p>}
     {TRANSLATION_TEXT_FIELDS.map(field=><div key={field}><label htmlFor={`${id}-${field}`} className="block text-sm font-semibold">{labels.fields[field]}</label><textarea id={`${id}-${field}`} name={field} lang={row.locale} defaultValue={row[field]??""} rows={3} disabled={pending} className="mt-2 w-full rounded-lg border border-slate-300 p-3 text-base focus:ring-2 focus:ring-teal-600" /></div>)}
-    <button type="submit" disabled={pending} className={`${button} bg-teal-700 text-white`}>{labels.save}</button>
+    <button type="submit" disabled={pending} className={editorPrimaryAction}><ProductActionIcon name="save" />{labels.save}</button>
   </form>;
 }

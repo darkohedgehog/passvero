@@ -1,5 +1,15 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-23 — product editor UI polish
+
+`PRODUCT_EDITOR_UI_POLISH_STAGING`: lokalni UI diff/build i ograničeni staging
+acceptance završeni. Build `U97P6q7YqVzFHSNqoWAT9`; jedno čuvanje namenskog
+nacrta i reload potvrđeni, proizvod ostaje neobjavljen. Ikonice, mirne pozadine,
+jasnije sekcije i mobilno prelamanje, bez promene poslovnog ponašanja. Dashboard
+postoji sa gornjom navigacijom; sidebar nije prisutan i nije dodat. Raniji
+NOT_PROVEN statusi ostaju nepromenjeni. Detalji i izdvojeni raniji testni nalazi:
+[izveštaj](PRODUCT_EDITOR_UI_POLISH_STAGING.md).
+
 ## Aktualizacija 2026-09-22 — kontrolirani Early Access
 
 `CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING`: source COMPLETE, staging NOT_PROVEN.

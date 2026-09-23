@@ -1,4 +1,7 @@
 "use client";
+
+import { ProductActionIcon, editorPrimaryAction, editorDangerAction, editorInput } from "./product-editor-ui";
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -26,13 +29,13 @@ export function GtinEditor({ state, canEdit }: { state: GtinState; canEdit: bool
       } catch { setMessage(t("failure")); }
     });
   }
-  return <section className="space-y-3 rounded-xl border border-slate-200 p-5">
+  return <section className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
     <h3 className="font-semibold">{t("title")}</h3><p className="text-sm text-slate-600">{t("notice")}</p>
     {canEdit ? <form className="space-y-3" onSubmit={event => { event.preventDefault(); submit("SET"); }}>
-      <label className="block text-sm">{t("number")}<input className="mt-1 block w-full rounded border p-2" type="text" inputMode="numeric" autoComplete="off" spellCheck={false} maxLength={14} value={value} disabled={pending} onChange={event => setValue(event.target.value)} aria-describedby="gtin-help" /></label>
+      <label className="block text-sm">{t("number")}<input className={editorInput} type="text" inputMode="numeric" autoComplete="off" spellCheck={false} maxLength={14} value={value} disabled={pending} onChange={event => setValue(event.target.value)} aria-describedby="gtin-help" /></label>
       <p id="gtin-help" className="text-sm text-slate-600">{t("help")}</p>
-      <div className="flex flex-wrap gap-2"><button className="rounded-lg border px-3 py-2 text-sm disabled:opacity-50" disabled={pending} type="submit">{pending ? t("pending") : t("save")}</button>
-        {draft.gtin !== null ? <button className="rounded-lg border px-3 py-2 text-sm disabled:opacity-50" disabled={pending} type="button" onClick={() => submit("REMOVE")}>{t("remove")}</button> : null}</div>
+      <div className="flex flex-wrap gap-2"><button className={editorPrimaryAction} disabled={pending} type="submit"><ProductActionIcon name="save" />{pending ? t("pending") : t("save")}</button>
+        {draft.gtin !== null ? <button className={editorDangerAction} disabled={pending} type="button" onClick={() => submit("REMOVE")}><ProductActionIcon name="remove" />{t("remove")}</button> : null}</div>
     </form> : <p>{draft.gtin ?? t("empty")}</p>}
     {message ? <p role="status">{message}</p> : null}
   </section>;

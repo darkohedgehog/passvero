@@ -1,4 +1,7 @@
 "use client";
+
+import { ProductActionIcon, editorPrimaryAction, editorDangerAction, editorInput } from "./product-editor-ui";
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -13,7 +16,7 @@ export function ManufacturerEditor({ state, canEdit }: { state: ManufacturerStat
   const [pending, startTransition] = useTransition();
   const operator = state.operators.find(o => o.id === selected);
   const draft = state.draft;
-  const button = "rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-50";
+  const button = editorPrimaryAction;
   function submit(operation: "CREATE" | "UPDATE" | "APPLY" | "REMOVE") {
     if (!draft && (operation === "APPLY" || operation === "REMOVE")) return;
     if ((operation === "CREATE" || operation === "UPDATE") && !manufacturerSchema.safeParse(values).success) { setMessage(t("failure")); return; }
@@ -30,23 +33,23 @@ export function ManufacturerEditor({ state, canEdit }: { state: ManufacturerStat
       } catch { setMessage(t("failure")); }
     });
   }
-  return <section className="space-y-4 rounded-xl border border-slate-200 p-5">
+  return <section className="min-w-0 space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
     <h3 className="font-semibold">{t("title")}</h3><p className="text-sm text-slate-600">{t("notice")}</p>
     <h4>{t("snapshot")}</h4><ManufacturerPreview value={draft?.snapshot ?? null} empty={t("empty")} />
     {canEdit ? <>
-      <label className="block">{t("directory")}<select disabled={pending} value={selected} className="mt-1 block w-full rounded border p-2" onChange={e => { const id=e.target.value; setSelected(id); const row=state.operators.find(o=>o.id===id); setValues(row ? Object.fromEntries(fields.map(f=>[f,row[f]])) as Manufacturer : empty); }}>
+      <label className="block">{t("directory")}<select disabled={pending} value={selected} className={editorInput} onChange={e => { const id=e.target.value; setSelected(id); const row=state.operators.find(o=>o.id===id); setValues(row ? Object.fromEntries(fields.map(f=>[f,row[f]])) as Manufacturer : empty); }}>
         <option value="">{t("new")}</option>{state.operators.map(o=><option key={o.id} value={o.id}>{o.name} — {o.city}, {o.countryCode}</option>)}
       </select></label>
-      {operator && draft ? <div className="space-y-2"><ManufacturerPreview value={operator} empty={t("empty")} /><button type="button" disabled={pending} className={button} onClick={()=>submit("APPLY")}>{t("apply")}</button></div> : null}
+      {operator && draft ? <div className="space-y-2"><ManufacturerPreview value={operator} empty={t("empty")} /><button type="button" disabled={pending} className={button} onClick={()=>submit("APPLY")}><ProductActionIcon name="check" />{t("apply")}</button></div> : null}
       <form className="grid gap-3 sm:grid-cols-2" onSubmit={e=>{e.preventDefault();submit(operator?"UPDATE":"CREATE");}}>
-        {fields.map(field=><label key={field} className="text-sm">{t(field)}<input className="mt-1 block w-full rounded border p-2" disabled={pending} required={["name","addressLine1","city","countryCode"].includes(field)} type={field==="publicEmail"?"email":field==="website"?"url":"text"} maxLength={field==="countryCode"?2:field==="website"?2048:field==="publicEmail"?254:field==="postalCode"?32:field==="city"||field==="region"?100:200} value={values[field]??""} onChange={e=>setValues(v=>({...v,[field]:field==="countryCode"?e.target.value.toUpperCase():e.target.value || (["name","addressLine1","city"].includes(field)?"":null)}))} /></label>)}
-        <button className={button} disabled={pending} type="submit">{pending?t("pending"):operator?t("save"):t("create")}</button>
+        {fields.map(field=><label key={field} className="text-sm">{t(field)}<input className={editorInput} disabled={pending} required={["name","addressLine1","city","countryCode"].includes(field)} type={field==="publicEmail"?"email":field==="website"?"url":"text"} maxLength={field==="countryCode"?2:field==="website"?2048:field==="publicEmail"?254:field==="postalCode"?32:field==="city"||field==="region"?100:200} value={values[field]??""} onChange={e=>setValues(v=>({...v,[field]:field==="countryCode"?e.target.value.toUpperCase():e.target.value || (["name","addressLine1","city"].includes(field)?"":null)}))} /></label>)}
+        <button className={button} disabled={pending} type="submit"><ProductActionIcon name="save" />{pending?t("pending"):operator?t("save"):t("create")}</button>
       </form>
-      {draft?.snapshot ? <button type="button" className={button} disabled={pending} onClick={()=>submit("REMOVE")}>{t("remove")}</button> : null}
+      {draft?.snapshot ? <button type="button" className={editorDangerAction} disabled={pending} onClick={()=>submit("REMOVE")}><ProductActionIcon name="remove" />{t("remove")}</button> : null}
     </> : null}
     {message ? <p role="status">{message}</p> : null}
   </section>;
 }
 export function ManufacturerPreview({ value, empty }: { value: Manufacturer | null; empty: string }) {
-  return value ? <div className="space-y-1 text-sm"><p className="font-medium">{value.name}</p><p>{[value.addressLine1,value.addressLine2,value.postalCode,value.city,value.region,value.countryCode].filter(Boolean).join(", ")}</p>{value.publicEmail?<p>{value.publicEmail}</p>:null}{value.website?<p>{value.website}</p>:null}</div> : <p className="text-sm text-slate-500">{empty}</p>;
+  return value ? <div className="space-y-1 break-words rounded-lg border border-slate-200 bg-white p-4 text-sm"><p className="font-medium">{value.name}</p><p>{[value.addressLine1,value.addressLine2,value.postalCode,value.city,value.region,value.countryCode].filter(Boolean).join(", ")}</p>{value.publicEmail?<p>{value.publicEmail}</p>:null}{value.website?<p>{value.website}</p>:null}</div> : <p className="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">{empty}</p>;
 }

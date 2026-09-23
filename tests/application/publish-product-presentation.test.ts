@@ -11,7 +11,7 @@ const data = { productId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", expectedDraftV
 
 test("renders one bounded publish control without exposing evidence", () => {
   const html = renderToStaticMarkup(createElement(PublishProductSection, { data, labels }));
-  assert.match(html, /<button[^>]*>Publish<\/button>/);
+  assert.match(html, /<button[^>]*><svg[^>]*aria-hidden="true"[^>]*focusable="false"[^>]*>[\s\S]*?<\/svg>Publish<\/button>/);
   assert.match(html, /aria-busy="false"/);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /tabindex="-1"/);

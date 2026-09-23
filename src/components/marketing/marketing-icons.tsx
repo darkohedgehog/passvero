@@ -1,6 +1,7 @@
 import type { SVGProps } from "react";
 
 export type MarketingIconName =
+  | "save" | "add" | "edit" | "remove" | "upload" | "download" | "preview" | "publish" | "back"
   | "analytics"
   | "check"
   | "compliance"
@@ -36,6 +37,15 @@ export function MarketingIcon({ name, ...props }: MarketingIconProps) {
   };
 
   const paths: Record<MarketingIconName, React.ReactNode> = {
+    save: <><path d="M5 3h12l4 4v14H3V3h2Z" /><path d="M7 3v6h10V3M7 21v-8h10v8" /></>,
+    add: <path d="M12 5v14M5 12h14" />,
+    edit: <><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z" /></>,
+    remove: <><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" /></>,
+    upload: <><path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5" /></>,
+    download: <><path d="M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5" /></>,
+    preview: <><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></>,
+    publish: <><path d="M12 15V3m-5 5 5-5 5 5M5 13v8h14v-8" /></>,
+    back: <path d="m10 5-7 7 7 7M3 12h18" />,
     analytics: <><path d="M5 20V11h4v9H5Zm7 0V5h4v15h-4Zm7 0v-7h4v7h-4Z" /></>,
     check: <path d="m6 13 4 4 8-10" />,
     compliance: <><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-5" /></>,

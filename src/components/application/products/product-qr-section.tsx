@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductActionIcon } from "./product-editor-ui";
+
 import { useEffect, useRef, useState } from "react";
 import type { ProductQrProjection } from "@/src/application/products/qr/contracts";
 import { activateQrFromDashboard, type QrUiResult } from "@/src/application/products/qr/ui-client";
@@ -11,7 +13,7 @@ export interface ProductQrLabels {
   readonly downloadSvg: string; readonly downloadPng: string; readonly publicationRequired: string;
   readonly noLongerAvailable: string; readonly helper: string; readonly reload: string;
 }
-const linkClass = "inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-bold text-teal-800 underline focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2";
+const linkClass = "inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center rounded-lg px-3 py-2 text-sm font-bold text-teal-800 underline focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2";
 export function ProductQrSection({ productId, data, labels }: Readonly<{
   productId: string; data: ProductQrProjection | null; labels: ProductQrLabels;
 }>) {
@@ -42,15 +44,15 @@ export function ProductQrSection({ productId, data, labels }: Readonly<{
           <p className="mt-3 text-sm font-semibold text-slate-800">{data.status === "PENDING" ? labels.pending : data.status === "ACTIVE" ? labels.active : labels.revoked}</p>
           {data.status === "PENDING" && data.activationEvidence !== null ? <>
             <p className="mt-2 text-sm leading-6 text-slate-600">{labels.helper}</p>
-            <button type="button" disabled={pending || result?.status === "STALE_WRITE"} onClick={activate} className="mt-3 inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">{pending ? labels.activating : labels.activate}</button>
+            <button type="button" disabled={pending || result?.status === "STALE_WRITE"} onClick={activate} className="mt-3 inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">{pending ? labels.activating : labels.activate}</button>
           </> : null}
           {data.status === "ACTIVE" && data.previewUrl !== null && !previewFailed ? <>
             {/* Authenticated image delivery must bypass the Next image optimizer. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={data.previewUrl} alt={labels.previewAlt} width={256} height={256} referrerPolicy="no-referrer" onError={() => setPreviewFailed(true)} className="mt-4 h-auto w-64 max-w-full bg-white" />
             <div className="mt-3 flex flex-wrap gap-2">
-              {data.downloadSvgUrl !== null ? <a href={data.downloadSvgUrl} className={linkClass}>{labels.downloadSvg}</a> : null}
-              {data.downloadPngUrl !== null ? <a href={data.downloadPngUrl} className={linkClass}>{labels.downloadPng}</a> : null}
+              {data.downloadSvgUrl !== null ? <a href={data.downloadSvgUrl} className={linkClass}><ProductActionIcon name="download" />{labels.downloadSvg}</a> : null}
+              {data.downloadPngUrl !== null ? <a href={data.downloadPngUrl} className={linkClass}><ProductActionIcon name="download" />{labels.downloadPng}</a> : null}
             </div>
           </> : null}
           {data.status === "REVOKED" || (data.status === "ACTIVE" && data.previewUrl === null) || previewFailed ? <p role="status" className="mt-3 text-sm text-slate-700">{labels.noLongerAvailable}</p> : null}
