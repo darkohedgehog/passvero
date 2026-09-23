@@ -1,5 +1,25 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-23 — donut, DPP i header (staging PASS)
+
+`DASHBOARD_DONUT_DPP_NAVIGATION_AND_UI_FINISHING_STAGING`: donut, autorizovana
+paginirana lista trenutno objavljenih DPP-ova, cover thumbnail i header ikonice
+implementirani. Lokalni ciljani testovi, disposable PostgreSQL, TypeScript, lint
+(15 ranijih upozorenja) i build `kiXCpv3nqiz1u_K4f8Pbv` prolaze. Staging paket je
+prenesen i checksum potvrđen. Prvi deploy je stao pre zamene artefakta zbog
+preuskog uslova za aktivirani qpdf socket; read-only potvrđen je ispravan LISTEN
+socket uz active/running servis. Ispravljen je samo privremeni deploy preflight,
+bez restarta servisa ili promene builda. Operator je potvrdio v2 deploy PASS:
+1134 artefakta, HTTPS/TLS 200/0, bez startup grešaka, konfiguracija i scanner/producer
+nepromenjeni. Rollback je sačuvan. Computer Use je ponovo povezan: ograničeni UI
+acceptance PASS — desktop donut/DPP/javni DPP/Back, šest jezika, mobilni prikaz
+390 px, meni/Escape/Tab fokus i završna odjava. Četiri screenshot-a su sačuvana
+bez Chrome ličnih podataka. Nulti skup i paginacija ostaju lokalni dokaz; nisu
+kreirani novi staging podaci.
+Nema promene scanner/producer/qpdf-a, migracija ni poslovnih podataka. Raniji
+NOT_PROVEN statusi ostaju nepromenjeni; sledeća poslovna celina su podaci firme
+za naplatu. [Izveštaj i granice dokaza](DASHBOARD_DONUT_DPP_NAVIGATION_AND_UI_FINISHING_STAGING.md).
+
 ## Aktualizacija 2026-09-23 — signature-health recovery A/B/C PASS
 
 Pokušaj 03 je COMPLETE; reader je prihvatio tri zakazane objave 38169–38171

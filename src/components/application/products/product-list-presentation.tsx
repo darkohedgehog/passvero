@@ -1,3 +1,4 @@
+import { ListPagination } from "./list-pagination";
 import type { ProductListItem } from "@/src/application/products/list-products/contracts";
 
 type StatusLabels = Readonly<Record<
@@ -113,16 +114,7 @@ export function ProductListPresentation({
         ))}
       </ul>
 
-      {nextPageHref === null ? null : (
-        <nav aria-label={labels.nextPage} className="mt-6 flex justify-end">
-          <a
-            href={nextPageHref}
-            className="inline-flex min-h-11 items-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
-          >
-            {labels.nextPage}
-          </a>
-        </nav>
-      )}
+      <ListPagination href={nextPageHref} label={labels.nextPage} />
     </>
   );
 }

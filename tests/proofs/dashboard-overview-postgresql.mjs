@@ -5,6 +5,8 @@ import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { Pool } from 'pg';
+const testFile=process.argv[2] ?? 'tests/integration/dashboard-overview-postgresql.test.ts';
+assert.ok(['tests/integration/dashboard-overview-postgresql.test.ts','tests/integration/dashboard-dpp-postgresql.test.ts'].includes(testFile));
 const root=resolve('.'),work=mkdtempSync('/private/tmp/passvero-dashboard-proof-');
 const pg='/opt/homebrew/opt/postgresql@16/bin';
 const env={PATH:process.env.PATH,HOME:work,TMPDIR:work,LANG:'C',PRISMA_HIDE_UPDATE_MESSAGE:'1'};
@@ -20,5 +22,5 @@ try {
  admin=new Pool({connectionString:url.replace('/dashboard_overview_test','/postgres')});assert.equal((await admin.query('SHOW data_directory')).rows[0].data_directory,data);
  await admin.query('CREATE DATABASE dashboard_overview_test');
  run(process.execPath,[root+'/node_modules/prisma/build/index.js','migrate','deploy','--config',work+'/prisma.config.ts'],{DASHBOARD_PROOF_URL:url});
- console.log(run(process.execPath,['--import','tsx','--test','tests/integration/dashboard-overview-postgresql.test.ts'],{TEST_DATABASE_URL:url}));
+ console.log(run(process.execPath,['--import','tsx','--test',testFile],{TEST_DATABASE_URL:url}));
 } finally {if(admin)await admin.end();if(started)run(pg+'/pg_ctl',['-D',data,'-m','fast','-w','stop']);console.log('DISPOSABLE_CLUSTER_STOPPED; '+work);}

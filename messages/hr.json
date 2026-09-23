@@ -515,5 +515,17 @@
     "retry": "Pokušaj ponovno",
     "updated": "Izmijenjeno",
     "sku": "SKU"
+  },
+  "DppList": {
+    "title": "Objavljeni DPP-ovi",
+    "description": "Proizvodi s trenutačno objavljenom verzijom, uključujući one s novim nacrtom. Prikazani su objavljeni podaci. Arhivirani proizvodi ostaju u pregledu; javni link dostupan je samo kada to dopušta trenutačno stanje DPP-a.",
+    "emptyTitle": "Još nema objavljenih DPP-ova",
+    "emptyDescription": "Objavljeni proizvodi ove organizacije pojavit će se ovdje.",
+    "version": "Objavljena verzija",
+    "open": "Otvori javni DPP",
+    "notPublic": "Javni DPP trenutačno nije dostupan",
+    "archived": "Arhivirano",
+    "unavailable": "Nije dostupno",
+    "nextPage": "Sljedeća stranica"
   }
 }

@@ -406,5 +406,17 @@
     "retry": "Erneut versuchen",
     "updated": "Geändert",
     "sku": "SKU"
+  },
+  "DppList": {
+    "title": "Veröffentlichte DPPs",
+    "description": "Produkte mit einer aktuell veröffentlichten Version, auch wenn ein neuer Entwurf vorliegt. Angezeigt werden veröffentlichte Daten. Archivierte Produkte bleiben aufgeführt; öffentliche Links sind nur verfügbar, wenn der aktuelle DPP-Status den Zugriff erlaubt.",
+    "emptyTitle": "Noch keine veröffentlichten DPPs",
+    "emptyDescription": "Veröffentlichte Produkte dieser Organisation erscheinen hier.",
+    "version": "Veröffentlichte Version",
+    "open": "Öffentlichen DPP öffnen",
+    "notPublic": "Öffentlicher DPP derzeit nicht verfügbar",
+    "archived": "Archiviert",
+    "unavailable": "Nicht verfügbar",
+    "nextPage": "Nächste Seite"
   }
 }

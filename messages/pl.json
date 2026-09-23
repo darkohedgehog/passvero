@@ -406,5 +406,17 @@
     "retry": "Spróbuj ponownie",
     "updated": "Zmieniono",
     "sku": "SKU"
+  },
+  "DppList": {
+    "title": "Opublikowane DPP",
+    "description": "Produkty z aktualnie opublikowaną wersją, również te z nową wersją roboczą. Wyświetlane są opublikowane dane. Produkty zarchiwizowane pozostają na liście; publiczne linki są dostępne tylko wtedy, gdy pozwala na to bieżący stan DPP.",
+    "emptyTitle": "Brak opublikowanych DPP",
+    "emptyDescription": "Tutaj pojawią się opublikowane produkty tej organizacji.",
+    "version": "Opublikowana wersja",
+    "open": "Otwórz publiczny DPP",
+    "notPublic": "Publiczny DPP jest obecnie niedostępny",
+    "archived": "Zarchiwizowano",
+    "unavailable": "Niedostępne",
+    "nextPage": "Następna strona"
   }
 }

@@ -413,5 +413,17 @@
     "retry": "Try again",
     "updated": "Modified",
     "sku": "SKU"
+  },
+  "DppList": {
+    "title": "Published DPPs",
+    "description": "Products with a current published version, including those with a new draft. Only published data is shown. Archived products remain listed; public links are available only when the current DPP state permits access.",
+    "emptyTitle": "No published DPPs yet",
+    "emptyDescription": "Published products from this organization will appear here.",
+    "version": "Published version",
+    "open": "Open public DPP",
+    "notPublic": "Public DPP is currently unavailable",
+    "archived": "Archived",
+    "unavailable": "Not available",
+    "nextPage": "Next page"
   }
 }

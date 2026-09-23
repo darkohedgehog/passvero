@@ -1,11 +1,11 @@
-/* eslint-disable @next/next/no-img-element -- Private image delivery requires the existing authenticated endpoint, not the public optimizer. */
+import { ProductThumbnail } from "../products/product-thumbnail";
 import type messages from "@/messages/en.json";
 import type { DashboardOverview } from "@/src/application/dashboard/overview";
 import { overviewCategories } from "@/src/application/dashboard/overview";
 import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
 import { editorPrimaryAction, editorSecondaryAction } from "@/src/components/application/products/product-editor-ui";
 export type OverviewLabels = typeof messages.DashboardOverview;
-const categoryColors = { draftOnly: "bg-blue-600", publishedOnly: "bg-teal-700", publishedWithDraft: "bg-indigo-600", withoutVersion: "bg-slate-500" };
+const categoryColors = { draftOnly: "text-blue-600", publishedOnly: "text-teal-700", publishedWithDraft: "text-indigo-600", withoutVersion: "text-slate-500" };
 
 export function DashboardOverviewPanel({ data, labels, locale, catalogHref, createHref, importHref, exportHref }: {
   data: DashboardOverview | null; labels: OverviewLabels; locale: string; catalogHref: string;
@@ -29,13 +29,32 @@ export function DashboardOverviewPanel({ data, labels, locale, catalogHref, crea
     {data.total === 0 ? <section className="rounded-2xl border border-dashed border-slate-300 bg-white p-8"><h2 className="text-lg font-bold">{labels.emptyTitle}</h2><p className="mt-2 text-sm text-slate-600">{labels.emptyDescription}</p></section> : null}
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <h2 className="text-lg font-bold text-slate-950">{labels.distribution}</h2>
-      <ul className="mt-5 grid gap-5 sm:grid-cols-2">{overviewCategories.map(category => <li key={category}><div className="mb-2 flex items-start justify-between gap-4 text-sm"><span className="text-slate-700">{labels[category]}</span><strong className="text-slate-950">{number.format(data.distribution[category])}</strong></div><div aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-slate-100"><div className={`h-full rounded-full ${categoryColors[category]}`} style={{ width: `${data.total ? data.distribution[category] / data.total * 100 : 0}%` }} /></div></li>)}</ul>
+      <div className="mt-6 flex flex-col items-center gap-7 md:flex-row md:gap-10">
+        <div className="relative size-52 shrink-0">
+          <svg viewBox="0 0 120 120" className="size-full -rotate-90" aria-hidden="true" focusable="false">
+            <circle cx="60" cy="60" r="48" fill="none" strokeWidth="15" className="stroke-slate-100" />
+            {overviewCategories.map((category, index) => {
+              const fraction = data.total ? data.distribution[category] / data.total : 0;
+              const offset = overviewCategories.slice(0,index).reduce((sum,key) => sum + data.distribution[key],0);
+              return fraction > 0 ? <circle key={category} cx="60" cy="60" r="48" pathLength="100" fill="none" stroke="currentColor" strokeWidth="15" className={categoryColors[category]}
+                strokeDasharray={`${fraction * 100} ${100 - fraction * 100}`} strokeDashoffset={-offset / data.total * 100} /> : null;
+            })}
+          </svg>
+          <div className="absolute inset-8 flex flex-col items-center justify-center text-center"><strong className="max-w-full break-all text-3xl font-bold tabular-nums text-slate-950">{number.format(data.total)}</strong><span className="mt-1 text-xs text-slate-600">{labels.total}</span></div>
+        </div>
+        <ul className="grid w-full min-w-0 flex-1 gap-4">{overviewCategories.map(category => <li key={category} className="flex items-start gap-3">
+          <span aria-hidden="true" className={`mt-1 size-3 shrink-0 rounded-full bg-current ${categoryColors[category]}`} />
+          <span className="min-w-0 flex-1 break-words text-sm text-slate-700">{labels[category]}</span>
+          <strong className="shrink-0 text-sm tabular-nums text-slate-950">{number.format(data.distribution[category])}</strong>
+          <span className="w-12 shrink-0 text-right text-sm tabular-nums text-slate-600">{new Intl.NumberFormat(locale,{style:"percent",maximumFractionDigits:0}).format(data.total ? data.distribution[category] / data.total : 0)}</span>
+        </li>)}</ul>
+      </div>
       <p className="mt-5 text-sm text-slate-600">{labels.scope} {labels.archived}: {number.format(data.archived)}.</p>
     </section>
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5 sm:px-6"><h2 className="text-lg font-bold text-slate-950">{labels.recent}</h2><a href={catalogHref} className="inline-flex min-h-11 items-center rounded text-sm font-semibold text-teal-800 underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-teal-700">{labels.allProducts}</a></div>
       <ul className="divide-y divide-slate-200">{data.recent.map(row => <li key={row.id} className="flex min-w-0 flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6"><div className="flex min-w-0 items-center gap-3">
-        {row.imageId ? <img src={`/api/products/${row.id}/images/${row.imageId}`} alt="" width={48} height={48} className="size-12 shrink-0 rounded-lg border border-slate-200 object-contain" /> : <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-500"><MarketingIcon name="packaging" className="size-6" /></span>}
+        <ProductThumbnail productId={row.id} imageId={row.imageId} />
         <div className="min-w-0"><a href={`${catalogHref}/${row.id}`} className="break-words font-semibold text-slate-900 underline-offset-4 hover:text-teal-800 hover:underline focus-visible:ring-2 focus-visible:ring-teal-700">{row.name}</a>{row.sku ? <p className="mt-1 break-all text-sm text-slate-500">{labels.sku}: {row.sku}</p> : null}</div></div>
         <div className="shrink-0 space-y-2 sm:max-w-[45%] sm:text-right"><p className="text-sm font-medium text-teal-800">{labels[row.category]}{row.archived ? ` · ${labels.archived}` : ""}</p><time dateTime={row.updatedAt.toISOString()} className="block text-xs text-slate-500">{labels.updated}: {date.format(row.updatedAt)}</time></div>
       </li>)}</ul><p className="border-t border-slate-200 bg-slate-50 px-5 py-4 text-xs leading-5 text-slate-600">{labels.recentHelp}</p>

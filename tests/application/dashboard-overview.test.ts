@@ -41,3 +41,12 @@ test("navigation stays active on product subroutes and all six label contracts a
   assert.equal(isDashboardNavActive("/dashboard/products-other","/dashboard/products"),false);
   for(const m of [hr,sr,sl,de,pl])assert.deepEqual(Object.keys(m.DashboardOverview).sort(),Object.keys(en.DashboardOverview).sort());
 });
+test("donut exposes textual counts and rounded percentages for mixed, single and empty distributions",()=>{
+ const mix=render({...empty,total:3,published:2,draft:1,distribution:{draftOnly:1,publishedOnly:2,publishedWithDraft:0,withoutVersion:0}});
+ assert.match(mix,/33%/);assert.match(mix,/67%/);assert.match(mix,/0%/);
+ const single=render({...empty,total:2,draft:2,distribution:{draftOnly:2,publishedOnly:0,publishedWithDraft:0,withoutVersion:0}});
+ assert.match(single,/100%/);assert.doesNotMatch(render(empty),/NaN|Infinity/);
+ assert.equal((mix.match(/stroke-dasharray=/g) ?? []).length,2);
+ assert.equal((single.match(/stroke-dasharray=/g) ?? []).length,1);
+ assert.equal((render(empty).match(/stroke-dasharray=/g) ?? []).length,0);
+});

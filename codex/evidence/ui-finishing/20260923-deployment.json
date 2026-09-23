@@ -1,0 +1,22 @@
+{
+  "evidence_source": "USER_OPERATOR_OUTPUT",
+  "deployment": "PASS",
+  "source_base": "1f43a09715017755e3430d057f849c4f23bdcb5b",
+  "reviewed_diff_files": 25,
+  "review_sha256": "17f32ca16243bba31f9480d26b2a266ff93e87e5588f3d7391f29e13477aeebe",
+  "build_id": "kiXCpv3nqiz1u_K4f8Pbv",
+  "artifact_files_verified": 1134,
+  "staging_pid": 23191,
+  "staging_https": "200 0",
+  "runtime_configuration": "UNCHANGED",
+  "scanners_broker_producer": "UNCHANGED",
+  "production_access_or_changes": false,
+  "startup_error_count": 0,
+  "live_dashboard_acceptance": "NOT_YET_RUN",
+  "rollback": "/var/lib/passvero-ui-finishing-1f43a09/application/rollback.py",
+  "migration": "NOT_REQUIRED",
+  "producer_recovery": "PRIOR_ACCEPTED_EVIDENCE_UNCHANGED",
+  "scanner_acceptance": "NOT_RERUN",
+  "reboot_acceptance": "NOT_PROVEN",
+  "retained_operator_sha256": "caac6bbc4fe5604c23837527c65aff1e35717580d7c079f7002f08406c87eda5"
+}

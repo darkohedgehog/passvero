@@ -15,3 +15,8 @@ test("invalid or ambiguous cursor is dropped rather than forwarded", () => {
     assert.equal(dashboardLocaleHref("/dashboard/products", query), "/dashboard/products");
   }
 });
+test("DPP page cursor and catalog search survive language changes without other parameters",()=>{
+ const id="00000000-0000-4000-8000-000000000001";
+ assert.equal(dashboardLocaleHref("/dashboard/dpp",`?cursor=${id}&token=secret`),`/dashboard/dpp?cursor=${id}`);
+ assert.equal(dashboardLocaleHref("/dashboard/products","?q=Pump&token=secret"),"/dashboard/products?q=Pump");
+});
