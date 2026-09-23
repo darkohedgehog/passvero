@@ -26,7 +26,7 @@ import { getProductionListProductsDependencies } from "@/src/infrastructure/pers
 
 type PageProps = Readonly<{
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ cursor?: string | readonly string[]; q?: string | readonly string[] }>;
+  searchParams: Promise<{ cursor?: string | readonly string[]; q?: string | readonly string[]; action?: string | readonly string[] }>;
 }>;
 
 export const dynamic = "force-dynamic";
@@ -150,8 +150,8 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           {search ? <a href={getPathname({ locale, href: "/dashboard/products" })} className="rounded-lg border px-4 py-2 text-sm">{productsT("searchClear")}</a> : null}
         </div>
       </form>
-      {hasProductPermission(resolution.context, PRODUCT_CREATE) && hasProductPermission(resolution.context, "PRODUCT_EDIT") ? <details className="mb-6"><summary className="cursor-pointer rounded-lg border px-4 py-2 text-sm">{productsT("import")}</summary><CatalogImport /></details> : null}
-      <CatalogExportAction search={search} labels={{ button: productsT("export.button"), pending: productsT("export.pending"), all: productsT("export.all"), filtered: productsT("export.filtered"), versionHelp: productsT("export.versionHelp"), textHelp: productsT("export.textHelp"), failure: productsT("export.failure"), limit: productsT("export.limit") }} />
+      {hasProductPermission(resolution.context, PRODUCT_CREATE) && hasProductPermission(resolution.context, "PRODUCT_EDIT") ? <details id="catalog-import" open={query.action === "import"} className="mb-6 scroll-mt-6"><summary className="cursor-pointer rounded-lg border px-4 py-2 text-sm">{productsT("import")}</summary><CatalogImport /></details> : null}
+      <div id="catalog-export" className="scroll-mt-6"><CatalogExportAction search={search} labels={{ button: productsT("export.button"), pending: productsT("export.pending"), all: productsT("export.all"), filtered: productsT("export.filtered"), versionHelp: productsT("export.versionHelp"), textHelp: productsT("export.textHelp"), failure: productsT("export.failure"), limit: productsT("export.limit") }} /></div>
       <ProductListPresentation
         items={result.items}
         formattedUpdatedAt={result.items.map((item) => dateFormatter.format(item.updatedAt))}

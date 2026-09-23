@@ -1,5 +1,7 @@
 import "server-only";
 
+import { PrismaDashboardOverview } from "./prisma-dashboard-overview";
+
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
@@ -80,4 +82,8 @@ export function getProductionPublishProductDependencies() {
 
 export async function disconnectProductionPrisma(): Promise<void> {
   await runtimeGlobal.__passveroProductionPrismaLifecycle?.disconnect();
+}
+
+export function getProductionDashboardOverviewPersistence() {
+  return new PrismaDashboardOverview(getProductionPrismaClient());
 }

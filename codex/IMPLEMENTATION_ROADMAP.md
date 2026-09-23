@@ -1,5 +1,21 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-23 — korisnički sidebar i pregled
+
+`CUSTOMER_DASHBOARD_SIDEBAR_AND_OVERVIEW_STAGING`: zajednički sidebar i autorizovani
+pregled celog kataloga implementirani; lokalni testovi/build i zaseban PostgreSQL
+dokaz PASS. Staging build `qwLCXFTd9EEGdvqaB9SZS` deployovan; ograničeni UI
+acceptance i nezavisno read-only poređenje 9/5/5 PASS. Postojeća sesija, desktop
+sidebar, katalog/editor, refresh/Back, mobilni meni i šest jezika provereni.
+Producer recovery = BLOCKED; malware scanning operational readiness = NOT_READY.
+Jedno health-reader odbijanje potvrđuje fail-closed zaštitu za trenutno stanje.
+Startup servis je aktivan/uključen; reboot acceptance = NOT_PROVEN.
+
+Sledeći zadatak: dokumentovana i implementirana procedura oporavka signature-health
+poverenja posle restarta, sa sačuvanim bazama i istorijom. Ne započinje se u ovom koraku.
+[Definicije brojeva i izveštaj](CUSTOMER_DASHBOARD_SIDEBAR_AND_OVERVIEW_STAGING.md).
+Raniji nepovezani NOT_PROVEN statusi ostaju nepromenjeni.
+
 ## Aktualizacija 2026-09-23 — product editor UI polish
 
 `PRODUCT_EDITOR_UI_POLISH_STAGING`: lokalni UI diff/build i ograničeni staging
