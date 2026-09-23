@@ -1,0 +1,43 @@
+{
+  "source": "operator-supplied RECOVERY_CURRENT_STATE_READ_ONLY",
+  "attempts": {
+    "01": "ROLLED_BACK",
+    "02": "ROLLED_BACK",
+    "03": "COMPLETE"
+  },
+  "scheduled_publications": [
+    {
+      "accepted": true,
+      "sequence": 38169,
+      "observedAt": 1790181729990,
+      "expiresAt": 1790181789990
+    },
+    {
+      "accepted": true,
+      "sequence": 38170,
+      "observedAt": 1790181746001,
+      "expiresAt": 1790181806001
+    },
+    {
+      "accepted": true,
+      "sequence": 38171,
+      "observedAt": 1790181761795,
+      "expiresAt": 1790181821795
+    }
+  ],
+  "daemon_ready": {
+    "loaded_log": true,
+    "pid": 15401,
+    "version_response": true
+  },
+  "current_reader": {
+    "accepted": true,
+    "sequence": 38181,
+    "observedAt": 1790181921039,
+    "expiresAt": 1790181981039
+  },
+  "reader_exit": 0,
+  "database_is_attempt_03": true,
+  "dashboard_build": "qwLCXFTd9EEGdvqaB9SZS",
+  "mutation_performed": false
+}

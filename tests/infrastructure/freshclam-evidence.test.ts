@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile } from "node:fs/promises";
-import { clamTime, parseFreshclamEvidence, validateDaemonEvidence, type DiskArtifact } from "../../src/infrastructure/documents/freshclam-evidence";
+import { clamTime, parseDaemonVersion, parseFreshclamEvidence, validateDaemonEvidence, type DiskArtifact } from "../../src/infrastructure/documents/freshclam-evidence";
 const fixture = (name: string) => readFile(new URL(`../fixtures/signature-health/${name}.log`, import.meta.url), "utf8");
 const disk = (daily = 28123): DiskArtifact[] => [
   { name: "main", version: 63, sha256: "a".repeat(64) },
@@ -45,4 +45,16 @@ test("selected real reload lifecycle; synthetic unresolved/unknown errors and in
   assert.throws(() => validateDaemonEvidence(error.replace("Not listening on any interfaces", "synthetic unknown error") + log, now, "Europe/Zagreb"));
   assert.throws(() => validateDaemonEvidence(log.replace(/.*Activating.*\n/, ""), now, "Europe/Zagreb"));
   assert.throws(() => validateDaemonEvidence(log + "Tue Sep 15 09:11:00 2026 -> WARNING: synthetic validation failure\n", now, "Europe/Zagreb"));
+});
+
+test("reviewed daemon versions only; restart still requires a complete new evidence period", async () => {
+  for (const version of ["1.5.3", "1.5.4"]) {
+    assert.equal(parseDaemonVersion(`ClamAV ${version}/28132/Wed Sep 23 08:24:42 2026\0`).engineVersion, version);
+  }
+  assert.throws(() => parseDaemonVersion("ClamAV 1.5.5/28132/Wed Sep 23 08:24:42 2026\0"));
+  const initial = await fixture("initial-download");
+  const now = Date.UTC(2026, 8, 14, 16, 4, 54);
+  assert.throws(() => parseFreshclamEvidence(initial + initial, disk(), now, "Europe/Zagreb"));
+  assert.equal(parseFreshclamEvidence(initial, disk(), now, "Europe/Zagreb").result, "UPDATED");
+  assert.throws(() => parseFreshclamEvidence(initial, disk(28132), now, "Europe/Zagreb"));
 });

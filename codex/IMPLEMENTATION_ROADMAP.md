@@ -1,5 +1,22 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-23 — signature-health recovery A/B/C PASS
+
+Pokušaj 03 je COMPLETE; reader je prihvatio tri zakazane objave 38169–38171
+(initialna + naredne dve) i kasniju 38181. Producer recovery A/B = PASS.
+Prethodna dva pokušaja su ROLLED_BACK, uz sačuvane baze/logove.
+Privatni autentifikovani PDF upload → eksplicitni CLEAN scan → autorizovano
+preuzimanje identičnih 750 bajtova C = PASS. Prilog je odvojen od testnog nacrta,
+Document arhiviran i tačan storage objekat uklonjen postojećim cleanup tokom.
+Audit je RETAINED; acceptance prozor CLOSED; sesija nije zadržana.
+Staging malware-scanning readiness potvrđen je u ovom ograničenom toku.
+Dashboard build qwLCXFTd9EEGdvqaB9SZS ostaje prihvaćen i nepromenjen.
+Posle sledećeg restarta koristi se dokumentovani eksplicitni operator recovery;
+automatski recovery nije uveden. Reboot i dugotrajni unattended kontinuitet ostaju
+NOT_PROVEN, kao i raniji nepovezani NOT_PROVEN statusi. Nema commita/pusha.
+[Recovery izveštaj i operatorska instrukcija](DOCUMENT_SIGNATURE_HEALTH_POST_RESTART_RECOVERY.md).
+Stariji odeljci ispod zadržavaju istorijske statuse u trenutku njihovog acceptancea.
+
 ## Aktualizacija 2026-09-23 — korisnički sidebar i pregled
 
 `CUSTOMER_DASHBOARD_SIDEBAR_AND_OVERVIEW_STAGING`: zajednički sidebar i autorizovani

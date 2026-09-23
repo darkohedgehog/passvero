@@ -1,0 +1,16 @@
+{
+  "/usr/bin/freshclam": "704e997b2911297f128067e0affaf272e83672837fadcb26d0aaab74fcf231b9",
+  "/usr/sbin/clamd": "d3365e97487942f205c7779d839b2fe12c1d7442335379ded189350df7320fe0",
+  "/usr/bin/sigtool": "19030313a9b3dde082e3df3b5f07050e527786174211f563f114f9b9c4f989ee",
+  "/etc/systemd/system/clamav-freshclam.service.d/passvero.conf": "3d6ed68651ed185504e39e1dccc84778e8b67e7387b2f1e8a0000be6eab7e689",
+  "/etc/systemd/system/clamav-freshclam.service.d/trust.conf": "5798c3ad6dcd7db91ec24c1f8989ba14d568075a69492aabeabb042d4ee06b47",
+  "/etc/systemd/system/clamav-daemon.service.d/extend.conf": "73a7e14f4f968e2f6ed3de89c992fe255d217fc7f7bdb26b17e3109273ca04bd",
+  "/etc/systemd/system/clamav-daemon.service.d/passvero.conf": "58b23a233221c1aa61bbf760a9c77072311e0edfd9373aa302a831af79818d5e",
+  "/etc/systemd/system/clamav-daemon.service.d/trust.conf": "3a12740d9e9f16892962383eca4c6b27eab6bed537d595faa08191ce90812a0d",
+  "/etc/systemd/system/clamav-daemon.socket.d/passvero.conf": "e4636a09cdc15e8e026cc38ab7c737cb9f30bf1f3c50c3f6ed8b2056333cd295",
+  "/etc/clamav/certs/clamav.crt": "60200e4b4b1b1b7257bb4550487aeb142034341f3300a8526e77a3134a940e9d",
+  "/etc/apparmor.d/usr.bin.freshclam": "1557585d98632b1c295ab595ad03649cd3dd1778b95d0b53d721fcdcdcd5f664",
+  "/etc/apparmor.d/local/usr.bin.freshclam": "25dbd4cfa70c4524fc3c48e2126826e110042f399e2d404e1e530d622dbfbd21",
+  "/etc/apparmor.d/usr.sbin.clamd": "95f1fc8749ad52415c76eba56e6408536efaae4bbd8fdf27a9ade8cf56d9ae0f",
+  "/etc/apparmor.d/local/usr.sbin.clamd": "fcfe80a09a4defa8720c6c65e1d6a28015ab5d7d2e91561d5a28a23fb714ef7c"
+}

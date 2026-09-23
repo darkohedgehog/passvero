@@ -22,7 +22,7 @@ export function clamTime(text: string, zone: EvidenceTimeZone = "UTC"): number {
   if (matches.length !== 1) throw new Error("EVIDENCE_INVALID");
   return matches[0];
 }
-/** Nonverbose standard-only 1.5.3 stream, from a retained initialization boundary.
+/** Nonverbose standard-only reviewed 1.5.3/1.5.4 stream, from a retained initialization boundary.
  * Completion is the final bytecode result in the fixed daily/main/bytecode order.
  * This proves logged operations only; protected validation/writer history is a deployment premise.
  */
@@ -102,7 +102,7 @@ export function diskManifest(components: readonly DiskArtifact[]) {
   return createHash("sha256").update(JSON.stringify(components)).digest("hex");
 }
 export function parseDaemonVersion(raw: string, zone: EvidenceTimeZone = "UTC") {
-  const m = /^ClamAV (1\.5\.3)\/(\d+)\/(.{24})\0$/.exec(raw);
+  const m = /^ClamAV (1\.5\.[34])\/(\d+)\/(.{24})\0$/.exec(raw);
   if (!m || !Number.isSafeInteger(Number(m[2]))) throw new Error("EVIDENCE_INVALID");
   return { scanner: "clamav" as const, engineVersion: m[1], dailyVersion: Number(m[2]), dailyPublishedAt: clamTime(m[3], zone) };
 }
