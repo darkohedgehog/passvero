@@ -487,3 +487,14 @@ This document does not define:
 - exceptional Organization deletion, merge, or ownership-transfer workflows.
 
 Those concerns require subsequent focused design or implementation tasks.
+
+## Approved billing profile slice — 2026-09-23
+
+The organization billing-profile task explicitly grants BILLING_PROFILE_READ and
+BILLING_PROFILE_UPDATE to OWNER and ADMIN only. EDITOR and VIEWER receive neither.
+These capabilities cover the private current billing identity, not Plan assignment,
+Subscription transitions, invoices or payments. Existing BILLING_READ/PLAN_ASSIGN/
+SUBSCRIPTION_MANAGE decisions above remain unchanged. ReadBillingProfile requires
+BILLING_PROFILE_READ; SaveBillingProfile requires BILLING_PROFILE_UPDATE. Both
+revalidate active tenant membership/organization in persistence. Save also requires
+expected revision CAS and atomic metadata-minimized audit.

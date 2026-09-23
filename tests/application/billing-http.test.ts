@@ -1,0 +1,20 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { createBillingHttpHandler } from "../../src/application/billing/http";
+import { createBillingServices } from "../../src/application/billing/service";
+import type { AuthenticatedUserContext } from "../../src/application/context/authenticated-user-context";
+const context:AuthenticatedUserContext={userId:randomUUID(),organizationId:randomUUID(),membershipId:randomUUID(),membershipRole:"ADMIN",membershipStatus:"ACTIVE",permissions:["BILLING_PROFILE_READ","BILLING_PROFILE_UPDATE"],correlationId:randomUUID()};
+test("private billing transport enforces origin, trusted proxy, context and strict bounded input",async()=>{
+ let writes=0;
+ const handler=createBillingHttpHandler({canonicalOrigin:"https://staging.passvero.eu",verifyProxy:h=>h.get("x-test-proxy")==="trusted",resolveContext:async()=>({status:"RESOLVED",context,presentation:{organizationName:"Test"}}),services:createBillingServices({get:async()=>null,save:async()=>{writes++;return {status:"SAVED",revision:1};}})});
+ const request=(body:string,origin="https://staging.passvero.eu",proxy="trusted")=>new Request("https://staging.passvero.eu/api/organization/billing-profile",{method:"POST",headers:{origin,"x-test-proxy":proxy,"content-type":"application/json"},body});
+ assert.equal((await handler(request('{}','https://evil.invalid'))).status,403);
+ assert.equal((await handler(request('{}',undefined,'no'))).status,403);
+ assert.equal((await handler(request('x'.repeat(8193)))).status,400);
+ assert.equal((await handler(request('{'))).status,400);
+ assert.equal((await handler(request(JSON.stringify({expectedRevision:0,organizationId:randomUUID(),values:{}})))).status,400);
+ const read=await handler(new Request('https://staging.passvero.eu/api/organization/billing-profile',{headers:{'x-test-proxy':'trusted'}}));assert.equal(read.status,200);assert.deepEqual(await read.json(),{profile:null});assert.equal(read.headers.get('cache-control'),'private, no-store');assert.equal(writes,0);
+ const denied=createBillingServices({get:async()=>{throw new Error('must not read');},save:async()=>{throw new Error('must not write');}});
+ await assert.rejects(denied.get({...context,membershipRole:'EDITOR',permissions:[]}),{code:'FORBIDDEN'});
+});

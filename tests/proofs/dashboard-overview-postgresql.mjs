@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { Pool } from 'pg';
 const testFile=process.argv[2] ?? 'tests/integration/dashboard-overview-postgresql.test.ts';
-assert.ok(['tests/integration/dashboard-overview-postgresql.test.ts','tests/integration/dashboard-dpp-postgresql.test.ts'].includes(testFile));
+assert.ok(['tests/integration/dashboard-overview-postgresql.test.ts','tests/integration/dashboard-dpp-postgresql.test.ts','tests/integration/billing-profile-postgresql.test.ts'].includes(testFile));
 const root=resolve('.'),work=mkdtempSync('/private/tmp/passvero-dashboard-proof-');
 const pg='/opt/homebrew/opt/postgresql@16/bin';
 const env={PATH:process.env.PATH,HOME:work,TMPDIR:work,LANG:'C',PRISMA_HIDE_UPDATE_MESSAGE:'1'};

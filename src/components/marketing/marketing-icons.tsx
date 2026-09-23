@@ -8,6 +8,7 @@ export type MarketingIconName =
   | "compliance"
   | "consumer"
   | "document"
+  | "receipt"
   | "electronics"
   | "efficiency"
   | "furniture"
@@ -53,6 +54,7 @@ export function MarketingIcon({ name, ...props }: MarketingIconProps) {
     check: <path d="m6 13 4 4 8-10" />,
     compliance: <><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-5" /></>,
     consumer: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9 9a3 3 0 0 1 6 0" /></>,
+    receipt: <><path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z" /><path d="M8 7h8M8 11h8M8 15h4" /></>,
     document: <><path d="M7 3h7l4 4v14H7V3Z" /><path d="M14 3v5h5M10 12h5m-5 4h5" /></>,
     electronics: <><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M10 6h4m-3 12h2" /></>,
     efficiency: <><circle cx="12" cy="12" r="8" /><path d="M12 7v5l3 2M12 2v2m0 16v2M2 12h2m16 0h2" /></>,

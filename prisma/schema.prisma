@@ -229,6 +229,7 @@ model User {
 }
 
 model Organization {
+  billingProfile OrganizationBillingProfile?
   accessRequest AccessRequest?
   csvImportBatches CatalogImportBatch[]
   imageAssets ProductImageAsset[]
@@ -1153,4 +1154,22 @@ model AccessRequest {
   user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
   activation AccountActivationIntent? @relation(fields: [activationId], references: [id], onDelete: Restrict)
   @@index([status, createdAt, id])
+}
+
+/// Private current billing identity. Future invoices own immutable snapshots.
+model OrganizationBillingProfile {
+  organizationId String @id @db.Uuid
+  legalName String @db.VarChar(200)
+  addressLine1 String @db.VarChar(200)
+  addressLine2 String? @db.VarChar(200)
+  city String @db.VarChar(100)
+  postalCode String? @db.VarChar(32)
+  countryCode String @db.VarChar(2)
+  billingEmail String @db.VarChar(254)
+  taxIdentifier String? @db.VarChar(64)
+  vatIdentifier String? @db.VarChar(64)
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 }

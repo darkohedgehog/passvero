@@ -1,3 +1,4 @@
+import { billingPermissionsForRole } from "../permissions/billing-permissions";
 import type {
   AuthenticatedIdentity,
   CurrentUserResolution,
@@ -219,7 +220,7 @@ function resolved(
       membershipId: membership.membershipId,
       membershipRole: membership.membershipRole,
       membershipStatus: "ACTIVE",
-      permissions: permissionsForMembershipRole(membership.membershipRole),
+      permissions: [...permissionsForMembershipRole(membership.membershipRole), ...billingPermissionsForRole(membership.membershipRole)],
       correlationId,
     },
     presentation: {

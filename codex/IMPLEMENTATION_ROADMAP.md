@@ -1,5 +1,23 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija — billing profil (staging PASS; zasebna ikonica potvrđena)
+
+Privatni profil firme za naplatu: aktivni OWNER/ADMIN, posebne permisije, jedan profil
+po organizaciji, CAS i atomski audit. Bez promene prikaznog naziva ili proizvođača.
+Ciljani testovi, disposable PostgreSQL sa runtime ACL-om, TypeScript, pogođeni lint i
+build prolaze. Migracija i sintetički unos/reload/izmena/reload: PASS. Završni UI build
+`kdteiRQIs5u_ZgM79J0WX` deployovan; sidebar ikonica i sr-Latn države potvrđene.
+Šest jezika desktop, Tab/fokus i mobilna forma/meni na 390 px: PASS; mobilni dokaz
+je browser emulacija. Scanner/producer/runtime konfiguracija nepromenjeni.
+[Izveštaj i manifest](ORGANIZATION_BILLING_PROFILE_IMPLEMENTATION_AND_STAGING_ACCEPTANCE.md).
+Korisnik je zatim tražio zasebnu ikonicu računa: lokalno proverena, build
+`OD9e4NOtu9LlMjE_0U2Dz`; deploy i vizuelna provera ikonice PASS. Završni screenshot
+je dodat u izveštaj. Prethodni screenshotovi
+prikazuju raniju ikonicu i ostaju istorijski dokaz.
+Budući račun dobija sopstveni snapshot. Računi/naplata/pretplate nisu implementirani.
+Retencija sintetičkog profila i audita ostaje otvorena pre produkcije. Raniji NOT_PROVEN
+statusi ostaju nepromenjeni, uključujući reboot acceptance. Bez commita/pusha.
+
 ## Aktualizacija 2026-09-23 — donut, DPP i header (staging PASS)
 
 `DASHBOARD_DONUT_DPP_NAVIGATION_AND_UI_FINISHING_STAGING`: donut, autorizovana

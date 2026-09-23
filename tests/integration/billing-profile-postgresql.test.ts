@@ -1,0 +1,47 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { createTestPrismaClient, requireSafeTestDatabaseConfig } from "../helpers/test-database";
+import { createBillingServices } from "../../src/application/billing/service";
+import { PrismaBillingPersistence } from "../../src/infrastructure/persistence/prisma/prisma-billing-profile";
+import { billingPermissionsForRole } from "../../src/application/permissions/billing-permissions";
+import type { AuthenticatedUserContext,MembershipRole } from "../../src/application/context/authenticated-user-context";
+const db=createTestPrismaClient(requireSafeTestDatabaseConfig(process.env));
+test.after(()=>db.$disconnect());
+test("billing tenant authorization, CAS, uniqueness, no-op and atomic private audit",async()=>{
+ const user=await db.user.create({data:{email:`${randomUUID()}@example.invalid`}});
+ const org=await db.organization.create({data:{displayName:"Synthetic billing proof"}});
+ const other=await db.organization.create({data:{displayName:"Other"}});
+ const member=await db.membership.create({data:{userId:user.id,organizationId:org.id,role:"ADMIN"}});
+ const ctx:AuthenticatedUserContext={userId:user.id,organizationId:org.id,membershipId:member.id,membershipRole:"ADMIN",membershipStatus:"ACTIVE",permissions:billingPermissionsForRole("ADMIN"),correlationId:randomUUID()};
+ await db.$executeRawUnsafe('CREATE ROLE billing_runtime_proof NOLOGIN');
+ await db.$executeRawUnsafe('GRANT USAGE ON SCHEMA public TO billing_runtime_proof');
+ await db.$executeRawUnsafe('GRANT SELECT ON "User", "Organization", "Membership" TO billing_runtime_proof');
+ await db.$executeRawUnsafe('GRANT SELECT, INSERT, UPDATE ON "OrganizationBillingProfile" TO billing_runtime_proof');
+ await db.$executeRawUnsafe('GRANT SELECT, INSERT ON "AuditLog" TO billing_runtime_proof');
+ const restrictedUrl=new URL(process.env.TEST_DATABASE_URL!);restrictedUrl.searchParams.set("options","-c role=billing_runtime_proof");
+ const restricted=createTestPrismaClient(requireSafeTestDatabaseConfig({NODE_ENV:"test",TEST_DATABASE_URL:restrictedUrl.toString()}));
+ const api=createBillingServices(new PrismaBillingPersistence(restricted));
+ test.after(()=>restricted.$disconnect());
+ const values={legalName:"SYNTHETIC",addressLine1:"Test 1",addressLine2:null,city:"Test",countryCode:"HR",postalCode:"00100",billingEmail:"synthetic@example.invalid",taxIdentifier:"0001",vatIdentifier:null};
+ assert.equal(await api.get(ctx),null);
+ for(const role of ["VIEWER","EDITOR"] as MembershipRole[])await assert.rejects(api.get({...ctx,membershipRole:role,permissions:billingPermissionsForRole(role)}),{code:"FORBIDDEN"});
+ await assert.rejects(api.get({...ctx,organizationId:other.id}),{code:"FORBIDDEN"});
+ await assert.rejects(api.save({expectedRevision:0,values,organizationId:other.id},ctx),{code:"VALIDATION_ERROR"});
+ const races=await Promise.allSettled([api.save({expectedRevision:0,values},ctx),api.save({expectedRevision:0,values},ctx)]);
+ assert.equal(races.filter(r=>r.status==="fulfilled").length,1);assert.equal(await db.organizationBillingProfile.count({where:{organizationId:org.id}}),1);
+ let saved=await api.get(ctx);assert.equal(saved?.revision,1);assert.equal(saved?.values.postalCode,"00100");
+ const logs=await db.auditLog.findMany({where:{organizationId:org.id}});assert.equal(logs.length,1);assert.deepEqual(logs[0].metadata,{revision:1});assert.ok(!JSON.stringify(logs).includes(values.billingEmail));
+ assert.equal((await api.save({expectedRevision:1,values},ctx)).status,"NO_CHANGE");assert.equal(await db.auditLog.count({where:{organizationId:org.id}}),1);
+ assert.equal((await api.save({expectedRevision:1,values:{...values,city:"Changed"}},ctx)).status,"SAVED");
+ await assert.rejects(api.save({expectedRevision:1,values},ctx),{code:"STALE_WRITE"});
+ await db.$executeRawUnsafe(`CREATE FUNCTION billing_proof_reject() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action = 'BILLING_PROFILE_UPDATED' THEN RAISE EXCEPTION 'proof'; END IF; RETURN NEW; END $$`);
+ await db.$executeRawUnsafe(`CREATE TRIGGER billing_proof_reject BEFORE INSERT ON "AuditLog" FOR EACH ROW EXECUTE FUNCTION billing_proof_reject()`);
+ try {await assert.rejects(api.save({expectedRevision:2,values:{...values,city:"Must rollback"}},ctx),{code:"OPERATIONAL_FAILURE"});}
+ finally {await db.$executeRawUnsafe('DROP TRIGGER billing_proof_reject ON "AuditLog"');await db.$executeRawUnsafe('DROP FUNCTION billing_proof_reject()');}
+ saved=await api.get(ctx);assert.equal(saved?.revision,2);assert.equal(saved?.values.city,"Changed");assert.equal(await db.auditLog.count({where:{organizationId:org.id}}),2);
+ assert.equal((await db.organization.findUniqueOrThrow({where:{id:org.id}})).displayName,"Synthetic billing proof");
+ await db.membership.update({where:{id:member.id},data:{role:"EDITOR"}});await assert.rejects(api.get(ctx),{code:"FORBIDDEN"});await assert.rejects(api.save({expectedRevision:2,values},ctx),{code:"FORBIDDEN"});
+ await db.membership.update({where:{id:member.id},data:{role:"OWNER",status:"SUSPENDED"}});await assert.rejects(api.get(ctx),{code:"FORBIDDEN"});
+ await db.membership.update({where:{id:member.id},data:{status:"ACTIVE"}});await db.organization.update({where:{id:org.id},data:{status:"SUSPENDED"}});await assert.rejects(api.get(ctx),{code:"FORBIDDEN"});
+});

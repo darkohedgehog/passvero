@@ -539,3 +539,14 @@ reviewed finding requires a mandatory schema change before Database
 Architecture Freeze v1.0. Service invariants remain mandatory production
 obligations. Database Production Audit and final Architecture Freeze approval
 remain pending.
+
+## OrganizationBillingProfile — approved private profile slice
+
+Optional one-to-one Organization child, keyed by organizationId (Restrict deletion).
+Required legalName, addressLine1, city, countryCode, billingEmail; optional
+addressLine2, postalCode, taxIdentifier and vatIdentifier. Text identifiers preserve
+leading zeros. Positive revision supports CAS; createdAt/updatedAt track current
+profile changes. No automatic backfill from general Organization fields or
+EconomicOperator. Existing organization display identity remains independent.
+This mutable current profile is private. Future invoices must retain their own
+billing snapshots; no invoice model is introduced by this slice.

@@ -24,7 +24,7 @@ test("authority read begins at exact publicCode and contains join identities ins
           lifecycleStatus: "ACTIVE",
           currentPublishedVersionId: versionId,
           lastPublishedAt: publishedAt,
-          organization: { id: organizationId, status: "ACTIVE", displayName: "Example Organization" },
+          organization: { id: organizationId, status: "ACTIVE", displayName: "Example Organization", billingProfile: {legalName:"PRIVATE_BILLING_CANARY",billingEmail:"private@example.invalid",taxIdentifier:"PRIVATE_TAX"} },
           passport: {
             id: passportId,
             productId,
@@ -59,6 +59,8 @@ test("authority read begins at exact publicCode and contains join identities ins
   assert.deepEqual((input as { where: unknown }).where, { publicCode });
   const serializedInput = JSON.stringify(input);
   assert.doesNotMatch(serializedInput, /currentDraftVersion|versions|QRCode|qrCode|documents|images|Membership|User/);
+  assert.doesNotMatch(JSON.stringify(result), /PRIVATE_BILLING_CANARY|private@example.invalid|PRIVATE_TAX/);
+  assert.doesNotMatch(JSON.stringify(input), /billingProfile|billingEmail|taxIdentifier/);
   assert.doesNotMatch(JSON.stringify(result), /aaaaaaaa|bbbbbbbb|cccccccc|dddddddd|currentPublishedVersionId/);
 });
 

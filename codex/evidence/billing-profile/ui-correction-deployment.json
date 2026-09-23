@@ -1,0 +1,18 @@
+{
+  "evidence_source": "USER_OPERATOR_OUTPUT",
+  "deployment": "PASS",
+  "source_base": "917fb16144fe14aa370365f4bc997ff33920d40a",
+  "reviewed_diff_files": 27,
+  "review_sha256": "8c2cfd66cd9a5e39f2c1e40b86987847630768be09340c817f842461ea1cd85a",
+  "build_id": "kdteiRQIs5u_ZgM79J0WX",
+  "artifact_files_verified": 1145,
+  "staging_https": "200 0",
+  "startup_error_count": 0,
+  "runtime_configuration": "UNCHANGED",
+  "scanners_broker_producer": "UNCHANGED",
+  "production_access_or_changes": false,
+  "rollback": "/var/lib/passvero-billing-ui-fix-917fb16/application/rollback.py",
+  "migration": "PASS_PREVIOUS_PHASE",
+  "reboot_acceptance": "NOT_PROVEN",
+  "scanner_acceptance": "NOT_RERUN"
+}

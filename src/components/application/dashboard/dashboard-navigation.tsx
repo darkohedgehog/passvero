@@ -9,8 +9,9 @@ import { MarketingIcon, type MarketingIconName } from "@/src/components/marketin
 export function isDashboardNavActive(path: string, target: string) {
   return target === "/dashboard" ? path === target : path === target || path.startsWith(target + "/");
 }
-export function DashboardNavigation({ canReadProducts }: { canReadProducts: boolean }) {
+export function DashboardNavigation({ canReadProducts, canReadBilling = false }: { canReadProducts: boolean; canReadBilling?: boolean }) {
   const t = useTranslations("DashboardOverview");
+  const billing = useTranslations("BillingProfile");
   const pathname = usePathname();
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -23,10 +24,10 @@ export function DashboardNavigation({ canReadProducts }: { canReadProducts: bool
     return () => desktop.removeEventListener("change", changed);
   }, []);
   const links = <nav aria-label={t("navigation")} className="mt-10 space-y-2">
-    {([{ href: "/dashboard", label: t("overview"), icon: "analytics" }, ...(canReadProducts ? [{ href: "/dashboard/products", label: t("products"), icon: "packaging" }, { href: "/dashboard/dpp", label: "DPP", icon: "document" }] : [])] as const).map(item => <Link key={item.href} href={item.href} onClick={close}
+    {([{ href: "/dashboard", label: t("overview"), icon: "analytics" }, ...(canReadProducts ? [{ href: "/dashboard/products", label: t("products"), icon: "packaging" as const }, { href: "/dashboard/dpp", label: "DPP", icon: "document" as const }] : []), ...(canReadBilling ? [{href:"/dashboard/billing",label:billing("title"),icon:"receipt" as const}] : [])] satisfies readonly {href:string;label:string;icon:MarketingIconName}[]).map(item => <Link key={item.href} href={item.href} onClick={close}
       aria-current={isDashboardNavActive(pathname, item.href) ? "page" : undefined}
       className={`flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 ${isDashboardNavActive(pathname, item.href) ? "bg-navy-800 text-white ring-1 ring-white/15" : "text-slate-300 hover:bg-navy-800 hover:text-white"}`}>
-      <MarketingIcon name={item.icon as MarketingIconName} aria-hidden="true" focusable="false" className="size-5 shrink-0" />{item.label}
+      <MarketingIcon name={item.icon} aria-hidden="true" focusable="false" className="size-5 shrink-0" />{item.label}
     </Link>)}
   </nav>;
   const brand = <Link href="/dashboard" onClick={close} className="inline-flex min-h-11 items-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300"><BrandLogo label="Passvero" inverse /></Link>;
