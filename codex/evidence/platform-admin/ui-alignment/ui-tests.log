@@ -1,0 +1,36 @@
+✔ six locales expose published version, safe public action, archived state and empty list (27.492417ms)
+✔ DPP is active without also activating Products or Overview (0.176917ms)
+✔ hr: shared authenticated header exposes a labelled native selector with six languages (7.766167ms)
+✔ en: shared authenticated header exposes a labelled native selector with six languages (2.791542ms)
+✔ de: shared authenticated header exposes a labelled native selector with six languages (3.089125ms)
+✔ sr: shared authenticated header exposes a labelled native selector with six languages (4.44825ms)
+✔ sl: shared authenticated header exposes a labelled native selector with six languages (3.444833ms)
+✔ pl: shared authenticated header exposes a labelled native selector with six languages (3.517583ms)
+✔ locale navigation preserves /dashboard in en (0.074583ms)
+✔ locale navigation preserves /dashboard/products in de (0.044291ms)
+✔ locale navigation preserves /dashboard/products/00000000-0000-4000-8000-000000000001 in hr (0.041792ms)
+✔ locale navigation preserves /dashboard/products/new in sl (0.07675ms)
+✔ locale navigation preserves /dashboard/products/00000000-0000-4000-8000-000000000001/edit in pl (0.04325ms)
+✔ locale navigation preserves /dashboard/products/00000000-0000-4000-8000-000000000001/content/edit in hr (0.044291ms)
+✔ hr to en keeps route identity and only updates the locale cookie (0.684458ms)
+✔ en to de keeps route identity and only updates the locale cookie (0.19725ms)
+✔ de to hr keeps route identity and only updates the locale cookie (0.192667ms)
+✔ sr to sl keeps route identity and only updates the locale cookie (0.985833ms)
+✔ sl to pl keeps route identity and only updates the locale cookie (0.396709ms)
+✔ pl to hr keeps route identity and only updates the locale cookie (0.233833ms)
+✔ overview rejects missing permission and inactive membership before persistence (1.815333ms)
+✔ whole-tenant scope, overlapping cards, exclusive distribution and rejected cross-tenant output (0.525958ms)
+✔ empty catalog differs from failed read; viewer gets no create/import action (48.556208ms)
+✔ recent product escapes names, uses authenticated thumbnail route, labels overlap and archived status (6.40625ms)
+✔ navigation stays active on product subroutes and all six label contracts agree (0.317584ms)
+✔ donut exposes textual counts and rounded percentages for mixed, single and empty distributions (23.007291ms)
+✔ six-locale organization list/detail/empty profile preserve read-only semantics and safe text (97.623916ms)
+✔ search reset, distinct empty states and next-page links keep bounded query semantics (4.104125ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 423.861375

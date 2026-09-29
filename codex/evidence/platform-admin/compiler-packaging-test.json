@@ -1,0 +1,12 @@
+{
+  "before": {
+    "status": 1,
+    "code": "ERR_MODULE_NOT_FOUND"
+  },
+  "fixed": {
+    "status": 0,
+    "compiler": "PASS",
+    "runtimeExports": 39
+  },
+  "database_access": "NONE"
+}

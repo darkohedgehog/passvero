@@ -1,0 +1,19 @@
+{
+  "build": "vwSSh_nI3c5X-dORRWq6S",
+  "artifacts": 758,
+  "combined_source_files": 25,
+  "ui_changed_files": 11,
+  "targeted_ui_tests": {
+    "pass": 28,
+    "fail": 0
+  },
+  "typescript": "PASS",
+  "affected_lint": "PASS, zero warnings",
+  "full_lint": "0 errors, 16 existing warnings including retained compiler diagnostic evidence",
+  "whitespace": "PASS",
+  "authorization_persistence_operator": "UNCHANGED",
+  "functional_postgresql_proof": "REUSED",
+  "local_preview": "actual components with synthetic data and mocked routing; desktop sidebar/list; mobile cards; dialog opens, Escape closes and restores trigger focus",
+  "live_ui_alignment": "PASS; see staging-ui-acceptance.json and four reviewed screenshots",
+  "review": "No blocking source/deploy findings; all 758 archive entries and pins independently verified"
+}

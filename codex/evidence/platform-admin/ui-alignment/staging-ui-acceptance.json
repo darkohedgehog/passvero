@@ -1,0 +1,162 @@
+{
+  "status": "PASS",
+  "build": "vwSSh_nI3c5X-dORRWq6S",
+  "viewportMeasurements": [
+    {
+      "scrollWidth": 1024,
+      "view": "detail",
+      "width": 1024
+    },
+    {
+      "scrollWidth": 768,
+      "view": "detail",
+      "width": 768
+    },
+    {
+      "scrollWidth": 375,
+      "view": "detail",
+      "width": 375
+    },
+    {
+      "scrollWidth": 320,
+      "view": "detail",
+      "width": 320
+    },
+    {
+      "scrollWidth": 320,
+      "view": "list",
+      "width": 320
+    },
+    {
+      "scrollWidth": 375,
+      "view": "list",
+      "width": 375
+    },
+    {
+      "scrollWidth": 768,
+      "view": "list",
+      "width": 768
+    },
+    {
+      "scrollWidth": 1024,
+      "view": "list",
+      "width": 1024
+    },
+    {
+      "scrollWidth": 1440,
+      "view": "list",
+      "width": 1440
+    }
+  ],
+  "listLocales": [
+    {
+      "locale": "en",
+      "path": "/en/platform/organizations",
+      "scrollWidth": 320,
+      "title": "Organizations",
+      "width": 320
+    },
+    {
+      "locale": "de",
+      "path": "/de/platform/organizations",
+      "scrollWidth": 320,
+      "title": "Organisationen",
+      "width": 320
+    },
+    {
+      "locale": "sr",
+      "path": "/sr/platform/organizations",
+      "scrollWidth": 320,
+      "title": "Organizacije",
+      "width": 320
+    },
+    {
+      "locale": "sl",
+      "path": "/sl/platform/organizations",
+      "scrollWidth": 320,
+      "title": "Organizacije",
+      "width": 320
+    },
+    {
+      "locale": "pl",
+      "path": "/pl/platform/organizations",
+      "scrollWidth": 320,
+      "title": "Organizacje",
+      "width": 320
+    },
+    {
+      "locale": "hr",
+      "path": "/platform/organizations",
+      "scrollWidth": 320,
+      "title": "Organizacije",
+      "width": 320
+    }
+  ],
+  "detailLocales": [
+    {
+      "headings": [
+        "Organization information",
+        "Billing information"
+      ],
+      "lang": "en",
+      "scrollWidth": 320,
+      "width": 320
+    },
+    {
+      "headings": [
+        "Organisationsdaten",
+        "Rechnungsdaten"
+      ],
+      "lang": "de",
+      "scrollWidth": 320,
+      "width": 320
+    },
+    {
+      "headings": [
+        "Podaci organizacije",
+        "Podaci za naplatu"
+      ],
+      "lang": "sr",
+      "scrollWidth": 320,
+      "width": 320
+    },
+    {
+      "headings": [
+        "Podatki organizacije",
+        "Podatki za obračun"
+      ],
+      "lang": "sl",
+      "scrollWidth": 320,
+      "width": 320
+    },
+    {
+      "headings": [
+        "Dane organizacji",
+        "Dane do faktury"
+      ],
+      "lang": "pl",
+      "scrollWidth": 320,
+      "width": 320
+    },
+    {
+      "headings": [
+        "Podaci organizacije",
+        "Podaci za naplatu"
+      ],
+      "lang": "hr",
+      "scrollWidth": 320,
+      "width": 320
+    }
+  ],
+  "search": "filter, no-results, reset PASS",
+  "navigation": "detail active link, modal initial focus, Tab to close, Escape trigger focus, link closes menu, dashboard round-trip PASS",
+  "screenshots": [
+    "staging-list-desktop.png",
+    "staging-detail-desktop.png",
+    "staging-list-mobile.png",
+    "staging-detail-mobile.png"
+  ],
+  "dataWrites": "NONE",
+  "consoleLogCount": 0,
+  "limitations": "Live next-page not exercised (two organizations); existing authorization and PostgreSQL proof reused; no grant/revoke/sign-out rerun"
+}

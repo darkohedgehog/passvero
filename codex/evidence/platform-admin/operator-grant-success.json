@@ -1,0 +1,13 @@
+{
+  "source": "user-returned operator output",
+  "read_only_probe": "PASS",
+  "operator": "PASS",
+  "action": "grant",
+  "status": "GRANTED",
+  "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+  "grant_active": true,
+  "audit_delta": 1,
+  "memberships": "UNCHANGED",
+  "database": "passvero_acceptance:5433",
+  "production_changes": "NONE"
+}

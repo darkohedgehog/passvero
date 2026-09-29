@@ -1,5 +1,35 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-29 — Platform Admin (funkcionalni staging PASS; UI deploy i vizualni acceptance PASS)
+
+Zaseban `PlatformGrant` daje samo `PLATFORM_ORGANIZATIONS_READ`; tenant OWNER/ADMIN
+ne dobiva platform ovlaštenje. Svaki server read provjerava grant, važeću sesiju i
+verificirani auth identitet. Lista/pretraga/keyset paginacija i privatni billing detalj
+koriste eksplicitne DTO-e i šest jezika. Tenant izolacija ostaje nepromijenjena.
+
+Staging migracija i deploy su PASS: build `GYvXvPhAmXDRhwUj_u9nm`, 753 potvrđena
+artefakta, anonimni pristup odbijen na šest jezika. Nakon ispravke pakiranja Prisma
+compilera, eksplicitno odobreni grant je GRANTED: active=true, audit_delta=1,
+memberships UNCHANGED. Runtime ima samo SELECT na PlatformGrant.
+
+Autentificirani Chrome acceptance je PASS: prijava → Platform Admin → lista → pretraga
+po prikaznom/pravnom nazivu → sintetički billing detalj → povratak → odjava.
+Postojeći billing podaci uspoređeni su bez izmjene. Provjereno šest jezika, tipkovnica,
+desktop 1280 px i mobilni prikaz 390 px; spremljene su čiste snimke.
+Live višestranična paginacija i opoziv nisu ponavljani; ostaju lokalni PostgreSQL dokaz.
+[Izvještaj, ograničenja i rollback](PLATFORM_ADMIN_ORGANIZATIONS_AND_BILLING_OVERVIEW_STAGING.md).
+
+UI usklađivanje s dashboardom dovršeno: zajednički navy sidebar/mobilni dijalog,
+header kontrole, katalog-tablica/mobilne kartice i odvojene read-only sekcije detalja.
+Build `vwSSh_nI3c5X-dORRWq6S`, 758 artefakata, 28 UI testova PASS. Staging UI deploy je PASS;
+četiri završne screenshot provjere su PASS. Lista/detalj na šest jezika, širine 320–1440 px,
+pretraga/reset, mobilni fokus/Escape/navigacija i povratak u dashboard prolaze.
+Funkcionalni PostgreSQL dokazi se ponovno koriste bez grant/audit mutacija.
+
+Bez production promjena, commit/push ili izmjena billing profila, članstva i proizvoda.
+Sljedeća cjelina: ugovor i implementacija ručnih godišnjih računa/pretplata;
+njihova pravila nisu pretpostavljena. Svi raniji NOT_PROVEN statusi ostaju nepromijenjeni.
+
 ## Aktualizacija — billing profil (staging PASS; zasebna ikonica potvrđena)
 
 Privatni profil firme za naplatu: aktivni OWNER/ADMIN, posebne permisije, jedan profil

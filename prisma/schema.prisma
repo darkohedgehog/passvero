@@ -195,6 +195,7 @@ enum AuthAbuseEndpoint {
 }
 
 model User {
+  platformGrant PlatformGrant?
   accessRequest AccessRequest?
   csvImportBatches CatalogImportBatch[]
   id              String   @id @default(uuid()) @db.Uuid
@@ -1172,4 +1173,12 @@ model OrganizationBillingProfile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+}
+
+/// Explicit platform authority; independent of tenant membership. No automatic grants.
+model PlatformGrant {
+  userId String @id @db.Uuid
+  grantedAt DateTime @default(now())
+  revokedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 }

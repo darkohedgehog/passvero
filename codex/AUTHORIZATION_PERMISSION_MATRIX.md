@@ -498,3 +498,16 @@ SUBSCRIPTION_MANAGE decisions above remain unchanged. ReadBillingProfile require
 BILLING_PROFILE_READ; SaveBillingProfile requires BILLING_PROFILE_UPDATE. Both
 revalidate active tenant membership/organization in persistence. Save also requires
 expected revision CAS and atomic metadata-minimized audit.
+
+## Approved implementation addition — 2026-09-29
+
+`PLATFORM_ORGANIZATIONS_READ` is a separate, read-only platform capability for the
+organization directory and current private billing profile. No Membership role
+receives it. The explicit `PlatformGrant` record maps only to this capability;
+it must never be reused as an implicit grant of the broader MANAGE/SUPPORT
+capabilities described above. Future platform operations require their own
+reviewed authorization policy. PlatformAdminContext carries the authenticated
+actor, this capability and a generated correlation ID. Every read independently
+revalidates grant, provider session and canonical binding; no long-lived grant cache.
+The new operator-only grant/revoke records AuthAuditEvent atomically without billing
+values. This directory is not a generic support/impersonation interface.

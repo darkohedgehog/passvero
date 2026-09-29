@@ -1,0 +1,24 @@
+{
+  "diagnostic": "COMPLETE",
+  "grant_state": {
+    "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+    "verified": true,
+    "active": false,
+    "events": 0,
+    "memberships": 1
+  },
+  "exit_code": 0,
+  "probe": [
+    {
+      "probe": "FAIL",
+      "step": "read-operator",
+      "codes": [
+        "ERR_MODULE_NOT_FOUND"
+      ],
+      "category": "MODULE_RESOLUTION"
+    }
+  ],
+  "writes": "NONE",
+  "grant_retried": false,
+  "source": "user-returned operator output"
+}

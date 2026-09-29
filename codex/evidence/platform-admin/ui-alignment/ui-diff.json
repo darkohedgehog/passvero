@@ -1,0 +1,46 @@
+{
+  "app/[locale]/platform/layout.tsx": {
+    "before": "43f4f3e8348293052047610f06344013259d6c222c2773b14aa93b7f7066117a",
+    "after": "7c3d42a0ffac843907c75388ff91f5c5a2051afbc20871a3183a7ced9daf8f37"
+  },
+  "messages/de.json": {
+    "before": "83e3025189e76bc01e1cc28d33543307e0134b0e60bc0b2d4a0ba0b03d61cbf5",
+    "after": "f7e24982dff83d09f11cf104693ef8b7edf1f2ce4bacaee589ddc965191de92f"
+  },
+  "messages/en.json": {
+    "before": "6f78fe6c9e4dec004514598a0cbb5afb464c3f2ebdf3f981aed994191774e9c5",
+    "after": "09d3f4d2f723d2020d97ba31a2b6bb23960b0aa9cd09e797fbaaf452891e313e"
+  },
+  "messages/hr.json": {
+    "before": "1f5b02782cfd4fa8e380a86032485d65549cfd78c048eec1c84f731321327eff",
+    "after": "2624c960cee379dc157975cf06c251aa4507d1c685b775b0fe79dd93b89ebf8f"
+  },
+  "messages/pl.json": {
+    "before": "44c09cecc3e460a0d8fc1e590bbff0dacaf97899febc665d6868d6aa29355529",
+    "after": "adcfbadce669fddf41f1c364e1b3e8cbc29d8282f00be315d3f3ad523df56462"
+  },
+  "messages/sl.json": {
+    "before": "2b66f4a294867d607a9c1a2ec0d00028b5fa8bd912d470eadc44082b3d9cf5e8",
+    "after": "b1ac4bef5c51a4d57055e30900ce30fd3b1019b50c4dd20077707acf7096ad78"
+  },
+  "messages/sr.json": {
+    "before": "5c5de66a4ad851a18bf664ff44ec222bd0a1692c542780767133d40eeb286de6",
+    "after": "c396d5dd2c2e16469dfbae1939e98714341fbe994916712cb067668cd941ae36"
+  },
+  "src/components/application/dashboard/dashboard-navigation.tsx": {
+    "before": "0421773fe0b45fdec7efb3ab6f46846998cdb2e670c4564922e7edb74dc94eda",
+    "after": "c939eadb04cdc440642aa0b441f45d0e14d6cef643eaedd898a1805891e7d293"
+  },
+  "src/components/application/dashboard/dashboard-shell.tsx": {
+    "before": "cd61b2726f7e3d3c62d678d3d0ea83df027faa0e4b9afced7e12c6ea292d8bd6",
+    "after": "8d7c11d0faa35377aa204465b66ec006a704e4c237a21612500cf9bf134e7b9e"
+  },
+  "src/components/application/platform/organizations-view.tsx": {
+    "before": "18251438c0334c04ad56eb08c10802107ff5306b603ef3764494ae724a319ed0",
+    "after": "c499ea57aef567b6450bdca88e36293c51d7a36a3e2bd3ca76ce9b5da56b297d"
+  },
+  "tests/application/platform-presentation.test.ts": {
+    "before": "586f246c96e6a1e04d7fce3c7f34ee0c05668039122677c1bb0dc744aa2e08d8",
+    "after": "8c8e89e5696c70116bd284c588ecd792b853c2ef4173682687625714604db172"
+  }
+}

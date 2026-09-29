@@ -1,0 +1,32 @@
+{
+  "source": "USER_RETURNED_OPERATOR_OUTPUT",
+  "migration": "PASS",
+  "applied": "20260929120000_platform_grant",
+  "attempts": 1,
+  "database": {
+    "database": "passvero_acceptance",
+    "port": "5433",
+    "data_directory": "/var/lib/postgresql/16/acceptance"
+  },
+  "grant_counts": {
+    "grants": 0
+  },
+  "existing_users_organizations_memberships_activations_identity_audit": "UNCHANGED",
+  "existing_owner_acl": "UNCHANGED",
+  "grant_privileges": {
+    "PlatformGrant": {
+      "select": true,
+      "insert": false,
+      "update": false,
+      "delete": false,
+      "truncate": false,
+      "references": false,
+      "trigger": false
+    }
+  },
+  "backup": "/var/lib/passvero-platform-c513679/migration/staging-before.dump",
+  "backup_sha256": "42fc43d3f59f228a53cb13f13c3eedff0aa15f4c4b8ba047ac3e52005cf771aa",
+  "prisma_status": "UP_TO_DATE",
+  "application_deployed": false,
+  "production_changes": "NONE"
+}

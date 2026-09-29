@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "surface": "native Chrome UI",
+  "signin_platform_list_search_detail_return_signout": "PASS",
+  "display_and_legal_name_search": "PASS",
+  "billing_comparison": "existing synthetic customer billing form matched; no save",
+  "detail_locales": [
+    "hr",
+    "en",
+    "de",
+    "sl",
+    "pl",
+    "sr"
+  ],
+  "screenshots_css_widths": [
+    1280,
+    390
+  ],
+  "keyboard": "Tab to search button and Enter submit PASS",
+  "live_pagination_revoke_other_roles": "NOT_RERUN; local PostgreSQL proof",
+  "console_network_capture": "NOT_COLLECTED",
+  "data_writes": "NONE; normal sign-in/sign-out only"
+}

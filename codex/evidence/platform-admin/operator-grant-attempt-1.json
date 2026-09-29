@@ -1,0 +1,9 @@
+{
+  "operator": "STOP",
+  "phase": "CLI_ONCE",
+  "attempted": true,
+  "no_blind_retry": true,
+  "reason": "OPERATOR_CLI_FAILED_CHECK_STATE_NO_BLIND_RETRY",
+  "grant_state": "UNKNOWN_PENDING_READ_ONLY_PROBE",
+  "source": "user-returned operator output"
+}

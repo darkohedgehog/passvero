@@ -149,3 +149,8 @@ export async function disconnectBetterAuthServer(): Promise<void> {
   runtimeGlobal.__passveroBetterAuthLifecycleAdapter = undefined;
   runtimeGlobal.__passveroBetterAuthEmailVerifiedHandler = undefined;
 }
+
+// Server-only consumers preserve the dedicated provider database role and lifecycle.
+export function getAuthPrismaClient(): PrismaClient {
+  return getAuthPrismaLifecycle().getRuntime().client;
+}

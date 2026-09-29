@@ -5,6 +5,7 @@ import { SignOutButton } from "./sign-out-button";
 
 export function DashboardShell({
   title,
+  contextLabel,
   organizationLabel,
   organizationName,
   signOutLabel,
@@ -14,6 +15,7 @@ export function DashboardShell({
 }: Readonly<{
   brandLabel: string;
   title: string;
+  contextLabel?: string;
   signedInAsLabel?: string;
   userLabel?: string;
   organizationLabel?: string;
@@ -29,6 +31,7 @@ export function DashboardShell({
       <div className="mx-auto w-full max-w-7xl">
         <header className="mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
           <div className="min-w-0">
+            {contextLabel ? <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-teal-800">{contextLabel}</p> : null}
             <h1 className="break-words text-2xl font-bold tracking-tight text-slate-950">{title}</h1>
             {organizationName === undefined ? null : <p className="mt-1 break-words text-sm text-slate-600"><span className="sr-only">{organizationLabel}: </span>{organizationName}</p>}
           </div>

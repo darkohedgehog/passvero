@@ -1,0 +1,37 @@
+{
+  "source": "USER_RETURNED_OPERATOR_OUTPUT",
+  "preflight": "PASS",
+  "database": {
+    "database": "passvero_acceptance",
+    "port": "5433",
+    "dataDirectory": "/var/lib/postgresql/16/acceptance"
+  },
+  "build": "OD9e4NOtu9LlMjE_0U2Dz",
+  "packageHash": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+  "lockHash": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+  "runtime": {
+    "status": "online",
+    "cwd": "/var/www/passvero-acceptance",
+    "node": "v24.21.0"
+  },
+  "approvedAccount": [
+    {
+      "user_id": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "verified": true
+    }
+  ],
+  "migrationState": {
+    "latest": "20260924120000_organization_billing_profile",
+    "unfinished": 0,
+    "platformTable": false
+  },
+  "acl": {
+    "migratorRole": true,
+    "appProviderRead": false,
+    "appIdentityRead": true,
+    "migratorAuditInsert": true,
+    "migratorAuditRead": true
+  },
+  "writes": "NONE",
+  "grant": "NOT_EXECUTED"
+}

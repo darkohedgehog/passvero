@@ -1,0 +1,38 @@
+[
+  {
+    "locale": "hr",
+    "heading": "Privatni billing profil",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "locale": "sr",
+    "heading": "Privatni billing profil",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "locale": "en",
+    "heading": "Private billing profile",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "locale": "de",
+    "heading": "Privates Rechnungsprofil",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "locale": "sl",
+    "heading": "Zasebni profil za obračun",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "locale": "pl",
+    "heading": "Prywatne dane do faktury",
+    "scrollWidth": 320,
+    "width": 320
+  }
+]
