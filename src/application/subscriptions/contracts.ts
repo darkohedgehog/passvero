@@ -1,0 +1,26 @@
+import { z } from "zod";
+import { parseCommercialLocalDateTime } from "./calendar";
+import { billingValuesSchema } from "../billing/contracts";
+import type { CurrentUserResolution } from "../auth/resolve-current-user";
+
+export type CommercialActor = Extract<CurrentUserResolution, {status:"AUTHENTICATED"}>;
+const text = z.string().trim().min(1).max(200).refine(v=>!/[\u0000-\u001f\u007f]/.test(v));
+export const limitsSchema = z.object({maxPublishedProducts:z.number().int().positive().max(2147483647),maxStoredProducts:z.number().int().positive().max(2147483647),maxStorageBytes:z.number().int().positive().max(Number.MAX_SAFE_INTEGER),maxPdfAttachments:z.number().int().positive().max(1000)}).strict().refine(v=>v.maxStoredProducts>=v.maxPublishedProducts);
+export const referenceSchema = z.object({issuer:text,year:z.number().int().min(2000).max(9999),number:text}).strict();
+export const requestSchema = z.object({idempotencyKey:z.uuid(),planSlug:z.enum(["start","business","pro","custom"]),months:z.union([z.literal(3),z.literal(12)]),replaceRequestId:z.uuid().optional()}).strict();
+export const acceptSchema = z.object({requestId:z.uuid(),offerId:z.uuid()}).strict();
+const issuedAtLocalSchema=z.string().max(19).refine(value=>{try{parseCommercialLocalDateTime(value);return true;}catch{return false;}});
+export const offerSchema = z.object({issuedAtLocal:issuedAtLocalSchema,requestId:z.uuid(),reference:referenceSchema,netAmountCents:z.number().int().positive().max(999999999),totalAmountCents:z.number().int().positive().max(999999999),taxTreatment:text,termsVersion:text,customLimits:limitsSchema.optional()}).strict().refine(v=>v.totalAmountCents>=v.netAmountCents);
+export const paymentSchema = z.object({requestId:z.uuid(),offerId:z.uuid(),reference:referenceSchema,kind:z.enum(["BANK_TRANSFER","SIMULATED_PAYMENT"])}).strict();
+export const anchorSchema = z.object({day:z.number().int().min(1).max(31),endOfMonth:z.boolean(),hour:z.number().int().min(0).max(23),minute:z.number().int().min(0).max(59),second:z.number().int().min(0).max(59),millisecond:z.number().int().min(0).max(999)}).strict();
+export const snapshotSchema = z.object({version:z.literal(1),offerIssuedAt:z.iso.datetime(),planSlug:z.enum(["start","business","pro","custom"]),months:z.union([z.literal(3),z.literal(12)]),currency:z.literal("EUR"),netAmountCents:z.number().int().positive(),totalAmountCents:z.number().int().positive(),taxTreatment:text,termsVersion:text,limits:limitsSchema,billingProfile:billingValuesSchema,billingRevision:z.number().int().positive(),timezone:z.literal("Europe/Zagreb"),startPolicy:z.enum(["ON_PAYMENT","CONTIGUOUS_RENEWAL"]),scheduledStart:z.iso.datetime().nullable(),scheduledEnd:z.iso.datetime().nullable(),anchor:anchorSchema.nullable(),publicRetentionMonths:z.literal(6),privateRetentionMonths:z.literal(12)}).strict();
+export type RequestCommand=z.infer<typeof requestSchema>;
+export type OfferCommand=z.infer<typeof offerSchema>;
+export type AcceptCommand=z.infer<typeof acceptSchema>;
+export type PaymentCommand=z.infer<typeof paymentSchema>;
+export type CommercialSnapshot=z.infer<typeof snapshotSchema>;
+export type ExternalReference=z.infer<typeof referenceSchema>;
+export type OfferDto={id:string;createdAt:string;expiresAt:string;reference:ExternalReference;snapshot:CommercialSnapshot};
+export type RequestDto={id:string;organizationId:string;organizationName:string;planSlug:string;months:number;status:"REQUESTED"|"OFFERED"|"ACCEPTED"|"PAID"|"REPLACED";createdAt:string;acceptedAt:string|null;offer:OfferDto|null};
+export type PaidPeriodDto={id:string;planSlug:string;start:string;end:string;paymentKind:"BANK_TRANSFER"|"SIMULATED_PAYMENT";snapshot:CommercialSnapshot};
+export type CommercialState={organizationId:string;organizationName:string;renewalPlanSlug:string|null;canManage:boolean;hasBillingProfile:boolean;requests:RequestDto[];currentPeriod:PaidPeriodDto|null;futurePeriods:PaidPeriodDto[];coverageEnd:string|null;occupiedPublishedProducts:number;storedProducts:number};

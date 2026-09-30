@@ -1,3 +1,4 @@
+import { getCommercialServices } from "@/src/infrastructure/subscriptions/commercial-runtime";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -17,13 +18,15 @@ export default async function PlatformLayout({children,params}:{children:ReactNo
   const requestHeaders=await headers();
   let allowed=false;
   try {await getPlatformServices().requireAccess(requestHeaders);allowed=true;} catch { /* Fail closed, without disclosing organization data. */ }
-  if (!allowed) notFound();
+  let canManageCommercial=false;
+  try {await getCommercialServices().requireBillingAccess(requestHeaders);canManageCommercial=true;} catch { /* Read-only platform access never implies billing authority. */ }
+  if (!allowed && !canManageCommercial) notFound();
   let canReturn=false;
   try {const context=await resolveReadOnlyAuthenticatedUserContext(requestHeaders);canReturn=context.status==="RESOLVED" || context.status==="ORGANIZATION_SELECTION_REQUIRED";} catch { /* Tenant workspace availability is independent of platform authority. */ }
   const [t,d]=await Promise.all([getTranslations({locale,namespace:"PlatformAdmin"}),getTranslations({locale,namespace:"Dashboard"})]);
   return <div className="min-h-screen bg-slate-50 lg:pl-64">
-    <DashboardNavigation canReadProducts={false} platform canReturn={canReturn} />
-    <DashboardShell brandLabel={d("brand")} contextLabel={t("title")} title={t("organizations")} productsLabel={t("organizations")} signOutLabel={d("signOut")} pendingLabel={d("loading")} signOutFailureLabel={d("signOutFailure")}>
+    <DashboardNavigation canReadProducts={false} platform canReadPlatform={allowed} canManageCommercial={canManageCommercial} canReturn={canReturn} />
+    <DashboardShell brandLabel={d("brand")} contextLabel={t("title")} title={t("title")} productsLabel={t("title")} signOutLabel={d("signOut")} pendingLabel={d("loading")} signOutFailureLabel={d("signOutFailure")}>
       {children}
     </DashboardShell>
   </div>;

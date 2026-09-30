@@ -48,6 +48,7 @@ test("Phase 5A retains Plan and PlanStatus", async () => {
     "ProductMaterial",
     "Document",
     "ProductDocument",
+    "ProductImageAsset",
     "ProductImage",
     "Passport",
     "QRCode",
@@ -67,6 +68,17 @@ test("Phase 5A retains Plan and PlanStatus", async () => {
     "AuthAuditEvent",
     "AuthSessionSelection",
     "AuthAbuseBucket",
+    "EconomicOperator",
+    "ProductVersionManufacturer",
+    "CatalogImportBatch",
+    "CatalogImportRow",
+    "AccessRequest",
+    "OrganizationBillingProfile",
+    "PlatformGrant",
+    "PlatformBillingGrant",
+    "CommercialRequest",
+    "CommercialOffer",
+    "SubscriptionPaidPeriod",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",
@@ -110,6 +122,7 @@ test("Plan contains exactly the approved fields, scalar types, and defaults", as
     "status",
     "currencyCode",
     "monthlyPrice",
+    "quarterlyPrice",
     "yearlyPrice",
     "maxProducts",
     "maxActivePassports",
@@ -131,6 +144,7 @@ test("Plan contains exactly the approved fields, scalar types, and defaults", as
   assert.match(plan, /status\s+PlanStatus\s+@default\(DRAFT\)/);
   assert.match(plan, /currencyCode\s+String\s+@default\("EUR"\)/);
   assert.match(plan, /monthlyPrice\s+Decimal\s+@db\.Decimal\(12, 2\)/);
+  assert.match(plan, /quarterlyPrice\s+Decimal\?\s+@db\.Decimal\(12, 2\)/);
   assert.match(plan, /yearlyPrice\s+Decimal\s+@db\.Decimal\(12, 2\)/);
   assert.match(plan, /isPublic\s+Boolean\s+@default\(true\)/);
   assert.match(plan, /sortOrder\s+Int\s+@default\(0\)/);

@@ -1,0 +1,224 @@
+{
+  "preflight": "PASS",
+  "database": {
+    "database": "passvero_acceptance",
+    "port": "5433",
+    "dataDirectory": "/var/lib/postgresql/16/acceptance"
+  },
+  "buildId": "vwSSh_nI3c5X-dORRWq6S",
+  "packageHash": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+  "lockHash": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+  "accounts": [
+    {
+      "id": "cbb590fa-1c67-41bf-883d-c2eb96bf6edb",
+      "email": "prodaja@zivic-elektro.com",
+      "verified": true,
+      "platform_read_grant": false
+    },
+    {
+      "id": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "email": "zivic.darko79@gmail.com",
+      "verified": true,
+      "platform_read_grant": true
+    }
+  ],
+  "migrations": [
+    {
+      "migration_name": "20260717191316_init_identity_domain",
+      "checksum": "347ada303ff4cc2495301b400955e0d89cf743fd1990dd27b9f6bb6889ecf0f6",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720170638_add_product_core_and_passport",
+      "checksum": "0395328af8ebd574ed7b8ad9d3b532233ea015c5f91dd02040e3ca877cd8442d",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720172426_add_product_translation",
+      "checksum": "05b0eba12925bba3d7b0ac7b6108a1e1c0057d305c233a7c90d75bcd4118e8fa",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720173610_add_product_identifier",
+      "checksum": "62be095ca5f0349105281a7ac72009c306a8c72da7cd5bfdb5832c6838dce288",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720175253_add_product_material",
+      "checksum": "41d4e2cc5857213ca6ccc65ce700b704fa590e375049d1dc317d6376f2b61737",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720182219_add_document_asset",
+      "checksum": "cb08e7305980f907343f464ba2519e22d2c3b7ba1ed833da88b58e20c6455e3f",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720184244_add_product_document",
+      "checksum": "777c2d4ccb60599235013e76868673a3b1298fe73b7a8147cb7c758af8288c74",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260720190323_add_product_image",
+      "checksum": "617932a5b88328541ca656b3123e66789772513a0ee67b5ebff97e48735e4525",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260721163104_add_qr_code",
+      "checksum": "2f1174adc82388e34225f29df56863e601c929c7a7ef2bb9749a63ae170c8dae",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260721173458_add_scan_event",
+      "checksum": "89e069a2e5e53c517169da6f598480e511a7253f66b738236aa643cedc9154d0",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260721180144_add_audit_log",
+      "checksum": "187195dc4f664e1e66f30978da4fd39a733b866c6602ba088b78863a992e4685",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260721182339_add_plan",
+      "checksum": "402ebb2d4fd11bf08201b080ae72fe77bd1464c9a86a0aa2f514edfb40c56761",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260721190547_add_subscription",
+      "checksum": "ee40fc679466c1fe484b1f208d07dac6c533ecd32b8a9d84638a066bbcaba440",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260722171607_add_notification",
+      "checksum": "d71c44c01edbf56e905a88cddc223716454b10a396681ee0ce14ef85fc013f5b",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260722180124_add_integration_mapping",
+      "checksum": "368783ae2a1895ca2aeb5f53af1dd6a2f21b29ac22127be001b30b0ea052e4ab",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260722184010_add_background_job",
+      "checksum": "167d74bed2928834bf0dc0ec57923702e51acecd2836c3f1c35ad96b1a3ebeda",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260822193000_add_auth_foundation",
+      "checksum": "17a259bbb54c59485aaa601f3d45e040d940bbbd5f32b669a8bbfdac6cd63d87",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260901120000_add_cn_product_identifier_schema_foundation",
+      "checksum": "fc323840a7d8fb231e11148dbc4d30ca7de3244bd7d3ee4f8abdf87a2b9e5470",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260908210000_correct_auth_abuse_last_failure_constraint",
+      "checksum": "dd5fa48d911a04cc6715b2824f1d87f5ddd8045f90943c5b6f77a8abb2c64120",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260914120000_add_document_malware_scan_contract",
+      "checksum": "c00d297dd7917a035b1ce6f12f781571bdec7e053ad8e0b90175d3f7e4ec90a7",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260917120000_add_manufacturer_snapshot",
+      "checksum": "6171b42f174061b4ffb362499ddda2cb66ff42710020a249df9a7b3637098980",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260920120000_one_gtin_per_version",
+      "checksum": "3d2c11b7a211df4fe67cc533daa09af92b7b1661489b329371a6cb5574dd41f7",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260920180000_product_image_assets",
+      "checksum": "5b8c9def4138280becee7169da793aba3f81b5e3cae21d85450a2513676de6cf",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260921120000_catalog_import_receipts",
+      "checksum": "e86eae3af0e84d814ae292db6e3f8d8b7877a2bdde273cdf44a8ab5c7ab964a7",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260922120000_controlled_access_requests",
+      "checksum": "97941e589e7cbc452bff4d4dec9eac70b848855005ae83f7651776b36db0ac97",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260924120000_organization_billing_profile",
+      "checksum": "59fa89f0d4444d18d16af00b12defd23befae732f594c12f9403e74f6063375c",
+      "finished": true,
+      "rolled_back": false
+    },
+    {
+      "migration_name": "20260929120000_platform_grant",
+      "checksum": "dc954ed496b3b4b9a9ad00fd42541efe947ce27507e00316dd9d71ef523fa497",
+      "finished": true,
+      "rolled_back": false
+    }
+  ],
+  "synthetic": {
+    "matchingOrganizations": 0
+  },
+  "writes": "NONE",
+  "billingGrant": "NOT_EXECUTED",
+  "organizationChange": "NOT_EXECUTED",
+  "retainedOperatorHash": "caac6bbc4fe5604c23837527c65aff1e35717580d7c079f7002f08406c87eda5",
+  "runtimeProbe": {
+    "result": "PASS",
+    "buildId": "vwSSh_nI3c5X-dORRWq6S",
+    "files": {
+      "node_modules/next/package.json": "c4ef8a1c8da320a162485f96d35df7745da90e6becc36882d6e81be9df66eec1",
+      "node_modules/react/package.json": "e60b92f6031f023907bbfab8f96e63e44307776ec1488f310ba61d41b8cda8cc",
+      "node_modules/react-dom/package.json": "b8448092689c7e6191595a98526ced808288f35138d97fbce5801a94922e3c36",
+      "node_modules/next-intl/package.json": "84f51dcebe80025dc9475fc260dc0e311a33a7af2e1a0a57e7617ca42f06cc69",
+      "node_modules/@prisma/client/package.json": "a64669ec1b457f2651b3de564db6b9604e89460cb349641afffa73b0bbf3939a",
+      "node_modules/@prisma/adapter-pg/package.json": "4a6bb303e1d86f2b8c6ad1f57adac7c924b9ac0f8e1f7b086abe4268ea7e3474",
+      "node_modules/@better-auth/prisma-adapter/package.json": "14b03c83194fd21515d570dbba6ade8a4bb804627d0af3ed80197008aeffc2f8",
+      "node_modules/better-auth/package.json": "d4da1b89925564605ca6540a4f5030aab18de043322ca0b51f08b9ec52b1e092",
+      "node_modules/pg/package.json": "e42dd36cba6e9dd8dbb6f773a2f7be8a8c3c273e18b155e42e75961a4cb8bc28",
+      "node_modules/nodemailer/package.json": "4ea1ee33f7582183473fe5c89215231534c90b3489da575347993505132dbb95",
+      "node_modules/zod/package.json": "d6159aa80f102c2060b90ab0d968588c7fe6a8694df34152cd1f98a391ff8843",
+      "node_modules/prisma/package.json": "d98a88695435d693b66c27d9e8e1b083fc5e544890ce2bdfe755b9f90846e35b",
+      "package.json": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+      "package-lock.json": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+      ".controlled-onboarding/review-access-requests.mjs": "caac6bbc4fe5604c23837527c65aff1e35717580d7c079f7002f08406c87eda5",
+      "node_modules/@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs": "f9b1cc127e0fc67aea591352f1200374c370a9c36fc51f9bb6c54f41de142b43",
+      "node_modules/@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs": "2d5f23bc41af8812c73ae50ad252092eeae6139207afd2684cad17c7c2b45c83"
+    },
+    "absentPackages": [
+      "bwip-js",
+      "csv-parse"
+    ],
+    "writes": "NONE"
+  }
+}

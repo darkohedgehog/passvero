@@ -1,3 +1,4 @@
+import { getCommercialServices } from "@/src/infrastructure/subscriptions/commercial-runtime";
 import { getPlatformServices } from "@/src/infrastructure/platform/platform-runtime";
 import { hasBillingPermission } from "@/src/application/permissions/billing-permissions";
 import { headers } from "next/headers";
@@ -10,6 +11,8 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   // Pages still resolve and authorize their own reads; the layout only decides navigation visibility.
   let canReadProducts = false;
   let canReadPlatform = false;
+  let canManageCommercial = false;
+  try { await getCommercialServices().requireBillingAccess(await headers()); canManageCommercial = true; } catch { /* Billing authority is a separate grant. */ }
   try { await getPlatformServices().requireAccess(await headers()); canReadPlatform = true; } catch { /* Platform grant is independent of tenant roles. */ }
   let canReadBilling = false;
   try {
@@ -18,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     canReadProducts = result.status === "RESOLVED" && result.context.membershipStatus === "ACTIVE" && hasProductPermission(result.context, PRODUCT_READ);
   } catch { /* The page renders its existing safe access error. */ }
   return <div className="min-h-screen bg-slate-50 lg:pl-64">
-    <DashboardNavigation canReadProducts={canReadProducts} canReadBilling={canReadBilling} canReadPlatform={canReadPlatform} />
+    <DashboardNavigation canReadProducts={canReadProducts} canReadBilling={canReadBilling} canReadPlatform={canReadPlatform} canManageCommercial={canManageCommercial} />
     {children}
   </div>;
 }

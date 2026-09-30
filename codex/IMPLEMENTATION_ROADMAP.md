@@ -1,5 +1,48 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-30 — ručni komercijalni tok (source/local PASS; početna kupovina staging PASS)
+
+Korisnik je potvrdio ugovor §§3–4 uz stroži downgrade: manji paket se ne aktivira
+prije usklađenja kvota; arhiviranje/povlačenje ne oslobađa objavljeno mjesto.
+Prva cjelina obuhvaća početnu kupovinu i obnovu istog paketa, vanjsku ponudu,
+OWNER prihvat i zasebno ovlaštenu potvrdu uplate. Rana obnova čuva tekući period.
+Globalni enforcement, upgrade/downgrade izvršenje, podsjetnici i public expiry ostaju
+izvan ove cjeline; backup/retencijske nepoznanice ostaju preduslov produkcije.
+[Izvještaj, potvrđeni testni identiteti i status dokaza](SUBSCRIPTION_MANUAL_COMMERCIAL_WORKFLOW_STAGING.md).
+Source/local PASS: 28 aplikacijskih/UI/HTTP testova, 19 schema testova, disposable
+PostgreSQL s 28 migracija i tri scenarija (uključujući setup regresiju), TypeScript/lint/build prolaze.
+Build `2nLJShFD4kXdyT54nYC0Z`; neovisni pregled nakon ispravki nema blokirajućih nalaza.
+Staging migracija/deploy/grant i sintetički OWNER → ponuda → prihvat → SIMULATED_PAYMENT tok PASS.
+DB potvrđuje jedan zahtjev, jedan plaćeni period, jedan audit, ACTIVE i identičan snapshot ponude.
+Desktop HR UI provjeren; ograničeni read-only HR/DE mobilni pregled u Chrome browser
+emulaciji 390×844 PASS, bez UI ispravki. Fizički uređaj i puni šest-jezični live sweep
+ostaju NOT_PROVEN. Završni objedinjeni skup ima 56 datoteka; commit odobren, bez pusha.
+Obnova i konkurentni HTTP replay lokalno PASS, nisu zasebno izvršeni na stagingu.
+Persistirani Subscription period ne osvježava se automatski na vremenskoj granici;
+komercijalni read izvodi efektivni period iz nepromjenjive povijesti. Budući enforcement
+mora koristiti taj resolver ili zasebno provjerenu reconciliaciju, ne sirovi stari period.
+
+## Aktualizacija 2026-09-30 — komercijalni ugovor pretplata i obuhvat backupa
+
+[Autoritativni ugovor i objedinjene potvrde](SUBSCRIPTION_COMMERCIAL_CONTRACT_AND_BACKUP_SCOPE_RECONCILIATION.md)
+uskladio je postojeće Plan/Subscription modele s B2B uplatom po ponudi, ručnom
+aktivacijom nakon provjere uplate i vanjskim Synesis računom. Paketi Start/Business/Pro
+imaju 25/100/500 objavljenih proizvoda i periode 3/12 mjeseci; trial je tri proizvoda
+na šest mjeseci. Nema Stripea/kartica ni izdavanja računa u Passveru.
+Detalji triala, kvota, javne/privatne retencije i prijelaza staging organizacija
+ostaju PROPOSED u jednom popisu od osam poslovnih potvrda; nisu implementirani.
+
+Backblaze: dokumentiran PostgreSQL dump i povijesni B2 restore PASS (2026-08-18),
+recovery runtime PASS iz završnog izvještaja 2026-08-24. Aktualni runtime, staging
+obuhvat, backup konfiguracije i kopiranje/restore Supabase datoteka NOT_PROVEN.
+CSV nije potpuni backup; automatsko trajno brisanje ostaje isključeno.
+
+Nastavak nakon potvrde ugovora: (1) zahtjev/ponuda/ručna aktivacija i kontrolirani
+staging prijelaz, (2) prava/trial/kvote i CSV konkurencija, (3) rokovi/podsjetnici i
+ograničena recovery/retencijska spremnost. Ovaj korak mijenja samo dokumentaciju;
+bez schema/service/data/infra promjena, testova/builda, commita/pusha ili deploya.
+Stariji navodi o godišnjoj-only naplati i Stripeu ispod su povijesni, ne novi opseg.
+
 ## Aktualizacija 2026-09-29 — Platform Admin (funkcionalni staging PASS; UI deploy i vizualni acceptance PASS)
 
 Zaseban `PlatformGrant` daje samo `PLATFORM_ORGANIZATIONS_READ`; tenant OWNER/ADMIN

@@ -1,0 +1,27 @@
+{
+  "writes": "NONE",
+  "requests": 1,
+  "paidPeriods": 1,
+  "confirmationAudits": 1,
+  "organizationFound": 1,
+  "organizationId": "ffe171d1-b6a6-43d5-83bb-890e2fa23c9f",
+  "subscription": [
+    {
+      "status": "ACTIVE",
+      "startUtc": "2026-09-30T13:22:05.515",
+      "endUtc": "2026-12-31T14:22:05.515"
+    }
+  ],
+  "periodDetails": [
+    {
+      "id": "2bb5bc61-f3de-4351-a463-e8e76e38e4cd",
+      "requestId": "499a2e81-d5ce-4fcf-af18-88f9e0f08708",
+      "plan": "start",
+      "paymentKind": "SIMULATED_PAYMENT",
+      "reference": "SIMULATED-PAYMENT-20260930-01",
+      "snapshotMatchesOffer": true,
+      "startUtc": "2026-09-30T13:22:05.515",
+      "endUtc": "2026-12-31T14:22:05.515"
+    }
+  ]
+}

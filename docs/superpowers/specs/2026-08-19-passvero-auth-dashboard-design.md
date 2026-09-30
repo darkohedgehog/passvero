@@ -371,6 +371,14 @@ MVP settings exposes Profile and Organization only. Settings follow the same hea
 
 ## 24. Billing architecture and schema assessment
 
+> Superseded commercial scope (2026-09-30): the
+> [subscription commercial contract](../../../codex/SUBSCRIPTION_COMMERCIAL_CONTRACT_AND_BACKUP_SCOPE_RECONCILIATION.md)
+> is authoritative over sections 24–25 below for payment methods, periods, pricing,
+> trial and retention decisions. The current direction is manual B2B bank transfer,
+> 3/12-month offers and external Synesis invoicing, without Stripe/cards.
+> The historical text remains evidence of the existing Plan/Subscription assessment;
+> it is not authorization to implement provider-hosted commerce or annual-only billing.
+
 The approved future architecture is a Passvero entitlement projection with provider-hosted commerce and manual annual billing.
 
 Existing `Plan` and `Subscription` support a current manual annual entitlement projection without Phase 12 schema changes:

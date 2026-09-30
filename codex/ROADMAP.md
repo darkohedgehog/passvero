@@ -70,12 +70,17 @@
 
 ## Phase 8 — Billing
 
-- subscription plans;
-- product limits;
-- team member limits;
-- billing portal;
-- webhook verification;
-- plan enforcement.
+Current scope: [commercial contract](SUBSCRIPTION_COMMERCIAL_CONTRACT_AND_BACKUP_SCOPE_RECONCILIATION.md).
+Delivery status: [central implementation roadmap](IMPLEMENTATION_ROADMAP.md).
+
+- existing Plan/Subscription foundation, manual B2B bank transfer;
+- 3/12-month package requests and explicit activation after payment verification;
+- external Synesis invoice references, no Passvero invoice issuance;
+- trial, product/storage limits and server-side expiry enforcement;
+- customer/admin period visibility and reminders;
+- proposed retention and staging-transition rules require confirmation.
+
+Stripe, cards and payment webhooks are outside this scope.
 
 ## Phase 9 — Integrations
 
