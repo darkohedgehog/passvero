@@ -1,0 +1,11 @@
+{
+  "file": "/private/tmp/passvero-reminder-scheduler-20261001-v1.py",
+  "sha256": "966f582287fa5c55f68a3484e9f4f2bca9c7e9eb69a200d79b2064650ccb1836",
+  "previousAcceptanceManifest": "94de46dc9668485c75c3b47058093acf77c436213ae47ea59fd454648b6da2fb",
+  "campaignsRemainDisabled": true,
+  "databaseWrites": false,
+  "additionalSmtpDispatches": 0,
+  "localProof": "6 isolated scheduler tests; 9 operator regressions; worker directory regression PASS",
+  "executedOnVps": true,
+  "operatorResult": "PASS_TIMER_TRIGGERED_IDLE_CYCLE"
+}

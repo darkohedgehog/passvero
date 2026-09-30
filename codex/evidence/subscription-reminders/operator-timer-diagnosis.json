@@ -1,0 +1,130 @@
+{
+  "source": "User-returned read-only diagnostic; mailto formatting normalized",
+  "diagnostic": "READ_ONLY_COMPLETE",
+  "timerPropertyRaw": "0\n",
+  "timerPropertyIntegerCompatible": true,
+  "timerProperties": {
+    "NextElapseUSecMonotonic": "infinity",
+    "LastTriggerUSec": "",
+    "LastTriggerUSecMonotonic": "0",
+    "LoadState": "loaded",
+    "ActiveState": "inactive",
+    "UnitFileState": "disabled"
+  },
+  "serviceProperties": {
+    "Result": "success",
+    "ExecMainStartTimestampMonotonic": "0",
+    "ExecMainStatus": "0",
+    "ActiveState": "inactive",
+    "InvocationID": ""
+  },
+  "stateFiles": [
+    "after-replay.json",
+    "after-trial-send.json",
+    "attempt.json",
+    "before-scheduled.json",
+    "closure.json",
+    "narrow.json",
+    "renew.json",
+    "resume.json",
+    "summary.json"
+  ],
+  "savedBeforeScheduled": {
+    "dispatches": 4,
+    "attempts": 4,
+    "acceptedAttempts": 4
+  },
+  "savedClosure": {
+    "timer": {
+      "enabled": "disabled",
+      "active": "inactive"
+    },
+    "campaignsEnabled": 0,
+    "serviceState": {
+      "Result": "success",
+      "ExecMainStartTimestampMonotonic": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "InvocationID": ""
+    },
+    "historyRetained": true,
+    "errors": []
+  },
+  "liveInventory": {
+    "campaigns": [
+      {
+        "id": "09877c41-11ef-5e38-b0a2-4089cc40511c",
+        "enabled": false,
+        "dispatches": 2,
+        "maxDispatches": 2
+      },
+      {
+        "id": "c0db6597-b030-58d5-bfe3-31019b05c427",
+        "enabled": false,
+        "dispatches": 2,
+        "maxDispatches": 2
+      }
+    ],
+    "outbox": [
+      {
+        "id": "1bf1e982-ca6d-46ae-90ce-8152c62da54d",
+        "recipient": "zivic.darko79@gmail.com",
+        "kind": "SUBSCRIPTION",
+        "status": "SENT",
+        "attempts": 1,
+        "acceptedAt": "2026-09-30T22:28:39.176",
+        "receiptConfirmedAt": null
+      },
+      {
+        "id": "202c0a74-4cfe-4a53-b7f4-dcf57e8eec62",
+        "recipient": "prodaja@zivic-elektro.com",
+        "kind": "SUBSCRIPTION",
+        "status": "SENT",
+        "attempts": 1,
+        "acceptedAt": "2026-09-30T22:28:39.637",
+        "receiptConfirmedAt": null
+      },
+      {
+        "id": "46fbaa7d-18ae-4d12-ad80-10a1ba3f11d4",
+        "recipient": "zivic.darko79@gmail.com",
+        "kind": "PUBLIC_AVAILABILITY",
+        "status": "SENT",
+        "attempts": 1,
+        "acceptedAt": "2026-09-30T22:28:43.426",
+        "receiptConfirmedAt": null
+      },
+      {
+        "id": "63da1655-8498-4858-8627-2974bfad81f2",
+        "recipient": "zivic.darko79@gmail.com",
+        "kind": "SUBSCRIPTION",
+        "status": "CANCELLED",
+        "attempts": 0,
+        "acceptedAt": null,
+        "receiptConfirmedAt": null
+      },
+      {
+        "id": "73bea7d7-765e-481d-986b-d2df302aaa8b",
+        "recipient": "prodaja@zivic-elektro.com",
+        "kind": "SUBSCRIPTION",
+        "status": "CANCELLED",
+        "attempts": 0,
+        "acceptedAt": null,
+        "receiptConfirmedAt": null
+      },
+      {
+        "id": "fe8b4b13-df78-47e0-9115-5858779bfed2",
+        "recipient": "prodaja@zivic-elektro.com",
+        "kind": "PUBLIC_AVAILABILITY",
+        "status": "SENT",
+        "attempts": 1,
+        "acceptedAt": "2026-09-30T22:28:44.029",
+        "receiptConfirmedAt": null
+      }
+    ],
+    "attempts": 4,
+    "acceptedAttempts": 4
+  },
+  "writes": "NONE",
+  "workerExecuted": false,
+  "smtpCalls": 0
+}

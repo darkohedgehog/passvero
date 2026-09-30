@@ -1,0 +1,11 @@
+[Unit]
+Description=Run bounded Passvero staging reminder cycle every five minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitInactiveSec=5min
+AccuracySec=15s
+Unit=passvero-subscription-reminders.service
+
+[Install]
+WantedBy=timers.target

@@ -31,7 +31,7 @@ async function readPhaseMigration() {
   return readFile(new URL(`${directories[0]}/migration.sql`, migrationsPath), "utf8");
 }
 
-test("Phase 5B adds only Subscription and its two approved enums", async () => {
+test("Subscription foundation retains its enums alongside approved additive models", async () => {
   const schema = await readFile(schemaPath, "utf8");
   const modelNames = [...schema.matchAll(/^model (\w+) \{/gm)].map((match) => match[1]);
   const enumNames = [...schema.matchAll(/^enum (\w+) \{/gm)].map((match) => match[1]);
@@ -79,6 +79,14 @@ test("Phase 5B adds only Subscription and its two approved enums", async () => {
     "CommercialRequest",
     "CommercialOffer",
     "SubscriptionPaidPeriod",
+    "SubscriptionUpgradeReceipt",
+    "SubscriptionPaidPeriodActivation",
+    "OrganizationEntitlementEnrollment",
+    "PlatformRegulatoryGrant",
+    "ReminderCampaign",
+    "BillingEmailConfirmation",
+    "SubscriptionReminder",
+    "ReminderAttempt",
   ]);
   assert.deepEqual(enumNames, [
     "OrganizationStatus",

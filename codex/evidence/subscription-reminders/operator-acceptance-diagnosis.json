@@ -1,0 +1,42 @@
+{
+  "diagnostic": "READ_ONLY_COMPLETE",
+  "counts": {
+    "fixtureOrganizations": 0,
+    "campaigns": 0,
+    "enabledCampaigns": 0,
+    "outbox": 0,
+    "attempts": 0
+  },
+  "actors": [
+    {
+      "id": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "verifiedidentities": 1,
+      "billinggrant": true,
+      "regulatorygrant": true
+    },
+    {
+      "id": "cbb590fa-1c67-41bf-883d-c2eb96bf6edb",
+      "verifiedidentities": 1,
+      "billinggrant": false,
+      "regulatorygrant": false
+    }
+  ],
+  "dependencyAccess": {
+    "currentIdentity": {
+      "bundleReadable": true,
+      "@prisma/adapter-pg": "MODULE_NOT_FOUND",
+      "@prisma/client/runtime/client": "MODULE_NOT_FOUND",
+      "zod": "MODULE_NOT_FOUND"
+    },
+    "withStagingGroup": {
+      "bundleReadable": true,
+      "@prisma/adapter-pg": "PASS",
+      "@prisma/client/runtime/client": "PASS",
+      "zod": "PASS"
+    }
+  },
+  "writes": "NONE",
+  "fixtureBundleExecuted": false,
+  "smtpCalls": 0,
+  "source": "User-returned VPS diagnostic output"
+}

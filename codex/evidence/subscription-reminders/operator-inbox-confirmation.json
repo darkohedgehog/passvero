@@ -1,0 +1,19 @@
+{
+  "source": "Explicit user confirmation",
+  "statement": "Stigle su po dve poruke na obe email adrese",
+  "recipients": [
+    {
+      "email": "prodaja@zivic-elektro.com",
+      "received": 2
+    },
+    {
+      "email": "zivic.darko79@gmail.com",
+      "received": 2
+    }
+  ],
+  "totalReceived": 4,
+  "receipt": "CONFIRMED_BY_USER",
+  "folder": "NOT_SPECIFIED",
+  "databaseReceiptAttestation": "NOT_RECORDED",
+  "messageIds": "NOT_SUPPLIED"
+}

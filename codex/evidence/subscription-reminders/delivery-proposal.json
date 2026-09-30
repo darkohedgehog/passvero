@@ -1,0 +1,98 @@
+{
+  "status": "APPROVED_BY_USER",
+  "scope": "staging.passvero.eu / passvero_acceptance:5433",
+  "expiresAt": "2026-10-01T09:00:00.000Z",
+  "locale": "hr",
+  "owner": {
+    "userId": "cbb590fa-1c67-41bf-883d-c2eb96bf6edb",
+    "email": "prodaja@zivic-elektro.com"
+  },
+  "operators": [
+    {
+      "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "email": "zivic.darko79@gmail.com"
+    }
+  ],
+  "billingEmail": "NOT_CONFIRMED_OR_USED_AS_SEPARATE_RECIPIENT",
+  "maximumSmtpDispatches": 4,
+  "fixtureOrganizations": [
+    {
+      "id": "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+      "slug": "synthetic-reminders-20260930-trial",
+      "name": "SYNTHETIC \u2014 Reminders trial",
+      "trialStartsAt": "2026-04-01T10:00:00.000Z",
+      "trialEndsAt": "2026-10-01T10:00:00.000Z",
+      "messageKind": "SUBSCRIPTION",
+      "threshold": 1,
+      "maximumMessages": 2
+    },
+    {
+      "id": "371ef379-7e1f-5775-842f-9eba78838046",
+      "slug": "synthetic-reminders-20260930-renewal",
+      "name": "SYNTHETIC \u2014 Reminders renewal cancellation",
+      "trialStartsAt": "2026-04-01T10:00:00.000Z",
+      "trialEndsAt": "2026-10-01T10:00:00.000Z",
+      "newSimulatedRenewalStartsAt": "2026-10-01T10:00:00.000Z",
+      "newSimulatedRenewalEndsAt": "2027-01-01T11:00:00.000Z",
+      "messageKind": "SUBSCRIPTION",
+      "threshold": 1,
+      "maximumMessages": 0
+    },
+    {
+      "id": "8504ae2e-059e-5b7d-974d-175e3d3c39c1",
+      "slug": "synthetic-reminders-20260930-public",
+      "name": "SYNTHETIC \u2014 Reminders VOLUNTARY public deadline",
+      "newSimulatedPeriodStartsAt": "2026-01-01T11:00:00.000Z",
+      "newSimulatedPeriodEndsAt": "2026-04-01T10:00:00.000Z",
+      "publicEndsAt": "2026-10-01T10:00:00.000Z",
+      "classification": "VOLUNTARY",
+      "messageKind": "PUBLIC_AVAILABILITY",
+      "threshold": 1,
+      "maximumMessages": 2
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "c0db6597-b030-58d5-bfe3-31019b05c427",
+      "messageKinds": [
+        "SUBSCRIPTION"
+      ],
+      "maxDispatches": 2,
+      "initialOrganizationIds": [
+        "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+        "371ef379-7e1f-5775-842f-9eba78838046"
+      ],
+      "sendOrganizationIds": [
+        "8c789610-9953-58c8-9cd7-1b5815dd6fd4"
+      ]
+    },
+    {
+      "id": "09877c41-11ef-5e38-b0a2-4089cc40511c",
+      "messageKinds": [
+        "PUBLIC_AVAILABILITY"
+      ],
+      "maxDispatches": 2,
+      "initialOrganizationIds": [
+        "8504ae2e-059e-5b7d-974d-175e3d3c39c1"
+      ],
+      "sendOrganizationIds": [
+        "8504ae2e-059e-5b7d-974d-175e3d3c39c1"
+      ]
+    }
+  ],
+  "procedure": [
+    "Create only these new explicitly synthetic fixtures; no existing period edits or actual payments.",
+    "Enqueue subscription messages while timer stays disabled.",
+    "Append the new simulated future period to renewal-cancellation fixture; revalidate/cancel its unsent rows; remove it from approved send scope before any worker run.",
+    "Send trial reminder once to each of the two explicit recipients.",
+    "Replay same worker with no extra dispatch.",
+    "Send public reminder once to each of the same two recipients.",
+    "Enable dedicated timer for one real scheduled bounded cycle after all above assertions pass; expected no new dispatch because both budgets are exhausted.",
+    "Record inbox confirmation separately; disable timer and campaigns after that scheduled cycle."
+  ],
+  "approvalEvidence": "User confirmed deployment PASS and explicitly approved the proposal together with both rules, 2026-09-30",
+  "businessRulesApproved": [
+    "Latest due threshold only after downtime; expiry only at/after real deadline.",
+    "Explicit audited operator confirmation of externally verified billing-address ownership, exact email plus profile revision."
+  ]
+}

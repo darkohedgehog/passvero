@@ -1,0 +1,16 @@
+{
+  "repair": "WORKER_DIRECTORY_0700_TO_0755_PASS",
+  "workerLibraries": "PASS",
+  "disabledCampaignEnqueue": "PASS",
+  "inventory": {
+    "campaigns": 2,
+    "enabled": 0,
+    "dispatches": 0,
+    "outbox": 0,
+    "attempts": 0
+  },
+  "codeFilesChanged": false,
+  "environmentFilesChanged": false,
+  "smtpCalls": 0,
+  "fixturesRetained": true
+}

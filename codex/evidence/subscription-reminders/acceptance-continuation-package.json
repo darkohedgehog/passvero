@@ -1,0 +1,9 @@
+{
+  "package": "/private/tmp/passvero-reminders-acceptance-20261001-v2.tar.gz",
+  "packageSha256": "1a0496056ee57ac650fd7bb7b05ad500190f928992c1486008d7413c05b2618f",
+  "manifestSha256": "3fbd3c8a65ce296d5d6450ec97f936e73f6095fce1a23de3f2d71adc3f0913f6",
+  "deploymentManifest": "1d7f456d13ce8cf1bb7173bc3c731be4fd7e61d6a5fbb70fb8aca99eba04f1cf",
+  "maximumSmtpDispatches": 4,
+  "expiresAt": "2026-10-01T09:00:00.000Z",
+  "transportRunLocally": false
+}

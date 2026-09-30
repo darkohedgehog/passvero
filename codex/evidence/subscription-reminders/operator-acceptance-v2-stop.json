@@ -1,0 +1,26 @@
+{
+  "source": "User-returned VPS output",
+  "fixtureCreation": "PASS",
+  "publicFixtureHttps": "PASS",
+  "result": "STOP",
+  "reason": "COMMAND_FAILED",
+  "inferredBoundary": "First worker enqueue subprocess after fixture creation and HTTPS check",
+  "sendingScopeClosed": {
+    "timer": {
+      "enabled": "disabled",
+      "active": "inactive"
+    },
+    "campaignsEnabled": 0,
+    "serviceState": {
+      "Result": "success",
+      "ExecMainStartTimestampMonotonic": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "InvocationID": ""
+    },
+    "historyRetained": true,
+    "errors": []
+  },
+  "inboxReceipt": "NOT_PROVEN",
+  "scheduledCycle": "NOT_PROVEN"
+}

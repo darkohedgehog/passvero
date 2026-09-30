@@ -61,10 +61,22 @@ async function coverage(tx: Tx, organizationId: string, now: Date) {
       continue; // A blocked financial receipt is neither active coverage nor public grace.
     }
     if (activation?.status === "PENDING") pendingChange = { planSlug: row.planSlug, startsAt: row.startsAt.toISOString(), status: activation.status };
-    const upgrade = upgrades.find(u => u.basePeriodId === row.id && now < u.endsAt);
+    // Expiry removes rights, not the historical identity of the last upgraded plan.
+    const upgrade = upgrades.find(u => u.basePeriodId === row.id);
     periods.push({ id: row.id, planSlug: upgrade?.planSlug ?? row.planSlug, start: row.startsAt, end: row.endsAt, limits: snapshotSchema.parse(upgrade?.snapshot ?? row.snapshot).limits });
   }
-  return { enrollment, periods, blockedReasons, pendingChange };
+  return { enrollment, periods, blockedReasons, pendingChange, conditionalPeriodIds: rows.filter(row => row.activation?.status === "PENDING" && row.startsAt > now).map(row => row.id) };
+}
+/** Reminder reads reuse precisely the same activation decisions and public coverage as enforcement. */
+export async function readReminderCoverage(tx: Tx, organizationId: string, now: Date) {
+  await lockEntitlementOrganization(tx, organizationId);
+  const data = await coverage(tx, organizationId, now);
+  const e = data.enrollment;
+  const trial = e?.trialStartedAt && e.trialEndsAt ? { start: e.trialStartedAt, end: e.trialEndsAt } : null;
+  const rights = resolveEntitlements({ now, trial, periods: data.periods });
+  const stagingException = !!(e?.exceptionStartsAt && e.exceptionEndsAt && e.exceptionStartsAt <= now && now < e.exceptionEndsAt && rights.kind !== "PAID");
+  const eligiblePublications = await tx.product.count({ where: { organizationId, lifecycleStatus: "ACTIVE", regulatoryClassification: "VOLUNTARY", currentPublishedVersion: { status: "PUBLISHED" }, passport: { status: "ACTIVE" } } });
+  return { now, trial, periods: data.periods, conditionalPeriodIds: data.conditionalPeriodIds, stagingException, eligiblePublications };
 }
 export async function readEntitlements(tx: Tx, organizationId: string, now?: Date): Promise<RuntimeEntitlements> {
   await lockEntitlementOrganization(tx, organizationId);

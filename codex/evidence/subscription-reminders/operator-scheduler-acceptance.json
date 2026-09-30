@@ -1,0 +1,31 @@
+{
+  "source": "User-returned VPS operator output",
+  "result": {
+    "scheduler": "PASS_TIMER_TRIGGERED_IDLE_CYCLE",
+    "triggerBefore": "0",
+    "triggerAfter": "1w 7h 41min 4.038970s",
+    "service": {
+      "Result": "success",
+      "ExecMainStartTimestampMonotonic": "632464053267",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "InvocationID": "8f41d476624547248dd60efc650cc285"
+    },
+    "workerEvidence": [
+      {
+        "invocationId": "8f41d476624547248dd60efc650cc285",
+        "worker": "IDLE",
+        "sending": "NO_APPROVED_CAMPAIGN"
+      }
+    ],
+    "databaseUnchanged": true,
+    "existingSmtpDispatches": 4,
+    "additionalSmtpDispatches": 0,
+    "campaignsEnabled": 0,
+    "closure": {
+      "timerDisabledInactive": true,
+      "campaignsEnabledByProof": false,
+      "errors": []
+    }
+  }
+}

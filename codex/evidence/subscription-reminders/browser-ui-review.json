@@ -1,0 +1,68 @@
+{
+  "reviewDate": "2026-10-01",
+  "result": "PASS_BOUNDED_READ_ONLY_UI_REVIEW",
+  "origin": "https://staging.passvero.eu",
+  "route": "/platform/billing/deliveries",
+  "session": "Existing authorized billing-operator Chrome session",
+  "method": "Native browser UI navigation, accessibility snapshots and visual screenshots inspected in the review session; no credentials copied or entered",
+  "locale": "hr",
+  "responsiveCssWidths": [
+    320,
+    375,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "responsiveCssHeight": 844,
+  "desktopWindowAlsoReviewed": true,
+  "checks": {
+    "layout": "PASS; no observed clipping, overlap or horizontal overflow; mobile cards and desktop grid remain readable",
+    "navigation": "PASS; dashboard to billing to deliveries; back to billing and return; mobile menu; return to tenant space",
+    "statusReadability": "PASS; explicit localized labels, numeric counts, dates with Europe/Zagreb, accepted-versus-received notice, cancellation reason",
+    "deliveryForms": "Visible labels, inputs and controls fit at narrow widths; no input submitted",
+    "keyboard": "Skip-to-content link focus observed; full keyboard audit not performed",
+    "campaigns": "Two disabled campaigns, each dispatch count 2/2",
+    "records": "Exactly six expected rows: four SENT and two CANCELLED, for the three approved synthetic organizations and two approved recipients",
+    "tenantBilling": "Current organization profile only; no synthetic reminder records or platform recipient list displayed"
+  },
+  "statusCounts": {
+    "PENDING": 0,
+    "CLAIMED": 0,
+    "SENDING": 0,
+    "SENT": 4,
+    "FAILED": 0,
+    "DELIVERY_UNKNOWN": 0,
+    "CANCELLED": 2
+  },
+  "expectedOrganizationIds": [
+    "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+    "371ef379-7e1f-5775-842f-9eba78838046",
+    "8504ae2e-059e-5b7d-974d-175e3d3c39c1"
+  ],
+  "authorizationEvidenceLimit": "Operator overview is intentionally global. Absence of unrelated records in this fixture inventory is observational evidence; unauthorized identities were not tested live. Existing focused authorization tests and independent source review are reused.",
+  "retainedAcceptance": {
+    "userConfirmedReceipts": 4,
+    "receiptDatabaseAttestation": "NOT_RECORDED; UI correctly shows no recorded receipt timestamp",
+    "replayAdditionalDispatches": 0,
+    "staleMessagesCancelled": 2,
+    "timer": "disabled/inactive per retained scheduler closure",
+    "campaignsEnabled": 0
+  },
+  "actions": {
+    "formsSubmitted": 0,
+    "retryActions": 0,
+    "emailAcceptanceRepeated": false,
+    "timerOrCampaignChanges": false,
+    "codeChanges": false,
+    "dataDeletion": false
+  },
+  "limitations": [
+    "Browser emulation, not physical devices",
+    "HR live visual review; no six-language sweep",
+    "No Safari or full screen-reader/keyboard audit",
+    "No new live negative-identity test",
+    "Protected page reads may create normal access audit records; no business-state mutation requested"
+  ],
+  "unresolvedImportantOrCriticalFindings": []
+}

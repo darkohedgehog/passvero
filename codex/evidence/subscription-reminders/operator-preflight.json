@@ -1,0 +1,58 @@
+{
+  "preflight": "PASS",
+  "database": {
+    "database": "passvero_acceptance",
+    "port": "5433",
+    "directory": "/var/lib/postgresql/16/acceptance"
+  },
+  "migrations": {
+    "count": 30,
+    "digest": "8840cc1de88a64a1049bac4725d84805",
+    "finished": true
+  },
+  "utcNow": "2026-09-30T23:22:01.768981+02:00",
+  "buildId": "W7mp9vBnQ9juQNqP9tnh6",
+  "packageHash": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+  "lockHash": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+  "retainedOperatorHash": "caac6bbc4fe5604c23837527c65aff1e35717580d7c079f7002f08406c87eda5",
+  "runtimeDependencies": {
+    "next": "c4ef8a1c8da320a162485f96d35df7745da90e6becc36882d6e81be9df66eec1",
+    "react": "e60b92f6031f023907bbfab8f96e63e44307776ec1488f310ba61d41b8cda8cc",
+    "react-dom": "b8448092689c7e6191595a98526ced808288f35138d97fbce5801a94922e3c36",
+    "next-intl": "84f51dcebe80025dc9475fc260dc0e311a33a7af2e1a0a57e7617ca42f06cc69",
+    "@prisma/client": "a64669ec1b457f2651b3de564db6b9604e89460cb349641afffa73b0bbf3939a",
+    "@prisma/adapter-pg": "4a6bb303e1d86f2b8c6ad1f57adac7c924b9ac0f8e1f7b086abe4268ea7e3474",
+    "@better-auth/prisma-adapter": "14b03c83194fd21515d570dbba6ade8a4bb804627d0af3ed80197008aeffc2f8",
+    "better-auth": "d4da1b89925564605ca6540a4f5030aab18de043322ca0b51f08b9ec52b1e092",
+    "pg": "e42dd36cba6e9dd8dbb6f773a2f7be8a8c3c273e18b155e42e75961a4cb8bc28",
+    "nodemailer": "4ea1ee33f7582183473fe5c89215231534c90b3489da575347993505132dbb95",
+    "zod": "d6159aa80f102c2060b90ab0d968588c7fe6a8694df34152cd1f98a391ff8843",
+    "prisma": "d98a88695435d693b66c27d9e8e1b083fc5e544890ce2bdfe755b9f90846e35b"
+  },
+  "accounts": [
+    {
+      "id": "cbb590fa-1c67-41bf-883d-c2eb96bf6edb",
+      "email": "prodaja@zivic-elektro.com",
+      "verified": true,
+      "billing_grant": false
+    },
+    {
+      "id": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "email": "zivic.darko79@gmail.com",
+      "verified": true,
+      "billing_grant": true
+    }
+  ],
+  "processes": [
+    {
+      "name": "passvero-acceptance",
+      "pid": 701511,
+      "status": "online",
+      "cwd": "/var/www/passvero-acceptance"
+    }
+  ],
+  "timers": "Wed 2026-09-30 23:22:13 CEST      12s Wed 2026-09-30 23:21:58 CEST    2s ago passvero-signature-health.timer passvero-signature-health.service\nThu 2026-10-01 00:00:00 CEST    37min Wed 2026-09-30 23:00:00 CEST 22min ago passvero-backup-freshness.timer passvero-backup-freshness.service\nThu 2026-10-01 04:07:38 CEST 4h 45min Wed 2026-09-30 04:02:09 CEST   19h ago passvero-postgres-backup.timer  passvero-postgres-backup.service",
+  "reminderTimerInstalled": false,
+  "writes": "NONE",
+  "emailSent": false
+}

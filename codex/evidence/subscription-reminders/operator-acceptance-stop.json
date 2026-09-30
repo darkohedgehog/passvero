@@ -1,0 +1,25 @@
+{
+  "source": "User-returned VPS output",
+  "result": "STOP",
+  "reason": "FIXTURE_CREATE_FAILED",
+  "retry": "MANUAL_REVIEW_REQUIRED",
+  "sendingScopeClosed": {
+    "timer": {
+      "enabled": "disabled",
+      "active": "inactive"
+    },
+    "campaignsEnabled": 0,
+    "serviceState": {
+      "Result": "success",
+      "ExecMainStartTimestampMonotonic": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "InvocationID": ""
+    },
+    "historyRetained": true,
+    "errors": []
+  },
+  "fixtureCreation": "NOT_PROVEN",
+  "workerPhaseReached": false,
+  "inboxReceipt": "NOT_PROVEN"
+}

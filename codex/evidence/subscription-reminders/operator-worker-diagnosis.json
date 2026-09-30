@@ -1,0 +1,56 @@
+{
+  "source": "User-returned read-only worker diagnostic",
+  "diagnostic": "READ_ONLY_COMPLETE",
+  "inventory": {
+    "campaigns": [
+      {
+        "id": "09877c41-11ef-5e38-b0a2-4089cc40511c",
+        "enabled": false,
+        "dispatches": 0,
+        "maxDispatches": 2
+      },
+      {
+        "id": "c0db6597-b030-58d5-bfe3-31019b05c427",
+        "enabled": false,
+        "dispatches": 0,
+        "maxDispatches": 2
+      }
+    ],
+    "outbox": [],
+    "attempts": 0
+  },
+  "allRequiredEnvironmentKeysPresent": true,
+  "runtimeMarkers": {
+    "runtimeStaging": true,
+    "originStaging": true
+  },
+  "workerLibraries": {
+    "@prisma/adapter-pg": "LOAD_FAILED",
+    "@prisma/client/runtime/client": "LOAD_FAILED",
+    "zod": "LOAD_FAILED",
+    "nodemailer": "LOAD_FAILED"
+  },
+  "allReportedReadPrivileges": true,
+  "allReportedOtherRequiredPrivileges": true,
+  "createdFixtureEvidence": {
+    "organizationIds": [
+      "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+      "371ef379-7e1f-5775-842f-9eba78838046",
+      "8504ae2e-059e-5b7d-974d-175e3d3c39c1"
+    ],
+    "campaignIds": [
+      "c0db6597-b030-58d5-bfe3-31019b05c427",
+      "09877c41-11ef-5e38-b0a2-4089cc40511c"
+    ],
+    "publicPeriodId": "d3b2c13e-4eca-4e5c-bec6-860254804d02",
+    "productId": "01416f36-6b3e-4e98-9ee6-90f49a437f19",
+    "publicCode": "Qh-FzCq7R-hfTjkftbozMw",
+    "versionId": "f346418c-bda6-48b6-be54-7495628f1e36",
+    "passportId": "c626dbbe-5589-4fdc-a7ad-a63426f0eb47",
+    "billingEmailConfirmed": false,
+    "transportCalls": 0
+  },
+  "writes": "NONE",
+  "workerExecuted": false,
+  "smtpCalls": 0
+}

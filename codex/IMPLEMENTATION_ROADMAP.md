@@ -1,5 +1,33 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-10-01 — podsjetnici i dostava: odobrena staging demonstracija završena
+
+Implementirani su trial/pretplatni pragovi30/7/1/istek, VOLUNTARY javni rok, šest jezika,
+provjereni primaoci, trajni outbox, lease/replay, ograničeni sigurni retry i DELIVERY_UNKNOWN.
+Billing-only pregled/akcije imaju autorizaciju i audit. Lokalni/disposable dokazi:14 PostgreSQL,
+18 app,5 entitlement,10 schema; TypeScript/lint/build PASS uz16 ranijih lint upozorenja.
+Pogođene operatorske provjere:9 operator,6 scheduler i1 directory PASS.
+
+Migracija/deploy i svih pet odobrenih staging koraka su potvrđeni: četiri SMTP prihvata,
+korisnička potvrda po dvije poruke na obje adrese, replay bez novih slanja, dvije poruke
+otkazane obnovom, VOLUNTARY HTTPS/podsjetnici i stvarni timer-triggered IDLE ciklus.
+Scheduler nije promijenio campaign/outbox/attempt zapise niti dodao SMTP pozive.
+Timer disabled/inactive, servis inactive/success, omogućene kampanje0, obje potrošene2/2.
+Fixturei i povijest ostaju. Nema novog operatorskog bloka niti ponavljanja acceptancea.
+
+Primatelji su ostali prodaja@zivic-elektro.com i zivic.darko79@gmail.com. Potvrda primitka
+sačuvana je kao korisnički dokaz; DB receiptConfirmedAt nije upisan. Live Chrome pregled
+delivery UI-ja PASS: desktop i širine 320/375/390/768/1024/1440, navigacija, čitljivi statusi
+i samo očekivani fixture zapisi. Tenant billing prikazuje samo trenutačnu organizaciju;
+negativni auth dokazi ostaju zasebni lokalni testovi/pregled koda. UI ispravke nisu potrebne.
+Završni neovisni pregled nema neriješenih IMPORTANT/CRITICAL nalaza. Raniji nepovezani scopeovi ostaju.
+Fault i concurrency scenariji dokazani su lokalno; nisu simulirani na live provideru.
+[Završni izvještaj i granice dokaza](SUBSCRIPTION_REMINDERS_AND_DELIVERY_STAGING_ACCEPTANCE.md).
+Odobren je točan pregledani commit `feat(subscriptions): add reminders and delivery tracking`.
+Manifest obuhvaća cijeli skup osim vlastitog hasha; identitet commita očitava se iz Gita.
+Bez pusha, novih emailova, produkcijskih promjena,
+automatskog brisanja, stvarnih uplata ili backup/restore radova. Scheduler nije enforcement.
+
 ## Aktualizacija 2026-09-30 — prava, kvote i promjene paketa (staging dokazi i Safari UI ispravka potvrđeni)
 
 Druga pretplatna cjelina ima source enforcement, jednokratni trial, zajedničke CSV/ručne

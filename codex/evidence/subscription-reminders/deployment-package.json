@@ -1,0 +1,10 @@
+{
+  "package": "/private/tmp/passvero-reminders-deploy-20260930-v2.tar.gz",
+  "packageSha256": "95847a809095414fda5ef3de94d3a56e9e07f56f0219c60798208eb80cd3fd47",
+  "manifestSha256": "1d7f456d13ce8cf1bb7173bc3c731be4fd7e61d6a5fbb70fb8aca99eba04f1cf",
+  "applicationFiles": 826,
+  "newBuild": "8QNIYVVZWEsQaCL9uLZ5Q",
+  "previousBuild": "W7mp9vBnQ9juQNqP9tnh6",
+  "emailSending": false,
+  "timerEnabled": false
+}

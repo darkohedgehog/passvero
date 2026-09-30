@@ -51,6 +51,11 @@ export function addCalendarMonths(date: Date, months: number, anchor: CalendarAn
 }
 export function addCalendarDays(date: Date, days: number): Date {
   if (!Number.isSafeInteger(days)||days<1||days>36600) throw new RangeError("Invalid calendar days");
+  return shiftCalendarDays(date, days);
+}
+/** Reminder thresholds share the contractual DST resolution, including negative offsets. */
+export function shiftCalendarDays(date: Date, days: number): Date {
+  if (!Number.isSafeInteger(days)||Math.abs(days)>36600) throw new RangeError("Invalid calendar days");
   const value = local(date);
   const target = new Date(Date.UTC(value.year,value.month-1,value.day+days));
   return resolve({...value,year:target.getUTCFullYear(),month:target.getUTCMonth()+1,day:target.getUTCDate()});

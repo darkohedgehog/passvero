@@ -1,0 +1,206 @@
+{
+  "base": "1fc84aa8ccc3118f8158029e8edf99275c8f7f6e",
+  "local": {
+    "applicationFocused": {
+      "passed": 18
+    },
+    "entitlementRegression": {
+      "passed": 5
+    },
+    "subscriptionSchema": {
+      "passed": 10
+    },
+    "disposablePostgresql": {
+      "passed": 14,
+      "migrations": 31,
+      "cluster": "/private/tmp/passvero-reminders-proof-zxFS0j",
+      "clusterStopped": true
+    },
+    "typeScript": "PASS",
+    "fullLint": {
+      "errors": 0,
+      "preExistingWarnings": 16
+    },
+    "scopedLint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "webpackBuild": {
+      "result": "PASS",
+      "buildId": "8QNIYVVZWEsQaCL9uLZ5Q"
+    },
+    "whitespace": "PASS",
+    "sixLocaleKeyParity": "PASS",
+    "pythonSyntax": "PASS",
+    "review": "Two findings corrected; independent bounded re-review has no remaining concrete blocker",
+    "operatorRollbackSimulation": {
+      "passed": 6,
+      "scope": "Isolated temporary filesystem with mocked systemd, PM2 and SQL; no live rollback",
+      "cases": [
+        "missing units",
+        "partial first swap",
+        "partial absent active directory",
+        "reject later deployment",
+        "reject artifact drift",
+        "stop failure prevents artifact mutation"
+      ]
+    },
+    "operatorPackageReview": "Rollback findings corrected; independent bounded re-review has no remaining concrete blocker",
+    "operatorPackageIntegrity": "PASS: outer archive, manifest, all package files, 826 nested application files, Python syntax, worker node --check",
+    "approvedFixtureSequence": {
+      "passed": 1,
+      "migrations": 31,
+      "cluster": "/private/tmp/passvero-reminder-acceptance-proof-NSbdke",
+      "clusterStopped": true,
+      "transport": "IN_MEMORY_TEST_DOUBLE_ONLY",
+      "publicResolver": "PUBLIC",
+      "coverage": [
+        "expiry and grant guards",
+        "three new synthetic organizations",
+        "no billing-email confirmation or auth sessions",
+        "renewal cancels two unchanged outbox rows before send",
+        "exact approved recipients and four attempts",
+        "replay and exhausted scheduled calls add zero attempts"
+      ]
+    },
+    "operatorClosureRegression": {
+      "passed": 3,
+      "scope": "isolated mocked systemd and SQL; timer failure still attempts campaign closure; closure failures retain sanitized evidence"
+    },
+    "acceptanceTypeScript": "PASS",
+    "acceptanceScopedLint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "acceptancePackageIntegrity": "PASS",
+    "acceptanceReview": "Two blockers fixed; public resolver regression RED to GREEN, independent closure actions covered by three tests",
+    "operatorContinuationRegression": {
+      "passed": 7,
+      "missingSupplementaryGroup": "RED_TO_GREEN",
+      "checks": [
+        "postgres UID/primary group preserved; staging supplementary group added only to child",
+        "prior attempt files preserved",
+        "nonempty attempt state blocks continuation",
+        "wrong prior manifest blocks continuation",
+        "three independent closure cases"
+      ],
+      "fixtureBundleAndApproval": "BYTE_IDENTICAL_TO_PREVIOUS_PACKAGE",
+      "pythonSyntax": "PASS",
+      "packageIntegrity": "PASS"
+    },
+    "workerDirectoryPermissionRegression": {
+      "passed": 1,
+      "redObserved": "mkdir0755 under operator umask0077 produces0700",
+      "green": "explicit chmod0755 after mkdir",
+      "applicationAndWorkerCodeChanged": false
+    },
+    "retainedFixtureResume": {
+      "passed": 1,
+      "migrations": 31,
+      "cluster": "/private/tmp/passvero-reminder-acceptance-proof-cHbm41",
+      "clusterStopped": true,
+      "transport": "IN_MEMORY_TEST_DOUBLE_ONLY",
+      "guards": [
+        "existing dispatch blocks resume",
+        "changed campaign cap blocks resume",
+        "expired approval blocks resume",
+        "same fixture IDs and periods retained",
+        "renewal cancellation and four capped mock sends with replay"
+      ],
+      "pythonOperatorTests": 7,
+      "typeScript": "PASS",
+      "scopedLint": "PASS",
+      "sealedPackageIntegrity": "PASS",
+      "approval": "BYTE_IDENTICAL_TO_V2"
+    },
+    "schedulerOnlyProof": {
+      "isolatedTests": 6,
+      "operatorRegressionTests": 9,
+      "directoryRegressionTests": 1,
+      "syntax": "PASS",
+      "liveExecuted": true,
+      "nonzeroSystemctlTimespan": "Handled as opaque changed marker; service numeric monotonic and journal invocation required",
+      "scope": "Timer enable/observe/disable only; disabled exhausted campaigns; complete reminder DB snapshot unchanged"
+    }
+  },
+  "staging": {
+    "preflight": "PASS_OPERATOR_OUTPUT",
+    "deployment": "PASS_OPERATOR_OUTPUT",
+    "migration": "PASS_OPERATOR_OUTPUT",
+    "smtpAcceptance": "PASS_OPERATOR_OUTPUT_FOUR_ACCEPTED",
+    "inboxReceipt": "PASS_USER_CONFIRMATION_TWO_PER_ADDRESS",
+    "scheduledCycle": "PASS_OPERATOR_TIMER_TRIGGERED_IDLE_CYCLE",
+    "fixtureIds": [
+      "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+      "371ef379-7e1f-5775-842f-9eba78838046",
+      "8504ae2e-059e-5b7d-974d-175e3d3c39c1"
+    ],
+    "campaignIds": [
+      "c0db6597-b030-58d5-bfe3-31019b05c427",
+      "09877c41-11ef-5e38-b0a2-4089cc40511c"
+    ],
+    "schedulerLiveState": "DISABLED_INACTIVE_AFTER_SUCCESSFUL_REAL_CYCLE",
+    "sendingApprovalConfigured": false,
+    "preflightObservedAt": "2026-09-30T23:22:01.768981+02:00",
+    "observedPreviousBuild": "W7mp9vBnQ9juQNqP9tnh6",
+    "sendingApproval": "EXPLICIT_USER_APPROVAL_RECEIVED_CAMPAIGNS_CURRENTLY_DISABLED",
+    "nextStep": "NONE_REQUIRED_FOR_APPROVED_DELIVERY_DEMONSTRATION",
+    "demonstration": "PASS_ACROSS_RETAINED_DELIVERY_AND_SEPARATE_SCHEDULER_EVIDENCE",
+    "fixtureCreation": "PASS_OPERATOR_OUTPUT",
+    "publicFixtureHttps": "PASS_OPERATOR_OUTPUT",
+    "retainedFixtureEvidence": {
+      "organizationIds": [
+        "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+        "371ef379-7e1f-5775-842f-9eba78838046",
+        "8504ae2e-059e-5b7d-974d-175e3d3c39c1"
+      ],
+      "campaignIds": [
+        "c0db6597-b030-58d5-bfe3-31019b05c427",
+        "09877c41-11ef-5e38-b0a2-4089cc40511c"
+      ],
+      "publicPeriodId": "d3b2c13e-4eca-4e5c-bec6-860254804d02",
+      "productId": "01416f36-6b3e-4e98-9ee6-90f49a437f19",
+      "publicCode": "Qh-FzCq7R-hfTjkftbozMw",
+      "versionId": "f346418c-bda6-48b6-be54-7495628f1e36",
+      "passportId": "c626dbbe-5589-4fdc-a7ad-a63426f0eb47",
+      "billingEmailConfirmed": false,
+      "transportCalls": 0
+    },
+    "workerStartup": "PASS_OPERATOR_DISABLED_CAMPAIGN_ENQUEUE",
+    "runtimeConfigurationPresence": "PASS_OPERATOR_DIAGNOSTIC",
+    "reportedRuntimeAcl": "PASS_OPERATOR_DIAGNOSTIC",
+    "workerDirectoryRepair": "PASS_OPERATOR_OUTPUT",
+    "receiptDatabaseAttestation": "NOT_RECORDED",
+    "actualSmtpDispatches": 4,
+    "renewalCancelled": 2,
+    "replayAdditionalDispatches": 0,
+    "timerDiagnostic": "READ_ONLY_PASS_RAW_ZERO_ORIGINAL_VALUE_ERROR_INPUT_NOT_CAPTURED",
+    "finalOutboxCount": 6,
+    "finalAttemptCount": 4,
+    "databaseUnchangedByScheduler": true,
+    "scheduledAdditionalSmtpDispatches": 0,
+    "scopeClosed": true,
+    "historicalPreSendDiagnosis": {
+      "outboxCount": 0,
+      "attemptCount": 0
+    },
+    "remainingUnproven": [
+      "Live provider fault simulation intentionally not performed; covered locally",
+      "Database receipt attestation not recorded; user receipt evidence retained",
+      "Prior backup/restore and unrelated transport scopes unchanged"
+    ],
+    "browserVisualReview": "PASS_BOUNDED_AUTHORIZED_CHROME_DESKTOP_AND_RESPONSIVE",
+    "browserEvidence": "browser-ui-review.json"
+  },
+  "constraints": {
+    "productionChanges": "NONE",
+    "automaticDataDeletion": false,
+    "pushCreated": false,
+    "backupRestore": "NOT_PERFORMED",
+    "commitScope": "USER_AUTHORIZED_EXACT_REVIEWED_MANIFEST; identity recorded in Git"
+  },
+  "approvedBusinessDecisions": [
+    "Latest due threshold only after downtime",
+    "Explicit operator attestation of independently verified billing-email ownership, bound to profile revision"
+  ]
+}

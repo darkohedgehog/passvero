@@ -38,7 +38,7 @@ export class PrismaCommercial implements CommercialPersistence {
   if(!session||!session.authprovideruser.emailVerified||session.expiresAt.getTime()<=now||session.createdAt.getTime()+30*86400000<=now)return false;
   return Boolean(await tx.authIdentity.findFirst({where:{userId:actor.currentUser.userId,provider:"BETTER_AUTH",providerSubject:session.userId,revokedAt:null},select:{id:true}}));
  }
- async authorize(actor:CommercialActor){return this.operatorAccess(this.db,actor);}
+ async authorize(actor:CommercialActor,transaction:Tx=this.db){return this.operatorAccess(transaction,actor);}
  private async operatorAccess(tx:Tx,actor:CommercialActor){
   const grant=await tx.platformBillingGrant.findUnique({where:{userId:actor.currentUser.userId},select:{revokedAt:true}});
   return !!grant&&grant.revokedAt===null&&await this.identity(tx,actor);

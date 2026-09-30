@@ -1,0 +1,10 @@
+{
+  "source": "User-returned VPS terminal result",
+  "deployment": "PASS",
+  "migration": "PASS",
+  "timerEnabled": false,
+  "campaigns": 0,
+  "emailSent": false,
+  "inboxReceipt": "NOT_PROVEN",
+  "rawResult": "STAGING_REMINDERS_MIGRATION_AND_DEPLOY=PASS; TIMER_ENABLED=NO; CAMPAIGNS=0; EMAIL_SENT=NO; INBOX_RECEIPT=NOT_PROVEN"
+}

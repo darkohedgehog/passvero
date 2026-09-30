@@ -1,0 +1,31 @@
+{
+  "source": "User-returned VPS output",
+  "fixtures": "REUSED",
+  "publicFixtureHttps": "PASS",
+  "renewalCancelled": 2,
+  "trialProviderAccepted": 2,
+  "publicProviderAccepted": 2,
+  "actualSmtpDispatches": 4,
+  "replayAdditionalDispatches": 0,
+  "sendingScopeClosed": {
+    "timer": {
+      "enabled": "disabled",
+      "active": "inactive"
+    },
+    "campaignsEnabled": 0,
+    "serviceState": {
+      "Result": "success",
+      "ExecMainStartTimestampMonotonic": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "InvocationID": ""
+    },
+    "historyRetained": true,
+    "errors": []
+  },
+  "result": "STOP",
+  "reason": "ValueError",
+  "scheduledCycle": "NOT_PROVEN",
+  "inferredBoundary": "Likely conversion of timer LastTriggerUSecMonotonic before enable; raw property pending read-only diagnostic",
+  "doNotRerun": true
+}
