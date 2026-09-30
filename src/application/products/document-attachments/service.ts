@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { z } from "zod";
 import { ApplicationError } from "../../errors/application-error";
 import { hasProductPermission, roleHasProductPermission, PRODUCT_EDIT } from "../../permissions/product-permissions";
@@ -54,6 +55,7 @@ export function createAttachmentService<Tx>(deps: AttachmentDependencies<Tx>): M
         return { status: command.operation === "ATTACH" ? "ATTACHED" : command.operation === "EDIT" ? "UPDATED" : "REMOVED" };
       });
     } catch (error) {
+      if (error instanceof EntitlementError) throw error;
       if (error instanceof ApplicationError && trusted.has(error)) throw error;
       throw fail("INTERNAL", "OPERATIONAL_FAILURE");
     }

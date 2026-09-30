@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import type {
   ProductMaterialRecord,
   ProductMaterialsCurrentDraftPersistence,
@@ -39,7 +41,7 @@ export class PrismaProductMaterialsCurrentDraftTransactionRunner {
   constructor(private readonly prisma: PrismaClient) {}
 
   run<Result>(work: (transaction: Transaction) => Promise<Result>): Promise<Result> {
-    return this.prisma.$transaction((transaction) => work(transaction));
+    return runEntitlementTransaction(this.prisma, (transaction) => work(transaction));
   }
 }
 
@@ -91,6 +93,7 @@ implements ProductMaterialsCurrentDraftPersistence<Transaction> {
     readonly userId: string;
     readonly membershipId: string;
   }) {
+    await lockEntitlementOrganization(transaction, input.organizationId);
     return this.safe(async () => {
       const row = await transaction.membership.findFirst({
         where: { id: input.membershipId, organizationId: input.organizationId, userId: input.userId },
@@ -168,6 +171,7 @@ implements ProductMaterialsCurrentDraftPersistence<Transaction> {
     readonly expectedUpdatedAt: Date;
     readonly actorId: string;
   }): Promise<boolean> {
+    await assertContentWrite(transaction, input.organizationId);
     return this.safe(async () => (await transaction.product.updateMany({
       where: {
         id: input.productId,

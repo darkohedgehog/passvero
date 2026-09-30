@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { hasProductPermission, PRODUCT_CREATE, roleHasProductPermission } from "@/src/application/permissions/product-permissions";
 import { ApplicationError, type ApplicationErrorCategory } from "@/src/application/errors/application-error";
 import type {
@@ -294,6 +295,7 @@ function mapCreateProductError(
   trustedApplicationErrors: WeakSet<ApplicationError>,
   createProductError: CreateProductError,
 ): ApplicationError {
+  if (error instanceof EntitlementError) return error;
   if (error instanceof ApplicationError && trustedApplicationErrors.has(error)) {
     return error;
   }

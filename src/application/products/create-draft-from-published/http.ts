@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { ApplicationError } from "@/src/application/errors/application-error";
@@ -32,6 +33,7 @@ export function createCreateDraftHttpHandler(dependencies: {
       const result = await dependencies.createDraft(command, resolution.context);
       return json(result.status, 200);
     } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } });
       if (error instanceof ApplicationError) {
         if (error.code === "CREATE_DRAFT_IMAGES_UNSUPPORTED") return json("IMAGES_UNSUPPORTED", 409);
         if (error.category === "CONFLICT") return json("CONFLICT", 409);

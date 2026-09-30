@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
@@ -34,7 +35,8 @@ export function createProductQrHttpHandlers(dependencies: {
         const activationEvidence = await readEvidence(request);
         const result = await dependencies.activate({ productId, activationEvidence }, await context(request));
         return Response.json({ status: result.status }, { headers: safeHeaders });
-      } catch (error) { return qrHttpFailure(error); }
+      } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return qrHttpFailure(error); }
     },
     async artifact(request: Request, productId: string, format: QrFormat, preview: boolean): Promise<Response> {
       try {
@@ -47,7 +49,8 @@ export function createProductQrHttpHandlers(dependencies: {
           "content-disposition": preview ? "inline" : `attachment; filename="${artifact.filename}"`,
           ...(format === "SVG" ? { "content-security-policy": "default-src 'none'; sandbox" } : {}),
         } });
-      } catch (error) { return qrHttpFailure(error); }
+      } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return qrHttpFailure(error); }
     },
   };
 }

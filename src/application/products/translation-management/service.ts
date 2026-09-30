@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { ApplicationError } from "../../errors/application-error";
 import type { AuthenticatedUserContext } from "../../context/authenticated-user-context";
 import { hasProductPermission, roleHasProductPermission, PRODUCT_EDIT, PRODUCT_READ } from "../../permissions/product-permissions";
@@ -30,6 +31,7 @@ export function createTranslationManagementServices<Tx>(deps: TranslationDepende
         return work(tx, context, fail);
       });
     } catch (error) {
+      if (error instanceof EntitlementError) throw error;
       if (error instanceof ApplicationError && trusted.has(error)) throw error;
       if (error instanceof TranslationConflict) throw fail("CONFLICT", "CONFLICT");
       throw fail("INTERNAL", "OPERATIONAL_FAILURE");

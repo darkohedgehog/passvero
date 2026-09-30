@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
@@ -85,6 +86,7 @@ export function createEditProductDraftHttpHandler(dependencies: {
       await dependencies.edit({ productId, ...payload }, resolution.context);
       return json({ status: "UPDATED" }, 200);
     } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } });
       return mapEditProductDraftError(error);
     }
   };

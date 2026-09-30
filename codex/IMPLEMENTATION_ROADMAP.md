@@ -1,5 +1,25 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Aktualizacija 2026-09-30 — prava, kvote i promjene paketa (staging dokazi i Safari UI ispravka potvrđeni)
+
+Druga pretplatna cjelina ima source enforcement, jednokratni trial, zajedničke CSV/ručne
+kvote, vremenske javne zaštite i izvršne upgrade/downgrade/zamjenske ponude. Zasebna
+regulatorna ovlast upravlja VOLUNTARY/MANDATORY/UNRESOLVED klasifikacijom uz audit.
+Lokalni disposable proof 12 PASS; odvojeno 48 aplikacijskih, 65 mutation regresija
+te 18 testova pogođenih UI korekcijom. Završni source review PASS nakon ispravki.
+Odobrene staging migracije, ACL, tri enrollmenta, regulatorni grant i deploy potvrđeni;
+konačni build nakon Safari UI korekcije `W7mp9vBnQ9juQNqP9tnh6`. Sintetički servisni upgrade/downgrade i javni HTML
+HTTPS scenariji PASS; trial create-limit/istek provjereni browserom i završnim DB inventarom.
+Samo SIMULATED_PAYMENT; 7 novih perioda i 1 upgrade receipt, bez stvarnih uplata.
+Chrome HR/DE mobilna emulacija PASS. Safari desktop jezik/odjava vizuelno PASS prema
+korisnikovom screenshotu nakon ispravke native select prikaza; 22 pogođena testa,
+TypeScript/lint i čist Webpack build PASS. Novi live PDF/image grace transport
+i live konkurentni/CSV proof nisu izvršeni.
+[Izvještaj, točni zadržani ID-jevi i odvojeni lokalni/live statusi](SUBSCRIPTION_ENTITLEMENTS_QUOTAS_AND_PLAN_CHANGES_STAGING.md).
+Podsjetnici su treća cjelina; backup/retencijski preduslovi produkcije ostaju otvoreni.
+Rollback je dokumentiran, live neizvršen. Bez commita/pusha ove cjeline i produkcijskih promjena.
+Starije sekcije ispod opisuju tadašnji opseg.
+
 ## Aktualizacija 2026-09-30 — ručni komercijalni tok (source/local PASS; početna kupovina staging PASS)
 
 Korisnik je potvrdio ugovor §§3–4 uz stroži downgrade: manji paket se ne aktivira

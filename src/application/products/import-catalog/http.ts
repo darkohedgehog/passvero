@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { z } from "zod";
 import { canonicalProxyDenial, type CanonicalProxyDependencies } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
@@ -59,6 +60,7 @@ export function createCatalogImportHandler(deps: CanonicalProxyDependencies & {
         }
       }
       return Response.json(result, { headers });
-    } catch (error) { return importFailure(error instanceof z.ZodError ? new CatalogImportError("VALIDATION") : error); }
+    } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return importFailure(error instanceof z.ZodError ? new CatalogImportError("VALIDATION") : error); }
   };
 }

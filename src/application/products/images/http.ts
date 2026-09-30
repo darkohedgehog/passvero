@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { ApplicationError } from "../../errors/application-error";
 import { canonicalProxyDenial } from "../../http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "../../context/resolve-authenticated-user-context";
@@ -35,7 +36,8 @@ export function createImageHttpHandlers(deps: {
         if (remove ? (command as { operation: string }).operation !== "REMOVE" : request.method !== "POST" || (command as { operation: string }).operation !== "SET" || !["image/jpeg", "image/png"].includes(request.headers.get("content-type") ?? "")) throw imageError("VALIDATION", "INVALID_IMAGE");
         const bytes = remove ? null : await readDocumentBytes(request.body, AbortSignal.any([request.signal, AbortSignal.timeout(20_000)]), MAX_IMAGE_BYTES);
         return Response.json(await deps.services.mutate(productId, command, bytes, ctx.context), { headers });
-      } catch (error) { return imageHttpFailure(error); }
+      } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return imageHttpFailure(error); }
       finally { if (acquired) active--; }
     },
     async download(request: Request, imageId: string, target: { productId: string } | { publicCode: string }) {
@@ -50,7 +52,8 @@ export function createImageHttpHandlers(deps: {
         })();
         // No signed redirects, 304 or range cache paths bypass the fresh authority check.
         return new Response(request.method === "HEAD" ? null : new Uint8Array(file.bytes), { headers: { ...headers, "content-type": file.mimeType, "content-length": String(file.sizeBytes), "content-disposition": "inline", "accept-ranges": "none", "content-security-policy": "default-src 'none'; sandbox" } });
-      } catch (error) { return imageHttpFailure(error, request.method === "HEAD"); }
+      } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return imageHttpFailure(error, request.method === "HEAD"); }
       finally { if (acquired) active--; }
     },
   };

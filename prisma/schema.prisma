@@ -195,6 +195,7 @@ enum AuthAbuseEndpoint {
 }
 
 model User {
+  regulatoryGrant PlatformRegulatoryGrant?
   billingGrant PlatformBillingGrant?
   platformGrant PlatformGrant?
   accessRequest AccessRequest?
@@ -231,6 +232,8 @@ model User {
 }
 
 model Organization {
+  entitlementEnrollment OrganizationEntitlementEnrollment?
+  upgradeReceipts SubscriptionUpgradeReceipt[]
   commercialRequests CommercialRequest[]
   paidPeriods SubscriptionPaidPeriod[]
   billingProfile OrganizationBillingProfile?
@@ -321,6 +324,10 @@ model Invitation {
 }
 
 model Product {
+  regulatoryClassification String @default("UNRESOLVED")
+  regulatoryClassifiedAt DateTime?
+  regulatoryClassifiedById String? @db.Uuid
+  regulatoryReason String?
   id                        String                 @id @default(uuid()) @db.Uuid
   organizationId            String                 @db.Uuid
   internalName              String
@@ -1203,6 +1210,7 @@ model CommercialRequest {
   payloadHash String
   planSlug String
   months Int
+  changeKind String @default("STANDARD")
   status String @default("REQUESTED")
   acceptedOfferId String? @unique @db.Uuid
   acceptedAt DateTime?
@@ -1212,6 +1220,7 @@ model CommercialRequest {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   offers CommercialOffer[] @relation("RequestOffers")
   acceptedOffer CommercialOffer? @relation("AcceptedOffer", fields: [acceptedOfferId], references: [id], onDelete: Restrict)
+  upgradeReceipt SubscriptionUpgradeReceipt?
   paidPeriod SubscriptionPaidPeriod?
   @@unique([organizationId, idempotencyKey])
   @@index([organizationId, createdAt])
@@ -1231,6 +1240,7 @@ model CommercialOffer {
   expiresAt DateTime
   request CommercialRequest @relation("RequestOffers", fields: [requestId], references: [id], onDelete: Restrict)
   acceptedByRequest CommercialRequest? @relation("AcceptedOffer")
+  upgradeReceipt SubscriptionUpgradeReceipt?
   paidPeriod SubscriptionPaidPeriod?
   @@unique([issuer, referenceYear, referenceNumber])
   @@index([requestId, createdAt])
@@ -1239,6 +1249,8 @@ model CommercialOffer {
 
 /// Immutable receipt and agreed rights. Subscription remains the current projection.
 model SubscriptionPaidPeriod {
+  upgradeReceipts SubscriptionUpgradeReceipt[]
+  activation SubscriptionPaidPeriodActivation?
   id String @id @default(uuid()) @db.Uuid
   organizationId String @db.Uuid
   requestId String @unique @db.Uuid
@@ -1259,4 +1271,63 @@ model SubscriptionPaidPeriod {
   offer CommercialOffer @relation(fields: [offerId], references: [id], onDelete: Restrict)
   @@unique([issuer, referenceYear, referenceNumber])
   @@index([organizationId, startsAt, endsAt])
+}
+
+/// Immutable explicit supplement; never changes the base or future receipts.
+model SubscriptionUpgradeReceipt {
+  sequence Int
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @db.Uuid
+  requestId String @unique @db.Uuid
+  offerId String @unique @db.Uuid
+  basePeriodId String @db.Uuid
+  planSlug String
+  startsAt DateTime
+  endsAt DateTime
+  snapshot Json
+  paymentKind String
+  issuer String
+  referenceYear Int
+  referenceNumber String
+  confirmedById String @db.Uuid
+  confirmedAt DateTime @default(now())
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  request CommercialRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  offer CommercialOffer @relation(fields: [offerId], references: [id], onDelete: Restrict)
+  basePeriod SubscriptionPaidPeriod @relation(fields: [basePeriodId], references: [id], onDelete: Restrict)
+  @@unique([basePeriodId, sequence])
+  @@unique([issuer, referenceYear, referenceNumber])
+  @@index([organizationId, startsAt, endsAt])
+}
+
+/// A blocked activation is durable; operator resolution requires a new agreement.
+model SubscriptionPaidPeriodActivation {
+  periodId String @id @db.Uuid
+  status String @default("PENDING")
+  reasons Json @default("[]")
+  checkedAt DateTime?
+  period SubscriptionPaidPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict)
+}
+
+
+/// Explicit enrollment; no inferred historical trial and no permanent legacy bypass.
+model OrganizationEntitlementEnrollment {
+  organizationId String @id @db.Uuid
+  enrolledAt DateTime
+  trialStartedAt DateTime?
+  trialEndsAt DateTime?
+  lifetimeCreatedProducts Int @default(0)
+  exceptionStartsAt DateTime?
+  exceptionEndsAt DateTime?
+  exceptionLimits Json?
+  reason String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+}
+
+/// Regulatory classification is independent of billing and read-only platform grants.
+model PlatformRegulatoryGrant {
+  userId String @id @db.Uuid
+  grantedAt DateTime @default(now())
+  revokedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 }

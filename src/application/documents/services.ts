@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { verifiedDocumentDownload } from "./verified-download";
 import { type SignatureHealthPort } from "./malware-scan";
 import type { AuthenticatedUserContext } from "../context/authenticated-user-context";
@@ -13,7 +14,7 @@ export function createDocumentServices(deps: { persistence: DocumentPersistence;
   }
   async function finalize(row: DocumentRecord, context: AuthenticatedUserContext) {
     try { await persistence.finalize(context, row.id); }
-    catch { throw new DocumentError("RECOVERY_REQUIRED"); }
+    catch (error) { if (error instanceof EntitlementError) throw error; throw new DocumentError("RECOVERY_REQUIRED"); }
     return { status: "AVAILABLE" as const, documentId: row.id };
   }
   return {

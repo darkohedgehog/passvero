@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
@@ -31,7 +32,8 @@ export function createCnClassificationHttpHandler(dependencies: {
       if (payload.operation === "ADD") return json({ status: (await dependencies.add({ productId, ...withoutOperation(payload) }, resolution.context)).status }, 200);
       if (payload.operation === "EDIT") return json({ status: (await dependencies.edit({ productId, ...withoutOperation(payload) }, resolution.context)).status }, 200);
       return json({ status: (await dependencies.remove({ productId, ...withoutOperation(payload) }, resolution.context)).status }, 200);
-    } catch (error) { return mapError(error); }
+    } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return mapError(error); }
   };
 }
 

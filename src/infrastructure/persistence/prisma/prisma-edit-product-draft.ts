@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import type {
   EditProductDraftPersistence,
   EditProductDraftTransactionRunner,
@@ -59,7 +61,7 @@ implements EditProductDraftTransactionRunner<EditProductDraftPrismaTransaction> 
   run<Result>(
     work: (transaction: EditProductDraftPrismaTransaction) => Promise<Result>,
   ): Promise<Result> {
-    return this.prisma.$transaction((transaction) => work(transaction));
+    return runEntitlementTransaction(this.prisma, (transaction) => work(transaction));
   }
 }
 
@@ -115,6 +117,7 @@ implements
     transaction: EditProductDraftPrismaTransaction,
     input: Parameters<EditProductDraftPersistence<EditProductDraftPrismaTransaction>["readEligibility"]>[1],
   ) {
+    await lockEntitlementOrganization(transaction, input.organizationId);
     return this.read("read", async () => {
       const membership = await transaction.membership.findFirst({
         where: {
@@ -199,6 +202,7 @@ implements
     transaction: EditProductDraftPrismaTransaction,
     input: Parameters<EditProductDraftPersistence<EditProductDraftPrismaTransaction>["updateProductIfCurrent"]>[1],
   ): Promise<boolean> {
+    await assertContentWrite(transaction, input.organizationId);
     return this.update("updateProduct", async () => {
       const result = await transaction.product.updateMany({
         where: {

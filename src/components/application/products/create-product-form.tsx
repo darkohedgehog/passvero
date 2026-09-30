@@ -33,6 +33,7 @@ export interface CreateProductFormLabels {
   readonly skuConflict: string;
   readonly forbidden: string;
   readonly failure: string;
+  readonly subscriptionDenied?: Readonly<Record<string, string>>;
 }
 
 type Fetcher = (
@@ -61,7 +62,7 @@ export function CreateProductForm({
 }>) {
   const [pending, setPending] = useState(false);
   const [fieldError, setFieldError] = useState<FieldError | null>(null);
-  const [formError, setFormError] = useState<"FORBIDDEN" | "FAILURE" | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const inFlightRef = useRef(false);
   const summaryRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -131,7 +132,7 @@ export function CreateProductForm({
       focusFailure(result.field);
       return;
     }
-    const nextFormError = result.status === "FORBIDDEN" ? "FORBIDDEN" : "FAILURE";
+    const nextFormError = result.status === "SUBSCRIPTION_DENIED" ? result.reason : result.status === "FORBIDDEN" ? "FORBIDDEN" : "FAILURE";
     setFormError(nextFormError);
     focusFailure(null);
   }
@@ -140,7 +141,7 @@ export function CreateProductForm({
     ? labels.forbidden
     : formError === "FAILURE"
       ? labels.failure
-      : "";
+      : formError ? labels.subscriptionDenied?.[formError] ?? labels.failure : "";
 
   return (
     <form onSubmit={submit} aria-busy={pending} className="space-y-6" noValidate>

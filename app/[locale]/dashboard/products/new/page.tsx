@@ -40,6 +40,8 @@ export default async function CreateProductPage({ params }: PageProps) {
     getTranslations({ locale, namespace: "CreateProduct" }),
   ]);
 
+  const subscriptionT = await getTranslations({ locale, namespace: "Subscription" });
+
   let resolution: Awaited<ReturnType<typeof resolveProtectedDashboard>>;
   try {
     resolution = await resolveProtectedDashboard(await headers());
@@ -116,6 +118,15 @@ export default async function CreateProductPage({ params }: PageProps) {
           skuConflict: createT("skuConflict"),
           forbidden: createT("forbidden"),
           failure: createT("failure"),
+          subscriptionDenied: {
+            STORED_PRODUCT_LIMIT: subscriptionT("STORED_PRODUCT_LIMIT"),
+            TRIAL_CREATION_LIMIT: subscriptionT("TRIAL_CREATION_LIMIT"),
+            PUBLICATION_LIMIT: subscriptionT("PUBLICATION_LIMIT"),
+            STORAGE_LIMIT: subscriptionT("STORAGE_LIMIT"),
+            PDF_ATTACHMENT_LIMIT: subscriptionT("PDF_ATTACHMENT_LIMIT"),
+            SUBSCRIPTION_EXPIRED: subscriptionT("EXPIRED"),
+            SUBSCRIPTION_TRANSITION_REQUIRED: subscriptionT("TRANSITION_REQUIRED"),
+          },
         }}
       />
     </div>,

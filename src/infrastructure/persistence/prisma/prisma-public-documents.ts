@@ -1,3 +1,4 @@
+import { allowsPublicProduct } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import type { PrismaClient } from "@/src/generated/prisma/client";
 import type { PublicDocumentPersistence, PublicDocumentRow } from "@/src/application/public-dpp/documents";
 import { MAX_DOCUMENT_PDF_SIZE } from "@/src/application/documents/pdf";
@@ -8,7 +9,7 @@ export class PrismaPublicDocuments implements PublicDocumentPersistence {
     // Prisma may use multiple relation queries: bind them to a single MVCC snapshot.
     return this.prisma.$transaction(async tx => {
       const product = await tx.product.findUnique({ where: { publicCode }, select: {
-        id: true, organizationId: true, lifecycleStatus: true, currentPublishedVersionId: true, lastPublishedAt: true,
+        id: true, organizationId: true, regulatoryClassification: true, lifecycleStatus: true, currentPublishedVersionId: true, lastPublishedAt: true,
         organization: { select: { status: true } },
         passport: { select: { productId: true, organizationId: true, status: true, lastPublishedAt: true } },
         currentPublishedVersion: { select: {
@@ -18,6 +19,7 @@ export class PrismaPublicDocuments implements PublicDocumentPersistence {
             include: { document: true } },
         } },
       } });
+      if (product && !await allowsPublicProduct(tx, product.organizationId, product.regulatoryClassification)) return [];
       const version = product?.currentPublishedVersion;
       const passport = product?.passport;
       if (!product || !version || !passport || product.lifecycleStatus !== "ACTIVE" || product.organization.status !== "ACTIVE"

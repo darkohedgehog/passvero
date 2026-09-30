@@ -240,3 +240,29 @@ komercijalnog ugovora i ne dopušta obećanje pune zaštite datoteka kupcima.
 
 Prvobitni dokumentacijski pregled: diff/whitespace PASS, bez aplikacijskih testova.
 Naknadna implementacija ima zasebne lokalne i staging dokaze u izvještaju implementacije.
+
+
+## 7. Potvrđeno za drugu cjelinu — prava, kvote i promjene paketa
+
+Potvrda korisnika 2026-09-30: plaćeni downgrade iznad bilo kojeg nižeg limita na
+početku sljedećeg perioda dobiva `BLOCKED_REQUIRES_OPERATOR`. Uplata i prihvaćena
+ponuda ostaju nepromjenjivi. Stara prava istječu, nova se ne aktiviraju. Nema
+automatskog povrata, kredita, pomicanja perioda ili produženja starih prava.
+Razrješenje zahtijeva eksplicitnu auditiranu odluku i prihvaćenu dopunsku/zamjensku
+ponudu. UI prije prihvata pokazuje prekoračene limite i posljedice. Blokada ne
+ukida prijavu, dozvoljeni pregled/izvoz niti izmjene billing profila. Blokirani
+period sam ne produžuje javni rok; ranije stečeni plaćeni grace ostaje zaseban.
+
+Regulatorna klasifikacija proizvoda je `VOLUNTARY`, `MANDATORY` ili `UNRESOLVED`.
+Novi i postojeći proizvodi bez potvrde imaju `UNRESOLVED`. Samo zaseban eksplicitni
+regulatorni grant dopušta promjenu; billing/read-only ovlast nije dovoljna. Svaka
+promjena bilježi razlog, prethodnu/novu vrijednost i identitet operatora. Klasifikacija
+vrijedi kroz verzije proizvoda, bez prepisivanja povijesnih snapshotova ili cijena.
+Samo potvrđeni VOLUNTARY slijedi trial/plaćeni javni rok. MANDATORY/UNRESOLVED
+zahtijevaju zasebno razrješenje/ugovor, bez generičkog komercijalnog gašenja.
+Klasifikacija ne daje sadržajna prava, kvote ni besplatnu aktivnu pretplatu.
+Publication, tenant, malware i integritet provjere ostaju obavezne.
+
+Točni staging prijelazi, novi regulatorni grant i klasifikacije postojećih proizvoda
+čekaju jedan objedinjeni prijedlog ID-jeva i korisničko odobrenje. Podsjetnici ostaju
+treća cjelina. Production, stvarne uplate i automatsko brisanje nisu odobreni.

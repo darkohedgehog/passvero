@@ -71,5 +71,21 @@ test("all six offer views distinguish agreed expiry policy from enforcement avai
   const html=renderToStaticMarkup(createElement(NextIntlClientProvider,{locale,messages,timeZone:"Europe/Zagreb",children:createElement(CommercialOverview,{state:{...state,requests:[offeredRequest]},now:"2026-09-30T10:00:00Z"})}));
   assert.ok(html.includes(messages.Subscription.contentLock));assert.ok(html.includes(messages.Subscription.quotaNotice));assert.ok(html.includes(messages.Subscription.issued));
  }
- assert.match(en.Subscription.contentLock,/approved policy/);assert.match(en.Subscription.contentLock,/does not yet enforce/);assert.match(en.Subscription.quotaNotice,/automatic content locking.*not yet globally enforced/);
+ assert.match(en.Subscription.contentLock,/require active rights/);assert.doesNotMatch(en.Subscription.quotaNotice,/not yet/);
+});
+
+test("downgrade consequences and excess limits appear before acceptance",()=>{
+ const snapshot=offeredRequest.offer!.snapshot;
+ const request={...offeredRequest,offer:{...offeredRequest.offer!,snapshot:{...snapshot,version:2 as const,changeKind:"DOWNGRADE" as const,basePeriodId:"00000000-0000-4000-8000-000000000004",baseLimits:snapshot.limits,downgradeWarnings:["STORAGE_LIMIT"]}}};
+ const html=renderState({...state,canManage:true,requests:[request]});
+ assert.ok(html.indexOf(en.Subscription.downgradeConsequence)<html.indexOf(en.Subscription.acceptConfirm));
+ assert.ok(html.includes(en.Subscription.STORAGE_LIMIT));
+});
+
+test("expired blocked receipt retains replacement recovery independently of current denial reasons",()=>{
+ const blocked={...state,canManage:true,unresolvedReplacementPeriodId:"00000000-0000-4000-8000-000000000099",entitlements:{kind:"EXPIRED",planSlug:"start",end:"2026-09-01T10:00:00Z",limits:null,blockedReasons:[]}};
+ const html=renderState(blocked);
+ assert.match(html,/<option value="REPLACEMENT" selected="">/);
+ assert.ok(html.includes(en.Subscription.replacementConsequence));
+ assert.doesNotMatch(renderState({...blocked,unresolvedReplacementPeriodId:null}),/<option value="REPLACEMENT"/);
 });

@@ -19,7 +19,7 @@ export type ImportValues = z.infer<typeof importValuesSchema>;
 export type ImportRow = { number: number; values: ImportValues; valid: boolean; errors: string[]; skuConflict: boolean; gtinMatch: boolean; similarName: boolean; apostrophe: boolean; numericSku: boolean };
 export type ImportOutcome = { number: number; status: string; productId: string | null; error: string | null };
 export type ImportBatchState = { id: string; status: string; selected: number[]; outcomes: ImportOutcome[] };
-export type ImportPreview = { headers: string[]; ignored: string[]; contentHash: string; token: string; rows: ImportRow[]; errorCount: number; invalidCount: number; existing: ImportBatchState | null };
+export type ImportPreview = { availableCreationSlots?: number; headers: string[]; ignored: string[]; contentHash: string; token: string; rows: ImportRow[]; errorCount: number; invalidCount: number; existing: ImportBatchState | null };
 export class CatalogImportError extends Error {
   constructor(readonly code: "FORBIDDEN" | "FILE" | "MAPPING" | "VALIDATION" | "STALE_PREVIEW" | "SELECTION" | "NOT_FOUND" | "FAILED" | "CANCELLED") { super(code); }
 }

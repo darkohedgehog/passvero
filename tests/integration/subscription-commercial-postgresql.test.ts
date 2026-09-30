@@ -24,7 +24,7 @@ test("commercial least-privilege initial purchase, immutable evidence, renewal, 
  assert.equal((await changeBillingGrant(db,db,{action:"grant",email:operator.email,operator:"synthetic-proof"})).status,"GRANTED");
  await db.$executeRawUnsafe('CREATE ROLE commercial_runtime_proof NOLOGIN');
  await db.$executeRawUnsafe('GRANT USAGE ON SCHEMA public TO commercial_runtime_proof');
- await db.$executeRawUnsafe('GRANT SELECT ON "User","Organization","Membership","AuthIdentity","PlatformBillingGrant","OrganizationBillingProfile","Plan","Product","CommercialOffer","SubscriptionPaidPeriod" TO commercial_runtime_proof');
+ await db.$executeRawUnsafe('GRANT SELECT ON "User","Organization","Membership","AuthIdentity","PlatformBillingGrant","OrganizationBillingProfile","Plan","Product","CommercialOffer","SubscriptionPaidPeriod","OrganizationEntitlementEnrollment","SubscriptionUpgradeReceipt","SubscriptionPaidPeriodActivation","Document","ProductImageAsset","ProductDocument","ProductVersion" TO commercial_runtime_proof');
  // PostgreSQL requires UPDATE permission on at least one column for FOR UPDATE; no organization mutation occurs.
  await db.$executeRawUnsafe('GRANT UPDATE (id) ON "Organization" TO commercial_runtime_proof');
  await db.$executeRawUnsafe('GRANT SELECT,INSERT,UPDATE ON "CommercialRequest","Subscription" TO commercial_runtime_proof');

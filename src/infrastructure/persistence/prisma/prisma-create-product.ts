@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import type {
   CreateProductPersistence,
   CreatedProductIdentity,
@@ -24,7 +26,7 @@ implements TransactionRunner<CreateProductPrismaTransaction> {
   run<Result>(
     work: (transaction: CreateProductPrismaTransaction) => Promise<Result>,
   ): Promise<Result> {
-    return this.prisma.$transaction((transaction) => work(transaction));
+    return runEntitlementTransaction(this.prisma, (transaction) => work(transaction));
   }
 }
 
@@ -77,6 +79,7 @@ implements CreateProductPersistence<CreateProductPrismaTransaction> {
       readonly actorId: string;
     },
   ): Promise<CreatedProductIdentity> {
+    await assertContentWrite(transaction, input.organizationId, { storedProducts: 1 });
     try {
       const product = await transaction.product.create({
         data: {

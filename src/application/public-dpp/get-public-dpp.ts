@@ -95,10 +95,16 @@ export function createGetPublicDppService(dependencies: {
         warrantyInformation: translation.warrantyInformation,
         publicNotes: translation.publicNotes,
       };
+      const documents = dependencies.documents ? await dependencies.documents.list(query.publicCode, { number: content.versionNumber, publishedAt: content.publishedAt.toISOString() }) : undefined;
+      // Asset lookup can cross expiry; recheck commercial/public authority before delivery.
+      const currentAuthority = await dependencies.persistence.readAuthorityByPublicCode(query.publicCode);
+      if (!currentAuthority || currentAuthority.productLifecycleStatus !== "ACTIVE" || currentAuthority.organizationStatus !== "ACTIVE"
+        || !currentAuthority.passport?.ownershipConsistent || currentAuthority.passport.status !== "ACTIVE"
+        || currentAuthority.productLastPublishedAt?.getTime() !== content.publishedAt.getTime()) return { kind: "NOT_FOUND" };
       return {
         kind: "PUBLIC",
         dpp: {
-          ...(dependencies.documents ? { documents: await dependencies.documents.list(query.publicCode, { number: content.versionNumber, publishedAt: content.publishedAt.toISOString() }) } : {}),
+          ...(documents ? { documents } : {}),
           image: content.imageRows?.length === 1 ? {
             url: `/api/public/products/${encodeURIComponent(query.publicCode)}/images/${encodeURIComponent(content.imageRows[0].id)}`,
             altText: content.imageRows[0].altText, width: content.imageRows[0].width, height: content.imageRows[0].height,

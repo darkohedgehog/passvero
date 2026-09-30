@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { canonicalProxyDenial } from "../../http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "../../context/resolve-authenticated-user-context";
 import { ApplicationError } from "../../errors/application-error";
@@ -31,6 +32,7 @@ export function createTranslationHttpHandler(deps: { canonicalOrigin: string; ve
       const result = await deps.mutate({ ...payload, productId } as TranslationCommand,resolution.context);
       return json(result.status,200);
     } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } });
       if (error instanceof ApplicationError) {
         if (error.category === "CONFLICT") return json(error.code === "TRANSLATION_CONFLICT" ? "CONFLICT" : "STALE_WRITE",409);
         if (error.category === "INVALID_STATE") return json(error.code === "TRANSLATION_SOURCE_PROTECTED" ? "SOURCE_PROTECTED" : "NOT_EDITABLE",409);

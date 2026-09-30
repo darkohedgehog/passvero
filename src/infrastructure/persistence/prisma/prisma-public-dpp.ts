@@ -1,7 +1,8 @@
+import { allowsPublicProduct } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { manufacturerSelect } from "@/src/application/products/manufacturer/contracts";
 import type { PublicDppPersistence } from "@/src/application/public-dpp/ports";
 import { PUBLIC_DPP_LOCALES } from "@/src/application/public-dpp/contracts";
-import type { PrismaClient } from "@/src/generated/prisma/client";
+import type { Prisma, PrismaClient } from "@/src/generated/prisma/client";
 
 const translationSelect = {
   locale: true,
@@ -20,7 +21,7 @@ const translationSelect = {
 } as const;
 
 export class PrismaPublicDppPersistence implements PublicDppPersistence {
-  constructor(private readonly prisma: Pick<PrismaClient, "product" | "productVersion">) {}
+  constructor(private readonly prisma: PrismaClient | Prisma.TransactionClient) {}
 
   async readAuthorityByPublicCode(publicCode: string) {
     const product = await this.prisma.product.findUnique({
@@ -28,6 +29,7 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
       select: {
         id: true,
         organizationId: true,
+        regulatoryClassification: true,
         lifecycleStatus: true,
         currentPublishedVersionId: true,
         lastPublishedAt: true,
@@ -46,6 +48,7 @@ export class PrismaPublicDppPersistence implements PublicDppPersistence {
       },
     });
     if (product === null) return null;
+    if (!("$transaction" in this.prisma ? await this.prisma.$transaction(tx => allowsPublicProduct(tx, product.organizationId, product.regulatoryClassification)) : await allowsPublicProduct(this.prisma, product.organizationId, product.regulatoryClassification))) return null;
     return {
       productLifecycleStatus: product.lifecycleStatus,
       organizationStatus: product.organization.status,

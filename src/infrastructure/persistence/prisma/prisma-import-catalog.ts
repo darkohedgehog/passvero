@@ -1,3 +1,6 @@
+import { readEntitlements, readEntitlementUsage } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { randomBytes, randomUUID } from "node:crypto";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
@@ -32,7 +35,7 @@ async function lockBatch(tx: Tx, c: AuthenticatedUserContext, id: string) {
 export class PrismaCatalogImportPersistence implements CatalogImportPersistence {
   constructor(private readonly prisma: PrismaClient) {}
   private run<T>(work: (tx: Tx) => Promise<T>, timeout = 5000) {
-    return this.prisma.$transaction(async tx => { await tx.$executeRaw`SET LOCAL statement_timeout = '4000ms'`; return work(tx); }, { timeout, maxWait: 2000 });
+    return runEntitlementTransaction(this.prisma, async tx => { await tx.$executeRaw`SET LOCAL statement_timeout = '4000ms'`; return work(tx); }, { timeout, maxWait: 2000 });
   }
   async inspect(c: AuthenticatedUserContext, hash: string, rows: ImportRow[]) {
     return this.run(async tx => {
@@ -46,7 +49,10 @@ export class PrismaCatalogImportPersistence implements CatalogImportPersistence 
       const skuRows = skus.length ? await tx.product.findMany({ where: { organizationId: c.organizationId, normalizedSku: { in: skus }, id: { notIn: ownIds } }, select: { normalizedSku: true } }) : [];
       const nameRows = names.length ? await tx.$queryRaw<{ name: string }[]>(Prisma.sql`SELECT DISTINCT lower("internalName") AS name FROM "Product" WHERE "organizationId"=${c.organizationId}::uuid AND lower("internalName")=ANY(${names}::text[]) AND NOT(id=ANY(${ownIds}::uuid[]))`) : [];
       const gtinRows = gtins.length ? await tx.$queryRaw<{ gtin: string }[]>(Prisma.sql`SELECT DISTINCT lpad(i.value,14,'0') AS gtin FROM "Product" p JOIN "ProductVersion" v ON v."productId"=p.id AND v."organizationId"=p."organizationId" JOIN "ProductIdentifier" i ON i."productVersionId"=v.id AND i.type='GTIN' WHERE p."organizationId"=${c.organizationId}::uuid AND NOT(p.id=ANY(${ownIds}::uuid[])) AND ((p."currentDraftVersionId"=v.id AND v.status IN ('DRAFT','READY_FOR_REVIEW')) OR (p."currentPublishedVersionId"=v.id AND v.status='PUBLISHED')) AND lpad(i.value,14,'0')=ANY(${gtins}::text[])`) : [];
-      return { existing, skus: skuRows.flatMap(r => r.normalizedSku ? [r.normalizedSku] : []), names: nameRows.map(r => r.name), gtins: gtinRows.map(r => r.gtin) };
+      const rights = await readEntitlements(tx, c.organizationId);
+      const usage = await readEntitlementUsage(tx, c.organizationId);
+      const availableCreationSlots = rights.limits ? Math.max(0, Math.min(rights.limits.maxStoredProducts - usage.storedProducts, rights.kind === "TRIAL" ? 3 - usage.lifetimeCreatedProducts : Number.MAX_SAFE_INTEGER)) : 0;
+      return { availableCreationSlots, existing, skus: skuRows.flatMap(r => r.normalizedSku ? [r.normalizedSku] : []), names: nameRows.map(r => r.name), gtins: gtinRows.map(r => r.gtin) };
     }, 15000);
   }
   async confirm(c: AuthenticatedUserContext, input: Parameters<CatalogImportPersistence["confirm"]>[1]) {
@@ -93,7 +99,7 @@ export class PrismaCatalogImportPersistence implements CatalogImportPersistence 
         // receipt update cannot overwrite another request's successfully committed row.
         await this.run(async tx => {
           await authorize(tx, c); await lockBatch(tx, c, id);
-          await tx.catalogImportRow.updateMany({ where: { batchId: id, rowNumber: row.number, rowHash: row.hash, status: "PENDING" }, data: { status: "FAILED", error: error instanceof ApplicationError && error.code === "CREATE_PRODUCT_SKU_CONFLICT" ? "SKU_CONFLICT" : "ROW_FAILED" } });
+          await tx.catalogImportRow.updateMany({ where: { batchId: id, rowNumber: row.number, rowHash: row.hash, status: "PENDING" }, data: { status: "FAILED", error: error instanceof EntitlementError ? error.code : error instanceof ApplicationError && error.code === "CREATE_PRODUCT_SKU_CONFLICT" ? "SKU_CONFLICT" : "ROW_FAILED" } });
         });
       }
     }

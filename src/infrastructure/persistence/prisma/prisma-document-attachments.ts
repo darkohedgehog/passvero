@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertPdfAttachment, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import type { AttachmentPersistence, AttachmentDependencies } from "@/src/application/products/document-attachments/contracts";
 import { PrismaTranslationManagementPersistence } from "./prisma-translation-management";
@@ -10,12 +12,14 @@ export class PrismaDocumentAttachments implements AttachmentPersistence<Tx> {
   private readonly existing: PrismaTranslationManagementPersistence;
   constructor(prisma: PrismaClient) { this.existing = new PrismaTranslationManagementPersistence(prisma); }
   async readEligibility(tx: Tx, input: Parameters<AttachmentPersistence<Tx>["readEligibility"]>[1]) {
+    await lockEntitlementOrganization(tx, input.organizationId);
     // Hold the revalidated authority until the authoring transaction commits.
     await tx.$queryRaw(Prisma.sql`SELECT m."id" FROM "Membership" m JOIN "Organization" o ON o."id"=m."organizationId" WHERE m."id"=${input.membershipId}::uuid AND m."userId"=${input.userId}::uuid AND m."organizationId"=${input.organizationId}::uuid FOR SHARE OF m,o`);
     return this.existing.readEligibility(tx, input);
   }
   touch(tx: Tx, input: Parameters<AttachmentPersistence<Tx>["touch"]>[1]) { return this.existing.touch(tx, input); }
   async lockState(tx: Tx, productId: string, organizationId: string) {
+    await lockEntitlementOrganization(tx, organizationId);
     await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Product" WHERE "id"=${productId}::uuid AND "organizationId"=${organizationId}::uuid FOR UPDATE`);
     const row = await tx.product.findFirst({ where: { id: productId, organizationId }, select: {
       id: true, organizationId: true, lifecycleStatus: true, currentDraftVersionId: true, updatedAt: true,
@@ -29,6 +33,8 @@ export class PrismaDocumentAttachments implements AttachmentPersistence<Tx> {
     return tx.document.findFirst({ where: { id: documentId, organizationId }, select: { status: true } });
   }
   async attach(tx: Tx, draftId: string, documentId: string, metadata: Parameters<AttachmentPersistence<Tx>["attach"]>[3], sortOrder: number) {
+    const version = await tx.productVersion.findUniqueOrThrow({ where: { id: draftId }, select: { organizationId: true } });
+    await assertPdfAttachment(tx, version.organizationId, draftId, 1);
     await tx.productDocument.create({ data: { productVersionId: draftId, documentId, ...metadata, isPrimary: false, sortOrder }, select: { id: true } });
   }
   async edit(tx: Tx, draftId: string, row: Parameters<AttachmentPersistence<Tx>["edit"]>[2], metadata: Parameters<AttachmentPersistence<Tx>["edit"]>[3], sortOrder: number) {
@@ -45,5 +51,5 @@ export class PrismaDocumentAttachments implements AttachmentPersistence<Tx> {
   }
 }
 export function createPrismaAttachmentDependencies(prisma: PrismaClient): AttachmentDependencies<Tx> {
-  return { persistence: new PrismaDocumentAttachments(prisma), transactionRunner: { run: work => prisma.$transaction(work) } };
+  return { persistence: new PrismaDocumentAttachments(prisma), transactionRunner: { run: work => runEntitlementTransaction(prisma, work) } };
 }

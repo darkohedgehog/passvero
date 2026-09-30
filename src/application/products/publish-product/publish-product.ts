@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { ApplicationError } from "@/src/application/errors/application-error";
 import { hasProductPermission, PRODUCT_PUBLISH, roleHasProductPermission } from "@/src/application/permissions/product-permissions";
 import type { PublishProduct, PublishProductCommand } from "@/src/application/products/publish-product/contracts";
@@ -97,6 +98,7 @@ export function createPublishProductService<Transaction>(
         return { productId: product.productId, status: "PUBLISHED" as const, versionNumber };
       });
     } catch (error) {
+      if (error instanceof EntitlementError) throw error;
       if (error instanceof ApplicationError && trusted.has(error)) throw error;
       throw fail("INTERNAL", "PUBLISH_PRODUCT_OPERATIONAL_FAILURE", context?.correlationId);
     }

@@ -1,0 +1,645 @@
+{
+  "scope": {
+    "database": "passvero_acceptance",
+    "port": "5433",
+    "directory": "/var/lib/postgresql/16/acceptance"
+  },
+  "fixtures": [
+    {
+      "id": "2a9a42d5-9d24-4003-aca7-fb3a7bf155f9",
+      "slug": "synthetic-entitlements-20260930-downgrade-allowed",
+      "products": 0,
+      "productids": null,
+      "drafts": 0,
+      "enrollment": {
+        "organizationId": "2a9a42d5-9d24-4003-aca7-fb3a7bf155f9",
+        "enrolledAt": "2026-09-30T16:40:59.473",
+        "trialStartedAt": null,
+        "trialEndsAt": null,
+        "lifetimeCreatedProducts": 0,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Approved synthetic entitlement acceptance; no trial or paid rights until explicit simulated commercial fixture"
+      },
+      "requests": [
+        {
+          "id": "71374272-421e-4ed4-bb2b-2c44b0888b9e",
+          "kind": "DOWNGRADE",
+          "status": "PAID"
+        },
+        {
+          "id": "b57aa0c5-db31-4ad7-ad52-aee9bfb9a62c",
+          "kind": "STANDARD",
+          "status": "PAID"
+        }
+      ],
+      "periods": [
+        {
+          "id": "632b8594-c4a1-46c2-8320-c805682f01b3",
+          "requestId": "b57aa0c5-db31-4ad7-ad52-aee9bfb9a62c",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2026-06-30T10:00:00",
+          "end": "2026-09-30T10:00:00",
+          "matchesOffer": true,
+          "activation": null,
+          "reasons": null
+        },
+        {
+          "id": "69440f82-3df2-4612-996f-c6fc66add6bc",
+          "requestId": "71374272-421e-4ed4-bb2b-2c44b0888b9e",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2026-09-30T10:00:00",
+          "end": "2026-12-31T11:00:00",
+          "matchesOffer": true,
+          "activation": "ACTIVE",
+          "reasons": []
+        }
+      ],
+      "upgrades": null,
+      "auditcounts": [
+        {
+          "action": "COMMERCIAL_OFFER_ACCEPTED",
+          "count": 2
+        },
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 2
+        },
+        {
+          "action": "COMMERCIAL_OFFER_RECORDED",
+          "count": 2
+        },
+        {
+          "action": "SUBSCRIPTION_DOWNGRADE_ACTIVATED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_REQUEST_CREATED",
+          "count": 2
+        },
+        {
+          "action": "COMMERCIAL_PAYMENT_CONFIRMED",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "d9d1c9f6-9fee-4df1-8623-02085eb2e9de",
+      "slug": "synthetic-entitlements-20260930-downgrade-blocked",
+      "products": 101,
+      "productids": [
+        "0197bf52-4927-48dd-9045-3c709a5e8056",
+        "02c612ce-36b9-4f7d-a30c-1d4ead3eff02",
+        "0492e69e-c463-45b8-9845-0078bb233fa6",
+        "099a8edf-4147-4591-8ff1-bd5ec3a192b4",
+        "0b585cf8-db8c-4282-8f00-0125b1d4448b",
+        "0da8a44f-fc81-48a7-aedf-9289db6572a7",
+        "113e051a-7488-4e2f-8cb5-98d04ea60f1b",
+        "181bf89c-ebf6-4e26-8184-d21aca925faa",
+        "1abb2a3a-e072-442a-af85-dfd420cee8ca",
+        "1fb4c0ed-4685-496d-bb4b-a04173bc6658",
+        "209fed4d-3ac5-48e4-862c-8a290285ae18",
+        "2ca6aabb-9f38-4d64-8334-cbb7735e02c2",
+        "2efb2225-7820-47d5-a889-f99a66ee246f",
+        "318f7767-0218-4fa9-826e-29c8f5ff0691",
+        "34618a09-b0a6-4c02-bfe6-a176e8b65b25",
+        "34ec9c35-5e06-409f-b9ba-7a3f145bacae",
+        "3add5cf1-898d-43b4-905a-2cb1aa12bac2",
+        "3b5e4edc-6a27-48c6-a9cf-83c00e23ce29",
+        "3cecfea9-f8f1-4025-afe7-b37539645ca6",
+        "3dcf890b-f5e3-45f0-bde8-d180781cfe67",
+        "3e669fdf-0b8d-4b26-bc9c-c30b7b6a47c4",
+        "3ee0eafd-886b-472a-9e2b-4140e468a62c",
+        "444742af-4731-4f7a-bc9d-ea1ef86412bd",
+        "44cc3918-ed3b-4b7c-8a5d-62e1cb0074fc",
+        "45d1d6f1-55e7-4812-9450-1244af1d1b22",
+        "4ae3b333-d05e-444c-b8ad-94974bfaf38e",
+        "4ec910fe-2b87-4a27-97c8-565da1e06153",
+        "4f90001b-02ef-4c34-a811-5b4acd66e69f",
+        "51829bcb-a3ab-4b58-bb7b-25759c7d6986",
+        "522c92b2-ca23-4af7-9f35-2744bd7ae95f",
+        "52783efe-1e36-4e00-b02b-a7903be08bed",
+        "538b6dae-905c-418f-bffb-22a10497d9ee",
+        "56b3787c-349e-4a5c-9c3a-792cba0a2f46",
+        "5958122a-b338-46c9-a93f-dd45882a4534",
+        "5a866266-16e9-47bd-946b-a007dcbf13bf",
+        "5eb1a5cf-6f68-4e83-95ff-c689a42901bf",
+        "60a82163-3dcf-44f3-a2a9-33452e32b226",
+        "625cafe3-2c6d-4a78-b238-d0072a2b1719",
+        "633c5b86-576e-4f71-a3ac-1c9392162433",
+        "672d88ef-493f-4011-a5c5-3b87bafcbb58",
+        "68c10672-f927-4ba8-89b9-2f775be5d92e",
+        "691e0e13-b108-4780-973c-5157d2cace97",
+        "7653fb8d-6900-40d1-af1f-c3bffb3a0d79",
+        "7a3f5a08-8fd4-4c32-8b04-2e3c0f7688d7",
+        "7db30ce1-ba10-466c-aabd-51123b1443a7",
+        "7ee91207-e1e9-4f28-a55b-8a9b84f7e62f",
+        "7eebd94a-2cf7-4fc2-a007-8c874dc6337e",
+        "818469e7-02ab-47a1-9c59-43b3449e73e2",
+        "8bdceb63-bcd8-4968-af3c-153646cf2086",
+        "8ea0999c-74bd-4b81-abf8-15262af79e97",
+        "943ac394-ee0b-4bea-94d8-a530c7ebc4e8",
+        "991e9f8d-25f6-4646-8826-22bb01a50bd7",
+        "9a153621-6483-42d2-9a35-c4085a7942f6",
+        "9d481271-f61f-487d-9b94-742def106a06",
+        "9ee5a8d3-76f0-4924-ad61-ee88c70a8085",
+        "a170911d-aca2-4fbb-8d14-9227e94514d9",
+        "a21a0898-50fe-48d5-8d45-86fe31f6119a",
+        "a38c004a-a081-4fc6-a1b9-d671c3683572",
+        "a3d0fda5-01b3-4898-8db2-2af5cd6516b4",
+        "a5076a49-e4bb-47d8-addd-ed45c01b79ef",
+        "a75664f8-d36a-478d-8679-45dcb38e773e",
+        "a879047a-7189-4c75-aff7-f306bf9f972e",
+        "aa802f41-bb0d-4dfa-bdb9-a0b6aac8ab71",
+        "aa89f7d4-f702-468a-b8fd-83d88a455b84",
+        "ab6f6999-c13c-4f74-91de-652468ff1b79",
+        "abd37c37-7dd5-48e5-a7e6-4bd3d06424ec",
+        "b08c8679-e23f-4c5a-b43f-2b4ccfe42bc0",
+        "b14a2b41-96a2-42d4-b316-6ba495a33f51",
+        "b17e7bd9-1446-4668-9348-a9f9f6edf9ca",
+        "b247c0e7-bb2a-4a9e-adf2-fec6aefa9540",
+        "bb00289a-8e67-4dea-a274-4ab59043e526",
+        "bb222ad3-d843-4d84-92ae-7478d270fd8b",
+        "bda5b763-4e9b-413d-866f-d8cb3283cb4e",
+        "bdac4451-5794-428c-8244-694d584d7c9d",
+        "bdec50f7-93f1-479d-80fc-36cf99b4cf7b",
+        "c6cebdee-f5fd-4570-a9d8-c88de9556a11",
+        "ca2c29e2-711a-4442-a9bf-5ea15387c751",
+        "cb568352-bf96-4089-b3ec-c685f590556d",
+        "cbf31daa-f439-4440-ae56-854135cbbeef",
+        "cccc346b-d63d-41ea-a2cb-1132fcfb12d3",
+        "cde0fb42-54f7-46f7-987c-d6b34c592a48",
+        "cfcb8e1c-1677-49f6-958a-f5b23664a416",
+        "d0bf76d8-361d-4165-9202-05e4e9f1986b",
+        "d40d80b3-04dc-4a7f-b7c1-e08f9ea945fc",
+        "d46b08f5-6ef3-4033-af7b-e54a7d686044",
+        "dac32c8a-9f32-43b7-b702-da2b1e659d12",
+        "dbedbc69-7709-4f00-b0bb-32dccf79a9b5",
+        "dd7c80ad-1eae-4801-943d-3efb475806f0",
+        "ddd0d928-ff10-4e3e-9f8c-0d645a9a7413",
+        "dfaba52f-9423-4049-a4bf-a107c03d1c4c",
+        "e0643a03-5003-4951-bd2f-6a7bd8c8e65e",
+        "e6011995-1f70-433f-9d1a-6bd445376a71",
+        "e7fd5289-db3b-4fe4-8353-3ce051b2796e",
+        "eb74158d-402c-4ffd-813e-3dfb1adda76d",
+        "ebdf392b-b584-4cce-aec2-0f2d15aa86ca",
+        "ed0885e5-b02c-44cd-aab1-935e2ea3fafd",
+        "ee7a1cb1-db16-4240-bd6d-3de533fa72e6",
+        "f11a58da-f879-474b-8671-83e0abf09847",
+        "f1f95f77-371c-4d4e-ba44-e45c7cd86f02",
+        "f87a3bb2-35c0-489b-a793-ea0d9b966d26",
+        "fe56337b-6cfd-4219-bed4-f255ad40bf6f"
+      ],
+      "drafts": 0,
+      "enrollment": {
+        "organizationId": "d9d1c9f6-9fee-4df1-8623-02085eb2e9de",
+        "enrolledAt": "2026-09-30T16:40:59.459",
+        "trialStartedAt": null,
+        "trialEndsAt": null,
+        "lifetimeCreatedProducts": 101,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Approved synthetic entitlement acceptance; no trial or paid rights until explicit simulated commercial fixture"
+      },
+      "requests": [
+        {
+          "id": "518f678a-b226-4450-8abc-5ce7d2bca772",
+          "kind": "DOWNGRADE",
+          "status": "PAID"
+        },
+        {
+          "id": "a8ad4a35-b3ee-4a2e-b33b-e628528c87c9",
+          "kind": "STANDARD",
+          "status": "PAID"
+        }
+      ],
+      "periods": [
+        {
+          "id": "a710102a-7d7b-4d2b-ada1-79f5195dec95",
+          "requestId": "a8ad4a35-b3ee-4a2e-b33b-e628528c87c9",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2026-06-30T10:00:00",
+          "end": "2026-09-30T10:00:00",
+          "matchesOffer": true,
+          "activation": null,
+          "reasons": null
+        },
+        {
+          "id": "84ab5b31-f6a3-4836-988b-413700143a14",
+          "requestId": "518f678a-b226-4450-8abc-5ce7d2bca772",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2026-09-30T10:00:00",
+          "end": "2026-12-31T11:00:00",
+          "matchesOffer": true,
+          "activation": "BLOCKED_REQUIRES_OPERATOR",
+          "reasons": [
+            "STORED_PRODUCT_LIMIT"
+          ]
+        }
+      ],
+      "upgrades": null,
+      "auditcounts": [
+        {
+          "action": "COMMERCIAL_OFFER_ACCEPTED",
+          "count": 2
+        },
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 2
+        },
+        {
+          "action": "COMMERCIAL_OFFER_RECORDED",
+          "count": 2
+        },
+        {
+          "action": "SYNTHETIC_QUOTA_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "SUBSCRIPTION_DOWNGRADE_BLOCKED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_REQUEST_CREATED",
+          "count": 2
+        },
+        {
+          "action": "COMMERCIAL_PAYMENT_CONFIRMED",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "c7f37fd1-10c0-40f8-a66d-c99b14e92635",
+      "slug": "synthetic-entitlements-20260930-paid-grace-active",
+      "products": 1,
+      "productids": [
+        "aee4bcde-0f40-43b4-9e32-c85e9daaed65"
+      ],
+      "drafts": 0,
+      "enrollment": {
+        "organizationId": "c7f37fd1-10c0-40f8-a66d-c99b14e92635",
+        "enrolledAt": "2026-09-30T16:40:59.417",
+        "trialStartedAt": null,
+        "trialEndsAt": null,
+        "lifetimeCreatedProducts": 1,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Approved synthetic entitlement acceptance; no trial or paid rights until explicit simulated commercial fixture"
+      },
+      "requests": [
+        {
+          "id": "7ec61841-9aae-4f11-aee0-19fbc822eb67",
+          "kind": "STANDARD",
+          "status": "PAID"
+        }
+      ],
+      "periods": [
+        {
+          "id": "0be13456-b4fb-4144-8c5b-30c2932530b9",
+          "requestId": "7ec61841-9aae-4f11-aee0-19fbc822eb67",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2026-02-01T11:00:00",
+          "end": "2026-05-01T10:00:00",
+          "matchesOffer": true,
+          "activation": null,
+          "reasons": null
+        }
+      ],
+      "upgrades": null,
+      "auditcounts": [
+        {
+          "action": "COMMERCIAL_OFFER_ACCEPTED",
+          "count": 1
+        },
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_OFFER_RECORDED",
+          "count": 1
+        },
+        {
+          "action": "PRODUCT_REGULATORY_CLASSIFICATION_CHANGED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_PUBLIC_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_REQUEST_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_PAYMENT_CONFIRMED",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "6ba064b9-517b-4bea-8627-28aefc8d6fa4",
+      "slug": "synthetic-entitlements-20260930-paid-grace-expired",
+      "products": 1,
+      "productids": [
+        "f28f5c3a-c658-4cd6-8a79-6409e422f76d"
+      ],
+      "drafts": 0,
+      "enrollment": {
+        "organizationId": "6ba064b9-517b-4bea-8627-28aefc8d6fa4",
+        "enrolledAt": "2026-09-30T16:40:59.434",
+        "trialStartedAt": null,
+        "trialEndsAt": null,
+        "lifetimeCreatedProducts": 1,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Approved synthetic entitlement acceptance; no trial or paid rights until explicit simulated commercial fixture"
+      },
+      "requests": [
+        {
+          "id": "dc87e8d8-2af1-4904-8dec-21725ee66e2c",
+          "kind": "STANDARD",
+          "status": "PAID"
+        }
+      ],
+      "periods": [
+        {
+          "id": "6c6f9475-7689-46f5-a58e-be18d3574749",
+          "requestId": "dc87e8d8-2af1-4904-8dec-21725ee66e2c",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2025-11-01T11:00:00",
+          "end": "2026-02-01T11:00:00",
+          "matchesOffer": true,
+          "activation": null,
+          "reasons": null
+        }
+      ],
+      "upgrades": null,
+      "auditcounts": [
+        {
+          "action": "COMMERCIAL_OFFER_ACCEPTED",
+          "count": 1
+        },
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_OFFER_RECORDED",
+          "count": 1
+        },
+        {
+          "action": "PRODUCT_REGULATORY_CLASSIFICATION_CHANGED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_PUBLIC_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_REQUEST_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_PAYMENT_CONFIRMED",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "2f6ef99e-4cc9-4127-8562-ab7d3ea2e622",
+      "slug": "synthetic-entitlements-20260930-trial-active",
+      "products": 3,
+      "productids": [
+        "03cf2023-be8a-4f58-b19b-c120cf0080f6",
+        "16e71add-be55-45ee-b341-dddbf9cddd4e",
+        "237e51ee-b501-4d33-93d3-6db701889e72"
+      ],
+      "drafts": 3,
+      "enrollment": {
+        "organizationId": "2f6ef99e-4cc9-4127-8562-ab7d3ea2e622",
+        "enrolledAt": "2026-09-30T16:40:59.362",
+        "trialStartedAt": "2026-09-30T16:40:59.362",
+        "trialEndsAt": "2027-03-31T16:40:59.362",
+        "lifetimeCreatedProducts": 3,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Verified organization activation"
+      },
+      "requests": null,
+      "periods": null,
+      "upgrades": null,
+      "auditcounts": [
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 1
+        },
+        {
+          "action": "SUBSCRIPTION_TRIAL_STARTED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "PRODUCT_CREATED",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "7c3a894e-34e0-4897-b61d-df9e672f5340",
+      "slug": "synthetic-entitlements-20260930-trial-expired",
+      "products": 1,
+      "productids": [
+        "ec8c4640-e307-4cd8-bd09-f6e8c1691ab3"
+      ],
+      "drafts": 0,
+      "enrollment": {
+        "organizationId": "7c3a894e-34e0-4897-b61d-df9e672f5340",
+        "enrolledAt": "2026-01-01T11:00:00",
+        "trialStartedAt": "2026-01-01T11:00:00",
+        "trialEndsAt": "2026-07-01T10:00:00",
+        "lifetimeCreatedProducts": 1,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Verified organization activation"
+      },
+      "requests": null,
+      "periods": null,
+      "upgrades": null,
+      "auditcounts": [
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 1
+        },
+        {
+          "action": "SUBSCRIPTION_TRIAL_STARTED",
+          "count": 1
+        },
+        {
+          "action": "PRODUCT_REGULATORY_CLASSIFICATION_CHANGED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_PUBLIC_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "da02e9b0-645e-42f1-96aa-4808d32c857d",
+      "slug": "synthetic-entitlements-20260930-upgrade",
+      "products": 0,
+      "productids": null,
+      "drafts": 0,
+      "enrollment": {
+        "organizationId": "da02e9b0-645e-42f1-96aa-4808d32c857d",
+        "enrolledAt": "2026-09-30T16:40:59.447",
+        "trialStartedAt": null,
+        "trialEndsAt": null,
+        "lifetimeCreatedProducts": 0,
+        "exceptionStartsAt": null,
+        "exceptionEndsAt": null,
+        "exceptionLimits": null,
+        "reason": "Approved synthetic entitlement acceptance; no trial or paid rights until explicit simulated commercial fixture"
+      },
+      "requests": [
+        {
+          "id": "30a44522-aa6f-4fff-ac5f-d21ede3c1a1e",
+          "kind": "UPGRADE",
+          "status": "PAID"
+        },
+        {
+          "id": "a615343e-a247-4391-8331-134a3f202e79",
+          "kind": "STANDARD",
+          "status": "PAID"
+        }
+      ],
+      "periods": [
+        {
+          "id": "6bb2ab40-095f-411e-b76b-e59204fd74ff",
+          "requestId": "a615343e-a247-4391-8331-134a3f202e79",
+          "kind": "SIMULATED_PAYMENT",
+          "start": "2026-09-30T12:00:00",
+          "end": "2026-12-31T13:00:00",
+          "matchesOffer": true,
+          "activation": null,
+          "reasons": null
+        }
+      ],
+      "upgrades": [
+        {
+          "id": "2463a4bf-4bd4-4738-928f-cf2c5be3cd65",
+          "requestId": "30a44522-aa6f-4fff-ac5f-d21ede3c1a1e",
+          "kind": "SIMULATED_PAYMENT",
+          "end": "2026-12-31T13:00:00",
+          "baseEnd": "2026-12-31T13:00:00",
+          "matchesOffer": true
+        }
+      ],
+      "auditcounts": [
+        {
+          "action": "COMMERCIAL_OFFER_ACCEPTED",
+          "count": 2
+        },
+        {
+          "action": "SUBSCRIPTION_ENTITLEMENTS_PROJECTED",
+          "count": 2
+        },
+        {
+          "action": "COMMERCIAL_OFFER_RECORDED",
+          "count": 2
+        },
+        {
+          "action": "SYNTHETIC_ENTITLEMENT_FIXTURE_CREATED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_UPGRADE_PAYMENT_CONFIRMED",
+          "count": 1
+        },
+        {
+          "action": "COMMERCIAL_REQUEST_CREATED",
+          "count": 2
+        },
+        {
+          "action": "COMMERCIAL_PAYMENT_CONFIRMED",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "regulatoryGrant": [
+    {
+      "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "active": true
+    }
+  ],
+  "classificationChanges": [
+    {
+      "productId": "aee4bcde-0f40-43b4-9e32-c85e9daaed65",
+      "actorId": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "metadata": {
+        "reason": "Approved synthetic commercial-expiry demonstration; no regulatory determination about existing customer products.",
+        "current": "VOLUNTARY",
+        "previous": "UNRESOLVED"
+      }
+    },
+    {
+      "productId": "f28f5c3a-c658-4cd6-8a79-6409e422f76d",
+      "actorId": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "metadata": {
+        "reason": "Approved synthetic commercial-expiry demonstration; no regulatory determination about existing customer products.",
+        "current": "VOLUNTARY",
+        "previous": "UNRESOLVED"
+      }
+    },
+    {
+      "productId": "ec8c4640-e307-4cd8-bd09-f6e8c1691ab3",
+      "actorId": "40e51001-912c-4bcf-aa45-d866632aac85",
+      "metadata": {
+        "reason": "Approved synthetic commercial-expiry demonstration; no regulatory determination about existing customer products.",
+        "current": "VOLUNTARY",
+        "previous": "UNRESOLVED"
+      }
+    }
+  ],
+  "existingProductsUnresolved": 9,
+  "originalPeriod": {
+    "id": "2bb5bc61-f3de-4351-a463-e8e76e38e4cd",
+    "kind": "SIMULATED_PAYMENT",
+    "start": "2026-09-30T13:22:05.515",
+    "end": "2026-12-31T14:22:05.515"
+  },
+  "writes": "NONE",
+  "buildId": "l-JG1xiXsl1bSbQauDDCf"
+}

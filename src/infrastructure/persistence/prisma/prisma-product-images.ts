@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, allowsPublicProduct } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { Prisma, type PrismaClient, type ProductImageAsset } from "@/src/generated/prisma/client";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
 import type { ImagePersistence } from "@/src/application/products/images/ports";
@@ -19,7 +21,7 @@ export class PrismaProductImagePersistence implements ImagePersistence {
   private readonly existing: PrismaTranslationManagementPersistence;
   constructor(private readonly prisma: PrismaClient) { this.existing = new PrismaTranslationManagementPersistence(prisma); }
   private async run<T>(work: (tx: Tx) => Promise<T>) {
-    try { return await this.prisma.$transaction(work); }
+    try { return await runEntitlementTransaction(this.prisma, work); }
     catch (error) {
       if (error instanceof DocumentError && error.code === "FORBIDDEN") throw imageError("FORBIDDEN", "FORBIDDEN");
       if (error instanceof Prisma.PrismaClientKnownRequestError && ["P2002", "P2034"].includes(error.code)) throw imageError("CONFLICT", "STALE_WRITE");
@@ -28,6 +30,7 @@ export class PrismaProductImagePersistence implements ImagePersistence {
   }
   private async load(tx: Tx, id: string, ctx: AuthenticatedUserContext, edit: boolean) {
     await authorizeDocumentActor(tx, ctx, edit ? "PRODUCT_EDIT" : "PRODUCT_READ");
+    if (edit) await assertContentWrite(tx, ctx.organizationId);
     if (edit) await tx.$queryRaw(Prisma.sql`SELECT id FROM "Product" WHERE id=${id}::uuid AND "organizationId"=${ctx.organizationId}::uuid FOR UPDATE`);
     const row = await tx.product.findFirst({ where: { id, organizationId: ctx.organizationId }, include: {
       currentDraftVersion: { include: { images: { where: { isPrimary: true }, take: 2, select: imageSelect } } },
@@ -55,6 +58,7 @@ export class PrismaProductImagePersistence implements ImagePersistence {
   }); }
   reserve(id: string, command: ImageCommand, ctx: AuthenticatedUserContext, value: ImageAsset) { return this.run(async tx => {
     await this.checked(tx, id, command, ctx);
+    await assertContentWrite(tx, ctx.organizationId, { storageBytes: value.sizeBytes });
     await tx.productImageAsset.create({ data: { ...value, originalFilename: value.mimeType === "image/png" ? "image.png" : "image.jpg", fileExtension: value.mimeType === "image/png" ? "png" : "jpg", state: "PENDING", policyVersion: 1 } });
   }); }
   finalize(id: string, command: ImageCommand, ctx: AuthenticatedUserContext, assetId?: string) { return this.run(async tx => {
@@ -82,6 +86,7 @@ export class PrismaProductImagePersistence implements ImagePersistence {
   }); }
   publicAsset(publicCode: string, imageId: string) { return this.run(async tx => {
     const product = await tx.product.findUnique({ where: { publicCode }, include: { organization: true, passport: true, currentPublishedVersion: { include: { images: { where: { isPrimary: true }, take: 2, include: { asset: true } } } } } });
+    if (product && !await allowsPublicProduct(tx, product.organizationId, product.regulatoryClassification)) throw imageError("NOT_FOUND", "NOT_FOUND");
     const version = product?.currentPublishedVersion; const passport = product?.passport;
     const images = version?.images ?? []; const row = images.length === 1 ? images[0] : null;
     if (!product || product.lifecycleStatus !== "ACTIVE" || product.organization.status !== "ACTIVE" || !passport || passport.status !== "ACTIVE" || passport.productId !== product.id || passport.organizationId !== product.organizationId

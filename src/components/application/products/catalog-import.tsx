@@ -8,8 +8,12 @@ import { IMPORT_FIELDS, IMPORT_BATCH_SIZE, MAX_IMPORT_BYTES, type ImportOptions,
 
 export function CatalogImport() {
   const t = useTranslations("CatalogImport");
+  const subscription = useTranslations("Subscription");
   const errors: Record<string, string> = Object.fromEntries((["FORBIDDEN", "FILE", "MAPPING", "VALIDATION", "STALE_PREVIEW", "SELECTION", "NOT_FOUND", "FAILED", "CANCELLED"] as const).map(k => [k, t(`errors.${k}`)]));
   const rowErrors: Record<string, string> = Object.fromEntries((["CREATE_PRODUCT_NAME_INVALID", "CREATE_PRODUCT_SKU_INVALID", "CREATE_PRODUCT_LOCALE_INVALID", "INVALID_GTIN", "INVALID_CN", "SKU_CONFLICT", "GTIN_REVIEW_REQUIRED", "ROW_FAILED", "INVALID_ROW"] as const).map(k => [k, t(`rowErrors.${k}`)]));
+  for (const code of ["STORED_PRODUCT_LIMIT", "TRIAL_CREATION_LIMIT", "STORAGE_LIMIT", "PUBLICATION_LIMIT", "PDF_ATTACHMENT_LIMIT"] as const) rowErrors[code] = subscription(code);
+  rowErrors.SUBSCRIPTION_EXPIRED = subscription("EXPIRED");
+  rowErrors.SUBSCRIPTION_TRANSITION_REQUIRED = subscription("TRANSITION_REQUIRED");
   const statuses: Record<string, string> = Object.fromEntries((["PENDING", "SUCCEEDED", "FAILED", "ACTIVE", "COMPLETE", "CANCELLED"] as const).map(k => [k, t(`status.${k}`)]));
   const [file, setFile] = useState<File | null>(null);
   const [options, setOptions] = useState<ImportOptions>({ delimiter: ",", defaultLocale: "hr", mapping: { internal_name: null, sku: null, source_locale: null, gtin: null, cn_code: null, cn_nomenclature_year: null } });
@@ -81,6 +85,7 @@ export function CatalogImport() {
       <button type="button" className="rounded border px-3 py-2" onClick={() => void act(loadPreview)}>{t("preview")}</button>
     </fieldset>}
     {preview && <>
+      <p className="text-sm">{subscription("availableCreationSlots", { count: preview.availableCreationSlots ?? 0 })}</p>
       <p className="text-sm">{t("ignored")}: {preview.ignored.join(", ") || "—"}</p>
       <p className="text-sm" role="status">{t("summary", { total: preview.rows.length, invalid: preview.invalidCount, errors: preview.errorCount, selected: selected.length, excluded: preview.rows.length - selected.length })}</p>
       {!batch && <>

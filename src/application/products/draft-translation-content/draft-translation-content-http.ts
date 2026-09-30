@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { canonicalProxyDenial } from "@/src/application/http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "@/src/application/context/resolve-authenticated-user-context";
 import { dashboardDenialOutcome } from "@/src/application/context/protected-dashboard-entry";
@@ -22,7 +23,8 @@ export function createDraftTranslationContentHttpHandler(dependencies: { canonic
     const access = classifyDraftTranslationContentPageAccess(resolution);
     if (access !== "FORM" || resolution.status !== "RESOLVED") return json({ status: "FORBIDDEN" }, access === "LOGIN" ? 401 : 403);
     try { await dependencies.update({ productId, ...payload }, resolution.context); return json({ status: "UPDATED" }, 200); }
-    catch (error) { return mapError(error); }
+    catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return mapError(error); }
   };
 }
 

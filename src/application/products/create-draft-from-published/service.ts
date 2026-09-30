@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { ApplicationError } from "@/src/application/errors/application-error";
 import { hasProductPermission, PRODUCT_EDIT, roleHasProductPermission } from "@/src/application/permissions/product-permissions";
 import { isPassveroLocale } from "@/src/domain/values/passvero-locale";
@@ -67,6 +68,7 @@ export function createDraftFromPublishedService<T>(dependencies: CreateDraftFrom
         return { status: "CREATED_NEW_DRAFT" as const };
       });
     } catch (error) {
+      if (error instanceof EntitlementError) throw error;
       if (error instanceof ApplicationError && trusted.has(error)) throw error;
       if (error instanceof DraftCreationConflict) throw fail("CONFLICT", "CONFLICT");
       throw fail("INTERNAL", "OPERATIONAL_FAILURE");

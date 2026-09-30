@@ -1,3 +1,4 @@
+import { requireRegulatoryAccess } from "@/src/infrastructure/subscriptions/regulatory-runtime";
 import { getCommercialServices } from "@/src/infrastructure/subscriptions/commercial-runtime";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
@@ -20,12 +21,14 @@ export default async function PlatformLayout({children,params}:{children:ReactNo
   try {await getPlatformServices().requireAccess(requestHeaders);allowed=true;} catch { /* Fail closed, without disclosing organization data. */ }
   let canManageCommercial=false;
   try {await getCommercialServices().requireBillingAccess(requestHeaders);canManageCommercial=true;} catch { /* Read-only platform access never implies billing authority. */ }
-  if (!allowed && !canManageCommercial) notFound();
+  let canClassifyRegulatory=false;
+  try { await requireRegulatoryAccess(requestHeaders); canClassifyRegulatory=true; } catch { /* Independent regulatory authority. */ }
+  if (!allowed && !canManageCommercial && !canClassifyRegulatory) notFound();
   let canReturn=false;
   try {const context=await resolveReadOnlyAuthenticatedUserContext(requestHeaders);canReturn=context.status==="RESOLVED" || context.status==="ORGANIZATION_SELECTION_REQUIRED";} catch { /* Tenant workspace availability is independent of platform authority. */ }
   const [t,d]=await Promise.all([getTranslations({locale,namespace:"PlatformAdmin"}),getTranslations({locale,namespace:"Dashboard"})]);
   return <div className="min-h-screen bg-slate-50 lg:pl-64">
-    <DashboardNavigation canReadProducts={false} platform canReadPlatform={allowed} canManageCommercial={canManageCommercial} canReturn={canReturn} />
+    <DashboardNavigation canReadProducts={false} platform canReadPlatform={allowed} canManageCommercial={canManageCommercial} canReturn={canReturn} canClassifyRegulatory={canClassifyRegulatory} />
     <DashboardShell brandLabel={d("brand")} contextLabel={t("title")} title={t("title")} productsLabel={t("title")} signOutLabel={d("signOut")} pendingLabel={d("loading")} signOutFailureLabel={d("signOutFailure")}>
       {children}
     </DashboardShell>

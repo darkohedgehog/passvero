@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { attachmentMetadataSchema, sortOrderSchema } from "@/src/application/products/document-attachments/contracts";
 import { isPassveroLocale } from "@/src/domain/values/passvero-locale";
 import type { PublishProductPersistence } from "@/src/application/products/publish-product/ports";
@@ -8,7 +10,7 @@ export type PublishProductPrismaTransaction = Prisma.TransactionClient;
 export class PrismaPublishProductTransactionRunner {
   constructor(private readonly prisma: PrismaClient) {}
   run<Result>(work: (transaction: PublishProductPrismaTransaction) => Promise<Result>): Promise<Result> {
-    return this.prisma.$transaction((transaction) => work(transaction));
+    return runEntitlementTransaction(this.prisma, (transaction) => work(transaction));
   }
 }
 
@@ -16,6 +18,7 @@ export class PrismaPublishProductPersistence implements PublishProductPersistenc
   constructor(private readonly prisma: PrismaClient) {}
 
   async readEligibility(tx: PublishProductPrismaTransaction, input: { organizationId: string; userId: string; membershipId: string }) {
+    await lockEntitlementOrganization(tx, input.organizationId);
     const membership = await tx.membership.findFirst({ where: { id: input.membershipId, userId: input.userId, organizationId: input.organizationId }, select: { status: true, role: true, organization: { select: { status: true } } } });
     return membership === null ? null : { organizationStatus: membership.organization.status, membershipStatus: membership.status, membershipRole: membership.role };
   }
@@ -69,6 +72,7 @@ export class PrismaPublishProductPersistence implements PublishProductPersistenc
   }
 
   async applyPublication(tx: PublishProductPrismaTransaction, input: Parameters<PublishProductPersistence<PublishProductPrismaTransaction>["applyPublication"]>[1]) {
+    await assertContentWrite(tx, input.organizationId, { publishedProducts: input.previousPublishedVersionId === null ? 1 : 0 });
     if (input.previousPublishedVersionId !== null) {
       const previous = await tx.productVersion.updateMany({ where: { id: input.previousPublishedVersionId, productId: input.productId, organizationId: input.organizationId, status: "PUBLISHED", supersededAt: null }, data: { status: "SUPERSEDED", supersededAt: input.publishedAt, updatedById: input.actorId } });
       if (previous.count !== 1) throw new Error("Previous publication invariant failed.");

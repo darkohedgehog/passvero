@@ -101,3 +101,10 @@ test("detects only structurally missing required form fields", () => {
     initialLocale: "en",
   }), null);
 });
+
+test("preserves subscription denial reason for localized form feedback", async () => {
+  assert.deepEqual(await createProductFromDashboard(async () => Response.json(
+    { status: "SUBSCRIPTION_DENIED", reason: "STORED_PRODUCT_LIMIT" }, { status: 403 }
+  ), { initialProductName: "Fourth", initialLocale: "hr" }),
+  { status: "SUBSCRIPTION_DENIED", reason: "STORED_PRODUCT_LIMIT" });
+});

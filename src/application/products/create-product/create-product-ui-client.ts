@@ -17,6 +17,7 @@ export type CreateProductUiResult =
       field: CreateProductField;
       reason: "INVALID" | "CONFLICT";
     }>
+  | Readonly<{ status: "SUBSCRIPTION_DENIED"; reason: string }>
   | Readonly<{ status: "FORBIDDEN" }>
   | Readonly<{ status: "FAILURE" }>;
 
@@ -53,6 +54,10 @@ export async function createProductFromDashboard(
         field: value.field,
         reason: response.status === 409 ? "CONFLICT" : "INVALID",
       };
+    }
+    if (response.status === 403 && isRecord(value) && value.status === "SUBSCRIPTION_DENIED" && typeof value.reason === "string"
+      && ["STORED_PRODUCT_LIMIT", "TRIAL_CREATION_LIMIT", "PUBLICATION_LIMIT", "STORAGE_LIMIT", "PDF_ATTACHMENT_LIMIT", "SUBSCRIPTION_EXPIRED", "SUBSCRIPTION_TRANSITION_REQUIRED"].includes(value.reason)) {
+      return { status: "SUBSCRIPTION_DENIED", reason: value.reason };
     }
     if (isStatus(value, "FORBIDDEN")) {
       return { status: "FORBIDDEN" };

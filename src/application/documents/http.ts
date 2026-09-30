@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { canonicalProxyDenial } from "../http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "../context/resolve-authenticated-user-context";
 import { DocumentError, type DocumentServices } from "./contracts";
@@ -45,7 +46,8 @@ export function createDocumentHttpHandlers(deps: {
         const bytes = await readDocumentBytes(request.body, signal);
         const result = await deps.services.upload({ filename, displayName, mimeType: request.headers.get("content-type"), bytes }, ctx);
         return Response.json(result, { status: 201, headers: safeHeaders });
-      } catch (error) { return documentHttpFailure(error); }
+      } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return documentHttpFailure(error); }
       finally { if (acquired) active--; }
     },
     async download(request: Request, id: string): Promise<Response> {
@@ -68,7 +70,8 @@ export function createDocumentHttpHandlers(deps: {
           "content-disposition": `attachment; filename="${ascii}"; filename*=UTF-8''${encoded}`,
           "accept-ranges": "none", "content-security-policy": "default-src 'none'; sandbox",
         } });
-      } catch (error) { return documentHttpFailure(error, head); }
+      } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } }); return documentHttpFailure(error, head); }
       finally { if (acquired) active--; }
     },
   };

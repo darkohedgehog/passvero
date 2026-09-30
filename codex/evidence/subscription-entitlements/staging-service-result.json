@@ -1,0 +1,44 @@
+{
+  "stagingServiceProof": "PASS",
+  "paymentKind": "SIMULATED_PAYMENT",
+  "actualPayment": false,
+  "productionChanges": "NONE",
+  "results": [
+    {
+      "scenario": "paid-grace-active",
+      "requestId": "7ec61841-9aae-4f11-aee0-19fbc822eb67",
+      "productId": "aee4bcde-0f40-43b4-9e32-c85e9daaed65",
+      "publicCode": "VdJB6IAUbTx24klr9Et22g"
+    },
+    {
+      "scenario": "paid-grace-expired",
+      "requestId": "dc87e8d8-2af1-4904-8dec-21725ee66e2c",
+      "productId": "f28f5c3a-c658-4cd6-8a79-6409e422f76d",
+      "publicCode": "JEWaq7Ue2pltVhARTt5FcA"
+    },
+    {
+      "scenario": "trial-expired",
+      "productId": "ec8c4640-e307-4cd8-bd09-f6e8c1691ab3",
+      "publicCode": "FQxEh2RpYJBytkQt63hv_g"
+    },
+    {
+      "scenario": "upgrade",
+      "requestId": "30a44522-aa6f-4fff-ac5f-d21ede3c1a1e",
+      "endUnchanged": "2026-12-31T13:00:00.000Z"
+    },
+    {
+      "scenario": "downgrade-blocked",
+      "requestId": "518f678a-b226-4450-8abc-5ce7d2bca772",
+      "rights": "EXPIRED",
+      "blockedReasons": [
+        "STORED_PRODUCT_LIMIT"
+      ]
+    },
+    {
+      "scenario": "downgrade-allowed",
+      "requestId": "71374272-421e-4ed4-bb2b-2c44b0888b9e",
+      "rights": "PAID",
+      "blockedReasons": []
+    }
+  ]
+}

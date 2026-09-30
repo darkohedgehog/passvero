@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import type { GtinDependencies, GtinPersistence } from "@/src/application/products/gtin/contracts";
 import { gtinError } from "@/src/application/products/gtin/service";
@@ -19,6 +21,7 @@ export class PrismaGtinPersistence implements GtinPersistence<Tx> {
     catch (error) { if (error instanceof DocumentError && error.code === "FORBIDDEN") throw gtinError("FORBIDDEN", "FORBIDDEN"); throw error; }
   }
   async load(tx: Tx, productId: string, organizationId: string, lock: boolean) {
+    if (lock) await assertContentWrite(tx, organizationId);
     if (lock) await tx.$queryRaw(Prisma.sql`SELECT id FROM "Product" WHERE id=${productId}::uuid AND "organizationId"=${organizationId}::uuid FOR UPDATE`);
     const row = await tx.product.findFirst({ where: { id: productId, organizationId }, select: {
       id: true, organizationId: true, lifecycleStatus: true, updatedAt: true,
@@ -53,7 +56,7 @@ export class PrismaGtinPersistence implements GtinPersistence<Tx> {
 }
 export function createPrismaGtinDependencies(prisma: PrismaClient): GtinDependencies<Tx> {
   return { persistence: new PrismaGtinPersistence(prisma), run: async work => {
-    try { return await prisma.$transaction(work); }
+    try { return await runEntitlementTransaction(prisma, work); }
     catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && ["P2002", "P2034"].includes(error.code)) throw gtinError("CONFLICT", "STALE_WRITE");
       throw error;

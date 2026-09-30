@@ -6,7 +6,7 @@ import { CatalogImportError, IMPORT_FIELDS, IMPORT_BATCH_SIZE, importOptionsSche
 import { mapImportRows, parseImportFile, validateImportValues } from "./parse";
 
 export interface CatalogImportPersistence {
-  inspect(context: AuthenticatedUserContext, hash: string, rows: ImportRow[]): Promise<{ existing: ImportBatchState | null; skus: string[]; gtins: string[]; names: string[] }>;
+  inspect(context: AuthenticatedUserContext, hash: string, rows: ImportRow[]): Promise<{ availableCreationSlots?: number; existing: ImportBatchState | null; skus: string[]; gtins: string[]; names: string[] }>;
   confirm(context: AuthenticatedUserContext, input: { contentHash: string; selectionHash: string; acceptGtinMatches: boolean; totalRows: number; rows: { number: number; hash: string }[] }): Promise<ImportBatchState>;
   execute(context: AuthenticatedUserContext, id: string, rows: { number: number; values: ImportValues; hash: string }[]): Promise<ImportBatchState>;
   cancel(context: AuthenticatedUserContext, id: string): Promise<ImportBatchState>;
@@ -36,7 +36,7 @@ export function createCatalogImportService(persistence: CatalogImportPersistence
       row.gtinMatch ||= !!row.values.gtin && gtins.has(row.values.gtin.padStart(14, "0"));
       row.similarName = names.has(row.values.internal_name.toLowerCase());
     }
-    return { ...prepared, existing: found.existing };
+    return { ...prepared, existing: found.existing, availableCreationSlots: found.availableCreationSlots };
   }
   return {
     async preview(bytes: Uint8Array, options: unknown, context: AuthenticatedUserContext | null): Promise<ImportPreview> {
@@ -46,7 +46,7 @@ export function createCatalogImportService(persistence: CatalogImportPersistence
       const errorCount = data.rows.reduce((n, r) => n + r.errors.length + Number(r.skuConflict), 0);
       let detailed = 0;
       const rows = data.rows.map(row => ({ ...row, errors: row.errors.filter(() => detailed++ < 100) }));
-      return { headers: data.headers, ignored: data.ignored, contentHash: data.hash, token: expires + "." + signature(context, data.hash, expires), rows, errorCount,
+      return { availableCreationSlots: data.availableCreationSlots, headers: data.headers, ignored: data.ignored, contentHash: data.hash, token: expires + "." + signature(context, data.hash, expires), rows, errorCount,
         invalidCount: rows.filter(r => !r.valid || r.skuConflict).length, existing: data.existing };
     },
     async confirm(bytes: Uint8Array, options: unknown, input: unknown, context: AuthenticatedUserContext | null) {

@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import { PrismaDraftTranslationContentPersistence } from "./prisma-draft-translation-content";
 import { TranslationConflict, type TranslationDependencies, type TranslationPersistence } from "@/src/application/products/translation-management/contracts";
@@ -17,6 +19,7 @@ export class PrismaTranslationManagementPersistence implements TranslationPersis
   readEligibility(tx: Tx, input: Parameters<TranslationPersistence<Tx>["readEligibility"]>[1]) { return this.existing.readEligibility(tx,input); }
   async readState(tx: Tx, input: Parameters<TranslationPersistence<Tx>["readState"]>[1]) {
     if (input.lock) {
+      await lockEntitlementOrganization(tx, input.organizationId);
       await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Product" WHERE "id"=${input.productId}::uuid AND "organizationId"=${input.organizationId}::uuid FOR UPDATE`);
     }
     const product = await tx.product.findFirst({ where: { id: input.productId, organizationId: input.organizationId }, select: {
@@ -30,6 +33,7 @@ export class PrismaTranslationManagementPersistence implements TranslationPersis
       updatedAt: product.updatedAt, draft: map(product.currentDraftVersion), published: map(product.currentPublishedVersion) };
   }
   async touch(tx: Tx, input: Parameters<TranslationPersistence<Tx>["touch"]>[1]) {
+    await assertContentWrite(tx, input.organizationId);
     // Strictly increasing evidence even when two writes share the same millisecond.
     const updatedAt = new Date(Math.max(Date.now(), input.productAt.getTime()+1, input.draftAt.getTime()+1));
     const product = await tx.product.updateMany({ where: { id: input.productId, organizationId: input.organizationId, lifecycleStatus: "ACTIVE", currentDraftVersionId: input.draftId, updatedAt: input.productAt }, data: { updatedAt, updatedById: input.actorId } });
@@ -53,5 +57,5 @@ export class PrismaTranslationManagementPersistence implements TranslationPersis
   }
 }
 export function createPrismaTranslationManagementDependencies(prisma: PrismaClient): TranslationDependencies<Tx> {
-  return { persistence: new PrismaTranslationManagementPersistence(prisma), transactionRunner: { run: work => prisma.$transaction(tx => work(tx)) } };
+  return { persistence: new PrismaTranslationManagementPersistence(prisma), transactionRunner: { run: work => runEntitlementTransaction(prisma, tx => work(tx)) } };
 }

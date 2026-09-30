@@ -1,3 +1,4 @@
+import { activateOrganizationTrial } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import type {
   ControlledActivationDependencies,
 } from "@/src/application/auth/controlled-activation";
@@ -292,6 +293,11 @@ implements VerifiedPersistence {
         boundAt: input.boundAt,
       },
     });
+    if (result.count === 1) {
+      const intent = await transaction.accountActivationIntent.findUniqueOrThrow({ where: { id: input.intentId }, select: { userId: true } });
+      const memberships = await transaction.membership.findMany({ where: { userId: intent.userId, role: "OWNER", status: "ACTIVE", organization: { status: "ACTIVE" } }, select: { organizationId: true } });
+      for (const membership of memberships) await activateOrganizationTrial(transaction, membership.organizationId, input.boundAt);
+    }
     return result.count === 1;
   }
 

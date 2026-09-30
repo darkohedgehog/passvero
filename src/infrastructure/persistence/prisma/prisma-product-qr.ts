@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import type { AuthenticatedUserContext } from "@/src/application/context/authenticated-user-context";
 import { createGetPublicDppService } from "@/src/application/public-dpp/get-public-dpp";
@@ -8,13 +10,14 @@ import { PrismaPublicDppPersistence } from "./prisma-public-dpp";
 export class PrismaProductQrTransactionRunner {
   constructor(private readonly prisma: PrismaClient) {}
   run<Result>(mode: QrTransactionMode, work: (tx: Prisma.TransactionClient) => Promise<Result>): Promise<Result> {
-    return this.prisma.$transaction(work, { isolationLevel: mode === "READ" ? "RepeatableRead" : "ReadCommitted" });
+    return runEntitlementTransaction(this.prisma, work, { isolationLevel: mode === "READ" ? "RepeatableRead" : "ReadCommitted" });
   }
 }
 
 export class PrismaProductQrPersistence implements ProductQrPersistence<Prisma.TransactionClient> {
   async readEligibility(tx: Prisma.TransactionClient, context: AuthenticatedUserContext, mode: QrTransactionMode) {
     if (mode === "ACTIVATE") {
+      await lockEntitlementOrganization(tx, context.organizationId);
       // Shared locks prevent eligibility changes until the QR audit commits.
       await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Organization" WHERE "id" = ${context.organizationId}::uuid FOR SHARE`);
       await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Membership" WHERE "id" = ${context.membershipId}::uuid AND "userId" = ${context.userId}::uuid AND "organizationId" = ${context.organizationId}::uuid FOR SHARE`);
@@ -28,6 +31,7 @@ export class PrismaProductQrPersistence implements ProductQrPersistence<Prisma.T
 
   async readProduct(tx: Prisma.TransactionClient, productId: string, organizationId: string, mode: QrTransactionMode): Promise<ProductQrRecord | null> {
     if (mode === "ACTIVATE") {
+      await assertContentWrite(tx, organizationId);
       // Publication takes the same Product lock. Locking does not touch updatedAt.
       await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Product" WHERE "id" = ${productId}::uuid AND "organizationId" = ${organizationId}::uuid FOR UPDATE`);
     }

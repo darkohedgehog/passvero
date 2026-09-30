@@ -1,0 +1,23 @@
+[
+  {
+    "scenario": "paid-grace-active",
+    "status": 200,
+    "expected": 200,
+    "cacheControl": "no-store",
+    "bytes": 3309
+  },
+  {
+    "scenario": "paid-grace-expired",
+    "status": 404,
+    "expected": 404,
+    "cacheControl": "no-store",
+    "bytes": 2851
+  },
+  {
+    "scenario": "trial-expired",
+    "status": 404,
+    "expected": 404,
+    "cacheControl": "no-store",
+    "bytes": 2851
+  }
+]

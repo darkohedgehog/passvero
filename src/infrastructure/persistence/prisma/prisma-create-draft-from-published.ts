@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, assertPdfAttachment } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { manufacturerSelect } from "@/src/application/products/manufacturer/contracts";
 import { DraftCreationConflict, type CreateDraftFromPublishedPersistence } from "@/src/application/products/create-draft-from-published/ports";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
@@ -27,6 +29,8 @@ export class PrismaCreateDraftFromPublishedPersistence extends PrismaPublishProd
   }
 
   async createDraft(tx: Transaction, input: Parameters<CreateDraftFromPublishedPersistence<Transaction>["createDraft"]>[1]) {
+    await assertContentWrite(tx, input.organizationId);
+    await assertPdfAttachment(tx, input.organizationId, input.sourceVersionId, 0);
     const where = { productVersionId: input.sourceVersionId };
     // Explicit authoring allowlists. No row IDs or lifecycle/actor history are copied.
     const [translations, materials, identifiers, documents, images] = await Promise.all([
@@ -74,7 +78,7 @@ export function createPrismaCreateDraftFromPublishedDependencies(prisma: PrismaC
     persistence: new PrismaCreateDraftFromPublishedPersistence(prisma),
     transactionRunner: {
       async run<R>(work: (tx: Transaction) => Promise<R>): Promise<R> {
-        try { return await prisma.$transaction(work); }
+        try { return await runEntitlementTransaction(prisma, work); }
         catch (error) {
           if (error instanceof Prisma.PrismaClientKnownRequestError && (error.code === "P2002" || error.code === "P2034")) throw new DraftCreationConflict();
           throw error;

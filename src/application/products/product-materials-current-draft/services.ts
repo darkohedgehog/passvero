@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { ApplicationError } from "@/src/application/errors/application-error";
 import {
   hasProductPermission,
@@ -272,7 +273,8 @@ async function runMutation<Transaction, Result>(
       }
     });
   } catch (error) {
-    if (error instanceof ApplicationError && trusted.has(error)) throw error;
+    if (error instanceof EntitlementError) throw error;
+      if (error instanceof ApplicationError && trusted.has(error)) throw error;
     throw safeError("INTERNAL", "PRODUCT_MATERIALS_OPERATIONAL_FAILURE", context?.correlationId);
   }
 }

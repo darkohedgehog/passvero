@@ -1,3 +1,4 @@
+import { EntitlementError } from "@/src/application/subscriptions/entitlement-error";
 import { ApplicationError } from "../../errors/application-error";
 import { canonicalProxyDenial } from "../../http/canonical-proxy";
 import type { AuthenticatedUserContextResolution } from "../../context/resolve-authenticated-user-context";
@@ -40,6 +41,7 @@ export function createAttachmentHttpHandler(deps: { canonicalOrigin: string; ver
       const result = await deps.mutate(productId, body, context.context);
       return attachmentResponse(result.status, 200);
     } catch (error) {
+      if (error instanceof EntitlementError) return Response.json({ status: "SUBSCRIPTION_DENIED", reason: error.code }, { status: 403, headers: { "Cache-Control": "private, no-store" } });
       if (error instanceof ApplicationError) {
         const codes: Partial<Record<ApplicationError["category"], number>> = { VALIDATION: 400, UNAUTHENTICATED: 403, FORBIDDEN: 403, NOT_FOUND: 404, INVALID_STATE: 409, CONFLICT: 409, INTERNAL: 503 };
         return attachmentResponse(error.category === "INTERNAL" ? "OPERATIONAL_FAILURE" : error.code, codes[error.category] ?? 503);

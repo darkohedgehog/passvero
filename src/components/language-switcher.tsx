@@ -37,7 +37,7 @@ export function LanguageSwitcher({ variant = "marketing" }: { variant?: "marketi
       <select
         aria-label={t("language")}
         className={variant === "dashboard"
-          ? "min-h-11 max-w-full rounded-lg border border-teal-700/30 bg-teal-50 py-2 pl-9 pr-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+          ? "h-11 min-h-11 max-w-full appearance-none rounded-lg border border-teal-700/30 bg-teal-50 py-2 pl-9 pr-9 text-sm font-semibold text-slate-800 shadow-sm hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
           : "min-h-9 max-w-24 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs text-slate-600 disabled:cursor-wait disabled:opacity-60"}
         disabled={isPending}
         onChange={handleLocaleChange}
@@ -49,6 +49,11 @@ export function LanguageSwitcher({ variant = "marketing" }: { variant?: "marketi
           </option>
         ))}
       </select>
+      {variant === "dashboard" ? (
+        <svg className="pointer-events-none absolute right-3 size-4 text-teal-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
+          <path d="m7 10 5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : null}
     </label>
   );
 }

@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite, lockEntitlementOrganization } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import type { CnClassificationRecord, CnClassificationCurrentDraftPersistence } from "@/src/application/products/cn-classification-current-draft/ports";
 import { CnClassificationConflictPersistenceError, CnClassificationCurrentDraftPersistenceError } from "@/src/application/products/cn-classification-current-draft/ports";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
@@ -19,7 +21,7 @@ const productProjection = { id: true, organizationId: true, lifecycleStatus: tru
 export class PrismaCnClassificationCurrentDraftTransactionRunner {
   constructor(private readonly prisma: PrismaClient) {}
   run<Result>(work: (transaction: Transaction) => Promise<Result>): Promise<Result> {
-    return this.prisma.$transaction((transaction) => work(transaction));
+    return runEntitlementTransaction(this.prisma, (transaction) => work(transaction));
   }
 }
 
@@ -62,6 +64,7 @@ implements CnClassificationCurrentDraftPersistence<Transaction> {
   }
 
   async readEligibility(transaction: Transaction, input: { readonly organizationId: string; readonly userId: string; readonly membershipId: string }) {
+    await lockEntitlementOrganization(transaction, input.organizationId);
     return this.safe(async () => {
       const row = await transaction.membership.findFirst({
         where: { id: input.membershipId, organizationId: input.organizationId, userId: input.userId },
@@ -96,6 +99,7 @@ implements CnClassificationCurrentDraftPersistence<Transaction> {
   }
 
   async touchProductIfCurrent(transaction: Transaction, input: { readonly productId: string; readonly organizationId: string; readonly currentDraftVersionId: string; readonly expectedUpdatedAt: Date; readonly actorId: string }): Promise<boolean> {
+    await assertContentWrite(transaction, input.organizationId);
     return this.safe(async () => (await transaction.product.updateMany({
       where: { id: input.productId, organizationId: input.organizationId, lifecycleStatus: "ACTIVE", currentDraftVersionId: input.currentDraftVersionId, updatedAt: input.expectedUpdatedAt },
       data: { updatedById: input.actorId },

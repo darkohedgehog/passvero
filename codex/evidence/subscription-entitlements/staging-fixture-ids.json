@@ -1,0 +1,9 @@
+{
+  "trial-active": "2f6ef99e-4cc9-4127-8562-ab7d3ea2e622",
+  "trial-expired": "7c3a894e-34e0-4897-b61d-df9e672f5340",
+  "paid-grace-active": "c7f37fd1-10c0-40f8-a66d-c99b14e92635",
+  "paid-grace-expired": "6ba064b9-517b-4bea-8627-28aefc8d6fa4",
+  "upgrade": "da02e9b0-645e-42f1-96aa-4808d32c857d",
+  "downgrade-blocked": "d9d1c9f6-9fee-4df1-8623-02085eb2e9de",
+  "downgrade-allowed": "2a9a42d5-9d24-4003-aca7-fb3a7bf155f9"
+}

@@ -1,3 +1,5 @@
+import { runEntitlementTransaction } from "@/src/infrastructure/subscriptions/entitlement-runtime";
+import { assertContentWrite } from "@/src/infrastructure/subscriptions/entitlement-runtime";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import type { ManufacturerDependencies, ManufacturerPersistence } from "@/src/application/products/manufacturer/contracts";
 import { manufacturerSelect } from "@/src/application/products/manufacturer/contracts";
@@ -15,6 +17,7 @@ export class PrismaManufacturerPersistence implements ManufacturerPersistence<Tx
     catch (error) { if (error instanceof DocumentError && error.code === "FORBIDDEN") throw manufacturerError("FORBIDDEN", "FORBIDDEN"); throw error; }
   }
   async load(tx: Tx, productId: string, organizationId: string, lock: boolean) {
+    if (lock) await assertContentWrite(tx, organizationId);
     if (lock) await tx.$queryRaw(Prisma.sql`SELECT id FROM "Product" WHERE id=${productId}::uuid AND "organizationId"=${organizationId}::uuid FOR UPDATE`);
     const row = await tx.product.findFirst({ where: { id: productId, organizationId }, select: {
       id: true, organizationId: true, lifecycleStatus: true, updatedAt: true,
@@ -60,5 +63,5 @@ export class PrismaManufacturerPersistence implements ManufacturerPersistence<Tx
   }
 }
 export function createPrismaManufacturerDependencies(prisma: PrismaClient): ManufacturerDependencies<Tx> {
-  return { persistence: new PrismaManufacturerPersistence(prisma), run: work => prisma.$transaction(work) };
+  return { persistence: new PrismaManufacturerPersistence(prisma), run: work => runEntitlementTransaction(prisma, work) };
 }
