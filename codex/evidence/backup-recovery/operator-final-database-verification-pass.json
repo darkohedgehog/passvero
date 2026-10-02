@@ -1,0 +1,55 @@
+{
+  "evidence": "RETURNED_OPERATOR_OUTPUT",
+  "recordedDate": "2026-10-02",
+  "setId": "20261001T212354Z",
+  "helper": {
+    "databaseVerificationHelper": "REVIEWED_INSTALLED",
+    "sourceSha256": "cfadf143ad7a2e79ba9635a01e7e167a34aa06669be7983396aba56973469624",
+    "stagingPauseRequested": false
+  },
+  "unit": {
+    "name": "passvero-stage-restore-20261001T212354Z-database-final.service",
+    "invocationId": "3ddfbb1dcdcb40e58f23b009e72102d6",
+    "result": "success",
+    "status": 0,
+    "runtimeSeconds": 2.571
+  },
+  "database": {
+    "databaseRestore": "PASS_REAL_B2_DOWNLOADED_DUMP_VERIFIED",
+    "setId": "20261001T212354Z",
+    "snapshotId": "2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2",
+    "database": "passvero_staging_recovery",
+    "tables": 51,
+    "migrations": 31,
+    "catalogOwnersAndAcls": "MATCH_SEMANTIC_WITH_EXACT_REVIEWED_EQUIVALENCES",
+    "reviewedConstraintRepresentations": 6,
+    "ownerDefaultAclEquivalences": 6,
+    "databaseAcl": "MATCH",
+    "allTableCounters": "MATCH",
+    "sequences": "MATCH",
+    "databaseAssetReferences": 9,
+    "storageObjects": 5,
+    "acceptedCleanupTombstones": 4,
+    "tcpListener": false,
+    "restoreRepeated": false,
+    "schemaWrites": "NONE",
+    "businessWrites": "NONE",
+    "isolatedApplicationRead": "NOT_YET_RUN",
+    "storageProviderRestore": "NOT_PERFORMED",
+    "stagingPauseRequested": false,
+    "smtpCalls": 0,
+    "telegramCalls": 0,
+    "automaticRetry": false
+  },
+  "closure": {
+    "databaseFinalClosure": "PASS",
+    "restoreCluster": "STOPPED",
+    "parentPermissions": "PRIVATE_0700_RESTORED",
+    "staging": "ONLINE_UNPAUSED",
+    "reminderTimer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  }
+}

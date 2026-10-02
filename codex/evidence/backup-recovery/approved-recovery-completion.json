@@ -1,0 +1,111 @@
+{
+  "task": "EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION",
+  "status": "COMPLETE_APPROVED_ONE_OFF_RECOVERY_SCOPE",
+  "recordedDate": "2026-10-02",
+  "captureUtc": "2026-10-01T21:23:54Z",
+  "setId": "20261001T212354Z",
+  "snapshotId": "2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2",
+  "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+  "b2Prefix": "passvero-staging-recovery-v1/",
+  "recoveryManifestSha256": "2c5ccd0b89064cc0b431444337ab7700c1638914cfd23f1b9366d22ac13d3132",
+  "sourceDatabase": {
+    "name": "passvero_acceptance",
+    "port": 5433,
+    "tables": 51,
+    "migrations": 31
+  },
+  "restoreDatabase": {
+    "name": "passvero_staging_recovery",
+    "pgdata": "/var/lib/passvero-staging-recovery/restore/20261001T212354Z/pgdata",
+    "socketOnly": true,
+    "tcpListener": false,
+    "state": "STOPPED"
+  },
+  "scope": {
+    "payloadBytes": 964172,
+    "storageBuckets": [
+      "passvero-staging-documents",
+      "passvero-staging-images"
+    ],
+    "storedObjects": 5,
+    "storageBytes": 6145,
+    "databaseAssetReferences": 9,
+    "acceptedCleanupTombstones": 4,
+    "acceptedDeletedBytesNotRestorable": 2959,
+    "nonSecretConfigurationFiles": [
+      "configuration/runtime.json",
+      "configuration/postgresql.json",
+      "configuration/scanner.json",
+      "configuration/source.json"
+    ],
+    "rawSecretFilesIncluded": false,
+    "applicationBinariesIncludedInThisSet": false
+  },
+  "proof": {
+    "consistentCapture": "PASS",
+    "pauseSeconds": 3.034,
+    "outsideDbClients": 0,
+    "stagingWritersDuringCapture": 0,
+    "storageUnchangedDuringCapture": true,
+    "realB2DownloadAndAllFileChecksums": "PASS",
+    "databaseRestoreVerification": "PASS",
+    "tableCounters": "MATCH",
+    "migrations": "MATCH",
+    "ownersAndEffectiveAcls": "MATCH_EXACT_REVIEWED_EQUIVALENCES",
+    "sequences": "MATCH",
+    "databaseAssetReferences": "MATCH",
+    "privateApplicationProductPdfImageRead": "PASS",
+    "catalogUnchanged": true,
+    "deployedArtifactHashesMatched": 826
+  },
+  "finalClosure": {
+    "applicationRecoveryClosure": "PASS",
+    "restoreCluster": "STOPPED",
+    "parentPermissions": "PRIVATE_0700_RESTORED",
+    "staging": "ONLINE_UNPAUSED",
+    "reminderTimer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "unchanged": {
+    "productionBackupJob": true,
+    "productionScheduleAndFreshness": true,
+    "existingTelegramIntegration": true,
+    "scannerProducerAndCredentials": true,
+    "priorRestoreAndReminderAcceptanceReused": true
+  },
+  "remindersRetained": {
+    "confirmedReceipts": 4,
+    "replayAdditionalDispatches": 0,
+    "staleCancelledMessages": 2,
+    "timer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0
+  },
+  "notPerformedOrIntroduced": {
+    "supabaseReupload": "NOT_PERFORMED",
+    "fullWebServiceRecovery": "NOT_TESTED",
+    "authSessionRecovery": "NOT_TESTED",
+    "freshScannerTrustRecovery": "NOT_TESTED",
+    "automaticStagingBackupSchedule": "NOT_INTRODUCED",
+    "newStagingFreshnessOrTelegramSchedule": "NOT_INTRODUCED",
+    "sourceDataDeletion": false,
+    "snapshotDeletionForgetPrune": false,
+    "commit": false,
+    "push": false
+  },
+  "remainingRecoveryDependencies": [
+    "Independent protected recovery of runtime/auth/storage/B2/SMTP/Telegram secrets and global role credential/bootstrap inputs; values not printed or changed.",
+    "Restore actual private bytes into a provider namespace and validate provider access before full Supabase recovery can be claimed.",
+    "Obtain the reviewed source/build or retained deployment artifact; this offsite set records configuration/build identity, not executable binaries.",
+    "Rebuild fresh scanner/ClamAV/qpdf trust and prove authenticated full web service recovery before live delivery.",
+    "A new recurring staging capture schedule/RPO/freshness policy needs separate authorization; the proved snapshot is as-of captureUtc only."
+  ],
+  "evidenceFiles": [
+    "operator-capture-pass-20261001T212354Z.json",
+    "operator-offsite-pass-20261001T212354Z.json",
+    "operator-final-database-verification-pass.json",
+    "operator-application-recovery-pass.json"
+  ]
+}

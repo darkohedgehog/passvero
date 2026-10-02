@@ -1,0 +1,51 @@
+{
+  "diagnostic": "READ_ONLY_RESTORE_PRIVATE_PATH",
+  "setId": "20261001T212354Z",
+  "privatePathFailures": [
+    {
+      "label": "originalClosure",
+      "exists": true,
+      "uid": 0,
+      "mode": "0o644",
+      "kind": "regular",
+      "privatePathPass": false
+    },
+    {
+      "label": "stdlibClosure",
+      "exists": true,
+      "uid": 0,
+      "mode": "0o644",
+      "kind": "regular",
+      "privatePathPass": false
+    }
+  ],
+  "closurePosture": [
+    {
+      "label": "originalClosure",
+      "exists": true,
+      "uid": 0,
+      "mode": "0o644",
+      "kind": "regular",
+      "privatePathPass": false
+    },
+    {
+      "label": "stdlibClosure",
+      "exists": true,
+      "uid": 0,
+      "mode": "0o644",
+      "kind": "regular",
+      "privatePathPass": false
+    }
+  ],
+  "checkedPaths": 33,
+  "restoreAttemptExists": false,
+  "pgdataExists": false,
+  "socketDirectoryExists": false,
+  "aclBaselineExists": false,
+  "writes": "NONE",
+  "restoreExecuted": false,
+  "stagingPauseRequested": false,
+  "b2Calls": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

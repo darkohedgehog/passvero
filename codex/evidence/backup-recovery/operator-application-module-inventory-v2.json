@@ -1,0 +1,184 @@
+{
+  "diagnostic": "READ_ONLY_APPLICATION_MODULE_INVENTORY_V2",
+  "setId": "20261001T212354Z",
+  "applicationGitHead": "3eec70abc80887eb4c098236c9b54ebc28d9fc58",
+  "modules": [
+    {
+      "path": "src/application/documents/bytes.ts",
+      "expectedSha256": "b09a9d1ec2d10e9a330352bc15a99271dd3de894d9fdb1145cba639304ec9710",
+      "exists": true,
+      "uid": 1001,
+      "mode": "0o664",
+      "state": "READABLE",
+      "bytes": 1301,
+      "actualSha256": "5d8d67e1bdfcdff9c3dc5c44957a2340248b855b59b587c441effc6b5be6f26b",
+      "matchesExpected": false,
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": "5d8d67e1bdfcdff9c3dc5c44957a2340248b855b59b587c441effc6b5be6f26b",
+      "matchesGitHeadSource": true,
+      "lfWithoutBomSha256": "5d8d67e1bdfcdff9c3dc5c44957a2340248b855b59b587c441effc6b5be6f26b",
+      "lfWithoutBomMatchesReviewed": false
+    },
+    {
+      "path": "src/application/documents/contracts.ts",
+      "expectedSha256": "fdb5f4448424c2175089955da78a304ecc1b4240b164e675880ad790539f26d3",
+      "exists": true,
+      "uid": 1001,
+      "mode": "0o664",
+      "state": "READABLE",
+      "bytes": 2241,
+      "actualSha256": "1f2beac7c38a402fa3d795d9ae89b710ee7987a83bdf18a25a218aa6ab2effd1",
+      "matchesExpected": false,
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": "1f2beac7c38a402fa3d795d9ae89b710ee7987a83bdf18a25a218aa6ab2effd1",
+      "matchesGitHeadSource": true,
+      "lfWithoutBomSha256": "1f2beac7c38a402fa3d795d9ae89b710ee7987a83bdf18a25a218aa6ab2effd1",
+      "lfWithoutBomMatchesReviewed": false
+    },
+    {
+      "path": "src/application/documents/pdf.ts",
+      "expectedSha256": "07697db8850f782bce3efe447f5430c2491ca06588097f482c7501f80b009fd8",
+      "exists": true,
+      "uid": 1001,
+      "mode": "0o664",
+      "state": "READABLE",
+      "bytes": 1725,
+      "actualSha256": "07697db8850f782bce3efe447f5430c2491ca06588097f482c7501f80b009fd8",
+      "matchesExpected": true,
+      "matchesReviewedBundle": true,
+      "gitHeadSourceSha256": "07697db8850f782bce3efe447f5430c2491ca06588097f482c7501f80b009fd8",
+      "matchesGitHeadSource": true
+    },
+    {
+      "path": "src/application/errors/application-error.ts",
+      "expectedSha256": "89bfd62a6ab94681e85cb8b3d57f4b09b002a638430de77ec074497ed493ebc1",
+      "exists": true,
+      "uid": 1001,
+      "mode": "0o664",
+      "state": "READABLE",
+      "bytes": 524,
+      "actualSha256": "89bfd62a6ab94681e85cb8b3d57f4b09b002a638430de77ec074497ed493ebc1",
+      "matchesExpected": true,
+      "matchesReviewedBundle": true,
+      "gitHeadSourceSha256": "89bfd62a6ab94681e85cb8b3d57f4b09b002a638430de77ec074497ed493ebc1",
+      "matchesGitHeadSource": true
+    },
+    {
+      "path": "src/application/permissions/product-permissions.ts",
+      "expectedSha256": "e716f110722779dadb9ba5f96713a0cec30c2b3a243e39d19ca5b1790f240c19",
+      "exists": true,
+      "uid": 1001,
+      "mode": "0o664",
+      "state": "READABLE",
+      "bytes": 1388,
+      "actualSha256": "e716f110722779dadb9ba5f96713a0cec30c2b3a243e39d19ca5b1790f240c19",
+      "matchesExpected": true,
+      "matchesReviewedBundle": true,
+      "gitHeadSourceSha256": "e716f110722779dadb9ba5f96713a0cec30c2b3a243e39d19ca5b1790f240c19",
+      "matchesGitHeadSource": true
+    },
+    {
+      "path": "src/application/products/export-catalog/contracts.ts",
+      "expectedSha256": "71b4ab48f017ec1135c1053680736e1d66e0b5ed5eee78ff9f05242a1b760d05",
+      "exists": false,
+      "state": "MISSING",
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": null,
+      "matchesGitHeadSource": null
+    },
+    {
+      "path": "src/application/products/export-catalog/csv.ts",
+      "expectedSha256": "3419d540dc4eb8e2fa0104c619850a3295d87e43fd4345caa5678c818300f0c6",
+      "exists": false,
+      "state": "MISSING",
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": null,
+      "matchesGitHeadSource": null
+    },
+    {
+      "path": "src/application/products/export-catalog/export-catalog.ts",
+      "expectedSha256": "da30f95fa7e5630819a633335099b9708b62daa552b3a10b23ed3202b0c2b708",
+      "exists": false,
+      "state": "MISSING",
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": null,
+      "matchesGitHeadSource": null
+    },
+    {
+      "path": "src/application/products/images/contracts.ts",
+      "expectedSha256": "117ceff40a0e49923cb22b44f6d3e3aa3cd7422b693c893dc0ebc580eebed4c1",
+      "exists": false,
+      "state": "MISSING",
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": null,
+      "matchesGitHeadSource": null
+    },
+    {
+      "path": "src/application/products/images/service.ts",
+      "expectedSha256": "7fb5fe12143737db88183b842e34d2caa9072d9c6300ee513e34cc831249c48c",
+      "exists": false,
+      "state": "MISSING",
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": null,
+      "matchesGitHeadSource": null
+    },
+    {
+      "path": "src/application/products/product-search.ts",
+      "expectedSha256": "77548eaa3b650333675cbca5419b4aa282947bd648222c660333ffbffda7ef7d",
+      "exists": false,
+      "state": "MISSING",
+      "matchesReviewedBundle": false,
+      "gitHeadSourceSha256": null,
+      "matchesGitHeadSource": null
+    }
+  ],
+  "missingModules": 6,
+  "mismatchedModules": 8,
+  "requiredEvidence": {
+    "build": {
+      "path": "/var/lib/passvero-staging-recovery/operator/application-read-build.json",
+      "expectedSha256": "b11c50998d87f134c3611c4e5337604990315b83b18d43eafe91403635351e85",
+      "exists": true,
+      "uid": 0,
+      "mode": "0o600",
+      "state": "READABLE",
+      "bytes": 1568,
+      "actualSha256": "b11c50998d87f134c3611c4e5337604990315b83b18d43eafe91403635351e85",
+      "matchesExpected": true
+    },
+    "helper": {
+      "path": "/var/lib/passvero-staging-recovery/operator/verify-application-c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee.py",
+      "expectedSha256": "c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee",
+      "exists": true,
+      "uid": 0,
+      "mode": "0o600",
+      "state": "READABLE",
+      "bytes": 9740,
+      "actualSha256": "c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee",
+      "matchesExpected": true
+    },
+    "closure": {
+      "path": "/var/lib/passvero-staging-recovery/control/20261001T212354Z/application-recovery-closure.json",
+      "expectedSha256": null,
+      "exists": true,
+      "uid": 0,
+      "mode": "0o600",
+      "state": "READABLE",
+      "bytes": 288,
+      "actualSha256": "93385791f2e6366fb8c292bc57d0bf755dd35f5638af9bbeb51e3145b4d84f4e"
+    }
+  },
+  "applicationAttempt": {
+    "path": "/var/lib/passvero-staging-recovery/control/20261001T212354Z/application-recovery-attempt.json",
+    "expectedSha256": null,
+    "exists": false,
+    "state": "MISSING"
+  },
+  "clusterStarted": false,
+  "acceptanceRepeated": false,
+  "writes": "NONE",
+  "stagingPauseRequested": false,
+  "b2Calls": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

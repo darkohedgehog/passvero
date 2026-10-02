@@ -1,0 +1,11 @@
+{
+  "preparation": "STOP",
+  "phase": "B2_EXACT_PREFIX_READ_ONLY",
+  "reason": "FileNotFoundError",
+  "stagingPauseRequested": false,
+  "remoteWrites": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0,
+  "retry": "MANUAL_REVIEW_REQUIRED",
+  "artifactsRetained": true
+}

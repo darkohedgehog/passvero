@@ -1,0 +1,39 @@
+{
+  "evidence": "LOCAL_ONLY_NOT_OPERATOR_ACCEPTANCE",
+  "recordedDate": "2026-10-02",
+  "provenance": {
+    "acceptedSourceBase": "1fc84aa8ccc3118f8158029e8edf99275c8f7f6e",
+    "applicationModules": {
+      "src/application/documents/bytes.ts": "b09a9d1ec2d10e9a330352bc15a99271dd3de894d9fdb1145cba639304ec9710",
+      "src/application/documents/contracts.ts": "fdb5f4448424c2175089955da78a304ecc1b4240b164e675880ad790539f26d3",
+      "src/application/documents/pdf.ts": "07697db8850f782bce3efe447f5430c2491ca06588097f482c7501f80b009fd8",
+      "src/application/errors/application-error.ts": "89bfd62a6ab94681e85cb8b3d57f4b09b002a638430de77ec074497ed493ebc1",
+      "src/application/permissions/product-permissions.ts": "e716f110722779dadb9ba5f96713a0cec30c2b3a243e39d19ca5b1790f240c19",
+      "src/application/products/export-catalog/contracts.ts": "71b4ab48f017ec1135c1053680736e1d66e0b5ed5eee78ff9f05242a1b760d05",
+      "src/application/products/export-catalog/csv.ts": "3419d540dc4eb8e2fa0104c619850a3295d87e43fd4345caa5678c818300f0c6",
+      "src/application/products/export-catalog/export-catalog.ts": "da30f95fa7e5630819a633335099b9708b62daa552b3a10b23ed3202b0c2b708",
+      "src/application/products/images/contracts.ts": "117ceff40a0e49923cb22b44f6d3e3aa3cd7422b693c893dc0ebc580eebed4c1",
+      "src/application/products/images/service.ts": "7fb5fe12143737db88183b842e34d2caa9072d9c6300ee513e34cc831249c48c",
+      "src/application/products/product-search.ts": "77548eaa3b650333675cbca5419b4aa282947bd648222c660333ffbffda7ef7d"
+    },
+    "buildManifestSha256": "b11c50998d87f134c3611c4e5337604990315b83b18d43eafe91403635351e85",
+    "deployedArtifactFiles": 826,
+    "deploymentBuildId": "8QNIYVVZWEsQaCL9uLZ5Q",
+    "deploymentManifestSha256": "1d7f456d13ce8cf1bb7173bc3c731be4fd7e61d6a5fbb70fb8aca99eba04f1cf",
+    "localProof": "ALL_11_MODULE_INPUTS_MATCH_ACCEPTED_BUILD_BASE; ALL_826_BUILD_ARTIFACT_FILES_MATCH_ACCEPTED_PACKAGE",
+    "schema": 1
+  },
+  "helperSha256": "e168795c416c97deb477d22999bf01438bf2e502b76bc3acfb8073e350204abf",
+  "provenanceSha256": "549271de0275b711bab687ce0a954887054debdfde4ccd55c0fcc20b2991f58d",
+  "handoffSha256": "d7765bdbe63ab31eb9cddd110e8008ff13529627b363c1aae1eb68986a38a205",
+  "checks": {
+    "sourceBaseModuleHashes": "PASS_ALL_11",
+    "localArtifactHashes": "PASS_ALL_826",
+    "operatorFlowTests": "10_PASS_SYNTHETIC",
+    "installerFixtures": "4_PASS_SYNTHETIC",
+    "exactPayloadsAndShellPythonSyntax": "PASS",
+    "applicationBundle": "UNCHANGED_REUSE_ACCEPTED_10_APPLICATION_READER_TESTS"
+  },
+  "liveApplicationRead": "NOT_YET_RUN",
+  "stagingSourceOrDeploymentChanged": false
+}

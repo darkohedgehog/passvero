@@ -1,0 +1,50 @@
+{
+  "diagnostic": "READ_ONLY_PREPARATION_DEPENDENCIES",
+  "requiredFiles": {
+    "/etc/passvero/backup/restic-repository": {
+      "exists": true,
+      "symlink": false,
+      "regular": true,
+      "uid": 0,
+      "mode": "0o600",
+      "executable": false
+    },
+    "/etc/passvero/backup/restic-password": {
+      "exists": true,
+      "symlink": false,
+      "regular": true,
+      "uid": 0,
+      "mode": "0o600",
+      "executable": false
+    },
+    "/etc/passvero/backup/restic.env": {
+      "exists": true,
+      "symlink": false,
+      "regular": true,
+      "uid": 0,
+      "mode": "0o600",
+      "executable": false
+    }
+  },
+  "hardcodedRestic": {
+    "path": "/usr/bin/restic",
+    "exists": false
+  },
+  "existingRestic": {
+    "path": "/usr/local/bin/restic",
+    "exists": true,
+    "symlink": false,
+    "regular": true,
+    "uid": 0,
+    "mode": "0o755",
+    "executable": true
+  },
+  "productionSourcePinMatches": true,
+  "secretValuesRead": false,
+  "writes": "NONE",
+  "resticCalls": 0,
+  "b2Calls": 0,
+  "stagingPauseRequested": false,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

@@ -1,0 +1,748 @@
+{
+  "diagnostic": "READ_ONLY_SHELL_SELECTORS",
+  "observedUtc": "2026-10-01T17:03:32.586062+00:00",
+  "sourceSha256": "5b6360633efb636f0aa9784b4e1a9d73aabe39a9c69f824cc99b9189407d7e75",
+  "statements": [
+    {
+      "context": "SHELL",
+      "startLine": 16,
+      "endLine": 16,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "config_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": [
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 17,
+      "endLine": 17,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "config_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": [
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 18,
+      "endLine": 18,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "config_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": [
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 24,
+      "endLine": 24,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 157,
+      "endLine": 157,
+      "argvShape": [
+        "restic",
+        "--no-cache",
+        "<redacted>",
+        "locks",
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [
+        "--no-cache"
+      ],
+      "recognizedOperations": [
+        "locks",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 213,
+      "endLine": 224,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [],
+      "recognizedOperations": [
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 249,
+      "endLine": 262,
+      "argvShape": [],
+      "variables": [
+        "backup_role",
+        "database_host",
+        "database_name",
+        "database_port",
+        "pgpass_file"
+      ],
+      "flags": [
+        "--no-psqlrc",
+        "--no-password",
+        "--host",
+        "--port",
+        "--username",
+        "--dbname",
+        "--set",
+        "--tuples-only",
+        "--no-align",
+        "--field-separator",
+        "--command"
+      ],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 325,
+      "endLine": 325,
+      "argvShape": [
+        "<redacted>",
+        "--no-cache",
+        "snapshots",
+        "--json",
+        "<redacted>"
+      ],
+      "variables": [
+        "pre_snapshots_json"
+      ],
+      "flags": [
+        "--no-cache",
+        "--json"
+      ],
+      "recognizedOperations": [
+        "restic",
+        "snapshots"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 353,
+      "endLine": 354,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "check",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [
+        "--no-cache"
+      ],
+      "recognizedOperations": [
+        "check",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 449,
+      "endLine": 460,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-psqlrc",
+        "<redacted>",
+        "--no-password",
+        "--host=<redacted>",
+        "--port=<redacted>",
+        "--username=<redacted>",
+        "--dbname=<redacted>",
+        "--quiet",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "backup_role",
+        "database_host",
+        "database_name",
+        "database_port",
+        "exporter_fifo",
+        "exporter_log",
+        "pgpass_file"
+      ],
+      "flags": [
+        "--no-psqlrc",
+        "--no-password",
+        "--host",
+        "--port",
+        "--username",
+        "--dbname",
+        "--quiet"
+      ],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 544,
+      "endLine": 554,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--host=<redacted>",
+        "--port=<redacted>",
+        "--username=<redacted>",
+        "--dbname=<redacted>",
+        "--format=<redacted>",
+        "--no-password",
+        "--lock-wait-timeout=<redacted>",
+        "--snapshot=<redacted>",
+        "--file=<redacted>"
+      ],
+      "variables": [
+        "backup_role",
+        "database_host",
+        "database_name",
+        "database_port",
+        "dump_partial",
+        "pgpass_file",
+        "snapshot_id"
+      ],
+      "flags": [
+        "--host",
+        "--port",
+        "--username",
+        "--dbname",
+        "--format",
+        "--no-password",
+        "--lock-wait-timeout",
+        "--snapshot",
+        "--file"
+      ],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 660,
+      "endLine": 660,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": [
+        "backup",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 661,
+      "endLine": 661,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": [
+        "backup",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 663,
+      "endLine": 672,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "backup",
+        "--host",
+        "<redacted>",
+        "--tag",
+        "<redacted>",
+        "--tag",
+        "<redacted>",
+        "--json",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "backup_tag",
+        "checksum",
+        "dump",
+        "manifest",
+        "production_tag",
+        "snapshot_host",
+        "toc",
+        "upload_json",
+        "upload_stderr"
+      ],
+      "flags": [
+        "--no-cache",
+        "--host",
+        "--tag",
+        "--tag",
+        "--json"
+      ],
+      "recognizedOperations": [
+        "backup",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 712,
+      "endLine": 712,
+      "argvShape": [
+        "<redacted>",
+        "--no-cache",
+        "snapshots",
+        "--json",
+        "<redacted>"
+      ],
+      "variables": [
+        "post_snapshots_json"
+      ],
+      "flags": [
+        "--no-cache",
+        "--json"
+      ],
+      "recognizedOperations": [
+        "restic",
+        "snapshots"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 757,
+      "endLine": 757,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": [
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 758,
+      "endLine": 759,
+      "argvShape": [
+        "<redacted>",
+        "--no-cache",
+        "ls",
+        "--json",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "new_snapshot_id",
+        "remote_ls_json"
+      ],
+      "flags": [
+        "--no-cache",
+        "--json"
+      ],
+      "recognizedOperations": [
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 797,
+      "endLine": 799,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "restore",
+        "<redacted>",
+        "--target",
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir",
+        "new_snapshot_id",
+        "remote_verify_dir"
+      ],
+      "flags": [
+        "--no-cache",
+        "--target"
+      ],
+      "recognizedOperations": [
+        "restic",
+        "restore"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 859,
+      "endLine": 860,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "check",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [
+        "--no-cache"
+      ],
+      "recognizedOperations": [
+        "check",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 869,
+      "endLine": 869,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 871,
+      "endLine": 880,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "forget",
+        "--host",
+        "<redacted>",
+        "--tag",
+        "<redacted>",
+        "--group-by",
+        "host",
+        "--keep-daily",
+        "14",
+        "--keep-weekly",
+        "8",
+        "--keep-monthly",
+        "6",
+        "--dry-run",
+        "--json",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir",
+        "production_tag",
+        "retention_json",
+        "snapshot_host"
+      ],
+      "flags": [
+        "--no-cache",
+        "--host",
+        "--tag",
+        "--group-by",
+        "--keep-daily",
+        "--keep-weekly",
+        "--keep-monthly",
+        "--dry-run",
+        "--json"
+      ],
+      "recognizedOperations": [
+        "forget",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 885,
+      "endLine": 885,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 922,
+      "endLine": 922,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 925,
+      "endLine": 932,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "forget",
+        "--host",
+        "<redacted>",
+        "--tag",
+        "<redacted>",
+        "--group-by",
+        "host",
+        "--keep-daily",
+        "14",
+        "--keep-weekly",
+        "8",
+        "--keep-monthly",
+        "6",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir",
+        "production_tag",
+        "snapshot_host"
+      ],
+      "flags": [
+        "--no-cache",
+        "--host",
+        "--tag",
+        "--group-by",
+        "--keep-daily",
+        "--keep-weekly",
+        "--keep-monthly"
+      ],
+      "recognizedOperations": [
+        "forget",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 937,
+      "endLine": 937,
+      "argvShape": [
+        "<redacted>"
+      ],
+      "variables": [
+        "retention_remove_count"
+      ],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 941,
+      "endLine": 941,
+      "argvShape": [
+        "<redacted>",
+        "--no-cache",
+        "snapshots",
+        "--json",
+        "<redacted>"
+      ],
+      "variables": [
+        "final_snapshots_json"
+      ],
+      "flags": [
+        "--no-cache",
+        "--json"
+      ],
+      "recognizedOperations": [
+        "restic",
+        "snapshots"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 973,
+      "endLine": 974,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>",
+        "--no-cache",
+        "check",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "helper_dir"
+      ],
+      "flags": [
+        "--no-cache"
+      ],
+      "recognizedOperations": [
+        "check",
+        "restic"
+      ]
+    },
+    {
+      "context": "SHELL",
+      "startLine": 991,
+      "endLine": 991,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "new_snapshot_id"
+      ],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 992,
+      "endLine": 992,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "snapshot_time"
+      ],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 993,
+      "endLine": 993,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "snapshot_host"
+      ],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 1002,
+      "endLine": 1002,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 1003,
+      "endLine": 1003,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [
+        "retention_status"
+      ],
+      "flags": [],
+      "recognizedOperations": []
+    },
+    {
+      "context": "SHELL",
+      "startLine": 1004,
+      "endLine": 1004,
+      "argvShape": [
+        "<redacted>",
+        "<redacted>",
+        "<redacted>"
+      ],
+      "variables": [],
+      "flags": [],
+      "recognizedOperations": []
+    }
+  ],
+  "limitations": [
+    "Unknown literal values are redacted; this is static argument structure, not source execution"
+  ],
+  "writes": "NONE",
+  "resticCalls": 0,
+  "sqlCalls": 0,
+  "storageCalls": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

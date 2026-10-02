@@ -1,0 +1,8 @@
+{
+  "diagnostic": "STOP",
+  "reason": "KeyError",
+  "phase": "CLUSTER_CATALOG_5432",
+  "writes": "NONE",
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

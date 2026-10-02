@@ -1,0 +1,36 @@
+{
+  "helper": {
+    "restoreHelper": "REVIEWED_INSTALLED",
+    "sourceSha256": "15fedf7fe4feecc12c79778a551ebba8f8c56793eabf04bb7d8e33a0be753034",
+    "stagingPauseRequested": false
+  },
+  "stop": {
+    "databaseRestore": "STOP",
+    "phase": "RESTORE_PREFLIGHT",
+    "reason": "ACL_TOOL_UNAVAILABLE",
+    "retry": "MANUAL_REVIEW_REQUIRED",
+    "stagingPauseRequested": false,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "closure": {
+    "restoreClosure": "PASS",
+    "setId": "20261001T212354Z",
+    "restoreCluster": "STOPPED",
+    "parentPermissions": "PRIVATE_0700_RESTORED",
+    "staging": "ONLINE_UNPAUSED",
+    "reminderTimer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "unit": {
+    "name": "passvero-stage-restore-20261001T212354Z.service",
+    "invocationId": "e2d37c7e744149efb0afbe3ea63f76c8",
+    "result": "exit-code",
+    "status": 1,
+    "runtime": "539ms"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "helper": {
+    "captureHelper": "REVIEWED_ADDITIONAL_CONTINUATION_INSTALLED",
+    "sourceSha256": "d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa",
+    "failedClaimRetained": true,
+    "stagingPauseRequested": false,
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "capture": {
+    "capture": "PASS",
+    "setId": "20261001T212354Z",
+    "staging": "ONLINE_RESUMED",
+    "pauseSeconds": 3.034,
+    "independentTimeoutResumeGuard": "REUSED_ACCEPTED_20261001T203612Z",
+    "lockedTables": 51,
+    "outsideDbClients": 0,
+    "stagingWritersDuringCapture": 0,
+    "storageMetadataAndBytesUnchanged": true,
+    "databaseAssetReferences": 9,
+    "storageObjects": 5,
+    "acceptedCleanupTombstones": 4,
+    "payloadBytes": 964172,
+    "b2Transfer": "NOT_YET_RUN",
+    "restore": "NOT_YET_RUN",
+    "reminderTimer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0,
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0,
+    "automaticRetry": false
+  }
+}

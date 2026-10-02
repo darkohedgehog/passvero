@@ -1,0 +1,41 @@
+{
+  "evidence": "RETURNED_OPERATOR_OUTPUT",
+  "recordedDate": "2026-10-02",
+  "setId": "20261001T212354Z",
+  "helper": {
+    "applicationRecoveryHelper": "REVIEWED_INSTALLED",
+    "sourceSha256": "c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee",
+    "bundleSha256": "35d4b1d74f7a8ac40efb1f1bc3264fb086fbbdb4f9c8ecf8d9e306544fc3aad9",
+    "buildSha256": "b11c50998d87f134c3611c4e5337604990315b83b18d43eafe91403635351e85",
+    "stagingPauseRequested": false
+  },
+  "unit": {
+    "name": "passvero-stage-restore-20261001T212354Z-application-recovery.service",
+    "invocationId": "faf168178f56437bba9e8a473eb920bc",
+    "result": "exit-code",
+    "status": 1,
+    "runtimeSeconds": 0.583
+  },
+  "result": {
+    "applicationRecoveryRead": "STOP",
+    "phase": "APPLICATION_RECOVERY_PREFLIGHT",
+    "reason": "APPLICATION_MODULE_CHANGED",
+    "retry": "MANUAL_REVIEW_REQUIRED",
+    "artifactsRetained": true,
+    "stagingPauseRequested": false,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "closure": {
+    "applicationRecoveryClosure": "PASS",
+    "restoreCluster": "STOPPED",
+    "parentPermissions": "PRIVATE_0700_RESTORED",
+    "staging": "ONLINE_UNPAUSED",
+    "reminderTimer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "assessment": "SOURCE_CHECK_PRECEDES_CLUSTER_START_AND_APPLICATION_ATTEMPT; DATABASE_AND_B2_PROOF_RETAINED"
+}

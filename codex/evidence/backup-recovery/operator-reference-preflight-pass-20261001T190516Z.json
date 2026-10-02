@@ -1,0 +1,14 @@
+{
+  "referencePreflight": "PASS",
+  "setId": "20261001T190516Z",
+  "databaseAssetReferences": 9,
+  "matchedStoredReferences": 5,
+  "acceptedCleanupTombstones": 4,
+  "tombstoneBytesNotPresent": 2959,
+  "unreferencedStoredObjects": 0,
+  "consistentCapture": "NOT_YET_RUN",
+  "stagingPauseRequested": false,
+  "remoteWrites": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

@@ -1,0 +1,19 @@
+{
+  "diagnostic": "READ_ONLY_ADDITIONAL_INSTALLER_STOP_STATE",
+  "originalClaimRetained": true,
+  "additionalAttemptClaimExists": false,
+  "correctedHelperExists": false,
+  "correctedHelperHashMatches": false,
+  "stagingOnline": true,
+  "reminderTimer": "DISABLED_INACTIVE",
+  "reminderService": "INACTIVE",
+  "campaignsEnabled": 0,
+  "captureExecutedByDiagnostic": false,
+  "stagingPauseRequested": false,
+  "writes": "NONE",
+  "storageCalls": 0,
+  "b2Calls": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0,
+  "assessment": "PRE_CAPTURE_INSTALLER_STOP_CONFIRMED"
+}

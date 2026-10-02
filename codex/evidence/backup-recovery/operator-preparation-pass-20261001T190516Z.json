@@ -1,0 +1,28 @@
+{
+  "repair": {
+    "repair": "EXISTING_RESTIC_PATH_ONLY_PASS",
+    "oldArtifactsRetained": true,
+    "stagingPauseRequested": false,
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "preparation": {
+    "preparation": "PASS",
+    "setId": "20261001T190516Z",
+    "staging": "ONLINE_UNPAUSED",
+    "b2Prefix": "passvero-staging-recovery-v1/",
+    "repositoryExists": false,
+    "existingStagingSnapshots": 0,
+    "storageObjects": 5,
+    "storageBytes": 6145,
+    "measurementDumpBytes": 584515,
+    "freeBytes": 88657485824,
+    "consistentCapture": "NOT_YET_RUN",
+    "writerClosureProof": "REQUIRED_DURING_CAPTURE",
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0,
+    "retry": "NO_AUTOMATIC_RETRY"
+  }
+}

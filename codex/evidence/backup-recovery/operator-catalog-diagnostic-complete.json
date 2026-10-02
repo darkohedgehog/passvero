@@ -1,0 +1,172 @@
+{
+  "operatorMessages": [
+    {
+      "catalogDiagnosticHelper": "REVIEWED_INSTALLED",
+      "sourceSha256": "07dce4ea1391b55a600931b91aca0a15a7e5046d7740b310b4fd65afe5f0fa24",
+      "stagingPauseRequested": false
+    },
+    {
+      "diagnostic": "READ_ONLY_RESTORED_CATALOG_COMPLETE",
+      "setId": "20261001T212354Z",
+      "catalogMatch": false,
+      "sections": {
+        "columns": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "constraints": {
+          "strictEqual": false,
+          "unorderedEntriesEqual": false
+        },
+        "defaultAcls": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "enums": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "functions": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "indexes": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "largeObjects": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": false
+        },
+        "migrations": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "nonPublicSchemas": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": false
+        },
+        "pendingDocuments": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": false
+        },
+        "pendingImages": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": false
+        },
+        "relations": {
+          "strictEqual": false,
+          "unorderedEntriesEqual": false
+        },
+        "roles": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        },
+        "schemas": {
+          "strictEqual": true,
+          "unorderedEntriesEqual": true
+        }
+      },
+      "differenceCount": 12,
+      "differences": [
+        {
+          "field": "/constraints/8/definition",
+          "sourceSha256": "81301f24f95fb27e37feeb9cd6d7e0e147a267520f05c892e0e160f8125f6088",
+          "restoredSha256": "9ff77e28b8664ccfde1ace0319a1a81dd39f74fd44263b602d263d30401fc804"
+        },
+        {
+          "field": "/constraints/65/definition",
+          "sourceSha256": "e113b45fd925046c451975696169b37e876584fa4936344fb8bdad9e1cb6a221",
+          "restoredSha256": "f6dcc955092bd4f32769dd1d2d3d5b9f54a00a3e0433a4143789c778cdef4491"
+        },
+        {
+          "field": "/constraints/71/definition",
+          "sourceSha256": "b42b1fd3ab1f7baf2f62fd4467855c436c8d3da48ff6d4b79d4e859a9843ca0e",
+          "restoredSha256": "90610191e7fbb3ce5a706c72e349bb6811d9af9f2908cde568425fee6af219af"
+        },
+        {
+          "field": "/constraints/231/definition",
+          "sourceSha256": "2a9cb2a90f812ebc10703440c72d947bde5046278a1294c22e30accd74137edd",
+          "restoredSha256": "e45d54d56558d9c09c71777c70fb9d959a62599902b7e899dbecfac85318bd63"
+        },
+        {
+          "field": "/constraints/233/definition",
+          "sourceSha256": "91ddd21f16057e49cc79af46397097dc9505477f96682a8a34bb2e24f9b257f4",
+          "restoredSha256": "2eded7720504308a08c823cff5976e4786de2b4211b777613001336b2583ca44"
+        },
+        {
+          "field": "/constraints/241/definition",
+          "sourceSha256": "7add4f175867c9e5d769f45d899dab24b65f7d1003ad88fb72fd91cacde2d7b4",
+          "restoredSha256": "4a220d17be617db99961376ab390b8c902bf3d383954c574011b50bbaed814d6"
+        },
+        {
+          "field": "/relations/11/acl",
+          "sourceSha256": "a1ef4291f027612a493828108b2b470f3839a0c249867b66a4f50c6a1a19822a",
+          "restoredSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "source": "{passvero_migrator=arwdDxt/passvero_migrator}",
+          "restored": null
+        },
+        {
+          "field": "/relations/19/acl",
+          "sourceSha256": "a1ef4291f027612a493828108b2b470f3839a0c249867b66a4f50c6a1a19822a",
+          "restoredSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "source": "{passvero_migrator=arwdDxt/passvero_migrator}",
+          "restored": null
+        },
+        {
+          "field": "/relations/20/acl",
+          "sourceSha256": "a1ef4291f027612a493828108b2b470f3839a0c249867b66a4f50c6a1a19822a",
+          "restoredSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "source": "{passvero_migrator=arwdDxt/passvero_migrator}",
+          "restored": null
+        },
+        {
+          "field": "/relations/22/acl",
+          "sourceSha256": "a1ef4291f027612a493828108b2b470f3839a0c249867b66a4f50c6a1a19822a",
+          "restoredSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "source": "{passvero_migrator=arwdDxt/passvero_migrator}",
+          "restored": null
+        },
+        {
+          "field": "/relations/43/acl",
+          "sourceSha256": "a1ef4291f027612a493828108b2b470f3839a0c249867b66a4f50c6a1a19822a",
+          "restoredSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "source": "{passvero_migrator=arwdDxt/passvero_migrator}",
+          "restored": null
+        },
+        {
+          "field": "/relations/50/acl",
+          "sourceSha256": "a1ef4291f027612a493828108b2b470f3839a0c249867b66a4f50c6a1a19822a",
+          "restoredSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "source": "{passvero_migrator=arwdDxt/passvero_migrator}",
+          "restored": null
+        }
+      ],
+      "differencesTruncated": false,
+      "fullDifferenceEvidenceRetained": true,
+      "restoreRepeated": false,
+      "schemaWrites": "NONE",
+      "businessWrites": "NONE",
+      "tcpListener": false,
+      "stagingPauseRequested": false,
+      "smtpCalls": 0,
+      "telegramCalls": 0
+    },
+    {
+      "catalogDiagnosticClosure": "PASS",
+      "restoreCluster": "STOPPED",
+      "parentPermissions": "PRIVATE_0700_RESTORED",
+      "staging": "ONLINE_UNPAUSED",
+      "reminderTimer": "DISABLED_INACTIVE",
+      "campaignsEnabled": 0,
+      "artifactsRetained": true,
+      "smtpCalls": 0,
+      "telegramCalls": 0
+    }
+  ],
+  "service": {
+    "result": "success",
+    "status": 0,
+    "runtime": "819ms"
+  }
+}

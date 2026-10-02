@@ -1,0 +1,15 @@
+{
+  "evidence": "RETURNED_OPERATOR_OUTPUT",
+  "recordedDate": "2026-10-02",
+  "setId": "20261001T212354Z",
+  "result": {
+    "diagnostic": "STOP",
+    "reason": "FileNotFoundError",
+    "writes": "NONE",
+    "clusterStarted": false,
+    "stagingPauseRequested": false,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "assessment": "MISSING_PATH_UNIDENTIFIED; NO_APPLICATION_OR_DATABASE_RETRY_PERFORMED"
+}

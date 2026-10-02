@@ -1,5 +1,566 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Final result — approved one-off staging recovery COMPLETE
+
+Recorded2026-10-02 Europe/Zagreb from returned operator output. No operator command
+remains pending for this approved series. Capture is an as-of snapshot2026-10-01T21:23:54Z,
+not a promise about future writes. Exact operator execution UTC was not in the final
+output; the final application unit ran2.424s/success/status0, invocation
+ac45bf2cfa6c4026acd3daee314dbad1. Complete evidence chain is retained in
+codex/evidence/backup-recovery/approved-recovery-completion.json and
+codex/evidence/backup-recovery/operator-application-recovery-pass.json.
+
+| Component | Final evidence |
+| --- | --- |
+| Existing topology | Production PG16/passvero:5432 and separate passvero_test retained; acceptance PG16/passvero_acceptance:5433. passvero_migrator is an owner/deployment role, not a separate database. Runtime/auth/backup/test roles remain separated. |
+| Existing production protection | Existing B2/restic PostgreSQL job, daily02:00UTC schedule/hourly freshness/Telegram, protected credentials and prior accepted production restore retained unchanged. Last inspected successful production set20261001T020750Z; this is accepted inspection evidence, not a fresh Oct2 production-job execution claim. |
+| Actual addition | One consistent acceptance DB+all actually stored private staging document/image bytes+minimal non-secret config recovery set in separate restic prefix passvero-staging-recovery-v1/ in the existing B2 bucket. No production repository validator/job changes. |
+| Set and offsite | Set20261001T212354Z;payload964172B. Real B2 snapshot2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2 downloaded and all file hashes verified. Repository9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35;recovery manifest2c5ccd0b89064cc0b431444337ab7700c1638914cfd23f1b9366d22ac13d3132. |
+| Consistency | Capture pause3.034s;51 tables locked;outsideDBclients0;stagingWriters0;Storage inventory+bytes unchanged. Accepted independent timeout resume proof reused. Application resumed before B2 transfer/restore. |
+| File scope | Whole passvero-staging-documents/passvero-staging-images:5 stored objects/6145B, including every actually retained historical/archive/original/derived object present at capture. Nine DB references=5 stored+4 accepted cleanup tombstones. Deleted tombstone bytes2959B do not exist and were not restored; filename metadata alone is not a retained original. No automatic deletion. |
+| Database recovery | Actual downloaded dump restored to private PG16/passvero_staging_recovery under /var/lib/passvero-staging-recovery/restore/20261001T212354Z/pgdata. All51 counters/31 migrations/owners/effective ACLs/sequences/refs MATCH; exactly6 reviewed constraint representations and6 owner-default ACL equivalences. No TCP; existing DB/test/staging never overwritten. Final DB verification reused during app read; no rerestore. |
+| Application read | Actual catalog export, bounded PDF metadata/bytes reader and private image download/recheck services PASS using private restored DB/read-only ports and actual B2-downloaded filesystem bytes. Representative PDF629B/image1168B/checksums MATCH;catalog unchanged. All826 executable deployment artifact hashes matched;11 module input provenance verified against accepted build base. Raw historical src checkout is not executable identity. |
+| Configuration | Included allowlisted runtime/PG settings+HBA/scanner requirements/source-build-package-lock identity in four configuration JSON files, linked by recovery-set.json hashes. Raw env/password/key/B2/SMTP/Telegram secrets excluded from config and never printed/committed/rotated. Protected DB dump retains required identity/business records. Full executable binaries and raw whole-system configs are not copied in this set. |
+| Final closure | PASS;stagingONLINE_UNPAUSED;restore clusterSTOPPED;private parents0700 restored;reminder timerDISABLED_INACTIVE;campaignsEnabled0;all history/artifacts retained;SMTP/Telegram0 throughout this recovery series. |
+| Reminder evidence retained | Four independently confirmed receipts, zero replay additional dispatches, two stale cancellations. No reminder/email acceptance repeated. |
+
+Remaining dependencies are explicit limits of the completed proof: Supabase provider
+reupload NOT_PERFORMED; full web service/authenticated session/fresh scanner trust
+NOT_TESTED. Private-file application reading is not a full live provider recovery.
+Independent protected secret/global role bootstrap inputs and available reviewed
+source/build or retained deployment artifact are needed for full application bootstrap;
+build identity in the config set is not a binary backup. Existing escrow procedure is
+retained; its availability is not re-proven by this read harness. Fresh scanner/ClamAV/
+qpdf evidence must be established before live document delivery, without bypassing
+security gates. No such activation or new integration was part of this approved series.
+
+Automatic staging backup/RPO/freshness/Telegram schedule NOT_INTRODUCED. Existing
+production scheduling/reporting remains unchanged, and the proved staging snapshot
+covers the capture instant only. A future recurring staging policy is a separate concrete
+decision; no implementation work or operator command is opened automatically.
+Local source unchanged main/originmainf778721ed77d87ad8e7de1dd38e0e5a51b688b60;
+source operational helpers/tests/docs remain uncommitted, indexEMPTY. Accepted tests
+are reused; only final evidence/JSON/manifest/whitespace/secret checks are needed now.
+No production, secret, scanner/producer config, email/Telegram, deletion, retention,
+forget/prune, commit or push action. All earlier checkpoints below are historical;
+PENDING labels and commands in them are retained evidence, not current instructions.
+
+## Historical checkpoint — artifact-bound application read subsequently passed; do not rerun
+
+Returned READ_ONLY_APPLICATION_MODULE_INVENTORY_V2 completed: raw Git checkout
+3eec70abc80887eb4c098236c9b54ebc28d9fc58, six missing modules, two different document
+modules, three identical modules. All five present sources match that checkout exactly;
+LF/BOM conversion does not explain differences. Installed build/helper/closure evidence
+is private0600/hash-matched, original application attempt absent. It does NOT prove
+that running staging build is3eec70a: reviewed deploy intentionally replaces only.next
+and messages, leaving rawsrc and Git checkout untouched. Earlier statement that staging
+runs the old Git revision is superseded by this distinction. No app upgrade justified.
+
+Actual root cause: verifier incorrectly used historical rawsrc as execution identity.
+Reviewed installer scripts/subscription-reminders/install.py establishes accepted
+reminders deployment build8QNIYVVZWEsQaCL9uLZ5Q/manifest1d7f456d13ce8cf1bb7173bc3c731be4fd7e61d6a5fbb70fb8aca99eba04f1cf.
+Local evidence verifies all11 unchanged recovery bundle inputs against accepted original
+build base1fc84aa8ccc3118f8158029e8edf99275c8f7f6e and all826 local build artefact bytes
+against the accepted deployment package. No new application bundle or production code.
+
+Corrected helper validates that same pinned existing deployment manifest, captured
+package/lock/build identity, canonical manifest's reminder provenance, all826 live
+.next/messages file hashes and existing runtime dependency hashes. Hash mismatches
+still STOP; no general bypass/normalization. Readonly artifact hashing does not redeploy
+or repeat email/Telegram acceptance. Raw checkout is explicitly not execution identity.
+Reuse installed hash-pinned bundle/build. New private provenance file549271de0275b711bab687ce0a954887054debdfde4ccd55c0fcc20b2991f58d,
+helper e168795c416c97deb477d22999bf01438bf2e502b76bc3acfb8073e350204abf,
+unit application-artifact, and separate application-recovery-artifact attempt/config/
+summary/closure names preserve original helper/closure/claims. Same already restored
+PG16/socket-only/read-only cluster; no new database, rerestore, staging pause or transfer.
+Same300s/25s/control-group/UMask0077/ExecStopPost/ACL cleanup boundaries. On STOP retain
+reason and evidence; no automatic retry. Ten affected full operator-flow tests and four
+complete installer fixtures PASS, including stale/missing raw checkout with matching
+executable artefacts, changed executable/runtime/provenance/canonical manifest, existing
+claim/unit and retained prior bytes. Exact2 payloads/Python/shell packaging PASS; unchanged
+10 actual application-reader tests reused. Operator application proof remains pending.
+
+Captured set20261001T212354Z/snapshot2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2:
+B2 download/all-file hashes and final51-table/31-migration/ACL/count/sequence/ref DB
+proof retained. Latest closure: clusterSTOPPED,parents0700,stageONLINE_UNPAUSED,
+reminder timerOFF/campaigns0. Four confirmed receipts/replay0/two stale cancellations
+retained. Production backup/freshness/Telegram/scanner/producer/credentials unchanged;
+one-off recovery only, automatic staging backup schedule not introduced. Private app
+service proof only; Supabase reupload NOT_PERFORMED and full web/auth/fresh scanner
+recovery NOT_TESTED remain explicit dependencies. No deletion, commit or push.
+PENDING_OPERATOR_COMMAND_APPLICATION_ARTIFACT_RECOVERY.
+
+## Historical checkpoint — inventory V2 subsequently completed; do not rerun
+
+Returned diagnostic STOP/FileNotFoundError/writes NONE/clusterStarted false. The
+first diagnostic incorrectly required every installed evidence/source path to exist
+and did not identify the missing path. No conclusion about which path is absent is
+yet supported. Its failed source/command remains retained as historical evidence.
+This does not invalidate the accepted B2/DB restore proof or repair the original
+APPLICATION_MODULE_CHANGED preflight; application proof remains NOT_YET_RUN.
+
+Correct only the read-only diagnostic: embed the exact11 reviewed expected module
+identities, independently inventory installed build/helper/closure and all11 sources.
+Missing, unreadable, unsafe-private, nonregular, symlink and oversize paths are labeled
+with their precise reviewed path; no source text/secret is printed. Missing installed
+metadata no longer prevents source inventory; missing sources no longer hide remaining
+rows. Existing Git HEAD/source hashes are optional readonly metadata. Hash mismatch
+is reported, never accepted/bypassed. Closure metadata inventory is not current runtime
+health proof. No source deployment, SQL/cluster start, ACL/file writes, pause, B2/Storage,
+SMTP/Telegram calls, acceptance retry or automatic cleanup. Seven focused tests PASS,
+including full main flow with missing build/helper/closure/source files and absent Git;
+Python/shell syntax and exact-source block checks PASS. Prior acceptance reused.
+PENDING_OPERATOR_COMMAND_READ_ONLY_APPLICATION_MODULE_INVENTORY_V2.
+
+## Historical checkpoint — module diagnostic subsequently hit missing file; do not rerun
+
+Operator unitfaf168178f56437bba9e8a473eb920bc returned APPLICATION_RECOVERY_PREFLIGHT /
+APPLICATION_MODULE_CHANGED in0.583s. At least one of the11 live application source
+hashes differs from the reviewed bundle; first mismatched path was not printed by
+the original fail-fast guard. Package/lock/build identity and downloaded-set checks
+preceded this guard successfully. Source control flow stops before application attempt
+claim, ancestor ACL grant, cluster start or application read. Do not infer why code
+bytes differ, bypass source checks, redeploy staging or re-run the acceptance unit.
+Closure PASS: cluster STOPPED, parent0700, staging ONLINE_UNPAUSED, reminder timer
+DISABLED_INACTIVE/campaigns0, SMTP/Telegram0. Actual B2 download/file checksum and
+final DB recovery PASS remain accepted. Application proof remains NOT_YET_RUN.
+Raw evidence: codex/evidence/backup-recovery/operator-application-preflight-module-changed.json.
+
+Minimal next read-only diagnostic: verify installed helper/build pins and saved closure,
+confirm application attempt absent; print all11 expected/current hashes, optional VPS
+Git HEAD/source hashes and LF/no-BOM comparisons for mismatches. No source contents,
+credentials, SQL, cluster start, permissions/file writes, B2/Storage calls, staging
+pause or acceptance retry. Four synthetic hash/CRLF/code-change/symlink fixtures and
+Python/shell syntax PASS. Local11 module hashes equal current HEAD; VPS identity
+must be established from operator output before choosing a source correction.
+All accepted capture/B2/DB/reminder/timeout/Telegram checks reused unchanged; no
+production/backup schedule/freshness/credential change, email, deletion, commit or push.
+PENDING_OPERATOR_COMMAND_READ_ONLY_APPLICATION_MODULE_IDENTITIES.
+
+## Historical checkpoint — application preflight subsequently stopped; DB proof retained
+
+Returned operator evidence recorded 2026-10-02; set20261001T212354Z, actual B2 snapshot
+2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2.
+Final database unit invocation3ddfbb1dcdcb40e58f23b009e72102d6 completed success/status0
+in2.571s. All51 tables/counters,31 migrations, sequences, database ACL and catalogue
+owners/ACLs MATCH. Exactly six reviewed constraint representations and six owner
+ACL/default equivalences accepted by their bounded comparator. Nine asset references,
+five restored stored objects and four accepted cleanup tombstones verified.
+No rerestore/schema/business writes. Closure PASS: cluster STOPPED, private parents0700,
+staging ONLINE_UNPAUSED, reminder timer DISABLED_INACTIVE, campaignsEnabled0.
+Raw sanitized output: codex/evidence/backup-recovery/operator-final-database-verification-pass.json.
+
+Only remaining operator step: isolated application services read from this already
+verified private database and actual B2-downloaded filesystem bytes. Reviewed helper
+c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee starts the same
+socket-only PG16 cluster with default_transaction_read_only=on; it does not restore
+again or pause staging. Hash-pinned bundle uses11 deployed application modules
+(checked against unchanged captured package/lock/build identity) and existing zod.
+Actual catalog export and private image download/recheck services, plus bounded PDF
+bytes/metadata reader, run with readonly SQL/private filesystem ports. No credentials
+or live application environment passed. All mutation/public transport ports denied.
+Exclusive attempt/summary/closure retain history. Unit UMask0077,RuntimeMaxSec300,
+TimeoutStopSec25,control-group kill and independent ExecStopPost preserve the accepted
+private ancestor ACL/0700 closure. No automatic retry on STOP.
+
+Local evidence:10 application reader tests and6 synthetic complete operator tests
+PASS; focused strict TypeScript/Python/Node/shell checks and exact three-payload/hash
+packaging PASS. Prior capture, real B2 download/checksum, final database, timeout,
+reminder delivery/replay/stale cancellation and Telegram acceptance reused unchanged.
+This proves private application service reading only: Supabase restore NOT_PERFORMED;
+full web service, authenticated session and fresh scanner trust NOT_TESTED. Independent
+secret/role credential escrow and provider/scanner activation remain recovery dependencies.
+Four confirmed reminder receipts, replay0 additional sends and two stale cancellations
+retained. Production backup/freshness/Telegram/scanner/producer/credentials unchanged;
+no email, new staging schedule, deletion, commit or push. This is a one-off recovery set.
+PENDING_OPERATOR_COMMAND_APPLICATION_RECOVERY_READ.
+
+## Historical checkpoint — final DB verification subsequently passed; do not rerun
+
+Review update2026-10-02 Europe/Zagreb. Returned six full definition pairs match all
+12 previously returned SHA signatures. Differences are solely associative grouping
+of existing AND operands and uniform varchar-array→text[] casting versus individual
+varchar-element→text casts; predicates, limits, literals, column references, regexes
+and OR groups are identical. No schema change warranted. New comparator accepts
+only these exact six (table,constraint,sourceSHA,restoredSHA) pairs; no generic text/
+parenthesis/cast normalizer. Other constraint fields and all other catalogue sections
+remain strict. For exactly six owner-only relation ACL→NULL pairs, require identical
+owner/kind/RLS/name, ownerpassvero_migrator/tablekindr, exact old ACL; then SELECT
+aclexplode of saved ACL versus coalesce(actualACL,acldefault('r',actualOwner)). Compare
+grantor/grantee/privilege/grant-option lists; no GRANT/REVOKE or permission repairs.
+Unexpected differences remain STOP. This corrects the verifier's overly strict text
+comparison, not restored schema/data. The reviewed full definitions are retained.
+
+Next is already approved final verification of the existing B2-restored database:
+51 table counters,31 migration metadata/checksums, sequences, owners/ACL,9 exact
+asset references/5 stored objects/4 accepted cleanup tombstones. Same private PG16
+cluster, no re-restore/new target, TCP disabled, SQL default read-only, business/schema
+writes NONE. Distinct database-final unit/claim/closure; UMask0077,300s/25s/control-group/
+ExecStopPost protections, named postgres execute-only ancestor ACL and0700 cleanup
+retained. Actual PG acceptance and isolated application product/PDF/image reads
+remain pending operator output. No repeated B2/capture/reminder/Telegram acceptance.
+
+11 affected comparator tests PASS: exact pairs/effective ACL pass, changed limits,
+owners,grants,RLS,role/function/constraint identity/count fail; inputs unchanged.
+Full installer exact source/hash/UMask/closure/Python/shell syntax PASS. Prior tests
+and accepted runtime/capture/B2/private byte checks reused. No Codex privileged action,
+production/schedule/freshness/scanner/producer/credential change, email, business or
+snapshot deletion, commit or push. No automatic staging schedule introduced.
+PENDING_OPERATOR_COMMAND_FINAL_DATABASE_VERIFICATION. Application read is next.
+
+
+## Current checkpoint — catalog diagnosis PASS; six constraint definitions pending review
+
+Returned READ_ONLY_RESTORED_CATALOG_COMPLETE is successful diagnostic, not DB acceptance:
+12 differences only: six constraint-definition hashes and six relation ACLs. All
+columns,defaultACLs,enums,functions,indexes,migrations,roles,schemas,pending counters,
+non-public schemas and large objects match strictly. Six ACL pairs are owner-only
+{passvero_migrator=arwdDxt/passvero_migrator} versus null/default. PostgreSQL16
+privilege docs describe null as default privileges; semantic validation must still
+check each relation owner/kind and actual expanded ACL, not ignore ACLs globally.
+No permission/schema correction justified by these ACL representations alone.
+
+Diagnostic closure PASS: private cluster stopped, parent0700, stage online,timerOFF,
+campaigns0,SMTP/Telegram0. No restore repeated or business/schema writes. Constraint
+hashes alone do not prove logical equivalence or actual difference. Next minimal
+operator block reads the already saved source and restored catalogues, verifies B2
+manifest/source-catalog SHA and saved constraint-difference hashes, and prints only
+six metadata definition pairs. No cluster start, SQL, chmod, provider call, file write,
+new database or rerestore. Await concrete definitions before comparator correction.
+Python/shell syntax PASS; existing8 diagnostic and28 restore tests reused unchanged.
+Capture/B2/reminder/timeout/production/freshness/Telegram proof remains retained;
+full DB/application recovery still pending. No commit/push or automatic schedule.
+PENDING_OPERATOR_COMMAND_SAVED_CONSTRAINT_DEFINITIONS.
+
+
+## Current checkpoint — dump restored; strict catalog mismatch STOP; closure PASS
+
+Returned helper5fb296f9... proves closure permission repair PASS/contents unchanged.
+Unit invocation66133792f28045ce89f45b6ed23fdae9 stopped VERIFY_RESTORED_DATABASE /
+RESTORED_CATALOG_MISMATCH after3.233s. Source control flow reaches this check only
+after successful single-transaction pg_restore and database-ACL application. This
+is restored data, not an accepted DB recovery proof. Returned closure PASS: isolated
+cluster STOPPED, ancestors0700, staging online, reminder timer OFF/campaigns0,
+SMTP/Telegram0. No restore rerun or new destination is proposed.
+
+Next bounded diagnosis imports the installed hash-pinned helper, rechecks downloaded
+B2 manifest/bytes and original private failed unit/closure, matches PG16 existing
+pgdata/socket ownership and saved parent ACL inode identities, then temporarily
+starts only this same cluster without TCP and default_transaction_read_only=on.
+It SELECTs the captured catalogue, saves the full current catalogue privately and
+prints differing sections/field paths; owner/ACL metadata is shown, SQL definitions
+and defaults only hashed. Text/row-order-only equality is a diagnostic hint, not a
+waived ACL check. No table/role/ACL/schema mutation or pg_restore; private runtime,
+logs, attempt/evidence and temporary ancestor ACL are written as operational proof.
+Separate catalog-diagnostic unit/claim/closure;UMask0077,300s/25s,KillMode control-group
+and ExecStopPost enforce private-cluster stop and ancestor0700 restoration. Never
+reset previous attempts; on error retain evidence and STOP/manual review. PG/application
+acceptance remains NOT_PROVEN until remaining comparisons and reads pass.
+
+8 new affected synthetic diagnostic tests plus complete installer source/hash/guard
+and Python/shell syntax PASS; old28 restore tests and accepted capture/B2/reminder/
+timeout proofs reused. PENDING_OPERATOR_COMMAND_CATALOG_DIAGNOSTIC; no privileged
+operation executed by Codex. Existing B2/production/freshness/Telegram/scanner/producer/
+keys unchanged; no automatic staging schedule, email, snapshot/business deletion,
+commit or push. Private filesystem proof is not Supabase/full application recovery.
+
+
+## Current checkpoint — PRIVATE_PATH cause confirmed; private-closure repair ready
+
+Returned READ_ONLY_RESTORE_PRIVATE_PATH checked33 paths: the only failures are
+originalClosure and stdlibClosure, regular root-owned0644. No restore attempt,
+pgdata, socket directory or ACL baseline exists; writes/providers0. Actual defect
+confirmed: prior ExecStopPost lacked a process umask and unit UMask. This was not
+a DB, Storage, offsite or ACL-xattr failure; none of those new restore operations ran.
+
+Minimum repair: explicitly os.umask077 in close(), unit UMask0077, and a guarded
+one-time0644→0600 repair of exactly the two non-secret retained closure JSONs.
+Both full JSON values must match accepted closure exactly, ownerroot/regular/single
+link/mode0644/size<8192 via O_NOFOLLOW-held descriptors. Previous stdlib unit result,
+invocation d3b214d0c90944acb5be57f7656da545 and helper hash must match; no attempt/
+pgdata/socket/ACL baseline may exist. Record both before hashes privately before
+fchmod; verify bytes/inode/device/owner unchanged. No validator weakening, generic
+chmod, secret reading, package install, old helper or unit reset. Original closure
+bytes are preserved. Any unexpected condition STOP/manual review; never auto retry.
+
+Reviewed new helper5fb296f96c37fb3ebfb681f534e6df01cf392c9fb8b993c322f696d20794fd0f;
+new unit passvero-stage-restore-20261001T212354Z-private.service;300s/25s/control-group
+limits and separate ExecStopPost retained. New restore-closure-private.json, old
+closures retained. Named postgres execute-only ACL and inode-bound cleanup unchanged.
+28 affected synthetic tests PASS, including start-close-with-umask022→0600 regression,
+content/mode/unit/claim rejection and bytes-preserved two-file repair. Complete
+installer exact-source/hash, UMask property, shell/Python syntax PASS. Live repair/
+PG/application reads NOT_YET_RUN; PENDING_OPERATOR_COMMAND_PRIVATE_DATABASE_RESTORE.
+
+Reuse accepted actual B2 snapshot2c317b57.../5objects/all964172 bytes, capture3.034s,
+independent timeout proof and reminders4 receipts/replay0/cancelled2. Staging remains
+online per latest accepted closure; timer/campaigns OFF. No new capture, B2 upload,
+email, Telegram, production job/freshness/schedule/credential/scanner/producer change,
+automatic staging schedule, deletion, commit or push. Private filesystem proof still
+does not imply Supabase or full service recovery. Application read follows DB proof.
+
+
+## Current checkpoint — PRIVATE_PATH preflight STOP; closure PASS; read-only diagnosis pending
+
+Returned stdlib helper9e092b11... unit invocation d3b214d0c90944acb5be57f7656da545
+stopped RESTORE_PREFLIGHT/PRIVATE_PATH after353ms. Closure PASS: cluster stopped,
+parents0700, stage online, timer OFF/campaigns0, SMTP/Telegram0. Accepted B2 retrieval
+and capture remain unchanged; no automatic restore retry. Source review identifies
+an unconfirmed hypothesis: separate ExecStopPost process does not set os.umask077,
+and the unit does not specify UMask0077, so prior closure JSON may be0644 and rejected
+by cap.read/private. Do not change rights or loosen validators on that hypothesis.
+A bounded read-only lstat inventory is the next operator command; no contents of
+secrets, no SQL/Storage/B2/network provider calls, no pause or restore. It identifies
+exact private-path failures and existence of attempt/pgdata/ACL baseline. Await
+actual output before a repair/continuation. Prior22 synthetic tests reused; diagnostic
+Python/shell syntax PASS. No source/helper edits, commit, push or deletion this turn.
+
+
+## Current checkpoint — PG preflight STOP; closure PASS; reviewed ACL continuation
+
+Returned database restore STOP: RESTORE_PREFLIGHT / ACL_TOOL_UNAVAILABLE.
+Original helper15fedf7fe4feecc12c79778a551ebba8f8c56793eabf04bb7d8e33a0be753034 remains installed and retained.
+Unit passvero-stage-restore-20261001T212354Z.service / invocation
+e2d37c7e744149efb0afbe3ea63f76c8 exited1 after539ms. Returned closure PASS:
+cluster STOPPED;parent0700;staging ONLINE_UNPAUSED;timer disabled/inactive;campaigns0;
+SMTP/Telegram0. Source ordering places missing-tool STOP before attempt/ACL/pgdata
+writes. The continuation checks original source hash, unit result/invocation, retained
+closure and absence of attempt/pgdata/old ACL backup before proceeding; no reset.
+
+The only source repair replaces getfacl/setfacl with Python os.getxattr/setxattr/
+removexattr for Linux system.posix_acl_access, according to kernel UAPI v2 tags and
+little-endian encoding. No package installation, new dependency, chmod broadening,
+production configuration or credential permission change. Existing extended parent
+ACL remains STOP. Named postgres entry grants execute only, group/other0; original
+three parents' inode/device/uid/gid/mode are saved privately. ExecStopPost verifies
+identity and expected ACL before removal/restoring0700; it attempts all three even
+if one fails and reports a closure error rather than claiming success. Existing
+preflight closure retained, new restore-closure-stdlib.json written exclusively.
+Reviewed continuation source9e092b115fe1d60e3497e39a714935b02fc9063b1fd241e2609c96199d7fd2d7;
+new transient unit suffix -acl-stdlib;300s runtime/25s stop/KillMode control-group
+unchanged. Any actual attempt failure remains STOP, no automatic retry.
+
+22 affected synthetic tests PASS; complete installer source/hash fixture and shell/
+Python syntax PASS. Linux ACL operations are mocked locally; live Linux/PG restore
+remains NOT_YET_RUN. Already accepted B2 snapshot2c317b57.../bytes964172/5objects,
+capture3.034s/resume, independent timeout and reminder4 receipts/replay0/cancelled2
+are reused. No B2 transfer, capture pause, email or Telegram acceptance repeated.
+Existing production jobs/freshness/schedules/keys/scanner/producer unchanged. No
+automatic staging schedule, commit, push or deletion. Isolated application read
+remains pending after DB proof; private filesystem proof is not Supabase recovery.
+
+
+## Current checkpoint — real B2 retrieval and byte restore PASS; PG restore pending
+
+Operator output for set `20261001T212354Z` confirms snapshot
+`2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2`,
+repository `9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35`,
+manifest `2c5ccd0b89064cc0b431444337ab7700c1638914cfd23f1b9366d22ac13d3132`.
+Exact separate prefix passvero-staging-recovery-v1/;964172 bytes;all set files
+checksummed;5 stored objects6145 bytes;9 references and4 accepted absent tombstones.
+This is actual B2 retrieval into private filesystem, not a Supabase restore.
+Staging ONLINE_UNPAUSED, reminders disabled/inactive, campaigns0, SMTP/Telegram0.
+No additional capture or B2 upload is needed or authorized as an automatic replay.
+Capture3.034s closure, four confirmed reminder receipts/replay0/two cancelled and
+unchanged accepted production backup/freshness/Telegram evidence remain retained.
+
+Next approved phase is the exact downloaded dump into new private PG16 pgdata,
+DB passvero_staging_recovery, socket-only55434. A root-owned hash-pinned operator
+helper executes in its own bounded transient systemd unit; maximum300 seconds,
+stop25 seconds, KillMode control-group plus ExecStopPost restore/closure. Only the
+new isolated cluster is terminated on interruption/error/timeout. Existing target,
+attempt or unit means STOP, never overwrite/retry. Parent ROOT/restore/set remain
+root0700 except temporary named execute-only postgres ACL; original basic ACLs
+are saved privately and restored by ExecStopPost. Existing extended ACL or missing
+existing ACL tools means STOP before the attempt; no package installation or rights
+changes to credentials, storage or production. Backups remain root0600. No trust
+HBA, role passwords or TCP listener; root/postgres peer authentication on private
+socket only. Roles' captured attributes, ownership and relevant schema/table/function/
+enum/default/database ACLs are compared; passwords and uncaptured role memberships
+remain independent protected recovery dependencies, not whole-cluster claims.
+
+15 affected local synthetic tests, full installer source/hash fixture and shell/Python
+syntax PASS. Old accepted guard/source/offsite proofs are reused, not repeated.
+PG/application restore is NOT_YET_RUN until operator output. This database phase
+stops the private cluster and retains it for the subsequent already-approved isolated
+application read. It does not launch a web server, timer, business worker or scanner.
+No automatic staging backup schedule, production change, commit, push or deletion.
+
+
+## Current checkpoint — consistent capture PASS; B2 transfer pending
+
+Returned operator evidence for `20261001T212354Z` proves capture PASS and staging
+ONLINE_RESUMED after 3.034 seconds. Reviewed helper d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa was installed; original failed claim/set retained.
+51 tables locked; outside clients0 and staging writers0; Storage metadata/bytes
+unchanged. Set964172 bytes;5 stored objects;9 references;4 accepted absent tombstones.
+Accepted independent timeout proof reused. Additional pause consumed; no new pause
+or capture retry is authorized by this continuation. Reminder timer disabled/inactive,
+campaigns0; accepted four receipts/replay0/two cancelled remain unchanged.
+
+Next is the already approved exact-prefix B2 upload and real private filesystem
+restore. New offsite helper has12 synthetic contract tests PASS; old42 source tests
+are reused. The complete operator block is below. It verifies existing credentials
+and prefix without printing secrets; never runs the production backup job or retention.
+Exclusive attempt/restore paths prevent replay/overwrite; failures retain artifacts.
+Database restore and isolated application reads remain NOT_YET_RUN, as does B2 until
+operator output. Filesystem bytes alone prove neither Supabase nor full service recovery.
+No automatic staging schedule introduced; production/freshness/Telegram unchanged.
+No privileged command run by Codex, no commit or push.
+
+
+## Aktualizacija — installer-only STOP zatvoren; odobrena pauza nije iskorišćena
+
+Vraćeni read-only output potvrđuje originalni claim, nema extra claima ni novog
+helpera; staging online, timer/service/campaigns OFF; writes/Storage/B2/SMTP/Telegram0.
+Dodatna pauza ostaje odobrena i nije iskorišćena. Konačan skraćeni VPS delta installer
+rekonstruiše isti odobreni d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa iz postojeće hash-pinned neuspešne verzije.
+Patch/source SHA i compile pre install/exec; stare oznake/skupovi ostaju.7 pogođenih
+installer fixture testova + syntax PASS; raniji42 source testa/live guard/SQL/Storage
+dokazi se ne ponavljaju.85s capture+25s nezavisni resume, stvarna pauza≤120s,
+set≤1GiB/free≥4GiB i bez retryja ostaju isti. PENDING_OPERATOR_COMMAND_APPROVED_CAPTURE_DELTA.
+Čeka se output; B2 transfer i izolovani restore slede tek nakon PASS capture/resume,
+u već odobrenim granicama. Bez nove potvrde, production/deploy scannera/kredencijala/
+emailova/Telegrama/commita/pusha.4 receipts/replay0/stale2 ostaju prihvaćeni. Raniji
+odlomci ispod su istorija, ne instrukcije za ponavljanje.
+
+## Aktualizacija — additional installer STOP; bez capture reruna
+
+Vraćeni STOP/Error nastao pre helper-installed outputa; pauseRequested=false,
+remote writes/SMTP/Telegram0. Moj prethodni chat blok je imao ubačene razmake u
+Base64 literalima. Strogo dekodiranje lokalno reprodukuje binascii.Error/class Error;
+intaktni pregledani artifact i odobreni source pin d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa ostaju isti.
+Decode je pre install/exec/novog claima/pauze; VPS stanje se ipak proverava uskim
+read-only blokom (original/extra claim, helper hash, PM2 staging, reminder gates).
+4 lokalna fixture testa/syntax PASS; raniji42 source testa i timeout/SQL/Storage
+prihvaćeni dokazi se ne ponavljaju. PENDING_OPERATOR_COMMAND_INSTALLER_STOP_READ_ONLY;
+ne resetovati claim, ne replayovati oštećen capture blok. Ako dodatni claim postoji,
+STOP/manual review. Odobrenje ostaje sačuvano, potrošnja se ne pretpostavlja bez
+operatorskog stanja. B2/restore nisu pokrenuti. Nema source/deploy/production/promena
+tajni, commita ili pusha;4 receipts/replay0/stale2 ostaju prihvaćeni. Raniji odlomci
+ispod su hronološki dokazi, ne komande za rerun.
+
+## Aktualizacija 2026-10-01 — zatvoren capture failure; plan jedne dodatne pauze
+
+Najnovije: korisnik je izričito odobrio jednu dodatnu pauzu≤120s sa pregledanim
+helperom d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa,
+85s capture+25s nezavisni resume. PENDING_OPERATOR_COMMAND_ADDITIONAL_CAPTURE;
+output još nije vraćen. B2/restore nakon uspešnog capture/resume ostaju odobreni.
+
+Vraćeni read-only dokaz za set20261001T203612Z potvrđuje SQL_RESULT_SHAPE pri
+LOCK_AND_EXPORT_SNAPSHOT, prihvaćen systemd timeout guard i uspešan resume za2,743s.
+Staging je pri tom pregledu online/port3001 dostupan; timer disabled/inactive, reminder
+service inactive, campaigns0. Nema dumpa/manifesta/B2 transfera/restore dokaza. Prvi
+claim/artefakti ostaju; SMTP/Telegram0. JSON formatter potvrđen na dva sintetička reda;
+prihvaćeni read-only/guard dokaz ne ponavljati.
+
+Plan/runbook ima kompletan pregledani draft VPS bloka i eksplicitni launcher samo
+posle ovog tačnog neuspeha: sveža merenja dok app radi, zaseban exclusive claim sa
+hashom originala, nova set/control putanja, jedna dodatna pauza≤120s, nepromenjeni
+85s capture+25s nezavisni resume. Payload≤1GiB/free≥4GiB.42 lokalnih testova PASS;
+source nije deployan. Capture transaction/PM2/guard/resume ostaju isti. Običan launcher
+ne zaobilazi originalni claim; dodatni blok čeka PENDING_APPROVAL_ONE_ADDITIONAL_PAUSE.
+Razlog novog odobrenja: original dozvoljava jednu pauzu, koja je potrošena. Ne traži
+se ponovno odobrenje nepromenjenog B2/private restore/prod sistema. Prenos/preuzimanje
+B2 i izolovani DB/PDF/image/app restore nastavljaju se tek nakon uspešnog novog skupa
+uz vraćen staging. Bez novog rasporeda, production promena, emailova/Telegrama,
+automatskog brisanja ili commita/pusha. Četiri potvrđena primitka/replay0/dve stale
+cancellations ostaju prihvaćeni. Sledeći checkpointovi su istorija, ne komande za rerun.
+
+Istorijski checkpoint pre capture pokušaja: preparation20261001T190516Z i reference preflight PASS.
+9 DB referenci =5 sačuvanih objekata6145B +4 ranije prihvaćena cleanup tombstone zapisa
+(2959 odsutnih bajtova);0 orphan objekata. U tom ranijem preflightu staging nije bio pauziran, remote writes/SMTP/
+Telegram0. Ne ponavljati prihvaćene pripreme/cleanup. Lokalni capture source/testovi i
+potpuni hash-pinned operatorski handoff spremni,34/34 testova PASS; systemd timeout/
+post-stop dokaz pre pauze,85s capture+25s resume,51 SHARE zaključana tabela i isti
+snapshot za dump/manifest/reference. PM2 postojeći daemon RPC; bez novih daemon/env.
+PENDING_OPERATOR_COMMAND_GUARDED_CAPTURE; stvarni capture/B2/restore još neizvedeni.
+Jednokratni dokaz ne uvodi automatski staging raspored. Nema commita/pusha/production
+promjena. Slijedeći odlomci čuvaju ranije checkpointove kao istoriju, ne nove naloge.
+Vraćeni helper-state output: prepare postoji/validan; references/capture nisu instalirani,
+one-pause claim ne postoji. Potpun direktni VPS installer sada koristi kratke linije;
+source hash nepromijenjen,34 testa PASS. Capture i dalje čeka operatorski rezultat.
+
+Main/local origin potvrđeni na `f778721ed77d87ad8e7de1dd38e0e5a51b688b60`; live remote
+isti pri ranijem početnom pregledu. Worktree sadrži dokumentaciju/dokaze i pripremnu operatorsku Python skriptu/testove
+ove cjeline; index prazan. Postojeći produkcijski B2/S3 restic, daily backup, hourly
+freshness i Telegram ostaju nepromijenjeni. Zadržani su današnji offsite skup
+`20261001T020750Z`, marker star47793s u17:24 CEST (<26h), prihvaćeni B2 PostgreSQL
+restore18.08. i recovery operational PASS24.08.; današnji staging restore nije izveden.
+
+V3 potvrđuje `main:5432/passvero` (17 migracija), zaseban test u main (16 migracija),
+i `acceptance:5433/passvero_acceptance` (31 migracija,51 tablica). Migrator je uloga.
+Staging ima sedam PDF zapisa (tri AVAILABLE,četiri ARCHIVED) i dvije READY slike,
+ukupno9104 referenciranih bajtova. To nije kopija bajtova ni potpuni bucket inventar.
+Identificirani postojeći posao cilja produkcijski DB, ne acceptance DB/Storage/test.
+Test/produkcija/acceptance nikad nisu restore targeti; nova backup uloga se ne dodaje.
+
+Source ugovor u18:04 i selektori u19:03 CEST potvrđuju stvarnu prepreku dijeljenju
+repozitorija: pre/post/final snapshots pozivi nemaju host/tag/path filtera, a Python
+validatori zahtijevaju production host/tag za svaki unos. Forget jeste produkcijski
+filtriran14/8/6, ali to ne čini novi staging snapshot sigurnim za postojeći posao.
+Produkcijska skripta se ne mijenja niti pokreće ručno.
+
+Korisnik je odobrio jedan konačan plan: zaseban restic repo na prefixu
+`passvero-staging-recovery-v1/` u istom postojećem B2 bucketu, s istim endpointom,
+postojećim kredencijalima i password datotekom. Razlog je potvrđena nekompatibilnost,
+ne NOT_PROVEN. Ako već postoji odgovarajući staging skup/prefix, koristi se; konflikt
+ili nedostupno pravo znači STOP bez novih kredencijala/promjene produkcije. Izvori su
+acceptance DB, cijele dvije privatne Storage kolekcije i minimalni non-secret manifest.
+Najviše120s staging write pauze, payload≤1GiB i najmanje4GiB slobodno; bez novog rasporeda.
+Restore ide samo u privatni PG16 pod `/var/lib/passvero-staging-recovery`, port-identitet
+55434 bez TCP listenera, DB `passvero_staging_recovery`, plus izolovane privatne datoteke.
+B2 download, DB/migracije/ACL/brojači, bytes/SHA/reference i aplikacijska čitanja ostaju
+za odobreni operativni korak. Filesystem/app-harness proof nije Supabase re-upload ili
+potpuni service recovery; nezavisne tajne/scanner trust i buduća staging freshness
+ostaju jasno označene zavisnosti.
+
+PENDING_OPERATOR_COMMAND_PREPARATION. Potpun VPS blok i hash-pinned pripremna
+skripta su spremni: staging ostaje online, provjeravaju se prefix/prava/identitet,
+inventarišu cijele privatne kolekcije, čuvaju bajtovi i mjeri zaseban DB dump.
+Deset lokalnih Python testova i sintaksa ugrađenog installera PASS; nisu live dokaz.
+Priprema nije konzistentan skup. Jedna pauza s nezavisnim vraćanjem aplikacije,
+writer-closure dokazom i limitom120s, pa B2 transfer/preuzimanje/izolovani restore,
+ostaju naredni odobreni koraci nakon operatorskog outputa. Nema novog staging
+rasporeda/freshness/Telegrama. Nije kreiran repo/restore target ni izvršen operatorski
+blok; nema live restic/Storage/restore/email/Telegram poziva od strane Codexa. Nema commita/pusha, forget/prune,
+rotacije ili automatskog brisanja. Timer disabled/inactive,kampanje0; četiri potvrđena
+primitka,replay bez novih slanja i dvije otkazane poruke ostaju prihvaćeni.
+[Objedinjeni nalaz, konačan plan i granice dokaza](EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md).
+
+Dodatni inventory output u20:25 CEST potvrđuje freshness invocation u20:00 exit0,
+isti production source hash i retained offsite/restore evidence; marker58629s<26h,
+slobodno88658350080B. Nije rezultat pripremne skripte (nema preparation/setId/Storage
+bajtova/dump mjere). Ne ponavlja se inventar; isti odobreni pripremni blok i njegov
+sanitizovani PASS/STOP ostaju PENDING_OPERATOR_COMMAND_PREPARATION.
+
+Pripremni operator rezultat sada je STOP/FileNotFoundError uB2 read-only fazi:
+pauza nije zatražena, B2 upisi0, SMTP0, Telegram0, artefakti zadržani. Ne ponavljati
+pripremu. Uska read-only provera utvrđuje prisustvo tri postojeće zaštićene datoteke
+i putanju postojećeg restica (skripta trenutno fiksira/usr/bin/restic). Root cause
+još nije potvrđen; nema instalacije, promjene prava/tajni ili production validatora.
+PENDING_OPERATOR_COMMAND_PREPARATION_DEPENDENCIES; jedna odobrena pauza ostaje
+neiskorištena. Bash poruke nakon STOP-a su zasebno kopiranje runbook objašnjenja u
+terminal; naredni blok je direktan i bez okolnog dokumentacijskog teksta.
+
+Dependency rezultat potvrđuje uzrok: /usr/bin/restic ne postoji, postojeći
+/usr/local/bin/restic je root0755 executable; sva tri secret inputa root0600 i
+production source hash nepromijenjeni. Ispravljena samo putanja klijenta u operatorskoj
+skripti, bez instalacije/promjene prava/configa. Regresija prvo reproducirana, zatim
+11/11 lokalnih testova PASS; pinned one-path transform i handoff fixture PASS.
+PENDING_OPERATOR_COMMAND_REPAIR_EXISTING_RESTIC_AND_PREPARATION: nova privatna
+verzionirana kopija čuva staru skriptu/artefakte, pa jednom nastavlja pogođenu pripremu.
+Live ispravka/priprema i dalje čekaju operatorski output; pauza još neiskorištena.
+
+Ispravljena priprema PASS za20261001T190516Z: staging ONLINE_UNPAUSED, odobreni
+B2 prefix prazan/readable,5 Storage objekata6145B i measurement.dump584515B,
+slobodno88657485824B; remote writes/email/Telegram0. Pauza nije potrošena i ovo
+nije konzistentan recovery skup. Podaci odgovaraju dostupnim PDF-ovima/slikama;
+četiri ARCHIVED DB reference moguće su već prihvaćeni exact cleanup3+1. Ne ponavlja
+se cleanup: prije pauze provjeravaju se trenutne reference, byte checksums i tačna
+povezanost sa tim accepted tombstones. Nepoznat missing/history objekt znači STOP.
+PENDING_OPERATOR_COMMAND_REFERENCE_PREFLIGHT;19 lokalnih testova PASS. B2 snapshot,
+writer-closed capture, izolovani restore i završno stanje clustera ostaju neizvedeni.
+
 ## Aktualizacija 2026-10-01 — podsjetnici i dostava: odobrena staging demonstracija završena
 
 Implementirani su trial/pretplatni pragovi30/7/1/istek, VOLUNTARY javni rok, šest jezika,

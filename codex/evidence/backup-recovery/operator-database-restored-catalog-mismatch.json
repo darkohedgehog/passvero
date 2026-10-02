@@ -1,0 +1,41 @@
+{
+  "helper": {
+    "restoreHelper": "REVIEWED_INSTALLED",
+    "sourceSha256": "5fb296f96c37fb3ebfb681f534e6df01cf392c9fb8b993c322f696d20794fd0f",
+    "stagingPauseRequested": false
+  },
+  "repair": {
+    "closurePermissionRepair": "PASS_TWO_FILES_0644_TO_0600",
+    "contentsUnchanged": true,
+    "stagingPauseRequested": false
+  },
+  "stop": {
+    "databaseRestore": "STOP",
+    "phase": "VERIFY_RESTORED_DATABASE",
+    "reason": "RESTORED_CATALOG_MISMATCH",
+    "retry": "MANUAL_REVIEW_REQUIRED",
+    "stagingPauseRequested": false,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "closure": {
+    "restoreClosure": "PASS",
+    "setId": "20261001T212354Z",
+    "restoreCluster": "STOPPED",
+    "parentPermissions": "PRIVATE_0700_RESTORED",
+    "staging": "ONLINE_UNPAUSED",
+    "reminderTimer": "DISABLED_INACTIVE",
+    "campaignsEnabled": 0,
+    "artifactsRetained": true,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "unit": {
+    "name": "passvero-stage-restore-20261001T212354Z-private.service",
+    "invocationId": "66133792f28045ce89f45b6ed23fdae9",
+    "result": "exit-code",
+    "status": 1,
+    "runtime": "3.233s"
+  }
+}

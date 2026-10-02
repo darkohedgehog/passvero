@@ -1,0 +1,724 @@
+{
+  "diagnostic": "READ_ONLY_COMPLETION_V3",
+  "observedUtc": "2026-10-01T15:49:59.409772+00:00",
+  "topology": [
+    {
+      "cluster": "main",
+      "identity": {
+        "port": "5432",
+        "directory": "/var/lib/postgresql/16/main",
+        "listen": "localhost"
+      },
+      "databases": [
+        {
+          "name": "passvero",
+          "owner": "passvero_migrator",
+          "bytes": 10828823,
+          "allowsConnection": true,
+          "connect": [
+            {
+              "name": "passvero_test",
+              "permitted": false
+            },
+            {
+              "name": "passvero_migrator",
+              "permitted": true
+            },
+            {
+              "name": "passvero_backup",
+              "permitted": true
+            },
+            {
+              "name": "passvero_app",
+              "permitted": true
+            },
+            {
+              "name": "passvero_auth",
+              "permitted": true
+            }
+          ],
+          "tableOwners": [
+            {
+              "name": "AccountActivationIntent",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuditLog",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthAbuseBucket",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthAuditEvent",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthIdentity",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderAccount",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderSession",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderUser",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderVerification",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthSessionSelection",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "BackgroundJob",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Document",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "IntegrationMapping",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Invitation",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Membership",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Notification",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Organization",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Passport",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Plan",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Product",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductDocument",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductIdentifier",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductImage",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductMaterial",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductTranslation",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductVersion",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "QRCode",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ScanEvent",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Subscription",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "User",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "_prisma_migrations",
+              "owner": "passvero_migrator"
+            }
+          ],
+          "migrations": {
+            "total": 17,
+            "successful": 17,
+            "latest": "20260822193000_add_auth_foundation",
+            "digest": "c7711ba432c6c9b7e3143063c9678988"
+          }
+        },
+        {
+          "name": "passvero_test",
+          "owner": "passvero_test",
+          "bytes": 10591255,
+          "allowsConnection": true,
+          "connect": [
+            {
+              "name": "passvero_test",
+              "permitted": true
+            },
+            {
+              "name": "passvero_migrator",
+              "permitted": false
+            },
+            {
+              "name": "passvero_backup",
+              "permitted": false
+            },
+            {
+              "name": "passvero_app",
+              "permitted": false
+            },
+            {
+              "name": "passvero_auth",
+              "permitted": false
+            }
+          ],
+          "tableOwners": [
+            {
+              "name": "AuditLog",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "BackgroundJob",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Document",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "IntegrationMapping",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Invitation",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Membership",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Notification",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Organization",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Passport",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Plan",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Product",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ProductDocument",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ProductIdentifier",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ProductImage",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ProductMaterial",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ProductTranslation",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ProductVersion",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "QRCode",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "ScanEvent",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "Subscription",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "User",
+              "owner": "passvero_test"
+            },
+            {
+              "name": "_prisma_migrations",
+              "owner": "passvero_test"
+            }
+          ],
+          "migrations": {
+            "total": 16,
+            "successful": 16,
+            "latest": "20260722184010_add_background_job",
+            "digest": "08dfff4b417b7870b344211cb7f3878e"
+          }
+        },
+        {
+          "name": "postgres",
+          "owner": "postgres",
+          "bytes": 7683095,
+          "allowsConnection": true
+        }
+      ],
+      "roles": [
+        {
+          "name": "passvero_app",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        },
+        {
+          "name": "passvero_auth",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        },
+        {
+          "name": "passvero_backup",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        },
+        {
+          "name": "passvero_migrator",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        },
+        {
+          "name": "passvero_test",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        }
+      ]
+    },
+    {
+      "cluster": "acceptance",
+      "identity": {
+        "port": "5433",
+        "directory": "/var/lib/postgresql/16/acceptance",
+        "listen": "127.0.0.1"
+      },
+      "databases": [
+        {
+          "name": "passvero_acceptance",
+          "owner": "passvero_migrator",
+          "bytes": 13720599,
+          "allowsConnection": true,
+          "connect": [
+            {
+              "name": "passvero_migrator",
+              "permitted": true
+            },
+            {
+              "name": "passvero_auth",
+              "permitted": true
+            },
+            {
+              "name": "passvero_app",
+              "permitted": true
+            }
+          ],
+          "tableOwners": [
+            {
+              "name": "AccessRequest",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AccountActivationIntent",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuditLog",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthAbuseBucket",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthAuditEvent",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthIdentity",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderAccount",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderSession",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderUser",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthProviderVerification",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "AuthSessionSelection",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "BackgroundJob",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "BillingEmailConfirmation",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "CatalogImportBatch",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "CatalogImportRow",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "CommercialOffer",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "CommercialRequest",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Document",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "EconomicOperator",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "IntegrationMapping",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Invitation",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Membership",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Notification",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Organization",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "OrganizationBillingProfile",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "OrganizationEntitlementEnrollment",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Passport",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Plan",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "PlatformBillingGrant",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "PlatformGrant",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "PlatformRegulatoryGrant",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Product",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductDocument",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductIdentifier",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductImage",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductImageAsset",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductMaterial",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductTranslation",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductVersion",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ProductVersionManufacturer",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "QRCode",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ReminderAttempt",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ReminderCampaign",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "ScanEvent",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "Subscription",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "SubscriptionPaidPeriod",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "SubscriptionPaidPeriodActivation",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "SubscriptionReminder",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "SubscriptionUpgradeReceipt",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "User",
+              "owner": "passvero_migrator"
+            },
+            {
+              "name": "_prisma_migrations",
+              "owner": "passvero_migrator"
+            }
+          ],
+          "migrations": {
+            "total": 31,
+            "successful": 31,
+            "latest": "20260930200000_subscription_reminders",
+            "digest": "37482ffc35ee40a0f7338afbdb8af11f"
+          },
+          "counts": {
+            "AccessRequest": 1,
+            "AccountActivationIntent": 2,
+            "AuditLog": 174,
+            "AuthAbuseBucket": 10,
+            "AuthAuditEvent": 12,
+            "AuthIdentity": 2,
+            "AuthProviderAccount": 2,
+            "AuthProviderSession": 8,
+            "AuthProviderUser": 2,
+            "AuthProviderVerification": 0,
+            "AuthSessionSelection": 43,
+            "BackgroundJob": 0,
+            "BillingEmailConfirmation": 0,
+            "CatalogImportBatch": 1,
+            "CatalogImportRow": 3,
+            "CommercialOffer": 11,
+            "CommercialRequest": 11,
+            "Document": 7,
+            "EconomicOperator": 1,
+            "IntegrationMapping": 0,
+            "Invitation": 0,
+            "Membership": 13,
+            "Notification": 0,
+            "Organization": 13,
+            "OrganizationBillingProfile": 12,
+            "OrganizationEntitlementEnrollment": 13,
+            "Passport": 9,
+            "Plan": 5,
+            "PlatformBillingGrant": 1,
+            "PlatformGrant": 1,
+            "PlatformRegulatoryGrant": 1,
+            "Product": 117,
+            "ProductDocument": 1,
+            "ProductIdentifier": 10,
+            "ProductImage": 2,
+            "ProductImageAsset": 2,
+            "ProductMaterial": 10,
+            "ProductTranslation": 26,
+            "ProductVersion": 24,
+            "ProductVersionManufacturer": 2,
+            "QRCode": 5,
+            "ReminderAttempt": 4,
+            "ReminderCampaign": 2,
+            "ScanEvent": 0,
+            "Subscription": 8,
+            "SubscriptionPaidPeriod": 10,
+            "SubscriptionPaidPeriodActivation": 2,
+            "SubscriptionReminder": 6,
+            "SubscriptionUpgradeReceipt": 1,
+            "User": 2,
+            "_prisma_migrations": 31
+          },
+          "assets": {
+            "Document": [
+              {
+                "provider": "supabase",
+                "bucket": "passvero-staging-documents",
+                "state": "AVAILABLE",
+                "objects": 3,
+                "bytes": "2001",
+                "validdigests": 3
+              },
+              {
+                "provider": "supabase",
+                "bucket": "passvero-staging-documents",
+                "state": "ARCHIVED",
+                "objects": 4,
+                "bytes": "2959",
+                "validdigests": 4
+              }
+            ],
+            "ProductImageAsset": [
+              {
+                "provider": "supabase",
+                "bucket": "passvero-staging-images",
+                "state": "READY",
+                "objects": 2,
+                "bytes": "4144",
+                "validdigests": 2
+              }
+            ]
+          },
+          "enabledCampaigns": 0
+        },
+        {
+          "name": "postgres",
+          "owner": "postgres",
+          "bytes": 7683095,
+          "allowsConnection": true
+        }
+      ],
+      "roles": [
+        {
+          "name": "passvero_app",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        },
+        {
+          "name": "passvero_auth",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        },
+        {
+          "name": "passvero_migrator",
+          "login": true,
+          "superuser": false,
+          "createdb": false,
+          "createrole": false,
+          "bypassrls": false
+        }
+      ]
+    }
+  ],
+  "existingDestinationBackend": "B2_S3",
+  "protectedDestinationLocator": "/etc/passvero/backup/restic-repository",
+  "backupPythonContract": [],
+  "otherPassveroBackupScripts": [
+    "/usr/local/sbin/passvero-backup-alert",
+    "/usr/local/sbin/passvero-backup-freshness",
+    "/usr/local/sbin/passvero-postgres-backup"
+  ],
+  "passveroBackupCronReferences": [],
+  "freshnessNumericConstants": [],
+  "reminderTimer": "ActiveState=inactive\nUnitFileState=disabled",
+  "restorePort55434Listeners": "",
+  "candidateRecoveryDirectoryPresent": false,
+  "writes": "NONE",
+  "resticCalls": 0,
+  "storageCalls": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

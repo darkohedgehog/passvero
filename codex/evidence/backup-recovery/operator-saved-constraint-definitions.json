@@ -1,0 +1,47 @@
+{
+  "diagnostic": "READ_ONLY_SAVED_CONSTRAINT_DEFINITIONS",
+  "setId": "20261001T212354Z",
+  "differences": [
+    {
+      "table": "AccessRequest",
+      "constraint": "AccessRequest_values",
+      "sourceDefinition": "CHECK ((((locale)::text = ANY ((ARRAY['hr'::character varying, 'en'::character varying, 'de'::character varying, 'sr'::character varying, 'sl'::character varying, 'pl'::character varying])::text[])) AND ((status)::text = ANY ((ARRAY['PENDING'::character varying, 'APPROVED'::character varying, 'REJECTED'::character varying])::text[])) AND ((\"deliveryStatus\")::text = ANY ((ARRAY['NOT_STARTED'::character varying, 'DELIVERY_IN_PROGRESS'::character varying, 'SENT'::character varying, 'DELIVERY_UNKNOWN'::character varying])::text[])) AND (length(TRIM(BOTH FROM \"contactName\")) > 0) AND (length(TRIM(BOTH FROM \"organizationDisplayName\")) > 0) AND ((email)::text = lower(TRIM(BOTH FROM email)))))",
+      "restoredDefinition": "CHECK ((((locale)::text = ANY (ARRAY[('hr'::character varying)::text, ('en'::character varying)::text, ('de'::character varying)::text, ('sr'::character varying)::text, ('sl'::character varying)::text, ('pl'::character varying)::text])) AND ((status)::text = ANY (ARRAY[('PENDING'::character varying)::text, ('APPROVED'::character varying)::text, ('REJECTED'::character varying)::text])) AND ((\"deliveryStatus\")::text = ANY (ARRAY[('NOT_STARTED'::character varying)::text, ('DELIVERY_IN_PROGRESS'::character varying)::text, ('SENT'::character varying)::text, ('DELIVERY_UNKNOWN'::character varying)::text])) AND (length(TRIM(BOTH FROM \"contactName\")) > 0) AND (length(TRIM(BOTH FROM \"organizationDisplayName\")) > 0) AND ((email)::text = lower(TRIM(BOTH FROM email)))))"
+    },
+    {
+      "table": "CatalogImportBatch",
+      "constraint": "CatalogImportBatch_bounds",
+      "sourceDefinition": "CHECK ((((\"totalRows\" >= 1) AND (\"totalRows\" <= 10000)) AND ((status)::text = ANY ((ARRAY['ACTIVE'::character varying, 'COMPLETE'::character varying, 'CANCELLED'::character varying])::text[])) AND ((\"contentHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((\"selectionHash\")::text ~ '^[0-9a-f]{64}$'::text)))",
+      "restoredDefinition": "CHECK (((\"totalRows\" >= 1) AND (\"totalRows\" <= 10000) AND ((status)::text = ANY (ARRAY[('ACTIVE'::character varying)::text, ('COMPLETE'::character varying)::text, ('CANCELLED'::character varying)::text])) AND ((\"contentHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((\"selectionHash\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "table": "CatalogImportRow",
+      "constraint": "CatalogImportRow_state",
+      "sourceDefinition": "CHECK ((((\"rowNumber\" >= 1) AND (\"rowNumber\" <= 10000)) AND ((\"rowHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((((status)::text = 'PENDING'::text) AND (\"productId\" IS NULL) AND (error IS NULL)) OR (((status)::text = 'SUCCEEDED'::text) AND (\"productId\" IS NOT NULL) AND (error IS NULL)) OR (((status)::text = 'FAILED'::text) AND (\"productId\" IS NULL) AND (error IS NOT NULL)))))",
+      "restoredDefinition": "CHECK (((\"rowNumber\" >= 1) AND (\"rowNumber\" <= 10000) AND ((\"rowHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((((status)::text = 'PENDING'::text) AND (\"productId\" IS NULL) AND (error IS NULL)) OR (((status)::text = 'SUCCEEDED'::text) AND (\"productId\" IS NOT NULL) AND (error IS NULL)) OR (((status)::text = 'FAILED'::text) AND (\"productId\" IS NULL) AND (error IS NOT NULL)))))"
+    },
+    {
+      "table": "ReminderAttempt",
+      "constraint": "reminder_attempt_state",
+      "sourceDefinition": "CHECK ((((number >= 1) AND (number <= 3)) AND (status = ANY (ARRAY['SENDING'::text, 'ACCEPTED'::text, 'SAFE_RETRY'::text, 'FAILED'::text, 'DELIVERY_UNKNOWN'::text]))))",
+      "restoredDefinition": "CHECK (((number >= 1) AND (number <= 3) AND (status = ANY (ARRAY['SENDING'::text, 'ACCEPTED'::text, 'SAFE_RETRY'::text, 'FAILED'::text, 'DELIVERY_UNKNOWN'::text]))))"
+    },
+    {
+      "table": "ReminderCampaign",
+      "constraint": "reminder_campaign_budget",
+      "sourceDefinition": "CHECK ((((\"maxDispatches\" >= 1) AND (\"maxDispatches\" <= 100)) AND ((dispatches >= 0) AND (dispatches <= \"maxDispatches\"))))",
+      "restoredDefinition": "CHECK (((\"maxDispatches\" >= 1) AND (\"maxDispatches\" <= 100) AND ((dispatches >= 0) AND (dispatches <= \"maxDispatches\"))))"
+    },
+    {
+      "table": "ScanEvent",
+      "constraint": "ck_scan_event_referrer_host_format",
+      "sourceDefinition": "CHECK (((\"referrerHost\" IS NULL) OR (((char_length(\"referrerHost\") >= 1) AND (char_length(\"referrerHost\") <= 253)) AND (\"referrerHost\" !~ '[[:space:]/?#@]'::text))))",
+      "restoredDefinition": "CHECK (((\"referrerHost\" IS NULL) OR ((char_length(\"referrerHost\") >= 1) AND (char_length(\"referrerHost\") <= 253) AND (\"referrerHost\" !~ '[[:space:]/?#@]'::text))))"
+    }
+  ],
+  "clusterStarted": false,
+  "restoreRepeated": false,
+  "writes": "NONE",
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

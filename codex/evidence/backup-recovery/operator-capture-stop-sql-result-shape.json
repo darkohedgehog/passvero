@@ -1,0 +1,20 @@
+{
+  "installedHelper": {
+    "captureHelper": "REVIEWED_INSTALLED",
+    "sourceSha256": "0278b8c57cd609bbedcb42ab2d39c614ff2b8e7cc979b1a5e0eec25b5e279865",
+    "stagingPauseRequested": false,
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  },
+  "returnedCapture": {
+    "capture": "STOP",
+    "phase": "ONE_BOUNDED_CAPTURE_WITH_SYSTEMD_RESUME",
+    "reason": "CAPTURE_FAILED_STAGING_RESUMED_SQL_RESULT_SHAPE",
+    "retry": "MANUAL_REVIEW_REQUIRED",
+    "artifactsRetained": true,
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  }
+}

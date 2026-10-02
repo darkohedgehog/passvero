@@ -1,0 +1,63 @@
+{
+  "diagnostic": "READ_ONLY_CAPTURE_FAILURE_COMPLETE",
+  "setId": "20261001T203612Z",
+  "failedPhase": "LOCK_AND_EXPORT_SNAPSHOT",
+  "failureReason": "SQL_RESULT_SHAPE",
+  "unit": {
+    "Result": "exit-code",
+    "ExecMainStatus": "1",
+    "LoadState": "loaded",
+    "ActiveState": "failed",
+    "SubState": "failed",
+    "InvocationID": "37ce4eff0d8e455daa9ffe54eb8f5a6e"
+  },
+  "savedClosure": {
+    "stagingPauseRequested": true,
+    "stagingResumed": true,
+    "pauseSeconds": 2.743,
+    "pm2Online": true,
+    "port3001Reachable": true,
+    "serviceResult": "exit-code"
+  },
+  "savedGuardProof": {
+    "exitCode": "killed",
+    "exitStatus": "KILL",
+    "serviceResult": "timeout"
+  },
+  "stagingOnlineNow": true,
+  "port3001ReachableNow": true,
+  "reminderTimer": "DISABLED_INACTIVE",
+  "reminderService": "INACTIVE",
+  "campaignsEnabled": 0,
+  "retainedFiles": {
+    "dump": {
+      "exists": false,
+      "bytes": 0
+    },
+    "databaseManifest": {
+      "exists": false,
+      "bytes": 0
+    },
+    "storageManifest": {
+      "exists": false,
+      "bytes": 0
+    },
+    "recoverySetManifest": {
+      "exists": false,
+      "bytes": 0
+    }
+  },
+  "syntheticSqlProbe": {
+    "physicalNonemptyLines": 2,
+    "oldParserWouldReject": true,
+    "wholeJsonValueParserPass": true,
+    "businessRowsRead": 0
+  },
+  "claimRetained": true,
+  "captureRerun": false,
+  "newPauseRequested": false,
+  "writes": "NONE",
+  "remoteWrites": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

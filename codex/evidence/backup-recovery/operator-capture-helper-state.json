@@ -1,0 +1,34 @@
+{
+  "shellDiagnostic": {
+    "diagnostic": "READ_ONLY_SHELL_STATUS",
+    "systemctlExit": 0,
+    "units": "",
+    "writes": "NONE"
+  },
+  "captureState": {
+    "diagnostic": "READ_ONLY_CAPTURE_STATE",
+    "helpers": {
+      "prepare": {
+        "exists": true,
+        "privateRootFile": true,
+        "reviewedHashMatches": true
+      },
+      "references": {
+        "exists": false,
+        "privateRootFile": false,
+        "reviewedHashMatches": false
+      },
+      "capture": {
+        "exists": false,
+        "privateRootFile": false,
+        "reviewedHashMatches": false
+      }
+    },
+    "onePauseClaimExists": false,
+    "writes": "NONE",
+    "stagingPauseRequested": false,
+    "remoteWrites": 0,
+    "smtpCalls": 0,
+    "telegramCalls": 0
+  }
+}

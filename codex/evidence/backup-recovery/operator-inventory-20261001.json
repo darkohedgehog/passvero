@@ -1,0 +1,709 @@
+{
+  "diagnostic": "READ_ONLY_COMPLETE",
+  "observedUtc": "2026-10-01T15:24:53.356462+00:00",
+  "topology": [
+    {
+      "version": "16",
+      "cluster": "acceptance",
+      "port": "5433",
+      "status": null,
+      "owner": null,
+      "datadir": null
+    },
+    {
+      "version": "16",
+      "cluster": "main",
+      "port": "5432",
+      "status": null,
+      "owner": null,
+      "datadir": null
+    }
+  ],
+  "backupJobs": {
+    "passvero-backup-freshness.service": "Result=success\nExecMainStartTimestamp=\nExecMainExitTimestamp=\nExecMainStatus=0\nId=passvero-backup-freshness.service\nLoadState=loaded\nActiveState=inactive\nFragmentPath=/etc/systemd/system/passvero-backup-freshness.service\nUnitFileState=static",
+    "passvero-postgres-backup-failure-alert.service": "Result=success\nExecMainStartTimestamp=\nExecMainExitTimestamp=\nExecMainStatus=0\nId=passvero-postgres-backup-failure-alert.service\nLoadState=loaded\nActiveState=inactive\nFragmentPath=/etc/systemd/system/passvero-postgres-backup-failure-alert.service\nUnitFileState=static",
+    "passvero-postgres-backup.service": "Result=success\nExecMainStartTimestamp=\nExecMainExitTimestamp=\nExecMainStatus=0\nId=passvero-postgres-backup.service\nLoadState=loaded\nActiveState=inactive\nFragmentPath=/etc/systemd/system/passvero-postgres-backup.service\nUnitFileState=static",
+    "passvero-backup-freshness.timer": "TimersCalendar={ OnCalendar=*-*-* *:00:00 ; next_elapse=Thu 2026-10-01 18:00:00 CEST }\nNextElapseUSecRealtime=Thu 2026-10-01 18:00:00 CEST\nLastTriggerUSec=Thu 2026-10-01 17:00:00 CEST\nResult=success\nRandomizedDelayUSec=0\nPersistent=yes\nId=passvero-backup-freshness.timer\nLoadState=loaded\nActiveState=active\nFragmentPath=/etc/systemd/system/passvero-backup-freshness.timer\nUnitFileState=enabled",
+    "passvero-postgres-backup.timer": "TimersCalendar={ OnCalendar=*-*-* 02:00:00 UTC ; next_elapse=Fri 2026-10-02 04:00:00 CEST }\nNextElapseUSecRealtime=Fri 2026-10-02 04:02:45 CEST\nLastTriggerUSec=Thu 2026-10-01 04:07:34 CEST\nResult=success\nRandomizedDelayUSec=10min\nPersistent=yes\nId=passvero-postgres-backup.timer\nLoadState=loaded\nActiveState=active\nFragmentPath=/etc/systemd/system/passvero-postgres-backup.timer\nUnitFileState=enabled"
+  },
+  "unitFiles": {
+    "passvero-backup-freshness.service": {
+      "path": "/etc/systemd/system/passvero-backup-freshness.service",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 773,
+      "mtimeUtc": "2026-08-17T17:36:54.084668+00:00",
+      "sha256": "748fc16bd524ab293d8157a1bc55f660ec7241f947f0da73c215d05b2d2625dd"
+    },
+    "passvero-postgres-backup-failure-alert.service": {
+      "path": "/etc/systemd/system/passvero-postgres-backup-failure-alert.service",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 778,
+      "mtimeUtc": "2026-08-17T17:36:54.090668+00:00",
+      "sha256": "1b641730d68d3c298730b58783f9016f453b65e7681548cdb5e99089d2429081"
+    },
+    "passvero-postgres-backup.service": {
+      "path": "/etc/systemd/system/passvero-postgres-backup.service",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 762,
+      "mtimeUtc": "2026-08-17T16:18:27.205643+00:00",
+      "sha256": "88a5903afe558bbcd621b90333df3842f556ed985895a0375a79d04c9fa81385"
+    },
+    "passvero-backup-freshness.timer": {
+      "path": "/etc/systemd/system/passvero-backup-freshness.timer",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 208,
+      "mtimeUtc": "2026-08-17T17:36:54.087668+00:00",
+      "sha256": "8bcd1b9a213224295316e21facc40e9e20f03c2a484199df11991e0913232871"
+    },
+    "passvero-postgres-backup.timer": {
+      "path": "/etc/systemd/system/passvero-postgres-backup.timer",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 235,
+      "mtimeUtc": "2026-08-17T16:18:27.208643+00:00",
+      "sha256": "794b00139396b027fb291283a01c1d7bdae386b36dbd3c551f26e022d2c5fc6d"
+    }
+  },
+  "installedScripts": [
+    {
+      "path": "/usr/local/sbin/passvero-backup-alert",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o750",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 11151,
+      "mtimeUtc": "2026-08-17T17:51:59.188759+00:00",
+      "sha256": "12ec655fc8dfdfa15d7aa004be948861754ae1e6371c1cbf743faa0ae342db15",
+      "constants": {},
+      "operationStructure": [
+        {
+          "line": 42,
+          "operations": [
+            "backup",
+            "telegram"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 43,
+          "operations": [
+            "backup",
+            "telegram"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 196,
+          "operations": [
+            "telegram"
+          ],
+          "variables": [],
+          "flags": []
+        }
+      ],
+      "scopeNeedsSemanticReview": true,
+      "scopeLiteralPresence": {
+        "passvero_acceptance": false,
+        "5433": false,
+        "passvero-staging-documents": false,
+        "passvero-staging-images": false,
+        "DOCUMENT_STORAGE": false,
+        "/etc/passvero": true,
+        "last-valid-offsite": false,
+        "93600": false,
+        "sendMessage": true
+      }
+    },
+    {
+      "path": "/usr/local/sbin/passvero-backup-freshness",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o750",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 5929,
+      "mtimeUtc": "2026-08-17T17:36:54.079668+00:00",
+      "sha256": "46cc593f4e38d72c77ad8549cf27a9a2ae6eb9489a9ddd83ccce35f8d9d78524",
+      "constants": {},
+      "operationStructure": [],
+      "scopeNeedsSemanticReview": true,
+      "scopeLiteralPresence": {
+        "passvero_acceptance": false,
+        "5433": false,
+        "passvero-staging-documents": false,
+        "passvero-staging-images": false,
+        "DOCUMENT_STORAGE": false,
+        "/etc/passvero": false,
+        "last-valid-offsite": true,
+        "93600": false,
+        "sendMessage": false
+      }
+    },
+    {
+      "path": "/usr/local/sbin/passvero-postgres-backup",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o750",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 32011,
+      "mtimeUtc": "2026-08-24T10:47:08.457336+00:00",
+      "sha256": "5b6360633efb636f0aa9784b4e1a9d73aabe39a9c69f824cc99b9189407d7e75",
+      "constants": {
+        "config_dir": "/etc/passvero/backup",
+        "database_host": "127.0.0.1",
+        "database_port": "5432",
+        "database_name": "passvero",
+        "backup_role": "passvero_backup",
+        "snapshot_host": "passvero-production"
+      },
+      "operationStructure": [
+        {
+          "line": 16,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "config_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 17,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "config_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 18,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "config_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 157,
+          "operations": [
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 215,
+          "operations": [
+            "pg_dump"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 216,
+          "operations": [
+            "pg_restore"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 224,
+          "operations": [
+            "restic"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 325,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "pre_snapshots_json"
+          ],
+          "flags": [
+            "--json",
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 353,
+          "operations": [
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 354,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 545,
+          "operations": [
+            "pg_dump"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 595,
+          "operations": [
+            "pg_restore"
+          ],
+          "variables": [
+            "dump",
+            "toc_partial"
+          ],
+          "flags": [
+            "--list"
+          ]
+        },
+        {
+          "line": 607,
+          "operations": [
+            "pg_dump"
+          ],
+          "variables": [],
+          "flags": [
+            "--version"
+          ]
+        },
+        {
+          "line": 621,
+          "operations": [
+            "pg_dump"
+          ],
+          "variables": [],
+          "flags": []
+        },
+        {
+          "line": 660,
+          "operations": [
+            "backup",
+            "restic"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 661,
+          "operations": [
+            "backup",
+            "restic"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 663,
+          "operations": [
+            "backup",
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 712,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "post_snapshots_json"
+          ],
+          "flags": [
+            "--json",
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 757,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 758,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "new_snapshot_id"
+          ],
+          "flags": [
+            "--json",
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 797,
+          "operations": [
+            "restic",
+            "restore"
+          ],
+          "variables": [
+            "new_snapshot_id"
+          ],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 799,
+          "operations": [
+            "restic",
+            "restore"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 835,
+          "operations": [
+            "pg_restore"
+          ],
+          "variables": [
+            "remote_dump"
+          ],
+          "flags": [
+            "--list"
+          ]
+        },
+        {
+          "line": 859,
+          "operations": [
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 860,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        },
+        {
+          "line": 871,
+          "operations": [
+            "forget",
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 925,
+          "operations": [
+            "forget",
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 941,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "final_snapshots_json"
+          ],
+          "flags": [
+            "--json",
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 973,
+          "operations": [
+            "restic"
+          ],
+          "variables": [],
+          "flags": [
+            "--no-cache"
+          ]
+        },
+        {
+          "line": 974,
+          "operations": [
+            "restic"
+          ],
+          "variables": [
+            "helper_dir"
+          ],
+          "flags": []
+        }
+      ],
+      "scopeNeedsSemanticReview": true,
+      "scopeLiteralPresence": {
+        "passvero_acceptance": false,
+        "5433": false,
+        "passvero-staging-documents": false,
+        "passvero-staging-images": false,
+        "DOCUMENT_STORAGE": false,
+        "/etc/passvero": true,
+        "last-valid-offsite": true,
+        "93600": false,
+        "sendMessage": false
+      }
+    }
+  ],
+  "destination": {
+    "protectedLocatorFile": "/etc/passvero/backup/restic-repository",
+    "backend": "OTHER_OR_DYNAMIC"
+  },
+  "protectedConfigMetadata": [
+    {
+      "path": "/etc/passvero/backup/pgpass",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 54,
+      "mtimeUtc": "2026-08-15T10:10:12.208893+00:00"
+    },
+    {
+      "path": "/etc/passvero/backup/restic-password",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 65,
+      "mtimeUtc": "2026-08-16T20:00:56.323753+00:00"
+    },
+    {
+      "path": "/etc/passvero/backup/restic-repository",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 105,
+      "mtimeUtc": "2026-08-16T20:00:56.320753+00:00"
+    },
+    {
+      "path": "/etc/passvero/backup/restic.env",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 132,
+      "mtimeUtc": "2026-08-16T20:00:56.325753+00:00"
+    },
+    {
+      "path": "/etc/passvero/backup/telegram-bot-token",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 47,
+      "mtimeUtc": "2026-08-17T17:46:57.487229+00:00"
+    },
+    {
+      "path": "/etc/passvero/backup/telegram-chat-id",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 11,
+      "mtimeUtc": "2026-08-17T17:46:57.489229+00:00"
+    }
+  ],
+  "backupConnectionTargets": [
+    {
+      "host": "127.0.0.1",
+      "port": "5432",
+      "database": "passvero",
+      "role": "passvero_backup"
+    }
+  ],
+  "freshnessMarker": {
+    "path": "/var/lib/passvero-backup/state/last-valid-offsite.epoch",
+    "exists": true,
+    "symlink": false,
+    "mode": "0o600",
+    "uid": 0,
+    "gid": 0,
+    "bytes": 11,
+    "mtimeUtc": "2026-10-01T02:08:20.947777+00:00",
+    "epoch": 1790820500,
+    "ageSeconds": 47793
+  },
+  "backupRootInventory": [
+    {
+      "path": "/var/lib/passvero-backup/evidence",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o700",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 16384,
+      "mtimeUtc": "2026-10-01T02:08:20.953777+00:00"
+    },
+    {
+      "path": "/var/lib/passvero-backup/quarantine",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o700",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 4096,
+      "mtimeUtc": "2026-08-15T10:09:20.856855+00:00"
+    },
+    {
+      "path": "/var/lib/passvero-backup/staging",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o700",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 4096,
+      "mtimeUtc": "2026-10-01T02:07:50.935770+00:00"
+    },
+    {
+      "path": "/var/lib/passvero-backup/state",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o700",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 4096,
+      "mtimeUtc": "2026-10-01T02:08:20.956777+00:00"
+    }
+  ],
+  "recentOffsiteEvidence": [
+    {
+      "path": "/var/lib/passvero-backup/evidence/passvero-20261001T020750Z.offsite",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 809,
+      "mtimeUtc": "2026-10-01T02:08:20.943777+00:00",
+      "sha256": "3308c1e002d94b9484a67f3de83a6f4510747ebe41043ae8da1d03259b2b813d",
+      "snapshotIds": [
+        "42e0fc88a37bc80b8c94e6cbbc5efd673ea5cb6a9d8884d0ea841375373d19d4"
+      ],
+      "backupSetTimestamps": [
+        "20261001T020750Z"
+      ]
+    },
+    {
+      "path": "/var/lib/passvero-backup/evidence/passvero-20260930T020233Z.offsite",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 809,
+      "mtimeUtc": "2026-09-30T02:03:23.112500+00:00",
+      "sha256": "37e92cb5d0cd6e555094cc3931fc16c79d7b29b68f2746751e4181bd6680a5b3",
+      "snapshotIds": [
+        "8b1be2f0bc97e09e03d82d8eba77a125b6ed905c3bc22d690d662417cafa30bb"
+      ],
+      "backupSetTimestamps": [
+        "20260930T020233Z"
+      ]
+    }
+  ],
+  "retainedRestoreEvidence": [
+    {
+      "path": "/var/lib/passvero-backup/evidence/passvero-restore-drill-20260818T145708Z.evidence",
+      "exists": true,
+      "symlink": false,
+      "mode": "0o600",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 4100,
+      "mtimeUtc": "2026-08-18T15:52:28.758565+00:00",
+      "sha256": "5fef55f248af5cc6fb5318965e38513fde293bd635247384b40f37ef53d829fd"
+    }
+  ],
+  "reminderTimer": "LoadState=loaded\nActiveState=inactive\nUnitFileState=disabled",
+  "space": {
+    "/var/lib": {
+      "availableBytes": 88653496320
+    },
+    "/tmp": {
+      "availableBytes": 88653496320
+    }
+  },
+  "limitations": [
+    "No restic execution or offsite listing yet",
+    "Static command structure is not a complete semantic include/exclude proof",
+    "No Storage API calls or byte copies",
+    "No secret values, raw scripts, logs or business rows emitted"
+  ],
+  "writes": "NONE",
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}

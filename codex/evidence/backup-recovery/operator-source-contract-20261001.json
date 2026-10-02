@@ -1,0 +1,57 @@
+{
+  "diagnostic": "READ_ONLY_BACKUP_CONTRACT",
+  "observedUtc": "2026-10-01T16:04:04.128377+00:00",
+  "sourceSha256": "5b6360633efb636f0aa9784b4e1a9d73aabe39a9c69f824cc99b9189407d7e75",
+  "contract": {
+    "form": "SHELL_WITH_PYTHON_BLOCKS",
+    "blocks": [
+      {
+        "startLine": 329,
+        "endLine": 341,
+        "sanitizedSource": "import json\nimport sys\nwith open(sys.argv[1], encoding='<redacted literal>') as handle:\n    snapshots = json.load(handle)\nfor snapshot in snapshots:\n    if snapshot.get('hostname') != 'passvero-production':\n        raise SystemExit('<redacted literal>')\n    if 'passvero-postgresql' not in set(snapshot.get('tags') or []):\n        raise SystemExit('<redacted literal>')\nprint(len(snapshots))"
+      },
+      {
+        "startLine": 405,
+        "endLine": 412,
+        "sanitizedSource": "import json\nimport sys\nwith open(sys.argv[1], encoding='<redacted literal>') as handle:\n    snapshots = json.load(handle)\ntag = sys.argv[2]\nraise SystemExit(0 if any((tag in (item.get('tags') or []) for item in snapshots)) else 1)"
+      },
+      {
+        "startLine": 489,
+        "endLine": 535,
+        "sanitizedSource": "import csv\nimport sys\ncatalog_path, rows_path = sys.argv[1:]\nwith open(catalog_path, newline='<redacted literal>', encoding='<redacted literal>') as handle:\n    catalog_rows = list(csv.DictReader(handle))\nif len(catalog_rows) != 1:\n    raise SystemExit('<redacted literal>')\ncatalog = catalog_rows[0]\nexpected = {'<redacted literal>': 'passvero', '<redacted literal>': 'passvero_backup', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>', '<redacted literal>': '<redacted literal>'}\nfor key, value in expected.items():\n    if catalog.get(key) != value:\n        raise SystemExit(f'<redacted literal>{key}')\nwith open(rows_path, newline='<redacted literal>', encoding='<redacted literal>') as handle:\n    rows = list(csv.reader(handle))\nif len(rows) != '<redacted literal>':\n    raise SystemExit('<redacted literal>')\nnames = [row[0] for row in rows if len(row) == 2]\nif len(names) != '<redacted literal>' or len(set(names)) != '<redacted literal>':\n    raise SystemExit('<redacted literal>')\nif names.count('<redacted literal>') != 1:\n    raise SystemExit('<redacted literal>')"
+      },
+      {
+        "startLine": 679,
+        "endLine": 701,
+        "sanitizedSource": "import json\nimport sys\nsummaries = []\nwith open(sys.argv[1], encoding='<redacted literal>') as handle:\n    for line in handle:\n        line = line.strip()\n        if not line:\n            continue\n        item = json.loads(line)\n        if item.get('<redacted literal>') == 'summary':\n            summaries.append(item)\nif len(summaries) != 1:\n    raise SystemExit('<redacted literal>')\nsummary = summaries[0]\nif summary.get('<redacted literal>') != '<redacted literal>':\n    raise SystemExit('<redacted literal>')\nif not summary.get('snapshot_id'):\n    raise SystemExit('<redacted literal>')\nprint(summary['snapshot_id'])"
+      },
+      {
+        "startLine": 724,
+        "endLine": 753,
+        "sanitizedSource": "import json\nimport sys\npath, expected_id, previous_count, backup_tag, *expected_paths = sys.argv[1:]\nwith open(path, encoding='<redacted literal>') as handle:\n    snapshots = json.load(handle)\nif len(snapshots) != int(previous_count) + 1:\n    raise SystemExit('<redacted literal>')\nmatching = [item for item in snapshots if item.get('id') == expected_id]\nif len(matching) != 1:\n    raise SystemExit('<redacted literal>')\nsnapshot = matching[0]\nif snapshot.get('hostname') != 'passvero-production':\n    raise SystemExit('<redacted literal>')\nif set(snapshot.get('tags') or []) != {'passvero-postgresql', backup_tag}:\n    raise SystemExit('<redacted literal>')\nif set(snapshot.get('paths') or []) != set(expected_paths):\n    raise SystemExit('<redacted literal>')\nprint(snapshot['time'])"
+      },
+      {
+        "startLine": 767,
+        "endLine": 788,
+        "sanitizedSource": "import json\nimport os\nimport sys\npath, *expected_paths = sys.argv[1:]\nexpected = {item: os.path.getsize(item) for item in expected_paths}\nfound = {}\nwith open(path, encoding='<redacted literal>') as handle:\n    for line in handle:\n        line = line.strip()\n        if not line:\n            continue\n        item = json.loads(line)\n        message_type = item.get('<redacted literal>') or item.get('<redacted literal>')\n        if message_type != '<redacted literal>':\n            continue\n        if item.get('<redacted literal>') == '<redacted literal>':\n            found[item.get('path')] = item.get('<redacted literal>')\nif found != expected:\n    raise SystemExit('<redacted literal>')"
+      },
+      {
+        "startLine": 889,
+        "endLine": 915,
+        "sanitizedSource": "import json\nimport sys\npath, newest_id = sys.argv[1:]\nwith open(path, encoding='<redacted literal>') as handle:\n    groups = json.load(handle)\nif len(groups) != 1:\n    raise SystemExit('<redacted literal>')\ngroup = groups[0]\nif group.get('host') != 'passvero-production':\n    raise SystemExit('<redacted literal>')\nkept = group.get('<redacted literal>') or []\nremoved = group.get('<redacted literal>') or []\nkept_ids = {item.get('id') for item in kept}\nremoved_ids = {item.get('id') for item in removed}\nif newest_id not in kept_ids:\n    raise SystemExit('<redacted literal>')\nif newest_id in removed_ids:\n    raise SystemExit('<redacted literal>')\nif not kept:\n    raise SystemExit('<redacted literal>')\nprint(len(removed))"
+      },
+      {
+        "startLine": 949,
+        "endLine": 969,
+        "sanitizedSource": "import json\nimport sys\npath, newest_id, previous_count, removed_count = sys.argv[1:]\nwith open(path, encoding='<redacted literal>') as handle:\n    snapshots = json.load(handle)\nexpected_count = int(previous_count) + 1 - int(removed_count)\nif len(snapshots) != expected_count:\n    raise SystemExit('<redacted literal>')\nif not snapshots:\n    raise SystemExit('<redacted literal>')\nif sum((item.get('id') == newest_id for item in snapshots)) != 1:\n    raise SystemExit('<redacted literal>')\nfor snapshot in snapshots:\n    if snapshot.get('hostname') != 'passvero-production':\n        raise SystemExit('<redacted literal>')\n    if 'passvero-postgresql' not in set(snapshot.get('tags') or []):\n        raise SystemExit('<redacted literal>')\nprint(len(snapshots))"
+      }
+    ],
+    "shellControlFlowReviewed": false
+  },
+  "writes": "NONE",
+  "resticCalls": 0,
+  "sqlCalls": 0,
+  "storageCalls": 0,
+  "smtpCalls": 0,
+  "telegramCalls": 0
+}
