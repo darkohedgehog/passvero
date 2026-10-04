@@ -302,7 +302,12 @@
     "invalid": "Invalid image or image limits exceeded. Choose a JPEG or PNG.",
     "stale": "The product changed. Refresh the page and try again.",
     "failure": "Image unavailable. Please try again.",
-    "ambiguous": "Multiple primary images exist. Data review is required before editing."
+    "ambiguous": "Multiple primary images exist. Data review is required before editing.",
+    "chooseFile": "Choose image",
+    "noFile": "No image selected.",
+    "selectedHint": "The selected image is not saved yet. Click Save image to upload it.",
+    "saved": "Saved draft image",
+    "uploading": "Uploading and saving image…"
   },
   "CatalogImport": {
     "title": "Import CSV",
@@ -359,15 +364,43 @@
       "CANCELLED": "Cancelled"
     },
     "rowErrors": {
-      "CREATE_PRODUCT_NAME_INVALID": "Invalid row — internal_name",
-      "CREATE_PRODUCT_SKU_INVALID": "Invalid row — sku",
-      "CREATE_PRODUCT_LOCALE_INVALID": "Invalid row — source_locale",
-      "INVALID_GTIN": "Invalid row — gtin",
-      "INVALID_CN": "Invalid row — cn_code / cn_nomenclature_year",
+      "CREATE_PRODUCT_NAME_INVALID": "Invalid row — Product name",
+      "CREATE_PRODUCT_SKU_INVALID": "Invalid row — SKU / internal reference",
+      "CREATE_PRODUCT_LOCALE_INVALID": "Invalid row — Source language",
+      "INVALID_GTIN": "Invalid row — GTIN",
+      "INVALID_CN": "Invalid row — CN code",
       "SKU_CONFLICT": "SKU conflict — row excluded",
       "GTIN_REVIEW_REQUIRED": "Matching GTIN; explicit decision required",
       "ROW_FAILED": "Invalid row — ",
       "INVALID_ROW": "Invalid row — "
+    },
+    "createOnly": "This import creates new products with a draft; it does not update existing products.",
+    "help": "Import help and limits",
+    "chooseFile": "Choose CSV",
+    "noFile": "No file selected.",
+    "selectionOnly": "Choosing and previewing a file does not create products.",
+    "blockedSku": "No valid rows selected. SKU {skus} already exists or is repeated in the file; this import does not update existing products.",
+    "blockedEmpty": "No valid rows selected. Select at least one row without a conflict.",
+    "blockedGtin": "Separately acknowledge GTIN matches for the selected rows.",
+    "blockedConfirm": "Review your selection and confirm creation.",
+    "gtinDoesNotResolveSku": "Acknowledging GTIN matches does not resolve SKU conflicts. Rows with an existing or repeated SKU remain excluded.",
+    "success": "All selected products were created.",
+    "partialSuccess": "Import partially succeeded. Check the row outcomes.",
+    "noSuccess": "No products were created. Check the row errors.",
+    "progressLabel": "Product creation progress",
+    "steps": {
+      "file": "Choose CSV",
+      "mapping": "Map columns",
+      "rows": "Review and select rows",
+      "confirm": "Confirm creation"
+    },
+    "fields": {
+      "internal_name": "Product name",
+      "sku": "SKU / internal reference",
+      "source_locale": "Source language",
+      "gtin": "GTIN",
+      "cn_code": "CN code",
+      "cn_nomenclature_year": "CN nomenclature year"
     }
   },
   "RequestAccess": {

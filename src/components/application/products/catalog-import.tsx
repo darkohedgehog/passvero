@@ -1,13 +1,18 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { PASSVERO_LOCALES } from "@/src/domain/values/passvero-locale";
 import { IMPORT_FIELDS, IMPORT_BATCH_SIZE, MAX_IMPORT_BYTES, type ImportOptions, type ImportPreview, type ImportBatchState } from "@/src/application/products/import-catalog/contracts";
 
+import { ProductActionIcon, editorInput, editorPrimaryAction, editorSecondaryAction } from "./product-editor-ui";
+
 export function CatalogImport() {
   const t = useTranslations("CatalogImport");
+  const fileInput = useRef<HTMLInputElement>(null);
+  const fileHintId = useId();
+  const blockedId = useId();
   const subscription = useTranslations("Subscription");
   const errors: Record<string, string> = Object.fromEntries((["FORBIDDEN", "FILE", "MAPPING", "VALIDATION", "STALE_PREVIEW", "SELECTION", "NOT_FOUND", "FAILED", "CANCELLED"] as const).map(k => [k, t(`errors.${k}`)]));
   const rowErrors: Record<string, string> = Object.fromEntries((["CREATE_PRODUCT_NAME_INVALID", "CREATE_PRODUCT_SKU_INVALID", "CREATE_PRODUCT_LOCALE_INVALID", "INVALID_GTIN", "INVALID_CN", "SKU_CONFLICT", "GTIN_REVIEW_REQUIRED", "ROW_FAILED", "INVALID_ROW"] as const).map(k => [k, t(`rowErrors.${k}`)]));
@@ -71,47 +76,87 @@ export function CatalogImport() {
   const selectedSet = new Set(selected);
   const visible = preview?.rows.slice(page * 50, (page + 1) * 50) ?? [];
   const outcomes = new Map(batch?.outcomes.map(r => [r.number, r]));
-  return <section className="mb-6 space-y-4 rounded-xl border border-slate-200 p-4" aria-busy={busy}>
-    <h2 className="text-xl font-semibold">{t("title")}</h2><p className="text-sm text-slate-600">{t("scope")}</p>
-    <p className="text-sm text-slate-600">{t("escape")}</p>
-    <fieldset disabled={busy || !!batch} className="flex flex-wrap gap-4">
-      <label className="min-w-0 flex-1">{t("file")}<input className="block max-w-full text-sm" type="file" accept=".csv,text/csv" onChange={e => { setFile(e.target.files?.[0] ?? null); setHeaders([]); invalidate(); }} /></label>
-      <label>{t("delimiter")}<select className="ml-2 rounded border p-2" value={options.delimiter} onChange={e => { setOptions({ ...options, delimiter: e.target.value as "," | ";" }); setHeaders([]); invalidate(); }}><option value=",">,</option><option value=";">;</option></select></label>
-      <button type="button" onClick={() => void act(loadHeaders)} disabled={!file} className="rounded border px-3 py-2">{t("readHeader")}</button>
+  const hasGtinMatch = preview?.rows.some(row => selectedSet.has(row.number) && row.gtinMatch) ?? false;
+  const conflicts = preview?.rows.filter(row => row.skuConflict).map(row => row.values.sku) ?? [];
+  const blocked = busy ? t("working") : !selected.length
+    ? conflicts.length ? t("blockedSku", { skus: [...new Set(conflicts)].slice(0, 3).join(", ") }) : t("blockedEmpty")
+    : hasGtinMatch && !acceptGtin ? t("blockedGtin") : !confirmed ? t("blockedConfirm") : null;
+  const succeeded = batch?.outcomes.filter(row => row.status === "SUCCEEDED").length ?? 0;
+  const failed = batch?.outcomes.filter(row => row.status === "FAILED").length ?? 0;
+  const pending = batch?.outcomes.filter(row => row.status === "PENDING").length ?? 0;
+  const completeMessage = batch?.status === "COMPLETE"
+    ? failed ? t(succeeded ? "partialSuccess" : "noSuccess") : t("success") : null;
+
+  return <section className="mb-6 min-w-0 space-y-5 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6" aria-busy={busy}>
+    <header>
+      <h2 className="flex items-center gap-2 text-xl font-bold text-slate-950"><ProductActionIcon name="upload" />{t("title")}</h2>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{t("createOnly")}</p>
+    </header>
+    <details className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+      <summary className="cursor-pointer font-semibold text-slate-800 focus-visible:outline-2 focus-visible:outline-teal-700">{t("help")}</summary>
+      <div className="mt-3 space-y-2 leading-6"><p>{t("scope")}</p><p>{t("escape")}</p><p>{t("resumeHelp")}</p></div>
+    </details>
+    <fieldset disabled={busy || !!batch} className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+      <legend className="px-1 font-semibold text-slate-950">1. {t("steps.file")}</legend>
+      <input ref={fileInput} className="sr-only" tabIndex={-1} aria-label={t("file")} type="file" accept=".csv,text/csv" onChange={event => { setFile(event.target.files?.[0] ?? null); setHeaders([]); invalidate(); }} />
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
+        <button type="button" className={editorPrimaryAction} aria-describedby={fileHintId} onClick={() => fileInput.current?.click()}><ProductActionIcon name="upload" />{t("chooseFile")}</button>
+        <p className="min-w-0 break-all text-sm font-medium text-slate-800" role="status">{file?.name ?? t("noFile")}</p>
+      </div>
+      <p id={fileHintId} className="text-sm text-slate-600">{t("file")}. {t("selectionOnly")}</p>
+      <div className="flex flex-wrap items-end gap-3">
+        <label className="text-sm font-medium">{t("delimiter")}<select className={editorInput} value={options.delimiter} onChange={event => { setOptions({ ...options, delimiter: event.target.value as "," | ";" }); setHeaders([]); invalidate(); }}><option value=",">,</option><option value=";">;</option></select></label>
+        <button type="button" onClick={() => void act(loadHeaders)} disabled={!file} className={editorSecondaryAction}>{t("readHeader")}</button>
+      </div>
     </fieldset>
-    {headers.length > 0 && <fieldset disabled={busy || !!batch} className="grid gap-3 sm:grid-cols-2">
-      {IMPORT_FIELDS.map(field => <label key={field} className="min-w-0 text-sm">{field}<select className="mt-1 block w-full rounded border p-2" value={options.mapping[field] ?? ""} onChange={e => { setOptions({ ...options, mapping: { ...options.mapping, [field]: e.target.value === "" ? null : Number(e.target.value) } }); invalidate(); }}><option value="">{t("notMapped")}</option>{headers.map((h,i) => <option key={i} value={i}>{h}</option>)}</select></label>)}
-      <label>{t("defaultLocale")}<select className="ml-2 rounded border p-2" value={options.defaultLocale} onChange={e => { setOptions({ ...options, defaultLocale: e.target.value as ImportOptions["defaultLocale"] }); invalidate(); }}>{PASSVERO_LOCALES.map(l => <option key={l}>{l}</option>)}</select></label>
-      <button type="button" className="rounded border px-3 py-2" onClick={() => void act(loadPreview)}>{t("preview")}</button>
+    {headers.length > 0 && <fieldset disabled={busy || !!batch} className="min-w-0 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+      <legend className="px-1 font-semibold text-slate-950">2. {t("steps.mapping")}</legend>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {IMPORT_FIELDS.map(field => <label key={field} className="min-w-0 text-sm font-medium text-slate-800">{t(`fields.${field}`)}<span className="ml-2 text-xs font-normal text-slate-500">({field})</span><select className={editorInput} value={options.mapping[field] ?? ""} onChange={event => { setOptions({ ...options, mapping: { ...options.mapping, [field]: event.target.value === "" ? null : Number(event.target.value) } }); invalidate(); }}><option value="">{t("notMapped")}</option>{headers.map((header, index) => <option key={index} value={index}>{header}</option>)}</select></label>)}
+        <label className="text-sm font-medium">{t("defaultLocale")}<select className={editorInput} value={options.defaultLocale} onChange={event => { setOptions({ ...options, defaultLocale: event.target.value as ImportOptions["defaultLocale"] }); invalidate(); }}>{PASSVERO_LOCALES.map(locale => <option key={locale}>{locale}</option>)}</select></label>
+      </div>
+      <button type="button" className={`${editorSecondaryAction} mt-4`} onClick={() => void act(loadPreview)}><ProductActionIcon name="preview" />{t("preview")}</button>
     </fieldset>}
     {preview && <>
-      <p className="text-sm">{subscription("availableCreationSlots", { count: preview.availableCreationSlots ?? 0 })}</p>
-      <p className="text-sm">{t("ignored")}: {preview.ignored.join(", ") || "—"}</p>
-      <p className="text-sm" role="status">{t("summary", { total: preview.rows.length, invalid: preview.invalidCount, errors: preview.errorCount, selected: selected.length, excluded: preview.rows.length - selected.length })}</p>
-      {!batch && <>
-        <button type="button" disabled={busy} className="rounded border px-3 py-2" onClick={() => { setSelected(preview.rows.filter(r => r.valid && !r.skuConflict).map(r => r.number)); setConfirmed(false); }}>{t("selectValid")}</button>
-        <label className="block text-sm"><input type="checkbox" checked={acceptGtin} disabled={busy} onChange={e => { setAcceptGtin(e.target.checked); setConfirmed(false); }} /> {t("gtinAccept")}</label>
-      </>}
-      <div className="overflow-x-auto"><table className="w-full text-left text-xs"><thead><tr><th>{t("select")}</th><th>#</th>{IMPORT_FIELDS.map(f => <th className="p-2" key={f}>{f}</th>)}<th>{t("result")}</th></tr></thead><tbody>{visible.map(row => {
-        const outcome = outcomes.get(row.number);
-        return <tr key={row.number} className="border-t"><td><input aria-label={t("row", { number: row.number })} type="checkbox" disabled={busy || !!batch || !row.valid || row.skuConflict} checked={selectedSet.has(row.number)} onChange={e => { setSelected(e.target.checked ? [...selected, row.number] : selected.filter(n => n !== row.number)); setConfirmed(false); }} /></td><td>{row.number}</td>{IMPORT_FIELDS.map(f => <td key={f} className="max-w-64 whitespace-pre-wrap break-words p-2">{row.values[f]}</td>)}<td className="min-w-44 p-2">
-          {!row.valid && <p>{t("invalid")}{row.errors.length ? ` (${row.errors.map(code => rowErrors[code] ?? t("invalid")).join(", ")})` : ""}</p>}
-          {row.skuConflict && <p>{t("skuConflict")}</p>}{row.gtinMatch && <p>{t("gtinWarning")}</p>}{row.similarName && <p>{t("nameWarning")}</p>}{row.apostrophe && <p>{t("apostropheWarning")}</p>}{row.numericSku && <p>{t("numericWarning")}</p>}
-          {outcome && <p>{statuses[outcome.status]} {outcome.error ? (rowErrors[outcome.error] ?? t("invalid")) : ""}</p>}
-          {outcome?.productId && <Link className="underline" href={`/dashboard/products/${outcome.productId}`}>{t("openProduct")}</Link>}
-        </td></tr>;
-      })}</tbody></table></div>
-      <div className="flex gap-3"><button type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>{t("previous")}</button><span>{page+1} / {Math.max(1,Math.ceil(preview.rows.length/50))}</span><button type="button" disabled={(page+1)*50 >= preview.rows.length} onClick={() => setPage(page + 1)}>{t("next")}</button></div>
-      {!batch && <><label className="block text-sm"><input type="checkbox" disabled={busy} checked={confirmed} onChange={e => setConfirmed(e.target.checked)} /> {t("confirmHelp", { count: selected.length, excluded: preview.rows.length-selected.length })}</label><button type="button" disabled={busy || !confirmed || !selected.length || (!acceptGtin && preview.rows.some(r => selectedSet.has(r.number) && r.gtinMatch))} onClick={() => void act(confirm)} className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-50">{t("confirm")}</button></>}
-      {batch && <>
-        <p role="status">{t("progress", { success: batch.outcomes.filter(r=>r.status==='SUCCEEDED').length, failed: batch.outcomes.filter(r=>r.status==='FAILED').length, pending: batch.outcomes.filter(r=>r.status==='PENDING').length })} — {statuses[batch.status]}</p>
-        <button type="button" disabled={busy || batch.status === "CANCELLED"} onClick={() => void act(() => runBatches(batch))} className="rounded border px-3 py-2">{batch.status === "COMPLETE" ? t("refreshReport") : t("resume")}</button>
-        {batch.status === "ACTIVE" && <button type="button" className="ml-2 rounded border px-3 py-2" onClick={() => { stop.current = true; void request("cancel",JSON.stringify({id:batch.id}),true).then(data=>setBatch(data as ImportBatchState)).catch(()=>setError(t("errors.FAILED"))); }}>{t("cancel")}</button>}
-      </>}
+      <div className="min-w-0 space-y-4 rounded-xl border border-slate-200 p-4">
+        <h3 className="font-semibold text-slate-950">3. {t("steps.rows")}</h3>
+        <p className="text-sm text-slate-600">{subscription("availableCreationSlots", { count: preview.availableCreationSlots ?? 0 })}</p>
+        <p className="rounded-lg bg-slate-50 p-3 text-sm leading-6 text-slate-800" role="status">{t("summary", { total: preview.rows.length, invalid: preview.invalidCount, errors: preview.errorCount, selected: selected.length, excluded: preview.rows.length - selected.length })}</p>
+        {preview.ignored.length > 0 && <p className="break-words text-xs text-slate-500">{t("ignored")}: {preview.ignored.join(", ")}</p>}
+        {!batch && <button type="button" disabled={busy} className={editorSecondaryAction} onClick={() => { setSelected(preview.rows.filter(row => row.valid && !row.skuConflict).map(row => row.number)); setConfirmed(false); }}>{t("selectValid")}</button>}
+        <div className="overflow-x-auto rounded-lg border border-slate-200" tabIndex={0} role="region" aria-label={t("steps.rows")}><table className="w-full text-left text-sm"><thead className="bg-slate-50 text-slate-600"><tr><th scope="col" className="p-3">{t("select")}</th><th scope="col" className="p-3">#</th>{IMPORT_FIELDS.map(field => <th scope="col" className="min-w-32 p-3" key={field}>{t(`fields.${field}`)}</th>)}<th scope="col" className="p-3">{t("result")}</th></tr></thead><tbody>{visible.map(row => {
+          const outcome = outcomes.get(row.number);
+          return <tr key={row.number} className="border-t border-slate-200 align-top"><td className="p-3"><input className="size-4 accent-teal-700" aria-label={t("row", { number: row.number })} type="checkbox" disabled={busy || !!batch || !row.valid || row.skuConflict} checked={selectedSet.has(row.number)} onChange={event => { setSelected(event.target.checked ? [...selected, row.number] : selected.filter(number => number !== row.number)); setConfirmed(false); }} /></td><td className="p-3">{row.number}</td>{IMPORT_FIELDS.map(field => <td key={field} className="max-w-64 whitespace-pre-wrap break-words p-3">{row.values[field]}</td>)}<td className="min-w-64 space-y-2 p-3">
+            {!row.valid && <p className="text-red-800">{t("invalid")}{row.errors.length ? ` (${row.errors.map(code => rowErrors[code] ?? t("invalid")).join(", ")})` : ""}</p>}
+            {row.skuConflict && <p className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1 font-medium text-amber-950">{t("skuConflict")}</p>}
+            {row.gtinMatch && <p className="text-amber-900">{t("gtinWarning")}</p>}{row.similarName && <p>{t("nameWarning")}</p>}{row.apostrophe && <p>{t("apostropheWarning")}</p>}{row.numericSku && <p>{t("numericWarning")}</p>}
+            {outcome && <p className={outcome.status === "FAILED" ? "font-medium text-red-800" : "font-medium text-teal-800"}>{statuses[outcome.status]} {outcome.error ? (rowErrors[outcome.error] ?? t("invalid")) : ""}</p>}
+            {outcome?.productId && <Link className="inline-flex min-h-11 items-center font-semibold text-teal-800 underline" href={`/dashboard/products/${outcome.productId}`}>{t("openProduct")}</Link>}
+          </td></tr>;
+        })}</tbody></table></div>
+        <div className="flex flex-wrap items-center gap-3"><button type="button" className={editorSecondaryAction} disabled={page === 0} onClick={() => setPage(page - 1)}>{t("previous")}</button><span className="text-sm">{page + 1} / {Math.max(1, Math.ceil(preview.rows.length / 50))}</span><button type="button" className={editorSecondaryAction} disabled={(page + 1) * 50 >= preview.rows.length} onClick={() => setPage(page + 1)}>{t("next")}</button></div>
+      </div>
+      <div className="space-y-3 rounded-xl border border-teal-200 bg-teal-50/30 p-4">
+        <h3 className="font-semibold text-slate-950">4. {t("steps.confirm")}</h3>
+        {!batch && <>
+          {preview.rows.some(row => row.gtinMatch) && <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+            <label className="flex items-start gap-2"><input className="mt-1 size-4 shrink-0 accent-teal-700" type="checkbox" checked={acceptGtin} disabled={busy} onChange={event => { setAcceptGtin(event.target.checked); setConfirmed(false); }} /><span>{t("gtinAccept")}</span></label>
+            <p className="text-amber-950">{t("gtinDoesNotResolveSku")}</p>
+          </div>}
+          {selected.length > 0 && <label className="flex items-start gap-2 text-sm"><input className="mt-1 size-4 shrink-0 accent-teal-700" type="checkbox" disabled={busy} checked={confirmed} onChange={event => setConfirmed(event.target.checked)} /><span>{t("confirmHelp", { count: selected.length, excluded: preview.rows.length - selected.length })}</span></label>}
+          {blocked && <p id={blockedId} role="status" className="text-sm font-medium leading-6 text-slate-700">{blocked}</p>}
+          <button type="button" disabled={blocked !== null} aria-describedby={blocked ? blockedId : undefined} onClick={() => void act(confirm)} className={editorPrimaryAction}><ProductActionIcon name="add" />{t("confirm")}</button>
+        </>}
+        {batch && <>
+          <p role="status" className="text-sm font-medium">{completeMessage ?? statuses[batch.status]} — {t("progress", { success: succeeded, failed, pending })}</p>
+          <progress className="h-2 w-full accent-teal-700" aria-label={t("progressLabel")} max={Math.max(1, batch.selected.length)} value={succeeded + failed} />
+          <div className="flex flex-wrap gap-2"><button type="button" disabled={busy || batch.status === "CANCELLED"} onClick={() => void act(() => runBatches(batch))} className={editorSecondaryAction}>{batch.status === "COMPLETE" ? t("refreshReport") : t("resume")}</button>
+            {batch.status === "ACTIVE" && <button type="button" className={editorSecondaryAction} onClick={() => { stop.current = true; void request("cancel", JSON.stringify({ id: batch.id }), true).then(data => setBatch(data as ImportBatchState)).catch(() => setError(t("errors.FAILED"))); }}>{t("cancel")}</button>}</div>
+        </>}
+      </div>
     </>}
-    <p className="text-sm text-slate-600">{t("resumeHelp")}</p>
-    {batch && !busy && <button type="button" className="rounded border px-3 py-2" onClick={() => { invalidate(); setHeaders([]); setFile(null); }}>{t("reset")}</button>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {busy && <p role="status">{t("working")}</p>}
+    {busy && <div role="status" className="space-y-2 text-sm font-medium text-teal-800"><p>{t("working")}</p>{!batch && <progress className="h-2 w-full accent-teal-700" aria-label={t("working")} />}</div>}
+    {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+    {batch && !busy && <button type="button" className={editorSecondaryAction} onClick={() => { invalidate(); setHeaders([]); setFile(null); if (fileInput.current) fileInput.current.value = ""; }}>{t("reset")}</button>}
   </section>;
 }

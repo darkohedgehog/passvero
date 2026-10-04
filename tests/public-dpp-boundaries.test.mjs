@@ -39,7 +39,7 @@ test("keeps Prisma and environment access in server-only infrastructure", () => 
     "src/components/public-dpp/public-dpp-labels.ts",
   ].map(read).join("\n");
   assert.doesNotMatch(publicSource, /generated\/prisma|DATABASE_URL|TEST_DATABASE_URL|BETTER_AUTH|resolveAuthenticated|resolveProtectedDashboard/);
-  assert.doesNotMatch(publicSource, /currentDraftVersion|ProductDocument|ProductImage|QRCode|ScanEvent|localStorage|sessionStorage|cookies\(/);
+  assert.doesNotMatch(publicSource, /currentDraftVersion|ProductDocument\b|ProductImage\b|QRCode|ScanEvent|localStorage|sessionStorage|cookies\(/);
   assert.doesNotMatch(publicSource, /"use client"|dangerouslySetInnerHTML/);
   const runtime = read(runtimePath);
   assert.match(runtime, /import "server-only"/);
@@ -53,7 +53,7 @@ test("all six locales expose the same complete PublicDpp message contract", () =
   const messages = locales.map((locale) => JSON.parse(read(`messages/${locale}.json`)).PublicDpp);
   assert.ok(messages[0]);
   const keys = flattenKeys(messages[0]);
-  assert.equal(keys.length, 41);
+  assert.equal(keys.length, 44);
   for (const [index, locale] of locales.entries()) {
     assert.deepEqual(flattenKeys(messages[index]), keys, locale);
   }

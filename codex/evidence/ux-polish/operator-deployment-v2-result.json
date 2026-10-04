@@ -1,0 +1,21 @@
+{
+  "evidenceSource": "USER_SUPPLIED_VPS_OPERATOR_OUTPUT",
+  "deployment": "PASS",
+  "scope": "STAGING_UI_ONLY",
+  "buildId": "HqpP77R94fR_j4Jo_P_0u",
+  "verifiedArtifacts": 826,
+  "stagingHttps": "200",
+  "rollback": "PREPARED_NOT_EXECUTED",
+  "scannerConfigurationAndPids": "UNCHANGED",
+  "qpdf": "UNCHANGED",
+  "reminderTimer": "DISABLED_INACTIVE",
+  "enabledCampaigns": 0,
+  "databaseWrites": 0,
+  "uploads": 0,
+  "scanCalls": 0,
+  "emails": 0,
+  "productionAccess": false,
+  "liveCsv": "NOT_YET_RUN",
+  "operatorExit": 0,
+  "rollbackCommand": "/usr/bin/python3 -B /var/lib/passvero-ux-polish-20261004-v2/rollback.py f91884488412096c4ce80a303391f0112f24042c3cbeee00ae04c3f39081b9b1"
+}

@@ -295,7 +295,12 @@
     "invalid": "Nieprawidłowe zdjęcie lub przekroczone limity. Wybierz JPEG lub PNG.",
     "stale": "Produkt został zmieniony. Odśwież stronę i spróbuj ponownie.",
     "failure": "Zdjęcie niedostępne. Spróbuj ponownie.",
-    "ambiguous": "Istnieje kilka zdjęć głównych. Przed edycją wymagany jest przegląd danych."
+    "ambiguous": "Istnieje kilka zdjęć głównych. Przed edycją wymagany jest przegląd danych.",
+    "chooseFile": "Wybierz obraz",
+    "noFile": "Nie wybrano obrazu.",
+    "selectedHint": "Wybrany obraz nie został jeszcze zapisany. Kliknij Zapisz obraz, aby go przesłać.",
+    "saved": "Zapisany obraz szkicu",
+    "uploading": "Przesyłanie i zapisywanie obrazu…"
   },
   "CatalogImport": {
     "title": "Importuj CSV",
@@ -352,15 +357,43 @@
       "CANCELLED": "Anulowano"
     },
     "rowErrors": {
-      "CREATE_PRODUCT_NAME_INVALID": "Nieprawidłowy wiersz — internal_name",
-      "CREATE_PRODUCT_SKU_INVALID": "Nieprawidłowy wiersz — sku",
-      "CREATE_PRODUCT_LOCALE_INVALID": "Nieprawidłowy wiersz — source_locale",
-      "INVALID_GTIN": "Nieprawidłowy wiersz — gtin",
-      "INVALID_CN": "Nieprawidłowy wiersz — cn_code / cn_nomenclature_year",
+      "CREATE_PRODUCT_NAME_INVALID": "Nieprawidłowy wiersz — Nazwa produktu",
+      "CREATE_PRODUCT_SKU_INVALID": "Nieprawidłowy wiersz — SKU / kod wewnętrzny",
+      "CREATE_PRODUCT_LOCALE_INVALID": "Nieprawidłowy wiersz — Język źródłowy",
+      "INVALID_GTIN": "Nieprawidłowy wiersz — GTIN",
+      "INVALID_CN": "Nieprawidłowy wiersz — Kod CN",
       "SKU_CONFLICT": "Konflikt SKU — wiersz wykluczony",
       "GTIN_REVIEW_REQUIRED": "Zgodny GTIN; wymagana świadoma decyzja",
       "ROW_FAILED": "Nieprawidłowy wiersz — ",
       "INVALID_ROW": "Nieprawidłowy wiersz — "
+    },
+    "createOnly": "Ten import tworzy nowe produkty ze szkicem; nie aktualizuje istniejących produktów.",
+    "help": "Pomoc i ograniczenia importu",
+    "chooseFile": "Wybierz CSV",
+    "noFile": "Nie wybrano pliku.",
+    "selectionOnly": "Wybór i podgląd pliku nie tworzą produktów.",
+    "blockedSku": "Nie wybrano prawidłowych wierszy. SKU {skus} już istnieje lub powtarza się w pliku; ten import nie aktualizuje istniejących produktów.",
+    "blockedEmpty": "Nie wybrano prawidłowych wierszy. Wybierz co najmniej jeden wiersz bez konfliktu.",
+    "blockedGtin": "Osobno potwierdź zgodność GTIN dla wybranych wierszy.",
+    "blockedConfirm": "Sprawdź wybór i potwierdź utworzenie.",
+    "gtinDoesNotResolveSku": "Potwierdzenie GTIN nie usuwa konfliktu SKU. Wiersze z istniejącym lub powtórzonym SKU pozostają wykluczone.",
+    "success": "Wszystkie wybrane produkty zostały utworzone.",
+    "partialSuccess": "Import częściowo się powiódł. Sprawdź wyniki wierszy.",
+    "noSuccess": "Nie utworzono produktów. Sprawdź błędy wierszy.",
+    "progressLabel": "Postęp tworzenia produktów",
+    "steps": {
+      "file": "Wybierz CSV",
+      "mapping": "Przypisz kolumny",
+      "rows": "Sprawdź i wybierz wiersze",
+      "confirm": "Potwierdź utworzenie"
+    },
+    "fields": {
+      "internal_name": "Nazwa produktu",
+      "sku": "SKU / kod wewnętrzny",
+      "source_locale": "Język źródłowy",
+      "gtin": "GTIN",
+      "cn_code": "Kod CN",
+      "cn_nomenclature_year": "Rok nomenklatury CN"
     }
   },
   "RequestAccess": {

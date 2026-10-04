@@ -131,7 +131,7 @@ if (require.main === module) {
     const query: Query = <T>(sql: string): T => {
       const out = execFileSync("/usr/lib/postgresql/16/bin/psql", ["-XqAt", "-h", config.socket, "-p", "55434", "-U", "postgres", "-d", config.database,
         "-v", "ON_ERROR_STOP=1", "-c", "BEGIN READ ONLY; SET LOCAL statement_timeout='10s'; " + sql],
-        { encoding: "utf8", timeout: 15000, maxBuffer: 1024 * 1024, env: { PATH: "/usr/bin:/bin", LANG: "C", PGAPPNAME: "passvero_recovery_app_read" }, stdio: ["ignore", "pipe", "pipe"] });
+        { encoding: "utf8", timeout: 15000, maxBuffer: 1024 * 1024, env: { NODE_ENV: "production", PATH: "/usr/bin:/bin", LANG: "C", PGAPPNAME: "passvero_recovery_app_read" }, stdio: ["ignore", "pipe", "pipe"] });
       return (out.trim() ? JSON.parse(out) : null) as T;
     };
     console.log(JSON.stringify(await runRecoveryRead(config, { query, readFile: file => new Uint8Array(readFileSync(file)) })));

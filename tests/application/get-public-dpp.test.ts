@@ -127,6 +127,7 @@ test("returns the exact allowlisted DTO from the pointed publication", async () 
   assert.deepEqual(subject.calls, [
     { operation: "authority", publicCode },
     { operation: "content", publicCode },
+    { operation: "authority", publicCode },
   ]);
   assert.doesNotMatch(JSON.stringify(result), /organizationId|productVersionId|currentDraft|supplier|notes|QRCode|Unsupported/);
 });

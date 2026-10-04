@@ -1,0 +1,22 @@
+{
+  "deployment": "PASS",
+  "scope": "STAGING_UI_ONLY",
+  "buildId": "_xSIVqA6vEbfYig6Tcxqj",
+  "verifiedArtifacts": 826,
+  "stagingHttps": "200",
+  "rollback": "PREPARED_NOT_EXECUTED",
+  "scannerConfigurationAndPids": "UNCHANGED",
+  "qpdf": "UNCHANGED",
+  "reminderTimer": "DISABLED_INACTIVE",
+  "enabledCampaigns": 0,
+  "databaseWrites": 0,
+  "uploads": 0,
+  "scanCalls": 0,
+  "emails": 0,
+  "productionAccess": false,
+  "publicGtinNotice": "REMOVED",
+  "businessDataChanges": false,
+  "operatorExit": 0,
+  "rollbackCommand": "/usr/bin/python3 -B /var/lib/passvero-gtin-notice-20261004/rollback.py 0db7ea23816f0f2b658a9bf77184e699f97371926f3208a3eb3277f20780d299",
+  "evidenceSource": "USER_SUPPLIED_VPS_OPERATOR_OUTPUT"
+}

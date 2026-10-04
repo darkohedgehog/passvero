@@ -295,7 +295,12 @@
     "invalid": "Neveljavna slika ali presežene omejitve. Izberite JPEG ali PNG.",
     "stale": "Izdelek je spremenjen. Osvežite stran in poskusite znova.",
     "failure": "Slika ni na voljo. Poskusite znova.",
-    "ambiguous": "Obstaja več glavnih slik. Pred urejanjem je potreben pregled podatkov."
+    "ambiguous": "Obstaja več glavnih slik. Pred urejanjem je potreben pregled podatkov.",
+    "chooseFile": "Izberi sliko",
+    "noFile": "Slika ni izbrana.",
+    "selectedHint": "Izbrana slika še ni shranjena. Kliknite Shrani sliko za prenos.",
+    "saved": "Shranjena slika osnutka",
+    "uploading": "Prenos in shranjevanje slike…"
   },
   "CatalogImport": {
     "title": "Uvozi CSV",
@@ -352,15 +357,43 @@
       "CANCELLED": "Preklicano"
     },
     "rowErrors": {
-      "CREATE_PRODUCT_NAME_INVALID": "Neveljavna vrstica — internal_name",
-      "CREATE_PRODUCT_SKU_INVALID": "Neveljavna vrstica — sku",
-      "CREATE_PRODUCT_LOCALE_INVALID": "Neveljavna vrstica — source_locale",
-      "INVALID_GTIN": "Neveljavna vrstica — gtin",
-      "INVALID_CN": "Neveljavna vrstica — cn_code / cn_nomenclature_year",
+      "CREATE_PRODUCT_NAME_INVALID": "Neveljavna vrstica — Ime izdelka",
+      "CREATE_PRODUCT_SKU_INVALID": "Neveljavna vrstica — SKU / interna šifra",
+      "CREATE_PRODUCT_LOCALE_INVALID": "Neveljavna vrstica — Izvorni jezik",
+      "INVALID_GTIN": "Neveljavna vrstica — GTIN",
+      "INVALID_CN": "Neveljavna vrstica — Oznaka KN",
       "SKU_CONFLICT": "Spor SKU — vrstica izključena",
       "GTIN_REVIEW_REQUIRED": "GTIN se ujema; potrebna je izrecna odločitev",
       "ROW_FAILED": "Neveljavna vrstica — ",
       "INVALID_ROW": "Neveljavna vrstica — "
+    },
+    "createOnly": "Ta uvoz ustvari nove izdelke z osnutkom; obstoječih izdelkov ne posodablja.",
+    "help": "Pomoč in omejitve uvoza",
+    "chooseFile": "Izberi CSV",
+    "noFile": "Datoteka ni izbrana.",
+    "selectionOnly": "Izbira in predogled datoteke ne ustvarita izdelkov.",
+    "blockedSku": "Ni izbranih veljavnih vrstic. SKU {skus} že obstaja ali se ponovi v datoteki; ta uvoz ne posodablja obstoječih izdelkov.",
+    "blockedEmpty": "Ni izbranih veljavnih vrstic. Izberite vsaj eno vrstico brez konflikta.",
+    "blockedGtin": "Posebej potrdite ujemanje GTIN za izbrane vrstice.",
+    "blockedConfirm": "Preglejte izbor in potrdite ustvarjanje.",
+    "gtinDoesNotResolveSku": "Potrditev GTIN ne odpravi konflikta SKU. Vrstica z obstoječim ali ponovljenim SKU ostane izključena.",
+    "success": "Vsi izbrani izdelki so ustvarjeni.",
+    "partialSuccess": "Uvoz je delno uspel. Preverite rezultate vrstic.",
+    "noSuccess": "Noben izdelek ni ustvarjen. Preverite napake vrstic.",
+    "progressLabel": "Napredek ustvarjanja izdelkov",
+    "steps": {
+      "file": "Izberi CSV",
+      "mapping": "Poveži stolpce",
+      "rows": "Preglej in izberi vrstice",
+      "confirm": "Potrdi ustvarjanje"
+    },
+    "fields": {
+      "internal_name": "Ime izdelka",
+      "sku": "SKU / interna šifra",
+      "source_locale": "Izvorni jezik",
+      "gtin": "GTIN",
+      "cn_code": "Oznaka KN",
+      "cn_nomenclature_year": "Leto nomenklature KN"
     }
   },
   "RequestAccess": {

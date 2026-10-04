@@ -1,3 +1,4 @@
+import { PassportSectionIcon, passportContentIcons } from "@/src/components/public-dpp/passport-section-icon";
 import type { ReactNode } from "react";
 import type { ProductDetailSnapshot } from "@/src/application/products/get-product-detail/contracts";
 import type { PublicDppLabels } from "@/src/components/public-dpp/public-dpp-document";
@@ -25,8 +26,8 @@ export function ProductDetailSnapshotContent({
           <h4 className="text-base font-bold text-slate-950">{contentTitle}</h4>
           <dl className="mt-3 space-y-4">
             {populated.map((field) => (
-              <div key={field}>
-                <dt className="text-sm font-semibold text-slate-700">{labels[field]}</dt>
+              <div key={field} className="rounded-lg border border-slate-200 bg-white p-4">
+                <dt className="flex items-center gap-2 text-sm font-semibold text-slate-700"><PassportSectionIcon name={passportContentIcons[field]} />{labels[field]}</dt>
                 <dd lang={sourceLocale} className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-slate-800">{snapshot.content[field]}</dd>
               </div>
             ))}
@@ -35,7 +36,7 @@ export function ProductDetailSnapshotContent({
       )}
       {cnSection ?? (snapshot.cn === null ? null : (
         <div>
-          <h4 className="text-base font-bold text-slate-950">{labels.cn}</h4>
+          <h4 className="flex items-center gap-2 text-base font-bold text-slate-950"><PassportSectionIcon name="receipt" />{labels.cn}</h4>
           <dl className="mt-3 grid gap-3 sm:grid-cols-2">
             <div><dt className="text-sm text-slate-600">{labels.cnCode}</dt><dd className="font-mono text-sm font-semibold">{snapshot.cn.code}</dd></div>
             <div><dt className="text-sm text-slate-600">{labels.cnYear}</dt><dd className="text-sm font-semibold">{snapshot.cn.nomenclatureYear}</dd></div>
@@ -45,7 +46,7 @@ export function ProductDetailSnapshotContent({
       ))}
       {materialsSection ?? (snapshot.materials.length === 0 ? null : (
         <div>
-          <h4 className="text-base font-bold text-slate-950">{labels.materials}</h4>
+          <h4 className="flex items-center gap-2 text-base font-bold text-slate-950"><PassportSectionIcon name="packaging" />{labels.materials}</h4>
           <ul className="mt-3 grid gap-3 sm:grid-cols-2">
             {snapshot.materials.map((material, index) => (
               <li key={index} className="rounded-lg border border-slate-200 p-4">

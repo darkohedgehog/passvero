@@ -1,0 +1,87 @@
+{
+  "task": "CSV_IMPORT_IMAGE_UPLOAD_AND_PRODUCT_PRESENTATION_UX_POLISH",
+  "date": "2026-10-04",
+  "baseHead": "703f588f1d6589f3e7b0118d991eab9ca8a35aa0",
+  "status": "LOCAL_PASS_STAGING_DEPLOY_PASS_LIVE_CSV_PASS",
+  "buildId": "HqpP77R94fR_j4Jo_P_0u",
+  "sourceFiles": {
+    "messages/hr.json": "91512f5c4455033183ec6a767d626ef6bbbbda8299fea7a87110759b1f8c9e3f",
+    "messages/sr.json": "5521b9a4ab5233b445c3352e6eab62abca3491c7a499422fa54e6ee55a1b484f",
+    "messages/en.json": "0cfd69b191e8e5b077283a47d9abdd967bbf20f0f01a4af39c8cf34343baeff9",
+    "messages/de.json": "0a08bbe323c4e96903a4b25c405cca9245f5a497bcd1c0d1c3898f7e52e9440d",
+    "messages/sl.json": "4b396a2586535e55127ce3e0ca1cda54e931e9ca2def5cc8c03f096c61bd3047",
+    "messages/pl.json": "f999dbddc94717a2e8d1f651166aaab7cded2db3ca33caf2f103f77e4b7a0ddd",
+    "src/components/application/products/catalog-import.tsx": "976eea1ebe4af59fb97d6172599d91c82d4f6db3f30ecabbf983e7c2678e973a",
+    "src/components/application/products/image-editor.tsx": "32c54d1c50591ef6c5f73dfb2868cd4a71456b2ec7de5a3e63704dd360f0f262",
+    "src/components/application/products/product-detail-snapshot.tsx": "ed42f5d8202f44e3873d449d0219a3adca63d5239d1d1de900502286df42f266",
+    "src/components/public-dpp/public-dpp-document.tsx": "d54fd31b161327058ad59389bfe15fa68b0b8efd179990cc2affec480a89c911",
+    "src/components/public-dpp/passport-section-icon.tsx": "9e07bda22625b46569a3deff4b400e2e6c6406b8ef241a34b9df1f9684489642",
+    "scripts/staging-recovery/application_read.ts": "0e2ff3e50ee157b8daaea54caf1dfb85515fa5d0b797820bbeb3d6df34603a41",
+    "tests/application/get-public-dpp.test.ts": "4edc49a4e6ad8cb4f7f15346d9b7301ed567ea3a8378691057c4ebe0864dc03d",
+    "tests/public-dpp-boundaries.test.mjs": "90c994433326a325b71d0e4d12c14ca0f08c749ca7abb19fad42044494ed4d4f"
+  },
+  "operatorFiles": {
+    "codex/evidence/ux-polish/operators/deploy.py": "dcca7214081975820bbc862110f9c7bfe37600922a4fb4a72cd759673675b6b7",
+    "codex/evidence/ux-polish/operators/rollback.py": "060eebdc5b03de6310884c348bc49ef37021d37e07045d24904a4d049f624904",
+    "codex/evidence/ux-polish/operators/common.py": "12b8cc998aafeef2cea1ef598f9e28f479e11c64c312db13cab203c7f651df66"
+  },
+  "deploymentPackage": {
+    "path": "/tmp/passvero-ux-polish-20261004.tar.gz",
+    "archiveSha256": "c88aa28532303772102d841e7ffb9696501433aae25b8371deaef411a2f3a60d",
+    "manifestSha256": "bf0f7ed265fae86211f6234a362a835b23543998cd1f781c9401aaf0e2e31bd6",
+    "artifacts": 826,
+    "deployExecuted": false,
+    "rollbackExecuted": false,
+    "attempted": true,
+    "preflightResult": "STOP_RUNTIME_PACKAGE_DRIFT"
+  },
+  "preservedRecoveryBaseline": {
+    "codex/DOCUMENT_SIGNATURE_HEALTH_POST_RESTART_RECOVERY.md": "2a51f92fc9255eef7307e88d8062d137e1140aefc989743eacd5dfc1a17d45b0",
+    "codex/IMPLEMENTATION_ROADMAP.md": "ab479eb8e5e3cb67b305fefb4e99df85a8e082aa00c4a9ea53ed28dedc1ac20a",
+    "scripts/recover-document-signature-health.py": "3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0",
+    "codex/STAGING_REAL_DATA_READINESS_AND_USER_ACCEPTANCE_PLAN.md": "33801d8725b2a7473cf47676b835c7b26f7324bb27c764b125ddc2b6d4d907fb",
+    "codex/evidence/signature-recovery/release-alignment-recovery-result.json": "6bc3034fd531610bbbc27601f4ad4f0679767a1fdc599935f7096bd9a4eb598a",
+    "codex/evidence/signature-recovery/release-alignment-source-manifest.json": "136ce94a7348728d8775b4e127508f798f181477c960cf485982347a8634747c"
+  },
+  "sourceDiffScope": "UI_AND_TRANSLATIONS; THREE_EXISTING_CHECK_COMPATIBILITY_FIXES",
+  "businessRulesChanged": false,
+  "userProof": "USER_REPORTED_POSITIVE_PRODUCT_PDF_IMAGE_PUBLISH_QR_EXPORT; REPUBLICATION_CONFIRMED; DRAFT_ONLY_IMMUTABILITY_NOT_CONFIRMED",
+  "localProof": {
+    "applicationTests": 74,
+    "boundaryTests": 4,
+    "typescript": "PASS",
+    "lintErrors": 0,
+    "lintExistingWarnings": 16,
+    "build": "PASS",
+    "syntheticBrowser": "PASS",
+    "syntheticRollback": "PASS"
+  },
+  "liveCsv": "PASS_ONE_SYNTHETIC_RETAINED_DRAFT",
+  "operatorStopEvidence": "operator-deployment-stop-v1.json",
+  "deploymentPackageV2": {
+    "path": "/tmp/passvero-ux-polish-20261004-v2.tar.gz",
+    "archiveSha256": "e4f724ee8c64f4d2358ff9f56a57a4a0e36ff21c71ce843a1b2a86119bcf703b",
+    "manifestSha256": "f91884488412096c4ce80a303391f0112f24042c3cbeee00ae04c3f39081b9b1",
+    "applicationTarSha256": "f1c35546d1411be9ccdcd5bcdd03371420a44743ad606a2cf894e3070983e34b",
+    "artifacts": 826,
+    "uiArtifactsIdenticalToV1": true,
+    "runtimePinReview": "runtime-pin-read-only-result.json",
+    "deployExecuted": true,
+    "rollbackExecuted": false,
+    "operatorFiles": {
+      "codex/evidence/ux-polish/operators-v2/deploy.py": "dcca7214081975820bbc862110f9c7bfe37600922a4fb4a72cd759673675b6b7",
+      "codex/evidence/ux-polish/operators-v2/rollback.py": "060eebdc5b03de6310884c348bc49ef37021d37e07045d24904a4d049f624904",
+      "codex/evidence/ux-polish/operators-v2/common.py": "9371e45f42fb60f87a1df89efa6fd2c47bfd13fa8b2e7abfa359c551c5a8cad5"
+    },
+    "operatorEvidence": "operator-deployment-v2-result.json"
+  },
+  "liveEvidence": "live-ui-csv-result.json",
+  "screenshots": {
+    "/private/tmp/passvero-ux-polish/live-dpp-desktop.jpg": "ad09948376f719eb9fe3eaa64603b29c32f8a18bdee3b947465aa8892622649e",
+    "/private/tmp/passvero-ux-polish/live-dpp-mobile.jpg": "ca3586c68c42c145d246689833e7ab60d9dc9dad1878af78e50b645b55324f8b",
+    "/private/tmp/passvero-ux-polish/live-csv-success-desktop.jpg": "f89c743798c914fa980b4847acbbfa312861add53fdd14ced12f680d88c5b890",
+    "/private/tmp/passvero-ux-polish/live-image-selection-mobile.jpg": "87af9d93a912c7c0e835484c8f5c3a94ee5f059813a832cfe918191f532271f3",
+    "/private/tmp/passvero-ux-polish/live-csv-conflict-mobile.jpg": "84571804346adc0487e0e9c1873eec69afc75bc3ead04676672718f643a2ca57",
+    "/private/tmp/passvero-ux-polish/live-preview-desktop.jpg": "417bf8ee3f647b0c924487c0e023602d9ff5d083aa67beb12630f4dcb25359a5"
+  }
+}

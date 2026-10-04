@@ -1,0 +1,50 @@
+{
+  "task": "PUBLIC_GTIN_NOTICE_REMOVAL",
+  "date": "2026-10-04",
+  "scope": "ONE_PUBLIC_PRESENTATION_LINE_REMOVED",
+  "sourceSha256": {
+    "src/components/public-dpp/public-dpp-document.tsx": "a895a43e3210e9e74c06688ff19c4d6cc739edc0c37019ddfea4de8ea0eb8321"
+  },
+  "previousDeployedSourceSha256": "d54fd31b161327058ad59389bfe15fa68b0b8efd179990cc2affec480a89c911",
+  "deployment": "PASS",
+  "userDraftImmutability": "USER_CONFIRMED",
+  "previousDeploymentManifest": "source-manifest.json",
+  "businessRulesChanged": false,
+  "localBuildId": "_xSIVqA6vEbfYig6Tcxqj",
+  "checks": {
+    "publicDppBoundaryTests": "PASS_4",
+    "fileLint": "PASS",
+    "build": "PASS",
+    "typescript": "PASS_AFTER_BUILD",
+    "whitespace": "PASS",
+    "syntheticDeploymentRollback": "PASS_SUCCESS_AND_HTTPS_FAILURE"
+  },
+  "checkObservation": "Initial simultaneous tsc/build raced on generated .next/types; sequential tsc after build passed.",
+  "package": {
+    "archivePath": "/tmp/passvero-gtin-notice-20261004.tar.gz",
+    "archiveSha256": "359065512e923eb7acca0d20ff868412d52043a07b96ae6ed90c28145a0e4672",
+    "manifestSha256": "0db7ea23816f0f2b658a9bf77184e699f97371926f3208a3eb3277f20780d299",
+    "applicationTarSha256": "5149b1df271c4356bf99dbc6260c6e24f7d390a710a97d8a71494236c084f0ac",
+    "previousBuild": "HqpP77R94fR_j4Jo_P_0u",
+    "buildId": "_xSIVqA6vEbfYig6Tcxqj",
+    "artifacts": 826,
+    "operatorFiles": {
+      "codex/evidence/ux-polish/operators-gtin/common.py": "0b764ec9544411a9f7ed9458b22599116908c40953e987d4190c546e6910208e",
+      "codex/evidence/ux-polish/operators-gtin/deploy.py": "2a84de87acf07ff443b81447807ca40cc2e296d23428fed34f103b585233dd68",
+      "codex/evidence/ux-polish/operators-gtin/rollback.py": "87876aea6d23c097a0875344d6f04f535c09e6cc8e3f2712e6e6a3da9c72b3fd"
+    },
+    "rollback": "PREPARED_NOT_EXECUTED",
+    "transfer": "SCP_COMPLETE_NO_SUDO"
+  },
+  "operatorEvidence": "operator-gtin-deployment-result.json",
+  "liveReadOnlyProof": {
+    "publicUrl": "https://staging.passvero.eu/p/dbaq1fzihspN8keQE2xiOw",
+    "publishedVersion": 4,
+    "gtinSectionText": "GTIN\n8606002984588",
+    "barcodePresent": true,
+    "noticeAbsent": true,
+    "screenshot": "/private/tmp/passvero-ux-polish/live-gtin-notice-removed.jpg",
+    "screenshotSha256": "839b90ad9d61541e113f706aed17f5a3663f68266715bd5aee011812d0759cb4",
+    "mutations": false
+  }
+}

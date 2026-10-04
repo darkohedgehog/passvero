@@ -544,3 +544,81 @@ upload/scan/download ostaje korisnička radnja iz koraka 3, bez nove antivirusne
 Ostali uslovi real-data unosa i backup ograničenja ostaju isti. Automatizacije reminder-a
 nisu uključene i testni podaci nisu obrisani. Jedini source diff je exact release pin
 recovery alata; nema aplikacijskog deploya, commita/pusha ili production promene.
+
+## Korisnički rezultati i UX nastavak — 2026-10-04
+
+Korisnički dokaz (nije nova automatizovana acceptance serija): prodaja@zivic-elektro.com,
+Živić-elektro - staging test, Razdjelni ormar MUT 4: kreiranje, PDF skeniranje,
+upload/prikaz slike, objava DPP-a/QR i CSV export uspešni prema prijavi korisnika.
+Korisnik je potvrdio novu objavu pre QR osvežavanja. Samo draft save → nepromenjena
+javna verzija još zahteva zasebnu potvrdu iz koraka 5; ne ponavljati objave realnog
+proizvoda radi ove UX celine. Nisu time dokazani negativni/recovery/concurrent tokovi.
+
+SKU 05.66.81 u CSV preview-u već postoji; isključen red i 0 selection su očekivani.
+GTIN acknowledgment ne omogućava update niti uklanja SKU konflikt. Za preostali
+CSV acceptance odabrati jedan jasno synthetic draft sa unique SKU i praznim GTIN-om,
+proći četiri koraka i proveriti rezultat/same-file replay. Ne menjati postojeći realni
+proizvod ili njegove fajlove/verzije. Sva sintetička evidencija ostaje sačuvana.
+
+[UX pregled, screenshotovi i provere](CSV_IMPORT_IMAGE_UPLOAD_AND_PRODUCT_PRESENTATION_UX_POLISH.md):
+lokalno PASS; staging deploy i live synthetic CSV još čekaju operator output.
+Image izbor označava nespremljenu datoteku; upload nastaje tek na Spremi sliku.
+Public/preview ikonice ne označavaju regulatornu verifikaciju ili sertifikat.
+Postojeće kvote, prava, javna potvrda i staging backup ograničenja ostaju primenljivi.
+
+Deploy UX v1 je stao na RUNTIME_PACKAGE_DRIFT pre UI zamene i app restarta.
+Korisnikov proizvod i podaci nisu menjani. Live synthetic CSV acceptance je i dalje
+NOT_YET_RUN. Sledi samo read-only potvrda staging runtime pinova; postojeći UI/build
+ne zahtevaju novu antivirusnu, backup ili subscription seriju.
+
+Read-only output 2026-10-04 12:48:06 lokalno potvrđuje accepted runtime pinove,
+svih 13 runtime fajlova i neizmenjeno originalno izdanje; PASS_RUNTIME_PIN_CORRECTION_ONLY.
+V2 paket ispravlja metadata pinove uz identične UI artefakte; v1 dokaz sačuvan.
+PENDING_OPERATOR_COMMAND_STAGING_UI_DEPLOY_V2. Novi live UI/CSV upis još nisu dokazani.
+
+## UX završetak — staging deploy i CSV acceptance PASS (2026-10-04)
+
+V2 deploy potvrđen operatorskim outputom: HqpP77R94fR_j4Jo_P_0u, HTTPS 200,
+826 artefakata. Reminders disabled/kampanje 0, scanner/qpdf neizmenjeni, rollback
+pripremljen/nije izvršen. Raniji pending/v1 STOP zapisi su istorijski.
+CSV korak potvrđen novom live proverom: jedan zadržan sintetički draft
+UX-CSV-20261004-0c77b9 (d414bbc1-3b97-4773-839d-645be2e9cb97), bez GTIN-a,
+preview/izbor/potvrda/rezultat i same-file report replay bez drugog kreiranja.
+Isti SKU u drugoj datoteci pravilno blokiran uz vidljiv razlog. Realni proizvod
+i fajlovi/verzije nisu menjani. Image keyboard izbor/unsaved stanje live; nije bilo
+novog upload-a ili scan-a. Javni DPP/preview read-only i mobile 375 px PASS.
+Error/partial/six-language UI ostaju lokalni dokazi; screen-reader sesija nije izvršena.
+Nastavak: korisnički korak 5 (draft save bez nove objave → javna verzija nepromenjena),
+uz postojeću potvrdu namere javne objave tek kada korisnik želi novu verziju.
+[Jedinstveni pregled, screenshotovi i manifest](CSV_IMPORT_IMAGE_UPLOAD_AND_PRODUCT_PRESENTATION_UX_POLISH.md).
+
+## Korisnička potvrda i završna GTIN dorada — 2026-10-04
+
+Korisnik je izričito potvrdio: samo čuvanje drafta bez nove objave ne menja
+javnu verziju. Korak 5 je prihvaćen kao korisnički dokaz pozitivnog toka;
+negativni/konkurentni/recovery scenariji time nisu dodatno potvrđeni. Screenshot
+prikazuje javnu verziju 4; raniji browser dokaz verzije 3 ostaje istorijski.
+
+Na zahtev korisnika uklonjen je samo objašnjavajući pasus ispod GTIN-a u
+public-dpp-document.tsx, za sve jezike. Barkod, broj, naslov i ostale sekcije
+ostaju isti; objašnjenje u dashboard unosu ostaje dostupno. Nema DTO/promene
+podataka ili poslovnih pravila. Ova dodatna source izmena još nije deployovana;
+prethodni staging deploy HqpP77R94fR_j4Jo_P_0u i njegov manifest ostaju istorijski
+tačni. Nema commita/pusha.
+
+GTIN follow-up deploy odobren: PENDING_OPERATOR_COMMAND. Paket prenet na VPS
+/tmp/passvero-gtin-notice-20261004.tar.gz bez sudo; novi build _xSIVqA6vEbfYig6Tcxqj
+sa 826 artefakata. Tačan prethodni build HqpP77R94fR_j4Jo_P_0u i manifest
+f91884488412096c4ce80a303391f0112f24042c3cbeee00ae04c3f39081b9b1 proveravaju
+se pre swapa. Odvojeni operators-gtin source/package/rollback ne prepisuje raniji UX
+ili recovery manifest. Lokalni sintetički deploy i eksplicitan rollback (uspeh i
+HTTPS failure) PASS; VPS izvršenje još nije dokazano. Nema novih poslovnih upisa.
+
+GTIN follow-up završetak: STAGING_DEPLOY_PASS, operatorExit 0, build
+_xSIVqA6vEbfYig6Tcxqj, 826 artefakata, HTTPS 200. Raniji pending zapisi
+su istorijski. Svež read-only browser uvid u javni DPP verzija 4 potvrđuje
+GTIN naslov, barkod i broj 8606002984588, bez objašnjavajućeg pasusa.
+Nema poslovnih upisa/upload/scan/email; scanner/qpdf neizmenjeni, reminders
+disabled/kampanje 0. Rollback pripremljen/nije izvršen.
+[Odvojeni završni manifest](evidence/ux-polish/gtin-notice-followup-manifest.json)
+i [operatorski dokaz](evidence/ux-polish/operator-gtin-deployment-result.json).

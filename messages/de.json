@@ -295,7 +295,12 @@
     "invalid": "Ungültiges Bild oder Grenzwerte überschritten. Wählen Sie JPEG oder PNG.",
     "stale": "Das Produkt wurde geändert. Laden Sie die Seite neu und versuchen Sie es erneut.",
     "failure": "Bild nicht verfügbar. Bitte erneut versuchen.",
-    "ambiguous": "Mehrere Hauptbilder vorhanden. Vor der Bearbeitung ist eine Datenprüfung erforderlich."
+    "ambiguous": "Mehrere Hauptbilder vorhanden. Vor der Bearbeitung ist eine Datenprüfung erforderlich.",
+    "chooseFile": "Bild auswählen",
+    "noFile": "Kein Bild ausgewählt.",
+    "selectedHint": "Das ausgewählte Bild ist noch nicht gespeichert. Klicken Sie zum Hochladen auf Bild speichern.",
+    "saved": "Gespeichertes Entwurfsbild",
+    "uploading": "Bild wird hochgeladen und gespeichert…"
   },
   "CatalogImport": {
     "title": "CSV importieren",
@@ -352,15 +357,43 @@
       "CANCELLED": "Abgebrochen"
     },
     "rowErrors": {
-      "CREATE_PRODUCT_NAME_INVALID": "Ungültige Zeile — internal_name",
-      "CREATE_PRODUCT_SKU_INVALID": "Ungültige Zeile — sku",
-      "CREATE_PRODUCT_LOCALE_INVALID": "Ungültige Zeile — source_locale",
-      "INVALID_GTIN": "Ungültige Zeile — gtin",
-      "INVALID_CN": "Ungültige Zeile — cn_code / cn_nomenclature_year",
+      "CREATE_PRODUCT_NAME_INVALID": "Ungültige Zeile — Produktname",
+      "CREATE_PRODUCT_SKU_INVALID": "Ungültige Zeile — SKU / interne Artikelnummer",
+      "CREATE_PRODUCT_LOCALE_INVALID": "Ungültige Zeile — Ausgangssprache",
+      "INVALID_GTIN": "Ungültige Zeile — GTIN",
+      "INVALID_CN": "Ungültige Zeile — KN-Code",
       "SKU_CONFLICT": "SKU-Konflikt — Zeile ausgeschlossen",
       "GTIN_REVIEW_REQUIRED": "GTIN stimmt überein; ausdrückliche Entscheidung erforderlich",
       "ROW_FAILED": "Ungültige Zeile — ",
       "INVALID_ROW": "Ungültige Zeile — "
+    },
+    "createOnly": "Dieser Import erstellt neue Produkte mit einem Entwurf; vorhandene Produkte werden nicht aktualisiert.",
+    "help": "Hilfe und Importgrenzen",
+    "chooseFile": "CSV auswählen",
+    "noFile": "Keine Datei ausgewählt.",
+    "selectionOnly": "Dateiauswahl und Vorschau erstellen keine Produkte.",
+    "blockedSku": "Keine gültigen Zeilen ausgewählt. SKU {skus} existiert bereits oder kommt mehrfach in der Datei vor; dieser Import aktualisiert keine vorhandenen Produkte.",
+    "blockedEmpty": "Keine gültigen Zeilen ausgewählt. Wählen Sie mindestens eine Zeile ohne Konflikt.",
+    "blockedGtin": "Bestätigen Sie GTIN-Übereinstimmungen für die ausgewählten Zeilen gesondert.",
+    "blockedConfirm": "Prüfen Sie Ihre Auswahl und bestätigen Sie die Erstellung.",
+    "gtinDoesNotResolveSku": "Die GTIN-Bestätigung löst keinen SKU-Konflikt. Zeilen mit vorhandener oder wiederholter SKU bleiben ausgeschlossen.",
+    "success": "Alle ausgewählten Produkte wurden erstellt.",
+    "partialSuccess": "Import teilweise erfolgreich. Prüfen Sie die Zeilenergebnisse.",
+    "noSuccess": "Keine Produkte erstellt. Prüfen Sie die Fehler der Zeilen.",
+    "progressLabel": "Fortschritt der Produkterstellung",
+    "steps": {
+      "file": "CSV auswählen",
+      "mapping": "Spalten zuordnen",
+      "rows": "Zeilen prüfen und auswählen",
+      "confirm": "Erstellung bestätigen"
+    },
+    "fields": {
+      "internal_name": "Produktname",
+      "sku": "SKU / interne Artikelnummer",
+      "source_locale": "Ausgangssprache",
+      "gtin": "GTIN",
+      "cn_code": "KN-Code",
+      "cn_nomenclature_year": "Jahr der KN-Nomenklatur"
     }
   },
   "RequestAccess": {

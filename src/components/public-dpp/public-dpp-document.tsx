@@ -1,3 +1,4 @@
+import { PassportSectionIcon, passportContentIcons } from "./passport-section-icon";
 /* eslint-disable @next/next/no-img-element -- Authenticated delivery must bypass the image optimizer cache. */
 import { GtinBarcode } from "@/src/components/application/products/gtin-barcode";
 import { gtinPublicLabels } from "@/src/components/application/products/gtin-labels";
@@ -92,18 +93,18 @@ export function PublicDppDocument({ result, locale, labels, canonicalUrl, public
 }
 
 function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; readonly publicCode: string; readonly labels: PublicDppLabels }) {
-  const contentSections: ReadonlyArray<readonly [string, string | null]> = [
-    [labels.shortDescription, dpp.content.shortDescription],
-    [labels.description, dpp.content.description],
-    [labels.technicalDescription, dpp.content.technicalDescription],
-    [labels.repairInstructions, dpp.content.repairInstructions],
-    [labels.sparePartsInformation, dpp.content.sparePartsInformation],
-    [labels.recyclingInstructions, dpp.content.recyclingInstructions],
-    [labels.disposalInstructions, dpp.content.disposalInstructions],
-    [labels.packagingInformation, dpp.content.packagingInformation],
-    [labels.safetyInformation, dpp.content.safetyInformation],
-    [labels.warrantyInformation, dpp.content.warrantyInformation],
-    [labels.publicNotes, dpp.content.publicNotes],
+  const contentSections: ReadonlyArray<readonly [string, string | null, typeof passportContentIcons[keyof typeof passportContentIcons]]> = [
+    [labels.shortDescription, dpp.content.shortDescription, passportContentIcons.shortDescription],
+    [labels.description, dpp.content.description, passportContentIcons.description],
+    [labels.technicalDescription, dpp.content.technicalDescription, passportContentIcons.technicalDescription],
+    [labels.repairInstructions, dpp.content.repairInstructions, passportContentIcons.repairInstructions],
+    [labels.sparePartsInformation, dpp.content.sparePartsInformation, passportContentIcons.sparePartsInformation],
+    [labels.recyclingInstructions, dpp.content.recyclingInstructions, passportContentIcons.recyclingInstructions],
+    [labels.disposalInstructions, dpp.content.disposalInstructions, passportContentIcons.disposalInstructions],
+    [labels.packagingInformation, dpp.content.packagingInformation, passportContentIcons.packagingInformation],
+    [labels.safetyInformation, dpp.content.safetyInformation, passportContentIcons.safetyInformation],
+    [labels.warrantyInformation, dpp.content.warrantyInformation, passportContentIcons.warrantyInformation],
+    [labels.publicNotes, dpp.content.publicNotes, passportContentIcons.publicNotes],
   ];
   return (
     <main lang={dpp.locale}>
@@ -111,7 +112,7 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
         <div className="brand">Passvero</div>
         <p className="eyebrow">{labels.documentTitle}</p>
         <h1>{dpp.content.productName}</h1>
-        {dpp.image ? <img src={dpp.image.url} alt={dpp.image.altText ?? dpp.content.productName} width={dpp.image.width} height={dpp.image.height} style={{ maxWidth: "100%", height: "auto", display: "block", marginTop: "1rem" }} /> : null}
+        {dpp.image ? <img src={dpp.image.url} alt={dpp.image.altText ?? dpp.content.productName} width={dpp.image.width} height={dpp.image.height} style={{ maxWidth: "100%", height: "auto", display: "block", marginTop: "1rem", maxHeight: "28rem", objectFit: "contain", borderRadius: ".75rem" }} /> : null}
         <p className="status"><span aria-hidden="true" />{labels.active}</p>
       </header>
 
@@ -126,7 +127,7 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
       ) : null}
 
       <section aria-labelledby="identity-heading">
-        <h2 id="identity-heading">{labels.organization}</h2>
+        <h2 id="identity-heading"><PassportSectionIcon name="manufacturing" />{labels.organization}</h2>
         <p>{dpp.organization.displayName}</p>
         <dl className="facts">
           <div><dt>{labels.version}</dt><dd>{dpp.version.number}</dd></div>
@@ -135,29 +136,28 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
       </section>
 
       {dpp.gtin ? <section aria-labelledby="gtin-heading">
-        <h2 id="gtin-heading">GTIN</h2>
+        <h2 id="gtin-heading"><PassportSectionIcon name="interoperable" />GTIN</h2>
         <GtinBarcode value={dpp.gtin} label={gtinPublicLabels[dpp.locale].barcode} />
-        <p>{gtinPublicLabels[dpp.locale].notice}</p>
       </section> : null}
 
       {dpp.manufacturer ? <section aria-labelledby="manufacturer-heading">
-        <h2 id="manufacturer-heading">{manufacturerTitles[dpp.locale]}</h2>
+        <h2 id="manufacturer-heading"><PassportSectionIcon name="manufacturing" />{manufacturerTitles[dpp.locale]}</h2>
         <p>{dpp.manufacturer.name}</p>
         <address style={{fontStyle:"normal"}}>{[dpp.manufacturer.addressLine1, dpp.manufacturer.addressLine2, dpp.manufacturer.postalCode, dpp.manufacturer.city, dpp.manufacturer.region, dpp.manufacturer.countryCode].filter(Boolean).join(", ")}</address>
         {dpp.manufacturer.publicEmail ? <p>{dpp.manufacturer.publicEmail}</p> : null}
         {dpp.manufacturer.website ? <p><a href={dpp.manufacturer.website} rel="noopener noreferrer nofollow">{dpp.manufacturer.website}</a></p> : null}
       </section> : null}
 
-      {contentSections.map(([heading, value]) => present(value) ? (
+      {contentSections.map(([heading, value, icon]) => present(value) ? (
         <section key={heading}>
-          <h2>{heading}</h2>
+          <h2><PassportSectionIcon name={icon} />{heading}</h2>
           <p className="authored">{value}</p>
         </section>
       ) : null)}
 
       {dpp.materials.length > 0 ? (
         <section aria-labelledby="materials-heading">
-          <h2 id="materials-heading">{labels.materials}</h2>
+          <h2 id="materials-heading"><PassportSectionIcon name="packaging" />{labels.materials}</h2>
           <ul className="materials">
             {dpp.materials.map((material, index) => (
               <li key={`${material.materialName}-${index}`}>
@@ -176,7 +176,7 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
 
       {(dpp.documents?.length ?? 0) > 0 ? (
         <section aria-labelledby="documents-heading">
-          <h2 id="documents-heading">{labels.documents}</h2>
+          <h2 id="documents-heading"><PassportSectionIcon name="document" />{labels.documents}</h2>
           <ul className="materials">
             {dpp.documents!.map(document => (
               <li key={document.downloadPath}>
@@ -191,7 +191,7 @@ function PublicDppView({ dpp, publicCode, labels }: { readonly dpp: PublicDpp; r
 
       {dpp.cn !== null ? (
         <section aria-labelledby="cn-heading">
-          <h2 id="cn-heading">{labels.cn}</h2>
+          <h2 id="cn-heading"><PassportSectionIcon name="receipt" />{labels.cn}</h2>
           <dl className="facts">
             <Fact label={labels.cnCode}><code>{groupCn(dpp.cn.code)}</code></Fact>
             <Fact label={labels.cnYear}>{dpp.cn.nomenclatureYear}</Fact>
@@ -246,9 +246,9 @@ const PUBLIC_DPP_CSS = `
 :root{color-scheme:light;font-family:Geist,Inter,ui-sans-serif,system-ui,sans-serif;color:#0f172a;background:#f8fafc}
 *{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#0f172a}main{width:min(100% - 2rem,48rem);margin:0 auto;padding:2rem 0 4rem;overflow-wrap:anywhere}
 .hero,.state{padding:1.5rem;border:1px solid #e2e8f0;border-radius:1rem;background:#fff}.state{margin-top:2rem}.brand{font-weight:800;color:#0f766e;letter-spacing:.02em}.eyebrow{margin:1rem 0 .35rem;color:#475569;font-size:.875rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-h1{margin:.25rem 0;font-size:clamp(1.75rem,8vw,2.75rem);line-height:1.12}h2{margin:0 0 1rem;font-size:1.35rem}h3{margin:0 0 .75rem;font-size:1.1rem}p,dd{font-size:1rem;line-height:1.65}.status{display:flex;align-items:center;gap:.5rem;margin:1rem 0 0;font-weight:700}.status span{width:.75rem;height:.75rem;border-radius:999px;background:#0f9f91}
+h1{margin:.25rem 0;font-size:clamp(1.75rem,8vw,2.75rem);line-height:1.12}h2{display:flex;align-items:center;gap:.75rem;margin:0 0 1rem;font-size:1.2rem}.passport-section-icon{width:1.25rem;height:1.25rem;flex-shrink:0;color:#0f766e}h3{margin:0 0 .75rem;font-size:1.1rem}p,dd{font-size:1rem;line-height:1.65}.status{display:flex;align-items:center;gap:.5rem;margin:1rem 0 0;font-weight:700}.status span{width:.75rem;height:.75rem;border-radius:999px;background:#0f9f91}
 .languages{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}.languages a{display:inline-flex;min-height:2.75rem;align-items:center;padding:.55rem .9rem;border:1px solid #cbd5e1;border-radius:.75rem;color:#123047;text-decoration:none;background:#fff;font-weight:650}.languages a[aria-current=page]{border-color:#0f766e;background:#ecfdf5}.languages a:focus-visible{outline:3px solid #3b82f6;outline-offset:3px}
-section{margin-top:1rem;padding:1.25rem;border:1px solid #e2e8f0;border-radius:1rem;background:#fff}.facts,.material-facts{display:grid;gap:1rem;margin:0}.facts div,.material-facts div{min-width:0}dt{color:#64748b;font-size:.875rem;font-weight:650}dd{margin:.15rem 0 0;font-weight:650}.authored{margin:0;white-space:pre-line}.materials{display:grid;gap:1rem;margin:0;padding:0;list-style:none}.materials li{padding:1rem;border-radius:.75rem;background:#f8fafc}.disclaimer{margin:1rem 0 0;color:#475569;font-size:.875rem}.public-message{padding:1rem;border-radius:.75rem;background:#f1f5f9;font-weight:650}code{font-size:1rem;white-space:nowrap}
+section{margin-top:1rem;padding:1.25rem;border:1px solid #e2e8f0;border-radius:1rem;background:#fff}.facts,.material-facts{display:grid;gap:1rem;margin:0}.facts div,.material-facts div{min-width:0}dt{color:#64748b;font-size:.875rem;font-weight:650}dd{margin:.15rem 0 0;font-weight:650}.authored{margin:0;white-space:pre-line}.materials{display:grid;gap:1rem;margin:0;padding:0;list-style:none}.materials li{padding:1rem;border-radius:.75rem;background:#f8fafc}a{color:#0f766e}a:focus-visible{outline:3px solid #2563eb;outline-offset:3px}.disclaimer{margin:1rem 0 0;color:#475569;font-size:.875rem}.public-message{padding:1rem;border-radius:.75rem;background:#f1f5f9;font-weight:650}code{font-size:1rem;white-space:nowrap}
 @media(min-width:40rem){main{padding-top:3rem}.hero,section,.state{padding:2rem}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 `;

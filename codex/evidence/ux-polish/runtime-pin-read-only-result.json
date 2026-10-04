@@ -1,0 +1,19 @@
+{
+  "scope": "STAGING_READ_ONLY",
+  "utcNow": "2026-10-04T10:48:06.122206+00:00",
+  "mutations": false,
+  "actualRuntimeHashes": {
+    "package.json": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+    "package-lock.json": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c"
+  },
+  "runtimeMatchesAcceptedDeployment": true,
+  "uxPinsDifferFromAcceptedRuntime": true,
+  "runtimeFilesChecked": 13,
+  "runtimeFilesAllMatchAccepted": true,
+  "buildId": "8QNIYVVZWEsQaCL9uLZ5Q",
+  "verifiedApplicationArtifacts": 826,
+  "noDeploymentStateOrSwapPaths": true,
+  "appOnline": true,
+  "stagingHttps": "200",
+  "review": "PASS_RUNTIME_PIN_CORRECTION_ONLY"
+}

@@ -1,5 +1,34 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## UX polish iz korisničke provere — 2026-10-04
+
+[Jedinstveni pregled i odvojeni dokazi](CSV_IMPORT_IMAGE_UPLOAD_AND_PRODUCT_PRESENTATION_UX_POLISH.md).
+Korisnik prodaja@zivic-elektro.com u Živić-elektro - staging test prijavio je uspešno
+kreiranje Razdjelni ormar MUT 4, PDF scan, image upload/prikaz, DPP publish/QR i CSV export.
+Potvrdio je novu objavu pre QR osvežavanja, a naknadno i da samo draft save
+bez nove objave ne menja javnu verziju (korisnički dokaz koraka 5).
+Staging browser read-only potvrdio je SKU 05.66.81 konflikt i 0 selected: očekivan deny.
+UI daje četiri CSV koraka, lokalizovano mapiranje, filename picker, konkretan disabled
+razlog i GTIN/SKU razdvajanje, progress/partial/error; image izbor/save status; dekorativne
+DPP/preview ikonice. Pravila/API/pipeline/DTO neizmenjeni. Local test/TS/lint/build/browser
+PASS; build HqpP77R94fR_j4Jo_P_0u. Deployment v1 STOP/RUNTIME_PACKAGE_DRIFT
+u preflightu pre zamene/restarta: lokalni package/lock pinovi umesto staging runtime
+pinova. Read-only 12:48:06 lokalno PASS_RUNTIME_PIN_CORRECTION_ONLY: svi runtime/artefakti
+neizmenjeni. Odvojeni v2 metadata pin correction sa identičnim UI buildom;
+V2 deployment PASS, HTTPS 200, 826 artefakata; rollback pripremljen/nije izvršen.
+Live CSV PASS: jedan zadržan nejavni sintetički nacrt UX-CSV-20261004-0c77b9,
+explicit keyboard selection/confirm, success, same-file report replay bez duplikata,
+SKU conflict disabled uz razlog. Image izbor bez upload/save; javni DPP/preview
+read-only PASS, mobile 375 px bez overflow-a. Error/partial i šest jezika lokalni dokazi.
+Prethodni recovery source/report/manifests sačuvani; novi [UX manifest](evidence/ux-polish/source-manifest.json)
+je odvojen. Bez commita/pusha, production pristupa, reminder-a ili brisanja podataka.
+
+Dodatna dorada na zahtev korisnika: uklonjen samo javni GTIN objašnjavajući pasus;
+STAGING_DEPLOY_PASS, build _xSIVqA6vEbfYig6Tcxqj, HTTPS 200;
+read-only javni prikaz potvrđuje barkod/broj bez pasusa. Rollback pripremljen.
+Ostalo neizmenjeno; prethodni UX
+deployment manifest sačuvan.
+
 ## Konačan pregled — stvarni staging unos i korisnički acceptance (2026-10-02)
 
 **Ograničen stvarni unos može početi nakon korisnikovog pregleda plana**, u tačnoj

@@ -1,0 +1,15 @@
+{
+  "evidenceSource": "USER_SUPPLIED_OPERATOR_OUTPUT",
+  "date": "2026-10-04",
+  "result": "STOP",
+  "reason": "RUNTIME_PACKAGE_DRIFT",
+  "operatorExit": 1,
+  "automaticRollback": false,
+  "phase": "COMMON_VERIFY_BEFORE_DEPLOY_MAIN",
+  "uiArtifactSwap": false,
+  "appRestart": false,
+  "rollbackRequired": false,
+  "localDiagnosis": "UX_MANIFEST_USED_LOCAL_PACKAGE_LOCK_HASHES_INSTEAD_OF_ACCEPTED_STAGING_RUNTIME_HASHES",
+  "localBuildDependencyPackagesMatchingAccepted": 12,
+  "currentVpsRuntimeIdentity": "PENDING_OPERATOR_COMMAND_READ_ONLY"
+}

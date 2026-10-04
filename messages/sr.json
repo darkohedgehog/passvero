@@ -295,7 +295,12 @@
     "invalid": "Slika nije ispravna ili prelazi dozvoljena ograničenja. Izaberite JPEG ili PNG.",
     "stale": "Proizvod je izmenjen. Osvežite stranicu i pokušajte ponovo.",
     "failure": "Slika trenutno nije dostupna. Pokušajte ponovo.",
-    "ambiguous": "Postoji više glavnih slika. Potreban je pregled podataka pre izmene."
+    "ambiguous": "Postoji više glavnih slika. Potreban je pregled podataka pre izmene.",
+    "chooseFile": "Odaberi sliku",
+    "noFile": "Slika nije odabrana.",
+    "selectedHint": "Odabrana slika još nije sačuvana. Kliknite Sačuvaj sliku za prenos.",
+    "saved": "Sačuvana slika nacrta",
+    "uploading": "Prenos i čuvanje slike…"
   },
   "CatalogImport": {
     "title": "Uvezi CSV",
@@ -352,15 +357,43 @@
       "CANCELLED": "Otkazano"
     },
     "rowErrors": {
-      "CREATE_PRODUCT_NAME_INVALID": "Nevalidan red — internal_name",
-      "CREATE_PRODUCT_SKU_INVALID": "Nevalidan red — sku",
-      "CREATE_PRODUCT_LOCALE_INVALID": "Nevalidan red — source_locale",
-      "INVALID_GTIN": "Nevalidan red — gtin",
-      "INVALID_CN": "Nevalidan red — cn_code / cn_nomenclature_year",
+      "CREATE_PRODUCT_NAME_INVALID": "Nevalidan red — Naziv proizvoda",
+      "CREATE_PRODUCT_SKU_INVALID": "Nevalidan red — SKU / interna šifra",
+      "CREATE_PRODUCT_LOCALE_INVALID": "Nevalidan red — Izvorni jezik",
+      "INVALID_GTIN": "Nevalidan red — GTIN",
+      "INVALID_CN": "Nevalidan red — CN oznaka",
       "SKU_CONFLICT": "SKU konflikt — red je isključen",
       "GTIN_REVIEW_REQUIRED": "GTIN se podudara; potrebna je izričita odluka",
       "ROW_FAILED": "Nevalidan red — ",
       "INVALID_ROW": "Nevalidan red — "
+    },
+    "createOnly": "Ovaj uvoz kreira nove proizvode sa nacrtom; ne ažurira postojeće proizvode.",
+    "help": "Pomoć i ograničenja uvoza",
+    "chooseFile": "Odaberi CSV",
+    "noFile": "Datoteka nije odabrana.",
+    "selectionOnly": "Odabir i pregled datoteke ne kreiraju proizvode.",
+    "blockedSku": "Nema odabranih validnih redova. SKU {skus} već postoji ili se ponavlja u datoteci; ovaj uvoz ne ažurira postojeće proizvode.",
+    "blockedEmpty": "Nema odabranih validnih redova. Odaberite bar jedan red bez konflikta.",
+    "blockedGtin": "Posebno potvrdite GTIN podudaranje za odabrane redove.",
+    "blockedConfirm": "Pregledajte odabir i potvrdite kreiranje.",
+    "gtinDoesNotResolveSku": "GTIN potvrda ne uklanja SKU konflikt. Red sa postojećim ili ponovljenim SKU-om ostaje isključen.",
+    "success": "Svi odabrani proizvodi su kreirani.",
+    "partialSuccess": "Uvoz je delimično uspeo. Proverite ishode redova.",
+    "noSuccess": "Nijedan proizvod nije kreiran. Proverite greške redova.",
+    "progressLabel": "Napredak kreiranja proizvoda",
+    "steps": {
+      "file": "Odaberi CSV",
+      "mapping": "Poveži kolone",
+      "rows": "Pregledaj i odaberi redove",
+      "confirm": "Potvrdi kreiranje"
+    },
+    "fields": {
+      "internal_name": "Naziv proizvoda",
+      "sku": "SKU / interna šifra",
+      "source_locale": "Izvorni jezik",
+      "gtin": "GTIN",
+      "cn_code": "CN oznaka",
+      "cn_nomenclature_year": "Godina CN nomenklature"
     }
   },
   "RequestAccess": {

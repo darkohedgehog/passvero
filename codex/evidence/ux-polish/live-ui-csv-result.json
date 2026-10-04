@@ -1,0 +1,32 @@
+{
+  "evidenceSource": "ACTUAL_STAGING_BROWSER_UI",
+  "date": "2026-10-04",
+  "organization": "Živić-elektro - staging test",
+  "sku": "UX-CSV-20261004-0c77b9",
+  "productId": "d414bbc1-3b97-4773-839d-645be2e9cb97",
+  "name": "SINTETIČKI TEST CSV UX 20261004 0c77b9",
+  "gtin": "",
+  "createdProducts": 1,
+  "retained": true,
+  "published": false,
+  "validRow": "PREVIEW_SELECTION_CONFIRM_SUCCESS_1",
+  "keyboard": "FILE_PICKER_ROW_SELECTION_CONFIRM_AND_CREATE_PASS",
+  "sameFileReplay": "EXISTING_SUCCESS_REPORT_NO_CREATE_ACTION",
+  "reportRefresh": "SUCCESS_1",
+  "uniqueSkuSearchResults": 1,
+  "differentFileSameSku": "CONFLICT_ROW_DISABLED_CREATE_DISABLED_REASON_VISIBLE",
+  "zeroProductConfirmationCount": 0,
+  "image": "KEYBOARD_SELECTION_FILENAME_UNSAVED_NOTICE_PASS_NO_SAVE",
+  "uploads": 0,
+  "scanCalls": 0,
+  "publications": 0,
+  "userProductWrites": 0,
+  "publicDpp": "EXISTING_PUBLISHED_VERSION_3_READ_ONLY_HEADINGS_IMAGE_BARCODE_DOCUMENT_LINK_PRESENT",
+  "publicDppDecorativeHeadingIcons": 17,
+  "publicDppMobile": {
+    "width": 375,
+    "horizontalOverflow": false
+  },
+  "screenReaderSession": "NOT_EXECUTED",
+  "liveForcedErrorPartial": "NOT_EXECUTED_LOCAL_MOCK_PROOF_ONLY"
+}
