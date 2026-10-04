@@ -1,4 +1,80 @@
-# Signature-health post-restart recovery — 2026-09-23
+# Signature-health post-restart recovery
+
+## Aktuelni release alignment i recovery — 2026-10-02
+
+Zadatak: STAGING_SIGNATURE_RECOVERY_RELEASE_ALIGNMENT_AND_EXECUTION.
+Korisnik je odobrio minimalno usklađivanje tačnog release pina i jedno izvršenje
+postojeće fresh-base procedure posle uspešnog compatibility pregleda. Sudo je
+isključivo operatorski. Nema nove dozvole koju treba tražiti posle PASS pregleda;
+installed/runtime identitet je potvrđen operatorskim outputom 19:48:35 UTC.
+
+**RECOVERY_COMPLETE / PASS — operatorski rezultat 2026-10-02.** Jedan attempt
+`recovery-20261002-release-8qni-01`, alignment 19:54:01 UTC (21:54:01 lokalno),
+recoveryExit=0/RECOVERED. Tri zakazane reader-prihvaćene objave: sequence
+87498 → 87499 → 87500, observedAt 19:55:04.010 → 19:55:19.268 → 19:55:34.890 UTC;
+expiresAt je svaki put observedAt +60 s. Raspon tri opažanja je 30.880 s.
+Završni stvarni reader prihvata sequence 87500. Uspešan postojeći recovery
+potvrđuje updater kontinuitet/isti PID i fresh CVD completion prema postojećem
+300 s kriterijumu, daemon readiness prema 120 s i scheduled acceptance prema 100 s.
+Timer active/waiting; oneshot success/exit 0, inactive/dead je normalno stanje
+između objava. Freshclam/clamd active/running, qpdf active/listening; HTTPS 200.
+Reminder timer DISABLED_INACTIVE i campaigns 0 pre/posle. Originalni alat,
+prethodne baze i evidencija sačuvani prema proceduri; nema drugog pokušaja.
+[Sanitizovani operatorski dokaz](evidence/signature-recovery/release-alignment-recovery-result.json).
+Ovo je opažanje pri završetku recoveryja, ne trajna freshness garancija.
+Reboot/dugotrajan rad ostaju NOT_PROVEN; stvarni PDF acceptance NOT_YET_RUN.
+
+Prethodna dijagnoza: UPDATER/EVIDENCE_CONTINUITY_REQUIRED → SNAPSHOT_ABSENT →
+PRIVATE_READ_ENOENT. Oporavljena ovim pokušajem; istorijski uzrok restartova nepoznat
+i izvan zadatka.
+
+Lokalni read-only compatibility pregled: sedam relevantnih source ugovora
+(reader, producer, IO, freshclam parser, malware schema/provenance, scan config,
+reader CLI) byte-identični su prihvaćenoj build bazi
+1fc84aa8ccc3118f8158029e8edf99275c8f7f6e. Operatorski preflight 2026-10-02T19:48:35.155731Z potvrđuje sve navedene
+installed hashove, live producer podudaranje i svih 826 deployment artefakata.
+
+| Pregledani ulaz | SHA-256 / pin |
+| --- | --- |
+| recovery-v3 source | 4a16d96c560e8b3a958cd12254d3b7236688d6e78121d470b184a24513cdc2d7 |
+| recovery producer.cjs | 725d3494983cfce68bdcacd30f9078606aa6c87c4b9d12a5674ea3770da7464b |
+| reader.cjs, prethodni operator output | 877c9bed25e195479d28dcad7e5ff506798a09b6b2edfe93c92691e228f97e62 |
+| protected pins.json, lokalni reviewed fajl | 24f0c02990df2c255269923c44a2a470bde1c5f1dd69b3d8f30a056b5c77c44d |
+| accepted deployment manifest | 1d7f456d13ce8cf1bb7173bc3c731be4fd7e61d6a5fbb70fb8aca99eba04f1cf |
+| istorijski recovery release pin | qwLCXFTd9EEGdvqaB9SZS |
+| aktuelni operatorski potvrđeni build | 8QNIYVVZWEsQaCL9uLZ5Q |
+| pregledani usklađeni source, samo jedna zamena tačnog pina | 3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0 |
+
+Operatorski review je PASS_ONLY_RELEASE_PIN_INCOMPATIBLE: originalni guard
+STAGING_RELEASE_CHANGED; kandidat PASS_ALL_EXISTING_GUARDS. Prethodni pokušaji
+01/02 su ROLLED_BACK, 03 COMPLETE; reminder DISABLED_INACTIVE, campaigns 0,
+staging HTTPS 200. Preflight nije izvršio mutaciju/recovery.
+
+Pripremljen je jedan operatorski blok za dodatni fajl
+`/usr/local/libexec/passvero-signature-recovery-v3/recover-release-8QNIYVVZWEsQaCL9uLZ5Q.py`.
+Originalni recover.py i bundle ostaju sačuvani. Novi attempt je
+`recovery-20261002-release-8qni-01`; blok ponovo proverava tačne hashove, artefakte
+i sve guardove, čuva privatni alignment manifest i poziva recovery jednom.
+Postojeći procedure backup čuva prethodne baze/config/evidenciju; nije novi backup test.
+Bez ponavljanja bloka pri STOP-u; nema implicitnog rollbacka/drugog pokušaja.
+Potpuni copy/paste blok izvršio je operator; rezultat je prihvaćen iz dostavljenog outputa.
+
+Prihvatanje koristi postojeće kriterijume bez izmene: updater isti PID i fresh CVD
+completion u 300 s; daemon confinement/loaded/VERSION u 120 s; tri uzastopne
+zakazane reader-prihvaćene publikacije sa sequence +1 i rastućim observedAt u 100 s.
+Snapshot max 60 s/updater max 24 h i fail-closed ostaju nepromenjeni. Nema ručnih
+producer poziva, PDF/EICAR/OOM/izolacijskih/backup testova. Završni output mora
+potvrditi aktuelni reader, scheduled publikacije, staging dostupnost i reminder off.
+
+Source diff: samo jedan exact release literal u
+`scripts/recover-document-signature-health.py`. Byte diff i normalizovani AST
+potvrđuju da je ostatak identičan; guard prihvata novi exact pin i odbija stari,
+prazan i prošireni pin. [Manifest source diffa](evidence/signature-recovery/release-alignment-source-manifest.json).
+Operator block SHA-256: `6b55f21fb098235ea747e99af153ec0929ad3f30892a46b104ccf7278ded0d71`. Shell/Python syntax PASS;
+stari test/build dokazi nisu ponavljani; izvršena je samo odobrena recovery procedura.
+Aktuelni reader prihvaćen u završnom opažanju. Bez commita/pusha/production pristupa.
+
+## Istorijski prihvaćeni rezultat — 2026-09-23
 
 Final status: staging recovery A/B **PASS**; authenticated private PDF smoke C
 **PASS**; exact storage cleanup **PASS**, audit **RETAINED**, acceptance window

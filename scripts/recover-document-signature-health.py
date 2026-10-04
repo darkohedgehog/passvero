@@ -272,7 +272,7 @@ class LinuxHost:
         private(FRESH, (0, 108))
         require(active('pm2-passvero-staging.service') == 'active', 'STAGING_NOT_ACTIVE')
         require(P('/var/www/passvero-acceptance/.next/BUILD_ID').read_text().strip()
-                == 'qwLCXFTd9EEGdvqaB9SZS', 'STAGING_RELEASE_CHANGED')
+                == '8QNIYVVZWEsQaCL9uLZ5Q', 'STAGING_RELEASE_CHANGED')
         require(shutil.disk_usage(ROOT).free > 2_000_000_000, 'DISK_SPACE_REQUIRED')
         self.consumers()
 

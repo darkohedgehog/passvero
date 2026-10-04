@@ -1,0 +1,86 @@
+{
+  "evidenceSource": "USER_SUPPLIED_OPERATOR_OUTPUT",
+  "alignmentUtc": "2026-10-02T19:54:01.304067+00:00",
+  "alignmentApplied": true,
+  "recoveryInvoked": true,
+  "attempt": "recovery-20261002-release-8qni-01",
+  "automaticRetry": false,
+  "recoveryExit": 0,
+  "status": "RECOVERY_COMPLETE",
+  "recovery": "RECOVERED",
+  "staging_reader": "ACCEPTED",
+  "scheduled_publications": [
+    {
+      "accepted": true,
+      "expiresAt": 1790970964010,
+      "observedAt": 1790970904010,
+      "sequence": 87498
+    },
+    {
+      "accepted": true,
+      "expiresAt": 1790970979268,
+      "observedAt": 1790970919268,
+      "sequence": 87499
+    },
+    {
+      "accepted": true,
+      "expiresAt": 1790970994890,
+      "observedAt": 1790970934890,
+      "sequence": 87500
+    }
+  ],
+  "freshReader": {
+    "accepted": true,
+    "expiresAt": 1790970994890,
+    "observedAt": 1790970934890,
+    "sequence": 87500
+  },
+  "producer_sha256": "725d3494983cfce68bdcacd30f9078606aa6c87c4b9d12a5674ea3770da7464b",
+  "alignedSourceSha256": "3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0",
+  "buildId": "8QNIYVVZWEsQaCL9uLZ5Q",
+  "verifiedArtifacts": 826,
+  "originalPreserved": "/usr/local/libexec/passvero-signature-recovery-v3/recover.py",
+  "archive": "/var/lib/passvero-signature-trust/records/recovery/recovery-20261002-release-8qni-01",
+  "remindersBefore": {
+    "timer": "DISABLED_INACTIVE",
+    "enabledCampaigns": 0
+  },
+  "remindersAfter": {
+    "timer": "DISABLED_INACTIVE",
+    "enabledCampaigns": 0
+  },
+  "stagingHttpsAfter": "200",
+  "finalUnits": {
+    "passvero-signature-health.timer": {
+      "Result": "success",
+      "ActiveState": "active",
+      "SubState": "waiting"
+    },
+    "passvero-signature-health.service": {
+      "Result": "success",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "clamav-freshclam.service": {
+      "Result": "success",
+      "ExecMainStatus": "0",
+      "ActiveState": "active",
+      "SubState": "running"
+    },
+    "clamav-daemon.service": {
+      "Result": "success",
+      "ExecMainStatus": "0",
+      "ActiveState": "active",
+      "SubState": "running"
+    },
+    "passvero-qpdf-broker.socket": {
+      "Result": "success",
+      "ActiveState": "active",
+      "SubState": "listening"
+    }
+  },
+  "reboot_acceptance": "NOT_PROVEN",
+  "dashboard_redeployed": false,
+  "pdf_smoke": "NOT_YET_RUN"
+}

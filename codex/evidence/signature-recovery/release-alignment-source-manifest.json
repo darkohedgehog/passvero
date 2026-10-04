@@ -1,0 +1,24 @@
+{
+  "scope": "STAGING_SIGNATURE_RECOVERY_RELEASE_ALIGNMENT",
+  "operatorPreflightUtc": "2026-10-02T19:48:35.155731+00:00",
+  "review": "PASS_ONLY_RELEASE_PIN_INCOMPATIBLE",
+  "buildId": "8QNIYVVZWEsQaCL9uLZ5Q",
+  "deploymentManifestSha256": "1d7f456d13ce8cf1bb7173bc3c731be4fd7e61d6a5fbb70fb8aca99eba04f1cf",
+  "verifiedDeploymentArtifacts": 826,
+  "sourceChanges": [
+    {
+      "path": "scripts/recover-document-signature-health.py",
+      "beforeSha256": "4a16d96c560e8b3a958cd12254d3b7236688d6e78121d470b184a24513cdc2d7",
+      "afterSha256": "3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0",
+      "change": "ONE_EXACT_RELEASE_PIN_LITERAL",
+      "beforePin": "qwLCXFTd9EEGdvqaB9SZS",
+      "afterPin": "8QNIYVVZWEsQaCL9uLZ5Q"
+    }
+  ],
+  "operatorBlockSha256": "6b55f21fb098235ea747e99af153ec0929ad3f30892a46b104ccf7278ded0d71",
+  "attempt": "recovery-20261002-release-8qni-01",
+  "recoveryExecuted": true,
+  "status": "RECOVERY_COMPLETE",
+  "freshnessCadenceAndDeadlines": "UNCHANGED",
+  "resultEvidence": "release-alignment-recovery-result.json"
+}

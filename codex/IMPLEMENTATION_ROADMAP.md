@@ -1,5 +1,119 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## Konačan pregled — stvarni staging unos i korisnički acceptance (2026-10-02)
+
+**Ograničen stvarni unos može početi nakon korisnikovog pregleda plana**, u tačnoj
+odobrenoj organizaciji, uz važeće sadržajno pravo, raspoložive kvote i zadržane
+izvorne podatke/fajlove izvan staginga. Signature-health recovery je PASS iz operatorskog outputa 02.10: tri zakazane
+prihvaćene objave 87498/87499/87500 i završni stvarni reader accepted=true u
+19:55:34.890 UTC; qpdf active/listening, staging HTTPS 200. PDF korak može ući
+u korisnički scenario; stvarni upload/scan/download još nije izvršen. Ranije
+reader odbijanje/odsutan snapshot je oporavljeno, bez tvrdnje o trajnoj freshness.
+Nije odobrenje dugotrajnog rada ili produkcije.
+
+[Korisnički scenario, uslovi, operatorski blok i prioriteti](STAGING_REAL_DATA_READINESS_AND_USER_ACCEPTANCE_PLAN.md).
+
+Početno stanje ovog pregleda: branch `main`; HEAD, lokalni `origin/main` i
+aktuelni udaljeni `refs/heads/main` jednaki su
+`703f588f1d6589f3e7b0118d991eab9ca8a35aa0` (`git ls-remote`, 2026-10-02).
+Worktree i index bili su čisti pre dokumentacijskih izmena. Posle ovog zadatka
+očekivane su samo dve dokumentacijske promene; nema commita/pusha. Source HEAD
+nije automatski identitet VPS runtimea: poslednji prihvaćeni executable build je
+`8QNIYVVZWEsQaCL9uLZ5Q`, sa 826 artefakata potvrđenih recovery dokazom. Današnji
+runtime nije ponovo proglašen proverenim na osnovu tog istorijskog podatka.
+
+### Objedinjeno funkcionalno stanje
+
+PASS u tabeli znači raniji prihvaćeni dokaz iz povezanog završnog izveštaja,
+ne ponovljeni test ili današnji operativni pregled. Source je pregledan read-only.
+
+| Oblast / implementirano | Prihvaćeno lokalno i na stagingu | Aktivno / ograničenje / prepreka unosu |
+| --- | --- | --- |
+| [Pristup, odobrenje, aktivacija, prijava](CONTROLLED_EARLY_ACCESS_ONBOARDING_STAGING.md) | Lokalna validacija, autorizacija, provisioning/replay; staging zahtev → eksplicitno odobrenje → dostava → aktivacija → prijava i tačna organizacija PASS. | Kontrolisani pristup; javni self-service signup isključen. Postojeći aktiviran račun može koristiti scenario; novi račun zahteva operatorovo odobrenje. Nema nove email serije u ovom pregledu. |
+| [Organizacija/billing](ORGANIZATION_BILLING_PROFILE_IMPLEMENTATION_AND_STAGING_ACCEPTANCE.md), [Platform Admin](PLATFORM_ADMIN_ORGANIZATIONS_AND_BILLING_OVERVIEW_STAGING.md) | Lokalno tenant/CAS/audit i sveže grant/session/identity provere; staging billing create/update/reload i platform list/detail/search/tenant-return PASS. | Billing profil je privatan i nije uslov product unosa. Tenant OWNER/ADMIN nije platform autoritet; read-only, billing i regulatory grantovi su zasebni. Neovlašćen korisnik ne prolazi operator deo. Live pagination/grant-revoke negativni scenariji nisu novi PASS niti prepreka običnom unosu. |
+| [Trial/paketi/kvote/istek/obnova/upgrade/downgrade](SUBSCRIPTION_ENTITLEMENTS_QUOTAS_AND_PLAN_CHANGES_STAGING.md) | Lokalno concurrency, shared CSV/storage/publication enforcement, kalendar, obnova, replacement; staging trial limit, istek/write denial, javni HTML, upgrade i dozvoljen/blokiran downgrade PASS. [Početna kupovina](SUBSCRIPTION_MANUAL_COMMERCIAL_WORKFLOW_STAGING.md) UI PASS; kasnija reminder serija potvrđuje obnovu/stale cancellation. | Manual B2B, samo SIMULATED_PAYMENT dokazi; nema bank/Stripe naplate. Dva konačna staging izuzetka važe do 2026-10-31T00:00:00Z. Istek/kvote blokiraju sadržajne izmene; login/read/export/billing profil ostaju uz autorizaciju. Live novi image/PDF grace transport, concurrency i rollback ostaju ograničeni dokazi, ne opšti blocker. |
+| [Proizvodi/proizvođač](MANUFACTURER_IMPLEMENTATION.md), [GTIN/barkod](PRODUCT_GTIN_VALIDATION_AND_BARCODE_STAGING.md), [slike/verzije](PRODUCT_IMAGE_UPLOAD_VERSIONING_AND_PUBLIC_DPP_STAGING.md) | Lokalno tenant/CAS/snapshot; staging create/edit, manufacturer v1/v2, GTIN validacija/nasleđivanje/dekodiranje, slika A/v1 → B/v2 i očuvani bajtovi PASS. CN/prevodi/materijali imaju postojeće lokalne dokaze i raniji DPP/CN prikaz. | Tokovi implementirani. Manufacturer snapshot je odvojen od tenant/billing identiteta. GTIN format/check-digit nije GS1 vlasništvo; CN nije automatsko pravno mišljenje. Unos zahteva pravo i kvotu, bez novog infrastrukturnog uslova. |
+| [Pretraga](PRODUCT_CATALOG_SEARCH_STAGING.md), [CSV export](PRODUCT_CATALOG_CSV_EXPORT_STAGING.md), [create-only import](PRODUCT_CATALOG_CSV_IMPORT_STAGING.md) | Lokalno 5.000 proizvoda/redova, paginacija, tenant, escape, replay/concurrency/rollback; staging name/SKU/GTIN pretraga, full/filtered/empty export i 5-row preview/3 selected drafts/replay PASS. | Aktivni tokovi; import preview ne piše, izbor je eksplicitan, nema update/upsert/XLSX. Nije pun export round-trip/backup; slike/PDF/proizvođač/istorija se ne uvoze. Live veliki katalog i konkurencija nisu ponavljani. Trial ukupno 3 kreiranja uključuje import. |
+| [PDF/scan/preuzimanje](DOCUMENT_MALWARE_SCAN_SCHEMA_AND_CONTRACT.md), [post-restart recovery](DOCUMENT_SIGNATURE_HEALTH_POST_RESTART_RECOVERY.md) | Lokalno struktura/auth/integritet/status/recovery; staging UNSCANNED deny, eksplicitni CLEAN i isti download bajtovi, validan EICAR INFECTED deny, malformed upload deny. Recovery 23.09: reader/scheduled publikacije i privatni CLEAN smoke PASS. | AVAILABLE nije CLEAN; qpdf struktura nije antivirus. Stari reboot BLOCKED je superseded prihvaćenim recoveryjem, ali današnja freshness nije istorijski PASS. Aktuelni operatorski preflight 02.10. 19:20:58 UTC: readerExit=1/accepted=false, qpdf active/listening. Dijagnoza 19:36:49 UTC: producer UNTRUSTED/EVIDENCE_CONTINUITY_REQUIRED u UPDATER, četiri initialization granice; snapshot odsutan pre/posle readera, PRIVATE_READ_ENOENT. Naknadni recovery 02.10 PASS: tri scheduled prihvaćene objave i fresh reader sequence 87500; HTTPS 200/qpdf listening. Stvarni PDF scan/download čeka korisnički scenario, fail-closed granica očuvana. Live expired-PENDING recovery i neopažene engine promene nisu dokazani. |
+| Javni DPP/QR i immutable objava | Lokalna javna allowlista, tenant/snapshot/asset/publication zaštita; staging anonimni DPP, screen-phone QR, GTIN dekoder, manufacturer/image v1/v2 i javni CLEAN PDF/stari link deny PASS. [PDF dokaz](DOCUMENT_MALWARE_SCAN_SCHEMA_AND_CONTRACT.md), [verzije](CREATE_DRAFT_FROM_PUBLISHED_PRODUCT.md). | Samo eksplicitna objava javno namenjenih podataka. Novi draft ne menja objavljeni snapshot; nova objava zadržava istoriju na stabilnom linku. Paper QR nije potvrđen. Regulatornu klasifikaciju ne pretpostavljati; UNRESOLVED/MANDATORY imaju zasebnu politiku, ne generičko komercijalno gašenje. |
+| [Podsetnici/dostava](SUBSCRIPTION_REMINDERS_AND_DELIVERY_STAGING_ACCEPTANCE.md) | Lokalno pragovi 30/7/1/istek, dedup/outbox/UNKNOWN/faults; staging 4 potvrđene dostave, replay bez novih sends, 2 stale cancellations, timer-triggered IDLE i desktop/mobile delivery UI PASS. | Poslednje stanje: timer DISABLED_INACTIVE, campaignsEnabled=0; nije uključeno ovim pregledom. Pregled istorije postoji, automatski podsetnik se ne očekuje. Live faults/concurrency nisu dokazani; ne sprečavaju ručno praćen staging unos. |
+| [Backup/recovery](EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md) | Jednokratni staging DB + svi stvarno sačuvani image/PDF bajtovi + minimalni non-secret config; stvarni B2 download/hash, izolovani PG restore/ACL/count i application private read PASS. | Snapshot 2026-10-01T21:23:54Z; nema staging rasporeda/RPO/freshness/Telegram. Noviji unosi nisu pokriveni tim setom. Supabase reupload, full web/auth/fresh scanner bootstrap nisu dokazani obnovom. Ograničen unos uz kopije izvora je primeren; dugotrajan autoritativan rad nije time zaštićen. |
+
+### Automatizacije, zadržani podaci i redosled
+
+Poslednji recovery closure: staging ONLINE_UNPAUSED, reminder timer off/campaigns 0;
+to je prihvaćeni snapshot, ne današnji VPS pregled. Staging B2 set je jednokratan.
+Postojeći production PostgreSQL B2/restic backup (02:00 UTC), hourly freshness i
+Telegram su zaseban sistem; nisu menjani niti pristupani u ovom zadatku. Njihovo
+postojanje ne daje backup zaštitu novim staging zapisima.
+
+Izuzeci za `6d686789-6379-4824-ae02-df97043cbbc0` (Živić-elektro - staging test) i
+`bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0` (Passvero Acceptance):
+`[2026-09-30T00:00:00Z, 2026-10-31T00:00:00Z)`, tj. 30.09. 02:00–31.10. 01:00
+Europe/Zagreb/Belgrade; Start limiti 25 objavljenih mesta, 100 sačuvanih proizvoda,
+2 GiB i 10 PDF/verzija. Nisu kupljeni paketi, trial niti automatsko produženje.
+Po isteku bez drugog prava sadržaj se zaključava; čitanje/export/billing ne gase se
+samim istekom, uz postojeće dozvole. UNRESOLVED se ne preklasifikuje radi testa.
+
+Sintetički proizvodi, organizacije, image/PDF istorija, billing profil, import
+receipts, trial/plan-change/reminder fixture i audit ostaju. Tačni izvori i granice
+brojanja su u povezanom planu; nema brisanja niti tvrdnje da je stari broj današnji.
+
+1. **Pre unosa:** korisnikov pregled plana, tačna organizacija/pravo/slobodne kvote,
+   kopije izvora i prihvaćena backup granica; za PDF aktuelni read-only reader/socket
+   rezultat. Završni rezultat: zabeležen izbor organizacije i PASS PDF uslov ili
+   eksplicitno odložen PDF korak. Nema dokazanog opšteg product blockera.
+2. **Tokom evaluacije:** jedna 30–45 min sesija i jedan objedinjeni zapis odstupanja;
+   pre 31.10. potvrditi šta dalje sa izuzetkom i novim podacima. Za duže oslanjanje
+   na staging zasebno dogovoriti backup raspored/RPO/retenciju i ostvariti novi set
+   koji pokriva novije unose. Bez automatske aktivacije u ovom pregledu.
+3. **Pre produkcije:** zasebno odobren rollout, komercijalne/regulatorne i retention
+   odluke, automatizovana DB+Storage zaštita i prihvaćen full-provider/web/auth/scanner
+   recovery, monitoring/alarmi i odobren reminder scope. Rezultat mora biti konkretan
+   production acceptance i operativni runbook, ne zbir preimenovanih NOT_PROVEN.
+4. **Ne blokira MVP:** fizički paper QR, širi accessibility/device sweep, marketing
+   usklađivanje pre poziva, analytics/ERP/XLSX/Stripe i napredniji catalog UX po potrebi.
+
+**Reader rejection diagnosis — završeno 2026-10-02:**
+READER_REJECTION_CAUSE=IDENTIFIED iz operatorskog outputa 19:36:49.806809 UTC
+(21:36:49 lokalno). Producer timer enabled/active/waiting; poslednja tri rezultata
+UNTRUSTED/EVIDENCE_CONTINUITY_REQUIRED/UPDATER; updater log četiri initialization
+granice. Producer konfiguracija/hash i reader/producer putanje podudarni.
+Snapshot odsutan pre i posle UID-1001 readera; stvarni reader exit=1/accepted=false,
+sourceConditionObservation=PRIVATE_READ_ENOENT, stabilno opažanje. Source privatni
+lstat ENOENT → HEALTH_UNAVAILABLE → null objašnjava konkretno reader odbijanje;
+producer failure invalidation objašnjava odsustvo važećeg snapshota. Nema zaključka
+ko je/kada/zašto izazvao ranije restartove; aktivni updater/daemon ne obnavljaju
+izgubljeni validation kontinuitet. Snapshot schema/sequence/observedAt/expiresAt
+nisu dostupni jer fajl ne postoji; nisu proglašeni neispravnim. Lock nije prisutan
+niti je tretiran kao uzrok. Nema dijagnostičkih mutacija ili scan/producer poziva.
+
+**Release alignment and execution — odobreno 2026-10-02:** korisnik je odobrio
+minimalnu exact-artifact pin korekciju i jedan postojeći fresh-base recovery posle
+PASS kompatibilnosti. [Izveštaj](DOCUMENT_SIGNATURE_HEALTH_POST_RESTART_RECOVERY.md)
+beleži reviewed hashove i kriterijume. Operator 19:48:35 UTC: installed hashovi,
+826 artefakata i build 8QNIYVVZWEsQaCL9uLZ5Q potvrđeni;
+PASS_ONLY_RELEASE_PIN_INCOMPATIBLE. Source diff je jedna tačna pin zamena,
+[manifest](evidence/signature-recovery/release-alignment-source-manifest.json).
+**RECOVERY_COMPLETE / PASS:** operator izvršio jedan novi attempt
+recovery-20261002-release-8qni-01; originalni alat sačuvan, recoveryExit=0.
+Tri zakazane objave sequence 87498/87499/87500, rastući observedAt, TTL 60 s;
+stvarni fresh reader accepted=true. Updater kontinuitet i daemon/scheduled
+kriterijumi postojeće procedure prihvaćeni. Freshclam/clamd running, qpdf listening,
+producer timer waiting i service success/exit 0, staging HTTPS 200.
+Reminder disabled/inactive i campaigns 0 pre/posle.
+[Operatorski dokaz](evidence/signature-recovery/release-alignment-recovery-result.json).
+Ranija dijagnoza ostaje istorijski dokaz; istorijski uzrok restartova nepoznat.
+Nema novih scan/upload/EICAR/OOM/backup serija. Reboot/dugotrajni rad nisu dokazani.
+
+**Preporučena sledeća radnja:** korisnik nakon pregleda prolazi
+[korisnički scenario](STAGING_REAL_DATA_READINESS_AND_USER_ACCEPTANCE_PLAN.md#jedna-korisnička-sesija--približno-40-minuta),
+uključujući stvarni PDF upload, eksplicitni scan i kontrolisani download.
+
+Sledeći odeljci su istorija. Njihove ranije tvrdnje „nije implementirano“,
+PENDING/BLOCKED i tadašnje Git stanje nisu konačan status gde ih noviji prihvaćeni
+izveštaji i ovaj pregled izričito superseduju. Ne ponavljati istorijske komande.
+
 ## Final result — approved one-off staging recovery COMPLETE
 
 Recorded2026-10-02 Europe/Zagreb from returned operator output. No operator command
