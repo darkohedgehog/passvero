@@ -92,3 +92,13 @@ Stripe, cards and payment webhooks are outside this scope.
 - GS1-related interoperability.
 
 Do not skip directly to later phases unless explicitly requested.
+
+## Platform access and subscription UI alignment — 2026-10-06
+
+UI source and focused local checks complete. Existing dashboard tokens, controls and
+icons align access-request review and subscription/billing presentation. Business
+handlers, authorization and persistence are unchanged; accepted functional evidence
+is reused. Safari desktop/responsive review uses synthetic local data. Staging deploy PASS (`lE10F_R1mCOG9rWxeChAI`); authenticated Chrome desktop/mobile
+read-only review completed without business actions. Rollback remains prepared; see
+[UI alignment report](PLATFORM_ACCESS_AND_SUBSCRIPTION_UI_ALIGNMENT_STAGING.md).
+No production, commit, push or automation changes.

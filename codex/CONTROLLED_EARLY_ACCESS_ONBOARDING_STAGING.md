@@ -312,3 +312,12 @@ localized form, and absence of capability output remain consistent with accepted
 No dependency/environment changes, real credentials, raw email, temporary packages or
 unrelated work are included. Retention remains a pre-production decision; public signup
 and Platform Admin remain disabled/unimplemented.
+
+## Presentation alignment follow-up — 2026-10-06
+
+Controlled onboarding and OWNER alignment were separately accepted and committed
+at `532f09d`. This follow-up changes only access-request and commercial UI presentation;
+it does not repeat onboarding, approval, email or payment acceptance. See
+[UI alignment report](PLATFORM_ACCESS_AND_SUBSCRIPTION_UI_ALIGNMENT_STAGING.md)
+for local Safari/six-locale evidence and accepted staging UI deployment with
+read-only Chrome desktop/mobile review. No onboarding or paid activation was repeated.

@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCommercialServices } from "@/src/infrastructure/subscriptions/commercial-runtime";
 import { isAppLocale } from "@/src/i18n/routing";
+import { CommercialRequestsView } from "@/src/components/application/subscriptions/commercial-requests-view";
+import { editorSecondaryAction } from "@/src/components/application/products/product-editor-ui";
+import { ReviewIcon } from "@/src/components/application/platform/review-ui";
 import { Link } from "@/src/i18n/navigation";
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -21,7 +24,7 @@ export default async function CommercialRequestsPage({ params }: Props) {
   let requests;
   try { requests = await getCommercialServices().listRequests(requestHeaders); } catch { /* Keep operational failure distinct from an empty list. */ }
   const reminders = await getTranslations({ locale, namespace: "SubscriptionReminders" });
-  return <section className="space-y-5"><h1 className="text-2xl font-semibold text-slate-950">{t("operatorTitle")}</h1><Link href="/platform/billing/deliveries" className="inline-flex min-h-11 items-center text-teal-700 underline">{reminders("title")}</Link><p className="text-sm text-slate-600">{t("listNotice")}</p>
-    {!requests ? <p role="alert">{t("failure")}</p> : requests.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-6">{t("empty")}</p> : <ul className="space-y-3">{requests.map(request => <li key={request.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5"><div className="min-w-0 space-y-1"><h2 className="break-words font-semibold">{request.organizationName}</h2><p className="text-sm text-slate-600">{request.planSlug} · {t("months", { count: request.months })} · {t(request.status)}</p></div><Link href={`/platform/billing/${request.organizationId}`} className="inline-flex min-h-11 items-center rounded-lg px-3 font-semibold text-teal-700 underline-offset-4 hover:underline">{t("open")}</Link></li>)}</ul>}
+  return <section className="space-y-5"><h1 className="text-2xl font-semibold text-slate-950">{t("operatorTitle")}</h1><Link href="/platform/billing/deliveries" className={editorSecondaryAction}><ReviewIcon name="share"/>{reminders("title")}</Link><p className="text-sm text-slate-600">{t("listNotice")}</p>
+    <CommercialRequestsView requests={requests}/>
   </section>;
 }

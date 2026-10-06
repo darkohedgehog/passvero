@@ -483,6 +483,11 @@
     "reviewed": "Izbrana je nova revizija. Preverite vnos in ponovno izberite Shrani podatke."
   },
   "AccessRequests": {
+    "help": "Pomoč in pojasnila",
+    "contactSection": "Kontakt",
+    "decisionSection": "Odločitev",
+    "deliverySection": "Dostava e-pošte",
+    "confirmationHint": "Izpolnite obvezna polja in označite potrditev pred nadaljevanjem.",
     "title": "Zahteve za dostop",
     "notice": "Oddaja zahteve ne ustvari računa. Samo pooblaščeni skrbnik lahko odobri novo organizacijo in pošlje aktivacijsko povezavo. Pravica do pregleda ne omogoča odobritve. Dostop in naročnina sta ločena postopka. Sprejem pri ponudniku ne potrjuje prejema v nabiralnik.",
     "status": "Stanje zahteve",
@@ -553,6 +558,8 @@
     "notProvided": "Ni vneseno"
   },
   "Subscription": {
+    "help": "Pomoč in pojasnila",
+    "confirmationHint": "Izpolnite obvezna polja in označite potrditev pred nadaljevanjem.",
     "title": "Naročnina",
     "operatorTitle": "Zahteve za naročnino",
     "description": "Izberite paket in obdobje. Ponudba se izda zunaj Passvera; pooblaščeni operater aktivira naročnino po potrditvi plačila.",

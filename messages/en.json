@@ -490,6 +490,11 @@
     "reviewed": "The new revision is selected. Review your input and select Save details again."
   },
   "AccessRequests": {
+    "help": "Help and explanations",
+    "contactSection": "Contact",
+    "decisionSection": "Decision",
+    "deliverySection": "Email delivery",
+    "confirmationHint": "Complete the required fields and select the confirmation before continuing.",
     "title": "Access requests",
     "notice": "Submitting a request does not create an account. Only an authorized administrator can approve a new organization and send an activation link. Read access alone does not permit approval. Access and subscriptions are separate processes. Provider acceptance does not confirm inbox receipt.",
     "status": "Request status",
@@ -560,6 +565,8 @@
     "notProvided": "Not provided"
   },
   "Subscription": {
+    "help": "Help and explanations",
+    "confirmationHint": "Complete the required fields and select the confirmation before continuing.",
     "title": "Subscription",
     "operatorTitle": "Subscription requests",
     "description": "Choose a plan and period. The offer is issued outside Passvero; an authorized operator activates the subscription after confirming payment.",

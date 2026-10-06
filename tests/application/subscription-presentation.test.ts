@@ -63,7 +63,7 @@ test("external offer issuance is explicit Zagreb local time and long references 
  assert.match(html,/<input(?=[^>]*name="issuedAtLocal")(?=[^>]*type="datetime-local")[^>]*>/);
  assert.doesNotMatch(html,/<input(?=[^>]*name="issuedAtLocal")(?=[^>]*value=)[^>]*>/);
  assert.match(html,/step="1"/);assert.ok(html.includes("Europe/Zagreb"));
- assert.match(html,/<h4 class="[^"]*\[overflow-wrap:anywhere\][^"]*">[^<]*R{200}/);
+ assert.match(html,/<h4 class="[^"]*\[overflow-wrap:anywhere\][^"]*">[\s\S]*?<span class="min-w-0 flex-1">[^<]*R{200}/);
 });
 test("all six offer views distinguish agreed expiry policy from enforcement available in this release",()=>{
  for(const locale of ["hr","en","de","sr","sl","pl"] as const){

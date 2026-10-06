@@ -483,6 +483,11 @@
     "reviewed": "Die neue Revision ist ausgewählt. Prüfen Sie Ihre Eingabe und wählen Sie erneut Daten speichern."
   },
   "AccessRequests": {
+    "help": "Hilfe und Hinweise",
+    "contactSection": "Kontakt",
+    "decisionSection": "Entscheidung",
+    "deliverySection": "E-Mail-Versand",
+    "confirmationHint": "Füllen Sie die Pflichtfelder aus und bestätigen Sie, bevor Sie fortfahren.",
     "title": "Zugangsanfragen",
     "notice": "Eine Anfrage erstellt kein Konto. Nur ein berechtigter Administrator kann eine neue Organisation genehmigen und einen Aktivierungslink senden. Leserechte allein erlauben keine Genehmigung. Zugang und Abonnement sind getrennte Vorgänge. Die Annahme durch den Anbieter bestätigt keinen Posteingang.",
     "status": "Anfragestatus",
@@ -553,6 +558,8 @@
     "notProvided": "Nicht angegeben"
   },
   "Subscription": {
+    "help": "Hilfe und Hinweise",
+    "confirmationHint": "Füllen Sie die Pflichtfelder aus und bestätigen Sie, bevor Sie fortfahren.",
     "title": "Abonnement",
     "operatorTitle": "Abonnementanfragen",
     "description": "Wählen Sie Paket und Laufzeit. Das Angebot wird außerhalb von Passvero erstellt; ein berechtigter Mitarbeiter aktiviert das Abonnement nach Zahlungsbestätigung.",

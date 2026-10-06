@@ -483,6 +483,11 @@
     "reviewed": "Nova revizija je izabrana. Proverite svoj unos i ponovo izaberite Sačuvaj podatke."
   },
   "AccessRequests": {
+    "help": "Pomoć i objašnjenja",
+    "contactSection": "Kontakt",
+    "decisionSection": "Odluka",
+    "deliverySection": "Email dostava",
+    "confirmationHint": "Popunite obavezna polja i označite potvrdu pre nastavka.",
     "title": "Zahtevi za pristup",
     "notice": "Slanje zahteva ne otvara nalog. Samo ovlašćeni administrator može odobriti novu organizaciju i slanje aktivacionog linka. Pravo pregleda samo po sebi ne dozvoljava odobravanje. Pristup i pretplata su odvojeni postupci. Prihvatanje poruke kod provajdera nije potvrda prijema u sanduče.",
     "status": "Status zahteva",
@@ -553,6 +558,8 @@
     "notProvided": "Nije uneto"
   },
   "Subscription": {
+    "help": "Pomoć i objašnjenja",
+    "confirmationHint": "Popunite obavezna polja i označite potvrdu pre nastavka.",
     "title": "Pretplata",
     "operatorTitle": "Zahtevi za pretplatu",
     "description": "Izaberite paket i period. Ponuda nastaje izvan Passvera; pretplatu aktivira ovlašćeni operator nakon potvrde uplate.",

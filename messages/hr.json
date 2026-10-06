@@ -592,6 +592,11 @@
     "reviewed": "Nova revizija je odabrana. Provjerite svoj unos i ponovno odaberite Spremi podatke."
   },
   "AccessRequests": {
+    "help": "Pomoć i objašnjenja",
+    "contactSection": "Kontakt",
+    "decisionSection": "Odluka",
+    "deliverySection": "Email dostava",
+    "confirmationHint": "Dovršite obavezna polja i označite potvrdu prije nastavka.",
     "title": "Zahtjevi za pristup",
     "notice": "Slanje zahtjeva ne otvara račun. Samo ovlašteni administrator može odobriti novu organizaciju i slanje aktivacijskog linka. Samo pravo pregleda ne omogućuje odobravanje. Pristup i pretplata odvojeni su postupci. Prihvaćanje poruke kod pružatelja nije potvrda primitka u sandučić.",
     "status": "Status zahtjeva",
@@ -662,6 +667,8 @@
     "notProvided": "Nije uneseno"
   },
   "Subscription": {
+    "help": "Pomoć i objašnjenja",
+    "confirmationHint": "Dovršite obavezna polja i označite potvrdu prije nastavka.",
     "title": "Pretplata",
     "operatorTitle": "Zahtjevi za pretplatu",
     "description": "Odaberite paket i period. Ponuda nastaje izvan Passvera; pretplatu aktivira ovlašteni operator nakon potvrde uplate.",

@@ -483,6 +483,11 @@
     "reviewed": "Wybrano nową rewizję. Sprawdź dane i ponownie wybierz Zapisz dane."
   },
   "AccessRequests": {
+    "help": "Pomoc i wyjaśnienia",
+    "contactSection": "Kontakt",
+    "decisionSection": "Decyzja",
+    "deliverySection": "Wysyłka e-mail",
+    "confirmationHint": "Uzupełnij wymagane pola i zaznacz potwierdzenie przed kontynuowaniem.",
     "title": "Wnioski o dostęp",
     "notice": "Złożenie wniosku nie tworzy konta. Tylko uprawniony administrator może zatwierdzić nową organizację i wysłać link aktywacyjny. Sam odczyt nie pozwala na zatwierdzanie. Dostęp i subskrypcja to oddzielne procesy. Przyjęcie przez dostawcę nie potwierdza odbioru w skrzynce.",
     "status": "Status wniosku",
@@ -553,6 +558,8 @@
     "notProvided": "Nie podano"
   },
   "Subscription": {
+    "help": "Pomoc i wyjaśnienia",
+    "confirmationHint": "Uzupełnij wymagane pola i zaznacz potwierdzenie przed kontynuowaniem.",
     "title": "Subskrypcja",
     "operatorTitle": "Wnioski o subskrypcję",
     "description": "Wybierz pakiet i okres. Oferta powstaje poza Passvero; uprawniony operator aktywuje subskrypcję po potwierdzeniu płatności.",
