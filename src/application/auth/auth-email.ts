@@ -1,6 +1,7 @@
 export type AuthEmailLocale = "hr" | "en" | "de" | "sr" | "sl" | "pl";
 
 export type AuthEmailMessage =
+  | { readonly type: "ACCESS_REQUEST_ADMIN"; readonly recipient: string; readonly locale?: AuthEmailLocale; readonly requestId: string; readonly reviewUrl: string; }
   | { readonly type: "CONTROLLED_ACTIVATION"; readonly recipient: string; readonly locale?: AuthEmailLocale; readonly activationUrl: string; }
   | {
     readonly type: "VERIFY_EMAIL";

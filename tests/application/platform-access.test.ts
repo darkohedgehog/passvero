@@ -6,7 +6,7 @@ const authenticated: CurrentUserResolution = {status:"AUTHENTICATED",currentUser
 test("every read denies anonymous and ungranted tenant users before reading organizations; revocation is fresh", async () => {
   let resolution: CurrentUserResolution = {status:"UNAUTHENTICATED",reason:"NO_PROVIDER_SESSION"};
   let granted=false; let reads=0;
-  const api=createPlatformServices({resolve:async()=>resolution,authorize:async()=>granted,list:async()=>{reads++;return {items:[],nextCursor:null};},detail:async()=>{reads++;return null;}});
+  const api=createPlatformServices({resolve:async()=>resolution,authorize:async()=>granted,list:async()=>{reads++;return {items:[],nextCursor:null};},detail:async()=>{reads++;return null;},accessRequests:async()=>({items:[],nextCursor:null})});
   await assert.rejects(api.list(new Headers(),{}),{code:"PLATFORM_FORBIDDEN"});
   resolution=authenticated;
   await assert.rejects(api.list(new Headers(),{}),{code:"PLATFORM_FORBIDDEN"});
@@ -21,4 +21,28 @@ test("bounded search and validated keyset cursor",()=>{
  assert.deepEqual(platformQuerySchema.parse({}),{q:"",cursor:null});
  assert.equal(platformQuerySchema.parse({q:"  Example  "}).q,"Example");
  for(const input of [{q:"x".repeat(101)},{q:["x"]},{cursor:"bad"},{pageSize:10000}])assert.equal(platformQuerySchema.safeParse(input).success,false);
+});
+
+test("access requests require fresh platform read authority and expose no decision actions", async () => {
+  let resolution: CurrentUserResolution = {status:"UNAUTHENTICATED",reason:"NO_PROVIDER_SESSION"};
+  let granted = false;
+  let reads = 0;
+  const api = createPlatformServices({
+    resolve: async () => resolution, authorize: async () => granted,
+    list: async () => ({items:[],nextCursor:null}), detail: async () => null,
+    accessRequests: async () => { reads++; return {items:[],nextCursor:null}; },
+  });
+  await assert.rejects(api.accessRequests(new Headers(), {}), {code:"PLATFORM_FORBIDDEN"});
+  resolution = authenticated;
+  await assert.rejects(api.accessRequests(new Headers(), {}), {code:"PLATFORM_FORBIDDEN"});
+  assert.equal(reads, 0);
+  granted = true;
+  assert.deepEqual(await api.accessRequests(new Headers(), {}), {items:[],nextCursor:null});
+  for (const input of [{status:"bad"},{status:["PENDING"]},{cursor:"bad"},{email:"synthetic@example.invalid"},{limit:1000}]) {
+    await assert.rejects(api.accessRequests(new Headers(), input));
+  }
+  assert.equal(reads, 1);
+  granted = false;
+  await assert.rejects(api.accessRequests(new Headers(), {}), {code:"PLATFORM_FORBIDDEN"});
+  assert.deepEqual(Object.keys(api).sort(), ["accessRequests","detail","list","requireAccess"].sort());
 });

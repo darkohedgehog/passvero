@@ -38,6 +38,15 @@ export function renderAuthEmail(
 ): RenderedAuthEmail {
   const locale = message.locale ?? "en";
   const language = copy[locale === "hr" ? "hr" : "en"];
+  if (message.type === "ACCESS_REQUEST_ADMIN") {
+    const url = assertCanonicalUrl(message.reviewUrl, canonicalOrigin);
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(message.requestId)
+      || !/^\/(?:en\/|de\/|sr\/|sl\/|pl\/)?platform\/access-requests$/.test(url.pathname)
+      || url.search || url.hash) throw new AuthEmailTemplateError();
+    const label = locale === "hr" ? "Novi zahtjev za pristup Passveru" : "New Passvero access request";
+    // No applicant PII or activation capability in the shared administrative inbox.
+    return {subject: label, text: `${label}\nID: ${message.requestId}\n${url.href}`, html: `<p>${label}</p><p>ID: ${escapeHtml(message.requestId)}</p><p><a href="${escapeHtml(url.href)}">${label}</a></p>`};
+  }
   if (message.type === "CONTROLLED_ACTIVATION") {
     const labels = { hr: "Odobren vam je pristup Passveru. Aktivirajte račun u roku od 72 sata", en: "Your Passvero access is approved. Activate your account within 72 hours", de: "Ihr Passvero-Zugang wurde genehmigt. Aktivieren Sie Ihr Konto innerhalb von 72 Stunden", sr: "Odobren vam je pristup Passveru. Aktivirajte nalog u roku od 72 sata", sl: "Vaš dostop do Passvera je odobren. Aktivirajte račun v 72 urah", pl: "Twój dostęp do Passvero został zatwierdzony. Aktywuj konto w ciągu 72 godzin" };
     const label = labels[locale];

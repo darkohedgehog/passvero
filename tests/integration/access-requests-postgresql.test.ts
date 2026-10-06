@@ -37,7 +37,7 @@ test("concurrent approval creates one aggregate and one message, no secrets in r
   assert.equal(await prisma.authIdentity.count({ where: { userId: row.userId! } }), 0);
   assert.equal(await prisma.product.count({ where: { organizationId: row.organizationId! } }), 0);
   const membership = await prisma.membership.findFirstOrThrow({ where: { userId: row.userId! } });
-  assert.equal(membership.role, "ADMIN"); assert.equal(membership.organizationId, row.organizationId);
+  assert.equal(membership.role, "OWNER"); assert.equal(membership.organizationId, row.organizationId);
   const logs = await prisma.authAuditEvent.findMany({ where: { correlationId: input.id } });
   assert.doesNotMatch(JSON.stringify({ results, logs }), /capability|tokenDigest|example\.test|Synthetic contact/);
   await assert.rejects(repository.reject(input.id, "proof"));
@@ -143,7 +143,7 @@ test("approved request follows existing activation, verified binding and server 
   assert.equal(resolved.status, "RESOLVED");
   if (resolved.status === "RESOLVED") {
     assert.equal(resolved.context.organizationId, (await repository.review(input.id))?.organizationId);
-    assert.equal(resolved.context.membershipRole, "ADMIN");
+    assert.equal(resolved.context.membershipRole, "OWNER");
     assert.ok(resolved.context.permissions.includes("PRODUCT_CREATE"));
   }
   sent = [];

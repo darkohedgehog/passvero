@@ -58,3 +58,12 @@ test("activation emails use canonical URLs and localized subjects in all six lan
   }
   assert.equal(subjects.size, 6);
 });
+
+test("admin notification contains only request ID and authenticated canonical review link", async () => {
+ const {renderAuthEmail}=await import("../../src/infrastructure/auth/auth-email-templates");
+ const message={type:"ACCESS_REQUEST_ADMIN" as const,recipient:"admin@example.invalid",locale:"hr" as const,requestId:"00000000-0000-4000-8000-000000000001",reviewUrl:"https://staging.example.test/platform/access-requests"};
+ const rendered=renderAuthEmail(message,"https://staging.example.test");
+ assert.match(rendered.text,/00000000-0000-4000-8000-000000000001/);
+ assert.doesNotMatch(JSON.stringify(rendered),/admin@example|capability|password|contactName/);
+ for(const change of [{reviewUrl:"https://evil.test/platform/access-requests"},{reviewUrl:"https://staging.example.test/activate-account"},{reviewUrl:message.reviewUrl+"?token=x"},{requestId:"<script>x</script>"}])assert.throws(()=>renderAuthEmail({...message,...change},"https://staging.example.test"));
+});

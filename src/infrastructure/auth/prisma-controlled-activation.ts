@@ -295,7 +295,27 @@ implements VerifiedPersistence {
     });
     if (result.count === 1) {
       const intent = await transaction.accountActivationIntent.findUniqueOrThrow({ where: { id: input.intentId }, select: { userId: true } });
-      const memberships = await transaction.membership.findMany({ where: { userId: intent.userId, role: "OWNER", status: "ACTIVE", organization: { status: "ACTIVE" } }, select: { organizationId: true } });
+      const memberships = await transaction.membership.findMany({
+        where: {
+          userId: intent.userId,
+          status: "ACTIVE",
+          organization: { status: "ACTIVE" },
+          OR: [
+            { role: "OWNER" },
+            {
+              role: "ADMIN",
+              // Historical controlled requests provisioned ADMIN. Start their trial
+              // only for the aggregate approved with this exact activation intent.
+              organization: { accessRequest: { is: {
+                activationId: input.intentId,
+                userId: intent.userId,
+                status: "APPROVED",
+              } } },
+            },
+          ],
+        },
+        select: { organizationId: true },
+      });
       for (const membership of memberships) await activateOrganizationTrial(transaction, membership.organizationId, input.boundAt);
     }
     return result.count === 1;

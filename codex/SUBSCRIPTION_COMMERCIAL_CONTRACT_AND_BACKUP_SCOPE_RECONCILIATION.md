@@ -266,3 +266,18 @@ Publication, tenant, malware i integritet provjere ostaju obavezne.
 Točni staging prijelazi, novi regulatorni grant i klasifikacije postojećih proizvoda
 čekaju jedan objedinjeni prijedlog ID-jeva i korisničko odobrenje. Podsjetnici ostaju
 treća cjelina. Production, stvarne uplate i automatsko brisanje nisu odobreni.
+
+
+## Usklađenje kontroliranog onboardinga — 2026-10-06
+
+Odobreni zahtjev koji kreira novu organizaciju dodjeljuje njenom prvom korisniku
+ulogu OWNER. OWNER podnosi zahtjev za pretplatu i prihvaća ponudu prema postojećem
+ugovoru; potvrda uplate i aktivacija plaćenog razdoblja ostaju zasebnom billing
+operatoru. Ne uvode se dodatni komercijalni grantovi.
+
+Ovo pravilo ne vrijedi za pridruživanje postojećoj organizaciji i ne promovira
+postojeće ADMIN članove. Ponovljeno odobravanje/provisioning ne mijenja članstva
+i ne stvara dodatni audit. Ranije aktivirani ADMIN podnositelji zadržavaju
+postojeći trial; izričito odobrena pojedinačna promjena uloge zaseban je auditirani
+operatorski postupak, uz provjeru identiteta, izvornog zahtjeva i odsustva drugog
+OWNER-a. Trial, kvote, podaci i plaćena razdoblja tim se postupkom ne mijenjaju.

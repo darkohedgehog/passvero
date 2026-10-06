@@ -5,6 +5,9 @@ import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { Pool } from 'pg';
+const proofFiles = {platform:'tests/integration/platform-postgresql.test.ts',onboarding:'tests/integration/onboarding-postgresql.test.ts'};
+const testFile = proofFiles[process.argv[2]] ?? 'tests/integration/access-requests-postgresql.test.ts';
+assert.ok(process.argv.length === 2 || (process.argv.length === 3 && Object.hasOwn(proofFiles,process.argv[2])), 'UNKNOWN_PROOF_TARGET');
 const root=resolve('.'),work=mkdtempSync('/private/tmp/passvero-access-proof-');
 const pg='/opt/homebrew/opt/postgresql@16/bin';
 const env={PATH:process.env.PATH,TMPDIR:work,LANG:'C',PRISMA_HIDE_UPDATE_MESSAGE:'1'};
@@ -20,5 +23,5 @@ try {
  admin=new Pool({connectionString:url.replace('/access_requests_test','/postgres')});assert.equal((await admin.query('SHOW data_directory')).rows[0].data_directory,data);
  await admin.query('CREATE DATABASE access_requests_test');
  run(process.execPath,[root+'/node_modules/prisma/build/index.js','migrate','deploy','--config',work+'/prisma.config.ts'],{ACCESS_PROOF_URL:url});
- console.log(run(process.execPath,['--import','tsx','--test','tests/integration/access-requests-postgresql.test.ts'],{TEST_DATABASE_URL:url}));
+ console.log(run(process.execPath,['--import','tsx','--test',testFile],{TEST_DATABASE_URL:url}));
 } finally {if(admin)await admin.end();if(started)run(pg+'/pg_ctl',['-D',data,'-m','fast','-w','stop']);console.log('DISPOSABLE_CLUSTER_STOPPED; '+work);}

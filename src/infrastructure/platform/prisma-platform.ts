@@ -1,6 +1,6 @@
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
 import { billingSelect } from "@/src/application/billing/contracts";
-import { platformDenied, type PlatformActor, type PlatformQuery, type OrganizationPage, type OrganizationDetail } from "@/src/application/platform/service";
+import { platformDenied, type PlatformActor, type PlatformQuery, type OrganizationPage, type OrganizationDetail, type AccessRequestQuery, type AccessRequestPage } from "@/src/application/platform/service";
 
 type Tx = Prisma.TransactionClient;
 const organizationSelect = { id: true, displayName: true, status: true, createdAt: true } as const;
@@ -38,6 +38,24 @@ export class PrismaPlatform {
     return this.read(actor, async tx => {
       const row = await tx.organization.findUnique({where:{id},select:{...organizationSelect,billingProfile:{select:{...billingSelect,updatedAt:true}}}});
       return row ? {...row,hasBillingProfile:row.billingProfile!==null} : null;
+    });
+  }
+  accessRequests(actor: PlatformActor, query: AccessRequestQuery): Promise<AccessRequestPage> {
+    return this.read(actor, async tx => {
+      const rows = await tx.accessRequest.findMany({
+        where: {
+          ...(query.status === "ALL" ? {} : {status: query.status}),
+          ...(query.cursor ? {id: {gt: query.cursor}} : {}),
+        },
+        orderBy: {id: "asc"}, take: 26,
+        select: {
+          id: true, contactName: true, email: true, organizationDisplayName: true, locale: true,
+          status: true, createdAt: true, decidedAt: true, deliveryStatus: true,
+          deliveryAttempts: true, deliveredAt: true,
+          adminNotification: {select:{status:true,attempts:true}},
+        },
+      });
+      return {items: rows.slice(0, 25), nextCursor: rows.length > 25 ? rows[24].id : null};
     });
   }
 }

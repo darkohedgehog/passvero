@@ -28,6 +28,7 @@ test("lazily creates a sanitized Nodemailer transport and sends rendered mail", 
       return {
         async sendMail(message) {
           mailOptions.push(message);
+          return {accepted:[message.to],rejected:[]};
         },
       };
     },
@@ -46,6 +47,9 @@ test("lazily creates a sanitized Nodemailer transport and sends rendered mail", 
     host: "smtp.example.com",
     port: 465,
     secure: true,
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 20_000,
     auth: {
       user: "contact@passvero.eu",
       pass: "test-only-secret",
@@ -90,4 +94,13 @@ test("converts transport failures to one provider-neutral secret-free error", as
       return true;
     },
   );
+});
+
+test("only explicit acceptance of the intended recipient becomes SENT", async () => {
+  for (const outcome of [undefined, {}, {accepted:[]}, {accepted:["other@example.invalid"]}, {accepted:[],rejected:["person@example.com"]}, {accepted:["person@example.com"],rejected:["person@example.com"]}]) {
+    const sender = createNodemailerAuthEmailSender(config, {canonicalOrigin:"https://passvero.eu",createTransport:()=>({sendMail:async()=>outcome})});
+    await assert.rejects(sender.send({type:"PASSWORD_CHANGED",recipient:"person@example.com"}), AuthEmailDeliveryError);
+  }
+  const sender = createNodemailerAuthEmailSender(config, {canonicalOrigin:"https://passvero.eu",createTransport:()=>({sendMail:async()=>({accepted:["person@example.com"],rejected:[]})})});
+  assert.deepEqual(await sender.send({type:"PASSWORD_CHANGED",recipient:"person@example.com"}),{status:"SENT"});
 });

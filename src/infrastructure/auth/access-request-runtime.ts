@@ -1,4 +1,5 @@
 import "server-only";
+import { after } from "next/server";
 import { createAccessRequestTransport } from "@/src/application/auth/access-request-http";
 import { getCanonicalAppOrigin } from "../config/canonical-app-origin";
 import { verifyRuntimeProxy } from "../http/trusted-proxy-runtime";
@@ -6,6 +7,7 @@ import { getProductionPrismaClient } from "../persistence/prisma/production-pris
 import { PrismaAccessRequests } from "../persistence/prisma/prisma-access-requests";
 import { createBusinessAuthAbuseService } from "./auth-abuse-runtime";
 import { createRuntimeTurnstileVerifier } from "./turnstile-provider-runtime";
+import { createLazyAuthEmailSender } from "./auth-email-runtime";
 
 export async function submitAccessRequest(request: Request): Promise<Response> {
   try {
@@ -14,7 +16,11 @@ export async function submitAccessRequest(request: Request): Promise<Response> {
     const key = Buffer.from(value, "base64url");
     if (key.length !== 32 || key.toString("base64url") !== value) throw new Error("Invalid configuration");
     const abuse = createBusinessAuthAbuseService({ hmacSecret: key });
-    const repository = new PrismaAccessRequests(getProductionPrismaClient());
+    const canonicalOrigin = getCanonicalAppOrigin();
+    const repository = new PrismaAccessRequests(getProductionPrismaClient(), undefined, {
+      sender: createLazyAuthEmailSender(canonicalOrigin), canonicalOrigin,
+      defer: task => after(task),
+    });
     return await createAccessRequestTransport({ canonicalOrigin: getCanonicalAppOrigin(), verifyProxy: verifyRuntimeProxy, abuse, turnstileVerifier: createRuntimeTurnstileVerifier(), submit: input => repository.submit(input) })(request);
   } catch { return Response.json({ status: "OPERATIONAL_FAILURE" }, { status: 503, headers: { "cache-control": "no-store" } }); }
 }

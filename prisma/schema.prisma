@@ -195,6 +195,7 @@ enum AuthAbuseEndpoint {
 }
 
 model User {
+  onboardingGrant PlatformOnboardingGrant?
   regulatoryGrant PlatformRegulatoryGrant?
   billingGrant PlatformBillingGrant?
   platformGrant PlatformGrant?
@@ -1145,6 +1146,7 @@ model CatalogImportRow {
 
 /// Operator-only PII. A public request never grants tenant authority.
 model AccessRequest {
+  adminNotification AccessRequestAdminNotification?
   id String @id @default(uuid()) @db.Uuid
   email String @unique @db.VarChar(254)
   contactName String @db.VarChar(120)
@@ -1168,6 +1170,36 @@ model AccessRequest {
   user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
   activation AccountActivationIntent? @relation(fields: [activationId], references: [id], onDelete: Restrict)
   @@index([status, createdAt, id])
+}
+
+/// Explicit approval authority; never inferred from tenant, platform read or billing grants.
+model PlatformOnboardingGrant {
+  userId String @id @db.Uuid
+  grantedAt DateTime @default(now())
+  revokedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
+
+/// Operator-managed single inbox. Disabled until sending is explicitly approved.
+model OnboardingNotificationSettings {
+  id Int @id @default(1)
+  recipientEmail String @db.VarChar(254)
+  enabled Boolean @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+/// One retained admin notification per request. Unknown delivery never auto-retries.
+model AccessRequestAdminNotification {
+  requestId String @id @db.Uuid
+  recipientEmail String @db.VarChar(254)
+  status String @default("PENDING") @db.VarChar(24)
+  attempts Int @default(0)
+  attemptId String? @db.Uuid
+  startedAt DateTime?
+  sentAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  request AccessRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
 }
 
 /// Private current billing identity. Future invoices own immutable snapshots.
