@@ -3,6 +3,7 @@ import type { Prisma, PrismaClient } from "@/src/generated/prisma/client";
 import { accessRequestIdSchema } from "@/src/application/auth/access-request";
 import type { AuthEmailSender } from "@/src/application/auth/auth-email";
 import { AuthEmailDeliveryError } from "@/src/infrastructure/auth/nodemailer-auth-email-sender-core";
+import { allowsAutomaticAdminNotification, readOnboardingNotificationPolicy, type OnboardingNotificationPolicyReader } from "./onboarding-notification-policy";
 export async function prepareAdminNotification(tx: Prisma.TransactionClient, requestId: string) {
   const settings = await tx.onboardingNotificationSettings.findUnique({ where: { id: 1 } });
   if (!settings)
@@ -11,7 +12,7 @@ export async function prepareAdminNotification(tx: Prisma.TransactionClient, req
   return true;
 }
 export class PrismaAccessRequestNotifications {
-  constructor(private readonly db: PrismaClient, private readonly canonicalOrigin: string) { }
+  constructor(private readonly db: PrismaClient, private readonly canonicalOrigin: string, private readonly policyReader: OnboardingNotificationPolicyReader = readOnboardingNotificationPolicy) { }
   async prepare(requestId: string) {
     accessRequestIdSchema.parse(requestId);
     return this.db.$transaction(async (tx) => {
@@ -32,6 +33,16 @@ export class PrismaAccessRequestNotifications {
       // automatic dispatch remains disabled. Public submissions supply no operator.
       if (!settings || (!settings.enabled && !operator) || settings.recipientEmail !== row.recipientEmail)
         return { send: false as const, status: row.status };
+      if (!operator) {
+        // Automatic sends are staging-only, new-request-only and never retry.
+        if (this.canonicalOrigin !== "https://staging.passvero.eu" || retry)
+          return { send: false as const, status: row.status };
+        const request = await tx.accessRequest.findUnique({ where: { id: requestId }, select: {
+          createdAt: true, email: true, contactName: true, organizationDisplayName: true, locale: true,
+        } });
+        if (!request || !allowsAutomaticAdminNotification(await this.policyReader(), request, row.recipientEmail, row.attempts, new Date()))
+          return { send: false as const, status: row.status };
+      }
       if (!retry && row.status !== "PENDING")
         return { send: false as const, status: row.status };
       if (retry && (row.attempts >= 3 || row.status === "SENT" || (row.status === "IN_PROGRESS" && row.startedAt && Date.now() - row.startedAt.getTime() < 600000)))

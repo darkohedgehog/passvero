@@ -199,3 +199,22 @@ handles partial installation or absent timer units. Six isolated filesystem/mock
 independent re-review found no remaining blocker. Live rollback has not been executed.
 
 PRODUCTION_CHANGES=NONE; AUTOMATIC_DATA_DELETION=NO; COMMIT_SCOPE=REVIEWED_MANIFEST; PUSH_CREATED=NO.
+
+## Scoped automation follow-up — 2026-10-07
+
+The disabled final boundary above is historical October 1 evidence. A separately approved
+October 7 configuration enabled only campaign a24b67dd-442c-4f06-b4f3-498554b4ff31 and
+the regular staging timer: one controlled onboarding organization, verified active OWNER,
+SUBSCRIPTION only, maximum 12 total attempts, fixed expiry 2027-04-06T15:27:58.877Z.
+Old synthetic campaigns remain disabled; no future organization or PUBLIC_AVAILABILITY
+message is included. First and next regular cycles succeeded with zero dispatches and
+unchanged delivery/attempt counters. Dates, quotas and commercial data are unchanged.
+Natural subscription email delivery is deferred; no date changes manufacture acceptance.
+See [scoped automation evidence and disable/rollback procedure](STAGING_ACCESS_NOTIFICATIONS_AND_SUBSCRIPTION_REMINDERS_ACTIVATION.md).
+Historical renewal/cancellation evidence above is reused, not repeated.
+
+Final October 7 operator PASS additionally confirms the successful regular cycle after
+the admin acceptance email, with zero subscription attempts and unchanged counters.
+The approved campaign and timer remain enabled; no new subscription SMTP/inbox acceptance
+is claimed until a naturally due message. NEW_REQUESTS admin notifications are separately
+enabled from the original 2026-10-07T15:04:06.958Z cutoff, without historical backfill.

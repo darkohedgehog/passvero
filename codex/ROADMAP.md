@@ -102,3 +102,28 @@ is reused. Safari desktop/responsive review uses synthetic local data. Staging d
 read-only review completed without business actions. Rollback remains prepared; see
 [UI alignment report](PLATFORM_ACCESS_AND_SUBSCRIPTION_UI_ALIGNMENT_STAGING.md).
 No production, commit, push or automation changes.
+
+## Staging notifications and reminders activation — 2026-10-07
+
+Read-only inventory reviewed; automatic access notifications and reminder timer/campaigns
+were initially disabled; the scoped proposal is approved and guard deployment PASS
+(`qgd6USnbSbiUKZInR9gSC`). Operator configuration PASS: bounded ACCEPTANCE guard and exact campaign/timer enabled
+at 2026-10-07T15:04:06.958Z. One automatic admin notification accepted and inbox-confirmed; request stays PENDING.
+Finalization PASS: NEW_REQUESTS active with the original cutoff and no backfill.
+Post-email regular cycle succeeded; subscription attempts remain zero. Historical test fixtures
+are excluded. No eligible subscription message is due for the proposed controlled
+onboarding tenant; its dates remain unchanged. The atomic one-attempt guard is deployed for the acceptance window;
+NEW_REQUESTS retains the original cutoff after confirmed acceptance. See
+[activation evidence](STAGING_ACCESS_NOTIFICATIONS_AND_SUBSCRIPTION_REMINDERS_ACTIVATION.md).
+
+## Required next implementation: SUBSCRIPTION_REMINDERS_FUTURE_ORGANIZATION_ENROLLMENT
+
+Status: REQUIRED_NEXT; not implemented in this notification automation commit.
+
+Automatically enroll future eligible organizations in subscription reminders using their
+existing trial/paid periods and confirmed authorized recipients. Preserve renewal
+invalidation, idempotent enrollment/delivery, concurrency protection, bounded retry and
+explicit sending controls; DELIVERY_UNKNOWN requires reconciliation. Define enrollment
+scope, budgets and expiry without resetting periods or including historical/test backlog.
+The currently approved staging campaign remains limited to its existing organization and
+recipient; this roadmap item does not expand active campaigns or authorize new sending.

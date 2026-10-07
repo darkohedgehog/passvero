@@ -10,9 +10,10 @@ import type { PlatformActor } from "../../src/application/platform/service";
 import { PrismaVerifiedActivationPersistence } from "../../src/infrastructure/auth/prisma-controlled-activation";
 const db=createTestPrismaClient(requireSafeTestDatabaseConfig(process.env));
 const env={BETTER_AUTH_URL:"https://staging.passvero.eu",BETTER_AUTH_SECRET:"proof-secret-".repeat(6),AUTH_ACTIVATION_CAPABILITY_HMAC_SECRET:Buffer.alloc(32,1).toString("base64url"),AUTH_ACTIVATION_EMAIL_HMAC_SECRET:Buffer.alloc(32,2).toString("base64url")};
+const policyReader = async () => ({mode:"NEW_REQUESTS" as const,activatedAt:"2000-01-01T00:00:00.000Z",recipient:"admin@example.invalid"});
 const sent:AuthEmailMessage[]=[];
 const sender:AuthEmailSender={send:async message=>{sent.push(message);return {status:"SENT"};}};
-const repo=new PrismaAccessRequests(db,async email=>Boolean(await db.authProviderUser.findUnique({where:{email},select:{id:true}})),{sender,canonicalOrigin:env.BETTER_AUTH_URL});
+const repo=new PrismaAccessRequests(db,async email=>Boolean(await db.authProviderUser.findUnique({where:{email},select:{id:true}})),{sender,canonicalOrigin:env.BETTER_AUTH_URL,policyReader});
 const payload=()=>({contactName:"Synthetic",email:`${randomUUID()}@example.invalid`,organizationDisplayName:"Synthetic organization",locale:"hr"});
 test.after(()=>db.$disconnect());
 
@@ -79,14 +80,14 @@ test("new request and one admin outbox are atomic; duplicate submits never resen
 
 test("public submission completes before deferred SMTP; duplicate and scheduling failure retain one pending notice",async()=>{
  const tasks:Array<()=>Promise<void>>=[];const before=sent.length;
- const repository=new PrismaAccessRequests(db,undefined,{sender,canonicalOrigin:env.BETTER_AUTH_URL,defer:task=>{tasks.push(task);}});
+ const repository=new PrismaAccessRequests(db,undefined,{sender,canonicalOrigin:env.BETTER_AUTH_URL,policyReader,defer:task=>{tasks.push(task);}});
  const input=payload();await repository.submit(input);await repository.submit(input);
  const row=await db.accessRequest.findUniqueOrThrow({where:{email:input.email}});
  assert.equal(tasks.length,1);assert.equal(sent.length,before);
  assert.equal((await db.accessRequestAdminNotification.findUniqueOrThrow({where:{requestId:row.id}})).status,"PENDING");
  await tasks[0]();assert.equal(sent.length,before+1);
  const failed=payload();
- await new PrismaAccessRequests(db,undefined,{sender,canonicalOrigin:env.BETTER_AUTH_URL,defer:()=>{throw Error("scheduler unavailable");}}).submit(failed);
+ await new PrismaAccessRequests(db,undefined,{sender,canonicalOrigin:env.BETTER_AUTH_URL,policyReader,defer:()=>{throw Error("scheduler unavailable");}}).submit(failed);
  const retained=await db.accessRequest.findUniqueOrThrow({where:{email:failed.email}});
  assert.equal((await db.accessRequestAdminNotification.findUniqueOrThrow({where:{requestId:retained.id}})).status,"PENDING");
  assert.equal(sent.length,before+1);
@@ -94,14 +95,14 @@ test("public submission completes before deferred SMTP; duplicate and scheduling
 
 test("uncertain admin delivery survives save; replay never retries; retry is explicit and bounded",async()=>{
  let calls=0;const failed:AuthEmailSender={send:async()=>{calls++;throw Error("private SMTP error");}};
- const input=payload();const repository=new PrismaAccessRequests(db,undefined,{sender:failed,canonicalOrigin:env.BETTER_AUTH_URL});
+ const input=payload();const repository=new PrismaAccessRequests(db,undefined,{sender:failed,canonicalOrigin:env.BETTER_AUTH_URL,policyReader});
  await repository.submit(input);
  const row=await db.accessRequest.findUniqueOrThrow({where:{email:input.email}});
- const notifications=new PrismaAccessRequestNotifications(db,env.BETTER_AUTH_URL);
+ const notifications=new PrismaAccessRequestNotifications(db,env.BETTER_AUTH_URL,policyReader);
  assert.equal((await db.accessRequestAdminNotification.findUniqueOrThrow({where:{requestId:row.id}})).status,"DELIVERY_UNKNOWN");
  await repository.submit(input);await notifications.deliver(row.id,sender);assert.equal(calls,1);
- await notifications.deliver(row.id,failed,true);await notifications.deliver(row.id,failed,true);
- await assert.rejects(notifications.deliver(row.id,sender,true));
+ await notifications.deliver(row.id,failed,true,"proof");await notifications.deliver(row.id,failed,true,"proof");
+ await assert.rejects(notifications.deliver(row.id,sender,true,"proof"));
  assert.equal(calls,3);assert.equal(await db.user.count({where:{email:input.email}}),0);
 });
 
@@ -184,11 +185,42 @@ test("application role cannot grant authority or enable email; independent grant
   await assert.rejects(app.platformOnboardingGrant.update({where:{userId:user.id},data:{revokedAt:new Date()}}));
   await assert.rejects(app.onboardingNotificationSettings.update({where:{id:1},data:{enabled:true}}));
   await db.onboardingNotificationSettings.update({where:{id:1},data:{enabled:true}});
-  const input=payload();const repository=new PrismaAccessRequests(app,async()=>false,{sender,canonicalOrigin:env.BETTER_AUTH_URL});
+  const input=payload();const repository=new PrismaAccessRequests(app,async()=>false,{sender,canonicalOrigin:env.BETTER_AUTH_URL,policyReader});
   await repository.submit(input);const request=await db.accessRequest.findUniqueOrThrow({where:{email:input.email}});
   assert.equal((await app.accessRequestAdminNotification.findUniqueOrThrow({where:{requestId:request.id}})).status,"SENT");
   assert.equal((await repository.approveFromPlatform(request.id,actor,db,env,sender)).status,"APPROVED");
   await db.authProviderSession.update({where:{id:session.id},data:{expiresAt:new Date(0)}});
   await assert.rejects(repository.approveFromPlatform(request.id,actor,db,env,sender));
  } finally {await app.$disconnect();}
+});
+
+test("acceptance policy fences unrelated/historical requests and atomically reserves one automatic attempt",async()=>{
+ await db.onboardingNotificationSettings.upsert({where:{id:1},create:{id:1,recipientEmail:"admin@example.invalid",enabled:true},update:{enabled:true}});
+ const input=payload(), activatedAt=new Date(Date.now()-100).toISOString();
+ const policy={mode:"ACCEPTANCE" as const,activatedAt,expiresAt:new Date(Date.parse(activatedAt)+1800000).toISOString(),recipient:"admin@example.invalid",request:{...input,locale:"hr" as const}};
+ let current:typeof policy|null=policy;
+ const reader=async()=>current;
+ let calls=0;
+ const transport:AuthEmailSender={send:async()=>{calls++;return {status:"SENT"};}};
+ const repository=new PrismaAccessRequests(db,undefined,{sender:transport,canonicalOrigin:env.BETTER_AUTH_URL,policyReader:reader});
+ const unrelated=payload();await repository.submit(unrelated);
+ const unrelatedRow=await db.accessRequest.findUniqueOrThrow({where:{email:unrelated.email}});
+ assert.equal((await db.accessRequestAdminNotification.findUniqueOrThrow({where:{requestId:unrelatedRow.id}})).attempts,0);
+ await Promise.all(Array.from({length:8},()=>repository.submit(input)));
+ const row=await db.accessRequest.findUniqueOrThrow({where:{email:input.email}});
+ const notices=new PrismaAccessRequestNotifications(db,env.BETTER_AUTH_URL,reader);
+ await Promise.all(Array.from({length:8},()=>notices.deliver(row.id,transport)));
+ assert.equal(calls,1);
+ assert.equal((await db.accessRequestAdminNotification.findUniqueOrThrow({where:{requestId:row.id}})).attempts,1);
+ assert.equal(await db.authAuditEvent.count({where:{correlationId:row.id,action:"ACCESS_ADMIN_NOTIFICATION_STARTED"}}),1);
+ assert.equal(row.status,"PENDING");assert.equal(row.userId,null);assert.equal(row.organizationId,null);assert.equal(row.activationId,null);
+ // No policy and an expired policy remain closed, even if the DB enabled switch is true.
+ current=null;await repository.submit(payload());assert.equal(calls,1);
+ current={...policy,activatedAt:"2000-01-01T00:00:00.000Z",expiresAt:"2000-01-01T00:30:00.000Z",request:{...unrelated,locale:"hr"}};
+ await notices.deliver(unrelatedRow.id,transport);assert.equal(calls,1);
+ // A matching historical request is also excluded by the activation cutoff.
+ current={...policy,request:{...unrelated,locale:"hr"}};
+ await db.accessRequest.update({where:{id:unrelatedRow.id},data:{createdAt:new Date(0)}});
+ await notices.deliver(unrelatedRow.id,transport);assert.equal(calls,1);
+ await notices.deliver(unrelatedRow.id,transport,true);assert.equal(calls,1);
 });

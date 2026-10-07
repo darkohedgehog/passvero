@@ -1,3 +1,4 @@
+import type { OnboardingNotificationPolicyReader } from "./onboarding-notification-policy";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { Prisma, type PrismaClient } from "@/src/generated/prisma/client";
@@ -22,7 +23,7 @@ export class AccessRequestError extends Error {
 }
 
 export class PrismaAccessRequests {
-  constructor(private readonly prisma: PrismaClient, private readonly providerEmailExists?: (email: string) => Promise<boolean>, private readonly notification?: {sender:AuthEmailSender;canonicalOrigin:string;defer?:(task:()=>Promise<void>)=>void}) {}
+  constructor(private readonly prisma: PrismaClient, private readonly providerEmailExists?: (email: string) => Promise<boolean>, private readonly notification?: {sender:AuthEmailSender;canonicalOrigin:string;policyReader?:OnboardingNotificationPolicyReader;defer?:(task:()=>Promise<void>)=>void}) {}
 
   async submit(value: unknown): Promise<void> {
     const input = accessRequestSchema.parse(value);
@@ -36,7 +37,7 @@ export class PrismaAccessRequests {
       // Saving is authoritative. Mail failure must not turn a retained request into a public error.
       const notification = this.notification;
       const deliver = async () => {
-        try { await new PrismaAccessRequestNotifications(this.prisma, notification.canonicalOrigin).deliver(id, notification.sender); }
+        try { await new PrismaAccessRequestNotifications(this.prisma, notification.canonicalOrigin, notification.policyReader).deliver(id, notification.sender); }
         catch { /* Retained outbox is reconciled explicitly; duplicates never retry it. */ }
       };
       // Public HTTP responses must not wait on SMTP only for newly created requests.
