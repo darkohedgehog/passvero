@@ -1,0 +1,23 @@
+{
+  "status": "PASS_OPERATOR_OUTPUT",
+  "userApproval": "EXPLICIT_COMPLETE_SCOPE_2026-10-08",
+  "deployManifestPin": "f87ceb46255104c856d3012c4aed3eccff48cff311d45cbce3a27fa9bc16df5d",
+  "block": "/private/tmp/VPS-TERMINAL-ENROLLMENT-ENABLE-ACCEPTANCE-20261008.sh",
+  "blockSha256": "551dc8f128864b4d4f31d352b2cf0f4d40b6b7ab3e2ff48930f1dce41ccb3cf4",
+  "inputs": {
+    "enrollment-enable.py": "ef06b3356153148d2be53c54328a029c75850edc77ee93c7678169af4f7bf746",
+    "enable-reviewed.sql": "ab74cc0419ec79bc9ac6b9847c00e6021142f997b474967da64414b55a56abb8",
+    "enable-projection.json": "64a723dd9dad389417fb3dabf215fc1ada8782633d1e91f2bb40aad043fb2769"
+  },
+  "operatorGuardProof": {
+    "pass": 4,
+    "fail": 0,
+    "noDatabaseTimerOrSMTPCalls": true
+  },
+  "enableExecuted": true,
+  "cyclesExecutedForAcceptance": 2,
+  "runtimeSourceChanged": false,
+  "SQLBusinessBody": "UNCHANGED_FROM_REVIEW_ONLY_COMMENT_UPDATED_TO_AUTHORIZED",
+  "enabledAtUtc": "2026-10-08T15:22:24.818Z",
+  "acceptanceEvidence": "operator-acceptance-pass.json"
+}

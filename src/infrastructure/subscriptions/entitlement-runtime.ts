@@ -76,7 +76,7 @@ export async function readReminderCoverage(tx: Tx, organizationId: string, now: 
   const rights = resolveEntitlements({ now, trial, periods: data.periods });
   const stagingException = !!(e?.exceptionStartsAt && e.exceptionEndsAt && e.exceptionStartsAt <= now && now < e.exceptionEndsAt && rights.kind !== "PAID");
   const eligiblePublications = await tx.product.count({ where: { organizationId, lifecycleStatus: "ACTIVE", regulatoryClassification: "VOLUNTARY", currentPublishedVersion: { status: "PUBLISHED" }, passport: { status: "ACTIVE" } } });
-  return { now, trial, periods: data.periods, conditionalPeriodIds: data.conditionalPeriodIds, stagingException, eligiblePublications };
+  return { now, trial, periods: data.periods, conditionalPeriodIds: data.conditionalPeriodIds, stagingException, eligiblePublications, blockedReasons: data.blockedReasons };
 }
 export async function readEntitlements(tx: Tx, organizationId: string, now?: Date): Promise<RuntimeEntitlements> {
   await lockEntitlementOrganization(tx, organizationId);

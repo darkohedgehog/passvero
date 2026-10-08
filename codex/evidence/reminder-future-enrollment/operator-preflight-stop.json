@@ -1,0 +1,7 @@
+{
+  "preflight": "STOP",
+  "reason": "RUNTIME_DATABASE_SCOPE",
+  "databaseWrites": 0,
+  "workerExecuted": false,
+  "emailsSent": 0
+}

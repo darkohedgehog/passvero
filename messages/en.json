@@ -682,6 +682,18 @@
     "failed": "Change not confirmed. Refresh before retrying."
   },
   "SubscriptionReminders": {
+    "enrollment": "Automatic organization enrollment",
+    "enrolled": "Organization enrolled",
+    "excluded": "Organization excluded",
+    "trackedPeriod": "Tracked period",
+    "noCampaign": "No campaign yet",
+    "NO_ELIGIBLE_RECIPIENT": "No eligible confirmed recipient",
+    "RECIPIENT_LIMIT_EXCEEDED": "More than 32 eligible addresses — review required",
+    "NO_AUTHORITATIVE_PERIOD": "No authoritative period",
+    "SENDING_DISABLED": "Sending is disabled",
+    "CAMPAIGN_EXPIRED": "Campaign window expired",
+    "BLOCKED_REQUIRES_OPERATOR": "Plan change requires operator review",
+    "STAGING_EXCEPTION": "Staging exception — reminders paused",
     "title": "Reminder delivery",
     "notice": "SMTP acceptance is not inbox receipt. Uncertain delivery is never retried automatically.",
     "back": "Back to billing",

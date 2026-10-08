@@ -675,6 +675,18 @@
     "failed": "Sprememba ni potrjena. Pred ponovnim poskusom osvežite prikaz."
   },
   "SubscriptionReminders": {
+    "enrollment": "Samodejna vključitev organizacij",
+    "enrolled": "Organizacija vključena",
+    "excluded": "Organizacija izključena",
+    "trackedPeriod": "Spremljano obdobje",
+    "noCampaign": "Kampanje še ni",
+    "NO_ELIGIBLE_RECIPIENT": "Ni ustreznega potrjenega prejemnika",
+    "RECIPIENT_LIMIT_EXCEEDED": "Več kot 32 ustreznih naslovov — potreben pregled",
+    "NO_AUTHORITATIVE_PERIOD": "Ni veljavnega obdobja",
+    "SENDING_DISABLED": "Pošiljanje je izključeno",
+    "CAMPAIGN_EXPIRED": "Obdobje kampanje je poteklo",
+    "BLOCKED_REQUIRES_OPERATOR": "Sprememba paketa zahteva pregled",
+    "STAGING_EXCEPTION": "Staging izjema — opomniki mirujejo",
     "title": "Dostava opomnikov",
     "notice": "Sprejem strežnika SMTP ne potrjuje prejema v nabiralnik. Negotova dostava se ne ponovi samodejno.",
     "back": "Nazaj na obračun",

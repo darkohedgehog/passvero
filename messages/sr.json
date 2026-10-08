@@ -675,6 +675,18 @@
     "failed": "Promena nije potvrđena. Osvežite prikaz pre ponovnog pokušaja."
   },
   "SubscriptionReminders": {
+    "enrollment": "Automatsko uključivanje organizacija",
+    "enrolled": "Organizacija uključena",
+    "excluded": "Organizacija isključena",
+    "trackedPeriod": "Praćeni period",
+    "noCampaign": "Još nema kampanje",
+    "NO_ELIGIBLE_RECIPIENT": "Nema podobnog potvrđenog primaoca",
+    "RECIPIENT_LIMIT_EXCEEDED": "Više od 32 podobne adrese — potreban pregled",
+    "NO_AUTHORITATIVE_PERIOD": "Nema autoritativnog perioda",
+    "SENDING_DISABLED": "Slanje je isključeno",
+    "CAMPAIGN_EXPIRED": "Rok kampanje je istekao",
+    "BLOCKED_REQUIRES_OPERATOR": "Promena paketa zahteva operatora",
+    "STAGING_EXCEPTION": "Staging izuzetak — podsetnici miruju",
     "title": "Dostava podsetnika",
     "notice": "Prihvatanje SMTP servera nije potvrda prijema u sanduče. Neizvesna dostava se ne ponavlja automatski.",
     "back": "Nazad na naplatu",

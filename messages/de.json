@@ -675,6 +675,18 @@
     "failed": "Änderung nicht bestätigt. Vor einem neuen Versuch aktualisieren."
   },
   "SubscriptionReminders": {
+    "enrollment": "Automatische Aufnahme von Organisationen",
+    "enrolled": "Organisation aufgenommen",
+    "excluded": "Organisation ausgeschlossen",
+    "trackedPeriod": "Überwachter Zeitraum",
+    "noCampaign": "Noch keine Kampagne",
+    "NO_ELIGIBLE_RECIPIENT": "Kein geeigneter bestätigter Empfänger",
+    "RECIPIENT_LIMIT_EXCEEDED": "Mehr als 32 geeignete Adressen — Prüfung erforderlich",
+    "NO_AUTHORITATIVE_PERIOD": "Kein maßgeblicher Zeitraum",
+    "SENDING_DISABLED": "Versand deaktiviert",
+    "CAMPAIGN_EXPIRED": "Kampagnenzeitraum abgelaufen",
+    "BLOCKED_REQUIRES_OPERATOR": "Tarifwechsel erfordert eine Prüfung",
+    "STAGING_EXCEPTION": "Staging-Ausnahme — Erinnerungen pausiert",
     "title": "Versand von Erinnerungen",
     "notice": "SMTP-Annahme bestätigt keinen Posteingang. Unklarer Versand wird nicht automatisch wiederholt.",
     "back": "Zurück zur Abrechnung",

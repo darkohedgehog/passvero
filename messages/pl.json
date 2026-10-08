@@ -675,6 +675,18 @@
     "failed": "Zmiana nie została potwierdzona. Odśwież przed ponowną próbą."
   },
   "SubscriptionReminders": {
+    "enrollment": "Automatyczne włączanie organizacji",
+    "enrolled": "Organizacja włączona",
+    "excluded": "Organizacja wyłączona",
+    "trackedPeriod": "Monitorowany okres",
+    "noCampaign": "Brak kampanii",
+    "NO_ELIGIBLE_RECIPIENT": "Brak uprawnionego potwierdzonego odbiorcy",
+    "RECIPIENT_LIMIT_EXCEEDED": "Ponad 32 uprawnione adresy — wymagany przegląd",
+    "NO_AUTHORITATIVE_PERIOD": "Brak wiążącego okresu",
+    "SENDING_DISABLED": "Wysyłanie wyłączone",
+    "CAMPAIGN_EXPIRED": "Okres kampanii wygasł",
+    "BLOCKED_REQUIRES_OPERATOR": "Zmiana planu wymaga operatora",
+    "STAGING_EXCEPTION": "Wyjątek staging — przypomnienia wstrzymane",
     "title": "Dostarczanie przypomnień",
     "notice": "Akceptacja SMTP nie potwierdza odbioru w skrzynce. Niepewna dostawa nie jest automatycznie ponawiana.",
     "back": "Powrót do rozliczeń",

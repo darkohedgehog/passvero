@@ -17,8 +17,8 @@ async function main() {
   const auth = new PrismaClient({ adapter: new PrismaPg({ connectionString: authConfig.connectionString }) });
   try {
     const worker = new ReminderWorker(db, auth, createReminderTransport(validateSmtpConfig(process.env)), { canonicalOrigin: process.env.BETTER_AUTH_URL, runtimeEnvironment: "staging" });
-    const now = new Date();
-    const campaignId = args[1] ?? (await db.reminderCampaign.findFirst({ where: { OR: [{ enabled: true, expiresAt: { gt: now } }, { reminders: { some: { status: { in: ["CLAIMED", "SENDING"] }, leaseUntil: { lte: now } } } }] }, orderBy: [{ lastStartedAt: { sort: "asc", nulls: "first" } }, { id: "asc" }], select: { id: true } }))?.id;
+    if (args[0] === "scheduled") await worker.reconcileEnrollments();
+    const campaignId = args[1] ?? await worker.nextCampaignId();
     if (!campaignId) { console.log(JSON.stringify({ worker: "IDLE", sending: "NO_APPROVED_CAMPAIGN" })); return; }
     if (args[0] === "enqueue") { await worker.enqueue(campaignId); console.log(JSON.stringify({ worker: "ENQUEUED", campaignId, transportCalls: 0 })); }
     else console.log(JSON.stringify({ worker: (await worker.run(campaignId)).status, campaignId, inboxReceipt: "NOT_PROVEN" }));

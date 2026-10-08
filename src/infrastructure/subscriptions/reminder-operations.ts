@@ -24,13 +24,15 @@ export class ReminderOperations {
   }
   overview(actor: CommercialActor) {
     return this.run(actor, async tx => {
-      const [campaigns, counts, deliveries] = await Promise.all([
+      const [campaigns, counts, deliveries, policy, enrollments] = await Promise.all([
         tx.reminderCampaign.findMany({ orderBy: { createdAt: "desc" }, take: 25, select: { id: true, enabled: true, expiresAt: true, maxDispatches: true, dispatches: true, lastStartedAt: true, lastSuccessAt: true, lastError: true } }),
         tx.subscriptionReminder.groupBy({ by: ["status"], _count: true }),
         tx.subscriptionReminder.findMany({ orderBy: [{ updatedAt: "desc" }, { id: "desc" }], take: 100, select: { id: true, organization: { select: { displayName: true } }, recipient: true, kind: true, threshold: true, deadline: true, status: true, attempts: true, lastError: true, nextAttemptAt: true, acceptedAt: true, receiptConfirmedAt: true } }),
+        tx.reminderEnrollmentPolicy.findUnique({ where: { id: 1 }, select: { enabled: true, enabledAt: true } }),
+        tx.organizationReminderEnrollment.findMany({ orderBy: { enrolledAt: "desc" }, take: 100, select: { organizationId: true, enabled: true, excludedAt: true, lastError: true, lastCheckedAt: true, organization: { select: { displayName: true } }, campaigns: { orderBy: { createdAt: "desc" }, take: 1, select: { periodKey: true, enabled: true, expiresAt: true, dispatches: true, maxDispatches: true } } } }),
       ]);
       await tx.authAuditEvent.create({ data: { userId: actor.currentUser.userId, action: "REMINDER_DELIVERY_OVERVIEW_READ", summary: "Billing-authorized delivery overview.", correlationId: randomUUID() } });
-      return { campaigns, counts, deliveries };
+      return { campaigns, counts, deliveries, policy, enrollments };
     });
   }
   confirmBillingEmail(actor: CommercialActor, raw: unknown) {

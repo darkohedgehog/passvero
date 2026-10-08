@@ -1,0 +1,19 @@
+{
+  "deployment": "PASS",
+  "migration": "PASS",
+  "buildId": "mMVPOjFPkw5L42RIqziS4",
+  "migrationCount": 33,
+  "artifacts": 839,
+  "futureEnrollmentEnabled": false,
+  "enrollments": 0,
+  "managedCampaigns": 0,
+  "retainedCampaigns": 3,
+  "milankLimit": 12,
+  "milankDispatches": 0,
+  "timer": "RESTORED_EXISTING_APPROVED_SCOPE",
+  "workerExecutedByInstaller": false,
+  "newRecipients": 0,
+  "emailsSentByInstaller": 0,
+  "inboxReceipt": "NOT_CLAIMED",
+  "rollbackCommand": "python3 -I -B /var/lib/passvero-future-enrollment-20261008/package/enrollment-install.py f87ceb46255104c856d3012c4aed3eccff48cff311d45cbce3a27fa9bc16df5d rollback"
+}

@@ -1,0 +1,99 @@
+{
+  "status": "USER_CONFIRMED_2026-10-08_PENDING_OPERATOR_EXECUTION",
+  "evidence": "OPERATOR_PREFLIGHT_PLUS_GUARDED_DEPLOY_PASS",
+  "activationBoundary": "Actual UTC DB timestamp captured once in approved enable transaction; original boundary retained forever",
+  "existingEnrollment": {
+    "organizationId": "ee116a32-05e8-401f-a90f-b54b31b3b7e9",
+    "name": "Test firma d.o.o.",
+    "origin": "EXISTING_APPROVED",
+    "campaignId": "a24b67dd-442c-4f06-b4f3-498554b4ff31",
+    "periodKey": "trial:2026-10-05T15:27:58.877Z",
+    "automaticRecipients": false,
+    "maxDispatches": 12,
+    "dispatches": 0,
+    "expiresAt": "2027-04-06T15:27:58.877Z",
+    "recipients": [
+      "milanko.zivic@optinet.hr"
+    ],
+    "operators": []
+  },
+  "existingExcludedOrganizations": [
+    {
+      "id": "2a9a42d5-9d24-4003-aca7-fb3a7bf155f9",
+      "name": "SYNTHETIC — Entitlements downgrade-allowed"
+    },
+    {
+      "id": "2f6ef99e-4cc9-4127-8562-ab7d3ea2e622",
+      "name": "SYNTHETIC — Entitlements trial-active"
+    },
+    {
+      "id": "371ef379-7e1f-5775-842f-9eba78838046",
+      "name": "SYNTHETIC — Reminders renewal cancellation"
+    },
+    {
+      "id": "6ba064b9-517b-4bea-8627-28aefc8d6fa4",
+      "name": "SYNTHETIC — Entitlements paid-grace-expired"
+    },
+    {
+      "id": "6d686789-6379-4824-ae02-df97043cbbc0",
+      "name": "Živić-elektro - staging test"
+    },
+    {
+      "id": "7c3a894e-34e0-4897-b61d-df9e672f5340",
+      "name": "SYNTHETIC — Entitlements trial-expired"
+    },
+    {
+      "id": "8504ae2e-059e-5b7d-974d-175e3d3c39c1",
+      "name": "SYNTHETIC — Reminders VOLUNTARY public deadline"
+    },
+    {
+      "id": "8c789610-9953-58c8-9cd7-1b5815dd6fd4",
+      "name": "SYNTHETIC — Reminders trial"
+    },
+    {
+      "id": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+      "name": "Passvero Acceptance"
+    },
+    {
+      "id": "c7f37fd1-10c0-40f8-a66d-c99b14e92635",
+      "name": "SYNTHETIC — Entitlements paid-grace-active"
+    },
+    {
+      "id": "d9d1c9f6-9fee-4df1-8623-02085eb2e9de",
+      "name": "SYNTHETIC — Entitlements downgrade-blocked"
+    },
+    {
+      "id": "da02e9b0-645e-42f1-96aa-4808d32c857d",
+      "name": "SYNTHETIC — Entitlements upgrade"
+    },
+    {
+      "id": "ffe171d1-b6a6-43d5-83bb-890e2fa23c9f",
+      "name": "SYNTHETIC — Subscription commercial acceptance"
+    }
+  ],
+  "newOrganizationsCurrentlyIncluded": [],
+  "futureEligibility": "Organization created at/after recorded boundary AND successful matching approved controlled activation binds at/after boundary and grants valid trial; explicit exclusions retained",
+  "futureRecipientRule": "Active verified OWNERs and currently confirmed matching billing-profile email/revision, normalized dedup, max32; no operator addresses",
+  "futureRecipientNotice": "Future identity/email values do not exist yet. Confirmation of the complete automatic model would authorize this future recipient selection; approval limited to known addresses must not be interpreted as that broader authorization.",
+  "dueMessages": [],
+  "proposedAcceptance": {
+    "scenario": "Durable approved-organization carry-forward and regular scheduled worker idle; no new identity/period/recipient or SMTP attempt",
+    "enrollmentsExpected": 1,
+    "campaignsExpected": 3,
+    "new384TrialCampaignExpected": false,
+    "outboxDeltaExpected": 0,
+    "attemptDeltaExpected": 0,
+    "milankDispatchesExpected": 0,
+    "regularCycle": "COMPLETED with zero dispatches is idle business behavior; literal IDLE status not required",
+    "repeat": "Second ordinary cycle same enrollment/campaign/outbox/attempt counts",
+    "liveNewControlledActivationProof": "NOT_EXECUTED; covered by existing disposable PostgreSQL proof, no artificial live identity proposed"
+  },
+  "enable": false,
+  "workerExecutedForAcceptance": false,
+  "newEmailsAuthorized": true,
+  "enableAuthorization": true,
+  "futureRecipientSelectionAuthorized": true,
+  "futureDueMessagesAuthorized": true,
+  "idleAcceptanceAuthorized": true,
+  "executedEnable": false
+}

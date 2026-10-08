@@ -1,0 +1,76 @@
+{
+  "preflight": "PASS",
+  "observedAt": "2026-10-08T16:56:24.89548+02:00",
+  "scope": {
+    "database": "passvero_acceptance",
+    "port": "5433",
+    "directory": "/var/lib/postgresql/16/acceptance"
+  },
+  "runtimeEndpoints": {
+    "DATABASE_URL": {
+      "role": "passvero_app",
+      "host": "127.0.0.1",
+      "port": 5433,
+      "database": "passvero_acceptance",
+      "valid": true
+    },
+    "AUTH_DATABASE_URL": {
+      "role": "passvero_auth",
+      "host": "127.0.0.1",
+      "port": 5433,
+      "database": "passvero_acceptance",
+      "valid": true
+    }
+  },
+  "buildId": "qgd6USnbSbiUKZInR9gSC",
+  "canonicalSha256": "530d4419c9f37eb8049e9ee74cd1fe7b23517363d1302f9a81c912612f71da94",
+  "verifiedArtifacts": 839,
+  "packageSha256": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+  "lockSha256": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+  "runtimeDependencies": {
+    "next": "c4ef8a1c8da320a162485f96d35df7745da90e6becc36882d6e81be9df66eec1",
+    "react": "e60b92f6031f023907bbfab8f96e63e44307776ec1488f310ba61d41b8cda8cc",
+    "react-dom": "b8448092689c7e6191595a98526ced808288f35138d97fbce5801a94922e3c36",
+    "next-intl": "84f51dcebe80025dc9475fc260dc0e311a33a7af2e1a0a57e7617ca42f06cc69",
+    "@prisma/client": "a64669ec1b457f2651b3de564db6b9604e89460cb349641afffa73b0bbf3939a",
+    "@prisma/adapter-pg": "4a6bb303e1d86f2b8c6ad1f57adac7c924b9ac0f8e1f7b086abe4268ea7e3474",
+    "@better-auth/prisma-adapter": "14b03c83194fd21515d570dbba6ade8a4bb804627d0af3ed80197008aeffc2f8",
+    "better-auth": "d4da1b89925564605ca6540a4f5030aab18de043322ca0b51f08b9ec52b1e092",
+    "pg": "e42dd36cba6e9dd8dbb6f773a2f7be8a8c3c273e18b155e42e75961a4cb8bc28",
+    "nodemailer": "4ea1ee33f7582183473fe5c89215231534c90b3489da575347993505132dbb95",
+    "zod": "d6159aa80f102c2060b90ab0d968588c7fe6a8694df34152cd1f98a391ff8843",
+    "prisma": "d98a88695435d693b66c27d9e8e1b083fc5e544890ce2bdfe755b9f90846e35b"
+  },
+  "workerSha256": "3979c88352bf62bad39a39a70ef050489cb1cbac9ab770e7d56d49c6aaf6a172",
+  "launcherSha256": "598676f413b1c79e7e3bca906599a53975ea34844af14c2efcf674a1be17d0d7",
+  "migrations": {
+    "count": 32,
+    "digest": "eea8e0c2cf283426da7e49d2c106fda3",
+    "finished": true
+  },
+  "organizations": 14,
+  "campaigns": 3,
+  "outboxStatuses": {
+    "CANCELLED": 2,
+    "SENT": 4
+  },
+  "attemptCounts": [
+    {
+      "status": "ACCEPTED",
+      "count": 4
+    }
+  ],
+  "futurePolicyTable": false,
+  "milankCampaign": {
+    "id": "a24b67dd-442c-4f06-b4f3-498554b4ff31",
+    "maxDispatches": 12,
+    "dispatches": 0,
+    "trialStartedAt": "2026-10-05T15:27:58.877",
+    "trialEndsAt": "2027-04-05T15:27:58.877",
+    "campaignExpiresAt": "2027-04-06T15:27:58.877"
+  },
+  "databaseWrites": 0,
+  "workerExecuted": false,
+  "emailsSent": 0,
+  "rawInventory": "PRIVATE_OPERATOR_ATTACHMENT_AND_TEMP_PACKAGE_ONLY"
+}

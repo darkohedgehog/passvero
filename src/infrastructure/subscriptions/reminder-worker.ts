@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { Prisma, type PrismaClient, type SubscriptionReminder } from "@/src/generated/prisma/client";
+import { Prisma, type PrismaClient, type SubscriptionReminder, type ReminderCampaign } from "@/src/generated/prisma/client";
+import { resolveEntitlements } from "@/src/application/subscriptions/entitlements";
 import { reminderDecision, type ReminderDecision } from "@/src/application/subscriptions/reminders";
 import { readReminderCoverage } from "./entitlement-runtime";
 import { campaignScopeSchema, reminderRecipients } from "./reminder-recipients";
@@ -18,7 +19,57 @@ export class ReminderWorker {
   private async campaign(tx: Tx, id: string, now: Date) {
     const row = await tx.reminderCampaign.findUnique({ where: { id } });
     if (!row || !row.enabled || row.expiresAt <= now) return null;
+    if (row.enrollmentOrganizationId) {
+      const policy = await tx.reminderEnrollmentPolicy.findUnique({ where: { id: 1 } });
+      const enrollment = await tx.organizationReminderEnrollment.findUnique({ where: { organizationId: row.enrollmentOrganizationId } });
+      if (!policy?.enabled || !enrollment?.enabled || enrollment.excludedAt) return null;
+    }
     return { ...row, ...campaignScopeSchema.parse(row) };
+  }
+  private forCampaign(campaign: ReminderCampaign, decision: ReminderDecision) {
+    return !campaign.periodKey || (decision.kind === "SUBSCRIPTION" && decision.revision === `${campaign.periodKey.replace(/^paid:/, "")}:${decision.deadline.toISOString()}`);
+  }
+  /** Durable enrollment is the recovery source. No historical tenant scanning or page trigger. */
+  async reconcileEnrollments() {
+    this.assertStaging();
+    const policy = await this.db.reminderEnrollmentPolicy.findUnique({ where: { id: 1 } });
+    if (!policy?.enabled) return;
+    const enrollments = await this.db.organizationReminderEnrollment.findMany({ where: { enabled: true, excludedAt: null }, select: { organizationId: true }, orderBy: { organizationId: "asc" } });
+    for (const { organizationId } of enrollments) await this.db.$transaction(async tx => {
+      const now = this.now(), coverage = await readReminderCoverage(tx, organizationId, now);
+      // Hold the operator gate until all reconciliation writes commit.
+      const gates = await tx.$queryRaw<{ enabled: boolean }[]>`SELECT lock_reminder_enrollment_gate() AS enabled`;
+      const enrollment = await tx.organizationReminderEnrollment.findUniqueOrThrow({ where: { organizationId } });
+      if (!gates[0]?.enabled || !enrollment.enabled || enrollment.excludedAt) return;
+      const rights = resolveEntitlements(coverage);
+      const key = rights.periodId ? `paid:${rights.periodId}` : rights.start ? `trial:${rights.start.toISOString()}` : null;
+      let campaignId: string | null = null;
+      if (key) {
+        const created = await tx.$queryRaw<{ id: string | null }[]>`SELECT create_period_reminder_campaign(${organizationId}::uuid, ${key}::text, ${now}::timestamp) AS id`;
+        campaignId = created[0]?.id ?? null;
+      }
+      const decisions = Object.values(reminderDecision(coverage)).filter((d): d is ReminderDecision => d?.kind === "SUBSCRIPTION");
+      const obsolete = await tx.subscriptionReminder.findMany({ where: { organizationId, campaign: { enrollmentOrganizationId: organizationId }, status: { in: ["PENDING", "CLAIMED"] } } });
+      for (const row of obsolete) if (row.campaignId !== campaignId || !decisions.some(d => this.matches(row, d))) {
+        const changed = await tx.subscriptionReminder.updateMany({ where: { id: row.id, status: { in: ["PENDING", "CLAIMED"] } }, data: { status: "CANCELLED", leaseToken: null, leaseUntil: null, nextAttemptAt: null, lastError: "STALE_OR_UNAUTHORIZED" } });
+        if (changed.count) await this.audit(tx, row, "REMINDER_CANCELLED", { reason: "PERIOD_RECONCILED" });
+      }
+      const campaign = campaignId ? await tx.reminderCampaign.findUnique({ where: { id: campaignId } }) : null;
+      const recipients = campaign ? await reminderRecipients(tx, this.auth, organizationId, campaignScopeSchema.parse(campaign)) : null;
+      const lastError = coverage.stagingException ? "STAGING_EXCEPTION" : coverage.blockedReasons.length ? "BLOCKED_REQUIRES_OPERATOR" : !campaign ? "NO_AUTHORITATIVE_PERIOD" : !campaign.enabled ? "SENDING_DISABLED" : campaign.expiresAt <= now ? "CAMPAIGN_EXPIRED" : campaign.dispatches >= campaign.maxDispatches ? "CAMPAIGN_BUDGET_EXHAUSTED" : recipients?.blocked ? "RECIPIENT_LIMIT_EXCEEDED" : !recipients?.recipients.length ? "NO_ELIGIBLE_RECIPIENT" : null;
+      await tx.organizationReminderEnrollment.update({ where: { organizationId }, data: { lastCheckedAt: now, lastError } });
+    }, { timeout: 15000 });
+  }
+  async nextCampaignId() {
+    this.assertStaging();
+    const now = this.now();
+    const rows = await this.db.$queryRaw<{ id: string }[]>`SELECT c.id FROM "ReminderCampaign" c
+      LEFT JOIN "OrganizationReminderEnrollment" e ON e."organizationId"=c."enrollmentOrganizationId"
+      WHERE (c.enabled AND c."expiresAt">${now} AND c.dispatches<c."maxDispatches"
+        AND (c."enrollmentOrganizationId" IS NULL OR (e.enabled AND e."excludedAt" IS NULL AND EXISTS (SELECT 1 FROM "ReminderEnrollmentPolicy" p WHERE p.id=1 AND p.enabled))))
+      OR EXISTS (SELECT 1 FROM "SubscriptionReminder" r WHERE r."campaignId"=c.id AND r.status IN ('CLAIMED','SENDING') AND r."leaseUntil"<=${now})
+      ORDER BY c."lastStartedAt" ASC NULLS FIRST,c.id LIMIT 1`;
+    return rows[0]?.id;
   }
   private audit(tx: Tx, row: Pick<SubscriptionReminder, "id" | "organizationId">, action: string, metadata: Prisma.InputJsonObject = {}) {
     return tx.auditLog.create({ data: { organizationId: row.organizationId, actorId: null, action, entityType: "SUBSCRIPTION_REMINDER", entityId: row.id, metadata, correlationId: randomUUID() } });
@@ -33,7 +84,7 @@ export class ReminderWorker {
     for (const organizationId of campaign.organizationIds) await this.db.$transaction(async tx => {
       const now = this.now(), current = await this.campaign(tx, campaignId, now);
       if (!current || !current.organizationIds.includes(organizationId)) return;
-      const decisions = (await this.decision(tx, organizationId, now)).filter(d => current.messageKinds.includes(d.kind));
+      const decisions = (await this.decision(tx, organizationId, now)).filter(d => current.messageKinds.includes(d.kind) && this.forCampaign(current, d));
       const { recipients } = await reminderRecipients(tx, this.auth, organizationId, current);
       const pending = await tx.subscriptionReminder.findMany({ where: { organizationId, campaignId, status: "PENDING" }, take: 250 });
       for (const row of pending) if (!decisions.some(d => this.matches(row, d)) || !recipients.some(r => r.email === row.recipient)) {
@@ -42,10 +93,20 @@ export class ReminderWorker {
       }
       const stranded = await tx.subscriptionReminder.findMany({ where: { organizationId, campaignId: { not: campaignId }, status: "PENDING" }, include: { campaign: true }, take: 250 });
       for (const row of stranded) {
+        // Automatic enrollment never adopts messages from an explicitly disabled approval.
+        if (current.enrollmentOrganizationId || row.campaign.enrollmentOrganizationId) continue;
         if (row.campaign.enabled && row.campaign.expiresAt > now && row.campaign.dispatches < row.campaign.maxDispatches) continue;
         if (!decisions.some(d => this.matches(row, d)) || !recipients.some(r => r.email === row.recipient)) continue;
         const adopted = await tx.subscriptionReminder.updateMany({ where: { id: row.id, campaignId: row.campaignId, status: "PENDING" }, data: { campaignId, lastError: null } });
         if (adopted.count) await this.audit(tx, row, "REMINDER_APPROVAL_REPLACED", { previousCampaignId: row.campaignId, campaignId });
+      }
+      if (current.automaticRecipients) {
+        const cancelled = await tx.subscriptionReminder.findMany({ where: { campaignId, organizationId, status: "CANCELLED", attempts: { lt: 3 }, lastError: "STALE_OR_UNAUTHORIZED" } });
+        for (const row of cancelled) if (decisions.some(d => this.matches(row, d)) && recipients.some(r => r.email === row.recipient)) {
+          // Only cancelled unsent/claimed work. SENT/FAILED/UNKNOWN are never resurrected.
+          const changed = await tx.subscriptionReminder.updateMany({ where: { id: row.id, status: "CANCELLED" }, data: { status: "PENDING", nextAttemptAt: now, lastError: null } });
+          if (changed.count) await this.audit(tx, row, "REMINDER_ELIGIBILITY_RESUMED");
+        }
       }
       // ON CONFLICT protects logical uniqueness across processes and campaigns.
       await tx.subscriptionReminder.createMany({ skipDuplicates: true, data: decisions.flatMap(d => recipients.map(recipient => ({ organizationId, campaignId, revision: d.revision, kind: d.kind, threshold: d.threshold, deadline: d.deadline, recipient: recipient.email, nextAttemptAt: now }))) });
@@ -80,6 +141,8 @@ export class ReminderWorker {
     return this.db.$transaction(async tx => {
       // Consistent order: organization entitlement lock, then campaign budget and outbox row.
       const now = this.now(), decisions = await this.decision(tx, row.organizationId, now);
+      const scope = await tx.reminderCampaign.findUniqueOrThrow({ where: { id: row.campaignId }, select: { enrollmentOrganizationId: true } });
+      if (scope.enrollmentOrganizationId) await tx.$queryRaw`SELECT lock_reminder_enrollment_gate()`;
       await tx.$queryRaw`SELECT id FROM "ReminderCampaign" WHERE id=${row.campaignId}::uuid FOR UPDATE`;
       const campaign = await this.campaign(tx, row.campaignId, now);
       const live = await tx.subscriptionReminder.findUniqueOrThrow({ where: { id: row.id } });
@@ -87,7 +150,7 @@ export class ReminderWorker {
       const decision = decisions.find(d => this.matches(row, d));
       const recipients = campaign ? await reminderRecipients(tx, this.auth, row.organizationId, campaign) : null;
       const recipient = recipients?.recipients.find(r => r.email === row.recipient);
-      if (!campaign || campaign.leaseToken !== campaignToken || !campaign.leaseUntil || campaign.leaseUntil <= now || !decision || !recipient || !campaign.messageKinds.includes(decision.kind)) {
+      if (!campaign || campaign.leaseToken !== campaignToken || !campaign.leaseUntil || campaign.leaseUntil <= now || !decision || !this.forCampaign(campaign, decision) || !recipient || !campaign.messageKinds.includes(decision.kind)) {
         await tx.subscriptionReminder.update({ where: { id: row.id }, data: { status: "CANCELLED", leaseToken: null, leaseUntil: null, nextAttemptAt: null, lastError: "STALE_OR_UNAUTHORIZED" } });
         await this.audit(tx, row, "REMINDER_CANCELLED", { reason: "STALE_OR_UNAUTHORIZED" });
         return null;
@@ -128,6 +191,12 @@ export class ReminderWorker {
     this.assertStaging();
     // Recovery records uncertainty, never sends. It remains required after approval expires.
     await this.recover(campaignId);
+    const current = await this.campaign(this.db, campaignId, this.now());
+    if (!current) return { status: "SKIPPED" as const };
+    if (current.dispatches >= current.maxDispatches) {
+      await this.db.reminderCampaign.update({ where: { id: campaignId }, data: { lastError: "CAMPAIGN_BUDGET_EXHAUSTED" } });
+      return { status: "BLOCKED" as const };
+    }
     const now = this.now(), token = randomUUID();
     const acquired = await this.db.reminderCampaign.updateMany({ where: { id: campaignId, enabled: true, expiresAt: { gt: now }, OR: [{ leaseUntil: null }, { leaseUntil: { lte: now } }] }, data: { leaseToken: token, leaseUntil: new Date(now.getTime() + LEASE_MS), lastStartedAt: now } });
     if (!acquired.count) return { status: "SKIPPED" as const };

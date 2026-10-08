@@ -37,7 +37,7 @@ def main():
     # The TS entrypoint emits a small allowlisted result. Never relay stack traces/stderr.
     assert result.returncode == 0
     output = json.loads(result.stdout)
-    assert output.get('worker') in ('IDLE', 'ENQUEUED', 'COMPLETED', 'SKIPPED')
+    assert output.get('worker') in ('IDLE', 'ENQUEUED', 'COMPLETED', 'SKIPPED', 'BLOCKED')
     print(json.dumps(output))
 
 try:

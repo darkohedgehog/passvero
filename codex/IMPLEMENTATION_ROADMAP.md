@@ -1174,3 +1174,47 @@ preserved. Test identities/organization/audit are deliberately retained; see
 No public self-service signup, Platform Admin, billing, production changes or commit/push.
 Retention duration remains a pre-production decision. Next product phases remain billing
 company details, then Platform Admin and manual annual subscriptions; not started here.
+
+
+## SUBSCRIPTION_REMINDERS_FUTURE_ORGANIZATION_ENROLLMENT — 2026-10-08
+
+Business policy confirmed; local implementation and focused PostgreSQL proof complete.
+Controlled trial enrollment is atomic, scheduled reconciliation follows authoritative
+paid periods, and managed sending preserves exclusions, recipient verification,
+finite budgets and DELIVERY_UNKNOWN. Existing trial campaign limit 12 is retained;
+new periods use 384 attempts / 32 deduplicated recipients and end+7 calendar days.
+See [implementation and evidence](SUBSCRIPTION_REMINDERS_FUTURE_ORGANIZATION_ENROLLMENT.md).
+Staging migration/deploy and fresh scope evidence: PENDING_OPERATOR_COMMAND.
+Enable/new live identities/periods/recipients or sending require the exact combined
+projection and user confirmation. No production change, commit or push.
+
+
+- 2026-10-08 future reminder enrollment: corrected read-only operator preflight
+  PASS (acceptance DB 5433, 32 migrations, 839 canonical artifacts); existing
+  Milank campaign retains 12/0 and original deadline. Pinned additive migration
+  and deploy/rollback package prepared; 6 local operator guard/rollback tests PASS.
+  Staging migration/deploy PENDING_OPERATOR_COMMAND; enrollment enable and exact
+  recipient/acceptance proposal remain separately unapproved. No SMTP execution.
+
+- Returned 2026-10-08 enrollment migration/deploy PASS: build mMVPOjFPkw5L42RIqziS4,
+  33 migrations/839 artifacts; policy disabled, enrollments 0, managed campaigns 0,
+  Milank 12/0. Existing timer restored, installer SMTP 0. Combined enable/recipient
+  and ordinary worker idle/replay projection prepared; awaiting user confirmation.
+
+- 2026-10-08 user explicitly approved complete future reminder enrollment/recipient
+  rule and future due delivery. Guarded one-shot enable plus two ordinary timer
+  idle cycles PENDING_OPERATOR_COMMAND. Current Milank 12/0 retained; no extra
+  live activation, identity/period, SMTP-forcing or commercial writes. Successful
+  acceptance leaves policy/timer enabled. Four local operator guard tests PASS.
+
+- **SUBSCRIPTION_REMINDERS_FUTURE_ORGANIZATION_ENROLLMENT — accepted staging scope,
+  2026-10-08:** enable boundary 2026-10-08T15:22:24.818Z; one EXISTING_APPROVED
+  enrollment, legacy current-trial campaign linked without duplicate 384-budget
+  campaign; Milank unchanged 12/0. Two ordinary timer invocations COMPLETED with
+  zero outbox/SMTP attempt delta, original exclusions (13) and counters retained.
+  Policy/timer remain enabled. Future verified OWNER/confirmed billing recipient
+  rule and due subscription delivery explicitly approved; operators empty and
+  PUBLIC_AVAILABILITY disabled. New controlled activation proved locally, not
+  performed live. Final evidence/manifest in codex/evidence/reminder-future-enrollment.
+  No further acceptance action pending in this approved scope; no production,
+  commercial writes, new live identity/period, commit/push or inbox claim.

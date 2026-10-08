@@ -316,7 +316,15 @@ implements VerifiedPersistence {
         },
         select: { organizationId: true },
       });
-      for (const membership of memberships) await activateOrganizationTrial(transaction, membership.organizationId, input.boundAt);
+      for (const membership of memberships) {
+        await activateOrganizationTrial(transaction, membership.organizationId, input.boundAt);
+        const recorded = await transaction.$queryRaw<{ enrolled: boolean }[]>`SELECT record_reminder_enrollment(${membership.organizationId}::uuid, ${input.intentId}::uuid) AS enrolled`;
+        if (recorded[0]?.enrolled) await transaction.auditLog.create({ data: {
+          organizationId: membership.organizationId, actorId: null, action: "REMINDER_ORGANIZATION_ENROLLED",
+          entityType: "ORGANIZATION", entityId: membership.organizationId,
+          metadata: { activationId: input.intentId }, correlationId: input.intentId,
+        } });
+      }
     }
     return result.count === 1;
   }

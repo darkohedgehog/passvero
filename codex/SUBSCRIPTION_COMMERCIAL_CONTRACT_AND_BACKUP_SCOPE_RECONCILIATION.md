@@ -281,3 +281,55 @@ i ne stvara dodatni audit. Ranije aktivirani ADMIN podnositelji zadržavaju
 postojeći trial; izričito odobrena pojedinačna promjena uloge zaseban je auditirani
 operatorski postupak, uz provjeru identiteta, izvornog zahtjeva i odsustva drugog
 OWNER-a. Trial, kvote, podaci i plaćena razdoblja tim se postupkom ne mijenjaju.
+
+
+## Confirmed future subscription enrollment policy — 2026-10-08
+
+The user confirmed durable enrollment from successful controlled trial activation,
+with continuity through authoritative paid periods/renewal/executed replacement.
+Request submission, access approval, subscription request and unaccepted offer do
+not enroll. Historical organization exclusions and the recorded staging enable
+boundary are durable; only the expressly approved existing organization carries
+forward. PUBLIC_AVAILABILITY remains outside this enrollment scope.
+
+Each new authoritative period gets one finite campaign, expiring seven Zagreb
+calendar days after period end. Maximum 32 normalized eligible addresses and
+384 SMTP attempts per campaign; existing three-attempt logical-message limit.
+Active verified OWNERs and matching explicitly confirmed billing addresses are
+revalidated before sending and deduplicated. No automatic operator recipients.
+Upgrade/recipient changes do not reset consumed budget. A distinct confirmed renewal
+gets a distinct campaign; stale pending/claimed messages are cancelled. Unknown
+outcomes require existing operator resolution and never blind replay. Exhaustion
+requires an explicit audited increase, with no automatic refill. Late verification
+sends only the current threshold, with expiry limited to the seven-day window.
+The current approved trial campaign retains its existing ID/scope/limit 12; the
+new model applies to its next confirmed period.
+
+Policy confirmation and local code are not staging enable or new-recipient send
+approval. Exact current inventory/projection and one bounded enrollment/idle
+acceptance must be reviewed separately. [Implementation/evidence](SUBSCRIPTION_REMINDERS_FUTURE_ORGANIZATION_ENROLLMENT.md).
+
+
+2026-10-08 operational approval: user confirmed staging enrollment enable and
+future due subscription delivery to automatically selected eligible verified
+OWNER/confirmed matching billing addresses (max32, dedup, pre-send revalidation),
+without per-new-address approval. Operators remain empty and PUBLIC_AVAILABILITY
+excluded. Enable boundary is actual immutable UTC DB transaction time; only
+Milank's existing organization is carried forward, preserving current 12/0
+campaign/deadline/manual scope. Other 13 existing organizations remain explicitly
+excluded; no backfill. Privileged guarded enable and two natural timer idle cycles
+remain PENDING_OPERATOR_COMMAND. No new live identity/period or commercial write.
+
+
+Final 2026-10-08 operational acceptance supersedes the pending enable handoff:
+activation boundary 2026-10-08T15:22:24.818Z, one EXISTING_APPROVED enrollment for
+Milank's organization, linked old trial campaign with unchanged 12/0/original
+expiry/manual recipients, 13 explicit historical exclusions. Two ordinary worker
+cycles at 15:23:02.823Z and 15:28:05.377Z completed with zero outbox/SMTP attempt
+delta. Three enable/link/enrollment audits retained. Policy and timer remain
+active. Future automatic verified OWNER/confirmed billing address selection and
+due subscription delivery are approved; no operators or PUBLIC_AVAILABILITY.
+Future controlled activation remains a local proof, not a live activation claim.
+No new live identity/period, commercial/production write, inbox receipt, commit
+or push. Final live acceptance evidence and disable/rollback contract are in the
+future enrollment report and codex/evidence/reminder-future-enrollment.

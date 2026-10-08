@@ -1,0 +1,17 @@
+{
+  "archive": "/private/tmp/passvero-future-enrollment-20261008-v2.tar.gz",
+  "archiveSha256": "ff90de291e615b52087d3d4b6c7fc7d19a6952a449b3bcf66e6e435dc928d815",
+  "manifestSha256": "f87ceb46255104c856d3012c4aed3eccff48cff311d45cbce3a27fa9bc16df5d",
+  "applicationFiles": 839,
+  "previousBuild": "qgd6USnbSbiUKZInR9gSC",
+  "newBuild": "mMVPOjFPkw5L42RIqziS4",
+  "futureEnrollmentEnabled": false,
+  "migration": "PASS_OPERATOR_OUTPUT",
+  "deploy": "PASS_OPERATOR_OUTPUT",
+  "blocks": {
+    "/private/tmp/LOCAL-TERMINAL-ENROLLMENT-UPLOAD-20261008.sh": "3bce3721abad6ba72ade1a9efcc108663e908aa75e6d357b20fd9af07ef2da8c",
+    "/private/tmp/VPS-TERMINAL-ENROLLMENT-DEPLOY-20261008.sh": "df810d1e55b6050089b7b562009864f8c2494304c7c81deb35b0968d21b8da19",
+    "/private/tmp/VPS-TERMINAL-ENROLLMENT-ROLLBACK-20261008.sh": "64662e7c79dd5c58698777d33a625476d009cd6b0237602bf741c4a1d6e6da5c"
+  },
+  "futureEnrollmentEnabledFieldMeaning": "PACKAGED_DEFAULT_BEFORE_SEPARATELY_APPROVED_ENABLE"
+}

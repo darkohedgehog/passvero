@@ -233,6 +233,7 @@ model User {
 }
 
 model Organization {
+  reminderEnrollment OrganizationReminderEnrollment?
   subscriptionReminders SubscriptionReminder[]
   billingEmailConfirmation BillingEmailConfirmation?
   entitlementEnrollment OrganizationEntitlementEnrollment?
@@ -987,6 +988,7 @@ model AuthIdentity {
 }
 
 model AccountActivationIntent {
+  reminderEnrollment OrganizationReminderEnrollment?
   accessRequest AccessRequest?
   id                   String                  @id @default(uuid()) @db.Uuid
   userId               String                  @db.Uuid
@@ -1368,6 +1370,10 @@ model PlatformRegulatoryGrant {
 
 /// Explicit, expiring staging delivery approval. Never inferred from a platform grant.
 model ReminderCampaign {
+  enrollmentOrganizationId String? @db.Uuid
+  periodKey String? @db.VarChar(100)
+  automaticRecipients Boolean @default(false)
+  enrollment OrganizationReminderEnrollment? @relation(fields: [enrollmentOrganizationId], references: [organizationId], onDelete: Restrict)
   id String @id @default(uuid()) @db.Uuid
   organizationIds Json
   recipientEmails Json
@@ -1385,6 +1391,32 @@ model ReminderCampaign {
   lastError String?
   createdAt DateTime @default(now())
   reminders SubscriptionReminder[]
+  @@unique([enrollmentOrganizationId, periodKey])
+}
+
+/// Operator-only staging gate. Original boundary and historical exclusions survive disable.
+model ReminderEnrollmentPolicy {
+  id Int @id @default(1)
+  enabled Boolean @default(false)
+  enabledAt DateTime?
+  approvalReference String @db.VarChar(200)
+  excludedOrganizationIds Json @default("[]")
+}
+
+/// Created with the exact controlled trial transaction, or explicit legacy approval.
+model OrganizationReminderEnrollment {
+  organizationId String @id @db.Uuid
+  activationId String? @unique @db.Uuid
+  enrolledAt DateTime
+  origin String @db.VarChar(32)
+  enabled Boolean @default(true)
+  excludedAt DateTime?
+  approvalReference String @db.VarChar(200)
+  lastCheckedAt DateTime?
+  lastError String?
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  activation AccountActivationIntent? @relation(fields: [activationId], references: [id], onDelete: Restrict)
+  campaigns ReminderCampaign[]
 }
 
 model BillingEmailConfirmation {

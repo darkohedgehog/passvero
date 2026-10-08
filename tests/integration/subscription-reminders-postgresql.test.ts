@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 import { createTestPrismaClient, requireSafeTestDatabaseConfig } from "../helpers/test-database";
 import { ReminderWorker } from "../../src/infrastructure/subscriptions/reminder-worker";
 import { ReminderOperations } from "../../src/infrastructure/subscriptions/reminder-operations";
@@ -10,9 +10,16 @@ import type { ReminderTransport } from "../../src/infrastructure/subscriptions/r
 import { reminderRecipients, campaignScopeSchema } from "../../src/infrastructure/subscriptions/reminder-recipients";
 import { calendarAnchor } from "../../src/application/subscriptions/calendar";
 import { TRIAL_LIMITS } from "../../src/application/subscriptions/entitlements";
+import { PrismaVerifiedActivationPersistence } from "../../src/infrastructure/auth/prisma-controlled-activation";
 import { readReminderCoverage } from "../../src/infrastructure/subscriptions/entitlement-runtime";
 const db = createTestPrismaClient(requireSafeTestDatabaseConfig(process.env));
 test.after(() => db.$disconnect());
+test("automatic recipient mode follows verified owners rather than a historic address snapshot", async () => {
+  const f = await fixture();
+  const scope = campaignScopeSchema.parse({ ...f.campaign, automaticRecipients: true, recipientEmails: ["old@example.invalid"], operatorEmails: [] });
+  const result = await db.$transaction(tx => reminderRecipients(tx, db, f.org.id, scope));
+  assert.deepEqual(result.recipients.map(r => r.email), [f.owner.user.email]);
+});
 const at = new Date("2027-03-25T11:00:00Z");
 const options = { canonicalOrigin: "https://staging.passvero.eu", runtimeEnvironment: "staging", now: () => at };
 async function person() {
@@ -23,12 +30,12 @@ async function person() {
   const actor: CommercialActor = { status: "AUTHENTICATED", currentUser: { userId: user.id }, providerSession: { provider: "BETTER_AUTH", providerSessionId: session.id } };
   return { user, provider, actor };
 }
-async function fixture(maxDispatches = 10, trial = true) {
+async function fixture(maxDispatches = 10, trial = true, enrolled = true) {
   const owner = await person(), operator = await person();
   await db.platformBillingGrant.create({ data: { userId: operator.user.id } });
   const org = await db.organization.create({ data: { displayName: "SYNTHETIC reminder", defaultLocale: "hr" } });
   const membership = await db.membership.create({ data: { organizationId: org.id, userId: owner.user.id, role: "OWNER" } });
-  await db.organizationEntitlementEnrollment.create({ data: { organizationId: org.id, enrolledAt: at, trialStartedAt: trial ? new Date("2026-09-30T10:00:00Z") : null, trialEndsAt: trial ? new Date("2027-03-31T10:00:00Z") : null, reason: "Synthetic reminder proof" } });
+  if (enrolled) await db.organizationEntitlementEnrollment.create({ data: { organizationId: org.id, enrolledAt: at, trialStartedAt: trial ? new Date("2026-09-30T10:00:00Z") : null, trialEndsAt: trial ? new Date("2027-03-31T10:00:00Z") : null, reason: "Synthetic reminder proof" } });
   await db.organizationBillingProfile.create({ data: { organizationId: org.id, legalName: "Synthetic", addressLine1: "Test", city: "Test", countryCode: "HR", billingEmail: owner.user.email } });
   const campaign = await db.reminderCampaign.create({ data: { organizationIds: [org.id], recipientEmails: [owner.user.email, operator.user.email], operatorEmails: [operator.user.email], messageKinds: ["SUBSCRIPTION"], maxDispatches, enabled: true, expiresAt: new Date("2027-04-01T00:00:00Z"), approvalReference: "Synthetic local proof" } });
   const api = new PrismaCommercial(db, db, options);
@@ -249,4 +256,204 @@ test("pending downgrade warns conditionally; blocked activation does not suppres
   assert.equal(bodies.length, 4);
   assert.ok(bodies.slice(2).every(body => body.includes("Razdoblje je isteklo")));
   assert.equal((await db.subscriptionPaidPeriodActivation.findUniqueOrThrow({ where: { periodId: future.id } })).status, "BLOCKED_REQUIRES_OPERATOR");
+});
+
+async function activationFixture(boundAt = new Date("2026-09-30T10:00:00Z")) {
+  const f = await fixture(10, true, false);
+  await db.organization.update({ where: { id: f.org.id }, data: { createdAt: new Date(boundAt.getTime() - 7200000) } });
+  await db.$executeRaw`INSERT INTO "ReminderEnrollmentPolicy" (id,enabled,"enabledAt","approvalReference","excludedOrganizationIds") VALUES (1,true,'2025-01-01', 'Local enrollment proof','[]') ON CONFLICT (id) DO UPDATE SET enabled=true,"enabledAt"='2025-01-01'`;
+  const intent = await db.accountActivationIntent.create({ data: { userId: f.owner.user.id, createdAt: new Date(boundAt.getTime() - 3600000), status: "EMAIL_VERIFIED", providerSubject: f.owner.provider.id, tokenDigest: createHash("sha256").update(randomUUID()).digest("base64url"), intendedEmailDigest: createHash("sha256").update(f.owner.user.email).digest("base64url"), emailVerifiedAt: boundAt, authAccountCreatedAt: new Date(boundAt.getTime() - 1800000), expiresAt: new Date("2027-01-01T00:00:00Z") } });
+  await db.accessRequest.create({ data: { email: f.owner.user.email, contactName: "Synthetic", organizationDisplayName: "Synthetic", locale: "hr", status: "APPROVED", deliveryStatus: "SENT", deliveryAttempts: 1, deliveryAttemptId: randomUUID(), deliveryStartedAt: new Date(boundAt.getTime() - 3600000), deliveredAt: new Date(boundAt.getTime() - 3540000), decidedAt: new Date(boundAt.getTime() - 3600000), decidedBy: "LOCAL_PROOF", createdAt: new Date(boundAt.getTime() - 5400000), organizationId: f.org.id, userId: f.owner.user.id, activationId: intent.id } });
+  const binding = { intentId: intent.id, providerSubject: f.owner.provider.id, boundAt: boundAt };
+  const persistence = new PrismaVerifiedActivationPersistence();
+  return { ...f, intent, binding, bind: (tx: Parameters<typeof persistence.markActivationBound>[0]) => persistence.markActivationBound(tx, binding) };
+}
+test("controlled trial and reminder enrollment commit atomically and replay creates no duplicate", async () => {
+  const f = await activationFixture();
+  assert.equal(await db.$transaction(f.bind), true);
+  assert.equal(await db.$transaction(f.bind), false);
+  const rows = await db.$queryRaw<{ organizationId: string; activationId: string }[]>`SELECT * FROM "OrganizationReminderEnrollment" WHERE "organizationId"=${f.org.id}::uuid`;
+  assert.equal(rows.length, 1); assert.equal(rows[0].activationId, f.intent.id);
+});
+test("rolled back and excluded activation produce no reminder enrollment", async () => {
+  const f = await activationFixture();
+  await assert.rejects(db.$transaction(async tx => { await f.bind(tx); throw new Error("ROLLBACK_PROOF"); }), /ROLLBACK_PROOF/);
+  assert.equal(await db.organizationEntitlementEnrollment.count({ where: { organizationId: f.org.id } }), 0);
+  await db.$executeRaw`UPDATE "ReminderEnrollmentPolicy" SET "excludedOrganizationIds"=${JSON.stringify([f.org.id])}::jsonb WHERE id=1`;
+  await db.$transaction(f.bind);
+  assert.equal((await db.$queryRaw<unknown[]>`SELECT * FROM "OrganizationReminderEnrollment" WHERE "organizationId"=${f.org.id}::uuid`).length, 0);
+});
+
+test("competing reconciliation repairs missed campaign creation and follows paid renewals", async () => {
+  const f = await activationFixture(); await db.$transaction(f.bind);
+  const worker = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, options);
+  await Promise.all([worker.reconcileEnrollments(), worker.reconcileEnrollments()]);
+  const trial = await db.reminderCampaign.findMany({ where: { enrollmentOrganizationId: f.org.id } });
+  assert.equal(trial.length, 1); assert.equal(trial[0].maxDispatches, 384);
+  assert.equal(trial[0].expiresAt.toISOString(), "2027-04-07T10:00:00.000Z");
+  await worker.enqueue(trial[0].id);
+  const renewal = await paid(f, new Date("2027-03-31T10:00:00Z"), new Date("2027-06-30T10:00:00Z"));
+  await worker.reconcileEnrollments();
+  assert.equal(await db.subscriptionReminder.count({ where: { campaignId: trial[0].id, status: "PENDING" } }), 0);
+  const next = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, { ...options, now: () => new Date("2027-06-24T10:00:00Z") });
+  await next.reconcileEnrollments();
+  const campaigns = await db.reminderCampaign.findMany({ where: { enrollmentOrganizationId: f.org.id } });
+  assert.equal(campaigns.length, 2); assert.ok(campaigns.some(c => c.periodKey === `paid:${renewal.id}`));
+});
+test("recipient verification resumes current unsent key; policy disable and budget exhaustion stop sends", async () => {
+  const f = await activationFixture(); await db.$transaction(f.bind); let sends = 0;
+  const worker = new ReminderWorker(db, db, { async send() { sends++; return { status: "ACCEPTED" }; } }, options);
+  await worker.reconcileEnrollments();
+  const campaign = await db.reminderCampaign.findFirstOrThrow({ where: { enrollmentOrganizationId: f.org.id } });
+  await worker.enqueue(campaign.id);
+  await db.authProviderUser.update({ where: { id: f.owner.provider.id }, data: { emailVerified: false } });
+  await worker.run(campaign.id); assert.equal(sends, 0);
+  await db.authProviderUser.update({ where: { id: f.owner.provider.id }, data: { emailVerified: true } });
+  await worker.run(campaign.id); assert.equal(sends, 1);
+  await worker.run(campaign.id); assert.equal(sends, 1);
+  await db.reminderCampaign.update({ where: { id: campaign.id }, data: { dispatches: 384 } });
+  await worker.run(campaign.id); assert.equal(sends, 1);
+  await db.reminderEnrollmentPolicy.update({ where: { id: 1 }, data: { enabled: false } });
+  await worker.reconcileEnrollments(); await worker.run(campaign.id); assert.equal(sends, 1);
+});
+
+test("managed runtime reconciliation has no policy, budget or arbitrary campaign write authority", async () => {
+  const f = await activationFixture(); await db.$transaction(f.bind);
+  await db.$executeRawUnsafe('GRANT SELECT ON "ReminderEnrollmentPolicy","OrganizationReminderEnrollment" TO reminder_runtime_proof');
+  await db.$executeRawUnsafe('GRANT UPDATE ("lastCheckedAt","lastError") ON "OrganizationReminderEnrollment" TO reminder_runtime_proof');
+  await db.$executeRawUnsafe('GRANT EXECUTE ON FUNCTION record_reminder_enrollment(UUID,UUID),create_period_reminder_campaign(UUID,TEXT,TIMESTAMP),lock_reminder_enrollment_gate() TO reminder_runtime_proof');
+  const url = new URL(process.env.TEST_DATABASE_URL!); url.searchParams.set("options", "-c role=reminder_runtime_proof");
+  const restricted = createTestPrismaClient(requireSafeTestDatabaseConfig({ NODE_ENV: "test", TEST_DATABASE_URL: url.toString() }));
+  try {
+    const worker = new ReminderWorker(restricted, db, { async send() { return { status: "ACCEPTED" }; } }, options);
+    await worker.reconcileEnrollments();
+    const campaign = await db.reminderCampaign.findFirstOrThrow({ where: { enrollmentOrganizationId: f.org.id } });
+    await worker.run(campaign.id);
+    assert.equal((await db.reminderCampaign.findUniqueOrThrow({ where: { id: campaign.id } })).dispatches, 1);
+    await assert.rejects(restricted.reminderEnrollmentPolicy.update({ where: { id: 1 }, data: { enabled: false } }));
+    await assert.rejects(restricted.organizationReminderEnrollment.update({ where: { organizationId: f.org.id }, data: { enabled: true } }));
+    await assert.rejects(restricted.reminderCampaign.update({ where: { id: campaign.id }, data: { maxDispatches: 500 } }));
+    await assert.rejects(restricted.reminderCampaign.create({ data: { organizationIds: [f.org.id], recipientEmails: [f.owner.user.email], operatorEmails: [], messageKinds: ["SUBSCRIPTION"], maxDispatches: 10, expiresAt: at, approvalReference: "Unapproved" } }));
+    const invalid = await restricted.$queryRaw<{ id: string | null }[]>`SELECT create_period_reminder_campaign(${f.org.id}::uuid,'paid:00000000-0000-0000-0000-000000000001',${at}::timestamp) AS id`;
+    assert.equal(invalid[0].id, null);
+  } finally { await restricted.$disconnect(); }
+});
+test("disabled tenants/campaigns stay disabled and next scheduler skips exhausted approvals", async () => {
+  const f = await activationFixture(); await db.$transaction(f.bind);
+  const worker = new ReminderWorker(db, db, { async send() { assert.fail("No approved dispatch"); } }, options);
+  await worker.reconcileEnrollments();
+  const campaign = await db.reminderCampaign.findFirstOrThrow({ where: { enrollmentOrganizationId: f.org.id } });
+  await db.reminderCampaign.update({ where: { id: campaign.id }, data: { enabled: false } });
+  await worker.reconcileEnrollments(); await worker.run(campaign.id);
+  assert.equal((await db.reminderCampaign.findUniqueOrThrow({ where: { id: campaign.id } })).enabled, false);
+  await db.organizationReminderEnrollment.update({ where: { organizationId: f.org.id }, data: { enabled: false, excludedAt: at } });
+  await db.reminderCampaign.update({ where: { id: campaign.id }, data: { enabled: true } });
+  await worker.reconcileEnrollments(); await worker.run(campaign.id);
+  assert.equal((await db.reminderCampaign.findUniqueOrThrow({ where: { id: campaign.id } })).dispatches, 0);
+  await db.reminderCampaign.updateMany({ data: { dispatches: 10 }, where: { maxDispatches: 10 } });
+  const selected = await worker.nextCampaignId();
+  assert.notEqual(selected, campaign.id);
+  if (selected) { const row = await db.reminderCampaign.findUniqueOrThrow({ where: { id: selected } }); assert.ok(row.dispatches < row.maxDispatches); }
+});
+test("no missed thresholds or expiry backfill beyond seven days; confirmed requests alone never enroll", async () => {
+  const f = await activationFixture();
+  const worker = new ReminderWorker(db, db, { async send() { assert.fail("No expiry backfill"); } }, { ...options, now: () => new Date("2027-04-07T10:00:00Z") });
+  await worker.reconcileEnrollments();
+  assert.equal(await db.organizationReminderEnrollment.count({ where: { organizationId: f.org.id } }), 0);
+  await db.$transaction(f.bind); await worker.reconcileEnrollments();
+  const campaign = await db.reminderCampaign.findFirstOrThrow({ where: { enrollmentOrganizationId: f.org.id } });
+  await worker.run(campaign.id);
+  assert.equal(await db.subscriptionReminder.count({ where: { campaignId: campaign.id } }), 0);
+});
+test("existing explicit campaign is retained for its trial and renewal gets a distinct managed budget", async () => {
+  const f = await fixture(12);
+  await db.reminderEnrollmentPolicy.update({ where: { id: 1 }, data: { enabled: true } });
+  await db.organizationReminderEnrollment.create({ data: { organizationId: f.org.id, enrolledAt: at, origin: "EXISTING_APPROVED", approvalReference: "Explicit local continuity proof" } });
+  await db.reminderCampaign.update({ where: { id: f.campaign.id }, data: { enrollmentOrganizationId: f.org.id, periodKey: "trial:2026-09-30T10:00:00.000Z" } });
+  const worker = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, options);
+  await worker.reconcileEnrollments();
+  assert.equal(await db.reminderCampaign.count({ where: { enrollmentOrganizationId: f.org.id } }), 1);
+  assert.equal((await db.reminderCampaign.findUniqueOrThrow({ where: { id: f.campaign.id } })).maxDispatches, 12);
+  const period = await paid(f, new Date("2027-03-31T10:00:00Z"), new Date("2027-06-30T10:00:00Z"));
+  const future = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, { ...options, now: () => new Date("2027-04-01T10:00:00Z") });
+  await future.reconcileEnrollments();
+  const next = await db.reminderCampaign.findUniqueOrThrow({ where: { enrollmentOrganizationId_periodKey: { enrollmentOrganizationId: f.org.id, periodKey: `paid:${period.id}` } } });
+  assert.equal(next.maxDispatches, 384); assert.equal(next.dispatches, 0);
+});
+
+test("managed plan change keeps spent budget; blocked downgrade cannot enroll a period but executed replacement can", async () => {
+  const f = await activationFixture(); await db.$transaction(f.bind);
+  let now = new Date("2027-01-10T11:00:00Z"), sequence = 0;
+  const api = new PrismaCommercial(db, db, { ...options, now: () => now });
+  const worker = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, { ...options, now: () => now });
+  async function purchase(planSlug: "business" | "pro" | "start", changeKind: "STANDARD" | "UPGRADE" | "DOWNGRADE" | "REPLACEMENT", amount: number) {
+    const requested = await api.request(f.owner.actor, f.org.id, { idempotencyKey: randomUUID(), planSlug, months: 3, changeKind });
+    const request = requested.requests.find(r => r.status === "REQUESTED")!;
+    const local = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Zagreb", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now).replace(" ", "T");
+    const offered = await api.offer(f.operator.actor, { requestId: request.id, issuedAtLocal: local, reference: { issuer: f.org.id, year: 2027, number: `O-${++sequence}` }, netAmountCents: amount, totalAmountCents: amount, taxTreatment: "Synthetic", termsVersion: "v2" });
+    const offer = offered.requests.find(r => r.id === request.id)!.offer!;
+    await api.accept(f.owner.actor, f.org.id, { requestId: request.id, offerId: offer.id });
+    const state = await api.pay(f.operator.actor, { requestId: request.id, offerId: offer.id, reference: { issuer: f.org.id, year: 2027, number: `P-${sequence}` }, kind: "SIMULATED_PAYMENT" });
+    return { request, state };
+  }
+  const initial = await purchase("business", "STANDARD", 29700);
+  const base = await db.subscriptionPaidPeriod.findUniqueOrThrow({ where: { requestId: initial.request.id } });
+  now = new Date("2027-04-04T10:00:00Z"); await worker.reconcileEnrollments();
+  const campaign = await db.reminderCampaign.findUniqueOrThrow({ where: { enrollmentOrganizationId_periodKey: { enrollmentOrganizationId: f.org.id, periodKey: `paid:${base.id}` } } });
+  await worker.run(campaign.id);
+  const upgrade = await purchase("pro", "UPGRADE", 1234); assert.equal(upgrade.state.currentPeriod!.end, base.endsAt.toISOString());
+  await worker.reconcileEnrollments(); await worker.run(campaign.id);
+  assert.equal((await db.reminderCampaign.findUniqueOrThrow({ where: { id: campaign.id } })).dispatches, 1);
+  await db.product.createMany({ data: Array.from({ length: 101 }, () => ({ organizationId: f.org.id, internalName: "Synthetic quota", publicCode: randomUUID() })) });
+  const downgrade = await purchase("start", "DOWNGRADE", 14700);
+  const blocked = await db.subscriptionPaidPeriod.findUniqueOrThrow({ where: { requestId: downgrade.request.id } });
+  now = base.endsAt; await worker.reconcileEnrollments();
+  assert.equal((await db.subscriptionPaidPeriodActivation.findUniqueOrThrow({ where: { periodId: blocked.id } })).status, "BLOCKED_REQUIRES_OPERATOR");
+  assert.equal(await db.reminderCampaign.count({ where: { enrollmentOrganizationId: f.org.id, periodKey: `paid:${blocked.id}` } }), 0);
+  assert.equal((await db.organizationReminderEnrollment.findUniqueOrThrow({ where: { organizationId: f.org.id } })).lastError, "BLOCKED_REQUIRES_OPERATOR");
+  const replacement = await purchase("business", "REPLACEMENT", 29700);
+  const replacementPeriod = await db.subscriptionPaidPeriod.findUniqueOrThrow({ where: { requestId: replacement.request.id } });
+  await worker.reconcileEnrollments();
+  const next = await db.reminderCampaign.findUniqueOrThrow({ where: { enrollmentOrganizationId_periodKey: { enrollmentOrganizationId: f.org.id, periodKey: `paid:${replacementPeriod.id}` } } });
+  assert.equal(next.maxDispatches, 384); assert.equal(next.dispatches, 0);
+});
+test("automatic recipients deduplicate owner/billing and block oversized scope without truncation", async () => {
+  const f = await fixture();
+  await f.operations.confirmBillingEmail(f.operator.actor, { organizationId: f.org.id, email: f.owner.user.email, profileRevision: 1, evidenceReference: "Synthetic possession proof" });
+  const scope = campaignScopeSchema.parse({ ...f.campaign, automaticRecipients: true, recipientEmails: [], operatorEmails: [] });
+  const get = () => db.$transaction(tx => reminderRecipients(tx, db, f.org.id, scope));
+  assert.equal((await get()).recipients.length, 1);
+  for (let i = 0; i < 32; i++) { const owner = await person(); await db.membership.create({ data: { organizationId: f.org.id, userId: owner.user.id, role: "OWNER" } }); }
+  const result = await get(); assert.equal(result.blocked, true); assert.equal(result.recipients.length, 0);
+});
+
+test("boundary and activation evidence exclude old tenants; concurrent bind/reconcile eventually creates one campaign", async () => {
+  const f = await activationFixture();
+  const worker = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, options);
+  assert.equal(await db.$transaction(tx => new PrismaVerifiedActivationPersistence().markActivationBound(tx, { ...f.binding, providerSubject: "wrong-subject" })), false);
+  assert.equal(await db.organizationReminderEnrollment.count({ where: { organizationId: f.org.id } }), 0);
+  await Promise.all([db.$transaction(f.bind), worker.reconcileEnrollments()]);
+  await Promise.all([worker.reconcileEnrollments(), worker.reconcileEnrollments()]);
+  assert.equal(await db.reminderCampaign.count({ where: { enrollmentOrganizationId: f.org.id } }), 1);
+  assert.equal(await db.auditLog.count({ where: { organizationId: f.org.id, action: "REMINDER_PERIOD_CAMPAIGN_CREATED" } }), 1);
+  const campaign = await db.reminderCampaign.findFirstOrThrow({ where: { enrollmentOrganizationId: f.org.id } });
+  await Promise.all([worker.run(campaign.id), worker.run(campaign.id)]);
+  assert.equal(await db.reminderAttempt.count({ where: { reminder: { campaignId: campaign.id } } }), 1);
+  await assert.rejects(db.reminderEnrollmentPolicy.update({ where: { id: 1 }, data: { enabledAt: new Date("2026-01-01") } }), /boundary/);
+  await assert.rejects(db.organizationReminderEnrollment.delete({ where: { organizationId: f.org.id } }), /retained/);
+  const old = await fixture(10, true, false);
+  const intent = await db.accountActivationIntent.create({ data: { userId: old.owner.user.id, status: "EMAIL_VERIFIED", providerSubject: old.owner.provider.id, tokenDigest: createHash("sha256").update(randomUUID()).digest("base64url"), intendedEmailDigest: createHash("sha256").update(old.owner.user.email).digest("base64url"), emailVerifiedAt: at, authAccountCreatedAt: at, createdAt: at, expiresAt: new Date("2027-04-01") } });
+  await db.accessRequest.create({ data: { email: old.owner.user.email, contactName: "Synthetic", organizationDisplayName: "Old tenant", locale: "hr", status: "APPROVED", deliveryStatus: "SENT", deliveryAttempts: 1, deliveryAttemptId: randomUUID(), deliveryStartedAt: at, deliveredAt: at, decidedAt: at, decidedBy: "LOCAL_PROOF", organizationId: old.org.id, userId: old.owner.user.id, activationId: intent.id } });
+  // New activation on an organization that predates the boundary: not a new tenant.
+  await db.organization.update({ where: { id: old.org.id }, data: { createdAt: new Date("2024-01-01") } });
+  await db.$transaction(tx => new PrismaVerifiedActivationPersistence().markActivationBound(tx, { intentId: intent.id, providerSubject: old.owner.provider.id, boundAt: at }));
+  assert.equal(await db.organizationReminderEnrollment.count({ where: { organizationId: old.org.id } }), 0);
+});
+
+test("seven-day expiry window preserves Zagreb earlier DST overlap", async () => {
+  const f = await activationFixture(new Date("2026-04-18T00:30:00Z")); await db.$transaction(f.bind);
+  const worker = new ReminderWorker(db, db, { async send() { return { status: "ACCEPTED" }; } }, { ...options, now: () => new Date("2026-10-18T00:30:00Z") });
+  await worker.reconcileEnrollments();
+  const campaign = await db.reminderCampaign.findFirstOrThrow({ where: { enrollmentOrganizationId: f.org.id } });
+  assert.equal(campaign.expiresAt.toISOString(), "2026-10-25T00:30:00.000Z");
 });
