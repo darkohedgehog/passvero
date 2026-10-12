@@ -1,0 +1,14 @@
+{
+  "applicationSourceChanged": false,
+  "canonicalRequest": "https://staging.passvero.eu/",
+  "canonicalStatus": 200,
+  "canonicalTlsVerify": 0,
+  "location": "/",
+  "observedHttpDate": "Mon, 12 Oct 2026 16:30:26 GMT",
+  "provenance": "ASSISTANT_READ_ONLY_PUBLIC_HTTPS_CHECK",
+  "rawCookiesOrBodyStored": false,
+  "request": "https://staging.passvero.eu/hr",
+  "rootCause": "DEPLOY_HELPER_WRONGLY_REQUIRED_DIRECT_200_AT_NONCANONICAL_DEFAULT_LOCALE_PATH",
+  "sourceEvidence": "src/i18n/routing.ts defaultLocale hr, localePrefix as-needed",
+  "status": 307
+}

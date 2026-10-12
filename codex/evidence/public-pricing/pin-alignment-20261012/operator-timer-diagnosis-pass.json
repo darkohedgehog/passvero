@@ -1,0 +1,32 @@
+{
+  "automaticRetry": false,
+  "backupStateSha256": "83a853dd397c13c2290a94a6defdc51d42638259c76091d6485a840f75ef44d1",
+  "canonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "configSha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+  "coordinationAttemptPresent": false,
+  "interpretation": "POINT_IN_TIME_BOTH_MARGINS_PASS_NO_TIMER_READER_ERROR_DEMONSTRATED_PRIOR_STOP_TIMER_UNKNOWN",
+  "mutations": "NONE",
+  "observedUTC": "2026-10-12T16:21:29+00:00",
+  "preparedResumeAttemptPresent": false,
+  "provenance": "SUMMARY_OF_USER_RETURNED_READ_ONLY_DIAGNOSTIC",
+  "reminderTimer": "ACTIVE_ENABLED_WAITING",
+  "services": "BACKUP_MONITOR_REMINDER_INACTIVE_DEAD",
+  "timers": {
+    "passvero-staging-backup-monitor.timer": {
+      "active": true,
+      "dueUTC": "2026-10-12T17:20:00+00:00",
+      "enabled": true,
+      "nextRealtimeMicroseconds": 1791825600000000,
+      "passesExisting900SecondGuard": true,
+      "remainingSeconds": 3510.881579875946
+    },
+    "passvero-staging-backup.timer": {
+      "active": true,
+      "dueUTC": "2026-10-13T04:30:00+00:00",
+      "enabled": true,
+      "nextRealtimeMicroseconds": 1791865800000000,
+      "passesExisting900SecondGuard": true,
+      "remainingSeconds": 43710.94185066223
+    }
+  }
+}

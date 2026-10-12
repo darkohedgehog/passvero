@@ -1,0 +1,34 @@
+
+> passvero@0.1.0 lint
+> eslint
+
+
+/Users/darkozivic/Desktop/Programiranje/passvero/codex/evidence/platform-admin/check-packaging.mjs
+  2:10  warning  'writeFileSync' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/darkozivic/Desktop/Programiranje/passvero/docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/auth.ts
+  846:47  warning  '_request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/darkozivic/Desktop/Programiranje/passvero/docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/evidence.ts
+  502:20  warning  '_cleanup' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/darkozivic/Desktop/Programiranje/passvero/docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/src/proof-boundary.ts
+  186:3  warning  '_hostileCreateInput' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/darkozivic/Desktop/Programiranje/passvero/docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/harness-contract.test.ts
+   336:25  warning  '_providerUser' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   613:22  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   651:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   679:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   746:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   777:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   808:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   850:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   879:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   908:22  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  1083:20  warning  '_cleanup' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+/Users/darkozivic/Desktop/Programiranje/passvero/docs/superpowers/specs/assets/2026-08-20-better-auth-transaction-proof/harness/test/recovery-boundary.test.ts
+  9:3  warning  'BoundaryAttemptFailed' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 16 problems (0 errors, 16 warnings)

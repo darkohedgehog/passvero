@@ -1,0 +1,12 @@
+{
+  "sourceManifest": "PASS",
+  "artifactArchive": "PASS",
+  "backupBoundary": "copy-check.json",
+  "documentationManifest": "PASS",
+  "buildId": "853RYrj-r5cyoSGuJudap",
+  "sourceFiles": 12,
+  "artifactFiles": 754,
+  "screenshots": 24,
+  "deployment": "PENDING_OPERATOR_PREFLIGHT",
+  "rollback": "PENDING_CURRENT_ARTIFACT_PREFLIGHT"
+}

@@ -1318,3 +1318,161 @@ No repeated acceptance/tests, source/release pin/production changes, commit or p
 Marketing deploy remains deferred until separately approved release-pin alignment;
 legal/marketing diffs retained. This completes only the approved recurring backup
 slice and does not declare all production readiness or authorize deployment.
+
+## MARKETING_STAGING_DEPLOY_AND_EXACT_BACKUP_PIN_ALIGNMENT_RESUME — 2026-10-12
+
+Reviewed 12-file source and complete 754-file archive/build `853RYrj-r5cyoSGuJudap`
+verified unchanged; no rebuild/test repetition. Backup A–D COMPLETE remains accepted.
+Minimal coordinated staging deploy/two-key exact pin alignment is user-authorized.
+One fresh read-only operator preflight PENDING_OPERATOR_COMMAND to derive exact
+canonical/config candidate hashes and confirm idle capture/restore/current schedule.
+[Concrete sequence and paired application/pin rollback](PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md#marketing_staging_deploy_and_exact_backup_pin_alignment_resume--2026-10-12).
+No deploy/pin/timer/runtime mutation yet; six Legal namespaces unchanged and internal
+legal/privacy draft excluded from executable package. No production, sending,
+backup acceptance replay, deletion, commit or push.
+
+
+### Marketing resume — preflight dependency STOP
+
+Initial package/lock identity comparison returned STOP before deployment/pins/timer
+changes. Historical staging package hashes differ from local build input hashes;
+core package metadata matched historical local inputs. One bounded read-only
+runtime dependency/lock comparison PENDING_OPERATOR_COMMAND; no deploy retry,
+rebuild or backup acceptance repeat. [Current diagnosis](PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md#returned-preflight-stop--dependency-identity-comparison).
+
+
+### Marketing resume — dependency baseline reconciled
+
+Returned package/lock matches accepted staging baseline; fifteen installed runtime
+metadata pins match local build. Only bwip-js/csv-parse are separately absent, both
+bundled in the exact reviewed archive with no external runtime traces/imports.
+Minimal preflight guard delta statically verified; no dependency install/new build.
+Read-only v2 release/pin derivation PENDING_OPERATOR_COMMAND; deploy not executed,
+backup A–D/pins/automation and legal draft preserved.
+
+
+### Marketing resume — exact candidates PASS; coordinated deploy pending
+
+Returned preflight confirms new canonical `b2a5866a…` and two-key config `c93266b5…`,
+unchanged deployed Legal namespaces and CONTINUOUS backup baseline. One bounded
+application/exact-pin swap with independent paired rollback/timer closure prepared;
+4 new-helper synthetic closure checks PASS, no accepted test/build replay.
+[Deploy and retained rollback](PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md#exact-candidate-accepted--one-deploypaired-close-handoff)
+PENDING_OPERATOR_COMMAND. Reminder observed activating: wait naturally up to60s,
+then require idle without stopping writer. Backup A–D and legal draft preserved.
+
+
+### Marketing resume — protective near-term STOP, no coordination
+
+Next timer term <=15min caused STOP before attempt/timer/application/pin changes;
+independent closure NOT_STARTED/timerChanges NONE, rollback not needed.
+Exact prepared artifacts/pin inputs retained. One guarded existing-preparation
+continuation prepared with unchanged timing/identity/closure guards and separate
+history, PENDING_OPERATOR_COMMAND; run in ordinary :25–:55 window after monitor,
+outside daily04:30UTC capture hour. No blind retry, rebuild or acceptance replay.
+
+
+### Marketing resume — second near-term STOP, exact timer diagnosis pending
+
+Prepared continuation again stopped before coordination/attempt reservation;
+resume closure NOT_STARTED/timerChanges NONE. Original history retained.
+No further deploy attempt until one read-only VPS clock/raw typed timer/remaining
+margin diagnosis returns. Unchanged900s guard, application/pins/backup acceptance
+and legal draft preserved; no timer or runtime changes.
+
+
+### Marketing resume — exact timer review PASS, one existing-helper continuation
+
+At18:21:29CEST both typed timer margins pass (monitor58m31s, backup12h08m31s);
+old pins/state unchanged and services idle, no attempt reservation. Evidence does
+not establish a timer-reader bug or identify the timer responsible for prior STOPs.
+One existing-helper continuation PENDING_OPERATOR_COMMAND, fresh >20min prelaunch
+window and unchanged15min helper guard; archive exact prior resume STOP/closure,
+retain initial history, reserve one wrapper marker, preserve independent closure.
+No helper/build/source change, backup acceptance replay, legal deploy or commit.
+
+
+### Marketing deploy — runtime/HTTPS and paired rollback health STOP
+
+New release verification and rollback health both STOP; closure absent. Current
+application availability, exact rollback alignment and timer restoration unconfirmed.
+One read-only identity/runtime/local-HTTP/public-HTTPS diagnostic pending; no deploy
+retry or blind timer start. Backup A–D retained; marketing release not COMPLETE.
+
+
+### Marketing closure — old release restored, canonical-route guard correction
+
+Old842-file manifest/pins and online runtime confirmed, backup state unchanged.
+Both backup/monitor timers inactive/enabled; writer baseline active/enabled.
+Helper health incorrectly required200 on /hr, which canonically redirects307 to /;
+independent canonical / read returns200/TLS0. One no-PM2/no-deploy old-release
+closure with exact identity/state/missed-term guards and timer baseline restoration
+PENDING_OPERATOR_COMMAND. Preserve failure history/new artifacts and backup A–D;
+marketing deploy/visual acceptance remain incomplete, legal draft excluded.
+
+
+### Marketing resume — old closure PASS, corrected canonical-health deploy pending
+
+Old exact release healthy; backup/monitor active/enabled and original next terms
+restored, state/writer/history unchanged. One corrected helper uses canonical /
+(direct200/TLS0), exact retained754 files and separate canonical-deploy-* evidence.
+Four local isolated health cases PASS; other helper functions unchanged except
+scoped reuse/prerequisite/namespace plumbing. No build or backup acceptance replay.
+New operatorski block PENDING_OPERATOR_COMMAND; same two exact staging pins,
+independent paired rollback/closure, fresh timer/idle guards. Legal excluded;
+marketing deployment and live visual acceptance still pending.
+
+
+### Marketing staging deploy and exact backup pin alignment — COMPLETE (2026-10-12)
+
+Reviewed build853RYrj-r5cyoSGuJudap deployed,757-file canonical artifact and two
+exact staging pin keys aligned; corrected canonical-route health/independent closure
+PASS. Backup/monitor active/enabled, next returned regular terms19:20CEST monitor
+and2026-10-13 06:30CEST backup; state/writer/history unchanged. Backup A–D retained.
+Live hr/sr/en/de/sl/pl desktop/mobile prices/3-and12-month/exVAT/trial/B2B copy,
+availability and localized CTA navigation PASS; no browser errors/overflow or forms
+submitted. Prior unchanged local evidence reused; no build/backup test replay.
+Paired rollback retained under corrected hash-pinned helper; legal draft outside
+deploy, production unchanged, marketing/legal worktree preserved, no commit/push.
+[Final results and rollback](PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md#final-staging-marketing-deployment-and-read-only-acceptance--complete).
+
+
+### Marketing visual identity restoration — USER_VISUAL_APPROVED_LOCAL_ONLY
+
+User rejected the prior illustration replacement; automated marketing visual PASS
+was not user approval. Restore passport/phone/QR hero and large laptop composition
+with2 new accurate assets based on existing synthetic DPP/dashboard UI. Preserve
+confirmed content/prices/quotas/trial/B2B/localized CTAs; only Hero.highlight changes
+in6 locales.2 affected components: targeted lint/TypeScript and18 local scoped
+viewport checks PASS; desktop/mobile screenshots delivered.
+[Local review and exact diff](MARKETING_VISUAL_IDENTITY_RESTORATION.md).
+User approved the restored local design on 2026-10-12: “Odobravam dizajn.”
+No deploy/repin/backup replay/commit/push; future execution remains a separate phase.
+Historical staging technical proof/backup A–D retained; legal/unrelated work preserved.
+
+### Approved restored marketing design — staging deploy pending operator
+
+User approved design and deploy. New isolated build_tkSUOn0PCoHjpx8V7FVr with756
+pinned executable members, including2 restored public PNGs; build/TypeScript PASS.
+User read-only preflight17:15:38UTC confirms old853RYrj-r5cyoSGuJudap, Legal unchanged,
+CONTINUOUS/hold=false/attempts2 and exact two-key pin delta. New canonicale30e2afa…,
+configa79c6c85…;759 total canonical members. Six local extraction/partial rollback/
+unknown-path checks PASS. Bounded reviewed deploy with independent closure and
+paired rollback PENDING_OPERATOR_COMMAND; fresh timer margin required. No runtime
+change yet, no backup acceptance replay, commit/push or production operation.
+[Plan, exact hashes, operator blocks](MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md).
+
+### Approved restored marketing design — staging COMPLETE
+
+Operator deployment/independent closure PASS: build_tkSUOn0PCoHjpx8V7FVr,759 exact
+canonical files, canonicale30e2afa…/configa79c6c85…, onlybuildId/canonicalSha256 changed.
+Runtime online/HTTPS200 TLS0, failure artifacts null, backup state and writer timer
+unchanged. Backup/monitor active/enabled/waiting; closure next terms13.10 06:30CEST
+and12.10 20:20CEST respectively (point-in-time evidence). A–D acceptance preserved.
+Read-only hero/laptop12 desktop/mobile views across6 locales PASS, no overflow or
+console errors;2 image/build-manifest hashes exact and one request-access CTA GET
+navigation PASS without form submission. Approved design deployed; unchanged prices/
+content proofs reused. Legal excluded/preserved; rollback prepared, not executed;
+no production change, acceptance replay, commit/push. Index empty, marketing/legal
+worktree intentionally preserved.
+[Completion report, exact manifest and rollback](MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md).

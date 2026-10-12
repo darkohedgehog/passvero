@@ -1,0 +1,66 @@
+{
+  "task": "PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING",
+  "branch": "main",
+  "baseHead": "1ba7b34c78d56960014d18e5f4cfef637e057d26",
+  "source": {
+    "app/[locale]/about/page.tsx": {
+      "sha256": "63042305710bc8d6a1d10f582fb64bf6ce6efaa0e0e713dace53b00fb4e75576",
+      "bytes": 8479
+    },
+    "app/[locale]/contact/page.tsx": {
+      "sha256": "04dccb4fbade13e4179f910f4a9d84d95fd1d3b72d447137f4b20e6bddf2dde1",
+      "bytes": 6015
+    },
+    "messages/de.json": {
+      "sha256": "fbcf8f8bd47c819cfc671017f9d94fb6c594da4f29e5b2087603e13c32a20e38",
+      "bytes": 77123
+    },
+    "messages/en.json": {
+      "sha256": "55400862d3894f5bd0b34b82a85d2a65568fd2d2df2a8300cc11c1af60287277",
+      "bytes": 68549
+    },
+    "messages/hr.json": {
+      "sha256": "016a67ce195d82a4f16e70a4f937082fc848f134463ab10841b4fec6d4e4b65e",
+      "bytes": 71967
+    },
+    "messages/pl.json": {
+      "sha256": "834783fb0c16d39c0995ff0d98e41ed8f5cdcc4703da955a68a9e3260bacb604",
+      "bytes": 74013
+    },
+    "messages/sl.json": {
+      "sha256": "21e7017638d9cc5390006e3292dc512387b49a6da3ef3407fb95466a7591e6f4",
+      "bytes": 70348
+    },
+    "messages/sr.json": {
+      "sha256": "a0d83eca9e2bb7c8434a1b109791e5248622ac11a22567fafc13fd0c4dca6bc0",
+      "bytes": 69939
+    },
+    "src/components/marketing/compliance-section.tsx": {
+      "sha256": "aef2d7461d39fb1cb24edf70cd85a715b2c4549849ee494aef8483bee56ebafc",
+      "bytes": 1716
+    },
+    "src/components/marketing/dashboard-preview-section.tsx": {
+      "sha256": "1ad97be888c46713803794031d99b60b1dc31161979f5dbae43395a3821a209d",
+      "bytes": 2966
+    },
+    "src/components/marketing/hero-section.tsx": {
+      "sha256": "ff36bf7b57dba993b506225e60108aea3c503af06936d441cf3119130e840236",
+      "bytes": 4181
+    },
+    "src/components/marketing/pricing-section.tsx": {
+      "sha256": "9acd08ec131291b12b11d9e3c2b4901cae24c8a85b9b1feda1f9c42b804c22a7",
+      "bytes": 4119
+    }
+  },
+  "unchangedReferenceInputs": {
+    "src/application/subscriptions/catalog.ts": "dd6af01c35a261af7eb770707ed1bf0d214b8456d896ed2213bd624c68673a28",
+    "src/application/subscriptions/entitlements.ts": "aae961bc70d2d092352b93e6b7641f16e33cf327c1ca23314b298f56db518656",
+    "codex/SUBSCRIPTION_COMMERCIAL_CONTRACT_AND_BACKUP_SCOPE_RECONCILIATION.md": "38633079d425ce2662d16d6fd414b4b5b21d870c468c210d4532ca410a0bd6c1"
+  },
+  "sourceDiffSha256": "51f0a7a86042f79e2352f64f245aa43147691d9aaaea806683fba272698bda32",
+  "backupChangesExcluded": true,
+  "businessWrites": 0,
+  "commit": false,
+  "push": false,
+  "deployment": "PENDING_OPERATOR_PREFLIGHT"
+}

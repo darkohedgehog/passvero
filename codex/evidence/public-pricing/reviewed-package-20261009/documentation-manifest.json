@@ -1,0 +1,31 @@
+{
+  "task": "PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING",
+  "report": {
+    "path": "codex/PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md",
+    "sha256": "0f4e7b977fb8ff357a77b34cd9b52777281fc6f3cc625434856e34d08b134cb5"
+  },
+  "roadmap": {
+    "path": "codex/IMPLEMENTATION_ROADMAP.md",
+    "currentWholeFileSha256": "a840f0284ca69ce5fdf9823590de5f02254342f2b089f33de1855747da910211",
+    "beforeMarketingSha256": "4da6853e89f8a013f483a831effda9b68ead67f52397ef8d80139a499cb8400e",
+    "ownedPatch": "roadmap-task-only.diff",
+    "ownedPatchSha256": "5d69cf7ff50bdf91c2fcb605f9756bbc739472cf4c67e881e9df721ca9f2eddc",
+    "preExistingBackupDiffExcluded": true
+  },
+  "executableSourceManifest": "source-manifest.json",
+  "artifactManifest": "artifact-manifest.json",
+  "operatorHandoff": {
+    "helper": "vps-preflight.py",
+    "sha256": "76c9341c0a33c5d62d9868a23158e71e7efed466f5606f68d30e44a928495e92",
+    "block": "vps-operator-block.sh"
+  },
+  "operatorEvidence": {
+    "path": "codex/evidence/public-pricing/operator-preflight-20261009.json",
+    "sha256": "a5db23c7ea4cb74ef27c236c758534d1464a5d24a15267b67097dd020c3c56c1"
+  },
+  "currentStatus": "LOCAL_PASS_DEPLOY_DEFERRED_BACKUP_ACCEPTANCE_COORDINATION",
+  "preservedPackage": {
+    "path": "codex/evidence/public-pricing/reviewed-package-20261009",
+    "manifestSha256": "c48446573788f29817dd15d61c87031ab1f519560cdb0d14de79adf777c3105b"
+  }
+}

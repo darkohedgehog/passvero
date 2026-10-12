@@ -7,11 +7,11 @@ import { MarketingContainer } from "@/src/components/marketing/marketing-contain
 import { SiteFooter } from "@/src/components/marketing/site-footer";
 import { SiteHeader } from "@/src/components/marketing/site-header";
 import { isAppLocale } from "@/src/i18n/routing";
+import { getPathname } from "@/src/i18n/navigation";
 import { createLocalizedMetadata } from "@/src/infrastructure/config/canonical-metadata";
 import {
   COMPANY_NAME,
   COMPANY_URL,
-  createMailtoHref,
 } from "@/src/lib/site";
 
 type AboutPageProps = Readonly<{
@@ -54,8 +54,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: "AboutPage" });
-  const contact = await getTranslations({ locale, namespace: "Contact" });
-  const earlyAccessHref = createMailtoHref(contact("earlyAccessSubject"));
+  const earlyAccessHref = getPathname({ locale, href: "/request-access" });
 
   return (
     <div className="marketing-shell min-h-screen font-sans">

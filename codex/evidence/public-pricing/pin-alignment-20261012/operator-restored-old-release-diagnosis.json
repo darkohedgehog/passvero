@@ -1,0 +1,42 @@
+{
+  "automaticRetry": false,
+  "backupAndMonitorServices": "INACTIVE",
+  "backupAndMonitorTimers": "INACTIVE_ENABLED",
+  "backupState": {
+    "attempts": 2,
+    "hold": false,
+    "mode": "CONTINUOUS"
+  },
+  "backupStateSha256": "83a853dd397c13c2290a94a6defdc51d42638259c76091d6485a840f75ef44d1",
+  "boundedHistoricalLogs": "NO_CLASSIFIED_ERRORS_OR_MISSING_MODULES",
+  "buildId": "mMVPOjFPkw5L42RIqziS4",
+  "canonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "configSha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+  "localHttp": {
+    "curlReturnCode": 0,
+    "httpCode": "307",
+    "tlsVerify": "0"
+  },
+  "manifestOld": {
+    "filesVerified": 842
+  },
+  "mutations": "NONE",
+  "observedUTC": "2026-10-12T16:29:55.768162+00:00",
+  "provenance": "SUMMARY_OF_USER_RETURNED_READ_ONLY_FAILED_CLOSURE_DIAGNOSIS",
+  "publicHttps": {
+    "curlReturnCode": 0,
+    "httpCode": "307",
+    "tlsVerify": "0"
+  },
+  "resumeClosure": null,
+  "rollbackArtifacts": "OLD_DIRECTORIES_RESTORED_NEW_DIRECTORIES_RETAINED_FAILED_NEW",
+  "runtimeScope": {
+    "cwd": "/var/www/passvero-acceptance",
+    "name": "passvero-acceptance",
+    "pid": 1113960,
+    "pmId": 0,
+    "status": "online"
+  },
+  "writerService": "INACTIVE",
+  "writerTimer": "ACTIVE_ENABLED"
+}

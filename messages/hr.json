@@ -35,7 +35,7 @@
   "EditProduct": {"metadataTitle": "Uredi proizvod | Passvero", "metadataDescription": "Uredite trenutačnu skicu proizvoda.", "title": "Uredi proizvod", "description": "Ažurirajte osnovne podatke trenutačne skice.", "productName": "Naziv proizvoda", "organizationSku": "SKU organizacije", "optional": "neobavezno", "sourceLocale": "Izvorni jezik", "save": "Spremi promjene", "saving": "Spremanje…", "cancel": "Odustani", "reload": "Ponovno učitaj proizvod", "required": "Ovo je polje obavezno.", "invalidName": "Unesite valjan naziv proizvoda.", "invalidSku": "Unesite valjan SKU.", "skuConflict": "Ovaj SKU već se koristi u vašoj organizaciji.", "staleWrite": "Proizvod je promijenjen. Ponovno ga učitajte prije uređivanja.", "draftNotEditable": "Trenutačnu skicu nije moguće uređivati.", "forbiddenTitle": "Ne možete uređivati ovaj proizvod", "forbidden": "Vaša uloga ne dopušta uređivanje proizvoda u ovoj organizaciji.", "failureTitle": "Proizvod nije ažuriran", "failure": "Proizvod nije moguće ažurirati. Pokušajte ponovno."},
   "Metadata": {
     "title": "Passvero — Digitalne putovnice proizvoda",
-    "description": "Izradite, upravljajte i dijelite pouzdane digitalne putovnice proizvoda.",
+    "description": "Organizirajte i objavite strukturirane digitalne putovnice proizvoda.",
     "openGraphImageAlt": "Passvero platforma za jednostavno upravljanje digitalnim putovnicama proizvoda"
   },
   "Navigation": {
@@ -63,7 +63,7 @@
     }
   },
   "Home": {
-    "title": "Provjerene putovnice proizvoda.",
+    "title": "Digitalne putovnice proizvoda.",
     "description": "Jednostavna platforma za izradu i upravljanje digitalnim putovnicama proizvoda."
   },
   "MarketingNavigation": {"login": "Prijava",
@@ -79,46 +79,102 @@
     "closeMenu": "Zatvori izbornik"
   },
   "Hero": {
-    "badge": "DPP spremno",
-    "title": "Provjerene putovnice proizvoda.",
+    "badge": "Strukturirani podaci",
+    "title": "Digitalne putovnice proizvoda.",
     "highlight": "putovnice proizvoda.",
-    "description": "Cjelovita platforma za digitalne putovnice proizvoda. Strukturirajte podatke, gradite povjerenje i svakom proizvodu dajte transparentan digitalni identitet.",
+    "description": "Strukturirajte podatke o proizvodima, upravljajte verzijama i objavite informacije koje želite podijeliti.",
     "primaryAction": "Zatraži pristup",
-    "secondaryAction": "Pogledajte pregled",
+    "secondaryAction": "Pregledajte",
     "visualAlt": "Digitalna putovnica proizvoda prikazana uz mobilni prikaz i QR karticu",
     "features": {
-      "ready": {"title": "DPP spremno", "description": "Za transparentne podatke o proizvodu"},
-      "secure": {"title": "Sigurno i pouzdano", "description": "Zaštićeni poslovni podaci"},
-      "interoperable": {"title": "Interoperabilno", "description": "GS1, EPCIS i API podrška"},
-      "scalable": {"title": "Skalabilno", "description": "Za svaku industriju"}
+      "ready": {
+        "title": "Strukturirani podaci",
+        "description": "Za vaše DPP procese"
+      },
+      "secure": {
+        "title": "Kontrolirani pristup",
+        "description": "Ovlasti po organizaciji"
+      },
+      "interoperable": {
+        "title": "GTIN i barkod",
+        "description": "Provjera formata i kontrolne znamenke"
+      },
+      "scalable": {
+        "title": "Verzije proizvoda",
+        "description": "Od nacrta do objave"
+      }
+    },
+    "example": {
+      "label": "Primjer prikaza — ilustrativni podaci",
+      "title": "Podaci o proizvodu",
+      "manufacturer": "Proizvođač i materijali",
+      "documents": "Slike i dokumenti"
     }
   },
   "Compliance": {
-    "title": "Stvoreno za usklađenost. Dizajnirano za poslovanje.",
+    "title": "Jasni podaci. Kontrolirana objava.",
     "items": {
-      "ready": {"title": "DPP spremno", "description": "Podržava strukturirane podatke i buduće EU zahtjeve."},
-      "secure": {"title": "Sigurnost u osnovi", "description": "Vaši podaci ostaju zaštićeni i pod vašom kontrolom."},
-      "interoperable": {"title": "Interoperabilno", "description": "Povežite GS1, EPCIS, API-je i druge sustave."},
-      "scalable": {"title": "Skalabilno", "description": "Od malih proizvođača do složenih opskrbnih lanaca."}
-    }
+      "ready": {
+        "title": "Strukturirani podaci",
+        "description": "Organizirajte informacije za svoje DPP procese."
+      },
+      "secure": {
+        "title": "Kontrolirani pristup",
+        "description": "Privatni radni prostor odvojen je od javne objave."
+      },
+      "interoperable": {
+        "title": "GTIN i barkod",
+        "description": "GTIN provjera i barkod nisu GS1 verifikacija ili certifikacija."
+      },
+      "scalable": {
+        "title": "Verzije proizvoda",
+        "description": "Uređujte nacrt bez promjene objavljene verzije."
+      }
+    },
+    "scopeNote": "PDF provjere obuhvaćaju strukturu datoteke i zlonamjerni sadržaj. Ne potvrđuju istinitost dokumenta, autentičnost proizvoda ili regulatornu usklađenost. GS1 registry, EPCIS/API integracije i analitika skeniranja nisu trenutačno dostupne funkcije."
   },
   "HowItWorks": {
     "label": "Kako funkcionira",
     "title": "Od proizvoda do putovnice u 4 jednostavna koraka",
     "steps": {
-      "create": {"title": "Izradite", "description": "Izradite digitalnu putovnicu za svoj proizvod."},
-      "generate": {"title": "Generirajte", "description": "Generirajte jedinstveni QR kod ili nosač podataka."},
-      "share": {"title": "Podijelite", "description": "Povežite ga s proizvodom ili ambalažom."},
-      "verify": {"title": "Provjerite", "description": "Omogućite pristup vjerodostojnim informacijama."}
+      "create": {
+        "title": "Izradite",
+        "description": "Izradite digitalnu putovnicu za svoj proizvod."
+      },
+      "generate": {
+        "title": "Generirajte",
+        "description": "Generirajte QR kod za poveznicu na javnu putovnicu."
+      },
+      "share": {
+        "title": "Podijelite",
+        "description": "Povežite ga s proizvodom ili ambalažom."
+      },
+      "verify": {
+        "title": "Pregledajte",
+        "description": "Omogućite pristup objavljenim informacijama o proizvodu."
+      }
     }
   },
   "DashboardPreview": {
-    "label": "Jedna platforma, sve što trebate",
-    "title": "Upravljajte. Pratite. Uskladite.",
-    "description": "Passvero objedinjuje alate za upravljanje podacima o proizvodima, podršku procesima usklađenosti i izgradnju povjerenja u cijelom opskrbnom lancu.",
-    "features": ["Centralizirano upravljanje proizvodima i putovnicama", "Praćenje podataka i događaja u stvarnom vremenu", "Dokumenti i certifikati na jednom mjestu", "Analitika i uvidi u performanse", "Pristup temeljen na ulogama i timska suradnja"],
-    "action": "Istražite sve mogućnosti",
-    "visualAlt": "Passvero nadzorna ploča za upravljanje digitalnim putovnicama proizvoda"
+    "label": "Pregled radnog prostora",
+    "title": "Uredite. Pregledajte. Objavite.",
+    "description": "Proizvodi, verzije i prilozi u jednom radnom prostoru, uz zaseban javni prikaz objavljenih informacija.",
+    "features": [
+      "Upravljanje katalogom i pretraga proizvoda",
+      "Nacrti i objavljene verzije",
+      "Slike i PDF prilozi po verziji",
+      "Uvoz i izvoz kataloga u CSV formatu",
+      "Pristup organizaciji prema ovlastima"
+    ],
+    "action": "Zatražite pristup",
+    "visualAlt": "Passvero nadzorna ploča za upravljanje digitalnim putovnicama proizvoda",
+    "example": {
+      "label": "Primjer prikaza — ilustrativni podaci",
+      "product": "Proizvod",
+      "draft": "Nacrt",
+      "published": "Objavljeno",
+      "title": "Pregled kataloga"
+    }
   },
   "Industries": {
     "title": "Stvoreno za proizvođače diljem Europe",
@@ -126,35 +182,54 @@
   },
   "Pricing": {
     "label": "Cijene",
-    "title": "Jednostavne cijene stižu uskoro.",
-    "description": "Cijene Passvera bit će objavljene prije javnog lansiranja. Zatražite rani pristup kako biste primali novosti o proizvodu i informacije o cijenama pri lansiranju.",
-    "plans": {
-      "starter": {"name": "Starter", "description": "Za prve korake s digitalnim putovnicama proizvoda."},
-      "growth": {"name": "Professional", "description": "Za rastuće kataloge proizvoda."},
-      "business": {"name": "Enterprise", "description": "Za veće organizacije i složenije potrebe."}
-    },
-    "status": "Detalji stižu uskoro",
-    "featured": "Stiže pri lansiranju",
-    "action": "Zatraži pristup",
-    "note": "Za slanje zahtjeva za pristup nije potrebno plaćanje."
+    "title": "Paketi za vaš katalog",
+    "description": "Odaberite obuhvat koji odgovara vašim proizvodima. Pristup se odobrava nakon pregleda zahtjeva.",
+    "priceNotice": "Ukupne cijene za 3 ili 12 kalendarskih mjeseci, u EUR bez PDV-a. Nema mjesečne pretplate.",
+    "published": "{count} objavljenih proizvoda",
+    "months": "{count, plural, =3 {3 kalendarska mjeseca} other {# kalendarskih mjeseci}}",
+    "limits": "Do {count} ukupno sačuvanih proizvoda, {storage} GiB prostora i {pdf} PDF priloga po verziji.",
+    "customScope": "Obuhvat po dogovoru",
+    "customPrice": "Cijena po ponudi",
+    "customDescription": "Broj proizvoda, prostor i ostali limiti utvrđuju se zasebnom ponudom.",
+    "trial": "Probno razdoblje traje 6 mjeseci od uspješne kontrolirane aktivacije organizacije: do 3 ukupno kreirana proizvoda, uključujući uvoz, i do 3 zauzeta objavljena mjesta. Jedno probno razdoblje po organizaciji; arhiviranje ne vraća mjesto.",
+    "payment": "Zahtjev za pristup ne aktivira račun niti predstavlja kupnju ili odabir paketa. Plaćanje je B2B bankovnim prijenosom po ponudi. Ovlašteni operator aktivira plaćenu pretplatu nakon provjere uplate.",
+    "expiry": "Nakon isteka zaključavaju se sadržajne izmjene i nove objave. Produženi javni prikaz vrijedi samo za prihvatljive dobrovoljne putovnice plaćenih paketa.",
+    "availabilityLink": "Kako se broje mjesta i koliko traje dostupnost?",
+    "detailsTitle": "Objavljena mjesta, dostupnost i čuvanje",
+    "counting": "Proizvod s objavljenom verzijom zauzima jedno mjesto, čak i ako ima novi nacrt ili je arhiviran ili povučen. Nova verzija istog proizvoda ne troši dodatno mjesto. Nacrti, objavljeni i arhivirani proizvodi ulaze u ukupni broj sačuvanih proizvoda; zadržane datoteke i povijesne verzije ulaze u kvotu prostora.",
+    "availability": "Dobrovoljne putovnice (VOLUNTARY) nakon isteka plaćenog paketa mogu ostati javne još 6 mjeseci, uz zaključan sadržaj i postojeće uvjete sigurnog pristupa. Probno razdoblje nema produženi javni prikaz. Obavezni (MANDATORY) i nerazjašnjeni (UNRESOLVED) slučajevi zahtijevaju zaseban dogovor o dugoročnoj dostupnosti; na njih se ne primjenjuje ovo automatsko gašenje.",
+    "retention": "Privatno čuvanje traje 12 mjeseci nakon isteka plaćenog paketa, odnosno 3 mjeseca nakon probnog razdoblja. Tijekom čuvanja ostaju dostupni privatni pregled i raspoloživi izvoz uz postojeće ovlasti. Ti rokovi ne pokreću automatsko trajno brisanje.",
+    "action": "Zatraži pristup"
   },
   "Benefits": {
     "label": "Prednosti",
-    "title": "Izgradite povjerenje. Smanjite rizik. Otključajte vrijednost.",
+    "title": "Jasnije informacije. Jednostavniji rad.",
     "items": {
-      "trust": {"title": "Izgradite povjerenje", "description": "Dokažite autentičnost i transparentnost proizvoda."},
-      "risk": {"title": "Smanjite rizik", "description": "Izbjegnite kazne i podržite regulatorne procese."},
-      "efficiency": {"title": "Povećajte učinkovitost", "description": "Automatizirajte prikupljanje i provjeru podataka."},
-      "value": {"title": "Otključajte vrijednost", "description": "Pretvorite kvalitetnije podatke u pametnije odluke."}
+      "trust": {
+        "title": "Podijelite informacije",
+        "description": "Objavite podatke koje vaši kupci i partneri trebaju."
+      },
+      "risk": {
+        "title": "Pripremite dokumentaciju",
+        "description": "Držite priloge uz odgovarajuću verziju proizvoda."
+      },
+      "efficiency": {
+        "title": "Uredite katalog",
+        "description": "Unesite podatke ili uvezite proizvode iz CSV datoteke."
+      },
+      "value": {
+        "title": "Održavajte pregled",
+        "description": "Pregledajte katalog, nacrte i objavljene verzije."
+      }
     }
   },
   "CTA": {
     "title": "Spremni za početak?",
-    "description": "Pridružite se budućnosti transparentnosti proizvoda.",
+    "description": "Zatražite kontrolirani pristup i predstavite potrebe svojeg tima.",
     "primaryAction": "Zatraži pristup",
-    "noteOne": "Bez obveze",
-    "noteTwo": "Postavljanje u nekoliko minuta",
-    "visualAlt": "Tirkizni štit s kvačicom koji predstavlja provjerene podatke"
+    "noteOne": "Zahtjev nije kupnja",
+    "noteTwo": "Aktivacija nakon odobrenja",
+    "visualAlt": "Dekorativna ilustracija štita"
   },
   "Contact": {
     "emailLabel": "E-pošta",

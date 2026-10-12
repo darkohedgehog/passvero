@@ -1,0 +1,744 @@
+diff --git a/app/[locale]/about/page.tsx b/app/[locale]/about/page.tsx
+index 77e9489..415ba59 100644
+--- a/app/[locale]/about/page.tsx
++++ b/app/[locale]/about/page.tsx
+@@ -7,11 +7,11 @@ import { MarketingContainer } from "@/src/components/marketing/marketing-contain
+ import { SiteFooter } from "@/src/components/marketing/site-footer";
+ import { SiteHeader } from "@/src/components/marketing/site-header";
+ import { isAppLocale } from "@/src/i18n/routing";
++import { getPathname } from "@/src/i18n/navigation";
+ import { createLocalizedMetadata } from "@/src/infrastructure/config/canonical-metadata";
+ import {
+   COMPANY_NAME,
+   COMPANY_URL,
+-  createMailtoHref,
+ } from "@/src/lib/site";
+
+ type AboutPageProps = Readonly<{
+@@ -54,8 +54,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
+   setRequestLocale(locale);
+
+   const t = await getTranslations({ locale, namespace: "AboutPage" });
+-  const contact = await getTranslations({ locale, namespace: "Contact" });
+-  const earlyAccessHref = createMailtoHref(contact("earlyAccessSubject"));
++  const earlyAccessHref = getPathname({ locale, href: "/request-access" });
+
+   return (
+     <div className="marketing-shell min-h-screen font-sans">
+diff --git a/app/[locale]/contact/page.tsx b/app/[locale]/contact/page.tsx
+index c79266b..f252800 100644
+--- a/app/[locale]/contact/page.tsx
++++ b/app/[locale]/contact/page.tsx
+@@ -7,6 +7,7 @@ import { MarketingContainer } from "@/src/components/marketing/marketing-contain
+ import { SiteFooter } from "@/src/components/marketing/site-footer";
+ import { SiteHeader } from "@/src/components/marketing/site-header";
+ import { isAppLocale } from "@/src/i18n/routing";
++import { getPathname } from "@/src/i18n/navigation";
+ import { createLocalizedMetadata } from "@/src/infrastructure/config/canonical-metadata";
+ import {
+   COMPANY_NAME,
+@@ -48,7 +49,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
+   const t = await getTranslations({ locale, namespace: "ContactPage" });
+   const contact = await getTranslations({ locale, namespace: "Contact" });
+   const generalHref = createMailtoHref(contact("generalSubject"));
+-  const earlyAccessHref = createMailtoHref(contact("earlyAccessSubject"));
++  const earlyAccessHref = getPathname({ locale, href: "/request-access" });
+
+   return (
+     <div className="marketing-shell min-h-screen font-sans">
+diff --git a/messages/de.json b/messages/de.json
+index 2a0865a..323e143 100644
+--- a/messages/de.json
++++ b/messages/de.json
+@@ -35,7 +35,7 @@
+   "EditProduct": {"metadataTitle": "Produkt bearbeiten | Passvero", "metadataDescription": "Den aktuellen Produktentwurf bearbeiten.", "title": "Produkt bearbeiten", "description": "Aktualisieren Sie die grundlegenden Angaben des aktuellen Entwurfs.", "productName": "Produktname", "organizationSku": "Organisations-SKU", "optional": "optional", "sourceLocale": "Ausgangssprache", "save": "Änderungen speichern", "saving": "Wird gespeichert…", "cancel": "Abbrechen", "reload": "Produkt neu laden", "required": "Dieses Feld ist erforderlich.", "invalidName": "Geben Sie einen gültigen Produktnamen ein.", "invalidSku": "Geben Sie eine gültige SKU ein.", "skuConflict": "Diese SKU wird bereits in Ihrer Organisation verwendet.", "staleWrite": "Das Produkt wurde geändert. Laden Sie es vor dem Bearbeiten neu.", "draftNotEditable": "Der aktuelle Entwurf kann nicht bearbeitet werden.", "forbiddenTitle": "Sie können dieses Produkt nicht bearbeiten", "forbidden": "Ihre Rolle erlaubt keine Produktbearbeitung in dieser Organisation.", "failureTitle": "Produkt nicht aktualisiert", "failure": "Das Produkt konnte nicht aktualisiert werden. Versuchen Sie es erneut."},
+   "Metadata": {
+     "title": "Passvero — Digitale Produktpässe",
+-    "description": "Erstellen, verwalten und teilen Sie vertrauenswürdige digitale Produktpässe.",
++    "description": "Strukturierte digitale Produktpässe organisieren und veröffentlichen.",
+     "openGraphImageAlt": "Passvero-Plattform für einfaches Management digitaler Produktpässe"
+   },
+   "Navigation": {
+@@ -63,18 +63,18 @@
+     }
+   },
+   "Home": {
+-    "title": "Verifizierte Produktpässe.",
++    "title": "Digitale Produktpässe.",
+     "description": "Eine einfache Plattform zum Erstellen und Verwalten digitaler Produktpässe."
+   },
+   "MarketingNavigation": {"login": "Anmelden","brand": "Passvero", "product": "Produkt", "solutions": "Lösungen", "pricing": "Preise", "resources": "Ressourcen", "about": "Über uns", "contact": "Kontakt", "earlyAccess": "Zugang anfragen", "menu": "Menü öffnen", "closeMenu": "Menü schließen"},
+-  "Hero": {"badge": "DPP-bereit", "title": "Verifizierte Produktpässe.", "highlight": "Produktpässe.", "description": "Die komplette Plattform für digitale Produktpässe. Strukturieren Sie Produktdaten, schaffen Sie Vertrauen und geben Sie jedem Produkt eine transparente digitale Identität.", "primaryAction": "Zugang anfragen", "secondaryAction": "Überblick ansehen", "visualAlt": "Digitaler Produktpass mit mobiler Passansicht und QR-Karte", "features": {"ready": {"title": "DPP-bereit", "description": "Für transparente Produktdaten"}, "secure": {"title": "Sicher & vertrauenswürdig", "description": "Geschützte Geschäftsdaten"}, "interoperable": {"title": "Interoperabel", "description": "GS1-, EPCIS- und API-Unterstützung"}, "scalable": {"title": "Skalierbar", "description": "Für jede Branche"}}},
+-  "Compliance": {"title": "Für Compliance entwickelt. Für Unternehmen gestaltet.", "items": {"ready": {"title": "DPP-bereit", "description": "Unterstützt strukturierte Daten und künftige EU-Anforderungen."}, "secure": {"title": "Sicherheit als Grundlage", "description": "Ihre Daten bleiben geschützt und unter Ihrer Kontrolle."}, "interoperable": {"title": "Interoperabel", "description": "Verbinden Sie GS1, EPCIS, APIs und weitere Systeme."}, "scalable": {"title": "Skalierbar", "description": "Von kleinen Herstellern bis zu komplexen Lieferketten."}}},
+-  "HowItWorks": {"label": "So funktioniert es", "title": "Vom Produkt zum Pass in 4 einfachen Schritten", "steps": {"create": {"title": "Erstellen", "description": "Erstellen Sie einen digitalen Pass für Ihr Produkt."}, "generate": {"title": "Generieren", "description": "Erzeugen Sie einen eindeutigen QR-Code oder Datenträger."}, "share": {"title": "Teilen", "description": "Bringen Sie ihn am Produkt oder an der Verpackung an."}, "verify": {"title": "Prüfen", "description": "Ermöglichen Sie Zugang zu vertrauenswürdigen Informationen."}}},
+-  "DashboardPreview": {"label": "Eine Plattform, alles was Sie brauchen", "title": "Verwalten. Verfolgen. Nachweisen.", "description": "Passvero vereint alle Werkzeuge zur Verwaltung von Produktdaten, zur Unterstützung von Compliance-Prozessen und zum Aufbau von Vertrauen in Ihrer Lieferkette.", "features": ["Zentrale Produkt- und Passverwaltung", "Daten- und Ereignisverfolgung in Echtzeit", "Dokumente und Zertifikate an einem Ort", "Analysen und Leistungsübersichten", "Rollenbasierter Zugriff und Teamarbeit"], "action": "Alle Funktionen entdecken", "visualAlt": "Passvero-Dashboard zur Verwaltung digitaler Produktpässe"},
++  "Hero": {"badge": "Strukturierte Daten", "title": "Digitale Produktpässe.", "highlight": "Digitale Produktpässe.", "description": "Strukturieren Sie Produktdaten, verwalten Sie Versionen und veröffentlichen Sie die Informationen, die Sie teilen möchten.", "primaryAction": "Zugang anfragen", "secondaryAction": "Ansehen", "visualAlt": "Digitaler Produktpass mit mobiler Passansicht und QR-Karte", "features": {"ready": {"title": "Strukturierte Daten", "description": "Für Ihre DPP-Abläufe"}, "secure": {"title": "Kontrollierter Zugang", "description": "Berechtigungen je Organisation"}, "interoperable": {"title": "GTIN und Barcode", "description": "Format- und Prüfziffernprüfung"}, "scalable": {"title": "Produktversionen", "description": "Vom Entwurf zur Veröffentlichung"}}, "example": {"label": "Beispielansicht — illustrative Daten", "title": "Produktinformationen", "manufacturer": "Hersteller und Materialien", "documents": "Bilder und Dokumente"}},
++  "Compliance": {"title": "Klare Daten. Kontrollierte Veröffentlichung.", "items": {"ready": {"title": "Strukturierte Daten", "description": "Organisieren Sie Informationen für Ihre DPP-Abläufe."}, "secure": {"title": "Kontrollierter Zugang", "description": "Der private Arbeitsbereich ist von der öffentlichen Veröffentlichung getrennt."}, "interoperable": {"title": "GTIN und Barcode", "description": "GTIN-Prüfung und Barcode sind keine GS1-Verifizierung oder Zertifizierung."}, "scalable": {"title": "Produktversionen", "description": "Bearbeiten Sie Entwürfe, ohne die veröffentlichte Version zu ändern."}}, "scopeNote": "PDF-Prüfungen betreffen Dateistruktur und Schadsoftware. Sie bestätigen weder die Richtigkeit des Dokuments noch die Produktauthentizität oder regulatorische Konformität. GS1-Register, EPCIS/API-Integrationen und Scan-Analysen sind derzeit keine verfügbaren Funktionen."},
++  "HowItWorks": {"label": "So funktioniert es", "title": "Vom Produkt zum Pass in 4 einfachen Schritten", "steps": {"create": {"title": "Erstellen", "description": "Erstellen Sie einen digitalen Pass für Ihr Produkt."}, "generate": {"title": "Generieren", "description": "Erzeugen Sie einen QR-Code mit Link zum öffentlichen Produktpass."}, "share": {"title": "Teilen", "description": "Bringen Sie ihn am Produkt oder an der Verpackung an."}, "verify": {"title": "Ansehen", "description": "Ermöglichen Sie den Zugriff auf veröffentlichte Produktinformationen."}}},
++  "DashboardPreview": {"label": "Einblick in den Arbeitsbereich", "title": "Bearbeiten. Prüfen. Veröffentlichen.", "description": "Produkte, Versionen und Anhänge in einem Arbeitsbereich mit einer separaten öffentlichen Ansicht veröffentlichter Informationen.", "features": ["Katalogverwaltung und Produktsuche", "Entwürfe und veröffentlichte Versionen", "Bilder und PDF-Anhänge je Version", "Katalogimport und -export im CSV-Format", "Organisationszugriff nach Berechtigungen"], "action": "Zugang anfragen", "visualAlt": "Passvero-Dashboard zur Verwaltung digitaler Produktpässe", "example": {"label": "Beispielansicht — illustrative Daten", "product": "Produkt", "draft": "Entwurf", "published": "Veröffentlicht", "title": "Katalogübersicht"}},
+   "Industries": {"title": "Für Hersteller in ganz Europa entwickelt", "items": {"furniture": "Möbel", "textiles": "Textilien", "packaging": "Verpackungen", "electronics": "Elektronik", "manufacturing": "Fertigung", "consumer": "Konsumgüter"}},
+-  "Pricing": {"label": "Preise", "title": "Einfache Preise folgen in Kürze.", "description": "Die Preise für Passvero werden vor der öffentlichen Einführung bekannt gegeben. Fragen Sie frühzeitigen Zugang an, um Produktneuigkeiten und Informationen zu den Einführungspreisen zu erhalten.", "plans": {"starter": {"name": "Starter", "description": "Für den Einstieg in Digitale Produktpässe."}, "growth": {"name": "Professional", "description": "Für wachsende Produktkataloge."}, "business": {"name": "Enterprise", "description": "Für größere Organisationen und komplexere Anforderungen."}}, "status": "Details folgen in Kürze", "featured": "Zum Marktstart verfügbar", "action": "Zugang anfragen", "note": "Für die Anfrage nach Zugang ist keine Zahlung erforderlich."},
+-  "Benefits": {"label": "Die Vorteile", "title": "Vertrauen schaffen. Risiken senken. Mehrwert erschließen.", "items": {"trust": {"title": "Vertrauen schaffen", "description": "Belegen Sie Authentizität und Transparenz."}, "risk": {"title": "Risiken senken", "description": "Vermeiden Sie Bußgelder und unterstützen Sie regulatorische Prozesse."}, "efficiency": {"title": "Effizienz steigern", "description": "Automatisieren Sie Datenerfassung und Prüfung."}, "value": {"title": "Mehrwert erschließen", "description": "Machen Sie aus besseren Daten klügere Entscheidungen."}}},
+-  "CTA": {"title": "Bereit für den Start?", "description": "Gestalten Sie die Zukunft der Produkttransparenz mit.", "primaryAction": "Zugang anfragen", "noteOne": "Unverbindlich", "noteTwo": "In wenigen Minuten eingerichtet", "visualAlt": "Türkiser Schild mit Häkchen als Symbol für geprüfte Daten"},
++  "Pricing": {"label": "Preise", "title": "Pakete für Ihren Katalog", "description": "Wählen Sie den passenden Umfang für Ihre Produkte. Der Zugang wird nach Prüfung Ihrer Anfrage genehmigt.", "priceNotice": "Gesamtpreise für 3 oder 12 Kalendermonate in EUR ohne Mehrwertsteuer. Kein Monatsabonnement.", "published": "{count} veröffentlichte Produkte", "months": "{count} Kalendermonate", "limits": "Bis zu {count} insgesamt gespeicherte Produkte, {storage} GiB Speicher und {pdf} PDF-Anhänge pro Version.", "customScope": "Umfang nach Vereinbarung", "customPrice": "Preis nach Angebot", "customDescription": "Produktanzahl, Speicher und weitere Grenzen werden in einem individuellen Angebot festgelegt.", "trial": "Die Testphase dauert 6 Monate ab erfolgreicher kontrollierter Aktivierung der Organisation: insgesamt bis zu 3 angelegte Produkte einschließlich Importen und bis zu 3 belegte Veröffentlichungsplätze. Eine Testphase pro Organisation; Archivieren gibt keinen Platz frei.", "payment": "Eine Zugangsanfrage aktiviert kein Konto und bedeutet weder Kauf noch Paketauswahl. B2B-Zahlung erfolgt per Banküberweisung gemäß Angebot. Ein berechtigter Operator aktiviert das bezahlte Abonnement nach Prüfung der Zahlung.", "expiry": "Nach Ablauf werden Inhaltsänderungen und neue Veröffentlichungen gesperrt. Verlängerte öffentliche Verfügbarkeit gilt nur für geeignete freiwillige Produktpässe bezahlter Pakete.", "availabilityLink": "Wie werden Plätze gezählt und wie lange sind Inhalte verfügbar?", "detailsTitle": "Veröffentlichungsplätze, Verfügbarkeit und Aufbewahrung", "counting": "Ein Produkt mit veröffentlichter Version belegt einen Platz, auch mit neuem Entwurf oder wenn es archiviert oder zurückgezogen wurde. Eine neue Version desselben Produkts belegt keinen zusätzlichen Platz. Entwürfe, veröffentlichte und archivierte Produkte zählen zur Gesamtzahl gespeicherter Produkte; aufbewahrte Dateien und frühere Versionen zum Speicherlimit.", "availability": "Freiwillige Produktpässe (VOLUNTARY) können nach Ablauf eines bezahlten Pakets weitere 6 Monate öffentlich bleiben, mit gesperrten Inhalten und den bestehenden Bedingungen für sicheren Zugriff. Für die Testphase gibt es keine verlängerte öffentliche Verfügbarkeit. Verpflichtende (MANDATORY) und ungeklärte (UNRESOLVED) Fälle benötigen eine gesonderte Vereinbarung zur langfristigen Verfügbarkeit; diese automatische Abschaltung gilt für sie nicht.", "retention": "Private Aufbewahrung dauert 12 Monate nach Ablauf eines bezahlten Pakets oder 3 Monate nach der Testphase. Private Ansicht und verfügbare Exporte bleiben während der Aufbewahrung mit bestehenden Berechtigungen zugänglich. Diese Fristen lösen keine automatische endgültige Löschung aus.", "action": "Zugang anfragen"},
++  "Benefits": {"label": "Die Vorteile", "title": "Klarere Informationen. Einfachere Abläufe.", "items": {"trust": {"title": "Informationen teilen", "description": "Veröffentlichen Sie die Daten, die Kunden und Partner benötigen."}, "risk": {"title": "Dokumentation vorbereiten", "description": "Ordnen Sie Anhänge der passenden Produktversion zu."}, "efficiency": {"title": "Katalog organisieren", "description": "Geben Sie Daten ein oder importieren Sie Produkte aus einer CSV-Datei."}, "value": {"title": "Überblick behalten", "description": "Prüfen Sie Katalog, Entwürfe und veröffentlichte Versionen."}}},
++  "CTA": {"title": "Bereit für den Start?", "description": "Fragen Sie kontrollierten Zugang an und nennen Sie uns die Bedürfnisse Ihres Teams.", "primaryAction": "Zugang anfragen", "noteOne": "Anfrage ist kein Kauf", "noteTwo": "Aktivierung nach Genehmigung", "visualAlt": "Dekorative Schildillustration"},
+   "Contact": {"emailLabel": "E-Mail", "earlyAccessSubject": "Anfrage für frühen Zugang zu Passvero", "generalSubject": "Allgemeine Anfrage zu Passvero", "privacySubject": "Datenschutzanfrage zu Passvero"},
+   "AboutPage": {
+     "metadata": {"title": "Über uns | Passvero", "description": "Erfahren Sie, warum wir Passvero entwickeln und wie wir europäischen Unternehmen die Verwaltung von Produktinformationen erleichtern."},
+diff --git a/messages/en.json b/messages/en.json
+index d5e0886..ee26f74 100644
+--- a/messages/en.json
++++ b/messages/en.json
+@@ -35,7 +35,7 @@
+   "EditProduct": {"metadataTitle": "Edit product | Passvero", "metadataDescription": "Edit the current product draft.", "title": "Edit product", "description": "Update the basic details of the current draft.", "productName": "Product name", "organizationSku": "Organization SKU", "optional": "optional", "sourceLocale": "Source language", "save": "Save changes", "saving": "Saving…", "cancel": "Cancel", "reload": "Reload product", "required": "This field is required.", "invalidName": "Enter a valid product name.", "invalidSku": "Enter a valid SKU.", "skuConflict": "This SKU is already used in your organization.", "staleWrite": "The product changed. Reload it before editing again.", "draftNotEditable": "The current draft cannot be edited.", "forbiddenTitle": "You cannot edit this product", "forbidden": "Your role does not allow product editing in this organization.", "failureTitle": "Product not updated", "failure": "The product could not be updated. Try again."},
+   "Metadata": {
+     "title": "Passvero — Digital Product Passports",
+-    "description": "Create, manage and share trusted digital product passports.",
++    "description": "Organize and publish structured digital product passports.",
+     "openGraphImageAlt": "Passvero platform for making digital product passports simple"
+   },
+   "Navigation": {
+@@ -63,23 +63,50 @@
+     }
+   },
+   "Home": {
+-    "title": "Verified product passports.",
++    "title": "Digital product passports.",
+     "description": "A simple platform for creating and managing digital product passports."
+   },
+   "MarketingNavigation": {"login": "Sign in","brand": "Passvero", "product": "Product", "solutions": "Solutions", "pricing": "Pricing", "resources": "Resources", "about": "About", "contact": "Contact", "earlyAccess": "Request access", "menu": "Open menu", "closeMenu": "Close menu"},
+   "Hero": {
+-    "badge": "DPP ready", "title": "Verified product passports.", "highlight": "product passports.",
+-    "description": "The complete platform for Digital Product Passports. Structure product data, build trust, and give every product a transparent digital identity.",
+-    "primaryAction": "Request access", "secondaryAction": "Watch overview", "visualAlt": "Digital product passport shown with a mobile passport view and QR card",
+-    "features": {"ready": {"title": "DPP ready", "description": "For transparent product data"}, "secure": {"title": "Secure & trusted", "description": "Protected business data"}, "interoperable": {"title": "Interoperable", "description": "GS1, EPCIS and API support"}, "scalable": {"title": "Scalable", "description": "For every industry"}}
++    "badge": "Structured data",
++    "title": "Digital product passports.",
++    "highlight": "Digital product passports.",
++    "description": "Structure product data, manage versions and publish the information you want to share.",
++    "primaryAction": "Request access",
++    "secondaryAction": "View",
++    "visualAlt": "Digital product passport shown with a mobile passport view and QR card",
++    "features": {
++      "ready": {
++        "title": "Structured data",
++        "description": "For your DPP workflows"
++      },
++      "secure": {
++        "title": "Controlled access",
++        "description": "Organization permissions"
++      },
++      "interoperable": {
++        "title": "GTIN and barcode",
++        "description": "Format and check-digit validation"
++      },
++      "scalable": {
++        "title": "Product versions",
++        "description": "From draft to publication"
++      }
++    },
++    "example": {
++      "label": "Example view — illustrative data",
++      "title": "Product information",
++      "manufacturer": "Manufacturer and materials",
++      "documents": "Images and documents"
++    }
+   },
+-  "Compliance": {"title": "Built for compliance. Designed for businesses.", "items": {"ready": {"title": "DPP ready", "description": "Supports structured data and future EU requirements."}, "secure": {"title": "Secure by design", "description": "Your data stays protected and under your control."}, "interoperable": {"title": "Interoperable", "description": "Connect GS1, EPCIS, APIs and other systems."}, "scalable": {"title": "Scalable", "description": "From small manufacturers to complex supply chains."}}},
+-  "HowItWorks": {"label": "How it works", "title": "From product to passport in 4 simple steps", "steps": {"create": {"title": "Create", "description": "Create a digital passport for your product."}, "generate": {"title": "Generate", "description": "Generate a unique QR code or data carrier."}, "share": {"title": "Share", "description": "Attach it to your product or packaging."}, "verify": {"title": "Verify", "description": "Give access to trusted product information."}}},
+-  "DashboardPreview": {"label": "One platform, everything you need", "title": "Manage. Track. Comply.", "description": "Passvero brings together the tools you need to manage product data, support compliance processes, and build trust across your supply chain.", "features": ["Centralized product and passport management", "Real-time data and event tracking", "Documents and certificates in one place", "Analytics and performance insights", "Role-based access and team collaboration"], "action": "Explore all features", "visualAlt": "Passvero dashboard for managing digital product passports"},
++  "Compliance": {"title": "Clear data. Controlled publication.", "items": {"ready": {"title": "Structured data", "description": "Organize information for your DPP workflows."}, "secure": {"title": "Controlled access", "description": "The private workspace is separate from public publication."}, "interoperable": {"title": "GTIN and barcode", "description": "GTIN checks and barcodes are not GS1 verification or certification."}, "scalable": {"title": "Product versions", "description": "Edit a draft without changing the published version."}}, "scopeNote": "PDF checks cover file structure and malware. They do not confirm document truthfulness, product authenticity or regulatory compliance. GS1 registry, EPCIS/API integrations and scan analytics are not currently available features."},
++  "HowItWorks": {"label": "How it works", "title": "From product to passport in 4 simple steps", "steps": {"create": {"title": "Create", "description": "Create a digital passport for your product."}, "generate": {"title": "Generate", "description": "Generate a QR code linking to the public passport."}, "share": {"title": "Share", "description": "Attach it to your product or packaging."}, "verify": {"title": "View", "description": "Provide access to published product information."}}},
++  "DashboardPreview": {"label": "Workspace overview", "title": "Edit. Review. Publish.", "description": "Products, versions and attachments in one workspace, with a separate public view of published information.", "features": ["Catalogue management and product search", "Drafts and published versions", "Images and PDF attachments by version", "CSV catalogue import and export", "Organization access based on permissions"], "action": "Request access", "visualAlt": "Passvero dashboard for managing digital product passports", "example": {"label": "Example view — illustrative data", "product": "Product", "draft": "Draft", "published": "Published", "title": "Catalogue overview"}},
+   "Industries": {"title": "Built for manufacturers across Europe", "items": {"furniture": "Furniture", "textiles": "Textiles", "packaging": "Packaging", "electronics": "Electronics", "manufacturing": "Manufacturing", "consumer": "Consumer Goods"}},
+-  "Pricing": {"label": "Pricing", "title": "Simple pricing is coming soon.", "description": "Passvero pricing will be announced before public launch. Request Early Access to receive product updates and launch pricing information.", "plans": {"starter": {"name": "Starter", "description": "For getting started with Digital Product Passports."}, "growth": {"name": "Professional", "description": "For growing product catalogues."}, "business": {"name": "Enterprise", "description": "For larger organisations and more complex needs."}}, "status": "Details coming soon", "featured": "Coming at launch", "action": "Request access", "note": "No payment is required to request access."},
+-  "Benefits": {"label": "The benefits", "title": "Build trust. Reduce risk. Unlock value.", "items": {"trust": {"title": "Build trust", "description": "Prove product authenticity and transparency."}, "risk": {"title": "Reduce risk", "description": "Avoid fines and support regulatory processes."}, "efficiency": {"title": "Improve efficiency", "description": "Automate data collection and verification."}, "value": {"title": "Unlock value", "description": "Turn better data into smarter decisions."}}},
+-  "CTA": {"title": "Ready to get started?", "description": "Join the future of product transparency.", "primaryAction": "Request access", "noteOne": "No commitment required", "noteTwo": "Set up in minutes", "visualAlt": "Teal shield with a checkmark representing verified data"},
++  "Pricing": {"label": "Pricing", "title": "Plans for your catalogue", "description": "Choose the scope that fits your products. Access is approved after reviewing your request.", "priceNotice": "Total prices for 3 or 12 calendar months, in EUR excluding VAT. No monthly subscription.", "published": "{count} published products", "months": "{count} calendar months", "limits": "Up to {count} stored products in total, {storage} GiB storage and {pdf} PDF attachments per version.", "customScope": "Agreed scope", "customPrice": "Price by offer", "customDescription": "Product count, storage and other limits are defined in an individual offer.", "trial": "The trial lasts 6 months from successful controlled organization activation: up to 3 products created in total, including imports, and up to 3 occupied published slots. One trial per organization; archiving does not restore a slot.", "payment": "Requesting access does not activate an account, purchase or select a plan. B2B payment is by bank transfer against an offer. An authorized operator activates the paid subscription after verifying payment.", "expiry": "Content changes and new publications are locked after expiry. Extended public availability applies only to eligible voluntary passports on paid plans.", "availabilityLink": "How are slots counted and how long is access available?", "detailsTitle": "Published slots, availability and retention", "counting": "A product with a published version occupies one slot, even with a new draft or when archived or withdrawn. A new version of the same product does not use an extra slot. Draft, published and archived products count toward total stored products; retained files and historical versions count toward storage.", "availability": "Voluntary passports (VOLUNTARY) may remain public for 6 more months after paid expiry, with locked content and existing safe-access conditions. The trial has no extended public availability. Mandatory (MANDATORY) and unresolved (UNRESOLVED) cases require a separate long-term availability agreement; this automatic shutdown does not apply to them.", "retention": "Private retention lasts 12 months after paid expiry or 3 months after the trial. Private viewing and available exports remain accessible during retention with existing permissions. These deadlines do not trigger automatic permanent deletion.", "action": "Request access"},
++  "Benefits": {"label": "The benefits", "title": "Clearer information. Simpler workflows.", "items": {"trust": {"title": "Share information", "description": "Publish the data your customers and partners need."}, "risk": {"title": "Prepare documentation", "description": "Keep attachments with the relevant product version."}, "efficiency": {"title": "Organize your catalogue", "description": "Enter data or import products from a CSV file."}, "value": {"title": "Keep an overview", "description": "Review your catalogue, drafts and published versions."}}},
++  "CTA": {"title": "Ready to get started?", "description": "Request controlled access and tell us what your team needs.", "primaryAction": "Request access", "noteOne": "A request is not a purchase", "noteTwo": "Activation after approval", "visualAlt": "Decorative shield illustration"},
+   "Contact": {"emailLabel": "Email", "earlyAccessSubject": "Passvero early access request", "generalSubject": "General Passvero inquiry", "privacySubject": "Passvero privacy enquiry"},
+   "AboutPage": {
+     "metadata": {"title": "About | Passvero", "description": "Learn why we are building Passvero and how we help European businesses manage product information more simply."},
+diff --git a/messages/hr.json b/messages/hr.json
+index efbadfe..9f66512 100644
+--- a/messages/hr.json
++++ b/messages/hr.json
+@@ -35,7 +35,7 @@
+   "EditProduct": {"metadataTitle": "Uredi proizvod | Passvero", "metadataDescription": "Uredite trenutačnu skicu proizvoda.", "title": "Uredi proizvod", "description": "Ažurirajte osnovne podatke trenutačne skice.", "productName": "Naziv proizvoda", "organizationSku": "SKU organizacije", "optional": "neobavezno", "sourceLocale": "Izvorni jezik", "save": "Spremi promjene", "saving": "Spremanje…", "cancel": "Odustani", "reload": "Ponovno učitaj proizvod", "required": "Ovo je polje obavezno.", "invalidName": "Unesite valjan naziv proizvoda.", "invalidSku": "Unesite valjan SKU.", "skuConflict": "Ovaj SKU već se koristi u vašoj organizaciji.", "staleWrite": "Proizvod je promijenjen. Ponovno ga učitajte prije uređivanja.", "draftNotEditable": "Trenutačnu skicu nije moguće uređivati.", "forbiddenTitle": "Ne možete uređivati ovaj proizvod", "forbidden": "Vaša uloga ne dopušta uređivanje proizvoda u ovoj organizaciji.", "failureTitle": "Proizvod nije ažuriran", "failure": "Proizvod nije moguće ažurirati. Pokušajte ponovno."},
+   "Metadata": {
+     "title": "Passvero — Digitalne putovnice proizvoda",
+-    "description": "Izradite, upravljajte i dijelite pouzdane digitalne putovnice proizvoda.",
++    "description": "Organizirajte i objavite strukturirane digitalne putovnice proizvoda.",
+     "openGraphImageAlt": "Passvero platforma za jednostavno upravljanje digitalnim putovnicama proizvoda"
+   },
+   "Navigation": {
+@@ -63,7 +63,7 @@
+     }
+   },
+   "Home": {
+-    "title": "Provjerene putovnice proizvoda.",
++    "title": "Digitalne putovnice proizvoda.",
+     "description": "Jednostavna platforma za izradu i upravljanje digitalnim putovnicama proizvoda."
+   },
+   "MarketingNavigation": {"login": "Prijava",
+@@ -79,46 +79,102 @@
+     "closeMenu": "Zatvori izbornik"
+   },
+   "Hero": {
+-    "badge": "DPP spremno",
+-    "title": "Provjerene putovnice proizvoda.",
+-    "highlight": "putovnice proizvoda.",
+-    "description": "Cjelovita platforma za digitalne putovnice proizvoda. Strukturirajte podatke, gradite povjerenje i svakom proizvodu dajte transparentan digitalni identitet.",
++    "badge": "Strukturirani podaci",
++    "title": "Digitalne putovnice proizvoda.",
++    "highlight": "Digitalne putovnice proizvoda.",
++    "description": "Strukturirajte podatke o proizvodima, upravljajte verzijama i objavite informacije koje želite podijeliti.",
+     "primaryAction": "Zatraži pristup",
+-    "secondaryAction": "Pogledajte pregled",
++    "secondaryAction": "Pregledajte",
+     "visualAlt": "Digitalna putovnica proizvoda prikazana uz mobilni prikaz i QR karticu",
+     "features": {
+-      "ready": {"title": "DPP spremno", "description": "Za transparentne podatke o proizvodu"},
+-      "secure": {"title": "Sigurno i pouzdano", "description": "Zaštićeni poslovni podaci"},
+-      "interoperable": {"title": "Interoperabilno", "description": "GS1, EPCIS i API podrška"},
+-      "scalable": {"title": "Skalabilno", "description": "Za svaku industriju"}
++      "ready": {
++        "title": "Strukturirani podaci",
++        "description": "Za vaše DPP procese"
++      },
++      "secure": {
++        "title": "Kontrolirani pristup",
++        "description": "Ovlasti po organizaciji"
++      },
++      "interoperable": {
++        "title": "GTIN i barkod",
++        "description": "Provjera formata i kontrolne znamenke"
++      },
++      "scalable": {
++        "title": "Verzije proizvoda",
++        "description": "Od nacrta do objave"
++      }
++    },
++    "example": {
++      "label": "Primjer prikaza — ilustrativni podaci",
++      "title": "Podaci o proizvodu",
++      "manufacturer": "Proizvođač i materijali",
++      "documents": "Slike i dokumenti"
+     }
+   },
+   "Compliance": {
+-    "title": "Stvoreno za usklađenost. Dizajnirano za poslovanje.",
++    "title": "Jasni podaci. Kontrolirana objava.",
+     "items": {
+-      "ready": {"title": "DPP spremno", "description": "Podržava strukturirane podatke i buduće EU zahtjeve."},
+-      "secure": {"title": "Sigurnost u osnovi", "description": "Vaši podaci ostaju zaštićeni i pod vašom kontrolom."},
+-      "interoperable": {"title": "Interoperabilno", "description": "Povežite GS1, EPCIS, API-je i druge sustave."},
+-      "scalable": {"title": "Skalabilno", "description": "Od malih proizvođača do složenih opskrbnih lanaca."}
+-    }
++      "ready": {
++        "title": "Strukturirani podaci",
++        "description": "Organizirajte informacije za svoje DPP procese."
++      },
++      "secure": {
++        "title": "Kontrolirani pristup",
++        "description": "Privatni radni prostor odvojen je od javne objave."
++      },
++      "interoperable": {
++        "title": "GTIN i barkod",
++        "description": "GTIN provjera i barkod nisu GS1 verifikacija ili certifikacija."
++      },
++      "scalable": {
++        "title": "Verzije proizvoda",
++        "description": "Uređujte nacrt bez promjene objavljene verzije."
++      }
++    },
++    "scopeNote": "PDF provjere obuhvaćaju strukturu datoteke i zlonamjerni sadržaj. Ne potvrđuju istinitost dokumenta, autentičnost proizvoda ili regulatornu usklađenost. GS1 registry, EPCIS/API integracije i analitika skeniranja nisu trenutačno dostupne funkcije."
+   },
+   "HowItWorks": {
+     "label": "Kako funkcionira",
+     "title": "Od proizvoda do putovnice u 4 jednostavna koraka",
+     "steps": {
+-      "create": {"title": "Izradite", "description": "Izradite digitalnu putovnicu za svoj proizvod."},
+-      "generate": {"title": "Generirajte", "description": "Generirajte jedinstveni QR kod ili nosač podataka."},
+-      "share": {"title": "Podijelite", "description": "Povežite ga s proizvodom ili ambalažom."},
+-      "verify": {"title": "Provjerite", "description": "Omogućite pristup vjerodostojnim informacijama."}
++      "create": {
++        "title": "Izradite",
++        "description": "Izradite digitalnu putovnicu za svoj proizvod."
++      },
++      "generate": {
++        "title": "Generirajte",
++        "description": "Generirajte QR kod za poveznicu na javnu putovnicu."
++      },
++      "share": {
++        "title": "Podijelite",
++        "description": "Povežite ga s proizvodom ili ambalažom."
++      },
++      "verify": {
++        "title": "Pregledajte",
++        "description": "Omogućite pristup objavljenim informacijama o proizvodu."
++      }
+     }
+   },
+   "DashboardPreview": {
+-    "label": "Jedna platforma, sve što trebate",
+-    "title": "Upravljajte. Pratite. Uskladite.",
+-    "description": "Passvero objedinjuje alate za upravljanje podacima o proizvodima, podršku procesima usklađenosti i izgradnju povjerenja u cijelom opskrbnom lancu.",
+-    "features": ["Centralizirano upravljanje proizvodima i putovnicama", "Praćenje podataka i događaja u stvarnom vremenu", "Dokumenti i certifikati na jednom mjestu", "Analitika i uvidi u performanse", "Pristup temeljen na ulogama i timska suradnja"],
+-    "action": "Istražite sve mogućnosti",
+-    "visualAlt": "Passvero nadzorna ploča za upravljanje digitalnim putovnicama proizvoda"
++    "label": "Pregled radnog prostora",
++    "title": "Uredite. Pregledajte. Objavite.",
++    "description": "Proizvodi, verzije i prilozi u jednom radnom prostoru, uz zaseban javni prikaz objavljenih informacija.",
++    "features": [
++      "Upravljanje katalogom i pretraga proizvoda",
++      "Nacrti i objavljene verzije",
++      "Slike i PDF prilozi po verziji",
++      "Uvoz i izvoz kataloga u CSV formatu",
++      "Pristup organizaciji prema ovlastima"
++    ],
++    "action": "Zatražite pristup",
++    "visualAlt": "Passvero nadzorna ploča za upravljanje digitalnim putovnicama proizvoda",
++    "example": {
++      "label": "Primjer prikaza — ilustrativni podaci",
++      "product": "Proizvod",
++      "draft": "Nacrt",
++      "published": "Objavljeno",
++      "title": "Pregled kataloga"
++    }
+   },
+   "Industries": {
+     "title": "Stvoreno za proizvođače diljem Europe",
+@@ -126,35 +182,54 @@
+   },
+   "Pricing": {
+     "label": "Cijene",
+-    "title": "Jednostavne cijene stižu uskoro.",
+-    "description": "Cijene Passvera bit će objavljene prije javnog lansiranja. Zatražite rani pristup kako biste primali novosti o proizvodu i informacije o cijenama pri lansiranju.",
+-    "plans": {
+-      "starter": {"name": "Starter", "description": "Za prve korake s digitalnim putovnicama proizvoda."},
+-      "growth": {"name": "Professional", "description": "Za rastuće kataloge proizvoda."},
+-      "business": {"name": "Enterprise", "description": "Za veće organizacije i složenije potrebe."}
+-    },
+-    "status": "Detalji stižu uskoro",
+-    "featured": "Stiže pri lansiranju",
+-    "action": "Zatraži pristup",
+-    "note": "Za slanje zahtjeva za pristup nije potrebno plaćanje."
++    "title": "Paketi za vaš katalog",
++    "description": "Odaberite obuhvat koji odgovara vašim proizvodima. Pristup se odobrava nakon pregleda zahtjeva.",
++    "priceNotice": "Ukupne cijene za 3 ili 12 kalendarskih mjeseci, u EUR bez PDV-a. Nema mjesečne pretplate.",
++    "published": "{count} objavljenih proizvoda",
++    "months": "{count, plural, =3 {3 kalendarska mjeseca} other {# kalendarskih mjeseci}}",
++    "limits": "Do {count} ukupno sačuvanih proizvoda, {storage} GiB prostora i {pdf} PDF priloga po verziji.",
++    "customScope": "Obuhvat po dogovoru",
++    "customPrice": "Cijena po ponudi",
++    "customDescription": "Broj proizvoda, prostor i ostali limiti utvrđuju se zasebnom ponudom.",
++    "trial": "Probno razdoblje traje 6 mjeseci od uspješne kontrolirane aktivacije organizacije: do 3 ukupno kreirana proizvoda, uključujući uvoz, i do 3 zauzeta objavljena mjesta. Jedno probno razdoblje po organizaciji; arhiviranje ne vraća mjesto.",
++    "payment": "Zahtjev za pristup ne aktivira račun niti predstavlja kupnju ili odabir paketa. Plaćanje je B2B bankovnim prijenosom po ponudi. Ovlašteni operator aktivira plaćenu pretplatu nakon provjere uplate.",
++    "expiry": "Nakon isteka zaključavaju se sadržajne izmjene i nove objave. Produženi javni prikaz vrijedi samo za prihvatljive dobrovoljne putovnice plaćenih paketa.",
++    "availabilityLink": "Kako se broje mjesta i koliko traje dostupnost?",
++    "detailsTitle": "Objavljena mjesta, dostupnost i čuvanje",
++    "counting": "Proizvod s objavljenom verzijom zauzima jedno mjesto, čak i ako ima novi nacrt ili je arhiviran ili povučen. Nova verzija istog proizvoda ne troši dodatno mjesto. Nacrti, objavljeni i arhivirani proizvodi ulaze u ukupni broj sačuvanih proizvoda; zadržane datoteke i povijesne verzije ulaze u kvotu prostora.",
++    "availability": "Dobrovoljne putovnice (VOLUNTARY) nakon isteka plaćenog paketa mogu ostati javne još 6 mjeseci, uz zaključan sadržaj i postojeće uvjete sigurnog pristupa. Probno razdoblje nema produženi javni prikaz. Obavezni (MANDATORY) i nerazjašnjeni (UNRESOLVED) slučajevi zahtijevaju zaseban dogovor o dugoročnoj dostupnosti; na njih se ne primjenjuje ovo automatsko gašenje.",
++    "retention": "Privatno čuvanje traje 12 mjeseci nakon isteka plaćenog paketa, odnosno 3 mjeseca nakon probnog razdoblja. Tijekom čuvanja ostaju dostupni privatni pregled i raspoloživi izvoz uz postojeće ovlasti. Ti rokovi ne pokreću automatsko trajno brisanje.",
++    "action": "Zatraži pristup"
+   },
+   "Benefits": {
+     "label": "Prednosti",
+-    "title": "Izgradite povjerenje. Smanjite rizik. Otključajte vrijednost.",
++    "title": "Jasnije informacije. Jednostavniji rad.",
+     "items": {
+-      "trust": {"title": "Izgradite povjerenje", "description": "Dokažite autentičnost i transparentnost proizvoda."},
+-      "risk": {"title": "Smanjite rizik", "description": "Izbjegnite kazne i podržite regulatorne procese."},
+-      "efficiency": {"title": "Povećajte učinkovitost", "description": "Automatizirajte prikupljanje i provjeru podataka."},
+-      "value": {"title": "Otključajte vrijednost", "description": "Pretvorite kvalitetnije podatke u pametnije odluke."}
++      "trust": {
++        "title": "Podijelite informacije",
++        "description": "Objavite podatke koje vaši kupci i partneri trebaju."
++      },
++      "risk": {
++        "title": "Pripremite dokumentaciju",
++        "description": "Držite priloge uz odgovarajuću verziju proizvoda."
++      },
++      "efficiency": {
++        "title": "Uredite katalog",
++        "description": "Unesite podatke ili uvezite proizvode iz CSV datoteke."
++      },
++      "value": {
++        "title": "Održavajte pregled",
++        "description": "Pregledajte katalog, nacrte i objavljene verzije."
++      }
+     }
+   },
+   "CTA": {
+     "title": "Spremni za početak?",
+-    "description": "Pridružite se budućnosti transparentnosti proizvoda.",
++    "description": "Zatražite kontrolirani pristup i predstavite potrebe svojeg tima.",
+     "primaryAction": "Zatraži pristup",
+-    "noteOne": "Bez obveze",
+-    "noteTwo": "Postavljanje u nekoliko minuta",
+-    "visualAlt": "Tirkizni štit s kvačicom koji predstavlja provjerene podatke"
++    "noteOne": "Zahtjev nije kupnja",
++    "noteTwo": "Aktivacija nakon odobrenja",
++    "visualAlt": "Dekorativna ilustracija štita"
+   },
+   "Contact": {
+     "emailLabel": "E-pošta",
+diff --git a/messages/pl.json b/messages/pl.json
+index febbf07..c22667f 100644
+--- a/messages/pl.json
++++ b/messages/pl.json
+@@ -35,7 +35,7 @@
+   "EditProduct": {"metadataTitle": "Edytuj produkt | Passvero", "metadataDescription": "Edytuj bieżącą wersję roboczą produktu.", "title": "Edytuj produkt", "description": "Zaktualizuj podstawowe dane bieżącej wersji roboczej.", "productName": "Nazwa produktu", "organizationSku": "SKU organizacji", "optional": "opcjonalnie", "sourceLocale": "Język źródłowy", "save": "Zapisz zmiany", "saving": "Zapisywanie…", "cancel": "Anuluj", "reload": "Wczytaj produkt ponownie", "required": "To pole jest wymagane.", "invalidName": "Wprowadź prawidłową nazwę produktu.", "invalidSku": "Wprowadź prawidłowy SKU.", "skuConflict": "Ten SKU jest już używany w Twojej organizacji.", "staleWrite": "Produkt został zmieniony. Wczytaj go ponownie przed edycją.", "draftNotEditable": "Bieżącej wersji roboczej nie można edytować.", "forbiddenTitle": "Nie możesz edytować tego produktu", "forbidden": "Twoja rola nie pozwala edytować produktów w tej organizacji.", "failureTitle": "Produkt nie został zaktualizowany", "failure": "Nie udało się zaktualizować produktu. Spróbuj ponownie."},
+   "Metadata": {
+     "title": "Passvero — Cyfrowe paszporty produktów",
+-    "description": "Twórz, zarządzaj i udostępniaj wiarygodne cyfrowe paszporty produktów.",
++    "description": "Organizuj i publikuj uporządkowane cyfrowe paszporty produktów.",
+     "openGraphImageAlt": "Platforma Passvero ułatwiająca zarządzanie cyfrowymi paszportami produktów"
+   },
+   "Navigation": {
+@@ -63,18 +63,18 @@
+     }
+   },
+   "Home": {
+-    "title": "Zweryfikowane paszporty produktów.",
++    "title": "Cyfrowe paszporty produktów.",
+     "description": "Prosta platforma do tworzenia cyfrowych paszportów produktów i zarządzania nimi."
+   },
+   "MarketingNavigation": {"login": "Zaloguj się","brand": "Passvero", "product": "Produkt", "solutions": "Rozwiązania", "pricing": "Cennik", "resources": "Materiały", "about": "O nas", "contact": "Kontakt", "earlyAccess": "Poproś o dostęp", "menu": "Otwórz menu", "closeMenu": "Zamknij menu"},
+-  "Hero": {"badge": "Gotowe na DPP", "title": "Zweryfikowane paszporty produktów.", "highlight": "paszporty produktów.", "description": "Kompletna platforma do cyfrowych paszportów produktów. Porządkuj dane, buduj zaufanie i nadaj każdemu produktowi przejrzystą cyfrową tożsamość.", "primaryAction": "Poproś o dostęp", "secondaryAction": "Zobacz przegląd", "visualAlt": "Cyfrowy paszport produktu z widokiem mobilnym i kartą QR", "features": {"ready": {"title": "Gotowe na DPP", "description": "Dla przejrzystych danych"}, "secure": {"title": "Bezpieczne i wiarygodne", "description": "Chronione dane biznesowe"}, "interoperable": {"title": "Interoperacyjne", "description": "Obsługa GS1, EPCIS i API"}, "scalable": {"title": "Skalowalne", "description": "Dla każdej branży"}}},
+-  "Compliance": {"title": "Stworzone z myślą o zgodności. Zaprojektowane dla firm.", "items": {"ready": {"title": "Gotowe na DPP", "description": "Obsługuje uporządkowane dane i przyszłe wymagania UE."}, "secure": {"title": "Bezpieczeństwo w standardzie", "description": "Twoje dane pozostają chronione i pod Twoją kontrolą."}, "interoperable": {"title": "Interoperacyjne", "description": "Połącz GS1, EPCIS, interfejsy API i inne systemy."}, "scalable": {"title": "Skalowalne", "description": "Od małych producentów po złożone łańcuchy dostaw."}}},
+-  "HowItWorks": {"label": "Jak to działa", "title": "Od produktu do paszportu w 4 prostych krokach", "steps": {"create": {"title": "Utwórz", "description": "Utwórz cyfrowy paszport swojego produktu."}, "generate": {"title": "Wygeneruj", "description": "Wygeneruj unikalny kod QR lub nośnik danych."}, "share": {"title": "Udostępnij", "description": "Połącz go z produktem lub opakowaniem."}, "verify": {"title": "Zweryfikuj", "description": "Zapewnij dostęp do wiarygodnych informacji."}}},
+-  "DashboardPreview": {"label": "Jedna platforma, wszystko czego potrzebujesz", "title": "Zarządzaj. Śledź. Zachowaj zgodność.", "description": "Passvero łączy narzędzia do zarządzania danymi produktów, wspierania procesów zgodności i budowania zaufania w całym łańcuchu dostaw.", "features": ["Centralne zarządzanie produktami i paszportami", "Śledzenie danych i zdarzeń w czasie rzeczywistym", "Dokumenty i certyfikaty w jednym miejscu", "Analityka i wgląd w wyniki", "Dostęp oparty na rolach i współpraca zespołowa"], "action": "Poznaj wszystkie możliwości", "visualAlt": "Panel Passvero do zarządzania cyfrowymi paszportami produktów"},
++  "Hero": {"badge": "Uporządkowane dane", "title": "Cyfrowe paszporty produktów.", "highlight": "Cyfrowe paszporty produktów.", "description": "Uporządkuj dane produktów, zarządzaj wersjami i publikuj informacje, które chcesz udostępnić.", "primaryAction": "Poproś o dostęp", "secondaryAction": "Zobacz", "visualAlt": "Cyfrowy paszport produktu z widokiem mobilnym i kartą QR", "features": {"ready": {"title": "Uporządkowane dane", "description": "Dla Twoich procesów DPP"}, "secure": {"title": "Kontrolowany dostęp", "description": "Uprawnienia organizacji"}, "interoperable": {"title": "GTIN i kod kreskowy", "description": "Kontrola formatu i cyfry kontrolnej"}, "scalable": {"title": "Wersje produktów", "description": "Od szkicu do publikacji"}}, "example": {"label": "Przykładowy widok — dane ilustracyjne", "title": "Dane produktu", "manufacturer": "Producent i materiały", "documents": "Zdjęcia i dokumenty"}},
++  "Compliance": {"title": "Jasne dane. Kontrolowana publikacja.", "items": {"ready": {"title": "Uporządkowane dane", "description": "Uporządkuj informacje dla swoich procesów DPP."}, "secure": {"title": "Kontrolowany dostęp", "description": "Prywatny obszar roboczy jest oddzielony od publicznej publikacji."}, "interoperable": {"title": "GTIN i kod kreskowy", "description": "Kontrola GTIN i kod kreskowy nie są weryfikacją ani certyfikacją GS1."}, "scalable": {"title": "Wersje produktów", "description": "Edytuj szkic bez zmiany opublikowanej wersji."}}, "scopeNote": "Kontrola PDF obejmuje strukturę pliku i złośliwą zawartość. Nie potwierdza prawdziwości dokumentu, autentyczności produktu ani zgodności regulacyjnej. Rejestr GS1, integracje EPCIS/API i analityka skanowania nie są obecnie dostępnymi funkcjami."},
++  "HowItWorks": {"label": "Jak to działa", "title": "Od produktu do paszportu w 4 prostych krokach", "steps": {"create": {"title": "Utwórz", "description": "Utwórz cyfrowy paszport swojego produktu."}, "generate": {"title": "Wygeneruj", "description": "Wygeneruj kod QR z linkiem do publicznego paszportu."}, "share": {"title": "Udostępnij", "description": "Połącz go z produktem lub opakowaniem."}, "verify": {"title": "Zobacz", "description": "Zapewnij dostęp do opublikowanych informacji o produkcie."}}},
++  "DashboardPreview": {"label": "Przegląd obszaru roboczego", "title": "Edytuj. Sprawdź. Opublikuj.", "description": "Produkty, wersje i załączniki w jednym obszarze roboczym, z osobnym publicznym widokiem opublikowanych informacji.", "features": ["Zarządzanie katalogiem i wyszukiwanie produktów", "Szkice i opublikowane wersje", "Zdjęcia i załączniki PDF według wersji", "Import i eksport katalogu w formacie CSV", "Dostęp do organizacji według uprawnień"], "action": "Poproś o dostęp", "visualAlt": "Panel Passvero do zarządzania cyfrowymi paszportami produktów", "example": {"label": "Przykładowy widok — dane ilustracyjne", "product": "Produkt", "draft": "Szkic", "published": "Opublikowano", "title": "Przegląd katalogu"}},
+   "Industries": {"title": "Stworzone dla producentów w całej Europie", "items": {"furniture": "Meble", "textiles": "Tekstylia", "packaging": "Opakowania", "electronics": "Elektronika", "manufacturing": "Produkcja", "consumer": "Dobra konsumpcyjne"}},
+-  "Pricing": {"label": "Cennik", "title": "Prosty cennik pojawi się wkrótce.", "description": "Cennik Passvero zostanie ogłoszony przed publicznym uruchomieniem. Poproś o wczesny dostęp, aby otrzymywać aktualizacje produktu i informacje o cenach przy uruchomieniu.", "plans": {"starter": {"name": "Starter", "description": "Na początek pracy z cyfrowymi paszportami produktów."}, "growth": {"name": "Professional", "description": "Dla rosnących katalogów produktów."}, "business": {"name": "Enterprise", "description": "Dla większych organizacji i bardziej złożonych potrzeb."}}, "status": "Szczegóły pojawią się wkrótce", "featured": "Dostępne w dniu premiery", "action": "Poproś o dostęp", "note": "Wysłanie prośby o dostęp nie wymaga płatności."},
+-  "Benefits": {"label": "Korzyści", "title": "Buduj zaufanie. Ograniczaj ryzyko. Uwalniaj wartość.", "items": {"trust": {"title": "Buduj zaufanie", "description": "Potwierdzaj autentyczność i przejrzystość produktów."}, "risk": {"title": "Ograniczaj ryzyko", "description": "Unikaj kar i wspieraj procesy regulacyjne."}, "efficiency": {"title": "Zwiększaj efektywność", "description": "Automatyzuj zbieranie i weryfikację danych."}, "value": {"title": "Uwalniaj wartość", "description": "Zmieniaj lepsze dane w trafniejsze decyzje."}}},
+-  "CTA": {"title": "Gotowi, aby zacząć?", "description": "Dołącz do przyszłości przejrzystości produktów.", "primaryAction": "Poproś o dostęp", "noteOne": "Bez zobowiązań", "noteTwo": "Konfiguracja w kilka minut", "visualAlt": "Turkusowa tarcza z haczykiem symbolizująca zweryfikowane dane"},
++  "Pricing": {"label": "Cennik", "title": "Pakiety dla Twojego katalogu", "description": "Wybierz zakres dopasowany do produktów. Dostęp jest zatwierdzany po rozpatrzeniu wniosku.", "priceNotice": "Ceny łączne za 3 lub 12 miesięcy kalendarzowych, w EUR bez VAT. Bez miesięcznej subskrypcji.", "published": "{count} opublikowanych produktów", "months": "{count, plural, =3 {3 miesiące kalendarzowe} other {# miesięcy kalendarzowych}}", "limits": "Do {count} zapisanych produktów łącznie, {storage} GiB przestrzeni i {pdf} załączników PDF na wersję.", "customScope": "Zakres do uzgodnienia", "customPrice": "Cena według oferty", "customDescription": "Liczba produktów, przestrzeń i pozostałe limity są określane w indywidualnej ofercie.", "trial": "Okres próbny trwa 6 miesięcy od pomyślnej kontrolowanej aktywacji organizacji: do 3 utworzonych produktów łącznie, w tym importowanych, i do 3 zajętych miejsc publikacji. Jeden okres próbny na organizację; archiwizacja nie zwalnia miejsca.", "payment": "Wniosek o dostęp nie aktywuje konta i nie oznacza zakupu ani wyboru pakietu. Płatność B2B odbywa się przelewem bankowym zgodnie z ofertą. Uprawniony operator aktywuje płatną subskrypcję po weryfikacji wpłaty.", "expiry": "Po wygaśnięciu zmiany treści i nowe publikacje są blokowane. Przedłużona publiczna dostępność dotyczy tylko kwalifikujących się dobrowolnych paszportów płatnych pakietów.", "availabilityLink": "Jak liczone są miejsca i jak długo treści są dostępne?", "detailsTitle": "Miejsca publikacji, dostępność i przechowywanie", "counting": "Produkt z opublikowaną wersją zajmuje jedno miejsce, także z nowym szkicem lub gdy jest zarchiwizowany albo wycofany. Nowa wersja tego samego produktu nie zajmuje dodatkowego miejsca. Szkice, produkty opublikowane i zarchiwizowane wliczają się do łącznej liczby zapisanych produktów; zachowane pliki i wcześniejsze wersje do limitu przestrzeni.", "availability": "Dobrowolne paszporty (VOLUNTARY) mogą pozostać publiczne przez kolejne 6 miesięcy po wygaśnięciu płatnego pakietu, z zablokowaną treścią i istniejącymi warunkami bezpiecznego dostępu. Okres próbny nie ma przedłużonej publicznej dostępności. Przypadki obowiązkowe (MANDATORY) i nierozstrzygnięte (UNRESOLVED) wymagają osobnego porozumienia o długoterminowej dostępności; to automatyczne wyłączenie ich nie dotyczy.", "retention": "Prywatne przechowywanie trwa 12 miesięcy po wygaśnięciu płatnego pakietu lub 3 miesiące po okresie próbnym. W tym czasie prywatny podgląd i dostępny eksport pozostają dostępne zgodnie z istniejącymi uprawnieniami. Te terminy nie uruchamiają automatycznego trwałego usuwania.", "action": "Poproś o dostęp"},
++  "Benefits": {"label": "Korzyści", "title": "Jaśniejsze informacje. Prostsza praca.", "items": {"trust": {"title": "Udostępniaj informacje", "description": "Publikuj dane potrzebne klientom i partnerom."}, "risk": {"title": "Przygotuj dokumentację", "description": "Przechowuj załączniki przy odpowiedniej wersji produktu."}, "efficiency": {"title": "Uporządkuj katalog", "description": "Wprowadź dane lub zaimportuj produkty z pliku CSV."}, "value": {"title": "Zachowaj przegląd", "description": "Przeglądaj katalog, szkice i opublikowane wersje."}}},
++  "CTA": {"title": "Gotowi, aby zacząć?", "description": "Poproś o kontrolowany dostęp i opisz potrzeby swojego zespołu.", "primaryAction": "Poproś o dostęp", "noteOne": "Wniosek nie jest zakupem", "noteTwo": "Aktywacja po zatwierdzeniu", "visualAlt": "Dekoracyjna ilustracja tarczy"},
+   "Contact": {"emailLabel": "E-mail", "earlyAccessSubject": "Prośba o wczesny dostęp do Passvero", "generalSubject": "Ogólne zapytanie dotyczące Passvero", "privacySubject": "Pytanie dotyczące prywatności w Passvero"},
+   "AboutPage": {
+     "metadata": {"title": "O nas | Passvero", "description": "Dowiedz się, dlaczego tworzymy Passvero i jak pomagamy europejskim firmom prościej zarządzać informacjami o produktach."},
+diff --git a/messages/sl.json b/messages/sl.json
+index bcf39ec..223fed1 100644
+--- a/messages/sl.json
++++ b/messages/sl.json
+@@ -35,7 +35,7 @@
+   "EditProduct": {"metadataTitle": "Uredi izdelek | Passvero", "metadataDescription": "Uredite trenutni osnutek izdelka.", "title": "Uredi izdelek", "description": "Posodobite osnovne podatke trenutnega osnutka.", "productName": "Ime izdelka", "organizationSku": "SKU organizacije", "optional": "neobvezno", "sourceLocale": "Izvorni jezik", "save": "Shrani spremembe", "saving": "Shranjevanje…", "cancel": "Prekliči", "reload": "Znova naloži izdelek", "required": "To polje je obvezno.", "invalidName": "Vnesite veljavno ime izdelka.", "invalidSku": "Vnesite veljaven SKU.", "skuConflict": "Ta SKU se že uporablja v vaši organizaciji.", "staleWrite": "Izdelek je bil spremenjen. Pred urejanjem ga znova naložite.", "draftNotEditable": "Trenutnega osnutka ni mogoče urejati.", "forbiddenTitle": "Tega izdelka ne morete urejati", "forbidden": "Vaša vloga ne dovoljuje urejanja izdelkov v tej organizaciji.", "failureTitle": "Izdelek ni posodobljen", "failure": "Izdelka ni bilo mogoče posodobiti. Poskusite znova."},
+   "Metadata": {
+     "title": "Passvero — Digitalni potni listi izdelkov",
+-    "description": "Ustvarjajte, upravljajte in delite zaupanja vredne digitalne potne liste izdelkov.",
++    "description": "Organizirajte in objavite strukturirane digitalne potne liste izdelkov.",
+     "openGraphImageAlt": "Platforma Passvero za preprosto upravljanje digitalnih potnih listov izdelkov"
+   },
+   "Navigation": {
+@@ -63,18 +63,18 @@
+     }
+   },
+   "Home": {
+-    "title": "Preverjeni potni listi izdelkov.",
++    "title": "Digitalni potni listi izdelkov.",
+     "description": "Preprosta platforma za ustvarjanje in upravljanje digitalnih potnih listov izdelkov."
+   },
+   "MarketingNavigation": {"login": "Prijava","brand": "Passvero", "product": "Izdelek", "solutions": "Rešitve", "pricing": "Cene", "resources": "Viri", "about": "O nas", "contact": "Kontakt", "earlyAccess": "Zaprosi za dostop", "menu": "Odpri meni", "closeMenu": "Zapri meni"},
+-  "Hero": {"badge": "Pripravljeno za DPP", "title": "Preverjeni potni listi izdelkov.", "highlight": "potni listi izdelkov.", "description": "Celovita platforma za digitalne potne liste izdelkov. Strukturirajte podatke, gradite zaupanje in vsakemu izdelku zagotovite pregleden digitalni identitetni zapis.", "primaryAction": "Zaprosi za dostop", "secondaryAction": "Oglejte si pregled", "visualAlt": "Digitalni potni list izdelka z mobilnim prikazom in QR-kartico", "features": {"ready": {"title": "Pripravljeno za DPP", "description": "Za pregledne podatke"}, "secure": {"title": "Varno in zaupanja vredno", "description": "Zaščiteni poslovni podatki"}, "interoperable": {"title": "Interoperabilno", "description": "Podpora GS1, EPCIS in API"}, "scalable": {"title": "Prilagodljivo", "description": "Za vsako panogo"}}},
+-  "Compliance": {"title": "Ustvarjeno za skladnost. Zasnovano za podjetja.", "items": {"ready": {"title": "Pripravljeno za DPP", "description": "Podpira strukturirane podatke in prihodnje zahteve EU."}, "secure": {"title": "Varnost v zasnovi", "description": "Vaši podatki ostanejo zaščiteni in pod vašim nadzorom."}, "interoperable": {"title": "Interoperabilno", "description": "Povežite GS1, EPCIS, API-je in druge sisteme."}, "scalable": {"title": "Prilagodljivo", "description": "Od manjših proizvajalcev do kompleksnih dobavnih verig."}}},
+-  "HowItWorks": {"label": "Kako deluje", "title": "Od izdelka do potnega lista v 4 preprostih korakih", "steps": {"create": {"title": "Ustvarite", "description": "Ustvarite digitalni potni list za svoj izdelek."}, "generate": {"title": "Ustvarite kodo", "description": "Ustvarite edinstveno QR-kodo ali nosilec podatkov."}, "share": {"title": "Delite", "description": "Povežite ga z izdelkom ali embalažo."}, "verify": {"title": "Preverite", "description": "Omogočite dostop do zaupanja vrednih informacij."}}},
+-  "DashboardPreview": {"label": "Ena platforma, vse kar potrebujete", "title": "Upravljajte. Sledite. Uskladite.", "description": "Passvero združuje orodja za upravljanje podatkov o izdelkih, podporo procesom skladnosti in krepitev zaupanja v celotni dobavni verigi.", "features": ["Centralizirano upravljanje izdelkov in potnih listov", "Sledenje podatkom in dogodkom v realnem času", "Dokumenti in certifikati na enem mestu", "Analitika in vpogledi v uspešnost", "Dostop glede na vloge in skupinsko sodelovanje"], "action": "Raziščite vse možnosti", "visualAlt": "Nadzorna plošča Passvero za upravljanje digitalnih potnih listov izdelkov"},
++  "Hero": {"badge": "Strukturirani podatki", "title": "Digitalni potni listi izdelkov.", "highlight": "Digitalni potni listi izdelkov.", "description": "Strukturirajte podatke o izdelkih, upravljajte različice in objavite informacije, ki jih želite deliti.", "primaryAction": "Zaprosi za dostop", "secondaryAction": "Oglejte si", "visualAlt": "Digitalni potni list izdelka z mobilnim prikazom in QR-kartico", "features": {"ready": {"title": "Strukturirani podatki", "description": "Za vaše postopke DPP"}, "secure": {"title": "Nadzorovan dostop", "description": "Dovoljenja po organizaciji"}, "interoperable": {"title": "GTIN in črtna koda", "description": "Preverjanje oblike in kontrolne številke"}, "scalable": {"title": "Različice izdelkov", "description": "Od osnutka do objave"}}, "example": {"label": "Primer prikaza — ponazoritveni podatki", "title": "Podatki o izdelku", "manufacturer": "Proizvajalec in materiali", "documents": "Slike in dokumenti"}},
++  "Compliance": {"title": "Jasni podatki. Nadzorovana objava.", "items": {"ready": {"title": "Strukturirani podatki", "description": "Organizirajte informacije za svoje postopke DPP."}, "secure": {"title": "Nadzorovan dostop", "description": "Zasebni delovni prostor je ločen od javne objave."}, "interoperable": {"title": "GTIN in črtna koda", "description": "Preverjanje GTIN in črtna koda nista verifikacija ali certificiranje GS1."}, "scalable": {"title": "Različice izdelkov", "description": "Urejajte osnutek brez spremembe objavljene različice."}}, "scopeNote": "Preverjanje PDF zajema strukturo datoteke in zlonamerno vsebino. Ne potrjuje resničnosti dokumenta, pristnosti izdelka ali regulativne skladnosti. Register GS1, integracije EPCIS/API in analitika skeniranja trenutno niso razpoložljive funkcije."},
++  "HowItWorks": {"label": "Kako deluje", "title": "Od izdelka do potnega lista v 4 preprostih korakih", "steps": {"create": {"title": "Ustvarite", "description": "Ustvarite digitalni potni list za svoj izdelek."}, "generate": {"title": "Ustvarite kodo", "description": "Ustvarite kodo QR s povezavo do javnega potnega lista."}, "share": {"title": "Delite", "description": "Povežite ga z izdelkom ali embalažo."}, "verify": {"title": "Oglejte si", "description": "Omogočite dostop do objavljenih informacij o izdelku."}}},
++  "DashboardPreview": {"label": "Pregled delovnega prostora", "title": "Uredite. Preglejte. Objavite.", "description": "Izdelki, različice in priloge v enem delovnem prostoru z ločenim javnim prikazom objavljenih informacij.", "features": ["Upravljanje kataloga in iskanje izdelkov", "Osnutki in objavljene različice", "Slike in priloge PDF po različici", "Uvoz in izvoz kataloga v obliki CSV", "Dostop do organizacije glede na dovoljenja"], "action": "Zahtevajte dostop", "visualAlt": "Nadzorna plošča Passvero za upravljanje digitalnih potnih listov izdelkov", "example": {"label": "Primer prikaza — ponazoritveni podatki", "product": "Izdelek", "draft": "Osnutek", "published": "Objavljeno", "title": "Pregled kataloga"}},
+   "Industries": {"title": "Ustvarjeno za proizvajalce po vsej Evropi", "items": {"furniture": "Pohištvo", "textiles": "Tekstil", "packaging": "Embalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Izdelki široke porabe"}},
+-  "Pricing": {"label": "Cene", "title": "Preproste cene prihajajo kmalu.", "description": "Cene za Passvero bodo objavljene pred javnim zagonom. Zaprosite za zgodnji dostop, da boste prejemali novice o izdelku in informacije o cenah ob zagonu.", "plans": {"starter": {"name": "Starter", "description": "Za prve korake z digitalnimi potnimi listi izdelkov."}, "growth": {"name": "Professional", "description": "Za rastoče kataloge izdelkov."}, "business": {"name": "Enterprise", "description": "Za večje organizacije in zahtevnejše potrebe."}}, "status": "Podrobnosti prihajajo kmalu", "featured": "Na voljo ob zagonu", "action": "Zaprosi za dostop", "note": "Za oddajo zahteve za dostop plačilo ni potrebno."},
+-  "Benefits": {"label": "Prednosti", "title": "Gradite zaupanje. Zmanjšajte tveganje. Odklenite vrednost.", "items": {"trust": {"title": "Gradite zaupanje", "description": "Dokažite pristnost in preglednost izdelkov."}, "risk": {"title": "Zmanjšajte tveganje", "description": "Izognite se kaznim in podprite regulativne postopke."}, "efficiency": {"title": "Izboljšajte učinkovitost", "description": "Avtomatizirajte zbiranje in preverjanje podatkov."}, "value": {"title": "Odklenite vrednost", "description": "Boljše podatke spremenite v pametnejše odločitve."}}},
+-  "CTA": {"title": "Ste pripravljeni začeti?", "description": "Pridružite se prihodnosti preglednosti izdelkov.", "primaryAction": "Zaprosi za dostop", "noteOne": "Brez obveznosti", "noteTwo": "Vzpostavitev v nekaj minutah", "visualAlt": "Turkizen ščit s kljukico, ki predstavlja preverjene podatke"},
++  "Pricing": {"label": "Cene", "title": "Paketi za vaš katalog", "description": "Izberite obseg, ki ustreza vašim izdelkom. Dostop odobrimo po pregledu zahteve.", "priceNotice": "Skupne cene za 3 ali 12 koledarskih mesecev v EUR brez DDV. Brez mesečne naročnine.", "published": "{count} objavljenih izdelkov", "months": "{count, plural, =3 {3 koledarski meseci} other {# koledarskih mesecev}}", "limits": "Do {count} skupno shranjenih izdelkov, {storage} GiB prostora in {pdf} prilog PDF na različico.", "customScope": "Obseg po dogovoru", "customPrice": "Cena po ponudbi", "customDescription": "Število izdelkov, prostor in druge omejitve se določijo v ločeni ponudbi.", "trial": "Preizkusno obdobje traja 6 mesecev od uspešne nadzorovane aktivacije organizacije: do 3 skupno ustvarjeni izdelki, vključno z uvozom, in do 3 zasedena mesta za objavljene izdelke. Eno preizkusno obdobje na organizacijo; arhiviranje ne sprosti mesta.", "payment": "Zahteva za dostop ne aktivira računa in ne pomeni nakupa ali izbire paketa. Plačilo B2B poteka z bančnim nakazilom po ponudbi. Pooblaščeni operater aktivira plačljivo naročnino po preverjanju plačila.", "expiry": "Po izteku se spremembe vsebine in nove objave zaklenejo. Podaljšana javna dostopnost velja le za ustrezne prostovoljne potne liste plačljivih paketov.", "availabilityLink": "Kako se štejejo mesta in kako dolgo traja dostopnost?", "detailsTitle": "Objavljena mesta, dostopnost in hramba", "counting": "Izdelek z objavljeno različico zaseda eno mesto, tudi z novim osnutkom ali če je arhiviran ali umaknjen. Nova različica istega izdelka ne porabi dodatnega mesta. Osnutki, objavljeni in arhivirani izdelki štejejo v skupno število shranjenih izdelkov; ohranjene datoteke in pretekle različice pa v omejitev prostora.", "availability": "Prostovoljni potni listi (VOLUNTARY) lahko ostanejo javni še 6 mesecev po izteku plačljivega paketa, z zaklenjeno vsebino in obstoječimi pogoji varnega dostopa. Preizkusno obdobje nima podaljšane javne dostopnosti. Obvezni (MANDATORY) in nerazjasnjeni (UNRESOLVED) primeri zahtevajo ločen dogovor o dolgoročni dostopnosti; ta samodejni izklop zanje ne velja.", "retention": "Zasebna hramba traja 12 mesecev po izteku plačljivega paketa oziroma 3 mesece po preizkusnem obdobju. Med hrambo sta z obstoječimi dovoljenji na voljo zasebni pregled in razpoložljivi izvoz. Ti roki ne sprožijo samodejnega trajnega brisanja.", "action": "Zaprosi za dostop"},
++  "Benefits": {"label": "Prednosti", "title": "Jasnejše informacije. Preprostejše delo.", "items": {"trust": {"title": "Delite informacije", "description": "Objavite podatke, ki jih potrebujejo vaše stranke in partnerji."}, "risk": {"title": "Pripravite dokumentacijo", "description": "Priloge hranite ob ustrezni različici izdelka."}, "efficiency": {"title": "Uredite katalog", "description": "Vnesite podatke ali uvozite izdelke iz datoteke CSV."}, "value": {"title": "Ohranite pregled", "description": "Preglejte katalog, osnutke in objavljene različice."}}},
++  "CTA": {"title": "Ste pripravljeni začeti?", "description": "Zahtevajte nadzorovan dostop in nam predstavite potrebe svoje ekipe.", "primaryAction": "Zaprosi za dostop", "noteOne": "Zahteva ni nakup", "noteTwo": "Aktivacija po odobritvi", "visualAlt": "Okrasna ilustracija ščita"},
+   "Contact": {"emailLabel": "E-pošta", "earlyAccessSubject": "Zahteva za zgodnji dostop do Passvera", "generalSubject": "Splošno povpraševanje za Passvero", "privacySubject": "Vprašanje o zasebnosti za Passvero"},
+   "AboutPage": {
+     "metadata": {"title": "O nas | Passvero", "description": "Spoznajte, zakaj razvijamo Passvero in kako evropskim podjetjem pomagamo preprosteje upravljati informacije o izdelkih."},
+diff --git a/messages/sr.json b/messages/sr.json
+index 463e3a1..36638fd 100644
+--- a/messages/sr.json
++++ b/messages/sr.json
+@@ -35,7 +35,7 @@
+   "EditProduct": {"metadataTitle": "Uredi proizvod | Passvero", "metadataDescription": "Uredite trenutni nacrt proizvoda.", "title": "Uredi proizvod", "description": "Ažurirajte osnovne podatke trenutnog nacrta.", "productName": "Naziv proizvoda", "organizationSku": "SKU organizacije", "optional": "neobavezno", "sourceLocale": "Izvorni jezik", "save": "Sačuvaj izmene", "saving": "Čuvanje…", "cancel": "Otkaži", "reload": "Ponovo učitaj proizvod", "required": "Ovo polje je obavezno.", "invalidName": "Unesite važeći naziv proizvoda.", "invalidSku": "Unesite važeći SKU.", "skuConflict": "Ovaj SKU se već koristi u vašoj organizaciji.", "staleWrite": "Proizvod je promenjen. Ponovo ga učitajte pre uređivanja.", "draftNotEditable": "Trenutni nacrt nije moguće uređivati.", "forbiddenTitle": "Ne možete uređivati ovaj proizvod", "forbidden": "Vaša uloga ne dozvoljava uređivanje proizvoda u ovoj organizaciji.", "failureTitle": "Proizvod nije ažuriran", "failure": "Proizvod nije moguće ažurirati. Pokušajte ponovo."},
+   "Metadata": {
+     "title": "Passvero — Digitalni pasoši proizvoda",
+-    "description": "Kreirajte, upravljajte i delite pouzdane digitalne pasoše proizvoda.",
++    "description": "Organizujte i objavite strukturirane digitalne pasoše proizvoda.",
+     "openGraphImageAlt": "Passvero platforma za jednostavno upravljanje digitalnim pasošima proizvoda"
+   },
+   "Navigation": {
+@@ -63,18 +63,18 @@
+     }
+   },
+   "Home": {
+-    "title": "Provereni pasoši proizvoda.",
++    "title": "Digitalni pasoši proizvoda.",
+     "description": "Jednostavna platforma za kreiranje i upravljanje digitalnim pasošima proizvoda."
+   },
+   "MarketingNavigation": {"login": "Prijava","brand": "Passvero", "product": "Proizvod", "solutions": "Rešenja", "pricing": "Cene", "resources": "Resursi", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatraži pristup", "menu": "Otvori meni", "closeMenu": "Zatvori meni"},
+-  "Hero": {"badge": "DPP spremno", "title": "Provereni pasoši proizvoda.", "highlight": "pasoši proizvoda.", "description": "Kompletna platforma za digitalne pasoše proizvoda. Strukturirajte podatke, izgradite poverenje i svakom proizvodu dajte transparentan digitalni identitet.", "primaryAction": "Zatraži pristup", "secondaryAction": "Pogledajte pregled", "visualAlt": "Digitalni pasoš proizvoda prikazan uz mobilni prikaz i QR karticu", "features": {"ready": {"title": "DPP spremno", "description": "Za transparentne podatke"}, "secure": {"title": "Sigurno i pouzdano", "description": "Zaštićeni poslovni podaci"}, "interoperable": {"title": "Interoperabilno", "description": "GS1, EPCIS i API podrška"}, "scalable": {"title": "Skalabilno", "description": "Za svaku industriju"}}},
+-  "Compliance": {"title": "Napravljeno za usklađenost. Dizajnirano za poslovanje.", "items": {"ready": {"title": "DPP spremno", "description": "Podržava strukturirane podatke i buduće EU zahteve."}, "secure": {"title": "Sigurnost u osnovi", "description": "Vaši podaci ostaju zaštićeni i pod vašom kontrolom."}, "interoperable": {"title": "Interoperabilno", "description": "Povežite GS1, EPCIS, API-je i druge sisteme."}, "scalable": {"title": "Skalabilno", "description": "Od malih proizvođača do složenih lanaca snabdevanja."}}},
+-  "HowItWorks": {"label": "Kako funkcioniše", "title": "Od proizvoda do pasoša u 4 jednostavna koraka", "steps": {"create": {"title": "Kreirajte", "description": "Kreirajte digitalni pasoš za svoj proizvod."}, "generate": {"title": "Generišite", "description": "Generišite jedinstveni QR kod ili nosač podataka."}, "share": {"title": "Podelite", "description": "Povežite ga sa proizvodom ili ambalažom."}, "verify": {"title": "Proverite", "description": "Omogućite pristup pouzdanim informacijama."}}},
+-  "DashboardPreview": {"label": "Jedna platforma, sve što vam treba", "title": "Upravljajte. Pratite. Uskladite.", "description": "Passvero objedinjuje alate za upravljanje podacima o proizvodima, podršku procesima usklađenosti i izgradnju poverenja u lancu snabdevanja.", "features": ["Centralizovano upravljanje proizvodima i pasošima", "Praćenje podataka i događaja u realnom vremenu", "Dokumenti i sertifikati na jednom mestu", "Analitika i uvidi u performanse", "Pristup zasnovan na ulogama i timski rad"], "action": "Istražite sve mogućnosti", "visualAlt": "Passvero kontrolna tabla za upravljanje digitalnim pasošima proizvoda"},
++  "Hero": {"badge": "Strukturirani podaci", "title": "Digitalni pasoši proizvoda.", "highlight": "Digitalni pasoši proizvoda.", "description": "Strukturirajte podatke o proizvodima, upravljajte verzijama i objavite informacije koje želite da podelite.", "primaryAction": "Zatraži pristup", "secondaryAction": "Pregledajte", "visualAlt": "Digitalni pasoš proizvoda prikazan uz mobilni prikaz i QR karticu", "features": {"ready": {"title": "Strukturirani podaci", "description": "Za vaše DPP procese"}, "secure": {"title": "Kontrolisani pristup", "description": "Ovlašćenja po organizaciji"}, "interoperable": {"title": "GTIN i barkod", "description": "Provera formata i kontrolne cifre"}, "scalable": {"title": "Verzije proizvoda", "description": "Od nacrta do objave"}}, "example": {"label": "Primer prikaza — ilustrativni podaci", "title": "Podaci o proizvodu", "manufacturer": "Proizvođač i materijali", "documents": "Slike i dokumenti"}},
++  "Compliance": {"title": "Jasni podaci. Kontrolisana objava.", "items": {"ready": {"title": "Strukturirani podaci", "description": "Organizujte informacije za svoje DPP procese."}, "secure": {"title": "Kontrolisani pristup", "description": "Privatni radni prostor odvojen je od javne objave."}, "interoperable": {"title": "GTIN i barkod", "description": "GTIN provera i barkod nisu GS1 verifikacija ili sertifikacija."}, "scalable": {"title": "Verzije proizvoda", "description": "Uređujte nacrt bez promene objavljene verzije."}}, "scopeNote": "PDF provere obuhvataju strukturu datoteke i zlonamerni sadržaj. Ne potvrđuju istinitost dokumenta, autentičnost proizvoda ili regulatornu usklađenost. GS1 registry, EPCIS/API integracije i analitika skeniranja nisu trenutno dostupne funkcije."},
++  "HowItWorks": {"label": "Kako funkcioniše", "title": "Od proizvoda do pasoša u 4 jednostavna koraka", "steps": {"create": {"title": "Kreirajte", "description": "Kreirajte digitalni pasoš za svoj proizvod."}, "generate": {"title": "Generišite", "description": "Generišite QR kod za vezu do javnog pasoša."}, "share": {"title": "Podelite", "description": "Povežite ga sa proizvodom ili ambalažom."}, "verify": {"title": "Pregledajte", "description": "Omogućite pristup objavljenim informacijama o proizvodu."}}},
++  "DashboardPreview": {"label": "Pregled radnog prostora", "title": "Uredite. Pregledajte. Objavite.", "description": "Proizvodi, verzije i prilozi u jednom radnom prostoru, uz zaseban javni prikaz objavljenih informacija.", "features": ["Upravljanje katalogom i pretraga proizvoda", "Nacrti i objavljene verzije", "Slike i PDF prilozi po verziji", "Uvoz i izvoz kataloga u CSV formatu", "Pristup organizaciji prema ovlašćenjima"], "action": "Zatražite pristup", "visualAlt": "Passvero kontrolna tabla za upravljanje digitalnim pasošima proizvoda", "example": {"label": "Primer prikaza — ilustrativni podaci", "product": "Proizvod", "draft": "Nacrt", "published": "Objavljeno", "title": "Pregled kataloga"}},
+   "Industries": {"title": "Napravljeno za proizvođače širom Evrope", "items": {"furniture": "Nameštaj", "textiles": "Tekstil", "packaging": "Ambalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Roba široke potrošnje"}},
+-  "Pricing": {"label": "Cene", "title": "Jednostavne cene stižu uskoro.", "description": "Cene Passvera biće objavljene pre javnog lansiranja. Zatražite rani pristup da biste dobijali novosti o proizvodu i informacije o cenama pri lansiranju.", "plans": {"starter": {"name": "Starter", "description": "Za prve korake sa digitalnim pasošima proizvoda."}, "growth": {"name": "Professional", "description": "Za rastuće kataloge proizvoda."}, "business": {"name": "Enterprise", "description": "Za veće organizacije i složenije potrebe."}}, "status": "Detalji stižu uskoro", "featured": "Stiže pri lansiranju", "action": "Zatraži pristup", "note": "Za slanje zahteva za pristup nije potrebno plaćanje."},
+-  "Benefits": {"label": "Prednosti", "title": "Izgradite poverenje. Smanjite rizik. Otključajte vrednost.", "items": {"trust": {"title": "Izgradite poverenje", "description": "Dokažite autentičnost i transparentnost proizvoda."}, "risk": {"title": "Smanjite rizik", "description": "Izbegnite kazne i podržite regulatorne procese."}, "efficiency": {"title": "Povećajte efikasnost", "description": "Automatizujte prikupljanje i proveru podataka."}, "value": {"title": "Otključajte vrednost", "description": "Pretvorite kvalitetnije podatke u pametnije odluke."}}},
+-  "CTA": {"title": "Spremni za početak?", "description": "Pridružite se budućnosti transparentnosti proizvoda.", "primaryAction": "Zatraži pristup", "noteOne": "Bez obaveze", "noteTwo": "Podešavanje za nekoliko minuta", "visualAlt": "Tirkizni štit sa kvačicom koji predstavlja proverene podatke"},
++  "Pricing": {"label": "Cene", "title": "Paketi za vaš katalog", "description": "Izaberite obuhvat koji odgovara vašim proizvodima. Pristup se odobrava nakon pregleda zahteva.", "priceNotice": "Ukupne cene za 3 ili 12 kalendarskih meseci, u EUR bez PDV-a. Nema mesečne pretplate.", "published": "{count} objavljenih proizvoda", "months": "{count, plural, =3 {3 kalendarska meseca} other {# kalendarskih meseci}}", "limits": "Do {count} ukupno sačuvanih proizvoda, {storage} GiB prostora i {pdf} PDF priloga po verziji.", "customScope": "Obuhvat po dogovoru", "customPrice": "Cena po ponudi", "customDescription": "Broj proizvoda, prostor i ostali limiti utvrđuju se zasebnom ponudom.", "trial": "Probni period traje 6 meseci od uspešne kontrolisane aktivacije organizacije: do 3 ukupno kreirana proizvoda, uključujući uvoz, i do 3 zauzeta objavljena mesta. Jedan probni period po organizaciji; arhiviranje ne vraća mesto.", "payment": "Zahtev za pristup ne aktivira nalog niti predstavlja kupovinu ili izbor paketa. Plaćanje je B2B bankovnim prenosom po ponudi. Ovlašćeni operator aktivira plaćenu pretplatu nakon provere uplate.", "expiry": "Nakon isteka zaključavaju se sadržajne izmene i nove objave. Produženi javni prikaz važi samo za odgovarajuće dobrovoljne pasoše plaćenih paketa.", "availabilityLink": "Kako se broje mesta i koliko traje dostupnost?", "detailsTitle": "Objavljena mesta, dostupnost i čuvanje", "counting": "Proizvod sa objavljenom verzijom zauzima jedno mesto, čak i ako ima novi nacrt ili je arhiviran ili povučen. Nova verzija istog proizvoda ne troši dodatno mesto. Nacrti, objavljeni i arhivirani proizvodi ulaze u ukupni broj sačuvanih proizvoda; zadržane datoteke i istorijske verzije ulaze u kvotu prostora.", "availability": "Dobrovoljni pasoši (VOLUNTARY) nakon isteka plaćenog paketa mogu ostati javni još 6 meseci, uz zaključan sadržaj i postojeće uslove bezbednog pristupa. Probni period nema produženi javni prikaz. Obavezni (MANDATORY) i nerazjašnjeni (UNRESOLVED) slučajevi zahtevaju zaseban dogovor o dugoročnoj dostupnosti; na njih se ne primenjuje ovo automatsko gašenje.", "retention": "Privatno čuvanje traje 12 meseci nakon isteka plaćenog paketa, odnosno 3 meseca nakon probnog perioda. Tokom čuvanja ostaju dostupni privatni pregled i raspoloživi izvoz uz postojeća ovlašćenja. Ti rokovi ne pokreću automatsko trajno brisanje.", "action": "Zatraži pristup"},
++  "Benefits": {"label": "Prednosti", "title": "Jasnije informacije. Jednostavniji rad.", "items": {"trust": {"title": "Podelite informacije", "description": "Objavite podatke koji su potrebni vašim kupcima i partnerima."}, "risk": {"title": "Pripremite dokumentaciju", "description": "Držite priloge uz odgovarajuću verziju proizvoda."}, "efficiency": {"title": "Uredite katalog", "description": "Unesite podatke ili uvezite proizvode iz CSV datoteke."}, "value": {"title": "Održavajte pregled", "description": "Pregledajte katalog, nacrte i objavljene verzije."}}},
++  "CTA": {"title": "Spremni za početak?", "description": "Zatražite kontrolisani pristup i predstavite potrebe svog tima.", "primaryAction": "Zatraži pristup", "noteOne": "Zahtev nije kupovina", "noteTwo": "Aktivacija nakon odobrenja", "visualAlt": "Dekorativna ilustracija štita"},
+   "Contact": {"emailLabel": "E-pošta", "earlyAccessSubject": "Zahtev za rani pristup Passveru", "generalSubject": "Opšti upit za Passvero", "privacySubject": "Upit o privatnosti za Passvero"},
+   "AboutPage": {
+     "metadata": {"title": "O nama | Passvero", "description": "Saznajte zašto gradimo Passvero i kako pomažemo evropskim preduzećima da jednostavnije upravljaju podacima o proizvodima."},
+diff --git a/src/components/marketing/compliance-section.tsx b/src/components/marketing/compliance-section.tsx
+index c14ae8a..c48e3df 100644
+--- a/src/components/marketing/compliance-section.tsx
++++ b/src/components/marketing/compliance-section.tsx
+@@ -31,6 +31,7 @@ export async function ComplianceSection() {
+             </article>
+           ))}
+         </div>
++        <p className="mx-auto mt-8 max-w-4xl text-center text-sm leading-6 text-slate-300">{t("scopeNote")}</p>
+       </MarketingContainer>
+     </section>
+   );
+diff --git a/src/components/marketing/dashboard-preview-section.tsx b/src/components/marketing/dashboard-preview-section.tsx
+index 11abd64..f78acb2 100644
+--- a/src/components/marketing/dashboard-preview-section.tsx
++++ b/src/components/marketing/dashboard-preview-section.tsx
+@@ -1,9 +1,9 @@
+-import Image from "next/image";
+-import { getTranslations } from "next-intl/server";
++import { getLocale, getTranslations } from "next-intl/server";
+
+ import { MarketingButton } from "@/src/components/marketing/marketing-button";
+ import { MarketingContainer } from "@/src/components/marketing/marketing-container";
+ import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
++import { getPathname } from "@/src/i18n/navigation";
+
+ function isStringArray(value: unknown): value is string[] {
+   return Array.isArray(value) && value.every((item) => typeof item === "string");
+@@ -13,6 +13,7 @@ export async function DashboardPreviewSection() {
+   const t = await getTranslations("DashboardPreview");
+   const rawFeatures: unknown = t.raw("features");
+   const features = isStringArray(rawFeatures) ? rawFeatures : [];
++  const accessHref = getPathname({ locale: await getLocale(), href: "/request-access" });
+
+   return (
+     <section className="pb-16 pt-6 md:pb-20 md:pt-8">
+@@ -29,18 +30,24 @@ export async function DashboardPreviewSection() {
+               </li>
+             ))}
+           </ul>
+-          <MarketingButton href="#early-access" variant="secondary" className="mt-8">{t("action")}</MarketingButton>
++          <MarketingButton href={accessHref} variant="secondary" className="mt-8">{t("action")}</MarketingButton>
+         </div>
+         <div className="relative -mx-3 overflow-hidden rounded-[20px] bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.1)] sm:mx-0">
+           <div className="absolute inset-x-[8%] bottom-[2%] h-1/3 rounded-full bg-blue-100/60 blur-3xl" aria-hidden="true" />
+-          <Image
+-            src="/marketing/dashboard-preview.png"
+-            alt={t("visualAlt")}
+-            width={1619}
+-            height={972}
+-            sizes="(max-width: 1023px) 100vw, 67vw"
+-            className="relative h-auto w-full mix-blend-multiply"
+-          />
++          <div className="relative rounded-2xl border border-slate-200 p-6 sm:p-8">
++            <p className="text-xs leading-5 text-slate-500">{t("example.label")}</p>
++            <h3 className="mt-4 text-2xl font-bold text-navy-950">{t("example.title")}</h3>
++            <div className="mt-6 grid gap-4 sm:grid-cols-2">
++              {["draft", "published"].map((state) => (
++                <div key={state} className="min-w-0 rounded-xl bg-slate-50 p-5">
++                  <MarketingIcon name="document" className="size-7 text-teal-700" />
++                  <p className="mt-4 font-semibold text-navy-950">{t("example.product")}</p>
++                  <p className="mt-2 text-sm text-slate-600">{t(`example.${state}`)}</p>
++                </div>
++              ))}
++            </div>
++            <p className="mt-6 text-sm leading-6 text-slate-600">{features[1]}</p>
++          </div>
+         </div>
+       </MarketingContainer>
+     </section>
+diff --git a/src/components/marketing/hero-section.tsx b/src/components/marketing/hero-section.tsx
+index 3dcd9e7..187327a 100644
+--- a/src/components/marketing/hero-section.tsx
++++ b/src/components/marketing/hero-section.tsx
+@@ -1,4 +1,3 @@
+-import Image from "next/image";
+ import { getLocale, getTranslations } from "next-intl/server";
+
+ import { MarketingButton } from "@/src/components/marketing/marketing-button";
+@@ -25,11 +24,11 @@ export async function HeroSection() {
+     <section id="product" className="pb-12 pt-6 md:pb-16 lg:pb-8 lg:pt-5">
+       <MarketingContainer>
+         <div className="grid items-center gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-5">
+-          <div className="relative z-10 max-w-140 lg:pb-20">
++          <div className="relative z-10 min-w-0 max-w-140 lg:pb-20">
+             <span className="inline-flex rounded-full bg-teal-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.08em] text-teal-700">
+               {t("badge")}
+             </span>
+-            <h1 className="mt-4 text-[2.375rem] font-bold leading-[1.06] tracking-[-0.045em] text-navy-950 sm:text-5xl lg:text-[3.5rem] lg:leading-[1.04]">
++            <h1 className="mt-4 [overflow-wrap:anywhere] text-[2.375rem] font-bold leading-[1.06] tracking-[-0.045em] text-navy-950 sm:text-5xl lg:text-[3.5rem] lg:leading-[1.04]">
+               {titleStart}
+               {highlightIndex >= 0 ? <span className="block text-teal-600">{highlight}</span> : null}
+             </h1>
+@@ -45,26 +44,21 @@ export async function HeroSection() {
+             </div>
+           </div>
+
+-          <div className="relative mx-auto w-full max-w-152 lg:-mb-8 lg:-mt-16 lg:justify-self-end">
+-            <Image
+-              src="/marketing/hero-passport.png"
+-              alt={t("visualAlt")}
+-              width={1012}
+-              height={1536}
+-              priority
+-              sizes="(max-width: 1023px) 90vw, 52vw"
+-              className="mx-auto h-auto w-[min(100%,30rem)] object-contain mix-blend-multiply lg:w-xl"
+-              style={{
+-                WebkitMaskImage:
+-                  "linear-gradient(to right, transparent 0, black 5%)",
+-                maskImage:
+-                  "linear-gradient(to right, transparent 0, black 5%)",
+-              }}
+-            />
++          <div className="relative mx-auto min-w-0 w-full max-w-152 lg:-mb-8 lg:-mt-16 lg:justify-self-end">
++            <div className="mx-auto max-w-sm rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[var(--shadow-marketing)]">
++              <p className="text-xs leading-5 text-slate-500">{t("example.label")}</p>
++              <MarketingIcon name="document" className="my-8 size-16 text-teal-700" />
++              <h2 className="[overflow-wrap:anywhere] text-2xl font-bold text-navy-950">{t("example.title")}</h2>
++              <div className="mt-6 space-y-4 text-sm text-slate-600">
++                <p className="rounded-xl bg-slate-50 p-4">{t("example.manufacturer")}</p>
++                <p className="rounded-xl bg-slate-50 p-4">{t("example.documents")}</p>
++                <p className="rounded-xl bg-blue-50 p-4">{t("features.scalable.description")}</p>
++              </div>
++            </div>
+           </div>
+         </div>
+
+-        <div id="features" className="mt-8 scroll-mt-6 grid grid-cols-2 gap-x-5 gap-y-6 border-t border-slate-100 pt-7 lg:-mt-28 lg:w-[53%] lg:grid-cols-4 lg:gap-x-7 lg:border-0 lg:pt-0">
++        <div id="features" className="mt-8 scroll-mt-6 grid grid-cols-2 gap-x-5 gap-y-6 border-t border-slate-100 pt-7 lg:-mt-12 lg:w-[53%] lg:grid-cols-4 lg:gap-x-7 lg:border-0 lg:pt-0">
+           {featureItems.map((item) => (
+             <div key={item.key} className="flex gap-3 lg:flex lg:items-start">
+               <MarketingIcon name={item.icon} className="size-6 shrink-0 text-navy-800" />
+diff --git a/src/components/marketing/pricing-section.tsx b/src/components/marketing/pricing-section.tsx
+index a4c3083..82f04cb 100644
+--- a/src/components/marketing/pricing-section.tsx
++++ b/src/components/marketing/pricing-section.tsx
+@@ -3,12 +3,15 @@ import { getLocale, getTranslations } from "next-intl/server";
+ import { MarketingButton } from "@/src/components/marketing/marketing-button";
+ import { MarketingContainer } from "@/src/components/marketing/marketing-container";
+ import { getPathname } from "@/src/i18n/navigation";
+-
+-const plans = ["starter", "growth", "business"] as const;
++import { STANDARD_PLANS } from "@/src/application/subscriptions/catalog";
+
+ export async function PricingSection() {
+   const t = await getTranslations("Pricing");
+-  const accessHref = getPathname({ locale: await getLocale(), href: "/request-access" });
++  const locale = await getLocale();
++  const accessHref = getPathname({ locale, href: "/request-access" });
++  const currency = new Intl.NumberFormat(locale, {
++    style: "currency", currency: "EUR", maximumFractionDigits: 0,
++  });
+
+   return (
+     <section id="pricing" className="scroll-mt-6 border-t border-slate-100 bg-white py-16 md:py-24">
+@@ -23,43 +26,44 @@ export async function PricingSection() {
+           </p>
+         </div>
+
+-        <div className="mx-auto mt-12 grid max-w-5xl gap-5 md:grid-cols-3 md:items-stretch">
+-          {plans.map((plan) => {
+-            const isFeatured = plan === "growth";
+-
+-            return (
+-              <article
+-                key={plan}
+-                className={`relative flex min-w-0 flex-col rounded-[20px] border p-6 md:p-7 ${
+-                  isFeatured
+-                    ? "border-blue-500 bg-blue-50/50 shadow-[0_16px_40px_rgba(37,99,235,0.12)] md:-translate-y-2"
+-                    : "border-slate-200 bg-slate-50/70"
+-                }`}
+-              >
+-                {isFeatured ? (
+-                  <p className="mb-4 inline-flex self-start rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
+-                    {t("featured")}
+-                  </p>
+-                ) : null}
+-                <h3 className="text-2xl font-bold text-navy-950">
+-                  {t(`plans.${plan}.name`)}
+-                </h3>
+-                <p className="mt-3 text-sm leading-6 text-slate-600">
+-                  {t(`plans.${plan}.description`)}
+-                </p>
+-                <p className="mt-8 border-t border-slate-200 pt-5 text-sm font-semibold text-teal-700">
+-                  {t("status")}
+-                </p>
+-              </article>
+-            );
+-          })}
++        <p className="mt-6 text-center text-sm text-slate-600">{t("priceNotice")}</p>
++        <div className="mx-auto mt-12 grid max-w-6xl gap-5 sm:grid-cols-2 xl:grid-cols-4">
++          {STANDARD_PLANS.map((plan) => (
++            <article key={plan.slug} className="flex min-w-0 flex-col rounded-[20px] border border-slate-200 bg-slate-50/70 p-6">
++              <h3 className="text-2xl font-bold text-navy-950">{plan.name}</h3>
++              <p className="mt-3 text-sm font-semibold text-teal-700">{t("published", { count: plan.limits.maxPublishedProducts })}</p>
++              <dl className="mt-6 space-y-4 border-t border-slate-200 pt-5">
++                {[3, 12].map((months) => (
++                  <div key={months}>
++                    <dt className="text-sm text-slate-600">{t("months", { count: months })}</dt>
++                    <dd className="mt-1 text-2xl font-bold text-navy-950">{currency.format((months === 3 ? plan.quarterlyPriceCents : plan.yearlyPriceCents) / 100)}</dd>
++                  </div>
++                ))}
++              </dl>
++              <p className="mt-5 text-sm leading-6 text-slate-600">{t("limits", { count: plan.limits.maxStoredProducts, storage: plan.limits.maxStorageBytes / 1024 ** 3, pdf: plan.limits.maxPdfAttachments })}</p>
++              <div className="mt-auto pt-6"><MarketingButton href={accessHref} className="w-full">{t("action")}</MarketingButton></div>
++            </article>
++          ))}
++          <article className="flex min-w-0 flex-col rounded-[20px] border border-slate-200 bg-slate-50/70 p-6">
++            <h3 className="text-2xl font-bold text-navy-950">Custom</h3>
++            <p className="mt-3 text-sm font-semibold text-teal-700">{t("customScope")}</p>
++            <p className="mt-6 border-t border-slate-200 pt-5 text-2xl font-bold text-navy-950">{t("customPrice")}</p>
++            <p className="mt-5 text-sm leading-6 text-slate-600">{t("customDescription")}</p>
++            <div className="mt-auto pt-6"><MarketingButton href={accessHref} className="w-full">{t("action")}</MarketingButton></div>
++          </article>
+         </div>
+-
+-        <div className="mt-10 flex flex-col items-center text-center">
+-          <MarketingButton href={accessHref}>
+-            {t("action")}
+-          </MarketingButton>
+-          <p className="mt-4 text-sm text-slate-500">{t("note")}</p>
++        <div className="mx-auto mt-10 max-w-4xl space-y-4 text-sm leading-6 text-slate-600">
++          <p>{t("trial")}</p>
++          <p>{t("payment")}</p>
++          <p>{t("expiry")} <a href="#pricing-availability" className="font-semibold text-teal-700 underline">{t("availabilityLink")}</a></p>
++          <details id="pricing-availability" className="scroll-mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
++            <summary className="cursor-pointer font-semibold text-navy-950">{t("detailsTitle")}</summary>
++            <div className="mt-4 space-y-3">
++              <p>{t("counting")}</p>
++              <p>{t("availability")}</p>
++              <p>{t("retention")}</p>
++            </div>
++          </details>
+         </div>
+       </MarketingContainer>
+     </section>

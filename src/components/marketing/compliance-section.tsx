@@ -31,6 +31,7 @@ export async function ComplianceSection() {
             </article>
           ))}
         </div>
+        <p className="mx-auto mt-8 max-w-4xl text-center text-sm leading-6 text-slate-300">{t("scopeNote")}</p>
       </MarketingContainer>
     </section>
   );

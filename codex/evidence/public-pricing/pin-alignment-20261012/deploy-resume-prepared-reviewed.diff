@@ -1,0 +1,137 @@
+--- deploy.py
++++ deploy-resume-prepared.py
+@@ -167,9 +167,16 @@
+         require(current['ActiveState'] == 'active' and current['UnitFileState'] == 'enabled', 'TIMER_NOT_RESTORED')
+
+
+-def deployment():
++def deployment(resume_prepared=False):
+     global CHECK_ID
+     require(not (ROOT / 'attempt.json').exists(), 'ONE_DEPLOY_ATTEMPT_NO_RETRY')
++    if resume_prepared:
++        require(not (ROOT / 'resume-attempt.json').exists(), 'ONE_PREPARED_CONTINUATION_ONLY')
++        require(json.loads(read(ROOT / 'first-failure.json')) == {'result': 'STOP',
++                'CHECK_ID': 'PREPARE_AND_PRESERVE', 'reason': 'NEXT_REGULAR_TERM_TOO_CLOSE_STOP',
++                'automaticRetry': False}, 'ORIGINAL_STOP_CHANGED')
++        require(json.loads(read(ROOT / 'closure.json')) == {'coordination': 'NOT_STARTED',
++                'rollback': 'NOT_NEEDED', 'timerChanges': 'NONE'}, 'ORIGINAL_CLOSURE_CHANGED')
+     config_bytes = read(CODE / 'config.json')
+     require(sha(config_bytes) == OLD_CONFIG, 'OLD_CONFIG_CHANGED')
+     config = json.loads(config_bytes)
+@@ -198,28 +205,45 @@
+             and not ROOT.is_symlink() and APP.is_dir() and not APP.is_symlink(), 'DEPLOY_DIRECTORY_POSTURE')
+     require(ROOT.stat().st_dev == APP.stat().st_dev, 'ATOMIC_RENAME_FILESYSTEM_REQUIRED')
+     prepared = ROOT / 'prepared'
+-    require(not prepared.exists(), 'PREPARED_TARGET_EXISTS')
+-    prepared.mkdir(mode=0o700)
+-    with tarfile.open(ROOT / 'application.tar.gz') as archive:
+-        for item in archive.getmembers():
+-            require(item.isfile() and item.name in artifact['files'], 'ARCHIVE_SCOPE')
+-            body = archive.extractfile(item).read()
+-            require(sha(body) == artifact['files'][item.name]['sha256'], 'ARCHIVE_MEMBER_CHANGED')
+-            dest = prepared / item.name
+-            dest.parent.mkdir(parents=True, exist_ok=True, mode=0o750)
+-            with open(dest, 'xb') as handle:
+-                handle.write(body)
+-            dest.chmod(0o640)
+-            os.chown(dest, account.pw_uid, account.pw_gid)
+-            parent = dest.parent
+-            while parent != prepared:
+-                parent.chmod(0o750)
+-                os.chown(parent, account.pw_uid, account.pw_gid)
+-                parent = parent.parent
+-    atomic(ROOT / 'old-canonical.json', old_bytes)
+-    atomic(ROOT / 'old-config.json', config_bytes)
+-    atomic(ROOT / 'new-canonical.json', new_canonical)
+-    atomic(ROOT / 'new-config.json', json_bytes(new_config))
++    if resume_prepared:
++        require(prepared.is_dir() and not prepared.is_symlink() and prepared.lstat().st_uid == 0
++                and stat.S_IMODE(prepared.stat().st_mode) == 0o700, 'PREPARED_DIRECTORY_CHANGED')
++        files = {str(path.relative_to(prepared)): path for path in prepared.rglob('*') if path.is_file()}
++        require(set(files) == set(artifact['files']), 'PREPARED_INVENTORY_CHANGED')
++        for path in prepared.rglob('*'):
++            require(not path.is_symlink(), 'PREPARED_SYMLINK')
++        for name, path in files.items():
++            entry = artifact['files'][name]
++            info = path.lstat()
++            require(info.st_uid == account.pw_uid and info.st_gid == account.pw_gid
++                    and stat.S_IMODE(info.st_mode) == 0o640 and len(read(path)) == entry['bytes']
++                    and sha(read(path)) == entry['sha256'], 'PREPARED_ARTIFACT_CHANGED')
++        for name, body in [('old-canonical.json', old_bytes), ('old-config.json', config_bytes),
++                           ('new-canonical.json', new_canonical), ('new-config.json', json_bytes(new_config))]:
++            require(read(ROOT / name) == body, 'SAVED_EXACT_PIN_INPUT_CHANGED')
++    else:
++        require(not prepared.exists(), 'PREPARED_TARGET_EXISTS')
++        prepared.mkdir(mode=0o700)
++        with tarfile.open(ROOT / 'application.tar.gz') as archive:
++            for item in archive.getmembers():
++                require(item.isfile() and item.name in artifact['files'], 'ARCHIVE_SCOPE')
++                body = archive.extractfile(item).read()
++                require(sha(body) == artifact['files'][item.name]['sha256'], 'ARCHIVE_MEMBER_CHANGED')
++                dest = prepared / item.name
++                dest.parent.mkdir(parents=True, exist_ok=True, mode=0o750)
++                with open(dest, 'xb') as handle:
++                    handle.write(body)
++                dest.chmod(0o640)
++                os.chown(dest, account.pw_uid, account.pw_gid)
++                parent = dest.parent
++                while parent != prepared:
++                    parent.chmod(0o750)
++                    os.chown(parent, account.pw_uid, account.pw_gid)
++                    parent = parent.parent
++        atomic(ROOT / 'old-canonical.json', old_bytes)
++        atomic(ROOT / 'old-config.json', config_bytes)
++        atomic(ROOT / 'new-canonical.json', new_canonical)
++        atomic(ROOT / 'new-config.json', json_bytes(new_config))
+     # Let an already running writer finish naturally; never stop/start its service.
+     deadline = time.monotonic() + 60
+     while unit('passvero-subscription-reminders.service')['ActiveState'] != 'inactive':
+@@ -239,6 +263,8 @@
+         idle()
+         verify_manifest(read(CANONICAL), OLD_CANONICAL, OLD_BUILD)
+         require(read(CODE / 'config.json') == config_bytes and read(BACKUP / 'state.json') == state, 'BASELINE_CHANGED')
++        if resume_prepared:
++            record('resume-attempt.json', {'originalPreparationReused': True, 'automaticRetry': False})
+         record('attempt.json', {'automaticRetry': False, 'timers': baseline, 'backupStateSha256': sha(state),
+                 'writerTimer': {'ActiveState': writer['ActiveState'], 'UnitFileState': writer['UnitFileState']},
+                 'mode': 'CONTINUOUS', 'hold': False, 'newBuild': NEW_BUILD})
+@@ -296,7 +322,7 @@
+     CHECK_ID = 'INDEPENDENT_CLOSURE'
+     path = ROOT / 'attempt.json'
+     if not path.exists():
+-        record('closure.json', {'coordination': 'NOT_STARTED', 'timerChanges': 'NONE', 'rollback': 'NOT_NEEDED'})
++        record('resume-closure.json', {'coordination': 'NOT_STARTED', 'timerChanges': 'NONE', 'rollback': 'NOT_NEEDED'})
+         return
+     attempt = json.loads(read(path))
+     require(sha(read(ROOT / 'old-config.json')) == OLD_CONFIG, 'SAVED_CONFIG_CHANGED')
+@@ -323,7 +349,7 @@
+         restore_timers(attempt['timers'])
+         for key, value in attempt['writerTimer'].items():
+             require(unit('passvero-subscription-reminders.timer')[key] == value, 'WRITER_BASELINE_CHANGED')
+-        record('closure.json', {'release': 'NEW_ALIGNED' if healthy_new else 'OLD_ROLLED_BACK_ALIGNED',
++        record('resume-closure.json', {'release': 'NEW_ALIGNED' if healthy_new else 'OLD_ROLLED_BACK_ALIGNED',
+             'backupAndMonitor': {name: unit(name) for name in TIMERS}, 'backupStateUnchanged': True,
+             'writerTimerUnchanged': True, 'rollback': 'PREPARED_NOT_EXECUTED' if healthy_new else 'PASS_PAIRED_NO_DELETION',
+             'artifactsRetained': True, 'automaticRetry': False})
+@@ -335,9 +361,9 @@
+     require(os.geteuid() == 0 and os.uname().nodename == 'srv1834647', 'OPERATOR_HOST')
+     os.umask(0o077)
+     mode = sys.argv[1]
+-    require(mode in ('--deploy', '--close', '--rollback'), 'MODE_SCOPE')
+-    if mode == '--deploy':
+-        deployment()
++    require(mode in ('--resume-prepared', '--close', '--rollback'), 'MODE_SCOPE')
++    if mode == '--resume-prepared':
++        deployment(resume_prepared=True)
+     else:
+         close(mode == '--rollback')
+
+@@ -348,7 +374,7 @@
+     except BaseException as error:
+         reason = str(error) if re.fullmatch('[A-Z0-9_]{1,160}', str(error)) else type(error).__name__
+         result = {'result': 'STOP', 'CHECK_ID': CHECK_ID, 'reason': reason, 'automaticRetry': False}
+-        name = 'closure-failure.json' if '--close' in sys.argv or '--rollback' in sys.argv else 'first-failure.json'
++        name = 'resume-closure-failure.json' if '--close' in sys.argv or '--rollback' in sys.argv else 'resume-first-failure.json'
+         if ROOT.is_dir() and not (ROOT / name).exists():
+             record(name, result)
+         print(json.dumps(result), flush=True)

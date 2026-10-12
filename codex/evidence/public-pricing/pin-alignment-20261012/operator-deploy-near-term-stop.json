@@ -1,0 +1,18 @@
+{
+  "automaticRetry": false,
+  "body-pass.json": null,
+  "closure-failure.json": null,
+  "closure.json": {
+    "coordination": "NOT_STARTED",
+    "rollback": "NOT_NEEDED",
+    "timerChanges": "NONE"
+  },
+  "deployment": "STOP_RETURN_OUTPUT_NO_RETRY",
+  "first-failure.json": {
+    "CHECK_ID": "PREPARE_AND_PRESERVE",
+    "automaticRetry": false,
+    "reason": "NEXT_REGULAR_TERM_TOO_CLOSE_STOP",
+    "result": "STOP"
+  },
+  "unitReturnCode": 1
+}

@@ -1,0 +1,29 @@
+{
+  "applicationActions": 0,
+  "artifactsRetained": true,
+  "automaticRetry": false,
+  "backupAndMonitor": "ACTIVE_ENABLED_WAITING",
+  "backupStateUnchanged": true,
+  "canonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "captureRestoreWorkerSmtpTelegramCalls": 0,
+  "closure": "PASS_OLD_ROLLED_BACK_ALIGNED_BASELINE_RESTORED",
+  "configSha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+  "httpsTls": "200_0_CANONICAL_ROOT",
+  "newMarketingDeployment": "NOT_ACCEPTED_ROLLED_BACK",
+  "nextTypedDueUTC": {
+    "passvero-staging-backup-monitor.timer": "2026-10-12T17:20:00+00:00",
+    "passvero-staging-backup.timer": "2026-10-13T04:30:00+00:00"
+  },
+  "oldManifestFilesVerified": 842,
+  "previousFailureHistory": "RETAINED_UNCHANGED",
+  "provenance": "SUMMARY_OF_USER_RETURNED_CANONICAL_OLD_RELEASE_CLOSURE",
+  "release": "mMVPOjFPkw5L42RIqziS4",
+  "runtime": {
+    "cwd": "/var/www/passvero-acceptance",
+    "name": "passvero-acceptance",
+    "pid": 1113960,
+    "pmId": 0,
+    "status": "online"
+  },
+  "writerTimerUnchanged": true
+}

@@ -1,0 +1,132 @@
+{
+  "task": "MARKETING_VISUAL_IDENTITY_RESTORATION_STAGING_DEPLOY",
+  "head": "5dba99b474d5fabbabc75855f15c912bb9c4b8c6",
+  "approval": "Odobravam dizajn. / Možeš uraditi deploy",
+  "source": {
+    "app/[locale]/about/page.tsx": {
+      "sha256": "63042305710bc8d6a1d10f582fb64bf6ce6efaa0e0e713dace53b00fb4e75576",
+      "bytes": 8479
+    },
+    "app/[locale]/contact/page.tsx": {
+      "sha256": "04dccb4fbade13e4179f910f4a9d84d95fd1d3b72d447137f4b20e6bddf2dde1",
+      "bytes": 6015
+    },
+    "messages/de.json": {
+      "sha256": "b833538e7ee03b3d644b159c0f25803ed5e940bcc9f86126de42ee77f5d4f6ee",
+      "bytes": 77114
+    },
+    "messages/en.json": {
+      "sha256": "96a7ba53167cb9f119041a8ab6a9e8f1c77cd889940b152ac3fa9942d9ccb193",
+      "bytes": 68541
+    },
+    "messages/hr.json": {
+      "sha256": "9fc61285e8422d1b52ff2700506833ccbd585e129b4308a91bfa268dbc4cd981",
+      "bytes": 71957
+    },
+    "messages/pl.json": {
+      "sha256": "c40c2ac13c2193f1c4cc08c5a6d2c33f014a7f060fb8356f3c6a2fc310a4506a",
+      "bytes": 74005
+    },
+    "messages/sl.json": {
+      "sha256": "f3a45352b2b34f169fd66764506dfcef9883fc80f83765df4bb2f9edc1b7b1b8",
+      "bytes": 70338
+    },
+    "messages/sr.json": {
+      "sha256": "8494bd0b127e19c0f635298c81495ca09eae73695db3572b46f59ba6709d78a2",
+      "bytes": 69929
+    },
+    "public/marketing/dashboard-preview-restored.png": {
+      "sha256": "d6b2f23ae08901f9ac0c87021d71d72f548ce62a4986f3592f6bd3669e354229",
+      "bytes": 1321997
+    },
+    "public/marketing/hero-passport-restored.png": {
+      "sha256": "dfb2633c28a424a46eec4774a16ba69cb5d3a510725108d40e4bcb8ccfdd8ef8",
+      "bytes": 1688760
+    },
+    "src/components/marketing/compliance-section.tsx": {
+      "sha256": "aef2d7461d39fb1cb24edf70cd85a715b2c4549849ee494aef8483bee56ebafc",
+      "bytes": 1716
+    },
+    "src/components/marketing/dashboard-preview-section.tsx": {
+      "sha256": "1efd76f2745738c1757802eef5e736d0776e2f193961b73559858cfa28464a56",
+      "bytes": 2522
+    },
+    "src/components/marketing/hero-section.tsx": {
+      "sha256": "0064bfa3e6cadea2353c97c612cef1dc125babcb38f364b96efbdf6b3e2462b0",
+      "bytes": 3836
+    },
+    "src/components/marketing/pricing-section.tsx": {
+      "sha256": "9acd08ec131291b12b11d9e3c2b4901cae24c8a85b9b1feda1f9c42b804c22a7",
+      "bytes": 4119
+    }
+  },
+  "legalNamespaces": "UNCHANGED_FROM_HEAD",
+  "isolatedBuildRoot": "/tmp/passvero-visual-release-20261012",
+  "noEnvFilesCopied": true,
+  "generatedClientInputs": {
+    "src/generated/prisma/browser.ts": "d1cfbd4f7d2800fc273dc72e54c27b9fd88c9075aa4bf3173235995c08a5d774",
+    "src/generated/prisma/client.ts": "6b7e97b5a6cde0fff6c79a960d9334f0f6d8792f829a441a59df21fe20113121",
+    "src/generated/prisma/commonInputTypes.ts": "8fed9951d5b85b72c89c34ab6677bc2d5ba3ed0a3e28d90e49b63a6794ecc26a",
+    "src/generated/prisma/enums.ts": "7cf3f947669a6ca674c27daf169435c44c9e825d62cf349aaeddcb06ce0ba26d",
+    "src/generated/prisma/internal/class.ts": "83f3cb6bf5138d4fd94b67c1490e4112645cb9727c5ad856b90fa25485c4ec21",
+    "src/generated/prisma/internal/prismaNamespace.ts": "aa3dddd2bd723529f1826649ba48f838620f5ddcad95ac6778af7b8934ba4f50",
+    "src/generated/prisma/internal/prismaNamespaceBrowser.ts": "e1782c80ebba807a52f17416c11d5f2be21780014a613ae26e21bf4fcb839cb3",
+    "src/generated/prisma/models/AccessRequest.ts": "5145e0a5b49439f0147d9265b1ed440856f5227aaeed1bf1b2c0a1ed5e8b105a",
+    "src/generated/prisma/models/AccessRequestAdminNotification.ts": "76a23f649d889950012aa2d3e6294093f77d9eb96c1262a9278ac80b3b697ef3",
+    "src/generated/prisma/models/AccountActivationIntent.ts": "3714c297079b38755870a60bf5ba27f8ad000112a40f40b07e8f34ecb82a49d9",
+    "src/generated/prisma/models/AuditLog.ts": "0f9a3c8df081ddfc6cda3fdfc4f4fc250c4c0998ac97ea1a31b9e58c0be108e8",
+    "src/generated/prisma/models/AuthAbuseBucket.ts": "1b31aec82d265652a82e3f9231627005f9b11b2713fa0be2b5629f486d732d63",
+    "src/generated/prisma/models/AuthAuditEvent.ts": "7505aa6fe8372fbb8d9bb17794b2cbd9f185b123d6e1492e4d06695fa04199fb",
+    "src/generated/prisma/models/AuthIdentity.ts": "cfd3ddc240c319ccd141e59f14cb47d98298f679719c9273c0aa3fd2cae4a421",
+    "src/generated/prisma/models/AuthProviderAccount.ts": "6826b0b9f2a3afee08e0dfb87ad78a949efde36c5cb008c4b734a3389e4097f1",
+    "src/generated/prisma/models/AuthProviderSession.ts": "404b2a1b2d4ca55363c90fb190b472bdf2323a73f979c223b40372adee7add9e",
+    "src/generated/prisma/models/AuthProviderUser.ts": "90d3178dd65481358324c85aebe731230f5af2dfda02053e45a5aa12ca0376fd",
+    "src/generated/prisma/models/AuthProviderVerification.ts": "73be57d94e808515ccc51074a69c12cc0be749f345db1befbadbbd0242b971a8",
+    "src/generated/prisma/models/AuthSessionSelection.ts": "bc46e4d55d853cc09ec143c66ba63ea788ab1c02a9369ddbfda6ecf4f892cb4e",
+    "src/generated/prisma/models/BackgroundJob.ts": "7badec96e0270adcda5c4e8e82e117cd562e532fc1e011a51428ace159d74c3a",
+    "src/generated/prisma/models/BillingEmailConfirmation.ts": "6f53f18935ab8c8eb87644119486f544470749a796843d9a4288e67993936e38",
+    "src/generated/prisma/models/CatalogImportBatch.ts": "41bb43239bd31c25bfa66d8a71c36369a42d69b3ae3d2357825d963e340cd054",
+    "src/generated/prisma/models/CatalogImportRow.ts": "7783f9de67514a76ce0ae38bf22d0d4312719851c4051785670f591bcffd3614",
+    "src/generated/prisma/models/CommercialOffer.ts": "c935ad86d1310e2201e5eda5aa580f1c7facc28349a71eecbb78cbe593ec7d35",
+    "src/generated/prisma/models/CommercialRequest.ts": "85bbf1bbb14f3e468966675d3c0a3020ede5123710520b8ac1040255a21bdda3",
+    "src/generated/prisma/models/Document.ts": "1f8ee44962694ca9fbeb72e3bf9921208a10e0ffba600d5c556f78d62a8e981e",
+    "src/generated/prisma/models/EconomicOperator.ts": "79bfabd500f66b407e725d1efc45c53b4c55c1257dacfea283dbe933a5cadca2",
+    "src/generated/prisma/models/IntegrationMapping.ts": "ad32868e8f5b83c01835ec312520315038c0782e149fc9289e28d5d8f4b9d106",
+    "src/generated/prisma/models/Invitation.ts": "04ddc0a8e061c4b2ee8d59bd87d9faf605e04cc5193dd96ab1be7a5e364710c6",
+    "src/generated/prisma/models/Membership.ts": "87f514363a8ab41ed7b40ec20d208ce8df543d0a2cd864d3f15b3cc72f3b9cb0",
+    "src/generated/prisma/models/Notification.ts": "42be7d50665106b64238e137d4ea3be86bf86694dd859a3fbc8da818e571b261",
+    "src/generated/prisma/models/OnboardingNotificationSettings.ts": "7912be269f2e11d969ed594a01e24f16c217c27e53cff3d809c32c4c56a683f1",
+    "src/generated/prisma/models/Organization.ts": "cd14e4d508556a709a48f374b913ec8caa831e22b629359539be60d565eae4df",
+    "src/generated/prisma/models/OrganizationBillingProfile.ts": "f2929e4ecf464794ed53e1e27fb248e0f309e303bf5b82dc084ac957d271e9c9",
+    "src/generated/prisma/models/OrganizationEntitlementEnrollment.ts": "76a7777590d19aaf1e65751b4cb46439bce1d7c8b3159d78d5432fba4b568d65",
+    "src/generated/prisma/models/OrganizationReminderEnrollment.ts": "97d1d11c03184b05d8dc5180424f1b13c6059b842ec707f545f8b540d4597177",
+    "src/generated/prisma/models/Passport.ts": "9726140d80f03e94b409666021fc8fb60610f260d6dff55d3c32f0abce3c9f9d",
+    "src/generated/prisma/models/Plan.ts": "d98fbb12869e8c8868e62a93ecbe56b031da341ef3feeeadd6f7972f56437980",
+    "src/generated/prisma/models/PlatformBillingGrant.ts": "2b04a039b3dd314bc8ec9d2e44d6e61fed34746225a14e7364624bd48112eb31",
+    "src/generated/prisma/models/PlatformGrant.ts": "ca37a91071857566481088f5f8d74f0d5805e2f38c4c9512c788b41423916cc1",
+    "src/generated/prisma/models/PlatformOnboardingGrant.ts": "32d2d841a7b33eecbd7704d1a9308d8b8939e136c83e9dc931f24ac6a1d2b1d9",
+    "src/generated/prisma/models/PlatformRegulatoryGrant.ts": "905df0a66a400a0aab6d00b61bcf230f464b8d95d14088e248b193fc490b4853",
+    "src/generated/prisma/models/Product.ts": "a44263afc700d9b36bb6f8a0a57ba18bd6047629098ce0e9a5babff227e1abf2",
+    "src/generated/prisma/models/ProductDocument.ts": "c43d2a075e610fdf00d01806dc94a3a0c33b63889b10bece5ea1195a288249b5",
+    "src/generated/prisma/models/ProductIdentifier.ts": "27b3eb2d0e3a0d609169fd4e5aff1db02504f5249b883edb30a8ba65b0a3941d",
+    "src/generated/prisma/models/ProductImage.ts": "9afd33ab1dee71303bddbe366df1a8fc0a80e46ac39344fce3419c10e125ac7e",
+    "src/generated/prisma/models/ProductImageAsset.ts": "8bcf9dcebb6fa7baeeedaaa2336915a0cd1df5c537280c5477cec2fec2890931",
+    "src/generated/prisma/models/ProductMaterial.ts": "b0f956614b45814198764df164410989f1414db3bddd915b327e5552182aead1",
+    "src/generated/prisma/models/ProductTranslation.ts": "a4634a8710a7406441b054564f1deff227f382e72ae3cc620bc5fdbd1ebd30f7",
+    "src/generated/prisma/models/ProductVersion.ts": "e83ca1d4daf357f601db72488b79a00f962bb6e3773f73aa350ea9dfabff8bee",
+    "src/generated/prisma/models/ProductVersionManufacturer.ts": "0a34a8cba6c43fe79d4442be63aab5f2c68d175f5565872be8d4731321b0a0b6",
+    "src/generated/prisma/models/QRCode.ts": "8a0106f804c0e89512c576ab2bef5df5794d3ee3431b5c3614d6ccc2e05ed26c",
+    "src/generated/prisma/models/ReminderAttempt.ts": "4ec6f576742ec1a909e90569548f8ccf96935acf3b8b0ea2709fa368e85a0ee0",
+    "src/generated/prisma/models/ReminderCampaign.ts": "c343c8c60760cae0a236128c1f72be869e747fb35c60fb984fa386fe7bb3ba44",
+    "src/generated/prisma/models/ReminderEnrollmentPolicy.ts": "c6e7f8102ea98e0d4c5941e96daa171952316b5368e240bb8b8ccfe1bd25b094",
+    "src/generated/prisma/models/ScanEvent.ts": "ee1d2c1b83f77142f536404945972e414f4697d689585673d78e352ca058d48b",
+    "src/generated/prisma/models/Subscription.ts": "16201a63e3660ce992116b89785fb8943b73144d635566b32e33bbb3be8ce57c",
+    "src/generated/prisma/models/SubscriptionPaidPeriod.ts": "d98e95d3f5ce9a6e0dd089cabacf9c9c723b6ccc8eccac1099d69adf87ca9089",
+    "src/generated/prisma/models/SubscriptionPaidPeriodActivation.ts": "03d27ea00a82ccac12a9cae3f74778523c2611af924e81791cf05f66cb838cad",
+    "src/generated/prisma/models/SubscriptionReminder.ts": "5488029e83faf6fc51380289544dfc1080974503a753974beb9a4884ccac59fc",
+    "src/generated/prisma/models/SubscriptionUpgradeReceipt.ts": "d691ae533b3264c4c338e38fbdd9cff92582e4cd26c44c4328e539a7eb51d57d",
+    "src/generated/prisma/models/User.ts": "8dccc268a2d3b3c1cb0bf8d48e2913e00a57801619f3d778f1f65a8fd0080961",
+    "src/generated/prisma/models.ts": "62a0f1ff466d00212cced7ba7f57c55fe8498a8367df99f7136b2b119d47bdd0"
+  },
+  "schemaSha256": "be640dc492b827794e592db758bf51d8d3ea864c9107373d62ca94e9aa2cfcbc"
+}

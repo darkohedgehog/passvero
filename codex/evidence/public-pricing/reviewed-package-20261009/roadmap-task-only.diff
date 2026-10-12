@@ -1,0 +1,35 @@
+--- codex/IMPLEMENTATION_ROADMAP.md.before-marketing
++++ codex/IMPLEMENTATION_ROADMAP.md
+@@ -94,14 +94,24 @@
+    nadzirati jednom, bez pomeranja datuma i veštačkih emailova. PUBLIC_AVAILABILITY
+    upozorenja pre gašenja nisu aktivirana u sadašnjem scope-u: pre obećanja tog toka
+    potreban je zaseban tačan enable/recipient predlog ili ograničenje javne tvrdnje.
+-4. **Javni paketi/cene i marketing tvrdnje.** Ciljano source čitanje potvrđuje:
+-   `src/components/marketing/pricing-section.tsx` i `messages/hr.json` još nude
+-   Starter/Professional/Enterprise „uskoro“, a ugovor Start/Business/Pro/Custom,
+-   3/12 meseci, EUR bez PDV-a. HR Hero/Compliance navode GS1/EPCIS/API podršku;
+-   DashboardPreview analitiku/timsku saradnju, Benefits automatizovanu proveru podataka.
+-   Nema pregledanog završnog dokaza za te šire tokove; CN/GTIN nisu ta podrška.
+-   Minimalno: jedan copy-to-capability pregled šest jezika i odobrena korekcija prema
+-   prihvaćenim funkcijama/cenama ili eksplicitnom backlog statusu. Nema nove cenovne politike.
++4. **Javni paketi/cene i marketing tvrdnje.** Lokalni source usklađen je 09.10.2026.
++   s potvrđenim Start/Business/Pro/Custom ugovorom, ukupnim EUR cenama bez PDV-a za
++   3/12 meseci i kvotama iz postojećeg kataloga. Šest jezika opisuje tačan trial,
++   kontrolisanu aktivaciju, B2B ponudu/uplatu, zaključavanje i odvojenu
++   VOLUNTARY/MANDATORY/UNRESOLVED dostupnost. Nepodržane GS1/EPCIS/API, autentičnost,
++   automatizacija i analitika tvrdnje i ilustracije su korigovane.
++   Lokalni build/TypeScript/lint i šest-jezični responsive/CTA/fokus pregled: PASS.
++   **Staging deploy/acceptance: DEFERRED_BACKUP_ACCEPTANCE_COORDINATION**; operatorski
++   read-only preflight 09.10 15:21 UTC potvrđuje iste build/canonical pinove,
++   0 capture pokušaja, hold=false i bez aktivnih capture/restore procesa.
++   Novi backup adapter vezuje capture za tačan build i canonical manifest.
++   Korisnik je potvrdio odlaganje, ne neuspešan deploy: sačuvati 10/11.10 capture;
++   nakon 11.10 07:10 Europe/Zagreb prvo rezultati i odobrene B–D provere. Tek posle
++   zatvaranja backup acceptance-a pripremiti jednu minimalnu objedinjenu promenu
++   tačnih release pinova i marketing deploy/rollback, uz zasebno odobrenje izvršenja.
++   Bez wildcarda/isključivanja pin zaštite, bez ponovnog builda/testova nepromenjenog
++   paketa. Pregledani paket/manifesti/dokazi sačuvani su u marketing evidence direktoriju;
++   backup konfiguracija nije menjana. [Izveštaj i granica nastavka](PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md).
+ 5. **Pravni/retencijski sadržaj i ručni B2B postupak.** HR privacy (`messages/hr.json`,
+    `Legal.Privacy.sections.scope`) tvrdi da nema računa/obrasca; sada postoje request-access,
+    auth, billing, dokumenti, audit i reminder podaci. Javni terms nisu dokaz usklađenja

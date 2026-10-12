@@ -1,0 +1,9 @@
+{
+  "provenance": "USER_RETURNED_OPERATOR_OUTPUT",
+  "result": "STOP",
+  "CHECK_ID": "REVIEWED_PACKAGE",
+  "reason": "RUNTIME_DEPENDENCY_IDENTITY_CHANGED",
+  "automaticRetry": false,
+  "deployment": "NOT_REACHED",
+  "pinChanges": "NOT_REACHED"
+}

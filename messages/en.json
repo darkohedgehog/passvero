@@ -35,7 +35,7 @@
   "EditProduct": {"metadataTitle": "Edit product | Passvero", "metadataDescription": "Edit the current product draft.", "title": "Edit product", "description": "Update the basic details of the current draft.", "productName": "Product name", "organizationSku": "Organization SKU", "optional": "optional", "sourceLocale": "Source language", "save": "Save changes", "saving": "Saving…", "cancel": "Cancel", "reload": "Reload product", "required": "This field is required.", "invalidName": "Enter a valid product name.", "invalidSku": "Enter a valid SKU.", "skuConflict": "This SKU is already used in your organization.", "staleWrite": "The product changed. Reload it before editing again.", "draftNotEditable": "The current draft cannot be edited.", "forbiddenTitle": "You cannot edit this product", "forbidden": "Your role does not allow product editing in this organization.", "failureTitle": "Product not updated", "failure": "The product could not be updated. Try again."},
   "Metadata": {
     "title": "Passvero — Digital Product Passports",
-    "description": "Create, manage and share trusted digital product passports.",
+    "description": "Organize and publish structured digital product passports.",
     "openGraphImageAlt": "Passvero platform for making digital product passports simple"
   },
   "Navigation": {
@@ -63,23 +63,50 @@
     }
   },
   "Home": {
-    "title": "Verified product passports.",
+    "title": "Digital product passports.",
     "description": "A simple platform for creating and managing digital product passports."
   },
   "MarketingNavigation": {"login": "Sign in","brand": "Passvero", "product": "Product", "solutions": "Solutions", "pricing": "Pricing", "resources": "Resources", "about": "About", "contact": "Contact", "earlyAccess": "Request access", "menu": "Open menu", "closeMenu": "Close menu"},
   "Hero": {
-    "badge": "DPP ready", "title": "Verified product passports.", "highlight": "product passports.",
-    "description": "The complete platform for Digital Product Passports. Structure product data, build trust, and give every product a transparent digital identity.",
-    "primaryAction": "Request access", "secondaryAction": "Watch overview", "visualAlt": "Digital product passport shown with a mobile passport view and QR card",
-    "features": {"ready": {"title": "DPP ready", "description": "For transparent product data"}, "secure": {"title": "Secure & trusted", "description": "Protected business data"}, "interoperable": {"title": "Interoperable", "description": "GS1, EPCIS and API support"}, "scalable": {"title": "Scalable", "description": "For every industry"}}
+    "badge": "Structured data",
+    "title": "Digital product passports.",
+    "highlight": "product passports.",
+    "description": "Structure product data, manage versions and publish the information you want to share.",
+    "primaryAction": "Request access",
+    "secondaryAction": "View",
+    "visualAlt": "Digital product passport shown with a mobile passport view and QR card",
+    "features": {
+      "ready": {
+        "title": "Structured data",
+        "description": "For your DPP workflows"
+      },
+      "secure": {
+        "title": "Controlled access",
+        "description": "Organization permissions"
+      },
+      "interoperable": {
+        "title": "GTIN and barcode",
+        "description": "Format and check-digit validation"
+      },
+      "scalable": {
+        "title": "Product versions",
+        "description": "From draft to publication"
+      }
+    },
+    "example": {
+      "label": "Example view — illustrative data",
+      "title": "Product information",
+      "manufacturer": "Manufacturer and materials",
+      "documents": "Images and documents"
+    }
   },
-  "Compliance": {"title": "Built for compliance. Designed for businesses.", "items": {"ready": {"title": "DPP ready", "description": "Supports structured data and future EU requirements."}, "secure": {"title": "Secure by design", "description": "Your data stays protected and under your control."}, "interoperable": {"title": "Interoperable", "description": "Connect GS1, EPCIS, APIs and other systems."}, "scalable": {"title": "Scalable", "description": "From small manufacturers to complex supply chains."}}},
-  "HowItWorks": {"label": "How it works", "title": "From product to passport in 4 simple steps", "steps": {"create": {"title": "Create", "description": "Create a digital passport for your product."}, "generate": {"title": "Generate", "description": "Generate a unique QR code or data carrier."}, "share": {"title": "Share", "description": "Attach it to your product or packaging."}, "verify": {"title": "Verify", "description": "Give access to trusted product information."}}},
-  "DashboardPreview": {"label": "One platform, everything you need", "title": "Manage. Track. Comply.", "description": "Passvero brings together the tools you need to manage product data, support compliance processes, and build trust across your supply chain.", "features": ["Centralized product and passport management", "Real-time data and event tracking", "Documents and certificates in one place", "Analytics and performance insights", "Role-based access and team collaboration"], "action": "Explore all features", "visualAlt": "Passvero dashboard for managing digital product passports"},
+  "Compliance": {"title": "Clear data. Controlled publication.", "items": {"ready": {"title": "Structured data", "description": "Organize information for your DPP workflows."}, "secure": {"title": "Controlled access", "description": "The private workspace is separate from public publication."}, "interoperable": {"title": "GTIN and barcode", "description": "GTIN checks and barcodes are not GS1 verification or certification."}, "scalable": {"title": "Product versions", "description": "Edit a draft without changing the published version."}}, "scopeNote": "PDF checks cover file structure and malware. They do not confirm document truthfulness, product authenticity or regulatory compliance. GS1 registry, EPCIS/API integrations and scan analytics are not currently available features."},
+  "HowItWorks": {"label": "How it works", "title": "From product to passport in 4 simple steps", "steps": {"create": {"title": "Create", "description": "Create a digital passport for your product."}, "generate": {"title": "Generate", "description": "Generate a QR code linking to the public passport."}, "share": {"title": "Share", "description": "Attach it to your product or packaging."}, "verify": {"title": "View", "description": "Provide access to published product information."}}},
+  "DashboardPreview": {"label": "Workspace overview", "title": "Edit. Review. Publish.", "description": "Products, versions and attachments in one workspace, with a separate public view of published information.", "features": ["Catalogue management and product search", "Drafts and published versions", "Images and PDF attachments by version", "CSV catalogue import and export", "Organization access based on permissions"], "action": "Request access", "visualAlt": "Passvero dashboard for managing digital product passports", "example": {"label": "Example view — illustrative data", "product": "Product", "draft": "Draft", "published": "Published", "title": "Catalogue overview"}},
   "Industries": {"title": "Built for manufacturers across Europe", "items": {"furniture": "Furniture", "textiles": "Textiles", "packaging": "Packaging", "electronics": "Electronics", "manufacturing": "Manufacturing", "consumer": "Consumer Goods"}},
-  "Pricing": {"label": "Pricing", "title": "Simple pricing is coming soon.", "description": "Passvero pricing will be announced before public launch. Request Early Access to receive product updates and launch pricing information.", "plans": {"starter": {"name": "Starter", "description": "For getting started with Digital Product Passports."}, "growth": {"name": "Professional", "description": "For growing product catalogues."}, "business": {"name": "Enterprise", "description": "For larger organisations and more complex needs."}}, "status": "Details coming soon", "featured": "Coming at launch", "action": "Request access", "note": "No payment is required to request access."},
-  "Benefits": {"label": "The benefits", "title": "Build trust. Reduce risk. Unlock value.", "items": {"trust": {"title": "Build trust", "description": "Prove product authenticity and transparency."}, "risk": {"title": "Reduce risk", "description": "Avoid fines and support regulatory processes."}, "efficiency": {"title": "Improve efficiency", "description": "Automate data collection and verification."}, "value": {"title": "Unlock value", "description": "Turn better data into smarter decisions."}}},
-  "CTA": {"title": "Ready to get started?", "description": "Join the future of product transparency.", "primaryAction": "Request access", "noteOne": "No commitment required", "noteTwo": "Set up in minutes", "visualAlt": "Teal shield with a checkmark representing verified data"},
+  "Pricing": {"label": "Pricing", "title": "Plans for your catalogue", "description": "Choose the scope that fits your products. Access is approved after reviewing your request.", "priceNotice": "Total prices for 3 or 12 calendar months, in EUR excluding VAT. No monthly subscription.", "published": "{count} published products", "months": "{count} calendar months", "limits": "Up to {count} stored products in total, {storage} GiB storage and {pdf} PDF attachments per version.", "customScope": "Agreed scope", "customPrice": "Price by offer", "customDescription": "Product count, storage and other limits are defined in an individual offer.", "trial": "The trial lasts 6 months from successful controlled organization activation: up to 3 products created in total, including imports, and up to 3 occupied published slots. One trial per organization; archiving does not restore a slot.", "payment": "Requesting access does not activate an account, purchase or select a plan. B2B payment is by bank transfer against an offer. An authorized operator activates the paid subscription after verifying payment.", "expiry": "Content changes and new publications are locked after expiry. Extended public availability applies only to eligible voluntary passports on paid plans.", "availabilityLink": "How are slots counted and how long is access available?", "detailsTitle": "Published slots, availability and retention", "counting": "A product with a published version occupies one slot, even with a new draft or when archived or withdrawn. A new version of the same product does not use an extra slot. Draft, published and archived products count toward total stored products; retained files and historical versions count toward storage.", "availability": "Voluntary passports (VOLUNTARY) may remain public for 6 more months after paid expiry, with locked content and existing safe-access conditions. The trial has no extended public availability. Mandatory (MANDATORY) and unresolved (UNRESOLVED) cases require a separate long-term availability agreement; this automatic shutdown does not apply to them.", "retention": "Private retention lasts 12 months after paid expiry or 3 months after the trial. Private viewing and available exports remain accessible during retention with existing permissions. These deadlines do not trigger automatic permanent deletion.", "action": "Request access"},
+  "Benefits": {"label": "The benefits", "title": "Clearer information. Simpler workflows.", "items": {"trust": {"title": "Share information", "description": "Publish the data your customers and partners need."}, "risk": {"title": "Prepare documentation", "description": "Keep attachments with the relevant product version."}, "efficiency": {"title": "Organize your catalogue", "description": "Enter data or import products from a CSV file."}, "value": {"title": "Keep an overview", "description": "Review your catalogue, drafts and published versions."}}},
+  "CTA": {"title": "Ready to get started?", "description": "Request controlled access and tell us what your team needs.", "primaryAction": "Request access", "noteOne": "A request is not a purchase", "noteTwo": "Activation after approval", "visualAlt": "Decorative shield illustration"},
   "Contact": {"emailLabel": "Email", "earlyAccessSubject": "Passvero early access request", "generalSubject": "General Passvero inquiry", "privacySubject": "Passvero privacy enquiry"},
   "AboutPage": {
     "metadata": {"title": "About | Passvero", "description": "Learn why we are building Passvero and how we help European businesses manage product information more simply."},

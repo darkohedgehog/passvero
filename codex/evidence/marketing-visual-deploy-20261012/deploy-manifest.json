@@ -1,0 +1,79 @@
+{
+  "backupAcceptance": "REUSED_A_D_COMPLETE",
+  "commitOrPush": false,
+  "completion": {
+    "backupAcceptanceRepeated": false,
+    "backupAndMonitor": "ACTIVE_ENABLED_WAITING_OPERATOR_CLOSURE",
+    "backupStateUnchanged": true,
+    "buildId": "_tkSUOn0PCoHjpx8V7FVr",
+    "canonicalFiles": 759,
+    "commitOrPush": false,
+    "consoleErrors": 0,
+    "formSubmissions": 0,
+    "legalDraft": "EXCLUDED_PRESERVED",
+    "liveViews": 12,
+    "operatorBodyAndIndependentClosure": "PASS",
+    "productionChanged": false,
+    "rollback": "PREPARED_NOT_EXECUTED",
+    "writerTimerUnchanged": true
+  },
+  "files": {
+    "codex/evidence/marketing-visual-deploy-20261012/VPS-TERMINAL-DEPLOY.sh": "62f9fc8aa48846389c58e17598e6fbbe982798c541c2179cc348d5009638ce85",
+    "codex/evidence/marketing-visual-deploy-20261012/VPS-TERMINAL-PREFLIGHT.sh": "57983d7e91e4d7141d009ef3020a141a3a47c25c20d8c3d426f45327225bacd7",
+    "codex/evidence/marketing-visual-deploy-20261012/VPS-TERMINAL-ROLLBACK.sh": "a52915ba75e32fa5c4677ec63eb876db1e9c2573ec81f3e4664829cd99819d93",
+    "codex/evidence/marketing-visual-deploy-20261012/artifact-manifest.json": "f99e967366651aeca151d68a5c9b243196023b8eb10e0294df767c9c2d985c82",
+    "codex/evidence/marketing-visual-deploy-20261012/deploy-reviewed.py": "db04d71b65c6b382b0796bdf3fe32aea07b9fd97c82b13c996b0c26be1af2082",
+    "codex/evidence/marketing-visual-deploy-20261012/live-read-only-visual-results.json": "1729a9322f7cd27590069030c0a67e0eff95d299d18fa605690457080780290b",
+    "codex/evidence/marketing-visual-deploy-20261012/local-checks.json": "c68271070df5cfd9ec3ea80998f669db6b57ae5ae1a77c8963020f258e22a047",
+    "codex/evidence/marketing-visual-deploy-20261012/operator-deploy-and-closure-pass.json": "e3bdf305a494d9e829f31c859d50c5161ac80e074336bffddc3e1f4b4a53be65",
+    "codex/evidence/marketing-visual-deploy-20261012/operator-preflight-reviewed-summary.json": "228b113cb5bbb86332b0a42c803dcb2e2a5daf330f757e97e3174c2dc8165316",
+    "codex/evidence/marketing-visual-deploy-20261012/preflight.py": "e74a2a3b8c1387015bfa7e8a05ad19394242095905a8dde1000ae2ddbf10bfed",
+    "codex/evidence/marketing-visual-deploy-20261012/source-manifest.json": "32b4285e12d0479dba18b6c1ad817a468dfc8ff0e8271fc4ec1c8e5829aee531",
+    "codex/evidence/marketing-visual-deploy-20261012/targeted-helper-checks.json": "c88f09f0d4560fc8323588c4d2d8723fce907e19e6c82e3a34b169b6c95c4f86"
+  },
+  "head": "5dba99b474d5fabbabc75855f15c912bb9c4b8c6",
+  "pinDelta": {
+    "newBuild": "_tkSUOn0PCoHjpx8V7FVr",
+    "newCanonicalSha256": "e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590",
+    "newConfigSha256": "a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839",
+    "oldBuild": "853RYrj-r5cyoSGuJudap",
+    "oldCanonicalSha256": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+    "oldConfigSha256": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a",
+    "onlyKeys": [
+      "buildId",
+      "canonicalSha256"
+    ],
+    "path": "/usr/local/libexec/passvero-staging-backup/config.json"
+  },
+  "preflight": "PASS_USER_RETURNED_READ_ONLY",
+  "report": {
+    "path": "codex/MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md",
+    "sha256": "74a388177bf10459f0f51fb5b45b09954fa7f7d5c13751941fd6ce927f0a3fa6"
+  },
+  "retainedOutsideGit": {
+    "codex/evidence/marketing-visual-deploy-20261012/application.tar.gz": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/marketing-visual-deploy-20261012/application.tar.gz",
+      "sha256": "0fa2668e2ce1eaa5aac34fb7e7ff44add1bd66aeca7c13d2439d448ac73ce3e0"
+    }
+  },
+  "runtimeChanges": true,
+  "selfHashExcluded": true,
+  "sharedDocuments": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+    "codex/MARKETING_VISUAL_IDENTITY_RESTORATION.md": "3711a1b0cb1678922a8ae4c7aec4f136c32aa10fb1ea6c3b678bcd9334aae926",
+    "codex/PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md": "af79ec43ecec14c9065d3035bcf063544a049044c734ab2d011efc20624761a5"
+  },
+  "sharedFileCommitScope": {
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "commitContentSha256": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+      "scope": "MARKETING_ONLY_INDEX_BLOB; READINESS_AND_LEGAL_WORKTREE_ADDITIONS_EXCLUDED",
+      "worktreeContentSha256": "747dca5aebd78e9ae69dd513fe06a3478a2aa878e8e586f3d0d522b17d0ef646",
+      "worktreeMustEqualCommit": false
+    }
+  },
+  "status": "COMPLETE_USER_APPROVED_DESIGN_DEPLOYED_READ_ONLY_STAGING_PASS",
+  "task": "MARKETING_VISUAL_IDENTITY_RESTORATION_STAGING_DEPLOY",
+  "userDesignApproved": true,
+  "userStagingDeployApproved": true
+}

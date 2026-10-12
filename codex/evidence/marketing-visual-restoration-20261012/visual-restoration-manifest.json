@@ -1,0 +1,138 @@
+{
+  "deployOrVpsOrBackupRepin": false,
+  "documentationChanges": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+    "codex/MARKETING_VISUAL_IDENTITY_RESTORATION.md": "3711a1b0cb1678922a8ae4c7aec4f136c32aa10fb1ea6c3b678bcd9334aae926",
+    "codex/PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md": "af79ec43ecec14c9065d3035bcf063544a049044c734ab2d011efc20624761a5",
+    "codex/evidence/marketing-visual-restoration-20261012/local-visual-checks.json": "5acf0b02e50834adba6d87ab2c5c19ab305a19d95c8cc0a317c3c4828a63c148",
+    "codex/evidence/marketing-visual-restoration-20261012/user-design-approval.json": "8415585be05fc920f499d4e6281133d498047765c1587f33abe0c44de55eae03",
+    "codex/evidence/marketing-visual-restoration-20261012/visual-restoration-only.diff": "5904c4143537cd3d18d6e6befb7e10985e05362c1b480be761bf6a24a143fc62",
+    "codex/evidence/public-pricing/pin-alignment-20261012/resume-manifest.json": "1d16f230147e77f6d1adbbd1fa431c1319422656b6b511fc3ebfa7646949b177"
+  },
+  "executableChanges": {
+    "messages/de.json": {
+      "afterSha256": "b833538e7ee03b3d644b159c0f25803ed5e940bcc9f86126de42ee77f5d4f6ee",
+      "beforeSha256": "fbcf8f8bd47c819cfc671017f9d94fb6c594da4f29e5b2087603e13c32a20e38",
+      "bytes": 77114
+    },
+    "messages/en.json": {
+      "afterSha256": "96a7ba53167cb9f119041a8ab6a9e8f1c77cd889940b152ac3fa9942d9ccb193",
+      "beforeSha256": "55400862d3894f5bd0b34b82a85d2a65568fd2d2df2a8300cc11c1af60287277",
+      "bytes": 68541
+    },
+    "messages/hr.json": {
+      "afterSha256": "9fc61285e8422d1b52ff2700506833ccbd585e129b4308a91bfa268dbc4cd981",
+      "beforeSha256": "016a67ce195d82a4f16e70a4f937082fc848f134463ab10841b4fec6d4e4b65e",
+      "bytes": 71957
+    },
+    "messages/pl.json": {
+      "afterSha256": "c40c2ac13c2193f1c4cc08c5a6d2c33f014a7f060fb8356f3c6a2fc310a4506a",
+      "beforeSha256": "834783fb0c16d39c0995ff0d98e41ed8f5cdcc4703da955a68a9e3260bacb604",
+      "bytes": 74005
+    },
+    "messages/sl.json": {
+      "afterSha256": "f3a45352b2b34f169fd66764506dfcef9883fc80f83765df4bb2f9edc1b7b1b8",
+      "beforeSha256": "21e7017638d9cc5390006e3292dc512387b49a6da3ef3407fb95466a7591e6f4",
+      "bytes": 70338
+    },
+    "messages/sr.json": {
+      "afterSha256": "8494bd0b127e19c0f635298c81495ca09eae73695db3572b46f59ba6709d78a2",
+      "beforeSha256": "a0d83eca9e2bb7c8434a1b109791e5248622ac11a22567fafc13fd0c4dca6bc0",
+      "bytes": 69929
+    },
+    "public/marketing/dashboard-preview-restored.png": {
+      "afterSha256": "d6b2f23ae08901f9ac0c87021d71d72f548ce62a4986f3592f6bd3669e354229",
+      "beforeSha256": null,
+      "bytes": 1321997
+    },
+    "public/marketing/hero-passport-restored.png": {
+      "afterSha256": "dfb2633c28a424a46eec4774a16ba69cb5d3a510725108d40e4bcb8ccfdd8ef8",
+      "beforeSha256": null,
+      "bytes": 1688760
+    },
+    "src/components/marketing/dashboard-preview-section.tsx": {
+      "afterSha256": "1efd76f2745738c1757802eef5e736d0776e2f193961b73559858cfa28464a56",
+      "beforeSha256": "1ad97be888c46713803794031d99b60b1dc31161979f5dbae43395a3821a209d",
+      "bytes": 2522
+    },
+    "src/components/marketing/hero-section.tsx": {
+      "afterSha256": "0064bfa3e6cadea2353c97c612cef1dc125babcb38f364b96efbdf6b3e2462b0",
+      "beforeSha256": "ff36bf7b57dba993b506225e60108aea3c503af06936d441cf3119130e840236",
+      "bytes": 3836
+    }
+  },
+  "head": "5dba99b474d5fabbabc75855f15c912bb9c4b8c6",
+  "legalDraftPreserved": {
+    "path": "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md",
+    "sha256": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "marketingCommitOrPush": false,
+  "newFullBuild": false,
+  "note": "Local source/asset review only; future deployment manifest must include both new public PNGs explicitly.",
+  "originalAssetsPreserved": {
+    "public/marketing/dashboard-preview.png": "9ab5e1831ccf653d056d14cc9bc0af589533212b9550b9601036f789fd6b1f67",
+    "public/marketing/hero-passport.png": "08e4be73faedcbe87f29d7efa0b320248f9d402a248e0865cef9ec7f893c78ad"
+  },
+  "reviewEvidenceWhitespaceNormalization": {
+    "codex/evidence/marketing-visual-restoration-20261012/visual-restoration-only.diff": {
+      "commitSha256": "5904c4143537cd3d18d6e6befb7e10985e05362c1b480be761bf6a24a143fc62",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/marketing-visual-restoration-20261012/visual-restoration-only.diff",
+      "originalSha256": "74742937a7f63d4a79bd6438431f345b01c97e28df7c704f851f08425fb6e5ae"
+    }
+  },
+  "reviewedPackageArchiveLocation": {
+    "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+    "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/application.tar.gz",
+    "sha256": "8c3e74a998966976aa92777a37fb1b040b2d02dea1ac49c4a1f148744e062a1e"
+  },
+  "reviewedPackageArchiveUnchanged": "8c3e74a998966976aa92777a37fb1b040b2d02dea1ac49c4a1f148744e062a1e",
+  "screenshotsOutsideRepository": {
+    "/tmp/passvero-visual-restoration-20261012/de-hero-desktop.png": "5aa950bca50f1ef355f89bae28477c307a78be679ee5564fa66beda3c32337d9",
+    "/tmp/passvero-visual-restoration-20261012/de-hero-mobile.png": "686ffc7802d6783cf7928085ebb2a0525ab5e3ef63ca8f91ba61a20391006cb9",
+    "/tmp/passvero-visual-restoration-20261012/de-laptop-desktop.png": "4f25c9dc056aa27d202ddd0ccacdda721c583bf72ca28cc4091c1bef819490b6",
+    "/tmp/passvero-visual-restoration-20261012/de-laptop-mobile.png": "0c5d9e7ebbba2734edcffa2dad21d63a9cb5c2eeb29d71c164970a3b170c6e1c",
+    "/tmp/passvero-visual-restoration-20261012/en-hero-desktop.png": "8ab13f75ae21c2583a6f1ca9011a5b6159cba397d67ba73e3083e9784f910e5f",
+    "/tmp/passvero-visual-restoration-20261012/en-hero-mobile.png": "1cbe895586c7aac4acda480fdc75ed22796b0474da3cef7fa420e1b46878fe98",
+    "/tmp/passvero-visual-restoration-20261012/en-laptop-desktop.png": "b7659f17ea07b19a15aeea09e6f6ee0c956be41b90122f0670eed3dc02b367af",
+    "/tmp/passvero-visual-restoration-20261012/en-laptop-mobile.png": "43e38df4577e95d107e3ddca731fcf5f3579bbed806d5ec58cf915a8ffcd61d0",
+    "/tmp/passvero-visual-restoration-20261012/hr-hero-desktop.png": "4c03a729c7dcc6ab5e4551d6dea4d21947386d4ff053a611a7f3d5f76d48374d",
+    "/tmp/passvero-visual-restoration-20261012/hr-hero-mobile.png": "30010c614e95ead2a5a8ab10e3464929183b71a5d3b4b35a6a82493d0aad770a",
+    "/tmp/passvero-visual-restoration-20261012/hr-laptop-desktop.png": "b267b7b752524a7073faa40c9684ccc17bb800d429af0bb05b615b438d1b33c9",
+    "/tmp/passvero-visual-restoration-20261012/hr-laptop-mobile.png": "14aeadc15756a3481beeb03b686a872285b800e346d00b745ceeb24c7be6ce35",
+    "/tmp/passvero-visual-restoration-20261012/pl-hero-desktop.png": "0906c7f488393ba1421f7a3cd83361a2f32673431fbf5f261fa979ab6440cb8e",
+    "/tmp/passvero-visual-restoration-20261012/pl-hero-mobile.png": "63f21934e856490ead8bca093ae19c652a4bd0ca30162c5f904e0125a5140089",
+    "/tmp/passvero-visual-restoration-20261012/pl-laptop-desktop.png": "7924406f86d42722e00d31dea63bb4fc3ca833fab588bd1b44bd1ef432e7bc12",
+    "/tmp/passvero-visual-restoration-20261012/pl-laptop-mobile.png": "2e0649cfcb0e247197a8bb5ab2f93245b4a470969ab6f905b467e8bbcf727cec",
+    "/tmp/passvero-visual-restoration-20261012/sl-hero-desktop.png": "f5f0dfcf981c93ce60cbcb185d3d5b6330756b84e4b2bc339955e05d08b348f8",
+    "/tmp/passvero-visual-restoration-20261012/sl-hero-mobile.png": "34e8d8ff821e71bfac94c3023d250a3e9d9dc60d7b945df905aae3c9ef8ac974",
+    "/tmp/passvero-visual-restoration-20261012/sl-laptop-desktop.png": "5a2e87ec08d0ecc105bf5de8a91356a0ef6d39950d4e10c62a4ff6ca7e0221ef",
+    "/tmp/passvero-visual-restoration-20261012/sl-laptop-mobile.png": "2c107255ae424ce5b92ee909039d922ebb681f28faaade7c2b27295ec964856e",
+    "/tmp/passvero-visual-restoration-20261012/sr-hero-desktop.png": "cb2ada31d2040a5f32dff05656635c91e04226721c196e80ad9229f256ff5614",
+    "/tmp/passvero-visual-restoration-20261012/sr-hero-mobile.png": "de2aa954dbc00f4b152d91d734796e9848511b1c119ee0c7a2674658ef5cfcd6",
+    "/tmp/passvero-visual-restoration-20261012/sr-laptop-desktop.png": "aa3b2d39aef8c0da2d7e9f77384234f592a80324ba42afab097fbca363fe1880",
+    "/tmp/passvero-visual-restoration-20261012/sr-laptop-mobile.png": "72fc7e6225816098841452b6f66faf74d7ab4768f7695b7793cba3f2c1e322d5"
+  },
+  "selfHashExcluded": true,
+  "sharedFileCommitScope": {
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "commitContentSha256": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+      "scope": "MARKETING_ONLY_INDEX_BLOB; READINESS_AND_LEGAL_WORKTREE_ADDITIONS_EXCLUDED",
+      "worktreeContentSha256": "747dca5aebd78e9ae69dd513fe06a3478a2aa878e8e586f3d0d522b17d0ef646",
+      "worktreeMustEqualCommit": false
+    }
+  },
+  "status": "USER_VISUAL_APPROVED_LOCAL_ONLY",
+  "subsequentStagingPhase": {
+    "manifest": "codex/evidence/marketing-visual-deploy-20261012/deploy-manifest.json",
+    "report": "codex/MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md",
+    "status": "COMPLETE_SEPARATELY_AUTHORIZED"
+  },
+  "syntheticScreenInputs": {
+    "/tmp/passvero-synthetic-visuals/dashboard.png": "00b6ad0ce91655972feaaa97176845a5613ea35b73cb7413e93865ce7ce0fce8",
+    "/tmp/passvero-synthetic-visuals/dpp.png": "dc65a6fbf2183b06096dbb2ce9e0bcc69b80ccd7b8234bc9599a366a025bb284"
+  },
+  "task": "MARKETING_VISUAL_IDENTITY_RESTORATION",
+  "userApprovalEvidence": "codex/evidence/marketing-visual-restoration-20261012/user-design-approval.json",
+  "userVisualAcceptance": "USER_CONFIRMED"
+}

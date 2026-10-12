@@ -1,0 +1,20 @@
+{
+  "preflight": "READ_ONLY",
+  "utc": "2026-10-09T15:21:42.832307+00:00",
+  "stagingBuild": "mMVPOjFPkw5L42RIqziS4",
+  "canonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "backupBuildPin": "mMVPOjFPkw5L42RIqziS4",
+  "backupCanonicalPin": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "currentPinsMatch": true,
+  "backupChecksExactBuild": true,
+  "backupChecksExactCanonical": true,
+  "backupAttempts": 0,
+  "completedCaptures": 0,
+  "backupHold": false,
+  "activeRecoveryUnits": [],
+  "recoveryProcesses": [],
+  "deploymentPerformed": false,
+  "configurationWrites": 0,
+  "databaseWrites": 0,
+  "emails": 0
+}

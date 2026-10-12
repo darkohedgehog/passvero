@@ -1,0 +1,34 @@
+{
+  "attempts": 2,
+  "backupStateSha256": "83a853dd397c13c2290a94a6defdc51d42638259c76091d6485a840f75ef44d1",
+  "backupTimer": "ACTIVE_ENABLED_NEXT_2026_10_13_04_30_UTC",
+  "captureRestoreWorkerSmtpTelegramCalls": 0,
+  "configKeysChanged": [
+    "buildId",
+    "canonicalSha256"
+  ],
+  "currentRuntime": {
+    "cwd": "/var/www/passvero-acceptance",
+    "name": "passvero-acceptance",
+    "pid": 1060413,
+    "pmId": 0,
+    "status": "online"
+  },
+  "hold": false,
+  "legalNamespaces": "UNCHANGED_FROM_DEPLOYED",
+  "mode": "CONTINUOUS",
+  "monitorTimer": "ACTIVE_ENABLED_NEXT_2026_10_12_16_20_UTC",
+  "mutations": "NONE",
+  "newArtifacts": 754,
+  "newBuild": "853RYrj-r5cyoSGuJudap",
+  "newCanonicalSha256": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+  "newConfigSha256": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a",
+  "observedUTC": "2026-10-12T16:02:02.110284+00:00",
+  "oldBuild": "mMVPOjFPkw5L42RIqziS4",
+  "oldCanonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "oldConfigSha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+  "preflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+  "provenance": "SUMMARY_OF_USER_RETURNED_PREFLIGHT_2026_10_12",
+  "reminderService": "ACTIVATING_START_NO_IDLE_ASSUMPTION",
+  "retainedCanonicalFiles": 3
+}

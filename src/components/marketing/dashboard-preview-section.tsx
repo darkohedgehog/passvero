@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { MarketingButton } from "@/src/components/marketing/marketing-button";
 import { MarketingContainer } from "@/src/components/marketing/marketing-container";
 import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
+import { getPathname } from "@/src/i18n/navigation";
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
@@ -13,6 +14,7 @@ export async function DashboardPreviewSection() {
   const t = await getTranslations("DashboardPreview");
   const rawFeatures: unknown = t.raw("features");
   const features = isStringArray(rawFeatures) ? rawFeatures : [];
+  const accessHref = getPathname({ locale: await getLocale(), href: "/request-access" });
 
   return (
     <section className="pb-16 pt-6 md:pb-20 md:pt-8">
@@ -29,18 +31,19 @@ export async function DashboardPreviewSection() {
               </li>
             ))}
           </ul>
-          <MarketingButton href="#early-access" variant="secondary" className="mt-8">{t("action")}</MarketingButton>
+          <MarketingButton href={accessHref} variant="secondary" className="mt-8">{t("action")}</MarketingButton>
         </div>
         <div className="relative -mx-3 overflow-hidden rounded-[20px] bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.1)] sm:mx-0">
           <div className="absolute inset-x-[8%] bottom-[2%] h-1/3 rounded-full bg-blue-100/60 blur-3xl" aria-hidden="true" />
           <Image
-            src="/marketing/dashboard-preview.png"
+            src="/marketing/dashboard-preview-restored.png"
             alt={t("visualAlt")}
             width={1619}
             height={972}
             sizes="(max-width: 1023px) 100vw, 67vw"
             className="relative h-auto w-full mix-blend-multiply"
           />
+          <p className="relative pb-2 text-center text-[0.6875rem] leading-4 text-slate-500">{t("example.label")}</p>
         </div>
       </MarketingContainer>
     </section>

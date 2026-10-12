@@ -1,0 +1,41 @@
+{
+  "artifacts": 757,
+  "artifactsRetained": true,
+  "automaticRetry": false,
+  "backupAndMonitor": {
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "NextElapseUSecRealtime": "Mon 2026-10-12 19:20:00 CEST",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "NextElapseUSecRealtime": "Tue 2026-10-13 06:30:00 CEST",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    }
+  },
+  "backupStateUnchanged": true,
+  "buildId": "853RYrj-r5cyoSGuJudap",
+  "canonical-deploy-closure-failure.json": null,
+  "canonical-deploy-first-failure.json": null,
+  "canonicalSha256": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+  "captureRestoreWorkerSmtpTelegramCalls": 0,
+  "configSha256": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a",
+  "deployment": "PASS",
+  "httpsTls": "200_0_CANONICAL_ROOT",
+  "previousHistory": "RETAINED_UNCHANGED",
+  "provenance": "SUMMARY_OF_USER_RETURNED_CANONICAL_DEPLOY_AND_CLOSURE_PASS",
+  "release": "NEW_ALIGNED",
+  "rollback": "PREPARED_NOT_EXECUTED",
+  "runtime": {
+    "cwd": "/var/www/passvero-acceptance",
+    "name": "passvero-acceptance",
+    "pid": 1115634,
+    "pmId": 0,
+    "status": "online"
+  },
+  "unitReturnCode": 0,
+  "writerTimerUnchanged": true
+}

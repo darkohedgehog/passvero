@@ -1,0 +1,20 @@
+{
+  "automaticRetry": false,
+  "body-pass.json": null,
+  "deployment": "STOP_RETURN_OUTPUT_NO_RETRY",
+  "previousFailureAndClosure": "ARCHIVED_RETAINED",
+  "resume-closure-failure.json": {
+    "CHECK_ID": "PAIRED_ROLLBACK",
+    "automaticRetry": false,
+    "reason": "STAGING_HTTPS_OR_RUNTIME_NOT_READY",
+    "result": "STOP"
+  },
+  "resume-closure.json": null,
+  "resume-first-failure.json": {
+    "CHECK_ID": "VERIFY_NEW_ALIGNED_RELEASE",
+    "automaticRetry": false,
+    "reason": "STAGING_HTTPS_OR_RUNTIME_NOT_READY",
+    "result": "STOP"
+  },
+  "unitReturnCode": 1
+}

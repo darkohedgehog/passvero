@@ -1,0 +1,37 @@
+{
+  "buildOrUnrelatedTests": false,
+  "cases": [
+    {
+      "expectedPass": true,
+      "response": "200 0",
+      "result": "PASS",
+      "runtimeScopeFails": false
+    },
+    {
+      "expectedPass": false,
+      "response": "307 0",
+      "result": "PASS",
+      "runtimeScopeFails": false
+    },
+    {
+      "expectedPass": false,
+      "response": "200 60",
+      "result": "PASS",
+      "runtimeScopeFails": false
+    },
+    {
+      "expectedPass": false,
+      "response": "200 0",
+      "result": "PASS",
+      "runtimeScopeFails": true
+    }
+  ],
+  "changedFunctions": [
+    "close",
+    "deployment",
+    "health",
+    "main"
+  ],
+  "execution": "LOCAL_ISOLATED_FUNCTION_MOCKS_NO_APPLICATION_OR_LIVE_ACTION",
+  "unchangedOtherFunctionASTs": true
+}

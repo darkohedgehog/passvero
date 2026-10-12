@@ -1,0 +1,151 @@
+--- before/src/components/marketing/hero-section.tsx
++++ after/src/components/marketing/hero-section.tsx
+@@ -1,3 +1,4 @@
++import Image from "next/image";
+ import { getLocale, getTranslations } from "next-intl/server";
+
+ import { MarketingButton } from "@/src/components/marketing/marketing-button";
+@@ -28,7 +29,7 @@
+             <span className="inline-flex rounded-full bg-teal-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.08em] text-teal-700">
+               {t("badge")}
+             </span>
+-            <h1 className="mt-4 [overflow-wrap:anywhere] text-[2.375rem] font-bold leading-[1.06] tracking-[-0.045em] text-navy-950 sm:text-5xl lg:text-[3.5rem] lg:leading-[1.04]">
++            <h1 className="mt-4 text-[2.375rem] font-bold leading-[1.06] tracking-[-0.045em] text-navy-950 sm:text-5xl lg:text-[3.5rem] lg:leading-[1.04]">
+               {titleStart}
+               {highlightIndex >= 0 ? <span className="block text-teal-600">{highlight}</span> : null}
+             </h1>
+@@ -45,20 +46,20 @@
+           </div>
+
+           <div className="relative mx-auto min-w-0 w-full max-w-152 lg:-mb-8 lg:-mt-16 lg:justify-self-end">
+-            <div className="mx-auto max-w-sm rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[var(--shadow-marketing)]">
+-              <p className="text-xs leading-5 text-slate-500">{t("example.label")}</p>
+-              <MarketingIcon name="document" className="my-8 size-16 text-teal-700" />
+-              <h2 className="[overflow-wrap:anywhere] text-2xl font-bold text-navy-950">{t("example.title")}</h2>
+-              <div className="mt-6 space-y-4 text-sm text-slate-600">
+-                <p className="rounded-xl bg-slate-50 p-4">{t("example.manufacturer")}</p>
+-                <p className="rounded-xl bg-slate-50 p-4">{t("example.documents")}</p>
+-                <p className="rounded-xl bg-blue-50 p-4">{t("features.scalable.description")}</p>
+-              </div>
+-            </div>
++            <Image
++              src="/marketing/hero-passport-restored.png"
++              alt={t("visualAlt")}
++              width={1019}
++              height={1544}
++              priority
++              sizes="(max-width: 1023px) 90vw, 52vw"
++              className="mx-auto h-auto w-[min(100%,30rem)] object-contain lg:w-xl"
++            />
++            <p className="mt-2 text-center text-[0.6875rem] leading-4 text-slate-500">{t("example.label")}</p>
+           </div>
+         </div>
+
+-        <div id="features" className="mt-8 scroll-mt-6 grid grid-cols-2 gap-x-5 gap-y-6 border-t border-slate-100 pt-7 lg:-mt-12 lg:w-[53%] lg:grid-cols-4 lg:gap-x-7 lg:border-0 lg:pt-0">
++        <div id="features" className="mt-8 scroll-mt-6 grid grid-cols-2 gap-x-5 gap-y-6 border-t border-slate-100 pt-7 lg:-mt-28 lg:w-[53%] lg:grid-cols-4 lg:gap-x-7 lg:border-0 lg:pt-0">
+           {featureItems.map((item) => (
+             <div key={item.key} className="flex gap-3 lg:flex lg:items-start">
+               <MarketingIcon name={item.icon} className="size-6 shrink-0 text-navy-800" />
+--- before/src/components/marketing/dashboard-preview-section.tsx
++++ after/src/components/marketing/dashboard-preview-section.tsx
+@@ -1,3 +1,4 @@
++import Image from "next/image";
+ import { getLocale, getTranslations } from "next-intl/server";
+
+ import { MarketingButton } from "@/src/components/marketing/marketing-button";
+@@ -34,20 +35,15 @@
+         </div>
+         <div className="relative -mx-3 overflow-hidden rounded-[20px] bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.1)] sm:mx-0">
+           <div className="absolute inset-x-[8%] bottom-[2%] h-1/3 rounded-full bg-blue-100/60 blur-3xl" aria-hidden="true" />
+-          <div className="relative rounded-2xl border border-slate-200 p-6 sm:p-8">
+-            <p className="text-xs leading-5 text-slate-500">{t("example.label")}</p>
+-            <h3 className="mt-4 text-2xl font-bold text-navy-950">{t("example.title")}</h3>
+-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+-              {["draft", "published"].map((state) => (
+-                <div key={state} className="min-w-0 rounded-xl bg-slate-50 p-5">
+-                  <MarketingIcon name="document" className="size-7 text-teal-700" />
+-                  <p className="mt-4 font-semibold text-navy-950">{t("example.product")}</p>
+-                  <p className="mt-2 text-sm text-slate-600">{t(`example.${state}`)}</p>
+-                </div>
+-              ))}
+-            </div>
+-            <p className="mt-6 text-sm leading-6 text-slate-600">{features[1]}</p>
+-          </div>
++          <Image
++            src="/marketing/dashboard-preview-restored.png"
++            alt={t("visualAlt")}
++            width={1619}
++            height={972}
++            sizes="(max-width: 1023px) 100vw, 67vw"
++            className="relative h-auto w-full mix-blend-multiply"
++          />
++          <p className="relative pb-2 text-center text-[0.6875rem] leading-4 text-slate-500">{t("example.label")}</p>
+         </div>
+       </MarketingContainer>
+     </section>
+--- before/messages/hr.json
++++ after/messages/hr.json
+@@ -81,7 +81,7 @@
+   "Hero": {
+     "badge": "Strukturirani podaci",
+     "title": "Digitalne putovnice proizvoda.",
+-    "highlight": "Digitalne putovnice proizvoda.",
++    "highlight": "putovnice proizvoda.",
+     "description": "Strukturirajte podatke o proizvodima, upravljajte verzijama i objavite informacije koje želite podijeliti.",
+     "primaryAction": "Zatraži pristup",
+     "secondaryAction": "Pregledajte",
+--- before/messages/sr.json
++++ after/messages/sr.json
+@@ -67,7 +67,7 @@
+     "description": "Jednostavna platforma za kreiranje i upravljanje digitalnim pasošima proizvoda."
+   },
+   "MarketingNavigation": {"login": "Prijava","brand": "Passvero", "product": "Proizvod", "solutions": "Rešenja", "pricing": "Cene", "resources": "Resursi", "about": "O nama", "contact": "Kontakt", "earlyAccess": "Zatraži pristup", "menu": "Otvori meni", "closeMenu": "Zatvori meni"},
+-  "Hero": {"badge": "Strukturirani podaci", "title": "Digitalni pasoši proizvoda.", "highlight": "Digitalni pasoši proizvoda.", "description": "Strukturirajte podatke o proizvodima, upravljajte verzijama i objavite informacije koje želite da podelite.", "primaryAction": "Zatraži pristup", "secondaryAction": "Pregledajte", "visualAlt": "Digitalni pasoš proizvoda prikazan uz mobilni prikaz i QR karticu", "features": {"ready": {"title": "Strukturirani podaci", "description": "Za vaše DPP procese"}, "secure": {"title": "Kontrolisani pristup", "description": "Ovlašćenja po organizaciji"}, "interoperable": {"title": "GTIN i barkod", "description": "Provera formata i kontrolne cifre"}, "scalable": {"title": "Verzije proizvoda", "description": "Od nacrta do objave"}}, "example": {"label": "Primer prikaza — ilustrativni podaci", "title": "Podaci o proizvodu", "manufacturer": "Proizvođač i materijali", "documents": "Slike i dokumenti"}},
++  "Hero": {"badge": "Strukturirani podaci", "title": "Digitalni pasoši proizvoda.", "highlight": "pasoši proizvoda.", "description": "Strukturirajte podatke o proizvodima, upravljajte verzijama i objavite informacije koje želite da podelite.", "primaryAction": "Zatraži pristup", "secondaryAction": "Pregledajte", "visualAlt": "Digitalni pasoš proizvoda prikazan uz mobilni prikaz i QR karticu", "features": {"ready": {"title": "Strukturirani podaci", "description": "Za vaše DPP procese"}, "secure": {"title": "Kontrolisani pristup", "description": "Ovlašćenja po organizaciji"}, "interoperable": {"title": "GTIN i barkod", "description": "Provera formata i kontrolne cifre"}, "scalable": {"title": "Verzije proizvoda", "description": "Od nacrta do objave"}}, "example": {"label": "Primer prikaza — ilustrativni podaci", "title": "Podaci o proizvodu", "manufacturer": "Proizvođač i materijali", "documents": "Slike i dokumenti"}},
+   "Compliance": {"title": "Jasni podaci. Kontrolisana objava.", "items": {"ready": {"title": "Strukturirani podaci", "description": "Organizujte informacije za svoje DPP procese."}, "secure": {"title": "Kontrolisani pristup", "description": "Privatni radni prostor odvojen je od javne objave."}, "interoperable": {"title": "GTIN i barkod", "description": "GTIN provera i barkod nisu GS1 verifikacija ili sertifikacija."}, "scalable": {"title": "Verzije proizvoda", "description": "Uređujte nacrt bez promene objavljene verzije."}}, "scopeNote": "PDF provere obuhvataju strukturu datoteke i zlonamerni sadržaj. Ne potvrđuju istinitost dokumenta, autentičnost proizvoda ili regulatornu usklađenost. GS1 registry, EPCIS/API integracije i analitika skeniranja nisu trenutno dostupne funkcije."},
+   "HowItWorks": {"label": "Kako funkcioniše", "title": "Od proizvoda do pasoša u 4 jednostavna koraka", "steps": {"create": {"title": "Kreirajte", "description": "Kreirajte digitalni pasoš za svoj proizvod."}, "generate": {"title": "Generišite", "description": "Generišite QR kod za vezu do javnog pasoša."}, "share": {"title": "Podelite", "description": "Povežite ga sa proizvodom ili ambalažom."}, "verify": {"title": "Pregledajte", "description": "Omogućite pristup objavljenim informacijama o proizvodu."}}},
+   "DashboardPreview": {"label": "Pregled radnog prostora", "title": "Uredite. Pregledajte. Objavite.", "description": "Proizvodi, verzije i prilozi u jednom radnom prostoru, uz zaseban javni prikaz objavljenih informacija.", "features": ["Upravljanje katalogom i pretraga proizvoda", "Nacrti i objavljene verzije", "Slike i PDF prilozi po verziji", "Uvoz i izvoz kataloga u CSV formatu", "Pristup organizaciji prema ovlašćenjima"], "action": "Zatražite pristup", "visualAlt": "Passvero kontrolna tabla za upravljanje digitalnim pasošima proizvoda", "example": {"label": "Primer prikaza — ilustrativni podaci", "product": "Proizvod", "draft": "Nacrt", "published": "Objavljeno", "title": "Pregled kataloga"}},
+--- before/messages/en.json
++++ after/messages/en.json
+@@ -70,7 +70,7 @@
+   "Hero": {
+     "badge": "Structured data",
+     "title": "Digital product passports.",
+-    "highlight": "Digital product passports.",
++    "highlight": "product passports.",
+     "description": "Structure product data, manage versions and publish the information you want to share.",
+     "primaryAction": "Request access",
+     "secondaryAction": "View",
+--- before/messages/de.json
++++ after/messages/de.json
+@@ -67,7 +67,7 @@
+     "description": "Eine einfache Plattform zum Erstellen und Verwalten digitaler Produktpässe."
+   },
+   "MarketingNavigation": {"login": "Anmelden","brand": "Passvero", "product": "Produkt", "solutions": "Lösungen", "pricing": "Preise", "resources": "Ressourcen", "about": "Über uns", "contact": "Kontakt", "earlyAccess": "Zugang anfragen", "menu": "Menü öffnen", "closeMenu": "Menü schließen"},
+-  "Hero": {"badge": "Strukturierte Daten", "title": "Digitale Produktpässe.", "highlight": "Digitale Produktpässe.", "description": "Strukturieren Sie Produktdaten, verwalten Sie Versionen und veröffentlichen Sie die Informationen, die Sie teilen möchten.", "primaryAction": "Zugang anfragen", "secondaryAction": "Ansehen", "visualAlt": "Digitaler Produktpass mit mobiler Passansicht und QR-Karte", "features": {"ready": {"title": "Strukturierte Daten", "description": "Für Ihre DPP-Abläufe"}, "secure": {"title": "Kontrollierter Zugang", "description": "Berechtigungen je Organisation"}, "interoperable": {"title": "GTIN und Barcode", "description": "Format- und Prüfziffernprüfung"}, "scalable": {"title": "Produktversionen", "description": "Vom Entwurf zur Veröffentlichung"}}, "example": {"label": "Beispielansicht — illustrative Daten", "title": "Produktinformationen", "manufacturer": "Hersteller und Materialien", "documents": "Bilder und Dokumente"}},
++  "Hero": {"badge": "Strukturierte Daten", "title": "Digitale Produktpässe.", "highlight": "Produktpässe.", "description": "Strukturieren Sie Produktdaten, verwalten Sie Versionen und veröffentlichen Sie die Informationen, die Sie teilen möchten.", "primaryAction": "Zugang anfragen", "secondaryAction": "Ansehen", "visualAlt": "Digitaler Produktpass mit mobiler Passansicht und QR-Karte", "features": {"ready": {"title": "Strukturierte Daten", "description": "Für Ihre DPP-Abläufe"}, "secure": {"title": "Kontrollierter Zugang", "description": "Berechtigungen je Organisation"}, "interoperable": {"title": "GTIN und Barcode", "description": "Format- und Prüfziffernprüfung"}, "scalable": {"title": "Produktversionen", "description": "Vom Entwurf zur Veröffentlichung"}}, "example": {"label": "Beispielansicht — illustrative Daten", "title": "Produktinformationen", "manufacturer": "Hersteller und Materialien", "documents": "Bilder und Dokumente"}},
+   "Compliance": {"title": "Klare Daten. Kontrollierte Veröffentlichung.", "items": {"ready": {"title": "Strukturierte Daten", "description": "Organisieren Sie Informationen für Ihre DPP-Abläufe."}, "secure": {"title": "Kontrollierter Zugang", "description": "Der private Arbeitsbereich ist von der öffentlichen Veröffentlichung getrennt."}, "interoperable": {"title": "GTIN und Barcode", "description": "GTIN-Prüfung und Barcode sind keine GS1-Verifizierung oder Zertifizierung."}, "scalable": {"title": "Produktversionen", "description": "Bearbeiten Sie Entwürfe, ohne die veröffentlichte Version zu ändern."}}, "scopeNote": "PDF-Prüfungen betreffen Dateistruktur und Schadsoftware. Sie bestätigen weder die Richtigkeit des Dokuments noch die Produktauthentizität oder regulatorische Konformität. GS1-Register, EPCIS/API-Integrationen und Scan-Analysen sind derzeit keine verfügbaren Funktionen."},
+   "HowItWorks": {"label": "So funktioniert es", "title": "Vom Produkt zum Pass in 4 einfachen Schritten", "steps": {"create": {"title": "Erstellen", "description": "Erstellen Sie einen digitalen Pass für Ihr Produkt."}, "generate": {"title": "Generieren", "description": "Erzeugen Sie einen QR-Code mit Link zum öffentlichen Produktpass."}, "share": {"title": "Teilen", "description": "Bringen Sie ihn am Produkt oder an der Verpackung an."}, "verify": {"title": "Ansehen", "description": "Ermöglichen Sie den Zugriff auf veröffentlichte Produktinformationen."}}},
+   "DashboardPreview": {"label": "Einblick in den Arbeitsbereich", "title": "Bearbeiten. Prüfen. Veröffentlichen.", "description": "Produkte, Versionen und Anhänge in einem Arbeitsbereich mit einer separaten öffentlichen Ansicht veröffentlichter Informationen.", "features": ["Katalogverwaltung und Produktsuche", "Entwürfe und veröffentlichte Versionen", "Bilder und PDF-Anhänge je Version", "Katalogimport und -export im CSV-Format", "Organisationszugriff nach Berechtigungen"], "action": "Zugang anfragen", "visualAlt": "Passvero-Dashboard zur Verwaltung digitaler Produktpässe", "example": {"label": "Beispielansicht — illustrative Daten", "product": "Produkt", "draft": "Entwurf", "published": "Veröffentlicht", "title": "Katalogübersicht"}},
+--- before/messages/sl.json
++++ after/messages/sl.json
+@@ -67,7 +67,7 @@
+     "description": "Preprosta platforma za ustvarjanje in upravljanje digitalnih potnih listov izdelkov."
+   },
+   "MarketingNavigation": {"login": "Prijava","brand": "Passvero", "product": "Izdelek", "solutions": "Rešitve", "pricing": "Cene", "resources": "Viri", "about": "O nas", "contact": "Kontakt", "earlyAccess": "Zaprosi za dostop", "menu": "Odpri meni", "closeMenu": "Zapri meni"},
+-  "Hero": {"badge": "Strukturirani podatki", "title": "Digitalni potni listi izdelkov.", "highlight": "Digitalni potni listi izdelkov.", "description": "Strukturirajte podatke o izdelkih, upravljajte različice in objavite informacije, ki jih želite deliti.", "primaryAction": "Zaprosi za dostop", "secondaryAction": "Oglejte si", "visualAlt": "Digitalni potni list izdelka z mobilnim prikazom in QR-kartico", "features": {"ready": {"title": "Strukturirani podatki", "description": "Za vaše postopke DPP"}, "secure": {"title": "Nadzorovan dostop", "description": "Dovoljenja po organizaciji"}, "interoperable": {"title": "GTIN in črtna koda", "description": "Preverjanje oblike in kontrolne številke"}, "scalable": {"title": "Različice izdelkov", "description": "Od osnutka do objave"}}, "example": {"label": "Primer prikaza — ponazoritveni podatki", "title": "Podatki o izdelku", "manufacturer": "Proizvajalec in materiali", "documents": "Slike in dokumenti"}},
++  "Hero": {"badge": "Strukturirani podatki", "title": "Digitalni potni listi izdelkov.", "highlight": "potni listi izdelkov.", "description": "Strukturirajte podatke o izdelkih, upravljajte različice in objavite informacije, ki jih želite deliti.", "primaryAction": "Zaprosi za dostop", "secondaryAction": "Oglejte si", "visualAlt": "Digitalni potni list izdelka z mobilnim prikazom in QR-kartico", "features": {"ready": {"title": "Strukturirani podatki", "description": "Za vaše postopke DPP"}, "secure": {"title": "Nadzorovan dostop", "description": "Dovoljenja po organizaciji"}, "interoperable": {"title": "GTIN in črtna koda", "description": "Preverjanje oblike in kontrolne številke"}, "scalable": {"title": "Različice izdelkov", "description": "Od osnutka do objave"}}, "example": {"label": "Primer prikaza — ponazoritveni podatki", "title": "Podatki o izdelku", "manufacturer": "Proizvajalec in materiali", "documents": "Slike in dokumenti"}},
+   "Compliance": {"title": "Jasni podatki. Nadzorovana objava.", "items": {"ready": {"title": "Strukturirani podatki", "description": "Organizirajte informacije za svoje postopke DPP."}, "secure": {"title": "Nadzorovan dostop", "description": "Zasebni delovni prostor je ločen od javne objave."}, "interoperable": {"title": "GTIN in črtna koda", "description": "Preverjanje GTIN in črtna koda nista verifikacija ali certificiranje GS1."}, "scalable": {"title": "Različice izdelkov", "description": "Urejajte osnutek brez spremembe objavljene različice."}}, "scopeNote": "Preverjanje PDF zajema strukturo datoteke in zlonamerno vsebino. Ne potrjuje resničnosti dokumenta, pristnosti izdelka ali regulativne skladnosti. Register GS1, integracije EPCIS/API in analitika skeniranja trenutno niso razpoložljive funkcije."},
+   "HowItWorks": {"label": "Kako deluje", "title": "Od izdelka do potnega lista v 4 preprostih korakih", "steps": {"create": {"title": "Ustvarite", "description": "Ustvarite digitalni potni list za svoj izdelek."}, "generate": {"title": "Ustvarite kodo", "description": "Ustvarite kodo QR s povezavo do javnega potnega lista."}, "share": {"title": "Delite", "description": "Povežite ga z izdelkom ali embalažo."}, "verify": {"title": "Oglejte si", "description": "Omogočite dostop do objavljenih informacij o izdelku."}}},
+   "DashboardPreview": {"label": "Pregled delovnega prostora", "title": "Uredite. Preglejte. Objavite.", "description": "Izdelki, različice in priloge v enem delovnem prostoru z ločenim javnim prikazom objavljenih informacij.", "features": ["Upravljanje kataloga in iskanje izdelkov", "Osnutki in objavljene različice", "Slike in priloge PDF po različici", "Uvoz in izvoz kataloga v obliki CSV", "Dostop do organizacije glede na dovoljenja"], "action": "Zahtevajte dostop", "visualAlt": "Nadzorna plošča Passvero za upravljanje digitalnih potnih listov izdelkov", "example": {"label": "Primer prikaza — ponazoritveni podatki", "product": "Izdelek", "draft": "Osnutek", "published": "Objavljeno", "title": "Pregled kataloga"}},
+--- before/messages/pl.json
++++ after/messages/pl.json
+@@ -67,7 +67,7 @@
+     "description": "Prosta platforma do tworzenia cyfrowych paszportów produktów i zarządzania nimi."
+   },
+   "MarketingNavigation": {"login": "Zaloguj się","brand": "Passvero", "product": "Produkt", "solutions": "Rozwiązania", "pricing": "Cennik", "resources": "Materiały", "about": "O nas", "contact": "Kontakt", "earlyAccess": "Poproś o dostęp", "menu": "Otwórz menu", "closeMenu": "Zamknij menu"},
+-  "Hero": {"badge": "Uporządkowane dane", "title": "Cyfrowe paszporty produktów.", "highlight": "Cyfrowe paszporty produktów.", "description": "Uporządkuj dane produktów, zarządzaj wersjami i publikuj informacje, które chcesz udostępnić.", "primaryAction": "Poproś o dostęp", "secondaryAction": "Zobacz", "visualAlt": "Cyfrowy paszport produktu z widokiem mobilnym i kartą QR", "features": {"ready": {"title": "Uporządkowane dane", "description": "Dla Twoich procesów DPP"}, "secure": {"title": "Kontrolowany dostęp", "description": "Uprawnienia organizacji"}, "interoperable": {"title": "GTIN i kod kreskowy", "description": "Kontrola formatu i cyfry kontrolnej"}, "scalable": {"title": "Wersje produktów", "description": "Od szkicu do publikacji"}}, "example": {"label": "Przykładowy widok — dane ilustracyjne", "title": "Dane produktu", "manufacturer": "Producent i materiały", "documents": "Zdjęcia i dokumenty"}},
++  "Hero": {"badge": "Uporządkowane dane", "title": "Cyfrowe paszporty produktów.", "highlight": "paszporty produktów.", "description": "Uporządkuj dane produktów, zarządzaj wersjami i publikuj informacje, które chcesz udostępnić.", "primaryAction": "Poproś o dostęp", "secondaryAction": "Zobacz", "visualAlt": "Cyfrowy paszport produktu z widokiem mobilnym i kartą QR", "features": {"ready": {"title": "Uporządkowane dane", "description": "Dla Twoich procesów DPP"}, "secure": {"title": "Kontrolowany dostęp", "description": "Uprawnienia organizacji"}, "interoperable": {"title": "GTIN i kod kreskowy", "description": "Kontrola formatu i cyfry kontrolnej"}, "scalable": {"title": "Wersje produktów", "description": "Od szkicu do publikacji"}}, "example": {"label": "Przykładowy widok — dane ilustracyjne", "title": "Dane produktu", "manufacturer": "Producent i materiały", "documents": "Zdjęcia i dokumenty"}},
+   "Compliance": {"title": "Jasne dane. Kontrolowana publikacja.", "items": {"ready": {"title": "Uporządkowane dane", "description": "Uporządkuj informacje dla swoich procesów DPP."}, "secure": {"title": "Kontrolowany dostęp", "description": "Prywatny obszar roboczy jest oddzielony od publicznej publikacji."}, "interoperable": {"title": "GTIN i kod kreskowy", "description": "Kontrola GTIN i kod kreskowy nie są weryfikacją ani certyfikacją GS1."}, "scalable": {"title": "Wersje produktów", "description": "Edytuj szkic bez zmiany opublikowanej wersji."}}, "scopeNote": "Kontrola PDF obejmuje strukturę pliku i złośliwą zawartość. Nie potwierdza prawdziwości dokumentu, autentyczności produktu ani zgodności regulacyjnej. Rejestr GS1, integracje EPCIS/API i analityka skanowania nie są obecnie dostępnymi funkcjami."},
+   "HowItWorks": {"label": "Jak to działa", "title": "Od produktu do paszportu w 4 prostych krokach", "steps": {"create": {"title": "Utwórz", "description": "Utwórz cyfrowy paszport swojego produktu."}, "generate": {"title": "Wygeneruj", "description": "Wygeneruj kod QR z linkiem do publicznego paszportu."}, "share": {"title": "Udostępnij", "description": "Połącz go z produktem lub opakowaniem."}, "verify": {"title": "Zobacz", "description": "Zapewnij dostęp do opublikowanych informacji o produkcie."}}},
+   "DashboardPreview": {"label": "Przegląd obszaru roboczego", "title": "Edytuj. Sprawdź. Opublikuj.", "description": "Produkty, wersje i załączniki w jednym obszarze roboczym, z osobnym publicznym widokiem opublikowanych informacji.", "features": ["Zarządzanie katalogiem i wyszukiwanie produktów", "Szkice i opublikowane wersje", "Zdjęcia i załączniki PDF według wersji", "Import i eksport katalogu w formacie CSV", "Dostęp do organizacji według uprawnień"], "action": "Poproś o dostęp", "visualAlt": "Panel Passvero do zarządzania cyfrowymi paszportami produktów", "example": {"label": "Przykładowy widok — dane ilustracyjne", "product": "Produkt", "draft": "Szkic", "published": "Opublikowano", "title": "Przegląd katalogu"}},

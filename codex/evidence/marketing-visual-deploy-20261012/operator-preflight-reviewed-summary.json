@@ -1,0 +1,24 @@
+{
+  "provenance": "Selected exact fields from user-returned read-only preflight output",
+  "observedUTC": "2026-10-12T17:15:38.082235+00:00",
+  "preflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+  "oldBuild": "853RYrj-r5cyoSGuJudap",
+  "newBuild": "_tkSUOn0PCoHjpx8V7FVr",
+  "oldCanonicalSha256": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+  "newCanonicalSha256": "e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590",
+  "oldConfigSha256": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a",
+  "newConfigSha256": "a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839",
+  "configKeysChanged": [
+    "buildId",
+    "canonicalSha256"
+  ],
+  "backupStateSha256": "83a853dd397c13c2290a94a6defdc51d42638259c76091d6485a840f75ef44d1",
+  "attempts": 2,
+  "hold": false,
+  "mode": "CONTINUOUS",
+  "legalNamespaces": "UNCHANGED_FROM_DEPLOYED",
+  "newArtifacts": 756,
+  "retainedCanonicalFiles": 3,
+  "mutations": "NONE",
+  "captureRestoreWorkerSmtpTelegramCalls": 0
+}

@@ -1,0 +1,14 @@
+{
+  "helperSha256": "db04d71b65c6b382b0796bdf3fe32aea07b9fd97c82b13c996b0c26be1af2082",
+  "scope": "New archive/assets preparation and partial-swap rollback only; local temporary filesystem, mocked PM2/health, no live execution",
+  "cases": [
+    "BEFORE_SWAP_PASS_NO_DELETION",
+    "OLD_NEXT_RENAMED_PASS_NO_DELETION",
+    "DIRECTORIES_SWAPPED_PASS_NO_DELETION",
+    "FIRST_ASSET_SWAPPED_PASS_NO_DELETION",
+    "BOTH_ASSETS_SWAPPED_PASS_NO_DELETION",
+    "UNKNOWN_PUBLIC_MEMBER_REJECTED"
+  ],
+  "result": "PASS",
+  "backupAcceptanceRepeated": false
+}

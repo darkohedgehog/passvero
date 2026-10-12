@@ -1,0 +1,168 @@
+{
+  "backupReleasePinsMatch": true,
+  "buildId": "mMVPOjFPkw5L42RIqziS4",
+  "canonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "captureRestoreWorkerSmtpTelegramCalls": 0,
+  "changedDeclaredRuntimeDependencies": [
+    "bwip-js",
+    "csv-parse"
+  ],
+  "changedPackageFields": [
+    "dependencies"
+  ],
+  "configSha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+  "deployRetry": false,
+  "diagnostic": "READ_ONLY_DEPENDENCY_INPUT_COMPARISON",
+  "installedRuntimePackageMetadata": [
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "@better-auth/prisma-adapter",
+      "present": true,
+      "sha256": "14b03c83194fd21515d570dbba6ade8a4bb804627d0af3ed80197008aeffc2f8",
+      "version": "1.7.1"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "@prisma/adapter-pg",
+      "present": true,
+      "sha256": "4a6bb303e1d86f2b8c6ad1f57adac7c924b9ac0f8e1f7b086abe4268ea7e3474",
+      "version": "7.8.0"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "@prisma/client",
+      "present": true,
+      "sha256": "a64669ec1b457f2651b3de564db6b9604e89460cb349641afffa73b0bbf3939a",
+      "version": "7.8.0"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "better-auth",
+      "present": true,
+      "sha256": "d4da1b89925564605ca6540a4f5030aab18de043322ca0b51f08b9ec52b1e092",
+      "version": "1.7.1"
+    },
+    {
+      "matchesReviewedLocalBuild": false,
+      "name": "bwip-js",
+      "present": false
+    },
+    {
+      "matchesReviewedLocalBuild": false,
+      "name": "csv-parse",
+      "present": false
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "next",
+      "present": true,
+      "sha256": "c4ef8a1c8da320a162485f96d35df7745da90e6becc36882d6e81be9df66eec1",
+      "version": "16.3.4"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "next-intl",
+      "present": true,
+      "sha256": "84f51dcebe80025dc9475fc260dc0e311a33a7af2e1a0a57e7617ca42f06cc69",
+      "version": "4.13.2"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "nodemailer",
+      "present": true,
+      "sha256": "4ea1ee33f7582183473fe5c89215231534c90b3489da575347993505132dbb95",
+      "version": "9.1.1"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "pg",
+      "present": true,
+      "sha256": "e42dd36cba6e9dd8dbb6f773a2f7be8a8c3c273e18b155e42e75961a4cb8bc28",
+      "version": "8.23.0"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "prisma",
+      "present": true,
+      "sha256": "d98a88695435d693b66c27d9e8e1b083fc5e544890ce2bdfe755b9f90846e35b",
+      "version": "7.8.0"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "qrcode",
+      "present": true,
+      "sha256": "cbe26d7282c802f4ab9c1f790c5d8450d2b5c82e8bb5f67e3a5c2641ea347d1d",
+      "version": "1.5.4"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "react",
+      "present": true,
+      "sha256": "e60b92f6031f023907bbfab8f96e63e44307776ec1488f310ba61d41b8cda8cc",
+      "version": "19.2.4"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "react-dom",
+      "present": true,
+      "sha256": "b8448092689c7e6191595a98526ced808288f35138d97fbce5801a94922e3c36",
+      "version": "19.2.4"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "server-only",
+      "present": true,
+      "sha256": "e4b0cc01e2e0349c51c694fa97d8a642eb8322521ca1444b20bd1842594b4339",
+      "version": "0.0.1"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "sharp",
+      "present": true,
+      "sha256": "27b5a6c6e1e1f27c527b09a963c932979403837d0f5f013ab5bdfb4a0ef2269a",
+      "version": "0.35.4"
+    },
+    {
+      "matchesReviewedLocalBuild": true,
+      "name": "zod",
+      "present": true,
+      "sha256": "d6159aa80f102c2060b90ab0d968588c7fe6a8694df34152cd1f98a391ff8843",
+      "version": "4.6.2"
+    }
+  ],
+  "lockMatchesAcceptedStagingBaseline": true,
+  "lockMatchesBuildInput": false,
+  "lockSha256": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+  "mutations": "NONE",
+  "packageMatchesAcceptedStagingBaseline": true,
+  "packageMatchesBuildInput": false,
+  "packageSha256": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+  "runtimeLockProjectionDifferences": [
+    {
+      "changedKeys": [
+        "dependencies"
+      ],
+      "localProjectionSha256": "308626d85de5296254801bf12f9c07a4b057a7b6044a6aea9a095174fe765880",
+      "path": "",
+      "stagingProjectionSha256": "a6de2a07d4e94f3c8fb1170049c838fbe3d17f25949b68510ac708cee94c7f4b"
+    },
+    {
+      "changedKeys": [
+        "integrity",
+        "version"
+      ],
+      "localProjectionSha256": "c2edd8b4f429454b2b2d18d139b8781ea535bb170647ceea5dc347a1a327d7c5",
+      "path": "node_modules/bwip-js",
+      "stagingProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "changedKeys": [
+        "integrity",
+        "version"
+      ],
+      "localProjectionSha256": "aa1b756f56691068019eeba1df8c7750bdaf1f269808755340fb118afb79361e",
+      "path": "node_modules/csv-parse",
+      "stagingProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    }
+  ]
+}

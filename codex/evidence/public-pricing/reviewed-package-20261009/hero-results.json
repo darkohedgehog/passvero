@@ -1,0 +1,9 @@
+{
+  "heroVisual": "PASS",
+  "locales": 6,
+  "viewportChecks": 30,
+  "ctaFeatureOverlap": false,
+  "languageSwitcher": "PASS",
+  "errors": [],
+  "scope": "hero correction only; pricing/CTA acceptance reused"
+}

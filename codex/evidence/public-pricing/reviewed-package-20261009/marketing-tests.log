@@ -1,0 +1,10 @@
+✔ inverse brand logo exposes visible text without prohibited ARIA (0.397167ms)
+✔ small teal text and teal CTA backgrounds use an AA color token (0.3265ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46.655416

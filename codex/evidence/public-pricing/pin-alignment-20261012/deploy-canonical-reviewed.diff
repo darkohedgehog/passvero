@@ -1,0 +1,189 @@
+--- deploy-resume-prepared.py (preserved)
++++ deploy-canonical-reviewed.py
+@@ -147,7 +147,8 @@
+         try:
+             process, _ = prepare.runtime()
+             value = run(['/usr/bin/curl', '--silent', '--max-time', '3', '--output', '/dev/null',
+-                         '--write-out', '%{http_code} %{ssl_verify_result}', 'https://staging.passvero.eu/hr'], timeout=5)
++                         '--write-out', '%{http_code} %{ssl_verify_result}', '--header', 'Accept-Language: hr',
++                         '--cookie', 'NEXT_LOCALE=hr', 'https://staging.passvero.eu/'], timeout=5)
+             if value == '200 0':
+                 return process
+         except Exception:
+@@ -167,16 +168,19 @@
+         require(current['ActiveState'] == 'active' and current['UnitFileState'] == 'enabled', 'TIMER_NOT_RESTORED')
+
+
+-def deployment(resume_prepared=False):
++def deployment():
+     global CHECK_ID
+-    require(not (ROOT / 'attempt.json').exists(), 'ONE_DEPLOY_ATTEMPT_NO_RETRY')
+-    if resume_prepared:
+-        require(not (ROOT / 'resume-attempt.json').exists(), 'ONE_PREPARED_CONTINUATION_ONLY')
+-        require(json.loads(read(ROOT / 'first-failure.json')) == {'result': 'STOP',
+-                'CHECK_ID': 'PREPARE_AND_PRESERVE', 'reason': 'NEXT_REGULAR_TERM_TOO_CLOSE_STOP',
+-                'automaticRetry': False}, 'ORIGINAL_STOP_CHANGED')
+-        require(json.loads(read(ROOT / 'closure.json')) == {'coordination': 'NOT_STARTED',
+-                'rollback': 'NOT_NEEDED', 'timerChanges': 'NONE'}, 'ORIGINAL_CLOSURE_CHANGED')
++    require(not (ROOT / 'canonical-deploy-attempt.json').exists(), 'ONE_REVIEWED_CANONICAL_DEPLOY_ONLY')
++    closure = json.loads(read(ROOT / 'canonical-closure.json'))
++    require(closure['closure'] == 'PASS_OLD_ROLLED_BACK_ALIGNED_BASELINE_RESTORED'
++            and closure['release'] == OLD_BUILD and closure['canonicalSha256'] == OLD_CANONICAL
++            and closure['configSha256'] == OLD_CONFIG and closure['backupStateUnchanged'] is True
++            and closure['writerTimerUnchanged'] is True and closure['httpsTls'] == '200_0_CANONICAL_ROOT',
++            'PREVIOUS_OLD_RELEASE_CLOSURE_NOT_CONFIRMED')
++    for name, check in [('resume-first-failure.json', 'VERIFY_NEW_ALIGNED_RELEASE'),
++                        ('resume-closure-failure.json', 'PAIRED_ROLLBACK')]:
++        require(json.loads(read(ROOT / name)) == {'result': 'STOP', 'CHECK_ID': check,
++                'reason': 'STAGING_HTTPS_OR_RUNTIME_NOT_READY', 'automaticRetry': False}, 'PREVIOUS_FAILURE_CHANGED')
+     config_bytes = read(CODE / 'config.json')
+     require(sha(config_bytes) == OLD_CONFIG, 'OLD_CONFIG_CHANGED')
+     config = json.loads(config_bytes)
+@@ -204,46 +208,24 @@
+     require(ROOT.lstat().st_uid == 0 and stat.S_IMODE(ROOT.stat().st_mode) == 0o700
+             and not ROOT.is_symlink() and APP.is_dir() and not APP.is_symlink(), 'DEPLOY_DIRECTORY_POSTURE')
+     require(ROOT.stat().st_dev == APP.stat().st_dev, 'ATOMIC_RENAME_FILESYSTEM_REQUIRED')
+-    prepared = ROOT / 'prepared'
+-    if resume_prepared:
+-        require(prepared.is_dir() and not prepared.is_symlink() and prepared.lstat().st_uid == 0
+-                and stat.S_IMODE(prepared.stat().st_mode) == 0o700, 'PREPARED_DIRECTORY_CHANGED')
+-        files = {str(path.relative_to(prepared)): path for path in prepared.rglob('*') if path.is_file()}
+-        require(set(files) == set(artifact['files']), 'PREPARED_INVENTORY_CHANGED')
+-        for path in prepared.rglob('*'):
+-            require(not path.is_symlink(), 'PREPARED_SYMLINK')
+-        for name, path in files.items():
+-            entry = artifact['files'][name]
+-            info = path.lstat()
+-            require(info.st_uid == account.pw_uid and info.st_gid == account.pw_gid
+-                    and stat.S_IMODE(info.st_mode) == 0o640 and len(read(path)) == entry['bytes']
+-                    and sha(read(path)) == entry['sha256'], 'PREPARED_ARTIFACT_CHANGED')
+-        for name, body in [('old-canonical.json', old_bytes), ('old-config.json', config_bytes),
+-                           ('new-canonical.json', new_canonical), ('new-config.json', json_bytes(new_config))]:
+-            require(read(ROOT / name) == body, 'SAVED_EXACT_PIN_INPUT_CHANGED')
+-    else:
+-        require(not prepared.exists(), 'PREPARED_TARGET_EXISTS')
+-        prepared.mkdir(mode=0o700)
+-        with tarfile.open(ROOT / 'application.tar.gz') as archive:
+-            for item in archive.getmembers():
+-                require(item.isfile() and item.name in artifact['files'], 'ARCHIVE_SCOPE')
+-                body = archive.extractfile(item).read()
+-                require(sha(body) == artifact['files'][item.name]['sha256'], 'ARCHIVE_MEMBER_CHANGED')
+-                dest = prepared / item.name
+-                dest.parent.mkdir(parents=True, exist_ok=True, mode=0o750)
+-                with open(dest, 'xb') as handle:
+-                    handle.write(body)
+-                dest.chmod(0o640)
+-                os.chown(dest, account.pw_uid, account.pw_gid)
+-                parent = dest.parent
+-                while parent != prepared:
+-                    parent.chmod(0o750)
+-                    os.chown(parent, account.pw_uid, account.pw_gid)
+-                    parent = parent.parent
+-        atomic(ROOT / 'old-canonical.json', old_bytes)
+-        atomic(ROOT / 'old-config.json', config_bytes)
+-        atomic(ROOT / 'new-canonical.json', new_canonical)
+-        atomic(ROOT / 'new-config.json', json_bytes(new_config))
++    files = {}
++    for directory in ('.next', 'messages'):
++        retained = ROOT / ('failed-new-' + directory)
++        require(retained.is_dir() and not retained.is_symlink(), 'RETAINED_DIRECTORY_CHANGED')
++        for path in retained.rglob('*'):
++            require(not path.is_symlink(), 'RETAINED_SYMLINK')
++            if path.is_file():
++                files[directory + '/' + str(path.relative_to(retained))] = path
++    require(set(files) == set(artifact['files']), 'RETAINED_INVENTORY_CHANGED')
++    for name, path in files.items():
++        entry = artifact['files'][name]
++        info = path.lstat()
++        require(info.st_uid == account.pw_uid and info.st_gid == account.pw_gid
++                and stat.S_IMODE(info.st_mode) == 0o640 and len(read(path)) == entry['bytes']
++                and sha(read(path)) == entry['sha256'], 'RETAINED_ARTIFACT_CHANGED')
++    for name, body in [('old-canonical.json', old_bytes), ('old-config.json', config_bytes),
++                       ('new-canonical.json', new_canonical), ('new-config.json', json_bytes(new_config))]:
++        require(read(ROOT / name) == body, 'SAVED_EXACT_PIN_INPUT_CHANGED')
+     # Let an already running writer finish naturally; never stop/start its service.
+     deadline = time.monotonic() + 60
+     while unit('passvero-subscription-reminders.service')['ActiveState'] != 'inactive':
+@@ -263,9 +245,7 @@
+         idle()
+         verify_manifest(read(CANONICAL), OLD_CANONICAL, OLD_BUILD)
+         require(read(CODE / 'config.json') == config_bytes and read(BACKUP / 'state.json') == state, 'BASELINE_CHANGED')
+-        if resume_prepared:
+-            record('resume-attempt.json', {'originalPreparationReused': True, 'automaticRetry': False})
+-        record('attempt.json', {'automaticRetry': False, 'timers': baseline, 'backupStateSha256': sha(state),
++        record('canonical-deploy-attempt.json', {'automaticRetry': False, 'timers': baseline, 'backupStateSha256': sha(state),
+                 'writerTimer': {'ActiveState': writer['ActiveState'], 'UnitFileState': writer['UnitFileState']},
+                 'mode': 'CONTINUOUS', 'hold': False, 'newBuild': NEW_BUILD})
+         CHECK_ID = 'COORDINATE_ONLY_STAGING_TIMERS'
+@@ -279,7 +259,7 @@
+             require(not previous.exists(), 'PREVIOUS_ARTIFACT_TARGET_EXISTS')
+             require((APP / name).is_dir() and not (APP / name).is_symlink(), 'APPLICATION_DIRECTORY_SCOPE')
+             (APP / name).rename(previous)
+-            (prepared / name).rename(APP / name)
++            (ROOT / ('failed-new-' + name)).rename(APP / name)
+         atomic(CANONICAL, new_canonical)
+         atomic(CODE / 'config.json', json_bytes(new_config))
+         cap.pm2(prepare, 'restart', 12)
+@@ -290,8 +270,8 @@
+         require(read(BACKUP / 'state.json') == state, 'BACKUP_STATE_CHANGED')
+         for key in ('ActiveState', 'UnitFileState'):
+             require(unit('passvero-subscription-reminders.timer')[key] == writer[key], 'WRITER_TIMER_CHANGED')
+-        record('body-pass.json', {'deployment': 'PASS', 'buildId': NEW_BUILD, 'canonicalSha256': NEW_CANONICAL,
+-            'configSha256': NEW_CONFIG, 'artifacts': len(candidate['files']), 'httpsTls': '200_0',
++        record('canonical-deploy-body-pass.json', {'deployment': 'PASS', 'buildId': NEW_BUILD, 'canonicalSha256': NEW_CANONICAL,
++            'configSha256': NEW_CONFIG, 'artifacts': len(candidate['files']), 'httpsTls': '200_0_CANONICAL_ROOT',
+             'runtime': process, 'backupStateUnchanged': True, 'captureRestoreWorkerSmtpTelegramCalls': 0})
+     finally:
+         os.close(lock_fd)
+@@ -320,9 +300,9 @@
+ def close(explicit_rollback=False):
+     global CHECK_ID
+     CHECK_ID = 'INDEPENDENT_CLOSURE'
+-    path = ROOT / 'attempt.json'
++    path = ROOT / 'canonical-deploy-attempt.json'
+     if not path.exists():
+-        record('resume-closure.json', {'coordination': 'NOT_STARTED', 'timerChanges': 'NONE', 'rollback': 'NOT_NEEDED'})
++        record('canonical-deploy-closure.json', {'coordination': 'NOT_STARTED', 'timerChanges': 'NONE', 'rollback': 'NOT_NEEDED'})
+         return
+     attempt = json.loads(read(path))
+     require(sha(read(ROOT / 'old-config.json')) == OLD_CONFIG, 'SAVED_CONFIG_CHANGED')
+@@ -338,7 +318,7 @@
+             for name in TIMERS:
+                 run(['/usr/bin/systemctl', 'stop', name])
+             idle()
+-        healthy_new = (ROOT / 'body-pass.json').exists() and not explicit_rollback
++        healthy_new = (ROOT / 'canonical-deploy-body-pass.json').exists() and not explicit_rollback
+         if healthy_new:
+             verify_manifest(read(CANONICAL), NEW_CANONICAL, NEW_BUILD)
+             require(sha(read(CODE / 'config.json')) == NEW_CONFIG, 'CLOSURE_NEW_CONFIG_CHANGED')
+@@ -349,7 +329,7 @@
+         restore_timers(attempt['timers'])
+         for key, value in attempt['writerTimer'].items():
+             require(unit('passvero-subscription-reminders.timer')[key] == value, 'WRITER_BASELINE_CHANGED')
+-        record('resume-closure.json', {'release': 'NEW_ALIGNED' if healthy_new else 'OLD_ROLLED_BACK_ALIGNED',
++        record('canonical-deploy-closure.json', {'release': 'NEW_ALIGNED' if healthy_new else 'OLD_ROLLED_BACK_ALIGNED',
+             'backupAndMonitor': {name: unit(name) for name in TIMERS}, 'backupStateUnchanged': True,
+             'writerTimerUnchanged': True, 'rollback': 'PREPARED_NOT_EXECUTED' if healthy_new else 'PASS_PAIRED_NO_DELETION',
+             'artifactsRetained': True, 'automaticRetry': False})
+@@ -361,9 +341,9 @@
+     require(os.geteuid() == 0 and os.uname().nodename == 'srv1834647', 'OPERATOR_HOST')
+     os.umask(0o077)
+     mode = sys.argv[1]
+-    require(mode in ('--resume-prepared', '--close', '--rollback'), 'MODE_SCOPE')
+-    if mode == '--resume-prepared':
+-        deployment(resume_prepared=True)
++    require(mode in ('--deploy-reviewed', '--close', '--rollback'), 'MODE_SCOPE')
++    if mode == '--deploy-reviewed':
++        deployment()
+     else:
+         close(mode == '--rollback')
+
+@@ -374,7 +354,7 @@
+     except BaseException as error:
+         reason = str(error) if re.fullmatch('[A-Z0-9_]{1,160}', str(error)) else type(error).__name__
+         result = {'result': 'STOP', 'CHECK_ID': CHECK_ID, 'reason': reason, 'automaticRetry': False}
+-        name = 'resume-closure-failure.json' if '--close' in sys.argv or '--rollback' in sys.argv else 'resume-first-failure.json'
++        name = 'canonical-deploy-closure-failure.json' if '--close' in sys.argv or '--rollback' in sys.argv else 'canonical-deploy-first-failure.json'
+         if ROOT.is_dir() and not (ROOT / name).exists():
+             record(name, result)
+         print(json.dumps(result), flush=True)

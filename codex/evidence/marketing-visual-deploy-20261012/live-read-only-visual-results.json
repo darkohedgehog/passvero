@@ -1,0 +1,384 @@
+{
+  "target": "STAGING_HERO_AND_LAPTOP_READ_ONLY",
+  "origin": "https://staging.passvero.eu",
+  "browser": "Existing Playwright and system Chrome; Browser plugin absent",
+  "results": [
+    {
+      "locale": "hr",
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1100,
+      "horizontalOverflow": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 576,
+          "height": 872.4375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 792.6875,
+          "height": 475.609375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "hr-hero-desktop.png",
+        "hr-laptop-desktop.png"
+      ],
+      "interaction": "PASS_HR_CTA_REQUEST_ACCESS_GET_ONLY_NO_SUBMISSION"
+    },
+    {
+      "locale": "hr",
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "horizontalOverflow": {
+        "viewport": 375,
+        "document": 375
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 343,
+          "height": 519.859375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 351,
+          "height": 210.59375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "hr-hero-mobile.png",
+        "hr-laptop-mobile.png"
+      ]
+    },
+    {
+      "locale": "sr",
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1100,
+      "horizontalOverflow": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 576,
+          "height": 872.4375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 792.6875,
+          "height": 475.609375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "sr-hero-desktop.png",
+        "sr-laptop-desktop.png"
+      ]
+    },
+    {
+      "locale": "sr",
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "horizontalOverflow": {
+        "viewport": 375,
+        "document": 375
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 343,
+          "height": 519.859375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 351,
+          "height": 210.59375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "sr-hero-mobile.png",
+        "sr-laptop-mobile.png"
+      ]
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1100,
+      "horizontalOverflow": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 576,
+          "height": 872.4375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 792.6875,
+          "height": 475.609375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "en-hero-desktop.png",
+        "en-laptop-desktop.png"
+      ]
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "horizontalOverflow": {
+        "viewport": 375,
+        "document": 375
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 343,
+          "height": 519.859375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 351,
+          "height": 210.59375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "en-hero-mobile.png",
+        "en-laptop-mobile.png"
+      ]
+    },
+    {
+      "locale": "de",
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1100,
+      "horizontalOverflow": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 576,
+          "height": 872.4375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 792.6875,
+          "height": 475.609375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "de-hero-desktop.png",
+        "de-laptop-desktop.png"
+      ]
+    },
+    {
+      "locale": "de",
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "horizontalOverflow": {
+        "viewport": 375,
+        "document": 375
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 343,
+          "height": 519.859375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 351,
+          "height": 210.59375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "de-hero-mobile.png",
+        "de-laptop-mobile.png"
+      ]
+    },
+    {
+      "locale": "sl",
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1100,
+      "horizontalOverflow": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 576,
+          "height": 872.4375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 792.6875,
+          "height": 475.609375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "sl-hero-desktop.png",
+        "sl-laptop-desktop.png"
+      ]
+    },
+    {
+      "locale": "sl",
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "horizontalOverflow": {
+        "viewport": 375,
+        "document": 375
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 343,
+          "height": 519.859375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 351,
+          "height": 210.59375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "sl-hero-mobile.png",
+        "sl-laptop-mobile.png"
+      ]
+    },
+    {
+      "locale": "pl",
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1100,
+      "horizontalOverflow": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 576,
+          "height": 872.4375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 792.6875,
+          "height": 475.609375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "pl-hero-desktop.png",
+        "pl-laptop-desktop.png"
+      ]
+    },
+    {
+      "locale": "pl",
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "horizontalOverflow": {
+        "viewport": 375,
+        "document": 375
+      },
+      "heading": "PASS_CONFIRMED_TEXT_RESTORED_HIGHLIGHT",
+      "images": {
+        "hero": {
+          "loaded": true,
+          "width": 343,
+          "height": 519.859375
+        },
+        "laptop": {
+          "loaded": true,
+          "width": 351,
+          "height": 210.59375
+        }
+      },
+      "localizedCtas": "PASS_UNCHANGED",
+      "screenshots": [
+        "pl-hero-mobile.png",
+        "pl-laptop-mobile.png"
+      ]
+    }
+  ],
+  "errors": [],
+  "formsSubmitted": 0,
+  "mutationRequestsAllowed": 0,
+  "exactPublicAssetAndBuildManifestHashes": "PASS",
+  "backupAcceptanceRepeated": false,
+  "userVisualAcceptance": "APPROVED_LOCAL_DESIGN_REUSED",
+  "screenshotsOutsideRepository": {
+    "/tmp/passvero-visual-staging-20261012/de-hero-desktop.png": "8da3f5cc7ddfbe78136dce27c6d03cb66c988e38fb9a0a96dccf3aed7bd60bf1",
+    "/tmp/passvero-visual-staging-20261012/de-hero-mobile.png": "f02bbcec92a60493a4de51affa354bb6610f62227fdcb3cb1a82a1acaada6e88",
+    "/tmp/passvero-visual-staging-20261012/de-laptop-desktop.png": "3896f1ad14ec8a1e48c4a4b2e43d7417aabfab23dce92e11ae302226462b33a7",
+    "/tmp/passvero-visual-staging-20261012/de-laptop-mobile.png": "623114b65ceac8d3d079d1025f7caf5c147834a77bc90210e0962c374ff37956",
+    "/tmp/passvero-visual-staging-20261012/en-hero-desktop.png": "d968a5dd2b476df920e9a9a18d11027e40b4f07a3fc6e34d024f2fb61887c793",
+    "/tmp/passvero-visual-staging-20261012/en-hero-mobile.png": "73677b15f1ff27c5546f1a376c513a7339c7548e5da44dba56333d1640ff6dc2",
+    "/tmp/passvero-visual-staging-20261012/en-laptop-desktop.png": "11f65ca94de3cd1f055d2e7d5e8f11efb59df5d4e8b20056f60355e65b2c1845",
+    "/tmp/passvero-visual-staging-20261012/en-laptop-mobile.png": "43e38df4577e95d107e3ddca731fcf5f3579bbed806d5ec58cf915a8ffcd61d0",
+    "/tmp/passvero-visual-staging-20261012/hr-hero-desktop.png": "ff3c57218e3533ec95d8b2ace69905e6043b2468a41ba74ce885cc7aca8611b8",
+    "/tmp/passvero-visual-staging-20261012/hr-hero-mobile.png": "f0fa688a19f9ae6d25d25c12d39240576d82afa4215365328e942d0f90078456",
+    "/tmp/passvero-visual-staging-20261012/hr-laptop-desktop.png": "0ca6fcaea0b2c57f609a257122fa6717e9c81f59d313c6242ab9e322d1d07f22",
+    "/tmp/passvero-visual-staging-20261012/hr-laptop-mobile.png": "14aeadc15756a3481beeb03b686a872285b800e346d00b745ceeb24c7be6ce35",
+    "/tmp/passvero-visual-staging-20261012/pl-hero-desktop.png": "8add89fdd5db5b1c7280c5a72ccfecfe389ac1905e8686abfc5576c948a74daa",
+    "/tmp/passvero-visual-staging-20261012/pl-hero-mobile.png": "7cea9dcbb30b7db40d13d61fc293d5f8d0a243c988a677ad7b1aa639ba4bf887",
+    "/tmp/passvero-visual-staging-20261012/pl-laptop-desktop.png": "baf7b3bded6207d8227b30ff376c060d9515d547a4657fd0a1fb61a353c8caae",
+    "/tmp/passvero-visual-staging-20261012/pl-laptop-mobile.png": "e4dd60b3e150752f5433ad90964e82003a34cc891438ad2a747e5521f4940ea7",
+    "/tmp/passvero-visual-staging-20261012/sl-hero-desktop.png": "774ba236cc46ae8a8983bed6ae756d9de877f9c98316cf672b9089e9928a9836",
+    "/tmp/passvero-visual-staging-20261012/sl-hero-mobile.png": "94292b747844c90a7407df3a5b319eb75d00e0e02eda6fd27a83d5083c5d30a9",
+    "/tmp/passvero-visual-staging-20261012/sl-laptop-desktop.png": "b62a74620a88ae86140fd487162a5359f0fd82775fe9f42d872409413b7ceb33",
+    "/tmp/passvero-visual-staging-20261012/sl-laptop-mobile.png": "2c107255ae424ce5b92ee909039d922ebb681f28faaade7c2b27295ec964856e",
+    "/tmp/passvero-visual-staging-20261012/sr-hero-desktop.png": "ea1bc419133379da3bb1450f8d7287dffb8c78daa5c231ab8c47c7218d7df047",
+    "/tmp/passvero-visual-staging-20261012/sr-hero-mobile.png": "bf57ff7b4e6f4c59e5858d5abc85bc32c9e3f839a93a71e003bf53cad9049c33",
+    "/tmp/passvero-visual-staging-20261012/sr-laptop-desktop.png": "6b7bfeba42cde8615cc0e2a63d9627b221fa1e513b852883b187923961829d57",
+    "/tmp/passvero-visual-staging-20261012/sr-laptop-mobile.png": "72fc7e6225816098841452b6f66faf74d7ab4768f7695b7793cba3f2c1e322d5"
+  },
+  "scriptSha256": "b89a4f8edaa8e9a10e87a8ae47f8edf82ec5f529d4a05ed9974a5196268cd016",
+  "observedUTC": "2026-10-12T17:22:46.169172+00:00",
+  "limitations": [
+    "Chrome desktop and responsive emulation only, not physical mobile or Safari",
+    "Only affected hero/laptop and CTA navigation live; unchanged pricing/content/local proof reused",
+    "No authenticated/service recovery or delivery proof",
+    "Automation state/next terms are operator closure point-in-time evidence"
+  ]
+}

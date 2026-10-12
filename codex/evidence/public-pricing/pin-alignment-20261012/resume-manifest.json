@@ -1,0 +1,238 @@
+{
+  "archive": {
+    "buildId": "853RYrj-r5cyoSGuJudap",
+    "files": 754,
+    "path": "codex/evidence/public-pricing/reviewed-package-20261009/application.tar.gz",
+    "sha256": "8c3e74a998966976aa92777a37fb1b040b2d02dea1ac49c4a1f148744e062a1e"
+  },
+  "artifactManifest": {
+    "path": "codex/evidence/public-pricing/reviewed-package-20261009/artifact-manifest.json",
+    "sha256": "8222518bd18a446278df3e375a2fdfe1af92c598cddecc46d072c6b745e13817"
+  },
+  "canonicalOldReleaseClosure": {
+    "applicationActions": 0,
+    "automaticRetry": false,
+    "blockPath": "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-CLOSE-RESTORED-CANONICAL-RELEASE.sh",
+    "execution": "PASS_USER_RETURNED_BASELINE_RESTORED",
+    "failureHistory": "RETAINED_NO_RESET",
+    "missedTerm": "STOP_NO_CATCH_UP",
+    "pinChanges": 0,
+    "sha256": "8c0f6c5466342ad20b407405946e0801f0b07fbc721ce47c5723e2bd4a68f105",
+    "timerActions": "START_ONLY_ORIGINAL_BACKUP_AND_MONITOR_BASELINE_AFTER_EXACT_OLD_HEALTH"
+  },
+  "canonicalReviewedDeploy": {
+    "archiveDownloadsOrExtractions": 0,
+    "attemptNamespace": "canonical-deploy-*",
+    "automaticRetry": false,
+    "backupHelperChanges": false,
+    "blockPath": "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPLOY-CANONICAL-REVIEWED.sh",
+    "blockSha256": "f337bc4755b4dc142155e1164abaec72ff34e93ae04ce471ca84dc94f106bf96",
+    "exactOldClosureRequired": true,
+    "execution": "PASS_USER_RETURNED_BODY_AND_INDEPENDENT_CLOSURE",
+    "helperPath": "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.py",
+    "helperSha256": "2074b486e1c54aeb8a5938751d1d688c690f99cd6704f78b255713ef8be3731a",
+    "independentClose": true,
+    "prelaunchMarginSeconds": 1200,
+    "priorHistory": "RETAINED_UNCHANGED",
+    "retainedArtifactFiles": 754,
+    "rollbackPath": "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-ROLLBACK-CANONICAL-REVIEWED.sh",
+    "underlyingGuardSeconds": 900
+  },
+  "checks": {
+    "backupAcceptance": "REUSED_A_D_COMPLETE",
+    "buildAndAcceptedTests": "NOT_REPEATED",
+    "canonicalHealth": "PASS_READ_ONLY_CANONICAL_ROOT_200_TLS0_NONCANONICAL_HR_REDIRECT307",
+    "canonicalHealthRegression": "PASS_FOUR_LOCAL_ISOLATED_CASES_NO_APPLICATION_OR_LIVE_EXECUTION",
+    "dependencyDiagnosticAST": "PASS_NOT_EXECUTED",
+    "dependencyIdentity": "PASS_EXACT_ACCEPTED_STAGING_INPUTS_15_METADATA_PINS_TWO_BUNDLED",
+    "exactReleasePreflight": "PASS_USER_RETURNED_POINT_IN_TIME",
+    "existingHelperContinuation": "PASS_SHELL_EMBEDDED_PYTHON_SYNTAX_NO_HELPER_CHANGE_PENDING_OPERATOR",
+    "failedClosureDiagnostic": "PASS_SHELL_EMBEDDED_PYTHON_SYNTAX_PENDING_OPERATOR_NO_EXECUTION",
+    "legalNamespacesAgainstHEAD": "UNCHANGED_ALL_SIX_LOCALES_RECHECKED",
+    "liveDeploymentAndPinAlignment": "PASS_USER_RETURNED_757_FILE_MANIFEST_EXACT_CONFIG_NEW_RUNTIME_AND_CLOSURE",
+    "newCoordinationHelper": "PASS_AST_SHELL_FOUR_SYNTHETIC_CLOSURE_CASES_NO_LIVE_ACTION",
+    "newPreflightAST": "PASS_NOT_EXECUTED",
+    "preflightV2StaticChecks": "PASS_AST_ARCHIVE_TRACES_AND_EXTERNAL_IMPORT_NEGATIVE_GUARD_NO_APPLICATION_EXECUTION",
+    "preparedContinuation": "PASS_AST_SHELL_CHANGED_FUNCTION_SCOPE_SAME_DUE_BOUNDARY_NO_LIVE_ACTION",
+    "sourceAndArchiveAllHashes": "PASS_REVIEWED_12_SOURCE_ENTRIES_ARCHIVE_UNCHANGED",
+    "timerGuardDiagnosis": "PASS_USER_RETURNED_TYPED_POINT_IN_TIME_BOTH_MARGINS_NO_READER_DEFECT_DEMONSTRATED",
+    "visualAcceptance": "HISTORICAL_AUTOMATED_PASS_NOT_USER_VISUAL_ACCEPTANCE"
+  },
+  "commit": false,
+  "completion": {
+    "backupAcceptance": "REUSED_A_D_COMPLETE",
+    "backupAndMonitor": "ACTIVE_ENABLED_WAITING_OPERATOR_CLOSURE_POINT_IN_TIME",
+    "backupStateAndWriter": "UNCHANGED",
+    "buildId": "853RYrj-r5cyoSGuJudap",
+    "businessWrites": 0,
+    "canonicalFiles": 757,
+    "canonicalSha256": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+    "configSha256": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a",
+    "formsSubmitted": 0,
+    "legalDraft": "EXCLUDED_PRESERVED_INTERNAL",
+    "readOnlyLiveChecks": 18,
+    "retainedCanonicalFiles": 3,
+    "reviewedMarketingFiles": 754,
+    "rollback": "PREPARED_NOT_EXECUTED_FOR_SUCCESSFUL_CORRECTED_DEPLOY",
+    "scheduledCaptureOrOtherBackupChecksRepeated": false,
+    "userVisualAcceptance": "HISTORICAL_DEPLOYED_CARDS_REJECTED_LOCAL_RESTORED_DESIGN_APPROVED_NOT_DEPLOYED"
+  },
+  "dependencyReconciliation": {
+    "backupSourceChanged": false,
+    "bundledPackages": [
+      "bwip-js",
+      "csv-parse"
+    ],
+    "dependencyInstall": false,
+    "installedMetadataExactMatches": 15,
+    "lockSha256": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+    "newBuild": false,
+    "packageSha256": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e"
+  },
+  "deploymentPlan": {
+    "execution": "HISTORICAL_INITIAL_ATTEMPT_NEAR_TERM_STOP",
+    "helperSha256": "4eb70f1c42602cded01ff9e5e80fcfa3ff5fdfaad611a0452ec2830cd01b2ddd",
+    "independentClose": true,
+    "naturalWriterIdleWaitSeconds": 60,
+    "nearDueGuardSeconds": 900,
+    "operatorBlockSha256": "dd21689ecc52035066a81d075519679b64511f146b0fd4e6431d47a5899de1b1",
+    "rollback": "PAIRED_APPLICATION_CANONICAL_CONFIG_RESTORE_RETAIN_ALL_ARTIFACTS",
+    "rootPrivateState": "/var/lib/passvero-marketing-pin-alignment-20261012",
+    "stateHistoryUnchangedRequired": true,
+    "timerPauseScope": [
+      "passvero-staging-backup.timer",
+      "passvero-staging-backup-monitor.timer"
+    ],
+    "unit": "passvero-marketing-pin-alignment-20261012"
+  },
+  "executableSourceManifest": {
+    "path": "codex/evidence/public-pricing/reviewed-package-20261009/source-manifest.json",
+    "sha256": "e1ba9855643e00c6d7513d1c569f08096fe963cf3109165aa55f5a8c0e8fae6d"
+  },
+  "failedClosureDiagnostic": {
+    "blockPath": "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-FAILED-CLOSURE-DIAGNOSIS.sh",
+    "execution": "PASS_RETURNED_OLD_ARTIFACTS_RUNTIME_AND_CANONICAL_REDIRECT_DIAGNOSED",
+    "mutations": "NONE",
+    "sha256": "f2f9b9a37738fde6b50a7d0e3fb077571dbdf5b18088790725f17a9b3c677876"
+  },
+  "files": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+    "codex/PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md": "af79ec43ecec14c9065d3035bcf063544a049044c734ab2d011efc20624761a5",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-CLOSE-RESTORED-CANONICAL-RELEASE.sh": "8c0f6c5466342ad20b407405946e0801f0b07fbc721ce47c5723e2bd4a68f105",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPENDENCY-DIAGNOSIS.sh": "57d9a0cefb8700df336e97cb42db5c75f25bae2c4d9ecf0a0bb58a4512d56557",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPLOY-CANONICAL-REVIEWED.sh": "f337bc4755b4dc142155e1164abaec72ff34e93ae04ce471ca84dc94f106bf96",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPLOY.sh": "dd21689ecc52035066a81d075519679b64511f146b0fd4e6431d47a5899de1b1",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-FAILED-CLOSURE-DIAGNOSIS.sh": "f2f9b9a37738fde6b50a7d0e3fb077571dbdf5b18088790725f17a9b3c677876",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-PREFLIGHT-V2.sh": "0ed088f272ca2c1dbfd237ceaa6790cdc56064eb164cde41891d41527550213d",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-PREFLIGHT.sh": "df81f4fc0f6aeaab898f26ea6ae46a109c90dd4fbe167125bdef3e77492f1ec1",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-RESUME-AFTER-TIMER-REVIEW.sh": "04d3d0f6195277b90d488237e0ed1b018d10500f6150ff341ae2197c0520c689",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-RESUME-PREPARED.sh": "0eb07043e2c9724b118d8faf6dff2696c30fccc5df29331a448c6799260184e2",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-ROLLBACK-CANONICAL-REVIEWED.sh": "b73951a1719d8d783cd92043419ea0b21af64beea14b29505b3c7827f6663fff",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-ROLLBACK.sh": "b1bfb8ba2a325724d7e5a5877e57e1b736f81d379e30c8a622e2b404e11f6417",
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-TIMER-DIAGNOSIS.sh": "5d0c016d77dd5227e0168ef54ea5d8d893556576d02bf2ec9632b6b8227fe0d6",
+    "codex/evidence/public-pricing/pin-alignment-20261012/canonical-health-targeted-checks.json": "5f87577191bf8bda8d3d25d4c66ce5eb5a3100d368a56a32a9e56a1a5b53a596",
+    "codex/evidence/public-pricing/pin-alignment-20261012/canonical-route-health-review.json": "8809007dcd55319b760a4c8b6622fe6131333f4963ff67ca1bb052d09c1a2db6",
+    "codex/evidence/public-pricing/pin-alignment-20261012/dependency-diagnostic.py": "6b36bf28effeb7ddd03475cf4d2b3f092064d6b14effe3bbd1e64dac2a2fea1e",
+    "codex/evidence/public-pricing/pin-alignment-20261012/dependency-expected.json": "ca2b29022dd9cedb1ea84e9ee915e686b7eea567dc0ac584515aad4d5df59fe9",
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.diff": "a1cc2cddd9e0bdba0eaa1085850a78bfde60d57e342a6da965afaeea5fc1c7d5",
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.py": "2074b486e1c54aeb8a5938751d1d688c690f99cd6704f78b255713ef8be3731a",
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared-reviewed.diff": "6d5685bbbb03acd50bf77ace788d7716770fca5caf38b14b2a605dfb0d93741f",
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared.py": "497c298b074574120c863c4d1b904dd9dc311f8f22a999e1f58d5c8fada5fb76",
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy.py": "4eb70f1c42602cded01ff9e5e80fcfa3ff5fdfaad611a0452ec2830cd01b2ddd",
+    "codex/evidence/public-pricing/pin-alignment-20261012/live-marketing-read-only-results.json": "13dbbe746dc5541a98b8fc4391319b3091a1f5fd4f21ba0db6a763b15be47986",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-canonical-deploy-closure-pass.json": "30e07484b58b552c439ee57ae4144ea46e1fd8b09042760d10af14f948cd5106",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-canonical-old-release-closure-pass.json": "a20f7936eb3542b384f0ed4cb3323d2f55cee2f15a17e151ba22ca24eeb3485c",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-dependency-diagnosis.json": "ccf56ef3c3c760b2d1844a86371e2b0e63a9568e160465fba098e4f3b0593935",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-deploy-and-closure-health-stop.json": "2e31aeaf8df377245a6c6f1d64fb09bb170ce63089513b03db240455eebd4179",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-deploy-near-term-stop.json": "b027e6aeb10f47aaa25631e3986bd16ac7cad4f0e18479a984edae15e5397cf5",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-preflight-stop.json": "25a3ee04b247883e855bff2bb9cfd246ecf019d7ae5db065546abc8ffdb7449a",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-prepared-continuation-near-term-stop.json": "c74b1b9c492c1a522b272296eb80439c3545c2f2db651bae913da28a02d8bc37",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-release-preflight-pass.json": "7cbffcc78b04bff0618402a3095e03808f60eec45730d38c44249287e14890f9",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-restored-old-release-diagnosis.json": "c215ab60f3cde2871754bc6525db8e258e919417f00879d3dfe74bfcd5a97917",
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-timer-diagnosis-pass.json": "d47247053628bddbd1ebe142d606d8826d33d3b10491be0d33aa599669749c14",
+    "codex/evidence/public-pricing/pin-alignment-20261012/preflight-v2-reviewed.diff": "39eace1857f8b254c84b09dbc9e777a58731cdbf435665e0698f78c00b7b0a5e",
+    "codex/evidence/public-pricing/pin-alignment-20261012/preflight-v2.py": "f176a0d74ed133498986d8e9055a19320e77bca1078dbc773ad7b28b195f7892",
+    "codex/evidence/public-pricing/pin-alignment-20261012/preflight.py": "57f9fcf0f293bcebc7e79d42ed2cabf5aef38f79f5153070b0aead7c4e460606"
+  },
+  "head": "5dba99b474d5fabbabc75855f15c912bb9c4b8c6",
+  "latestOperatorEvidence": "codex/evidence/public-pricing/pin-alignment-20261012/operator-canonical-deploy-closure-pass.json",
+  "legalDraftExcluded": true,
+  "liveReadOnlyEvidence": "codex/evidence/public-pricing/pin-alignment-20261012/live-marketing-read-only-results.json",
+  "localRestorationApproval": {
+    "evidence": "codex/evidence/marketing-visual-restoration-20261012/user-design-approval.json",
+    "sha256": "8415585be05fc920f499d4e6281133d498047765c1587f33abe0c44de55eae03",
+    "status": "USER_VISUAL_APPROVED_LOCAL_ONLY"
+  },
+  "pinDelta": {
+    "configPath": "/usr/local/libexec/passvero-staging-backup/config.json",
+    "helperVerifierArchitectureChanges": false,
+    "newBuild": "853RYrj-r5cyoSGuJudap",
+    "newCanonicalAndConfigSha256": {
+      "canonical": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+      "config": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a"
+    },
+    "oldBuild": "mMVPOjFPkw5L42RIqziS4",
+    "oldCanonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+    "oldConfigSha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+    "onlyKeys": [
+      "buildId",
+      "canonicalSha256"
+    ]
+  },
+  "preparedContinuation": {
+    "artifactDownloadsOrExtractions": 0,
+    "blockSha256": "0eb07043e2c9724b118d8faf6dff2696c30fccc5df29331a448c6799260184e2",
+    "counterHoldModeReset": false,
+    "dueGuardSecondsUnchanged": 900,
+    "execution": "RETURNED_STOP_BEFORE_COORDINATION_NO_RETRY",
+    "helperSha256": "497c298b074574120c863c4d1b904dd9dc311f8f22a999e1f58d5c8fada5fb76",
+    "independentClose": true,
+    "originalFailureAndClosure": "RETAINED",
+    "originalPreparationReused": true
+  },
+  "productionChanged": false,
+  "push": false,
+  "reviewEvidenceWhitespaceNormalization": {
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.diff": {
+      "commitSha256": "a1cc2cddd9e0bdba0eaa1085850a78bfde60d57e342a6da965afaeea5fc1c7d5",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.diff",
+      "originalSha256": "7b2e2fe1a547cd3f9595f977a2652a00760b8333a844a0c5249d9d25102f7a86"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared-reviewed.diff": {
+      "commitSha256": "6d5685bbbb03acd50bf77ace788d7716770fca5caf38b14b2a605dfb0d93741f",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared-reviewed.diff",
+      "originalSha256": "de7671bb236d90a1cf8424e7d9bb6812569743b6fc8bce51f54ecb6b3032f468"
+    }
+  },
+  "selfHashExcluded": true,
+  "sharedFileCommitScope": {
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "commitContentSha256": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+      "scope": "MARKETING_ONLY_INDEX_BLOB; READINESS_AND_LEGAL_WORKTREE_ADDITIONS_EXCLUDED",
+      "worktreeContentSha256": "747dca5aebd78e9ae69dd513fe06a3478a2aa878e8e586f3d0d522b17d0ef646",
+      "worktreeMustEqualCommit": false
+    }
+  },
+  "sourceSnapshotScope": "REVIEWED_PACKAGE_SOURCE_HISTORICAL_NOT_CURRENT_WORKTREE",
+  "status": "HISTORICAL_TECHNICAL_DEPLOY_PASS_LOCAL_RESTORED_DESIGN_USER_APPROVED_NOT_DEPLOYED",
+  "subsequentRestoredDesignDeployment": {
+    "buildId": "_tkSUOn0PCoHjpx8V7FVr",
+    "report": "codex/MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md",
+    "status": "COMPLETE_SEPARATELY_AUTHORIZED"
+  },
+  "task": "MARKETING_STAGING_DEPLOY_AND_EXACT_BACKUP_PIN_ALIGNMENT_RESUME",
+  "timerReviewedContinuation": {
+    "automaticRetry": false,
+    "blockPath": "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-RESUME-AFTER-TIMER-REVIEW.sh",
+    "blockSha256": "04d3d0f6195277b90d488237e0ed1b018d10500f6150ff341ae2197c0520c689",
+    "execution": "RETURNED_HEALTH_STOP_NO_RETRY",
+    "existingHelperSha256": "497c298b074574120c863c4d1b904dd9dc311f8f22a999e1f58d5c8fada5fb76",
+    "oneShotMarker": "timer-reviewed-continuation.json",
+    "prelaunchMarginSeconds": 1200,
+    "priorResumeHistory": "ARCHIVE_EXACT_BYTES_INITIAL_HISTORY_RETAINED",
+    "underlyingGuardSecondsUnchanged": 900
+  },
+  "visualRestorationReport": "codex/MARKETING_VISUAL_IDENTITY_RESTORATION.md"
+}

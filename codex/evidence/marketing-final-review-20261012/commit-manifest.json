@@ -1,0 +1,633 @@
+{
+  "acceptedBuildId": "_tkSUOn0PCoHjpx8V7FVr",
+  "acceptedExecutableSource": {
+    "app/[locale]/about/page.tsx": {
+      "bytes": 8479,
+      "sha256": "63042305710bc8d6a1d10f582fb64bf6ce6efaa0e0e713dace53b00fb4e75576"
+    },
+    "app/[locale]/contact/page.tsx": {
+      "bytes": 6015,
+      "sha256": "04dccb4fbade13e4179f910f4a9d84d95fd1d3b72d447137f4b20e6bddf2dde1"
+    },
+    "messages/de.json": {
+      "bytes": 77114,
+      "sha256": "b833538e7ee03b3d644b159c0f25803ed5e940bcc9f86126de42ee77f5d4f6ee"
+    },
+    "messages/en.json": {
+      "bytes": 68541,
+      "sha256": "96a7ba53167cb9f119041a8ab6a9e8f1c77cd889940b152ac3fa9942d9ccb193"
+    },
+    "messages/hr.json": {
+      "bytes": 71957,
+      "sha256": "9fc61285e8422d1b52ff2700506833ccbd585e129b4308a91bfa268dbc4cd981"
+    },
+    "messages/pl.json": {
+      "bytes": 74005,
+      "sha256": "c40c2ac13c2193f1c4cc08c5a6d2c33f014a7f060fb8356f3c6a2fc310a4506a"
+    },
+    "messages/sl.json": {
+      "bytes": 70338,
+      "sha256": "f3a45352b2b34f169fd66764506dfcef9883fc80f83765df4bb2f9edc1b7b1b8"
+    },
+    "messages/sr.json": {
+      "bytes": 69929,
+      "sha256": "8494bd0b127e19c0f635298c81495ca09eae73695db3572b46f59ba6709d78a2"
+    },
+    "public/marketing/dashboard-preview-restored.png": {
+      "bytes": 1321997,
+      "sha256": "d6b2f23ae08901f9ac0c87021d71d72f548ce62a4986f3592f6bd3669e354229"
+    },
+    "public/marketing/hero-passport-restored.png": {
+      "bytes": 1688760,
+      "sha256": "dfb2633c28a424a46eec4774a16ba69cb5d3a510725108d40e4bcb8ccfdd8ef8"
+    },
+    "src/components/marketing/compliance-section.tsx": {
+      "bytes": 1716,
+      "sha256": "aef2d7461d39fb1cb24edf70cd85a715b2c4549849ee494aef8483bee56ebafc"
+    },
+    "src/components/marketing/dashboard-preview-section.tsx": {
+      "bytes": 2522,
+      "sha256": "1efd76f2745738c1757802eef5e736d0776e2f193961b73559858cfa28464a56"
+    },
+    "src/components/marketing/hero-section.tsx": {
+      "bytes": 3836,
+      "sha256": "0064bfa3e6cadea2353c97c612cef1dc125babcb38f364b96efbdf6b3e2462b0"
+    },
+    "src/components/marketing/pricing-section.tsx": {
+      "bytes": 4119,
+      "sha256": "9acd08ec131291b12b11d9e3c2b4901cae24c8a85b9b1feda1f9c42b804c22a7"
+    }
+  },
+  "baseHead": "5dba99b474d5fabbabc75855f15c912bb9c4b8c6",
+  "branch": "main",
+  "commitFiles": {
+    "app/[locale]/about/page.tsx": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "63042305710bc8d6a1d10f582fb64bf6ce6efaa0e0e713dace53b00fb4e75576"
+    },
+    "app/[locale]/contact/page.tsx": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "04dccb4fbade13e4179f910f4a9d84d95fd1d3b72d447137f4b20e6bddf2dde1"
+    },
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "scope": "MARKETING_ONLY_SHARED_INDEX_CONTENT",
+      "sha256": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b"
+    },
+    "codex/MARKETING_VISUAL_IDENTITY_RESTORATION.md": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "3711a1b0cb1678922a8ae4c7aec4f136c32aa10fb1ea6c3b678bcd9334aae926"
+    },
+    "codex/MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "74a388177bf10459f0f51fb5b45b09954fa7f7d5c13751941fd6ce927f0a3fa6"
+    },
+    "codex/PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "af79ec43ecec14c9065d3035bcf063544a049044c734ab2d011efc20624761a5"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/VPS-TERMINAL-DEPLOY.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "62f9fc8aa48846389c58e17598e6fbbe982798c541c2179cc348d5009638ce85"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/VPS-TERMINAL-PREFLIGHT.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "57983d7e91e4d7141d009ef3020a141a3a47c25c20d8c3d426f45327225bacd7"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/VPS-TERMINAL-ROLLBACK.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "a52915ba75e32fa5c4677ec63eb876db1e9c2573ec81f3e4664829cd99819d93"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/artifact-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "f99e967366651aeca151d68a5c9b243196023b8eb10e0294df767c9c2d985c82"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/deploy-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "b4a4249ed6171efa391ae0febf561da7b0bfc5396c0b70dbc99994af0fa94481"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/deploy-reviewed.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "db04d71b65c6b382b0796bdf3fe32aea07b9fd97c82b13c996b0c26be1af2082"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/live-read-only-visual-results.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "1729a9322f7cd27590069030c0a67e0eff95d299d18fa605690457080780290b"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/local-checks.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "c68271070df5cfd9ec3ea80998f669db6b57ae5ae1a77c8963020f258e22a047"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/operator-deploy-and-closure-pass.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "e3bdf305a494d9e829f31c859d50c5161ac80e074336bffddc3e1f4b4a53be65"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/operator-preflight-reviewed-summary.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "228b113cb5bbb86332b0a42c803dcb2e2a5daf330f757e97e3174c2dc8165316"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/preflight.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "e74a2a3b8c1387015bfa7e8a05ad19394242095905a8dde1000ae2ddbf10bfed"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/source-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "32b4285e12d0479dba18b6c1ad817a468dfc8ff0e8271fc4ec1c8e5829aee531"
+    },
+    "codex/evidence/marketing-visual-deploy-20261012/targeted-helper-checks.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "c88f09f0d4560fc8323588c4d2d8723fce907e19e6c82e3a34b169b6c95c4f86"
+    },
+    "codex/evidence/marketing-visual-restoration-20261012/local-visual-checks.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "5acf0b02e50834adba6d87ab2c5c19ab305a19d95c8cc0a317c3c4828a63c148"
+    },
+    "codex/evidence/marketing-visual-restoration-20261012/user-design-approval.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8415585be05fc920f499d4e6281133d498047765c1587f33abe0c44de55eae03"
+    },
+    "codex/evidence/marketing-visual-restoration-20261012/visual-restoration-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "988edae413ae34264cb34979285afab098db30305afdcad625d595a8f610f566"
+    },
+    "codex/evidence/marketing-visual-restoration-20261012/visual-restoration-only.diff": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "5904c4143537cd3d18d6e6befb7e10985e05362c1b480be761bf6a24a143fc62"
+    },
+    "codex/evidence/public-pricing/operator-preflight-20261009.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "a5db23c7ea4cb74ef27c236c758534d1464a5d24a15267b67097dd020c3c56c1"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-CLOSE-RESTORED-CANONICAL-RELEASE.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8c0f6c5466342ad20b407405946e0801f0b07fbc721ce47c5723e2bd4a68f105"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPENDENCY-DIAGNOSIS.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "57d9a0cefb8700df336e97cb42db5c75f25bae2c4d9ecf0a0bb58a4512d56557"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPLOY-CANONICAL-REVIEWED.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "f337bc4755b4dc142155e1164abaec72ff34e93ae04ce471ca84dc94f106bf96"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-DEPLOY.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "dd21689ecc52035066a81d075519679b64511f146b0fd4e6431d47a5899de1b1"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-FAILED-CLOSURE-DIAGNOSIS.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "f2f9b9a37738fde6b50a7d0e3fb077571dbdf5b18088790725f17a9b3c677876"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-PREFLIGHT-V2.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "0ed088f272ca2c1dbfd237ceaa6790cdc56064eb164cde41891d41527550213d"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-PREFLIGHT.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "df81f4fc0f6aeaab898f26ea6ae46a109c90dd4fbe167125bdef3e77492f1ec1"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-RESUME-AFTER-TIMER-REVIEW.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "04d3d0f6195277b90d488237e0ed1b018d10500f6150ff341ae2197c0520c689"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-RESUME-PREPARED.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "0eb07043e2c9724b118d8faf6dff2696c30fccc5df29331a448c6799260184e2"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-ROLLBACK-CANONICAL-REVIEWED.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "b73951a1719d8d783cd92043419ea0b21af64beea14b29505b3c7827f6663fff"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-ROLLBACK.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "b1bfb8ba2a325724d7e5a5877e57e1b736f81d379e30c8a622e2b404e11f6417"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/VPS-TERMINAL-TIMER-DIAGNOSIS.sh": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "5d0c016d77dd5227e0168ef54ea5d8d893556576d02bf2ec9632b6b8227fe0d6"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/canonical-health-targeted-checks.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "5f87577191bf8bda8d3d25d4c66ce5eb5a3100d368a56a32a9e56a1a5b53a596"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/canonical-route-health-review.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8809007dcd55319b760a4c8b6622fe6131333f4963ff67ca1bb052d09c1a2db6"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/dependency-diagnostic.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "6b36bf28effeb7ddd03475cf4d2b3f092064d6b14effe3bbd1e64dac2a2fea1e"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/dependency-expected.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "ca2b29022dd9cedb1ea84e9ee915e686b7eea567dc0ac584515aad4d5df59fe9"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.diff": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "a1cc2cddd9e0bdba0eaa1085850a78bfde60d57e342a6da965afaeea5fc1c7d5"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "2074b486e1c54aeb8a5938751d1d688c690f99cd6704f78b255713ef8be3731a"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared-reviewed.diff": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "6d5685bbbb03acd50bf77ace788d7716770fca5caf38b14b2a605dfb0d93741f"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "497c298b074574120c863c4d1b904dd9dc311f8f22a999e1f58d5c8fada5fb76"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "4eb70f1c42602cded01ff9e5e80fcfa3ff5fdfaad611a0452ec2830cd01b2ddd"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/live-marketing-read-only-results.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "13dbbe746dc5541a98b8fc4391319b3091a1f5fd4f21ba0db6a763b15be47986"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-canonical-deploy-closure-pass.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "30e07484b58b552c439ee57ae4144ea46e1fd8b09042760d10af14f948cd5106"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-canonical-old-release-closure-pass.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "a20f7936eb3542b384f0ed4cb3323d2f55cee2f15a17e151ba22ca24eeb3485c"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-dependency-diagnosis.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "ccf56ef3c3c760b2d1844a86371e2b0e63a9568e160465fba098e4f3b0593935"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-deploy-and-closure-health-stop.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "2e31aeaf8df377245a6c6f1d64fb09bb170ce63089513b03db240455eebd4179"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-deploy-near-term-stop.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "b027e6aeb10f47aaa25631e3986bd16ac7cad4f0e18479a984edae15e5397cf5"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-preflight-stop.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "25a3ee04b247883e855bff2bb9cfd246ecf019d7ae5db065546abc8ffdb7449a"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-prepared-continuation-near-term-stop.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "c74b1b9c492c1a522b272296eb80439c3545c2f2db651bae913da28a02d8bc37"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-release-preflight-pass.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "7cbffcc78b04bff0618402a3095e03808f60eec45730d38c44249287e14890f9"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-restored-old-release-diagnosis.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "c215ab60f3cde2871754bc6525db8e258e919417f00879d3dfe74bfcd5a97917"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/operator-timer-diagnosis-pass.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "d47247053628bddbd1ebe142d606d8826d33d3b10491be0d33aa599669749c14"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/preflight-v2-reviewed.diff": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "39eace1857f8b254c84b09dbc9e777a58731cdbf435665e0698f78c00b7b0a5e"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/preflight-v2.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "f176a0d74ed133498986d8e9055a19320e77bca1078dbc773ad7b28b195f7892"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/preflight.py": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "57f9fcf0f293bcebc7e79d42ed2cabf5aef38f79f5153070b0aead7c4e460606"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/resume-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "1d16f230147e77f6d1adbbd1fa431c1319422656b6b511fc3ebfa7646949b177"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/artifact-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8222518bd18a446278df3e375a2fdfe1af92c598cddecc46d072c6b745e13817"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/build.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "0372a2d496d20a2a8371cbd6f06db945c39b8755ba8e1fa7e6b0eff66d283714"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/copy-check.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "ec967d21330054a932f98523ba17e4c8f382ea5baf78675a1b5282a9abfe78e9"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/documentation-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "d52f633643d3c1ca03e2c818c135a76680b2f3ebde6f34901ebcc6cdf374ec4e"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/handoff-verification.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "543e4ec5c64189e405b456feb0f57d3111110df76f4259160804b2ae1246f0ca"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/hero-check.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "a3d6eceeea805dacf09d4f927ba30f528df465f791163aad1d7d09a39e2fd2bb"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/hero-results.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8a9c91ddfd997617f11117cc27b1dcd25f7e8d3dc45f7f293307c020c61a2c3e"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/lint.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8af09168e413c7ca37a583b4f8636b6c88d4e052e56fb43c59c3574905c737de"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/marketing-tests.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "05b2cae8b7e8a2adb55e6fafb703586fe3a8149987dced652c64e89d3155372b"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/preservation-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "c48446573788f29817dd15d61c87031ab1f519560cdb0d14de79adf777c3105b"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/roadmap-task-only.diff": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "5d69cf7ff50bdf91c2fcb605f9756bbc739472cf4c67e881e9df721ca9f2eddc"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/source-manifest.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "e1ba9855643e00c6d7513d1c569f08096fe963cf3109165aa55f5a8c0e8fae6d"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/source-review.diff": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "b1a5ff414bf07e36f3e5c3ba7beada9bbb6ef8d9c929e04eb11880c51f24abc0"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/targeted-lint.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/typescript.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/visual-check.log": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "1898ba4f54a2e7471076aadcffbe3d88a4f35faabe2e1cfad747a62a39a08c17"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/visual-results.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "4c3e2d73fd7645f3839a2350d9dfca194bade29ef44c17c2d5f8d3b17ec53dff"
+    },
+    "messages/de.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "b833538e7ee03b3d644b159c0f25803ed5e940bcc9f86126de42ee77f5d4f6ee"
+    },
+    "messages/en.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "96a7ba53167cb9f119041a8ab6a9e8f1c77cd889940b152ac3fa9942d9ccb193"
+    },
+    "messages/hr.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "9fc61285e8422d1b52ff2700506833ccbd585e129b4308a91bfa268dbc4cd981"
+    },
+    "messages/pl.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "c40c2ac13c2193f1c4cc08c5a6d2c33f014a7f060fb8356f3c6a2fc310a4506a"
+    },
+    "messages/sl.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "f3a45352b2b34f169fd66764506dfcef9883fc80f83765df4bb2f9edc1b7b1b8"
+    },
+    "messages/sr.json": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "8494bd0b127e19c0f635298c81495ca09eae73695db3572b46f59ba6709d78a2"
+    },
+    "public/marketing/dashboard-preview-restored.png": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "d6b2f23ae08901f9ac0c87021d71d72f548ce62a4986f3592f6bd3669e354229"
+    },
+    "public/marketing/hero-passport-restored.png": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "dfb2633c28a424a46eec4774a16ba69cb5d3a510725108d40e4bcb8ccfdd8ef8"
+    },
+    "src/components/marketing/compliance-section.tsx": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "aef2d7461d39fb1cb24edf70cd85a715b2c4549849ee494aef8483bee56ebafc"
+    },
+    "src/components/marketing/dashboard-preview-section.tsx": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "1efd76f2745738c1757802eef5e736d0776e2f193961b73559858cfa28464a56"
+    },
+    "src/components/marketing/hero-section.tsx": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "0064bfa3e6cadea2353c97c612cef1dc125babcb38f364b96efbdf6b3e2462b0"
+    },
+    "src/components/marketing/pricing-section.tsx": {
+      "scope": "REVIEWED_MARKETING_SOURCE_ASSET_OR_DOCUMENTATION",
+      "sha256": "9acd08ec131291b12b11d9e3c2b4901cae24c8a85b9b1feda1f9c42b804c22a7"
+    }
+  },
+  "commitMessage": "feat(marketing): align pricing and restore visual identity",
+  "evidenceWhitespaceNormalization": {
+    "codex/evidence/marketing-visual-restoration-20261012/visual-restoration-only.diff": {
+      "commitSha256": "5904c4143537cd3d18d6e6befb7e10985e05362c1b480be761bf6a24a143fc62",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/marketing-visual-restoration-20261012/visual-restoration-only.diff",
+      "originalSha256": "74742937a7f63d4a79bd6438431f345b01c97e28df7c704f851f08425fb6e5ae"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.diff": {
+      "commitSha256": "a1cc2cddd9e0bdba0eaa1085850a78bfde60d57e342a6da965afaeea5fc1c7d5",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/pin-alignment-20261012/deploy-canonical-reviewed.diff",
+      "originalSha256": "7b2e2fe1a547cd3f9595f977a2652a00760b8333a844a0c5249d9d25102f7a86"
+    },
+    "codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared-reviewed.diff": {
+      "commitSha256": "6d5685bbbb03acd50bf77ace788d7716770fca5caf38b14b2a605dfb0d93741f",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/pin-alignment-20261012/deploy-resume-prepared-reviewed.diff",
+      "originalSha256": "de7671bb236d90a1cf8424e7d9bb6812569743b6fc8bce51f54ecb6b3032f468"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/build.log": {
+      "commitSha256": "0372a2d496d20a2a8371cbd6f06db945c39b8755ba8e1fa7e6b0eff66d283714",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/reviewed-package-20261009/build.log",
+      "originalSha256": "98218128fef7c2bd8ce935635dad21eec0ae030abe7ae963a44a467d0328c451"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/lint.log": {
+      "commitSha256": "8af09168e413c7ca37a583b4f8636b6c88d4e052e56fb43c59c3574905c737de",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/reviewed-package-20261009/lint.log",
+      "originalSha256": "9800fe24ae26888e877df4a536bbc7bbc9b6907ecba63bfa6b7eab8402d159c6"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/source-review.diff": {
+      "commitSha256": "b1a5ff414bf07e36f3e5c3ba7beada9bbb6ef8d9c929e04eb11880c51f24abc0",
+      "normalization": "Text whitespace only; patch parsed successfully; original retained byte-for-byte",
+      "originalRetainedAt": "/tmp/passvero-marketing-commit-review-20261012/raw-evidence-originals/codex/evidence/public-pricing/reviewed-package-20261009/source-review.diff",
+      "originalSha256": "51f0a7a86042f79e2352f64f245aa43147691d9aaaea806683fba272698bda32"
+    }
+  },
+  "excludedPreservedWorktreeFiles": {
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": {
+      "excludedFromCommit": true,
+      "initialSha256": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+    }
+  },
+  "expectedCommitFileCount": 90,
+  "historicalEvidenceNotes": "Earlier preparation manifests and reports contain point-in-time hashes/statuses; this manifest is authoritative for final Git commit membership. Executable artifact manifests describe deployed build, not Git files.",
+  "initialIndex": "EMPTY",
+  "origin": "https://github.com/darkohedgehog/passvero.git",
+  "remoteMainVerifiedBeforeReview": "5dba99b474d5fabbabc75855f15c912bb9c4b8c6",
+  "retainedOutsideGit": {
+    "codex/evidence/marketing-visual-deploy-20261012/application.tar.gz": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/marketing-visual-deploy-20261012/application.tar.gz",
+      "sha256": "0fa2668e2ce1eaa5aac34fb7e7ff44add1bd66aeca7c13d2439d448ac73ce3e0"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/application.tar.gz": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/application.tar.gz",
+      "sha256": "8c3e74a998966976aa92777a37fb1b040b2d02dea1ac49c4a1f148744e062a1e"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/de-desktop.png",
+      "sha256": "51c38b2f72bb6676dc8e6859f0418298cd596ae421de8bc9d4e7d79f57f4dcf6"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/de-mobile.png",
+      "sha256": "848d539d3265ccb4f9c5a472df2c7de4129ff4ed26b36d20ede8471e6c6bb888"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-pricing-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/de-pricing-desktop.png",
+      "sha256": "151e1f56d9b46cde9f6f684d069899d4d86fa6e77a22e3e0721fdc1e5f671b31"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-pricing-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/de-pricing-mobile.png",
+      "sha256": "4c97386ec1147d1f8c0f2da072b000b18a6788d5fd184798144e0cef77164a3e"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/en-desktop.png",
+      "sha256": "ac067062e9829e65523e3e9d86e5f7c0b2178c0725b2c8ae65d922a272f7e423"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/en-mobile.png",
+      "sha256": "39e0890b8530bc430bf878ea6a4520f8a8d6268a4960f97f784200ca5c6cd6dd"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-pricing-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/en-pricing-desktop.png",
+      "sha256": "b354c036f66b5bd6737dedc2fd9b1e0d459e817d098897fb1ff0909727388e91"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-pricing-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/en-pricing-mobile.png",
+      "sha256": "03349b83f79dddbc1b6d45dac012d928bb31b4be1ac2282be1bf4281a36cccbd"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/hr-desktop.png",
+      "sha256": "5800744817cb6ae647b6ece70b17980dc72750b9e685641a4f47697488906f16"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/hr-mobile.png",
+      "sha256": "13626058b4ee443d7fab2158211d47545bc193c3ba4312b4978ddfb16b879599"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-pricing-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/hr-pricing-desktop.png",
+      "sha256": "765d5887fe358ab05903ac366c3c348eeb853bc92d93c8c270964c05f9bf4393"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-pricing-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/hr-pricing-mobile.png",
+      "sha256": "1ee05632ada5f6fd29ca76762a852d2c47b6f450345bfeee7e481089018ef983"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/pl-desktop.png",
+      "sha256": "e76526b8f1fdc0238e4e2bd6f017e0967ca5c827ed058c7f6a3ccca2b2ad08fe"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/pl-mobile.png",
+      "sha256": "2a6f0934d820d03a4db5107c786942878ceb5297ff66fad2fa749e9199a7ed21"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-pricing-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/pl-pricing-desktop.png",
+      "sha256": "f0650741d425f48b523acca401f7ae69cad8f4bb82525586f5097a3b8be10fc2"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-pricing-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/pl-pricing-mobile.png",
+      "sha256": "53ca07d61f9d4cb38ef9e04e8a3ca6b9417ed7284b42fc16ad362062ae130e90"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/roadmap-before.md": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/roadmap-before.md",
+      "sha256": "4da6853e89f8a013f483a831effda9b68ead67f52397ef8d80139a499cb8400e"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sl-desktop.png",
+      "sha256": "65841182fd0506c89b0e00787f858574092e4c14a1f6b8d5c7a7094a3d822192"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sl-mobile.png",
+      "sha256": "0e2049194b01096d855becbde2e44baecb28ef93b069852fb5ea6f199ff96f45"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-pricing-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sl-pricing-desktop.png",
+      "sha256": "dd14f1b643ff0280887b599c712e262cd4fd0834c28f0863c4f4dc1d332423bb"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-pricing-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sl-pricing-mobile.png",
+      "sha256": "4571db52cb994a1970f0642b5f26fe5aed84fec8f7ef36cf3e579cd3aa5efbbf"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sr-desktop.png",
+      "sha256": "732996790d8b26b8c29436f02a71f6900766ac9f219ee2d5d6052e55cd95e18d"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sr-mobile.png",
+      "sha256": "19d8fcaaa38bd691af52015917ce3c925a948afee07dcb6880d0aa16851809db"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-pricing-desktop.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sr-pricing-desktop.png",
+      "sha256": "84a253bd5f76f3d4d85131bfab2c2eb8a1cccb585382c5fffa0da701336af97a"
+    },
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-pricing-mobile.png": {
+      "disposition": "PRESERVED_OUTSIDE_GIT_NOT_COMMITTED",
+      "retainedAt": "/tmp/passvero-marketing-commit-review-20261012/retained-local-artifacts/codex/evidence/public-pricing/reviewed-package-20261009/sr-pricing-mobile.png",
+      "sha256": "58c08a8c2973e69ba17f1786cc7adc96ca0624712225c88a7068f23adc6082a5"
+    }
+  },
+  "review": {
+    "credentialsOrPrivatePayloadsFoundInAddedContent": false,
+    "exactSourceMatchesAcceptedBuild": true,
+    "legalNamespacesUnchangedFromHEAD": true,
+    "packagesBuildArtifactsAndRawDumpsIncluded": false,
+    "runtimePinChanges": false,
+    "stagedWhitespace": "PASS_AFTER_EVIDENCE_TEXT_NORMALIZATION",
+    "testsBuildDeployAcceptanceRepeated": false,
+    "vpsOrProductionActions": false
+  },
+  "selfHashExcluded": true,
+  "selfPath": "codex/evidence/marketing-final-review-20261012/commit-manifest.json",
+  "sharedFiles": {
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "commitContentSha256": "55edefc72acda11718c49c12fa664b306398e96a69f90bacc7fb0f11be83305b",
+      "initialFullWorktreeSha256": "747dca5aebd78e9ae69dd513fe06a3478a2aa878e8e586f3d0d522b17d0ef646",
+      "remainingContentScope": "PREEXISTING_READINESS_REVIEW_AND_INTERNAL_LEGAL_ADDITIONS",
+      "remainingDiffSha256": "262017391db0da1c2ea4b7f6ec90dba4d631c8fb986f459939784f0429331333",
+      "scope": "MARKETING_ONLY_INDEX_BLOB; READINESS_AND_LEGAL_WORKTREE_ADDITIONS_EXCLUDED",
+      "worktreeContentSha256": "747dca5aebd78e9ae69dd513fe06a3478a2aa878e8e586f3d0d522b17d0ef646",
+      "worktreeMustEqualCommit": false
+    }
+  },
+  "status": "REVIEWED_EXACT_COMMIT_SET",
+  "task": "MARKETING_FINAL_REVIEW_COMMIT_AND_NON_FORCE_PUSH"
+}

@@ -25,7 +25,7 @@ export async function HeroSection() {
     <section id="product" className="pb-12 pt-6 md:pb-16 lg:pb-8 lg:pt-5">
       <MarketingContainer>
         <div className="grid items-center gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-5">
-          <div className="relative z-10 max-w-140 lg:pb-20">
+          <div className="relative z-10 min-w-0 max-w-140 lg:pb-20">
             <span className="inline-flex rounded-full bg-teal-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.08em] text-teal-700">
               {t("badge")}
             </span>
@@ -45,22 +45,17 @@ export async function HeroSection() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-152 lg:-mb-8 lg:-mt-16 lg:justify-self-end">
+          <div className="relative mx-auto min-w-0 w-full max-w-152 lg:-mb-8 lg:-mt-16 lg:justify-self-end">
             <Image
-              src="/marketing/hero-passport.png"
+              src="/marketing/hero-passport-restored.png"
               alt={t("visualAlt")}
-              width={1012}
-              height={1536}
+              width={1019}
+              height={1544}
               priority
               sizes="(max-width: 1023px) 90vw, 52vw"
-              className="mx-auto h-auto w-[min(100%,30rem)] object-contain mix-blend-multiply lg:w-xl"
-              style={{
-                WebkitMaskImage:
-                  "linear-gradient(to right, transparent 0, black 5%)",
-                maskImage:
-                  "linear-gradient(to right, transparent 0, black 5%)",
-              }}
+              className="mx-auto h-auto w-[min(100%,30rem)] object-contain lg:w-xl"
             />
+            <p className="mt-2 text-center text-[0.6875rem] leading-4 text-slate-500">{t("example.label")}</p>
           </div>
         </div>
 

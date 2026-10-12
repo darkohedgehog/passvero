@@ -1,0 +1,384 @@
+{
+  "blockedNonReadOnlyRequests": [],
+  "browser": "System Chrome via existing Playwright; Browser plugin not available",
+  "buildOrLocalTestsRepeated": false,
+  "businessWrites": 0,
+  "errors": [],
+  "formsSubmitted": 0,
+  "limitations": [
+    "Chrome desktop1440x1000/mobile375x812 live; other local responsive widths reuse accepted unchanged evidence",
+    "No forms submitted, authenticated business workflow or sending tested",
+    "Ancillary screenshot-only networkidle wait timed out once; primary18-check run PASS; HR/PL pricing-element captures completed without networkidle wait"
+  ],
+  "observedUTC": "2026-10-12T16:39:57.333Z",
+  "origin": "https://staging.passvero.eu",
+  "results": [
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 1440,
+        "viewport": 1440
+      },
+      "http": 200,
+      "locale": "hr",
+      "localizedCtaHref": "/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "hr-desktop-hero.png",
+        "hr-desktop-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/",
+      "viewport": {
+        "height": 1000,
+        "width": 1440
+      }
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 375,
+        "viewport": 375
+      },
+      "http": 200,
+      "locale": "hr",
+      "localizedCtaHref": "/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "hr-mobile-hero.png",
+        "hr-mobile-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/",
+      "viewport": {
+        "height": 812,
+        "width": 375
+      }
+    },
+    {
+      "formsSubmitted": 0,
+      "interaction": "PRICING_CTA_TO_LOCALIZED_REQUEST_ACCESS",
+      "locale": "hr",
+      "result": "PASS"
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 1440,
+        "viewport": 1440
+      },
+      "http": 200,
+      "locale": "sr",
+      "localizedCtaHref": "/sr/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "sr-desktop-hero.png",
+        "sr-desktop-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/sr",
+      "viewport": {
+        "height": 1000,
+        "width": 1440
+      }
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 375,
+        "viewport": 375
+      },
+      "http": 200,
+      "locale": "sr",
+      "localizedCtaHref": "/sr/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "sr-mobile-hero.png",
+        "sr-mobile-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/sr",
+      "viewport": {
+        "height": 812,
+        "width": 375
+      }
+    },
+    {
+      "formsSubmitted": 0,
+      "interaction": "PRICING_CTA_TO_LOCALIZED_REQUEST_ACCESS",
+      "locale": "sr",
+      "result": "PASS"
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 1440,
+        "viewport": 1440
+      },
+      "http": 200,
+      "locale": "en",
+      "localizedCtaHref": "/en/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "en-desktop-hero.png",
+        "en-desktop-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/en",
+      "viewport": {
+        "height": 1000,
+        "width": 1440
+      }
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 375,
+        "viewport": 375
+      },
+      "http": 200,
+      "locale": "en",
+      "localizedCtaHref": "/en/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "en-mobile-hero.png",
+        "en-mobile-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/en",
+      "viewport": {
+        "height": 812,
+        "width": 375
+      }
+    },
+    {
+      "formsSubmitted": 0,
+      "interaction": "PRICING_CTA_TO_LOCALIZED_REQUEST_ACCESS",
+      "locale": "en",
+      "result": "PASS"
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 1440,
+        "viewport": 1440
+      },
+      "http": 200,
+      "locale": "de",
+      "localizedCtaHref": "/de/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "de-desktop-hero.png",
+        "de-desktop-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/de",
+      "viewport": {
+        "height": 1000,
+        "width": 1440
+      }
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 375,
+        "viewport": 375
+      },
+      "http": 200,
+      "locale": "de",
+      "localizedCtaHref": "/de/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "de-mobile-hero.png",
+        "de-mobile-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/de",
+      "viewport": {
+        "height": 812,
+        "width": 375
+      }
+    },
+    {
+      "formsSubmitted": 0,
+      "interaction": "PRICING_CTA_TO_LOCALIZED_REQUEST_ACCESS",
+      "locale": "de",
+      "result": "PASS"
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 1440,
+        "viewport": 1440
+      },
+      "http": 200,
+      "locale": "sl",
+      "localizedCtaHref": "/sl/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "sl-desktop-hero.png",
+        "sl-desktop-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/sl",
+      "viewport": {
+        "height": 1000,
+        "width": 1440
+      }
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 375,
+        "viewport": 375
+      },
+      "http": 200,
+      "locale": "sl",
+      "localizedCtaHref": "/sl/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "sl-mobile-hero.png",
+        "sl-mobile-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/sl",
+      "viewport": {
+        "height": 812,
+        "width": 375
+      }
+    },
+    {
+      "formsSubmitted": 0,
+      "interaction": "PRICING_CTA_TO_LOCALIZED_REQUEST_ACCESS",
+      "locale": "sl",
+      "result": "PASS"
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 1440,
+        "viewport": 1440
+      },
+      "http": 200,
+      "locale": "pl",
+      "localizedCtaHref": "/pl/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "pl-desktop-hero.png",
+        "pl-desktop-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/pl",
+      "viewport": {
+        "height": 1000,
+        "width": 1440
+      }
+    },
+    {
+      "availabilityDetailsInteraction": "PASS",
+      "durations3And12": "PASS",
+      "exVATTrialManualB2B": "PASS",
+      "frameworkOverlay": "NONE",
+      "horizontalOverflow": {
+        "document": 375,
+        "viewport": 375
+      },
+      "http": 200,
+      "locale": "pl",
+      "localizedCtaHref": "/pl/request-access",
+      "notBlank": "PASS",
+      "pageIdentity": "PASS",
+      "plansAndExactPrices": "PASS",
+      "screenshots": [
+        "pl-mobile-hero.png",
+        "pl-mobile-pricing.png"
+      ],
+      "url": "https://staging.passvero.eu/pl",
+      "viewport": {
+        "height": 812,
+        "width": 375
+      }
+    },
+    {
+      "formsSubmitted": 0,
+      "interaction": "PRICING_CTA_TO_LOCALIZED_REQUEST_ACCESS",
+      "locale": "pl",
+      "result": "PASS"
+    }
+  ],
+  "screenshotArtifactsOutsideRepository": {
+    "/tmp/passvero-live-marketing-20261012/de-desktop-hero.png": "48438481dab7ab3f9488cd5d56119b5a50392bf916390971c5d5dfd0c9ee2bcd",
+    "/tmp/passvero-live-marketing-20261012/de-desktop-pricing.png": "40c44f615b8cb1707d59101a9a1a063283578d104d73329b80cac6c3db7a8696",
+    "/tmp/passvero-live-marketing-20261012/de-mobile-hero.png": "300b89355ff8667df987b41e34fc09c2a0b8d47b067f145299363e7480f56add",
+    "/tmp/passvero-live-marketing-20261012/de-mobile-pricing.png": "852763a8eed144b15c53b87b62e159ecb02caced222c930b2578054851b9d539",
+    "/tmp/passvero-live-marketing-20261012/en-desktop-hero.png": "9a0dc7025ceaa67a5799738996ad5b350e168a581e6a168a8c0268a1fafa9c55",
+    "/tmp/passvero-live-marketing-20261012/en-desktop-pricing.png": "c7459206f2073be5b6e07dbcabeaaefe85e56663aea31003e1d025daec3e4f61",
+    "/tmp/passvero-live-marketing-20261012/en-mobile-hero.png": "e1775511bca1a1caa98258213972303012d21c89be4edf8c38927d91422a804f",
+    "/tmp/passvero-live-marketing-20261012/en-mobile-pricing.png": "c7fe26bdb35e09ad648d3cc3a0f6a7b41f897894cef8c114702776dee1d09fbf",
+    "/tmp/passvero-live-marketing-20261012/hr-desktop-hero.png": "bc17a8e5825038bb1569c2d2b814bb3bd954cbd1d88296064f6c1c8cab3c2a63",
+    "/tmp/passvero-live-marketing-20261012/hr-desktop-pricing.png": "01a4ba8e30a7d7dd6e164ca3579ef31ea1234a4b783b1fdc5cfe6c7238a918c6",
+    "/tmp/passvero-live-marketing-20261012/hr-mobile-hero.png": "60afb24a061c72d66e110508171fa7db8bb7697b5681110ec6a553f01f93e594",
+    "/tmp/passvero-live-marketing-20261012/hr-mobile-pricing.png": "6576688acb3e6d082936b6d62490038693a7b8fe8e8dcb8ae5174a70cb6398ff",
+    "/tmp/passvero-live-marketing-20261012/pl-desktop-hero.png": "c5f30d4135601025cc4fca7e728f75f66f255ec307506c8e49470cd402be0667",
+    "/tmp/passvero-live-marketing-20261012/pl-desktop-pricing.png": "c0386c874f91456c431b226fb160710dfe837ba2cda9291d2062125a8d1b2a38",
+    "/tmp/passvero-live-marketing-20261012/pl-mobile-hero.png": "a7e908d19306040846712e366b9b4885aaccf0dd52225d0c96e10abdc40dc2db",
+    "/tmp/passvero-live-marketing-20261012/pl-mobile-pricing.png": "3e5f0ce77d86857ea44567eae3d4fc8c6dd6b8a5609b80a34fa3643b82fd629d",
+    "/tmp/passvero-live-marketing-20261012/sl-desktop-hero.png": "137b2dc77315aac72507c7181251a044d0b786b9cae73399259fbd629d8bf5a8",
+    "/tmp/passvero-live-marketing-20261012/sl-desktop-pricing.png": "f479dc81bb907b62292f49f687bdf1d558592a1217e37dc33c78313e47837ce9",
+    "/tmp/passvero-live-marketing-20261012/sl-mobile-hero.png": "4e0fb0515f8713725ac9c5f8d993a4bf9f79bb78b8888c58d6170340ff03c104",
+    "/tmp/passvero-live-marketing-20261012/sl-mobile-pricing.png": "efe1f4e8871a9df1e18c0a7268454f3bf97e3a8fbf361ab2995c1e0879550b00",
+    "/tmp/passvero-live-marketing-20261012/sr-desktop-hero.png": "20eed626dbeb03d04a04366567a804ca82a921acc3e95022352e44e23deea50f",
+    "/tmp/passvero-live-marketing-20261012/sr-desktop-pricing.png": "97fe0489ca297a581651077bdfb3049e9813d912f785aa65a6a42d2ea50730bb",
+    "/tmp/passvero-live-marketing-20261012/sr-mobile-hero.png": "b9f0c033d0a33be2fc7bb68d4b896650634ae444b8b3c154496adb8117d2a1ba",
+    "/tmp/passvero-live-marketing-20261012/sr-mobile-pricing.png": "d1b0d109798dcced03c4a778442357357b861c529f35618e25eacce69880c899"
+  },
+  "temporaryQAAdjustments": [
+    "Corrected QA expectation for ICU plural labels without any application change"
+  ],
+  "temporaryQAScriptSha256": "04c0320c3104ae9d45e7622fd4d632b74a30df9e7e3bcd8654b2b3860640b0cb",
+  "visualInspection": "PASS_SIX_LOCALE_MOBILE_HERO_DESKTOP_SAMPLES_PRICING_AND_REUSED_UNCHANGED_LOCAL_EVIDENCE"
+}

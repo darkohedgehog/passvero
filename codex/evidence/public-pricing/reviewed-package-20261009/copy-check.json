@@ -1,0 +1,15 @@
+{
+  "locales": [
+    "hr",
+    "sr",
+    "en",
+    "de",
+    "sl",
+    "pl"
+  ],
+  "marketingKeys": "PASS",
+  "unrelatedAndLegalNamespaces": "UNCHANGED",
+  "protectedBackupFiles": "UNCHANGED",
+  "contractPrices": "SOURCE_REUSES_STANDARD_PLANS",
+  "capabilityReview": "PASS"
+}

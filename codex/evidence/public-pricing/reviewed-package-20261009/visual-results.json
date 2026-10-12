@@ -1,0 +1,99 @@
+{
+  "browser": "system Chrome via installed Playwright; Browser plugin not available",
+  "origin": "http://127.0.0.1:3127",
+  "results": [
+    {
+      "locale": "hr",
+      "prices": "PASS",
+      "cta": "PASS",
+      "availability": "PASS",
+      "keyboard": "PASS",
+      "viewports": [
+        320,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "screenshots": 4
+    },
+    {
+      "locale": "sr",
+      "prices": "PASS",
+      "cta": "PASS",
+      "availability": "PASS",
+      "keyboard": "PASS",
+      "viewports": [
+        320,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "screenshots": 4
+    },
+    {
+      "locale": "en",
+      "prices": "PASS",
+      "cta": "PASS",
+      "availability": "PASS",
+      "keyboard": "PASS",
+      "viewports": [
+        320,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "screenshots": 4
+    },
+    {
+      "locale": "de",
+      "prices": "PASS",
+      "cta": "PASS",
+      "availability": "PASS",
+      "keyboard": "PASS",
+      "viewports": [
+        320,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "screenshots": 4
+    },
+    {
+      "locale": "sl",
+      "prices": "PASS",
+      "cta": "PASS",
+      "availability": "PASS",
+      "keyboard": "PASS",
+      "viewports": [
+        320,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "screenshots": 4
+    },
+    {
+      "locale": "pl",
+      "prices": "PASS",
+      "cta": "PASS",
+      "availability": "PASS",
+      "keyboard": "PASS",
+      "viewports": [
+        320,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "screenshots": 4
+    }
+  ],
+  "errors": [],
+  "businessWrites": 0,
+  "formsSubmitted": 0
+}
