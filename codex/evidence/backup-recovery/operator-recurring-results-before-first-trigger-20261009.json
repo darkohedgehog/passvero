@@ -1,0 +1,10 @@
+{
+  "state": {
+    "attempts": 0,
+    "completed": [],
+    "firstDueEpoch": 1791606600,
+    "hold": false,
+    "mode": "ACCEPTANCE"
+  },
+  "units": "NextElapseUSecRealtime=Sat 2026-10-10 06:30:00 CEST\nLastTriggerUSec=\nId=passvero-staging-backup.timer\nActiveState=active\nUnitFileState=enabled\n\nNextElapseUSecRealtime=Fri 2026-10-09 17:20:00 CEST\nLastTriggerUSec=\nId=passvero-staging-backup-monitor.timer\nActiveState=active\nUnitFileState=enabled\n"
+}

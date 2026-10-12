@@ -1,5 +1,905 @@
 # Existing backup coverage and staging recovery — bounded continuation
 
+## STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING — 2026-10-09
+
+Status: **COMPLETE_A_D_PASS_CONTINUOUS**, accepted 2026-10-12.
+Earlier dated checkpoints and execution blocks are history; do not rerun. See final COMPLETE section.
+
+### 2026-10-10 — correction installed PASS; hold released; wait regular schedule
+
+[Returned correction install output](../../../codex/evidence/backup-recovery/operator-monotonic-correction-installed-pass-20261010.json):
+**PASS_INSTALLED_PIN_MATCH_HOLD_RELEASED**; installed adapter SHA
+`14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418` matches reviewed
+correction. Typed D-Bus reads returned exact source microseconds. Both pre/post checks:
+no active backup/transient capture; staging web online/TCP3001; reminder timer enabled
+and active, service inactive, no residual reminder processes. attempts=0, hold=false,
+ACCEPTANCE mode. First failure/old adapter history retained; no manual capture, automatic
+retry, reset-failed, SMTP/Telegram call, timer configuration or production change.
+This is operator installation/precondition evidence, not a successful scheduled set;
+exact correction execution timestamp was not included in returned JSON.
+
+Confirmed first due **2026-10-11 04:30 UTC / 06:30 Europe/Zagreb CEST**;
+second due **2026-10-12 04:30 UTC / 06:30 Europe/Zagreb CEST**.
+A **WAITING_TWO_SUCCESSFUL_SCHEDULED_SETS**, B/C/D **NOT_RUN**, new set/restore IDs NONE.
+Do not rerun correction or local accepted checks. Wait without polling/manual capture;
+use existing results block once after **2026-10-12 05:10 UTC / 07:10 CEST**.
+On new failure preserve exact normalized diagnosis/closure and HOLD for review before
+another acceptance attempt. Marketing deploy remains deferred; B–D await two successes.
+Earlier pending/held checkpoints below are historical and superseded by this output.
+
+[Returned read-only operator inventory](../../../codex/evidence/backup-recovery/operator-recurring-preflight-20261009.json):
+`PASS_READ_ONLY`, observed `2026-10-09T14:21:28.458656+00:00`. This is inventory,
+not scheduled capture/restore/runtime-health acceptance.
+[Returned installation A](../../../codex/evidence/backup-recovery/operator-recurring-installation-pass-20261009.json)
+**PASS_ENABLED_ACCEPTANCE_BUDGET_TWO**: reviewed staging backup/monitor timers enabled
+in ACCEPTANCE mode. No test Telegram/manual capture; exact install timestamp not supplied.
+First due **2026-10-10 04:30 UTC / 06:30 Europe/Zagreb CEST**;
+second due **2026-10-11 04:30 UTC / 06:30 Europe/Zagreb CEST**.
+A **WAITING_TWO_REAL_SCHEDULED_SETS**; B/C/D **NOT_RUN**; IDs **NONE**.
+Wait without polling or manual capture; one reviewed results-read after
+**2026-10-11 05:10 UTC / 07:10 CEST** (35min deadline plus closure/buffer).
+Timer enablement is installation evidence, not proof of scheduled success or ongoing
+health. A failure HOLDs the job; retain diagnosis/resume and report affected next term
+before any bounded continuation. B–D follows only two successfully returned sets.
+
+
+### 2026-10-10 — failed first scheduled trigger; HOLD retained
+
+[Returned failure results](../../../codex/evidence/backup-recovery/operator-recurring-backup-failed-results-20261010.json):
+backup timer triggered 10.10 04:30UTC/06:30CEST; normalized STOP phase=SCOPE,
+reason=ValueError, setId=preparation, attempts=0, completed=[], hold=true.
+SCOPE is the initial phase label, retained through timer-identity parsing before
+reserve_attempt; it does not locate an exception inside scope(). Original exception
+message/trace/line/input were not saved (output=null; normalization retained type only).
+Concrete root cause **NOT_PROVEN**. Narrow candidate requiring direct evidence: two
+systemctl monotonic values converted by int() before reservation. Do not infer their
+actual formatting from local code alone.
+
+Next timer remains 11.10 04:30UTC/06:30CEST, enabled/active, but hold=true makes
+ExecCondition --eligible skip capture. No automatic capture retry or budget refill.
+No capture attempt was reserved; the reviewed path has not reached online preparation,
+writer drain, web pause or upload. Current web/reminder baseline and actual local/B2
+inventory are **NOT_PROVEN by this results output**; no new valid set is accepted.
+User reports receiving the real BACKUP_FAILED Telegram alarm; that is operator receipt
+for this failure only, not D acceptance or proof of future successful delivery.
+One combined read-only diagnostic pending: installed adapter identity, raw monotonic
+values/int parsing + numeric D-Bus values, service/runtime/writer states, control/set
+proofs and existing staging repository snapshot inventory. No adapter main/worker/job,
+restart, hold reset, schedule/pin change, deletion, B–D or marketing deploy.
+Correction proposal remains conditional on returned exact cause: fix only the evidenced
+pre-reservation input handling plus its targeted regression/normalized diagnosis;
+keep hold and live pins unchanged in this diagnosis step. No live retry approved here.
+
+**READ-ONLY DIAGNOSIS RETURNED — DO NOT RERUN.** JSON below was returned and the
+cause confirmed at 14:14UTC on 10.10; historical block retained for reproducibility. Script writes no file/state, imports
+only pinned read primitives, invokes no adapter main, no DB/Storage query or mutation.
+
+```sh
+# PENDING_OPERATOR_COMMAND — VPS TERMINAL: one read-only failure diagnosis
+sudo /usr/bin/python3 -I -B - <<'PASSVERO_STAGING_READ_ONLY_FAILURE'
+import datetime,hashlib,importlib.util,json,os,pathlib,re,socket,stat,subprocess,sys
+sys.dont_write_bytecode=True
+ROOT=pathlib.Path('/var/lib/passvero-staging-recovery')
+CODE=pathlib.Path('/usr/local/libexec/passvero-staging-backup')
+EXPECTED='00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294'
+PREP='d519bf0f039996f3ac9838182ba28218f31055e42e5ba675d572336f67c5e473'
+REPO='9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35'
+result={'diagnostic':'READ_ONLY_FAILURE_INVENTORY','observedUTC':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'filesWritten':0,'databaseWrites':0,'remoteWrites':0,'workerExecuted':False,'captureExecuted':False,
+        'restartCalls':0,'smtpCalls':0,'telegramCalls':0}
+def require(value,code):
+    if not value:raise RuntimeError(code)
+def read(path):
+    info=path.lstat()
+    require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o077 and info.st_size<1024**2,'PRIVATE_JSON_INPUT')
+    return json.loads(path.read_text())
+def run(args):
+    response=subprocess.run(args,capture_output=True,timeout=30,env={'PATH':'/usr/bin:/bin','LANG':'C'})
+    require(response.returncode==0 and len(response.stdout)<1024**2,'READ_COMMAND_FAILED')
+    return response.stdout.decode().strip()
+def probe(name,callback):
+    try:result[name]=callback()
+    except Exception as error:
+        code=str(error) if re.fullmatch('[A-Z0-9_]{1,120}',str(error)) else type(error).__name__
+        result[name]={'result':'NOT_PROVEN','reason':code}
+def properties(name):
+    keys='Id,LoadState,ActiveState,SubState,Result,ExecMainStatus,ExecMainCode,MainPID,UnitFileState,InvocationID,ExecMainStartTimestampMonotonic,LastTriggerUSecMonotonic,LastTriggerUSec,NextElapseUSecRealtime'
+    raw=run(['/usr/bin/systemctl','show',name,'--property='+keys])
+    return dict(line.split('=',1) for line in raw.splitlines() if '=' in line)
+def monotonic():
+    output={}
+    pairs=[('passvero-staging-backup.service','org.freedesktop.systemd1.Service','ExecMainStartTimestampMonotonic'),
+           ('passvero-staging-backup.timer','org.freedesktop.systemd1.Timer','LastTriggerUSecMonotonic')]
+    for name,interface,key in pairs:
+        raw=properties(name).get(key,'')
+        try:int(raw);conversion='PASS'
+        except ValueError:conversion='ValueError'
+        entry={'systemctlShow':raw,'installedIntConversion':conversion}
+        output[key]=entry
+        try:
+            reply=run(['/usr/bin/busctl','call','org.freedesktop.systemd1','/org/freedesktop/systemd1',
+                       'org.freedesktop.systemd1.Manager','GetUnit','s',name])
+            require(re.fullmatch(r'o "/org/freedesktop/systemd1/unit/[A-Za-z0-9_]+"',reply),'DBUS_UNIT_IDENTITY')
+            numeric=run(['/usr/bin/busctl','get-property','org.freedesktop.systemd1',reply[3:-1],interface,key])
+            require(re.fullmatch('t [0-9]+',numeric),'DBUS_TIMESTAMP_SHAPE')
+            entry['dbusMicroseconds']=int(numeric[2:])
+        except Exception as error:
+            entry['dbusRead']='NOT_PROVEN'
+            entry['dbusReason']=str(error) if re.fullmatch('[A-Z0-9_]{1,120}',str(error)) else type(error).__name__
+    return output
+try:
+    require(os.geteuid()==0 and os.uname().nodename=='srv1834647','OPERATOR_HOST')
+    path=CODE/'recurring.py';info=path.lstat()
+    require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o077,'ADAPTER_POSTURE')
+    actual=hashlib.sha256(path.read_bytes()).hexdigest()
+    result['adapterIdentity']={'sha256':actual,'matchesReviewed':actual==EXPECTED}
+    require(actual==EXPECTED,'INSTALLED_ADAPTER_CHANGED')
+    state_path=ROOT/'recurring/state.json';state_before=state_path.read_bytes()
+    state=read(state_path);result['state']=state
+    result['units']={name:properties(name) for name in (
+        'passvero-staging-backup.service','passvero-staging-backup.timer','passvero-staging-backup-monitor.service',
+        'passvero-staging-backup-monitor.timer','passvero-subscription-reminders.service',
+        'passvero-subscription-reminders.timer','pm2-passvero-staging.service')}
+    probe('timerMonotonicInputs',monotonic)
+    active=ROOT/'recurring/active.json'
+    result['activePointerExists']=active.exists()
+    if active.exists():result['activePointer']=read(active)
+    local=[]
+    for folder in ('sets','control'):
+        parent=ROOT/folder
+        for directory in sorted(parent.iterdir()) if parent.exists() else []:
+            if not re.fullmatch('[0-9]{8}T[0-9]{6}Z',directory.name):continue
+            require(directory.is_dir() and not directory.is_symlink(),'LOCAL_DIRECTORY_POSTURE')
+            record={'area':folder,'setId':directory.name,'files':{}}
+            for name in ('recovery-set.json','selected.json','writer-baseline.json','pause-intent.json',
+                         'capture-core.json','closure.json','first-failure.json','resume-failure.json',
+                         'offsite-attempt.json','offsite-summary.json'):
+                file=directory/name
+                if file.exists():
+                    info=file.lstat();require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o077,'ARTIFACT_POSTURE')
+                    item={'exists':True,'bytes':info.st_size,'sha256':hashlib.sha256(file.read_bytes()).hexdigest()}
+                    if name in ('writer-baseline.json','pause-intent.json','capture-core.json','closure.json',
+                                'first-failure.json','resume-failure.json','offsite-attempt.json','offsite-summary.json'):
+                        item['proof']=read(file)
+                    record['files'][name]=item
+            record['regularFileCount']=sum(1 for file in directory.rglob('*') if file.is_file())
+            local.append(record)
+    result['localSetAndControlInventory']=local
+    for name in ('alerts.json','monitor-result.json'):
+        file=ROOT/'recurring'/name
+        if file.exists():result[name]=read(file)
+    path=ROOT/'operator'/('prepare-'+PREP+'.py');info=path.lstat()
+    require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o077
+            and hashlib.sha256(path.read_bytes()).hexdigest()==PREP,'READ_HELPER_IDENTITY')
+    spec=importlib.util.spec_from_file_location('accepted_read_primitives',path)
+    prepare=importlib.util.module_from_spec(spec);spec.loader.exec_module(prepare)
+    def runtime():
+        process,_private_env=prepare.runtime()
+        with socket.create_connection(('127.0.0.1',3001),timeout=2):pass
+        return {'pm2':process,'webTcp3001':'ACCEPTING','environmentScope':'STAGING_VERIFIED','httpAuthScannerAcceptance':'NOT_RUN'}
+    probe('webRuntime',runtime)
+    def residual():
+        count=0
+        for entry in pathlib.Path('/proc').iterdir():
+            if entry.name.isdigit():
+                try:
+                    if b'/usr/local/libexec/passvero-subscription-reminders/' in (entry/'cmdline').read_bytes():count+=1
+                except (FileNotFoundError,ProcessLookupError):pass
+        return {'launcherOrBundleProcessCount':count,'workerExecutedByDiagnostic':False}
+    probe('reminderProcesses',residual)
+    def snapshots():
+        locator=prepare.protected('/etc/passvero/backup/restic-repository').decode().strip()
+        _host,_region,_bucket,repo=prepare.destination(locator)
+        keys=prepare.credentials(prepare.protected('/etc/passvero/backup/restic.env').decode())
+        config=json.loads(prepare.restic(repo,keys,['cat','config']))
+        require(config['id']==REPO,'STAGING_REPOSITORY_CHANGED')
+        rows=json.loads(prepare.restic(repo,keys,['snapshots','--json'])) or []
+        safe=[]
+        for row in rows:
+            require(row.get('hostname')=='passvero-staging-recovery' and 'passvero-staging-recovery' in row.get('tags',[])
+                    and len(row.get('paths',[]))==1 and re.fullmatch(re.escape(str(ROOT/'sets'))+r'/[0-9]{8}T[0-9]{6}Z',row['paths'][0])
+                    and re.fullmatch('[a-f0-9]{64}',row.get('id','')),'STAGING_SNAPSHOT_SCOPE')
+            safe.append({'setId':pathlib.PurePosixPath(row['paths'][0]).name,'snapshotId':row['id'],'time':row['time']})
+        return {'repositoryId':REPO,'prefix':'passvero-staging-recovery-v1/','snapshots':safe,'mode':'NO_CACHE_NO_LOCK_READ_ONLY'}
+    probe('b2SnapshotInventory',snapshots)
+    result['stateUnchangedDuringRead']=state_path.read_bytes()==state_before
+except Exception as error:
+    code=str(error) if re.fullmatch('[A-Z0-9_]{1,120}',str(error)) else type(error).__name__
+    result['diagnosticStop']={'reason':code}
+print(json.dumps(result,indent=2,sort_keys=True))
+PASSVERO_STAGING_READ_ONLY_FAILURE
+```
+
+
+### 2026-10-10 — exact cause confirmed; no corrective mutation
+
+[Returned combined read-only diagnosis](../../../codex/evidence/backup-recovery/operator-recurring-failure-read-only-cause-20261010.json),
+observed `2026-10-10T14:14:52.272251+00:00`, matches installed reviewed adapter SHA
+`00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294`.
+Exact defective step: `scheduled()` parses timer `LastTriggerUSecMonotonic` via `int()`.
+`systemctl show` returned **`1w 1d 13h 5min 47.034136s`**, which raises ValueError;
+D-Bus same property is typed uint64 microseconds **738347034136**. Service start property
+was numeric **738347225648** and its int conversion passed. Difference is **191512us /
+0.191512s**, within the existing 5s trigger guard. The defect is the adapter's formatted
+CLI output assumption, not evidence of an incorrect timer schedule or missed capture.
+SCOPE was misleadingly retained until reservation; saved original diagnosis has only
+ValueError, but returned exact property/conversion proof now locates the cause without
+rerunning the job. No additional read-only proof is needed for this cause.
+
+State unchanged during read: attempts=0/completed=[], hold=true, ACCEPTANCE, no active
+pointer. Stop occurred before reservation/precopy/drain/pause/upload. Current PM2 app
+online, staging environment verified, TCP3001 accepting. Reminder timer enabled/active,
+service inactive/success/status0, residual launcher/bundle processes=0. These match the
+previous enabled/active timer baseline; no resume was required because no pause/drain
+was reached. No HTTP/auth/scanner acceptance, business-history or email replay proof
+is claimed by this read-only check.
+
+Local inventory contains only historical sets/control `20261001T203612Z` (retained
+incomplete Oct1 attempt without recovery manifest) and `20261001T212354Z` (accepted).
+B2 staging repository contains only accepted snapshot
+`2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2` for the latter set.
+No new/incomplete October10 local set or B2 snapshot exists in returned inventory;
+October10 failure is recorded only as STOP/SCOPE/ValueError/preparation in recurring
+state, not as a valid recovery set. Existing historical incomplete artifacts retained.
+Alarm dedup `BACKUP_FAILED:preparation` has PROVIDER_ACCEPTED and user confirmed receipt;
+no test message or extra dispatch was made by diagnosis. This is real-failure evidence,
+not the synthetic D acceptance.
+
+Next regular trigger **2026-10-11 04:30UTC / 06:30 Europe/Zagreb CEST** remains enabled,
+but ExecCondition/HOLD blocks capture. Two actual capture reservations remain unused;
+no budget reset/refill is required. B–D and marketing deploy remain stopped.
+One bounded proposed correction: replace only the two scheduled monotonic input reads
+with strict typed D-Bus uint64 microsecond reads; keep identity/delay/age guards and
+all limits, add targeted formatting regression plus a specific pre-reservation failure
+phase/normalized property code. Proposed local correction is not implemented here.
+Live adapter pin replacement, hold release and resuming scheduled acceptance are outside
+this diagnosis and must be reviewed/authorized explicitly; no manual capture or catch-up.
+
+
+### 2026-10-10 — approved narrow monotonic correction, local PASS, pending operator
+
+User explicitly approved only the confirmed scheduled() defect correction, exact pin
+alignment/installation and guarded hold release; no manual capture/retry/catch-up,
+production changes, unrelated backup changes, B–D or marketing deploy.
+The changed reader gets typed D-Bus uint64 microseconds for the two monotonic values;
+never parses systemctl's formatted duration. Existing invocation identity, 0..5s
+start/trigger delay, <30s trigger age, and reservation boundary remain unchanged.
+Phase now `TIMER_INVOCATION_PRE_RESERVATION`; normalized codes identify
+`TIMER_START_MONOTONIC_READ_FAILED/INVALID` or
+`TIMER_TRIGGER_MONOTONIC_READ_FAILED/INVALID`. No raw errors/secrets are printed.
+
+Local red/green: the two initial regression tests first reproduced the recorded
+ValueError; then **17 adapter tests PASS / 0 FAIL**, including recorded values,
+wrong bus type, zero/overflow/read failure, identity/delay/age guards and existing
+reservation/hold/drain/resume tests. Only the relevant adapter test file was run;
+initial unrelated acceptance/preflight proofs retained, no app build/restore/global suite.
+AST comparison to exact old installed payload: only scheduled() and new typed reader
+changed; all other functions identical. Changed adapter/test/operator block syntax,
+exact old/new/compressed payload pins and whitespace PASS. These are local checks,
+not installed correction or scheduled acceptance proof.
+
+Old confirmed adapter SHA: `00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294`.
+Reviewed corrected adapter SHA: `14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418`.
+Config/helper/reader/catalog/offsite and all four staging unit pins remain exact and
+unchanged. Original installation/diagnostic blocks retain historical old pins and must
+not be rerun. A new pinned correction block below replaces only recurring.py after
+verifying the exact old bytes and unchanged companion pins; no weakened identity check.
+The bootstrap package generator automatically hashes current source; historical initial
+embedded A block is retained as its original payload, not regenerated in this correction.
+
+Operator preconditions under existing exclusive job lock: installed old pin matches;
+ACCEPTANCE, attempts=0/completed=[], hold=true, exact known first failure, no active
+pointer/job/transient capture; web online/staging/3001 accepting; reminder timer enabled
+and active, service inactive, no residual worker, worker bytes unchanged. Any failed
+precondition returns STOP without installing or releasing hold. No worker drain/pause
+or retry loop during this handoff. Checks are repeated against the installed new pin
+before hold release, with pure typed-property reads (no adapter main/capture invocation).
+Old adapter and whole original failure/state are preserved in root-private correction
+artifacts. Hold release archives the resolved failure in state, preserving alerts/dedup;
+attempts stays zero, no reset/refill. firstDueEpoch becomes actual next ordinary timer
+due so initial-set freshness grace reflects the approved resumed schedule. Monitor
+result may retain old BACKUP_FAILED until the next ordinary hourly read; no test alert.
+
+**PENDING_OPERATOR_COMMAND — INSTALL CORRECTION / GUARDED HOLD RELEASE.** Not yet run.
+Block writes only corrected adapter and private archive/receipt/state. Units, config,
+credentials, production, reminders and existing artifacts untouched; no daemon reload,
+reset-failed, service/timer start/restart, manual capture or business action. Failure after
+replacement retains HOLD and normalized first installation diagnosis for review; no
+automatic rollback/retry. The script refuses hold release within 60s of next due to
+avoid racing the daily trigger; return STOP output for review rather than retrying.
+
+If correction completes safely before **2026-10-11 04:30 UTC**, first/second captures
+are **11.10 and 12.10 04:30 UTC / 06:30 Europe/Zagreb CEST**. If a term passes while held,
+use the next two ordinary dates; typed timer next-due output determines actual dates.
+One results-read only after second due +40min (expected **12.10 05:10 UTC / 07:10 CEST**).
+No forced missed run. A still requires two successful scheduled sets; on new failure
+save precise diagnosis/HOLD and review. B–D and marketing deploy remain pending.
+Until operator output returns, latest confirmed installed adapter is 00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294,
+attempts=0/hold=true, and 11.10 capture is still blocked.
+
+### Historical VPS TERMINAL — monotonic correction installed PASS, do not rerun
+
+```sh
+# PENDING_OPERATOR_COMMAND — VPS TERMINAL: pinned monotonic correction and guarded hold release
+sudo /usr/bin/python3 -I -B - <<'PASSVERO_STAGING_MONOTONIC_FIX'
+OLD='00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294'
+NEW='14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418'
+PINS={'config.json': '399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62', 'offsite.py': '4349476eafa6067ca0690fa027b1baad1159b8e0d17d2be8301bc04c7482514f', 'passvero-staging-backup-monitor.service': '1e2c941c516a76bdb974703ed49cf21a8a6e6a6a6c7d9f172c969a415045e72f', 'passvero-staging-backup-monitor.timer': '092e0e0d1eb3e3c63803095ceac733b57090c7197ee34c06c0465ab5dcdb7689', 'passvero-staging-backup.service': '609ae194de0f6bdef8c91d7a1a1932173f6aca81092a28da623a702413d3d99b', 'passvero-staging-backup.timer': '6808757a8377a118f57999447cc0d5ceb769484069915765248ca856bb445301', 'recurring_acceptance.py': 'fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7', 'recurring_catalog.py': 'b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7'}
+PAYLOAD='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'
+import base64,datetime,fcntl,gzip,hashlib,importlib.util,json,os,pathlib,re,socket,stat,subprocess,sys,time
+from zoneinfo import ZoneInfo
+sys.dont_write_bytecode=True
+os.umask(0o077)
+ROOT=pathlib.Path('/var/lib/passvero-staging-recovery')
+STATE=ROOT/'recurring'
+CODE=pathlib.Path('/usr/local/libexec/passvero-staging-backup')
+PHASE='PINNED_INSTALL_PRECHECK'
+fd=None
+record=None
+adapter=None
+mutation_started=False
+try:
+    def require(value,code):
+        if not value:raise RuntimeError(code)
+    def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+    def private_file(path,pin):
+        info=path.lstat()
+        require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o077 and digest(path)==pin,'PINNED_PRIVATE_FILE_CHANGED')
+    def load(path,name):
+        spec=importlib.util.spec_from_file_location(name,path)
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        return module
+    require(os.geteuid()==0 and os.uname().nodename=='srv1834647','OPERATOR_HOST')
+    path=CODE/'recurring.py'
+    private_file(path,OLD)
+    body=gzip.decompress(base64.b64decode(PAYLOAD))
+    require(len(body)<65536 and hashlib.sha256(body).hexdigest()==NEW,'NEW_ADAPTER_PAYLOAD_PIN')
+    for name,pin in PINS.items():
+        file=(pathlib.Path('/etc/systemd/system') if name.endswith(('.service','.timer')) else CODE)/name
+        info=file.lstat()
+        require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o022 and digest(file)==pin,'UNCHANGED_COMPANION_PIN')
+    adapter=load(path,'reviewed_old_adapter')
+    policy,helpers=adapter.scope()
+    lock_path=STATE/'job.lock'
+    info=lock_path.lstat()
+    require(stat.S_ISREG(info.st_mode) and info.st_uid==0 and not info.st_mode&0o077,'EXISTING_JOB_LOCK_POSTURE')
+    fd=os.open(lock_path,os.O_RDWR|os.O_NOFOLLOW)
+    try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    except BlockingIOError:raise RuntimeError('CAPTURE_JOB_LOCK_BUSY') from None
+    original=adapter.read(STATE/'state.json')
+    require(original['mode']=='ACCEPTANCE' and original['hold'] is True and original['attempts']==0
+            and original['completed']==[] and 'attempt' not in original and 'valid' not in original,'EXPECTED_ZERO_ATTEMPT_HELD_STATE')
+    require(original.get('failure')=={'automaticRetry':False,'phase':'SCOPE','reason':'ValueError','result':'STOP','setId':'preparation'},'EXPECTED_CONFIRMED_FAILURE_STATE')
+    require(not (STATE/'active.json').exists(),'ACTIVE_CAPTURE_POINTER_PRESENT')
+    def pre_release_checks(current_adapter):
+        backup=current_adapter.unit('passvero-staging-backup.service')
+        require(backup['ActiveState'] in ('inactive','failed'),'BACKUP_JOB_ACTIVE')
+        listed=current_adapter.command(['/usr/bin/systemctl','list-units','--all','--type=service','--plain','--no-legend']).decode()
+        for row in listed.splitlines():
+            parts=row.split()
+            if parts and parts[0].startswith(('passvero-stage-recurring-capture-','passvero-stage-capture-')):
+                require(len(parts)>=4 and parts[2] in ('inactive','failed'),'TRANSIENT_CAPTURE_ACTIVE')
+        timer=current_adapter.unit(current_adapter.REMINDER_TIMER)
+        worker=current_adapter.unit(current_adapter.REMINDER_SERVICE)
+        require(timer['ActiveState']=='active' and timer['UnitFileState']=='enabled'
+                and worker['ActiveState']=='inactive','REMINDER_BASELINE_NOT_EXPECTED_IDLE')
+        current_adapter.residual_reminder()
+        process,_private_env=helpers['prepare'].runtime()
+        with socket.create_connection(('127.0.0.1',3001),timeout=2):pass
+        for name,pin in policy['worker'].items():
+            file=pathlib.Path('/usr/local/libexec/passvero-subscription-reminders')/name
+            require(file.is_file() and not file.is_symlink() and digest(file)==pin,'UNCHANGED_WORKER_PIN')
+        for timer_name in ('passvero-staging-backup.timer','passvero-staging-backup-monitor.timer'):
+            raw=current_adapter.command(['/usr/bin/systemctl','show',timer_name,'--property=ActiveState,UnitFileState']).decode()
+            current=dict(line.split('=',1) for line in raw.splitlines() if '=' in line)
+            require(current['ActiveState']=='active' and current['UnitFileState']=='enabled','STAGING_TIMERS_NOT_ENABLED')
+        return {'backup':'NOT_ACTIVE','transientCapture':'NOT_ACTIVE','web':'ONLINE_STAGING_TCP3001',
+                'reminderTimer':'ENABLED_ACTIVE','reminderService':'INACTIVE','residualReminderProcesses':0}
+    precheck=pre_release_checks(adapter)
+    record=STATE/'monotonic-fix-installation.json'
+    old_copy=STATE/('adapter-before-monotonic-fix-'+OLD+'.py')
+    require(not record.exists() and not old_copy.exists(),'CORRECTION_ALREADY_ATTEMPTED_REVIEW_OUTPUT')
+    mutation_started=True
+    adapter.atomic(record,{'status':'INSTALL_STARTED_HOLD_RETAINED','oldSha256':OLD,'newSha256':NEW,
+                          'stateBefore':original,'prechecks':precheck,'manualCapture':False})
+    with open(old_copy,'xb') as handle:
+        handle.write(path.read_bytes());handle.flush();os.fsync(handle.fileno())
+    require(digest(old_copy)==OLD,'ARCHIVED_ADAPTER_PIN')
+    PHASE='ATOMIC_ADAPTER_REPLACEMENT_HOLD_RETAINED'
+    tmp=CODE/'recurring.monotonic-fix.pending.py'
+    with open(tmp,'xb') as handle:handle.write(body);handle.flush();os.fsync(handle.fileno())
+    require(digest(tmp)==NEW,'STAGED_ADAPTER_PIN')
+    os.replace(tmp,path)
+    directory=os.open(CODE,os.O_RDONLY|os.O_DIRECTORY)
+    try:os.fsync(directory)
+    finally:os.close(directory)
+    private_file(path,NEW)
+    current=load(path,'reviewed_fixed_adapter')
+    fixed_policy,fixed_helpers=current.scope()
+    require(fixed_policy==policy,'CONFIG_CHANGED_DURING_INSTALL')
+    # Pure typed-property reads only; never invoke --scheduled, --capture or worker.
+    start=current.monotonic_microseconds('passvero-staging-backup.service','org.freedesktop.systemd1.Service',
+                                         'ExecMainStartTimestampMonotonic','TIMER_START_MONOTONIC')
+    trigger=current.monotonic_microseconds('passvero-staging-backup.timer','org.freedesktop.systemd1.Timer',
+                                           'LastTriggerUSecMonotonic','TIMER_TRIGGER_MONOTONIC')
+    postcheck=pre_release_checks(current)
+    require(current.read(STATE/'state.json')==original,'STATE_CHANGED_DURING_INSTALL')
+    private_file(path,NEW)
+    PHASE='PRE_HOLD_RELEASE_REGULAR_SCHEDULE_CHECK'
+    first_epoch_us=current.monotonic_microseconds('passvero-staging-backup.timer','org.freedesktop.systemd1.Timer',
+                                                 'NextElapseUSecRealtime','NEXT_REGULAR_DUE')
+    first_epoch=first_epoch_us//1000000
+    first=datetime.datetime.fromtimestamp(first_epoch,datetime.timezone.utc)
+    require(first.hour==4 and first.minute==30 and first.second==0,'REGULAR_DAILY_SCHEDULE_MISMATCH')
+    require(60<=first_epoch-time.time()<=86460,'HOLD_RELEASE_TOO_CLOSE_TO_TRIGGER_OR_STALE_DUE')
+    second=first+datetime.timedelta(days=1)
+    result={'correction':'PASS_INSTALLED_PIN_MATCH_HOLD_RELEASED','oldSha256':OLD,'installedSha256':NEW,
+            'attempts':0,'mode':'ACCEPTANCE','hold':False,'prechecks':precheck,'postchecks':postcheck,
+            'typedMonotonicReads':{'startMicroseconds':start,'triggerMicroseconds':trigger},
+            'firstDueUTC':first.isoformat(),'secondDueUTC':second.isoformat(),
+            'firstDueEuropeZagreb':first.astimezone(ZoneInfo('Europe/Zagreb')).isoformat(),
+            'secondDueEuropeZagreb':second.astimezone(ZoneInfo('Europe/Zagreb')).isoformat(),
+            'manualCapture':False,'automaticRetry':False,'serviceResetFailed':False,
+            'timerConfigurationChanged':False,'smtpCalls':0,'telegramCalls':0,
+            'failureHistoryRetained':True,'productionChanged':False}
+    # Preserve first failure and whole original state before changing the active signal.
+    saved=current.read(record)
+    saved.update(status='PIN_AND_PRECHECKS_PASS_READY_FOR_HOLD_RELEASE',postchecks=postcheck,
+                 firstDueUTC=result['firstDueUTC'],secondDueUTC=result['secondDueUTC'])
+    current.atomic(record,saved)
+    new_state=dict(original)
+    new_state['resolvedPreReservationFailure']=new_state.pop('failure')
+    new_state.update(hold=False,firstDueEpoch=first_epoch,adapterSha256=NEW)
+    current.atomic(STATE/'state.json',new_state)
+    saved.update(status='PASS_INSTALLED_PIN_MATCH_HOLD_RELEASED',result=result)
+    current.atomic(record,saved)
+    print(json.dumps(result,indent=2,sort_keys=True))
+except BaseException as error:
+    reason=str(error) if re.fullmatch('[A-Z0-9_]{1,160}',str(error)) else type(error).__name__
+    output={'correction':'STOP_REVIEW_REQUIRED_NO_AUTOMATIC_RETRY','phase':PHASE,'reason':reason,'manualCapture':False}
+    if adapter is not None and mutation_started:
+        try:
+            state=adapter.read(STATE/'state.json')
+            state['hold']=True
+            adapter.atomic(STATE/'state.json',state)
+            output['hold']=True
+            output['installedSha256']=hashlib.sha256((CODE/'recurring.py').read_bytes()).hexdigest()
+            if record is not None and record.exists():
+                saved=adapter.read(record);saved.setdefault('firstFailure',output);adapter.atomic(record,saved)
+        except Exception:output['holdPosture']='NOT_PROVEN_RETURN_OUTPUT_NO_RETRY'
+    print(json.dumps(output,indent=2,sort_keys=True))
+    sys.exit(1)
+finally:
+    if fd is not None:os.close(fd)
+PASSVERO_STAGING_MONOTONIC_FIX
+```
+
+### Existing system reused and returned inventory
+
+Reuse the existing B2 bucket, protected credentials/password and **existing**
+`passvero-staging-recovery-v1/` repository, ID
+`9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35`.
+Reuse `/var/lib/passvero-staging-recovery`, PG16 acceptance DB `passvero_acceptance:5433`,
+whole private `passvero-staging-documents` / `passvero-staging-images`, minimized
+four-file configuration allowlist, accepted exported-snapshot/SHARE-lock capture,
+Storage pagination/byte/reconciliation and offsite manifest/tree primitives.
+Historical helper files and their mains/guards are unchanged; mains are never called.
+Original set `20261001T212354Z` and accepted one-off restore remain accepted.
+Production job/repository/retention/freshness/Telegram marker/state are unchanged.
+
+Returned inventory: 56 tables, 33 finished migrations, DB 14,146,583 B; 7 Storage
+objects / 368,798 B, disk free 87,238,836,224 B. Reminder timer **enabled/active**,
+service inactive, one enabled campaign; outbox SENT=4/CANCELLED=2. These are
+point-in-time counts, not permission to alter/replay reminders. Build
+`mMVPOjFPkw5L42RIqziS4`, canonical manifest SHA
+`f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40`,
+842 canonical entries. Prior 839 application-artifact count and 842 whole-canonical
+inventory measure different inventories; no executable drift is inferred from count
+alone. New job checks the exact current canonical files, worker hashes and migrations
+before any pause; accepted reader's eleven source inputs match locally.
+
+### Confirmed combined approval — exact reviewed boundaries
+
+| Item | Boundary explicitly approved by user |
+| --- | --- |
+| Schedule | Daily **04:30:00 UTC**, AccuracySec=1s, no random delay, Persistent=false. First two invocations are real ordinary daily timer runs; no manual capture, clock change, catch-up or automatic retry. Two acceptance attempts, then ExecCondition skips further captures until successful A–D promotion under this same approval. |
+| RPO / freshness | Target 24 h; stale **>90,000 s (25 h)** from consistent snapshot instant. Hourly **:20 UTC**, no catch-up; <=1 h detection latency. Missing first set is a distinct waiting state until first due +1 h. Failure has immediate OnFailure monitoring; incomplete/missing/stale remain distinct. A target is not a guaranteed 24 h loss bound under delay/failure. |
+| Retention | **14 daily / 8 weekly / 6 monthly, dry-run only**. Exact existing staging repository ID/prefix; host and tag `passvero-staging-recovery`, group-by **host** (not changing per-set paths). Every candidate must have one `/var/lib/passvero-staging-recovery/sets/<UTC-id>` path. Reject production/mixed paths/foreign snapshots. No real forget/prune/local deletion; accumulation continues until separately approved deletion. |
+| Monitoring / receiver | Existing bot and **existing configured protected Telegram chat** from `/etc/passvero/backup/telegram-chat-id`; owner confirms that destination without exposing token/chat credential. Approval includes automatic real staging failure/missing/incomplete/stale alerts, separate staging marker/lock/dedup. Existing production helper CLI only exposes `--clear-marker-alerts` and references production state: do not call its main. Minimal new staging transport uses the same protected reader/bot/chat/sendMessage mechanism, independent staging state and durable UNKNOWN reservation before I/O; a repeated same signal/revision is never blindly resent. Production alert script/state untouched. |
+| Test message | Reviewed default **NO test Telegram**. D tests synthetic signal/dedup inputs without calling transport; provider/inbox proof remains NOT_PROVEN. Optional one-message variant requires a revised pinned package after explicit approval; not included in these blocks. |
+| Writer coordination | Save original reminder timer enabled/active baseline; stop only that timer, natural drain <=240 s before web pause, never kill worker/SMTP or alter campaign/policy/outbox/enrollment. Require inactive service/no detached launcher or bundle; full-table SHARE locks and zero unknown DB clients/prepared transactions at snapshot and closure. Freshclam/clamd/health producer/production jobs untouched. |
+| Capture / resume | Online byte precopy and bounded online dump-size measurement; consistent dump rechecks inventory, actual bytes, sequences and references. Child RuntimeMaxSec=85s + independent ExecStopPost resume TimeoutStopSec=25s; observed complete web pause **<=120 s** required. Existing PM2 RPC resumes web, readiness checked, timer baseline restored even if web restart fails. Parent ExecStopPost is an additional guard. Runtime/host failure can defeat recovery; such a result is STOP/HOLD, never a valid set. |
+| Resources | >=4 GiB free before work, <=1 GiB complete set, <=10,000 stored objects; 128 MiB payload reserve; one lock, no parallel capture/restore. Online measurement <=60s; restic transfer <=900s; overall scheduled job <=35min, Restart=no. Production backup active -> STOP before pause, not a delayed retry. Proposed 04:30 UTC is after usual production 02:00 UTC (+<=10min random); a long production run remains guarded. |
+| Attempts / acceptance | **Capture max2, latest-new-set restore max1, retention dry-run max1, controlled signal/dedup proof max1**, no live retry. A failure consumes its reserved attempt and saves first normalized phase/reason before cleanup; restore previous web/timer state, HOLD. Correct only failed local component; replay only that part if remaining budget permits. Extra attempts require one known-cause approval. |
+| Enable / rollback | Block A installs only new private adapter/config/state and four staging units; validates installed/runtime/repository pins and unit syntax, then enables only two new timers. Initial ACCEPTANCE mode promotes to CONTINUOUS only after A–D proof. Disable block disables/stops only new timers and sets HOLD; lets an active job finish through independent resume. Files/sets/alert/evidence retained; no production/reminder enablement or source rollback. |
+
+### Finite acceptance and scope
+
+A: two distinct real scheduled new sets, timer InvocationIDs/monotonic trigger proof,
+consistent snapshot timestamps, set/manifest/snapshot IDs and valid offsite tree.
+Start once; read once after printed secondDueUTC; wait for the date without polling
+or filler tests. Return that JSON before B–D; do not execute B on an incomplete A.
+B: download **latest new** B2 snapshot, verify every downloaded file/hash, restore once
+into new private socket-only PG16 `passvero_staging_recovery` (port55434/no TCP),
+compare complete new catalog/counters/owners/effective ACLs/sequences/reference set.
+Reuse accepted exact constraint pairs and effective owner-ACL equivalence verifier;
+new adapter removes only historical fixed six/six difference cardinality. Unknown
+schema/grant/constraint difference is STOP. Targeted accepted product/PDF/image reader
+uses verified new bytes/private read-only DB; all eleven bundle inputs match current
+local accepted main, current deployed executable canonical inventory checked independently.
+No new application bundle or historical raw-checkout identity claim. Independent
+systemd post verifies private cluster stopped and removes only temporary named-postgres
+traversal ACLs, returning original 0700 parents. Artifacts retained.
+C: one guarded retention dry-run; whole candidate inventory and returned keep/remove
+IDs remain staging-only; zero deleted snapshots/production candidates.
+D: controlled failed/missing/incomplete/stale/healthy input and UNKNOWN dedup proof,
+without corrupting live backup/marker; no test Telegram in default package.
+Finalize only after A–D and private closure; daily/monitoring timers remain enabled.
+
+No production restore/reconfiguration, Storage re-upload, business test write/email,
+full web/auth/scanner recovery, reboot, deletion, application build, commit or push.
+Scheduled recurrence and latest restore are **NOT_PROVEN until returned evidence**.
+Daily retention deletion and full-service recovery remain outside this task.
+Protected DB/Storage sets contain real private data; no payload is included in repo.
+
+### Reviewed local proof and operator package
+
+Focused changed orchestration/preflight/new-schema tests: **24 PASS / 0 FAIL**;
+Python AST, all shell blocks and embedded Python syntax, payload SHA and documentation
+links/whitespace checked. This is local orchestration proof, not live acceptance.
+[Diff/payload/block manifest](../../../codex/evidence/backup-recovery/recurring-preparation-manifest.json)
+separates the preserved roadmap review from this task. Local application source and
+historical helpers/evidence unchanged. Package generator reproduces exact blocks locally:
+`python3 scripts/staging-recovery/recurring_package.py /private/tmp/passvero-recurring-backup-20261009`.
+
+**INSTALLATION A COMPLETE — DO NOT RERUN.** User confirmed exact table, protected
+Telegram destination and no test message. **PENDING_OPERATOR_COMMAND — RESULTS**, only
+after the two due times/job window above. B–D awaits returned A proof. Unchanged blocks
+below retained for reproducibility/rollback; do not repeat accepted local checks.
+Default test-message count is zero. Privileged commands are run by the operator only.
+
+### Historical VPS TERMINAL A — installation PASS, do not rerun
+
+```sh
+# PENDING_OPERATOR_COMMAND — VPS TERMINAL A: only after combined approval
+sudo /usr/bin/python3 -B - <<'PASSVERO_STAGING_INSTALL'
+PAYLOAD={'recurring.py': {'sha256': '00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294', 'base64': 'IiIiU3RhZ2luZy1vbmx5IHNjaGVkdWxlZCBhZGFwdGVyIGFyb3VuZCBhY2NlcHRlZCBjYXB0dXJlL29mZnNpdGUgcHJpbWl0aXZlcy4KCk5vIGhpc3RvcmljYWwgaGVscGVyIGlzIGVkaXRlZCBvciBpdHMgbWFpbiBlbnRyeXBvaW50IGNhbGxlZC4gSW5jb21wbGV0ZSBhdHRlbXB0cwpIT0xEIHRoZSBuZXcgam9iOyByZXN1bWUgaXMgaW5kZXBlbmRlbnRseSBpbnZva2VkIGJ5IHN5c3RlbWQgb24gdGltZW91dC9kZWF0aC4KIiIiCmltcG9ydCBkYXRldGltZQppbXBvcnQgZmNudGwKaW1wb3J0IGhhc2hsaWIKaW1wb3J0IGltcG9ydGxpYi51dGlsCmltcG9ydCBqc29uCmltcG9ydCBvcwppbXBvcnQgcGF0aGxpYgppbXBvcnQgcmUKaW1wb3J0IHJlc291cmNlCmltcG9ydCBzb2NrZXQKaW1wb3J0IHN0YXQKaW1wb3J0IHN1YnByb2Nlc3MKaW1wb3J0IHN5cwppbXBvcnQgdGltZQppbXBvcnQgdXJsbGliLnBhcnNlCmltcG9ydCB1cmxsaWIucmVxdWVzdAppbXBvcnQgdXVpZAoKUk9PVCA9IHBhdGhsaWIuUGF0aCgnL3Zhci9saWIvcGFzc3Zlcm8tc3RhZ2luZy1yZWNvdmVyeScpClNUQVRFID0gUk9PVCAvICdyZWN1cnJpbmcnCkNPREUgPSBwYXRobGliLlBhdGgoJy91c3IvbG9jYWwvbGliZXhlYy9wYXNzdmVyby1zdGFnaW5nLWJhY2t1cCcpCkNPTkZJRyA9IENPREUgLyAnY29uZmlnLmpzb24nCkFQUCA9IHBhdGhsaWIuUGF0aCgnL3Zhci93d3cvcGFzc3Zlcm8tYWNjZXB0YW5jZScpCkNBTk9OSUNBTCA9IHBhdGhsaWIuUGF0aCgnL3Zhci9saWIvcGFzc3Zlcm8tb25ib2FyZGluZy1kZXBsb3ktMmNiOWQ2ZS9hcHBsaWNhdGlvbi9tYW5pZmVzdC5qc29uJykKUkVNSU5ERVJfVElNRVIgPSAncGFzc3Zlcm8tc3Vic2NyaXB0aW9uLXJlbWluZGVycy50aW1lcicKUkVNSU5ERVJfU0VSVklDRSA9ICdwYXNzdmVyby1zdWJzY3JpcHRpb24tcmVtaW5kZXJzLnNlcnZpY2UnCkdJQiA9IDEwMjQgKiogMwpQSEFTRSA9ICdTQ09QRScKCgpjbGFzcyBTdG9wKEV4Y2VwdGlvbik6CiAgICBwYXNzCgoKZGVmIHJlcXVpcmUodmFsdWUsIGNvZGUpOgogICAgaWYgbm90IHZhbHVlOgogICAgICAgIHJhaXNlIFN0b3AoY29kZSkKCgpkZWYgcmVhZChwYXRoKToKICAgIHJlcXVpcmUocGF0aC5pc19maWxlKCkgYW5kIG5vdCBwYXRoLmlzX3N5bWxpbmsoKSBhbmQgcGF0aC5zdGF0KCkuc3Rfc2l6ZSA8IDMyICogMTAyNCAqKiAyLAogICAgICAgICAgICAnSlNPTl9JTlBVVF9QT1NUVVJFJykKICAgIHJldHVybiBqc29uLmxvYWRzKHBhdGgucmVhZF90ZXh0KCkpCgoKZGVmIGF0b21pYyhwYXRoLCB2YWx1ZSk6CiAgICByZXF1aXJlKG5vdCBwYXRoLmlzX3N5bWxpbmsoKSwgJ1NUQVRFX1NZTUxJTksnKQogICAgdG1wID0gcGF0aC53aXRoX25hbWUocGF0aC5uYW1lICsgJy4nICsgdXVpZC51dWlkNCgpLmhleCkKICAgIGZkID0gb3Mub3Blbih0bXAsIG9zLk9fV1JPTkxZIHwgb3MuT19DUkVBVCB8IG9zLk9fRVhDTCwgMG82MDApCiAgICB3aXRoIG9zLmZkb3BlbihmZCwgJ3cnKSBhcyBoYW5kbGU6CiAgICAgICAganNvbi5kdW1wKHZhbHVlLCBoYW5kbGUsIHNvcnRfa2V5cz1UcnVlLCBpbmRlbnQ9MikKICAgICAgICBoYW5kbGUud3JpdGUoJ1xuJyk7IGhhbmRsZS5mbHVzaCgpOyBvcy5mc3luYyhoYW5kbGUuZmlsZW5vKCkpCiAgICBvcy5yZXBsYWNlKHRtcCwgcGF0aCkKICAgIGZkID0gb3Mub3BlbihwYXRoLnBhcmVudCwgb3MuT19SRE9OTFkgfCBvcy5PX0RJUkVDVE9SWSkKICAgIHRyeToKICAgICAgICBvcy5mc3luYyhmZCkKICAgIGZpbmFsbHk6CiAgICAgICAgb3MuY2xvc2UoZmQpCgoKZGVmIGNvbW1hbmQoYXJncywgdGltZW91dD0xNSwgKiprd2FyZ3MpOgogICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oYXJncywgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGltZW91dD10aW1lb3V0LCAqKmt3YXJncykKICAgIHJlcXVpcmUocmVzdWx0LnJldHVybmNvZGUgPT0gMCwgJ0NPTU1BTkRfRkFJTEVEJykKICAgIHJlcXVpcmUobGVuKHJlc3VsdC5zdGRvdXQpIDw9IDMyICogMTAyNCAqKiAyLCAnQ09NTUFORF9PVVRQVVRfTElNSVQnKQogICAgcmV0dXJuIHJlc3VsdC5zdGRvdXQKCgpkZWYgdW5pdChuYW1lKToKICAgIHJlcXVpcmUobmFtZSBpbiAoUkVNSU5ERVJfVElNRVIsIFJFTUlOREVSX1NFUlZJQ0UsICdwYXNzdmVyby1wb3N0Z3Jlcy1iYWNrdXAuc2VydmljZScsCiAgICAgICAgICAgICAgICAgICAgICdwYXNzdmVyby1zdGFnaW5nLWJhY2t1cC50aW1lcicsICdwYXNzdmVyby1zdGFnaW5nLWJhY2t1cC5zZXJ2aWNlJyksICdVTklUX1NDT1BFJykKICAgIGJvZHkgPSBjb21tYW5kKFsnL3Vzci9iaW4vc3lzdGVtY3RsJywgJ3Nob3cnLCBuYW1lLAogICAgICAgICAgICAgICAgICAgICctLXByb3BlcnR5PUFjdGl2ZVN0YXRlLFVuaXRGaWxlU3RhdGUsSW52b2NhdGlvbklELEV4ZWNNYWluU3RhcnRUaW1lc3RhbXBNb25vdG9uaWMsTGFzdFRyaWdnZXJVU2VjTW9ub3RvbmljJ10pLmRlY29kZSgpCiAgICByZXR1cm4gZGljdChsaW5lLnNwbGl0KCc9JywgMSkgZm9yIGxpbmUgaW4gYm9keS5zcGxpdGxpbmVzKCkgaWYgJz0nIGluIGxpbmUpCgoKZGVmIGN0bChhY3Rpb24sIG5hbWUpOgogICAgcmVxdWlyZShhY3Rpb24gaW4gKCdzdG9wJywgJ3N0YXJ0JykgYW5kIG5hbWUgPT0gUkVNSU5ERVJfVElNRVIsICdSRU1JTkRFUl9USU1FUl9BQ1RJT05fU0NPUEUnKQogICAgY29tbWFuZChbJy91c3IvYmluL3N5c3RlbWN0bCcsIGFjdGlvbiwgbmFtZV0sIHRpbWVvdXQ9MTApCgoKZGVmIHJlc2VydmVfYXR0ZW1wdChwYXRoLCBzZXRfaWQpOgogICAgc3RhdGUgPSByZWFkKHBhdGgpCiAgICByZXF1aXJlKG5vdCBzdGF0ZVsnaG9sZCddLCAnQ0FQVFVSRV9PTl9IT0xEJykKICAgIHJlcXVpcmUoc3RhdGVbJ21vZGUnXSBpbiAoJ0FDQ0VQVEFOQ0UnLCAnQ09OVElOVU9VUycpLCAnTU9ERV9TQ09QRScpCiAgICByZXF1aXJlKHN0YXRlWydtb2RlJ10gIT0gJ0FDQ0VQVEFOQ0UnIG9yIHN0YXRlWydhdHRlbXB0cyddIDwgMiwgJ0FDQ0VQVEFOQ0VfQ0FQVFVSRV9CVURHRVQnKQogICAgc3RhdGUudXBkYXRlKGF0dGVtcHRzPXN0YXRlWydhdHRlbXB0cyddICsgMSwgYXR0ZW1wdD17J3NldElkJzogc2V0X2lkLCAnY29tcGxldGUnOiBGYWxzZX0pCiAgICBhdG9taWMocGF0aCwgc3RhdGUpCiAgICByZXR1cm4gc3RhdGUKCgpkZWYgcXVpZXNjZShjb250cm9sKToKICAgIHRpbWVyID0gdW5pdChSRU1JTkRFUl9USU1FUikKICAgIHJlcXVpcmUodGltZXJbJ1VuaXRGaWxlU3RhdGUnXSBpbiAoJ2VuYWJsZWQnLCAnZGlzYWJsZWQnKSwgJ1JFTUlOREVSX1RJTUVSX0VOQUJMRU1FTlQnKQogICAgcmVxdWlyZSh0aW1lclsnQWN0aXZlU3RhdGUnXSBpbiAoJ2FjdGl2ZScsICdpbmFjdGl2ZScpLCAnUkVNSU5ERVJfVElNRVJfU1RBVEUnKQogICAgYXRvbWljKGNvbnRyb2wgLyAnd3JpdGVyLWJhc2VsaW5lLmpzb24nLCB7J3RpbWVyQWN0aXZlJzogdGltZXJbJ0FjdGl2ZVN0YXRlJ10gPT0gJ2FjdGl2ZScsCiAgICAgICAgICAgJ3RpbWVyRW5hYmxlZCc6IHRpbWVyWydVbml0RmlsZVN0YXRlJ10gPT0gJ2VuYWJsZWQnfSkKICAgICMgUGVyc2lzdCB0aGUgcmVzdG9yZSBpbnRlbnQgYmVmb3JlIHN0b3BwaW5nIHRoZSB0aW1lcjsgbmV2ZXIga2lsbCB0aGUgd29ya2VyLgogICAgY3RsKCdzdG9wJywgUkVNSU5ERVJfVElNRVIpCiAgICBkZWFkbGluZSA9IHRpbWUubW9ub3RvbmljKCkgKyAyNDAKICAgIHdoaWxlIHRpbWUubW9ub3RvbmljKCkgPCBkZWFkbGluZToKICAgICAgICBzZXJ2aWNlID0gdW5pdChSRU1JTkRFUl9TRVJWSUNFKQogICAgICAgIGlmIHNlcnZpY2VbJ0FjdGl2ZVN0YXRlJ10gPT0gJ2luYWN0aXZlJzoKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgcmVxdWlyZShzZXJ2aWNlWydBY3RpdmVTdGF0ZSddIGluICgnYWN0aXZlJywgJ2FjdGl2YXRpbmcnLCAnZGVhY3RpdmF0aW5nJyksICdSRU1JTkRFUl9TRVJWSUNFX0ZBSUxFRCcpCiAgICAgICAgdGltZS5zbGVlcCgxKQogICAgcmFpc2UgU3RvcCgnUkVNSU5ERVJfRFJBSU5fVElNRU9VVCcpCgoKZGVmIHJlc3VtZV90aW1lcihjb250cm9sKToKICAgIHBhdGggPSBjb250cm9sIC8gJ3dyaXRlci1iYXNlbGluZS5qc29uJwogICAgaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICAgICAgcmV0dXJuCiAgICBiYXNlbGluZSA9IHJlYWQocGF0aCkKICAgIGN1cnJlbnQgPSB1bml0KFJFTUlOREVSX1RJTUVSKQogICAgcmVxdWlyZSgoY3VycmVudFsnVW5pdEZpbGVTdGF0ZSddID09ICdlbmFibGVkJykgPT0gYmFzZWxpbmVbJ3RpbWVyRW5hYmxlZCddLCAnUkVNSU5ERVJfRU5BQkxFTUVOVF9DSEFOR0VEJykKICAgIGlmIGJhc2VsaW5lWyd0aW1lckFjdGl2ZSddIGFuZCBjdXJyZW50WydBY3RpdmVTdGF0ZSddICE9ICdhY3RpdmUnOgogICAgICAgIGN0bCgnc3RhcnQnLCBSRU1JTkRFUl9USU1FUikKICAgIGVsaWYgbm90IGJhc2VsaW5lWyd0aW1lckFjdGl2ZSddIGFuZCBjdXJyZW50WydBY3RpdmVTdGF0ZSddICE9ICdpbmFjdGl2ZSc6CiAgICAgICAgY3RsKCdzdG9wJywgUkVNSU5ERVJfVElNRVIpCgoKZGVmIHJlc2lkdWFsX3JlbWluZGVyKCk6CiAgICAiIiJDYXRjaCBhIGRldGFjaGVkIGxhdW5jaGVyL2J1bmRsZSBldmVuIHdoZW4gaXRzIHN5c3RlbWQgc2VydmljZSBpcyBpbmFjdGl2ZS4iIiIKICAgIGZvciBwYXRoIGluIHBhdGhsaWIuUGF0aCgnL3Byb2MnKS5pdGVyZGlyKCk6CiAgICAgICAgaWYgbm90IHBhdGgubmFtZS5pc2RpZ2l0KCk6CiAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAgdHJ5OgogICAgICAgICAgICBhcmdzID0gKHBhdGggLyAnY21kbGluZScpLnJlYWRfYnl0ZXMoKQogICAgICAgICAgICByZXF1aXJlKGInL3Vzci9sb2NhbC9saWJleGVjL3Bhc3N2ZXJvLXN1YnNjcmlwdGlvbi1yZW1pbmRlcnMvJyBub3QgaW4gYXJncywKICAgICAgICAgICAgICAgICAgICAnUkVTSURVQUxfUkVNSU5ERVJfUFJPQ0VTUycpCiAgICAgICAgZXhjZXB0IChGaWxlTm90Rm91bmRFcnJvciwgUHJvY2Vzc0xvb2t1cEVycm9yKToKICAgICAgICAgICAgcGFzcwoKCmRlZiBzaWduYWwoc3RhdGUsIG5vdyk6CiAgICBpZiBzdGF0ZS5nZXQoJ2ZhaWx1cmUnKToKICAgICAgICByZXR1cm4gJ0JBQ0tVUF9GQUlMRUQnCiAgICBpZiBzdGF0ZS5nZXQoJ2F0dGVtcHQnKSBhbmQgbm90IHN0YXRlWydhdHRlbXB0J11bJ2NvbXBsZXRlJ106CiAgICAgICAgcmV0dXJuICdTRVRfSU5DT01QTEVURScKICAgIGlmIG5vdCBzdGF0ZS5nZXQoJ3ZhbGlkJyk6CiAgICAgICAgcmV0dXJuICdWQUxJRF9TRVRfTUlTU0lORycKICAgIGFnZSA9IG5vdyAtIHN0YXRlWyd2YWxpZCddWydjYXB0dXJlRXBvY2gnXQogICAgaWYgYWdlIDwgMDoKICAgICAgICByZXR1cm4gJ0NMT0NLX0lOVkFMSUQnCiAgICByZXR1cm4gJ1NFVF9TVEFMRScgaWYgYWdlID4gOTAwMDAgZWxzZSAnSEVBTFRIWScKCgpkZWYgcmVzZXJ2ZV9hbGVydChwYXRoLCBraW5kLCByZXZpc2lvbiwgbm93KToKICAgIHN0YXRlID0gcmVhZChwYXRoKSBpZiBwYXRoLmV4aXN0cygpIGVsc2UgeydzZW50Jzoge319CiAgICBrZXkgPSBraW5kICsgJzonICsgcmV2aXNpb24KICAgIGlmIGtleSBpbiBzdGF0ZVsnc2VudCddOgogICAgICAgIHJldHVybiBGYWxzZQogICAgc3RhdGVbJ3NlbnQnXVtrZXldID0gbm93CiAgICBzdGF0ZS51cGRhdGUoZGVsaXZlcnk9J1VOS05PV04nLCBzaWduYWw9a2luZCwgcmVzZXJ2ZWRBdD1ub3cpCiAgICBhdG9taWMocGF0aCwgc3RhdGUpICAjIHVuY2VydGFpbnR5IGlzIGR1cmFibGUgYmVmb3JlIGV4dGVybmFsIEkvTzsgbmV2ZXIgcmV0cnkgYmxpbmRseQogICAgcmV0dXJuIFRydWUKCgpkZWYgc2VsZWN0X3NuYXBzaG90cyhyb3dzKToKICAgIHJlcXVpcmUoaXNpbnN0YW5jZShyb3dzLCBsaXN0KSwgJ1NOQVBTSE9UX0xJU1QnKQogICAgZm9yIHJvdyBpbiByb3dzOgogICAgICAgIHJlcXVpcmUocmUuZnVsbG1hdGNoKCdbYS1mMC05XXs2NH0nLCByb3cuZ2V0KCdpZCcsICcnKSkKICAgICAgICAgICAgICAgIGFuZCByb3cuZ2V0KCdob3N0bmFtZScpID09ICdwYXNzdmVyby1zdGFnaW5nLXJlY292ZXJ5JwogICAgICAgICAgICAgICAgYW5kICdwYXNzdmVyby1zdGFnaW5nLXJlY292ZXJ5JyBpbiByb3cuZ2V0KCd0YWdzJywgW10pCiAgICAgICAgICAgICAgICBhbmQgbGVuKHJvdy5nZXQoJ3BhdGhzJywgW10pKSA9PSAxCiAgICAgICAgICAgICAgICBhbmQgcmUuZnVsbG1hdGNoKHJlLmVzY2FwZShzdHIoUk9PVCAvICdzZXRzJykpICsgcicvWzAtOV17OH1UWzAtOV17Nn1aJywgcm93WydwYXRocyddWzBdKSwKICAgICAgICAgICAgICAgICdTVEFHSU5HX1JFVEVOVElPTl9TRUxFQ1RPUicpCiAgICByZXR1cm4gcm93cwoKCmRlZiBsb2FkKHBhdGgsIHBpbiwgbmFtZSk6CiAgICBpbmZvID0gcGF0aC5sc3RhdCgpCiAgICByZXF1aXJlKHN0YXQuU19JU1JFRyhpbmZvLnN0X21vZGUpIGFuZCBpbmZvLnN0X3VpZCA9PSAwIGFuZCBub3QgaW5mby5zdF9tb2RlICYgMG8wNzcKICAgICAgICAgICAgYW5kIGhhc2hsaWIuc2hhMjU2KHBhdGgucmVhZF9ieXRlcygpKS5oZXhkaWdlc3QoKSA9PSBwaW4sICdQSU5ORURfSEVMUEVSX0lERU5USVRZJykKICAgIHNwZWMgPSBpbXBvcnRsaWIudXRpbC5zcGVjX2Zyb21fZmlsZV9sb2NhdGlvbihuYW1lLCBwYXRoKQogICAgbW9kdWxlID0gaW1wb3J0bGliLnV0aWwubW9kdWxlX2Zyb21fc3BlYyhzcGVjKTsgc3BlYy5sb2FkZXIuZXhlY19tb2R1bGUobW9kdWxlKQogICAgcmV0dXJuIG1vZHVsZQoKCmRlZiBzY29wZShjbG9zaW5nPUZhbHNlKToKICAgIHJlcXVpcmUob3MuZ2V0ZXVpZCgpID09IDAgYW5kIG9zLnVuYW1lKCkubm9kZW5hbWUgPT0gJ3NydjE4MzQ2NDcnLCAnT1BFUkFUT1JfSE9TVCcpCiAgICBvcy51bWFzaygwbzA3Nyk7IHN5cy5kb250X3dyaXRlX2J5dGVjb2RlID0gVHJ1ZQogICAgZm9yIHBhdGggaW4gKFJPT1QsIFNUQVRFLCBDT0RFKToKICAgICAgICBpbmZvID0gcGF0aC5sc3RhdCgpCiAgICAgICAgYWNsX2Nsb3N1cmUgPSBwYXRoID09IFJPT1QgYW5kIHN0YXQuU19JTU9ERShpbmZvLnN0X21vZGUpID09IDBvNzEwCiAgICAgICAgcmVxdWlyZShzdGF0LlNfSVNESVIoaW5mby5zdF9tb2RlKSBhbmQgaW5mby5zdF91aWQgPT0gMAogICAgICAgICAgICAgICAgYW5kIChub3QgaW5mby5zdF9tb2RlICYgMG8wNzcgb3IgYWNsX2Nsb3N1cmUpLCAnUFJJVkFURV9ST09UJykKICAgIGNvbmZpZyA9IHJlYWQoQ09ORklHKQogICAgcmVxdWlyZShDT05GSUcubHN0YXQoKS5zdF91aWQgPT0gMCBhbmQgbm90IENPTkZJRy5zdGF0KCkuc3RfbW9kZSAmIDBvMDc3LCAnQ09ORklHX1BPU1RVUkUnKQogICAgcmVxdWlyZShjb25maWdbJ2FwcHJvdmVkJ10gYW5kIGNvbmZpZ1sncmVwb3NpdG9yeUlkJ10gPT0KICAgICAgICAgICAgJzkwNTgzNThkOTdiZGQzYjdlMmVmNTZjNTNlYTEzMmY0YjdiZTc0NzUyZjIxM2NiZmJjYzA5M2M1MzMxYjliMzUnLCAnQVBQUk9WRURfUE9MSUNZX1JFUVVJUkVEJykKICAgIGhlbHBlcnMgPSB7fQogICAgZm9yIG5hbWUsIHBpbiBpbiBjb25maWdbJ2hlbHBlcnMnXS5pdGVtcygpOgogICAgICAgIHBhdGggPSBDT0RFIC8gKG5hbWUgKyAnLnB5JykgaWYgbmFtZSBpbiAoJ29mZnNpdGUnLCAncmVjdXJyaW5nX2NhdGFsb2cnKSBlbHNlIFJPT1QgLyAnb3BlcmF0b3InIC8gKG5hbWUgKyAnLScgKyBwaW4gKyAnLnB5JykKICAgICAgICBoZWxwZXJzW25hbWVdID0gbG9hZChwYXRoLCBwaW4sICdhY2NlcHRlZF8nICsgbmFtZSkKICAgIGlmIHN0YXQuU19JTU9ERShST09ULnN0YXQoKS5zdF9tb2RlKSA9PSAwbzcxMDoKICAgICAgICByZXN0b3JlID0gaGVscGVyc1sncmVzdG9yZS1kYXRhYmFzZSddCiAgICAgICAgcG9zdGdyZXNfdWlkID0gX19pbXBvcnRfXygncHdkJykuZ2V0cHduYW0oJ3Bvc3RncmVzJykucHdfdWlkCiAgICAgICAgcmVxdWlyZShyZXN0b3JlLmdldF9hY2woUk9PVCkgPT0gcmVzdG9yZS50cmF2ZXJzYWxfYWNsKHBvc3RncmVzX3VpZCksICdVTlJFVklFV0VEX1JPT1RfQUNMJykKICAgIHJldHVybiBjb25maWcsIGhlbHBlcnMKCgpkZWYgbG9jayhwYXRoKToKICAgIGZkID0gb3Mub3BlbihwYXRoLCBvcy5PX1JEV1IgfCBvcy5PX0NSRUFUIHwgb3MuT19OT0ZPTExPVywgMG82MDApCiAgICB0cnk6CiAgICAgICAgZmNudGwuZmxvY2soZmQsIGZjbnRsLkxPQ0tfRVggfCBmY250bC5MT0NLX05CKQogICAgZXhjZXB0IEJsb2NraW5nSU9FcnJvcjoKICAgICAgICBvcy5jbG9zZShmZCk7IHJhaXNlIFN0b3AoJ0pPQl9MT0NLX0JVU1knKSBmcm9tIE5vbmUKICAgIHJldHVybiBmZAoKCmRlZiBydW50aW1lKGNvbmZpZywgaGVscGVycyk6CiAgICBwcmVwYXJlID0gaGVscGVyc1sncHJlcGFyZSddOyBjYXAgPSBoZWxwZXJzWydjYXB0dXJlJ10KICAgIHByb2Nlc3MsIGVudiA9IHByZXBhcmUucnVudGltZSgpCiAgICByZXF1aXJlKGhhc2hsaWIuc2hhMjU2KENBTk9OSUNBTC5yZWFkX2J5dGVzKCkpLmhleGRpZ2VzdCgpID09IGNvbmZpZ1snY2Fub25pY2FsU2hhMjU2J10sICdDQU5PTklDQUxfUkVMRUFTRV9DSEFOR0VEJykKICAgIGNhbm9uaWNhbCA9IHJlYWQoQ0FOT05JQ0FMKQogICAgcmVxdWlyZShjYW5vbmljYWxbJ2J1aWxkX2lkJ10gPT0gY29uZmlnWydidWlsZElkJ10gPT0gKEFQUCAvICcubmV4dC9CVUlMRF9JRCcpLnJlYWRfdGV4dCgpLnN0cmlwKCksICdCVUlMRF9DSEFOR0VEJykKICAgIGZvciBuYW1lLCBlbnRyeSBpbiBjYW5vbmljYWxbJ2ZpbGVzJ10uaXRlbXMoKToKICAgICAgICBwYXRoID0gQVBQIC8gbmFtZQogICAgICAgIHJlcXVpcmUobm90IHBhdGhsaWIuUHVyZVBvc2l4UGF0aChuYW1lKS5pc19hYnNvbHV0ZSgpIGFuZCAnLi4nIG5vdCBpbiBwYXRobGliLlB1cmVQb3NpeFBhdGgobmFtZSkucGFydHMKICAgICAgICAgICAgICAgIGFuZCBwYXRoLnJlc29sdmUoKS5pc19yZWxhdGl2ZV90byhBUFAucmVzb2x2ZSgpKSBhbmQgbm90IHBhdGguaXNfc3ltbGluaygpCiAgICAgICAgICAgICAgICBhbmQgcGF0aC5pc19maWxlKCkgYW5kIGhlbHBlcnNbJ29mZnNpdGUnXS5kaWdlc3QocGF0aCkgPT0gZW50cnlbJ3NoYTI1NiddLCAnRVhFQ1VUQUJMRV9BUlRJRkFDVF9DSEFOR0VEJykKICAgIGZvciBuYW1lLCBwaW4gaW4gY29uZmlnWyd3b3JrZXInXS5pdGVtcygpOgogICAgICAgIHBhdGggPSBwYXRobGliLlBhdGgoJy91c3IvbG9jYWwvbGliZXhlYy9wYXNzdmVyby1zdWJzY3JpcHRpb24tcmVtaW5kZXJzJykgLyBuYW1lCiAgICAgICAgcmVxdWlyZShwYXRoLmlzX2ZpbGUoKSBhbmQgbm90IHBhdGguaXNfc3ltbGluaygpIGFuZCBoZWxwZXJzWydvZmZzaXRlJ10uZGlnZXN0KHBhdGgpID09IHBpbiwgJ1dPUktFUl9DSEFOR0VEJykKICAgIG1pZ3JhdGlvbnMgPSBwcmVwYXJlLnNxbCgiU0VMRUNUIGpzb25fYnVpbGRfb2JqZWN0KCdjb3VudCcsY291bnQoKiksJ2ZpbmlzaGVkJyxib29sX2FuZChmaW5pc2hlZF9hdCBJUyBOT1QgTlVMTCBBTkQgcm9sbGVkX2JhY2tfYXQgSVMgTlVMTCksJ2RpZ2VzdCcsbWQ1KHN0cmluZ19hZ2cobWlncmF0aW9uX25hbWV8fCc6J3x8Y2hlY2tzdW0sJywnIE9SREVSIEJZIG1pZ3JhdGlvbl9uYW1lKSkpIEZST00gX3ByaXNtYV9taWdyYXRpb25zIikKICAgIHJlcXVpcmUobWlncmF0aW9ucyA9PSBjb25maWdbJ21pZ3JhdGlvbnMnXSwgJ01JR1JBVElPTl9ISVNUT1JZX0NIQU5HRUQnKQogICAgcmVxdWlyZSh1bml0KCdwYXNzdmVyby1wb3N0Z3Jlcy1iYWNrdXAuc2VydmljZScpWydBY3RpdmVTdGF0ZSddID09ICdpbmFjdGl2ZScsICdQUk9EVUNUSU9OX0JBQ0tVUF9CVVNZJykKICAgIHJlcXVpcmUoX19pbXBvcnRfXygnc2h1dGlsJykuZGlza191c2FnZShST09UKS5mcmVlID49IDQgKiBHSUIsICdGUkVFX1NQQUNFX0xJTUlUJykKICAgIHJldHVybiBwcm9jZXNzLCBlbnYKCgpkZWYgY29udGV4dHMoc2V0X2lkKToKICAgIHJlcXVpcmUocmUuZnVsbG1hdGNoKCdbMC05XXs4fVRbMC05XXs2fVonLCBzZXRfaWQpLCAnU0VUX0lEJykKICAgIHJldHVybiBST09UIC8gJ3NldHMnIC8gc2V0X2lkLCBST09UIC8gJ2NvbnRyb2wnIC8gc2V0X2lkCgoKZGVmIHN0YWdlX2J5dGVzKGNvbmZpZywgaGVscGVycywgc2V0X2lkKToKICAgIGdsb2JhbCBQSEFTRQogICAgcHJvY2VzcywgZW52ID0gcnVudGltZShjb25maWcsIGhlbHBlcnMpCiAgICBwcmVwYXJlLCBjYXAgPSBoZWxwZXJzWydwcmVwYXJlJ10sIGhlbHBlcnNbJ2NhcHR1cmUnXQogICAgd29yaywgY29udHJvbCA9IGNvbnRleHRzKHNldF9pZCkKICAgIHdvcmsubWtkaXIobW9kZT0wbzcwMCk7IGNvbnRyb2wubWtkaXIobW9kZT0wbzcwMCkKICAgIGF0b21pYyhTVEFURSAvICdhY3RpdmUuanNvbicsIHsnc2V0SWQnOiBzZXRfaWR9KQogICAgZm9yIG5hbWUgaW4gKCdkYXRhYmFzZScsICdzdG9yYWdlJywgJ2NvbmZpZ3VyYXRpb24nKToKICAgICAgICAod29yayAvIG5hbWUpLm1rZGlyKG1vZGU9MG83MDApCiAgICAod29yayAvICdzdG9yYWdlL29iamVjdHMnKS5ta2Rpcihtb2RlPTBvNzAwKQogICAgUEhBU0UgPSAnT05MSU5FX1NUT1JBR0VfUFJFQ09QWScKICAgIG9iamVjdHMgPSBjYXAuaW52ZW50b3J5KHByZXBhcmUsIGVudikKICAgIHJlcXVpcmUoc3VtKHhbJ3NpemUnXSBmb3IgeCBpbiBvYmplY3RzKSA8IEdJQiAtIDEyOCAqIDEwMjQgKiogMiwgJ1NUT1JBR0VfUEFZTE9BRF9MSU1JVCcpCiAgICBmb3IgaXRlbSBpbiBvYmplY3RzOgogICAgICAgIGl0ZW1bJ2ZpbGUnXSA9IGhhc2hsaWIuc2hhMjU2KChpdGVtWydidWNrZXQnXSArICdcMCcgKyBpdGVtWydrZXknXSkuZW5jb2RlKCkpLmhleGRpZ2VzdCgpCiAgICAgICAgZGlyZWN0b3J5ID0gd29yayAvICdzdG9yYWdlL29iamVjdHMnIC8gaXRlbVsnYnVja2V0J107IGRpcmVjdG9yeS5ta2Rpcihtb2RlPTBvNzAwLCBleGlzdF9vaz1UcnVlKQogICAgICAgIHBhdGggPSBkaXJlY3RvcnkgLyBpdGVtWydmaWxlJ107IGNoZWNrc3VtID0gaGFzaGxpYi5zaGEyNTYoKTsgc2l6ZSA9IDAKICAgICAgICB3aXRoIHByZXBhcmUuc3RvcmFnZV9yZXF1ZXN0KGVudiwgJ29iamVjdC9hdXRoZW50aWNhdGVkLycgKyBpdGVtWydidWNrZXQnXSArICcvJyArIHVybGxpYi5wYXJzZS5xdW90ZShpdGVtWydrZXknXSwgc2FmZT0nLycpKSBhcyByZXNwb25zZSwgb3BlbihwYXRoLCAneGInKSBhcyBvdXRwdXQ6CiAgICAgICAgICAgIGZvciBjaHVuayBpbiBpdGVyKGxhbWJkYTogcmVzcG9uc2UucmVhZCgxMDI0ICogMTAyNCksIGInJyk6CiAgICAgICAgICAgICAgICBzaXplICs9IGxlbihjaHVuayk7IHJlcXVpcmUoc2l6ZSA8PSBpdGVtWydzaXplJ10sICdTVE9SQUdFX1BSRUNPUFlfQ0hBTkdFRCcpCiAgICAgICAgICAgICAgICBjaGVja3N1bS51cGRhdGUoY2h1bmspOyBvdXRwdXQud3JpdGUoY2h1bmspCiAgICAgICAgcmVxdWlyZShzaXplID09IGl0ZW1bJ3NpemUnXSwgJ1NUT1JBR0VfUFJFQ09QWV9DSEFOR0VEJyk7IGl0ZW1bJ3NoYTI1NiddID0gY2hlY2tzdW0uaGV4ZGlnZXN0KCkKICAgIHNlZWQgPSB7J3NvdXJjZVBhY2thZ2VTaGEyNTYnOiBoZWxwZXJzWydvZmZzaXRlJ10uZGlnZXN0KEFQUCAvICdwYWNrYWdlLmpzb24nKSwKICAgICAgICAgICAgJ3NvdXJjZUxvY2tTaGEyNTYnOiBoZWxwZXJzWydvZmZzaXRlJ10uZGlnZXN0KEFQUCAvICdwYWNrYWdlLWxvY2suanNvbicpLCAnYnVpbGRJZCc6IGNvbmZpZ1snYnVpbGRJZCddfQogICAgZm9yIG5hbWUsIHZhbHVlIGluIGNhcC5jb25maWd1cmF0aW9ucyhwcmVwYXJlLCBwcm9jZXNzLCBlbnYsIHNlZWQpLml0ZW1zKCk6CiAgICAgICAgYXRvbWljKHdvcmsgLyAnY29uZmlndXJhdGlvbicgLyBuYW1lLCB2YWx1ZSkKICAgIHRhYmxlcyA9IHByZXBhcmUuc3FsKGNhcC5UQUJMRVMpCiAgICByZXF1aXJlKGxlbih0YWJsZXMpID09IGNvbmZpZ1sndGFibGVzJ10sICdUQUJMRV9UT1BPTE9HWV9DSEFOR0VEJykKICAgIGF0b21pYyhjb250cm9sIC8gJ3NlbGVjdGVkLmpzb24nLCB7J3Byb2Nlc3MnOiBwcm9jZXNzLCAnb2JqZWN0cyc6IG9iamVjdHMsICd0YWJsZXMnOiB0YWJsZXMsCiAgICAgICAgICAgJ2NhcHR1cmVFcG9jaCc6IGludCh0aW1lLnRpbWUoKSksICd1bml0JzogJ3Bhc3N2ZXJvLXN0YWdlLXJlY3VycmluZy1jYXB0dXJlLScgKyBzZXRfaWQgKyAnLnNlcnZpY2UnfSkKICAgIGNhcC5tZWFzdXJlX2N1cnJlbnRfZHVtcChwcmVwYXJlLCB3b3JrLCBjb250cm9sKQogICAgcmV0dXJuIHdvcmssIGNvbnRyb2wKCgpkZWYgY2hpbGQoc2V0X2lkLCBjb25maWcsIGhlbHBlcnMpOgogICAgZ2xvYmFsIFBIQVNFCiAgICBwcmVwYXJlLCBjYXAsIHJlZmVyZW5jZXMgPSBoZWxwZXJzWydwcmVwYXJlJ10sIGhlbHBlcnNbJ2NhcHR1cmUnXSwgaGVscGVyc1sncmVmZXJlbmNlcyddCiAgICB3b3JrLCBjb250cm9sID0gY29udGV4dHMoc2V0X2lkKTsgc2VsZWN0ZWQgPSByZWFkKGNvbnRyb2wgLyAnc2VsZWN0ZWQuanNvbicpCiAgICBjYXAuZ3VhcmRfcHJvcGVydGllcyhzZWxlY3RlZFsndW5pdCddLCBDT0RFIC8gJ3JlY3VycmluZy5weScsIHNldF9pZCwgODUsIDI1KQogICAgcmVxdWlyZSh1bml0KFJFTUlOREVSX1RJTUVSKVsnQWN0aXZlU3RhdGUnXSA9PSAnaW5hY3RpdmUnCiAgICAgICAgICAgIGFuZCB1bml0KFJFTUlOREVSX1NFUlZJQ0UpWydBY3RpdmVTdGF0ZSddID09ICdpbmFjdGl2ZScsICdSRU1JTkRFUl9OT1RfRFJBSU5FRCcpCiAgICByZXNpZHVhbF9yZW1pbmRlcigpCiAgICBwcm9jZXNzLCBlbnYgPSBwcmVwYXJlLnJ1bnRpbWUoKQogICAgcmVxdWlyZShwcm9jZXNzID09IHNlbGVjdGVkWydwcm9jZXNzJ10sICdSVU5USU1FX0NIQU5HRURfQkVGT1JFX1BBVVNFJykKICAgIGRlYWRsaW5lID0gdGltZS5tb25vdG9uaWMoKSArIDc1CiAgICBhdG9taWMoY29udHJvbCAvICdwYXVzZS1pbnRlbnQuanNvbicsIHsnbW9ub3RvbmljJzogdGltZS5tb25vdG9uaWMoKX0pCiAgICBQSEFTRSA9ICdTVE9QX1NUQUdJTkdfV0VCJwogICAgY2FwLnBtMihwcmVwYXJlLCAnc3RvcCcsIDgpCiAgICByZXF1aXJlKGNhcC5tb25pdG9yKHByZXBhcmUpWydzdGF0dXMnXSA9PSAnc3RvcHBlZCcgYW5kIGNhcC5zb3VyY2Vfd29ya2VycyhwcmVwYXJlKSA9PSAwLCAnV0VCX05PVF9TVE9QUEVEJykKICAgIG9iamVjdHMgPSBzZWxlY3RlZFsnb2JqZWN0cyddCiAgICByZXF1aXJlKGNhcC5tZXRhZGF0YShjYXAuaW52ZW50b3J5KHByZXBhcmUsIGVudikpID09IGNhcC5tZXRhZGF0YShvYmplY3RzKSwgJ1NUT1JBR0VfUFJFQ09QWV9TVEFMRScpCiAgICBzbmFwc2hvdCA9IGNhcC5TbmFwc2hvdChwcmVwYXJlLCBkZWFkbGluZSkKICAgIHRyeToKICAgICAgICBQSEFTRSA9ICdMT0NLX0FORF9TTkFQU0hPVCcKICAgICAgICBjYXB0dXJlX2Vwb2NoID0gaW50KHRpbWUudGltZSgpKQogICAgICAgIG9wZW5pbmcgPSBzbmFwc2hvdC5xKCJCRUdJTiBJU09MQVRJT04gTEVWRUwgUkVQRUFUQUJMRSBSRUFEO1NFVCBMT0NBTCBsb2NrX3RpbWVvdXQ9JzEwMDBtcyc7U0VUIExPQ0FMIHN0YXRlbWVudF90aW1lb3V0PSc2MDAwbXMnO1NFVCBMT0NBTCBzdGF0c19mZXRjaF9jb25zaXN0ZW5jeT0nbm9uZSc7TE9DSyBUQUJMRSAiICsgJywnLmpvaW4oY2FwLmlkZW50aWZpZXIoeCkgZm9yIHggaW4gc2VsZWN0ZWRbJ3RhYmxlcyddKSArICIgSU4gU0hBUkUgTU9ERSBOT1dBSVQ7U0VMRUNUIGpzb25fYnVpbGRfb2JqZWN0KCdzbmFwc2hvdCcscGdfZXhwb3J0X3NuYXBzaG90KCksJ2NsaWVudHMnLChTRUxFQ1QgY291bnQoKikgRlJPTSBwZ19zdGF0X2FjdGl2aXR5IFdIRVJFIGRhdG5hbWU9Y3VycmVudF9kYXRhYmFzZSgpIEFORCBiYWNrZW5kX3R5cGU9J2NsaWVudCBiYWNrZW5kJyBBTkQgcGlkPD5wZ19iYWNrZW5kX3BpZCgpKSwncHJlcGFyZWQnLChTRUxFQ1QgY291bnQoKikgRlJPTSBwZ19wcmVwYXJlZF94YWN0cyBXSEVSRSBkYXRhYmFzZT1jdXJyZW50X2RhdGFiYXNlKCkpKSIpCiAgICAgICAgcmVxdWlyZShvcGVuaW5nWydjbGllbnRzJ10gPT0gMCBhbmQgb3BlbmluZ1sncHJlcGFyZWQnXSA9PSAwLCAnVU5LTk9XTl9EQVRBQkFTRV9XUklURVInKQogICAgICAgIHJlcXVpcmUoc25hcHNob3QucShjYXAuVEFCTEVTKSA9PSBzZWxlY3RlZFsndGFibGVzJ10sICdUQUJMRV9UT1BPTE9HWV9DSEFOR0VEJykKICAgICAgICBjYXRhbG9nID0gc25hcHNob3QucShjYXAuQ0FUQUxPRykKICAgICAgICByZXF1aXJlKGNhdGFsb2dbJ3BlbmRpbmdEb2N1bWVudHMnXSA9PSAwIGFuZCBjYXRhbG9nWydwZW5kaW5nSW1hZ2VzJ10gPT0gMAogICAgICAgICAgICAgICAgYW5kIGNhdGFsb2dbJ25vblB1YmxpY1NjaGVtYXMnXSA9PSAwIGFuZCBjYXRhbG9nWydsYXJnZU9iamVjdHMnXSA9PSAwLCAnVU5TRVRUTEVEX1NPVVJDRScpCiAgICAgICAgY291bnRzID0gc25hcHNob3QucSgnU0VMRUNUIGpzb25fb2JqZWN0X2FnZyhuYW1lLHRvdGFsKSBGUk9NICgnICsgJyBVTklPTiBBTEwgJy5qb2luKAogICAgICAgICAgICAiU0VMRUNUICciICsgbmFtZS5yZXBsYWNlKCInIiwgIicnIikgKyAiJzo6dGV4dCBuYW1lLGNvdW50KCopIHRvdGFsIEZST00gIiArIGNhcC5pZGVudGlmaWVyKG5hbWUpCiAgICAgICAgICAgIGZvciBuYW1lIGluIHNlbGVjdGVkWyd0YWJsZXMnXSkgKyAnKSB4JykKICAgICAgICBhc3NldHMgPSBzbmFwc2hvdC5xKHJlZmVyZW5jZXMuUVVFUlkpOyBzZXF1ZW5jZXMgPSBzbmFwc2hvdC5xKGNhcC5TRVFVRU5DRVMpCiAgICAgICAgcmVjb25jaWxpYXRpb24gPSByZWZlcmVuY2VzLnJlY29uY2lsZShvYmplY3RzLCBhc3NldHNbJ3JlZmVyZW5jZXMnXSkKICAgICAgICBQSEFTRSA9ICdDT05TSVNURU5UX0RVTVAnCiAgICAgICAgcmVtYWluaW5nID0gZGVhZGxpbmUgLSB0aW1lLm1vbm90b25pYygpOyByZXF1aXJlKHJlbWFpbmluZyA+IDUsICdDQVBUVVJFX0RFQURMSU5FJykKICAgICAgICBsaW1pdCA9IEdJQiAtIHN1bSh4WydzaXplJ10gZm9yIHggaW4gb2JqZWN0cykgLSAxMjggKiAxMDI0ICoqIDIKICAgICAgICB3aXRoIG9wZW4od29yayAvICdkYXRhYmFzZS9wYXNzdmVyb19hY2NlcHRhbmNlLmR1bXAnLCAneGInKSBhcyBvdXRwdXQ6CiAgICAgICAgICAgIHJlc3VsdCA9IHN1YnByb2Nlc3MucnVuKFtjYXAuUEcgKyAncGdfZHVtcCcsICctaCcsICcvdmFyL3J1bi9wb3N0Z3Jlc3FsJywgJy1wJywgJzU0MzMnLCAnLVUnLCAncG9zdGdyZXMnLAogICAgICAgICAgICAgICAgJy1kJywgJ3Bhc3N2ZXJvX2FjY2VwdGFuY2UnLCAnLUZjJywgJy0tbm8tcGFzc3dvcmQnLCAnLS1sb2NrLXdhaXQtdGltZW91dD0xMDAwJywgJy0tc25hcHNob3Q9JyArIG9wZW5pbmdbJ3NuYXBzaG90J11dLAogICAgICAgICAgICAgICAgc3Rkb3V0PW91dHB1dCwgc3RkZXJyPXN1YnByb2Nlc3MuREVWTlVMTCwgdGltZW91dD1yZW1haW5pbmcsICoqcHJlcGFyZS5hY2NvdW50KCdwb3N0Z3JlcycpLAogICAgICAgICAgICAgICAgZW52PXsnUEFUSCc6ICcvdXNyL2JpbjovYmluJywgJ0xBTkcnOiAnQyd9LAogICAgICAgICAgICAgICAgcHJlZXhlY19mbj1sYW1iZGE6IHJlc291cmNlLnNldHJsaW1pdChyZXNvdXJjZS5STElNSVRfRlNJWkUsIChsaW1pdCwgbGltaXQpKSkKICAgICAgICByZXF1aXJlKHJlc3VsdC5yZXR1cm5jb2RlID09IDAsICdTTkFQU0hPVF9EVU1QX0ZBSUxFRCcpCiAgICAgICAgUEhBU0UgPSAnQ0FQVFVSRV9DTE9TVVJFJwogICAgICAgIHJlc2lkdWFsX3JlbWluZGVyKCkKICAgICAgICBjYXAudmVyaWZ5X3N0b3JhZ2VfYnl0ZXMocHJlcGFyZSwgZW52LCBvYmplY3RzKQogICAgICAgIHJlcXVpcmUoY2FwLm1ldGFkYXRhKGNhcC5pbnZlbnRvcnkocHJlcGFyZSwgZW52KSkgPT0gY2FwLm1ldGFkYXRhKG9iamVjdHMpLCAnU1RPUkFHRV9DSEFOR0VEX0RVUklOR19DQVBUVVJFJykKICAgICAgICByZXF1aXJlKHNuYXBzaG90LnEoY2FwLlNFUVVFTkNFUykgPT0gc2VxdWVuY2VzIGFuZCBzbmFwc2hvdC5xKGNhcC5PVVRTSURFKSA9PSB7J2NsaWVudHMnOiAwLCAncHJlcGFyZWQnOiAwfQogICAgICAgICAgICAgICAgYW5kIGNhcC5zb3VyY2Vfd29ya2VycyhwcmVwYXJlKSA9PSAwIGFuZCB1bml0KFJFTUlOREVSX1NFUlZJQ0UpWydBY3RpdmVTdGF0ZSddID09ICdpbmFjdGl2ZScKICAgICAgICAgICAgICAgIGFuZCB0aW1lLm1vbm90b25pYygpIDwgZGVhZGxpbmUsICdXUklURVJfQ0xPU1VSRV9DSEFOR0VEJykKICAgICAgICBhdG9taWMod29yayAvICdkYXRhYmFzZS9tYW5pZmVzdC5qc29uJywgeydzY2hlbWEnOiAxLCAnY291bnRzJzogY291bnRzLCAnY2F0YWxvZyc6IGNhdGFsb2csCiAgICAgICAgICAgICAgICdzZXF1ZW5jZXMnOiBzZXF1ZW5jZXMsICdzb3VyY2VEYXRhYmFzZSc6ICdwYXNzdmVyb19hY2NlcHRhbmNlJywgJ3NuYXBzaG90SWQnOiBvcGVuaW5nWydzbmFwc2hvdCddfSkKICAgICAgICBhdG9taWMod29yayAvICdzdG9yYWdlL21hbmlmZXN0Lmpzb24nLCB7J29iamVjdHMnOiBvYmplY3RzLCAncmVmZXJlbmNlcyc6IGFzc2V0c1sncmVmZXJlbmNlcyddLAogICAgICAgICAgICAgICAncmVjb25jaWxpYXRpb24nOiByZWNvbmNpbGlhdGlvbiwgJ2VuYWJsZWRDYW1wYWlnbnMnOiBhc3NldHNbJ2VuYWJsZWRDYW1wYWlnbnMnXX0pCiAgICAgICAgYXRvbWljKGNvbnRyb2wgLyAnY2FwdHVyZS1jb3JlLmpzb24nLCB7J2NhcHR1cmUnOiAnUEFTUycsICdvdXRzaWRlRGJDbGllbnRzJzogMCwKICAgICAgICAgICAgICAgJ3N0YWdpbmdXcml0ZXJzJzogMCwgJ2xvY2tlZFRhYmxlcyc6IGxlbihzZWxlY3RlZFsndGFibGVzJ10pLCAnY2FwdHVyZUVwb2NoJzogY2FwdHVyZV9lcG9jaH0pCiAgICBmaW5hbGx5OgogICAgICAgIHNuYXBzaG90LmNsb3NlKCkKCgpkZWYgcmVzdW1lKHNldF9pZCwgaGVscGVycyk6CiAgICBwcmVwYXJlLCBjYXAgPSBoZWxwZXJzWydwcmVwYXJlJ10sIGhlbHBlcnNbJ2NhcHR1cmUnXQogICAgXywgY29udHJvbCA9IGNvbnRleHRzKHNldF9pZCkKICAgIGZkID0gbG9jayhjb250cm9sIC8gJ3Jlc3VtZS5sb2NrJykKICAgIHRyeToKICAgICAgICBzZXJ2aWNlX3Jlc3VsdCA9IG9zLmVudmlyb24uZ2V0KCdTRVJWSUNFX1JFU1VMVCcsICd1bmtub3duJykKICAgICAgICBpZiBzZXJ2aWNlX3Jlc3VsdCBub3QgaW4gKCd1bmtub3duJywgJ3N1Y2Nlc3MnKToKICAgICAgICAgICAgZmFpbHVyZSA9IHsncmVzdWx0JzogJ1NUT1AnLCAncGhhc2UnOiAnU1lTVEVNRF9DQVBUVVJFX0VYSVQnLAogICAgICAgICAgICAgICAgICAgICAgICdyZWFzb24nOiBzZXJ2aWNlX3Jlc3VsdCwgJ3NldElkJzogc2V0X2lkLCAnYXV0b21hdGljUmV0cnknOiBGYWxzZX0KICAgICAgICAgICAgaWYgbm90IChjb250cm9sIC8gJ2ZpcnN0LWZhaWx1cmUuanNvbicpLmV4aXN0cygpOgogICAgICAgICAgICAgICAgYXRvbWljKGNvbnRyb2wgLyAnZmlyc3QtZmFpbHVyZS5qc29uJywgZmFpbHVyZSkKICAgICAgICAgICAgc3RhdGUgPSByZWFkKFNUQVRFIC8gJ3N0YXRlLmpzb24nKTsgc3RhdGVbJ2hvbGQnXSA9IFRydWUKICAgICAgICAgICAgc3RhdGUuc2V0ZGVmYXVsdCgnZmFpbHVyZScsIGZhaWx1cmUpOyBhdG9taWMoU1RBVEUgLyAnc3RhdGUuanNvbicsIHN0YXRlKQogICAgICAgIGludGVudCA9IGNvbnRyb2wgLyAncGF1c2UtaW50ZW50Lmpzb24nCiAgICAgICAgaWYgaW50ZW50LmV4aXN0cygpOgogICAgICAgICAgICBzdGFydGVkID0gcmVhZChpbnRlbnQpWydtb25vdG9uaWMnXQogICAgICAgICAgICBpZiBjYXAubW9uaXRvcihwcmVwYXJlKVsnc3RhdHVzJ10gIT0gJ29ubGluZSc6CiAgICAgICAgICAgICAgICB0cnk6CiAgICAgICAgICAgICAgICAgICAgY2FwLnBtMihwcmVwYXJlLCAncmVzdGFydCcsIDgpCiAgICAgICAgICAgICAgICBleGNlcHQgRXhjZXB0aW9uOgogICAgICAgICAgICAgICAgICAgIHBhc3MgICMgUlBDIG1heSBoYXZlIGNvbXBsZXRlZCBldmVuIGlmIHJlc3BvbnNlIHRpbWVkIG91dDsgdmVyaWZ5IG9ubGluZS4KICAgICAgICAgICAgcmVhZHlfZGVhZGxpbmUgPSB0aW1lLm1vbm90b25pYygpICsgNQogICAgICAgICAgICB3aGlsZSBUcnVlOgogICAgICAgICAgICAgICAgdHJ5OgogICAgICAgICAgICAgICAgICAgIHByZXBhcmUucnVudGltZSgpCiAgICAgICAgICAgICAgICAgICAgd2l0aCBzb2NrZXQuY3JlYXRlX2Nvbm5lY3Rpb24oKCcxMjcuMC4wLjEnLCAzMDAxKSwgdGltZW91dD0xKToKICAgICAgICAgICAgICAgICAgICAgICAgcGFzcwogICAgICAgICAgICAgICAgICAgIGJyZWFrCiAgICAgICAgICAgICAgICBleGNlcHQgRXhjZXB0aW9uOgogICAgICAgICAgICAgICAgICAgIHJlcXVpcmUodGltZS5tb25vdG9uaWMoKSA8IHJlYWR5X2RlYWRsaW5lLCAnV0VCX1JFU1VNRV9OT1RfUkVBRFknKQogICAgICAgICAgICAgICAgICAgIHRpbWUuc2xlZXAoMC4yNSkKICAgICAgICAgICAgZWxhcHNlZCA9IHRpbWUubW9ub3RvbmljKCkgLSBzdGFydGVkCiAgICAgICAgICAgIHJlcXVpcmUoZWxhcHNlZCA8PSAxMjAgb3IgKGNvbnRyb2wgLyAnY2xvc3VyZS5qc29uJykuZXhpc3RzKCksICdXRUJfUEFVU0VfTElNSVRfRVhDRUVERUQnKQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIGVsYXBzZWQgPSAwOyBwcmVwYXJlLnJ1bnRpbWUoKQogICAgICAgIHJlc3VtZV90aW1lcihjb250cm9sKQogICAgICAgIGlmIG5vdCAoY29udHJvbCAvICdjbG9zdXJlLmpzb24nKS5leGlzdHMoKToKICAgICAgICAgICAgYXRvbWljKGNvbnRyb2wgLyAnY2xvc3VyZS5qc29uJywgeydzdGFnaW5nUmVzdW1lZCc6IFRydWUsICdwYXVzZVNlY29uZHMnOiByb3VuZChlbGFwc2VkLCAzKSwKICAgICAgICAgICAgICAgICAgICd0aW1lckJhc2VsaW5lUmVzdG9yZWQnOiBUcnVlLCAnc2VydmljZVJlc3VsdCc6IG9zLmVudmlyb24uZ2V0KCdTRVJWSUNFX1JFU1VMVCcsICd1bmtub3duJyl9KQogICAgZmluYWxseToKICAgICAgICAjIEEgZmFpbGVkIHdlYiByZXN0YXJ0IG11c3Qgbm90IGxlYXZlIHRoZSBwcmV2aW91c2x5IGVuYWJsZWQgd3JpdGVyIHRpbWVyIHN0b3BwZWQuCiAgICAgICAgdHJ5OgogICAgICAgICAgICByZXN1bWVfdGltZXIoY29udHJvbCkKICAgICAgICBmaW5hbGx5OgogICAgICAgICAgICBvcy5jbG9zZShmZCkKCgpkZWYgcHVibGlzaChzZXRfaWQsIGhlbHBlcnMpOgogICAgY2FwLCBvZmZzaXRlID0gaGVscGVyc1snY2FwdHVyZSddLCBoZWxwZXJzWydvZmZzaXRlJ10KICAgIHdvcmssIGNvbnRyb2wgPSBjb250ZXh0cyhzZXRfaWQpCiAgICBjb3JlLCBjbG9zdXJlID0gcmVhZChjb250cm9sIC8gJ2NhcHR1cmUtY29yZS5qc29uJyksIHJlYWQoY29udHJvbCAvICdjbG9zdXJlLmpzb24nKQogICAgcmVxdWlyZShjb3JlWydjYXB0dXJlJ10gPT0gJ1BBU1MnIGFuZCBjbG9zdXJlWydzdGFnaW5nUmVzdW1lZCddIGFuZCBjbG9zdXJlWydwYXVzZVNlY29uZHMnXSA8PSAxMjAKICAgICAgICAgICAgYW5kIGNsb3N1cmVbJ3NlcnZpY2VSZXN1bHQnXSA9PSAnc3VjY2VzcycsICdDQVBUVVJFX0NMT1NVUkVfTk9UX0FDQ0VQVEVEJykKICAgIGR1bXAgPSB3b3JrIC8gJ2RhdGFiYXNlL3Bhc3N2ZXJvX2FjY2VwdGFuY2UuZHVtcCcKICAgICh3b3JrIC8gJ2RhdGFiYXNlL3Bhc3N2ZXJvX2FjY2VwdGFuY2UudG9jJykud3JpdGVfYnl0ZXMoY29tbWFuZChbY2FwLlBHICsgJ3BnX3Jlc3RvcmUnLCAnLS1saXN0Jywgc3RyKGR1bXApXSkpCiAgICAod29yayAvICdkYXRhYmFzZS9wYXNzdmVyb19hY2NlcHRhbmNlLnNoYTI1NicpLndyaXRlX3RleHQob2Zmc2l0ZS5kaWdlc3QoZHVtcCkgKyAnICBwYXNzdmVyb19hY2NlcHRhbmNlLmR1bXBcbicpCiAgICBmaWxlcyA9IHtzdHIocC5yZWxhdGl2ZV90byh3b3JrKSk6IHsnYnl0ZXMnOiBwLnN0YXQoKS5zdF9zaXplLCAnc2hhMjU2Jzogb2Zmc2l0ZS5kaWdlc3QocCl9CiAgICAgICAgICAgICBmb3IgcCBpbiBzb3J0ZWQod29yay5yZ2xvYignKicpKSBpZiBwLmlzX2ZpbGUoKX0KICAgIHJlcXVpcmUoc3VtKHhbJ2J5dGVzJ10gZm9yIHggaW4gZmlsZXMudmFsdWVzKCkpIDwgR0lCLCAnUEFZTE9BRF9MSU1JVCcpCiAgICBhdG9taWMod29yayAvICdyZWNvdmVyeS1zZXQuanNvbicsIHsnc2NoZW1hJzogMSwgJ3NldElkJzogc2V0X2lkLCAnZmlsZXMnOiBmaWxlcywKICAgICAgICAgICAncGF5bG9hZEJ5dGVzJzogc3VtKHhbJ2J5dGVzJ10gZm9yIHggaW4gZmlsZXMudmFsdWVzKCkpLCAnd3JpdGVyQ2xvc3VyZSc6IGNvcmUsICdzdGFnaW5nQ2xvc3VyZSc6IGNsb3N1cmUsCiAgICAgICAgICAgJ3NvdXJjZVJvbGVzUGFzc3dvcmRzJzogJ0lOREVQRU5ERU5UX1BST1RFQ1RFRF9FU0NST1cnLCAnc3RvcmFnZVByb3ZpZGVyUmVzdG9yZSc6ICdOT1RfUEVSRk9STUVEJ30pCiAgICBvZmZzaXRlLlNFVF9JRCA9IHNldF9pZAogICAgbWFuaWZlc3QsIHBheWxvYWQsIG1hbmlmZXN0X3NoYSA9IG9mZnNpdGUudmVyaWZ5X3NldCh3b3JrLCBjYXApCiAgICByZXBvc2l0b3J5ID0gb2Zmc2l0ZS5SZXBvc2l0b3J5KGhlbHBlcnNbJ3ByZXBhcmUnXSkKICAgIGJlZm9yZSA9IHNlbGVjdF9zbmFwc2hvdHMocmVwb3NpdG9yeS5zbmFwc2hvdHMoKSkKICAgIGNvbmZpZyA9IGpzb24ubG9hZHMocmVwb3NpdG9yeS5ydW4oWydjYXQnLCAnY29uZmlnJ10pKQogICAgcmVxdWlyZShjb25maWdbJ2lkJ10gPT0gcmVhZChDT05GSUcpWydyZXBvc2l0b3J5SWQnXSwgJ1JFUE9TSVRPUllfQ0hBTkdFRCcpCiAgICByZXF1aXJlKG5vdCBhbnkocm93WydwYXRocyddID09IFtzdHIod29yayldIGZvciByb3cgaW4gYmVmb3JlKSwgJ1NFVF9BTFJFQURZX09GRlNJVEUnKQogICAgYXRvbWljKGNvbnRyb2wgLyAnb2Zmc2l0ZS1hdHRlbXB0Lmpzb24nLCB7J3NldElkJzogc2V0X2lkLCAnYXV0b21hdGljUmV0cnknOiBGYWxzZX0pCiAgICByZXBvc2l0b3J5LnJ1bihbJ2JhY2t1cCcsICctLWpzb24nLCAnLS1mb3JjZScsICctLWhvc3QnLCAncGFzc3Zlcm8tc3RhZ2luZy1yZWNvdmVyeScsCiAgICAgICAgICAgICAgICAgICAgJy0tdGFnJywgJ3Bhc3N2ZXJvLXN0YWdpbmctcmVjb3ZlcnknLCAnLS10YWcnLCAnc2V0OicgKyBzZXRfaWQsIHN0cih3b3JrKV0sIHdyaXRpbmc9VHJ1ZSkKICAgIGFmdGVyID0gc2VsZWN0X3NuYXBzaG90cyhyZXBvc2l0b3J5LnNuYXBzaG90cygpKQogICAgcmVxdWlyZSh7eFsnaWQnXSBmb3IgeCBpbiBiZWZvcmV9IDw9IHt4WydpZCddIGZvciB4IGluIGFmdGVyfSwgJ09MRF9TTkFQU0hPVFNfQ0hBTkdFRCcpCiAgICBhZGRlZCA9IFt4IGZvciB4IGluIGFmdGVyIGlmIHhbJ2lkJ10gbm90IGluIHt5WydpZCddIGZvciB5IGluIGJlZm9yZX1dCiAgICByZXF1aXJlKGxlbihhZGRlZCkgPT0gMSBhbmQgYWRkZWRbMF1bJ3BhdGhzJ10gPT0gW3N0cih3b3JrKV0sICdORVdfU05BUFNIT1RfSURFTlRJVFknKQogICAgc25hcHNob3RfaWQgPSBhZGRlZFswXVsnaWQnXQogICAgcmVxdWlyZShoYXNobGliLnNoYTI1NihyZXBvc2l0b3J5LnJ1bihbJ2R1bXAnLCBzbmFwc2hvdF9pZCwgc3RyKHdvcmsgLyAncmVjb3Zlcnktc2V0Lmpzb24nKV0pKS5oZXhkaWdlc3QoKSA9PSBtYW5pZmVzdF9zaGEsCiAgICAgICAgICAgICdPRkZTSVRFX01BTklGRVNUX0NIQU5HRUQnKQogICAgb2Zmc2l0ZS52YWxpZGF0ZV90cmVlKHJlcG9zaXRvcnkucnVuKFsnbHMnLCAnLS1qc29uJywgc25hcHNob3RfaWRdKSwgc25hcHNob3RfaWQsIHdvcmssIG1hbmlmZXN0KQogICAgcmVxdWlyZShvZmZzaXRlLnZlcmlmeV9zZXQod29yaywgY2FwKSA9PSAobWFuaWZlc3QsIHBheWxvYWQsIG1hbmlmZXN0X3NoYSksICdDQVBUVVJFX0NIQU5HRURfRFVSSU5HX1VQTE9BRCcpCiAgICByZXN1bHQgPSB7J3NldElkJzogc2V0X2lkLCAnc25hcHNob3RJZCc6IHNuYXBzaG90X2lkLCAnbWFuaWZlc3RTaGEyNTYnOiBtYW5pZmVzdF9zaGEsCiAgICAgICAgICAgICAgJ3JlcG9zaXRvcnlJZCc6IGNvbmZpZ1snaWQnXSwgJ2NhcHR1cmVFcG9jaCc6IGNvcmVbJ2NhcHR1cmVFcG9jaCddLCAncGF5bG9hZEJ5dGVzJzogcGF5bG9hZCwKICAgICAgICAgICAgICAncGF1c2VTZWNvbmRzJzogY2xvc3VyZVsncGF1c2VTZWNvbmRzJ10sICdvZmZzaXRlJzogJ1BBU1NfVkFMSURfT0ZGU0lURV9UUkVFX0FORF9NQU5JRkVTVCd9CiAgICBhdG9taWMoY29udHJvbCAvICdvZmZzaXRlLXN1bW1hcnkuanNvbicsIHJlc3VsdCkKICAgIHJldHVybiByZXN1bHQKCgpkZWYgc2NoZWR1bGVkKGNvbmZpZywgaGVscGVycyk6CiAgICBnbG9iYWwgUEhBU0UKICAgIHNlcnZpY2UsIHRpbWVyID0gdW5pdCgncGFzc3Zlcm8tc3RhZ2luZy1iYWNrdXAuc2VydmljZScpLCB1bml0KCdwYXNzdmVyby1zdGFnaW5nLWJhY2t1cC50aW1lcicpCiAgICBpbnZvY2F0aW9uID0gb3MuZW52aXJvbi5nZXQoJ0lOVk9DQVRJT05fSUQnLCAnJykKICAgIHN0YXJ0LCB0cmlnZ2VyID0gaW50KHNlcnZpY2VbJ0V4ZWNNYWluU3RhcnRUaW1lc3RhbXBNb25vdG9uaWMnXSksIGludCh0aW1lclsnTGFzdFRyaWdnZXJVU2VjTW9ub3RvbmljJ10pCiAgICByZXF1aXJlKHJlLmZ1bGxtYXRjaCgnW2EtZjAtOV17MzJ9JywgaW52b2NhdGlvbikgYW5kIHNlcnZpY2VbJ0ludm9jYXRpb25JRCddID09IGludm9jYXRpb24KICAgICAgICAgICAgYW5kIDAgPD0gc3RhcnQgLSB0cmlnZ2VyIDw9IDUwMDAwMDAgYW5kIHRpbWUubW9ub3RvbmljKCkgKiAxZTYgLSB0cmlnZ2VyIDwgMzAwMDAwMDAsCiAgICAgICAgICAgICdPUkRJTkFSWV9USU1FUl9JTlZPQ0FUSU9OX1JFUVVJUkVEJykKICAgIHNldF9pZCA9IGRhdGV0aW1lLmRhdGV0aW1lLm5vdyhkYXRldGltZS50aW1lem9uZS51dGMpLnN0cmZ0aW1lKCclWSVtJWRUJUglTSVTWicpCiAgICBzdGF0ZSA9IHJlc2VydmVfYXR0ZW1wdChTVEFURSAvICdzdGF0ZS5qc29uJywgc2V0X2lkKQogICAgUEhBU0UgPSAnUFJFUEFSQVRJT04nCiAgICBfLCBjb250cm9sID0gc3RhZ2VfYnl0ZXMoY29uZmlnLCBoZWxwZXJzLCBzZXRfaWQpCiAgICBhdG9taWMoY29udHJvbCAvICd0aW1lci1pbnZvY2F0aW9uLmpzb24nLCB7J2ludm9jYXRpb25JZCc6IGludm9jYXRpb24sICdzdGFydE1vbm90b25pYyc6IHN0YXJ0LAogICAgICAgICAgICd0cmlnZ2VyTW9ub3RvbmljJzogdHJpZ2dlciwgJ3NjaGVkdWxlZFNldElkJzogc2V0X2lkfSkKICAgIFBIQVNFID0gJ0RSQUlOX1JFTUlOREVSJwogICAgcXVpZXNjZShjb250cm9sKQogICAgUEhBU0UgPSAnQk9VTkRFRF9DQVBUVVJFJwogICAgaGVscGVyID0gQ09ERSAvICdyZWN1cnJpbmcucHknCiAgICBhcmdzID0gWycvdXNyL2Jpbi9zeXN0ZW1kLXJ1bicsICctLXF1aWV0JywgJy0td2FpdCcsICctLXVuaXQnLCAncGFzc3Zlcm8tc3RhZ2UtcmVjdXJyaW5nLWNhcHR1cmUtJyArIHNldF9pZCwKICAgICAgICAgICAgJy0tcHJvcGVydHk9VHlwZT1leGVjJywgJy0tcHJvcGVydHk9UmVzdGFydD1ubycsICctLXByb3BlcnR5PUtpbGxNb2RlPWNvbnRyb2wtZ3JvdXAnLAogICAgICAgICAgICAnLS1wcm9wZXJ0eT1LaWxsU2lnbmFsPVNJR0tJTEwnLCAnLS1wcm9wZXJ0eT1SdW50aW1lTWF4U2VjPTg1cycsICctLXByb3BlcnR5PVRpbWVvdXRTdG9wU2VjPTI1cycsCiAgICAgICAgICAgICctLXByb3BlcnR5PVN0YW5kYXJkT3V0cHV0PW51bGwnLCAnLS1wcm9wZXJ0eT1TdGFuZGFyZEVycm9yPW51bGwnLAogICAgICAgICAgICAnLS1wcm9wZXJ0eT1FeGVjU3RvcFBvc3Q9L3Vzci9iaW4vcHl0aG9uMyAtQiAnICsgc3RyKGhlbHBlcikgKyAnIC0tcmVzdW1lICcgKyBzZXRfaWQsCiAgICAgICAgICAgICcvdXNyL2Jpbi9weXRob24zJywgJy1CJywgc3RyKGhlbHBlciksICctLWNhcHR1cmUnLCBzZXRfaWRdCiAgICBjb21tYW5kKGFyZ3MsIHRpbWVvdXQ9MTI1KQogICAgUEhBU0UgPSAnT0ZGU0lURScKICAgIHJlc3VsdCA9IHB1Ymxpc2goc2V0X2lkLCBoZWxwZXJzKQogICAgc3RhdGUgPSByZWFkKFNUQVRFIC8gJ3N0YXRlLmpzb24nKQogICAgc3RhdGVbJ2F0dGVtcHQnXVsnY29tcGxldGUnXSA9IFRydWU7IHN0YXRlWyd2YWxpZCddID0gcmVzdWx0OyBzdGF0ZS5wb3AoJ2ZhaWx1cmUnLCBOb25lKQogICAgc3RhdGUuc2V0ZGVmYXVsdCgnY29tcGxldGVkJywgW10pLmFwcGVuZChyZXN1bHQpCiAgICBhdG9taWMoU1RBVEUgLyAnc3RhdGUuanNvbicsIHN0YXRlKQogICAgcHJpbnQoanNvbi5kdW1wcyhyZXN1bHQpKQoKCmRlZiB0ZWxlZ3JhbSh0ZXh0LCBwcmVwYXJlKToKICAgIHRva2VuID0gcHJlcGFyZS5wcm90ZWN0ZWQoJy9ldGMvcGFzc3Zlcm8vYmFja3VwL3RlbGVncmFtLWJvdC10b2tlbicpLmRlY29kZSgpLnN0cmlwKCkKICAgIGNoYXQgPSBwcmVwYXJlLnByb3RlY3RlZCgnL2V0Yy9wYXNzdmVyby9iYWNrdXAvdGVsZWdyYW0tY2hhdC1pZCcpLmRlY29kZSgpLnN0cmlwKCkKICAgIHJlcXVpcmUocmUuZnVsbG1hdGNoKCdbMC05XSs6W0EtWmEtejAtOV8tXSsnLCB0b2tlbikgYW5kIHJlLmZ1bGxtYXRjaCgnLT9bMC05XSsnLCBjaGF0KSwgJ1RFTEVHUkFNX1BST1RFQ1RFRF9JTlBVVCcpCiAgICByZXF1ZXN0ID0gdXJsbGliLnJlcXVlc3QuUmVxdWVzdCgnaHR0cHM6Ly9hcGkudGVsZWdyYW0ub3JnL2JvdCcgKyB0b2tlbiArICcvc2VuZE1lc3NhZ2UnLAogICAgICAgIGRhdGE9dXJsbGliLnBhcnNlLnVybGVuY29kZSh7J2NoYXRfaWQnOiBjaGF0LCAndGV4dCc6IHRleHR9KS5lbmNvZGUoKSwgbWV0aG9kPSdQT1NUJykKICAgICMgU2FtZSBleGlzdGluZyBib3QvY2hhdC9BUEkgbWVjaGFuaXNtLCBpbmRlcGVuZGVudCBzdGFnaW5nIHN0YXRlOyBubyByZWRpcmVjdC9yZXRyeS4KICAgIHdpdGggcHJlcGFyZS5IVFRQLm9wZW4ocmVxdWVzdCwgdGltZW91dD0xMCkgYXMgcmVzcG9uc2U6CiAgICAgICAgYm9keSA9IGpzb24ubG9hZHMocmVzcG9uc2UucmVhZCgxNjM4NCkpCiAgICAgICAgcmVxdWlyZShib2R5LmdldCgnb2snKSBpcyBUcnVlLCAnVEVMRUdSQU1fTk9UX0FDQ0VQVEVEJykKCgpkZWYgbW9uaXRvcihjb25maWcsIGhlbHBlcnMsIHRlc3Q9RmFsc2UpOgogICAgcmVxdWlyZShub3QgdGVzdCBvciBjb25maWdbJ3Rlc3RUZWxlZ3JhbUFwcHJvdmVkJ10sICdURVNUX1RFTEVHUkFNX05PVF9BUFBST1ZFRCcpCiAgICBmZCA9IGxvY2soU1RBVEUgLyAnbW9uaXRvci5sb2NrJykKICAgIHRyeToKICAgICAgICBzdGF0ZSA9IHJlYWQoU1RBVEUgLyAnc3RhdGUuanNvbicpOyBub3cgPSBpbnQodGltZS50aW1lKCkpCiAgICAgICAga2luZCA9ICdDT05UUk9MTEVEX1RFU1QnIGlmIHRlc3QgZWxzZSBzaWduYWwoc3RhdGUsIG5vdykKICAgICAgICBpZiBraW5kID09ICdWQUxJRF9TRVRfTUlTU0lORycgYW5kIG5vdyA8IHN0YXRlWydmaXJzdER1ZUVwb2NoJ10gKyAzNjAwOgogICAgICAgICAgICBhdG9taWMoU1RBVEUgLyAnbW9uaXRvci1yZXN1bHQuanNvbicsIHsnc2lnbmFsJzogJ1dBSVRfRklSU1RfU0NIRURVTEUnLCAnb2JzZXJ2ZWRFcG9jaCc6IG5vd30pCiAgICAgICAgICAgIHJldHVybgogICAgICAgIGlmIGtpbmQgPT0gJ0hFQUxUSFknOgogICAgICAgICAgICBhdG9taWMoU1RBVEUgLyAnbW9uaXRvci1yZXN1bHQuanNvbicsIHsnc2lnbmFsJzoga2luZCwgJ29ic2VydmVkRXBvY2gnOiBub3d9KQogICAgICAgICAgICByZXR1cm4KICAgICAgICByZXZpc2lvbiA9ICdjb250cm9sbGVkLW9uY2UnIGlmIHRlc3QgZWxzZSBzdGF0ZS5nZXQoJ2ZhaWx1cmUnLCB7fSkuZ2V0KCdzZXRJZCcsIHN0YXRlLmdldCgndmFsaWQnLCB7fSkuZ2V0KCdzbmFwc2hvdElkJywgJ2luaXRpYWwnKSkKICAgICAgICBwYXRoID0gU1RBVEUgLyAnYWxlcnRzLmpzb24nCiAgICAgICAgaWYgcmVzZXJ2ZV9hbGVydChwYXRoLCBraW5kLCByZXZpc2lvbiwgbm93KToKICAgICAgICAgICAgdGV4dCA9ICgnUGFzc3Zlcm8gU1RBR0lORyBiYWNrdXAgbW9uaXRvcmluZyDigJQgY29udHJvbGxlZCB0ZXN0OyBubyBsaXZlIGJhY2t1cCBmYWlsdXJlLicgaWYgdGVzdAogICAgICAgICAgICAgICAgICAgIGVsc2UgJ1Bhc3N2ZXJvIFNUQUdJTkcgYmFja3VwOiAnICsga2luZCArICcuIE9wZXJhdG9yIHJldmlldyByZXF1aXJlZDsgbm8gYXV0b21hdGljIHJldHJ5LicpCiAgICAgICAgICAgIHRlbGVncmFtKHRleHQsIGhlbHBlcnNbJ3ByZXBhcmUnXSkKICAgICAgICAgICAgcmVzdWx0ID0gcmVhZChwYXRoKTsgcmVzdWx0WydkZWxpdmVyeSddID0gJ1BST1ZJREVSX0FDQ0VQVEVEJzsgYXRvbWljKHBhdGgsIHJlc3VsdCkKICAgICAgICBhdG9taWMoU1RBVEUgLyAnbW9uaXRvci1yZXN1bHQuanNvbicsIHsnc2lnbmFsJzoga2luZCwgJ29ic2VydmVkRXBvY2gnOiBub3d9KQogICAgZmluYWxseToKICAgICAgICBvcy5jbG9zZShmZCkKCgpkZWYgcG9zdChoZWxwZXJzKToKICAgIGFjdGl2ZSA9IFNUQVRFIC8gJ2FjdGl2ZS5qc29uJwogICAgaWYgb3MuZW52aXJvbi5nZXQoJ1NFUlZJQ0VfUkVTVUxUJykgPT0gJ2V4ZWMtY29uZGl0aW9uJzoKICAgICAgICByZXR1cm4gICMgYnVkZ2V0L2hvbGQgZ3VhcmQgc2tpcHBlZCBFeGVjU3RhcnQ7IG5vIG5ldyBhdHRlbXB0IG9yIGNsZWFudXAKICAgIHN0YXRlID0gcmVhZChTVEFURSAvICdzdGF0ZS5qc29uJykKICAgIGlmIG9zLmVudmlyb24uZ2V0KCdTRVJWSUNFX1JFU1VMVCcpIG5vdCBpbiAoTm9uZSwgJ3N1Y2Nlc3MnKToKICAgICAgICBzdGF0ZVsnaG9sZCddID0gVHJ1ZQogICAgICAgIHN0YXRlLnNldGRlZmF1bHQoJ2ZhaWx1cmUnLCB7J3BoYXNlJzogJ1NZU1RFTURfSk9CX0VYSVQnLCAncmVhc29uJzogb3MuZW52aXJvbi5nZXQoJ1NFUlZJQ0VfUkVTVUxUJyksCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJ3NldElkJzogc3RhdGUuZ2V0KCdhdHRlbXB0Jywge30pLmdldCgnc2V0SWQnLCAncHJlcGFyYXRpb24nKX0pCiAgICAgICAgYXRvbWljKFNUQVRFIC8gJ3N0YXRlLmpzb24nLCBzdGF0ZSkKICAgIGlmIGFjdGl2ZS5leGlzdHMoKSBhbmQgcmVhZChhY3RpdmUpWydzZXRJZCddID09IHN0YXRlLmdldCgnYXR0ZW1wdCcsIHt9KS5nZXQoJ3NldElkJyk6CiAgICAgICAgc2V0X2lkID0gcmVhZChhY3RpdmUpWydzZXRJZCddOyBfLCBjb250cm9sID0gY29udGV4dHMoc2V0X2lkKQogICAgICAgIHRyeToKICAgICAgICAgICAgcmVzdW1lKHNldF9pZCwgaGVscGVycykKICAgICAgICBleGNlcHQgRXhjZXB0aW9uIGFzIGVycm9yOgogICAgICAgICAgICBhdG9taWMoY29udHJvbCAvICdyZXN1bWUtZmFpbHVyZS5qc29uJywgeydwaGFzZSc6ICdJTkRFUEVOREVOVF9SRVNVTUUnLCAncmVhc29uJzogdHlwZShlcnJvcikuX19uYW1lX199KQogICAgICAgICAgICByYWlzZQoKCmRlZiBtYWluKCk6CiAgICBnbG9iYWwgUEhBU0UKICAgIGNvbmZpZywgaGVscGVycyA9IHNjb3BlKCk7IG1vZGUgPSBzeXMuYXJndlsxXQogICAgaWYgbW9kZSA9PSAnLS1lbGlnaWJsZSc6CiAgICAgICAgc3RhdGUgPSByZWFkKFNUQVRFIC8gJ3N0YXRlLmpzb24nKQogICAgICAgIHN5cy5leGl0KDAgaWYgbm90IHN0YXRlWydob2xkJ10gYW5kIChzdGF0ZVsnbW9kZSddID09ICdDT05USU5VT1VTJyBvciBzdGF0ZVsnYXR0ZW1wdHMnXSA8IDIpIGVsc2UgMSkKICAgIGlmIG1vZGUgaW4gKCctLWNhcHR1cmUnLCAnLS1yZXN1bWUnKToKICAgICAgICByZXF1aXJlKGxlbihzeXMuYXJndikgPT0gMywgJ0NISUxEX0FSR1VNRU5UUycpCiAgICAgICAgKGNoaWxkKHN5cy5hcmd2WzJdLCBjb25maWcsIGhlbHBlcnMpIGlmIG1vZGUgPT0gJy0tY2FwdHVyZScgZWxzZSByZXN1bWUoc3lzLmFyZ3ZbMl0sIGhlbHBlcnMpKQogICAgZWxpZiBtb2RlID09ICctLXBvc3QnOgogICAgICAgIHBvc3QoaGVscGVycykKICAgIGVsaWYgbW9kZSBpbiAoJy0tbW9uaXRvcicsICctLXRlbGVncmFtLXRlc3QnKToKICAgICAgICBtb25pdG9yKGNvbmZpZywgaGVscGVycywgbW9kZSA9PSAnLS10ZWxlZ3JhbS10ZXN0JykKICAgIGVsaWYgbW9kZSA9PSAnLS1zY2hlZHVsZWQnOgogICAgICAgIGZkID0gbG9jayhTVEFURSAvICdqb2IubG9jaycpCiAgICAgICAgdHJ5OgogICAgICAgICAgICBzY2hlZHVsZWQoY29uZmlnLCBoZWxwZXJzKQogICAgICAgIGZpbmFsbHk6CiAgICAgICAgICAgIG9zLmNsb3NlKGZkKQogICAgZWxzZToKICAgICAgICByYWlzZSBTdG9wKCdNT0RFX1NDT1BFJykKCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgdHJ5OgogICAgICAgIG1haW4oKQogICAgZXhjZXB0IFN5c3RlbUV4aXQ6CiAgICAgICAgcmFpc2UKICAgIGV4Y2VwdCBCYXNlRXhjZXB0aW9uIGFzIGVycm9yOgogICAgICAgIHJlYXNvbiA9IHN0cihlcnJvcikgaWYgcmUuZnVsbG1hdGNoKCdbQS1aMC05X117MSwxNjB9Jywgc3RyKGVycm9yKSkgZWxzZSB0eXBlKGVycm9yKS5fX25hbWVfXwogICAgICAgIG91dHB1dCA9IHsncmVzdWx0JzogJ1NUT1AnLCAncGhhc2UnOiBQSEFTRSwgJ3JlYXNvbic6IHJlYXNvbiwgJ2F1dG9tYXRpY1JldHJ5JzogRmFsc2V9CiAgICAgICAgIyBTYXZlIGZpcnN0IG5vcm1hbGl6ZWQgZmFpbHVyZSBiZWZvcmUgaW5kZXBlbmRlbnQgc3lzdGVtZCByZXN1bWUvY2xlYW51cC4KICAgICAgICBpZiBvcy5nZXRldWlkKCkgPT0gMCBhbmQgU1RBVEUuaXNfZGlyKCk6CiAgICAgICAgICAgIHRyeToKICAgICAgICAgICAgICAgIHN0YXRlID0gcmVhZChTVEFURSAvICdzdGF0ZS5qc29uJykKICAgICAgICAgICAgICAgIGlmICctLXNjaGVkdWxlZCcgaW4gc3lzLmFyZ3Ygb3IgJy0tY2FwdHVyZScgaW4gc3lzLmFyZ3Y6CiAgICAgICAgICAgICAgICAgICAgc3RhdGVbJ2hvbGQnXSA9IFRydWUKICAgICAgICAgICAgICAgICAgICBzdGF0ZS5zZXRkZWZhdWx0KCdmYWlsdXJlJywgZGljdChvdXRwdXQsIHNldElkPXN0YXRlLmdldCgnYXR0ZW1wdCcsIHt9KS5nZXQoJ3NldElkJywgJ3ByZXBhcmF0aW9uJykpKQogICAgICAgICAgICAgICAgICAgIGF0b21pYyhTVEFURSAvICdzdGF0ZS5qc29uJywgc3RhdGUpCiAgICAgICAgICAgICAgICAgICAgaWYgc3RhdGUuZ2V0KCdhdHRlbXB0Jyk6CiAgICAgICAgICAgICAgICAgICAgICAgIF8sIGNvbnRyb2wgPSBjb250ZXh0cyhzdGF0ZVsnYXR0ZW1wdCddWydzZXRJZCddKQogICAgICAgICAgICAgICAgICAgICAgICBpZiBjb250cm9sLmlzX2RpcigpIGFuZCBub3QgKGNvbnRyb2wgLyAnZmlyc3QtZmFpbHVyZS5qc29uJykuZXhpc3RzKCk6CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBhdG9taWMoY29udHJvbCAvICdmaXJzdC1mYWlsdXJlLmpzb24nLCBvdXRwdXQpCiAgICAgICAgICAgIGV4Y2VwdCBFeGNlcHRpb246CiAgICAgICAgICAgICAgICBwYXNzCiAgICAgICAgcHJpbnQoanNvbi5kdW1wcyhvdXRwdXQpLCBmbHVzaD1UcnVlKQogICAgICAgIHN5cy5leGl0KDEpCg=='}, 'recurring_acceptance.py': {'sha256': 'fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7', 'base64': 'IiIiT25lIGxhdGVzdC1uZXctc2V0IHByaXZhdGUgcmVzdG9yZSwgc2NvcGVkIHJldGVudGlvbiBkcnktcnVuIGFuZCBzaWduYWwgcHJvb2YuCgpBbGwgbXV0YXRpb24gaXMgY29uZmluZWQgdG8gdGhlIHByaXZhdGUgcmVzdG9yZSB0YXJnZXQvY29udHJvbC9zdGFnaW5nIHN0YXRlLgpBY2NlcHRlZCBoZWxwZXIgbWFpbnMgYXJlIG5ldmVyIGludm9rZWQuIE5vIFN0b3JhZ2UgdXBsb2FkIG9yIGxpdmUgREIgd3JpdGUuCiIiIgppbXBvcnQgaGFzaGxpYgppbXBvcnQgaW1wb3J0bGliLnV0aWwKaW1wb3J0IGpzb24KaW1wb3J0IG9zCmltcG9ydCBwYXRobGliCmltcG9ydCBwd2QKaW1wb3J0IHJlCmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBzeXMKaW1wb3J0IHRpbWUKCkhFUkUgPSBwYXRobGliLlBhdGgoX19maWxlX18pLnBhcmVudApzcGVjID0gaW1wb3J0bGliLnV0aWwuc3BlY19mcm9tX2ZpbGVfbG9jYXRpb24oJ3JlY3VycmluZ19hZGFwdGVyJywgSEVSRSAvICdyZWN1cnJpbmcucHknKQpyID0gaW1wb3J0bGliLnV0aWwubW9kdWxlX2Zyb21fc3BlYyhzcGVjKQpzcGVjLmxvYWRlci5leGVjX21vZHVsZShyKQpQSEFTRSA9ICdBQ0NFUFRBTkNFX1BSRUZMSUdIVCcKCgpkZWYgc2VsZWN0ZWQoY29uZmlnLCBoZWxwZXJzKToKICAgIHN0YXRlID0gci5yZWFkKHIuU1RBVEUgLyAnc3RhdGUuanNvbicpCiAgICByb3dzID0gc3RhdGUuZ2V0KCdjb21wbGV0ZWQnLCBbXSkKICAgIHIucmVxdWlyZShzdGF0ZVsnbW9kZSddID09ICdBQ0NFUFRBTkNFJyBhbmQgbm90IHN0YXRlWydob2xkJ10gYW5kIHN0YXRlWydhdHRlbXB0cyddID09IDIKICAgICAgICAgICAgICBhbmQgbGVuKHJvd3MpID09IDIgYW5kIGxlbih7eFsnc2V0SWQnXSBmb3IgeCBpbiByb3dzfSkgPT0gMgogICAgICAgICAgICAgIGFuZCBzdGF0ZVsnYXR0ZW1wdCddWydjb21wbGV0ZSddLCAnVFdPX1NDSEVEVUxFRF9TRVRTX1JFUVVJUkVEJykKICAgIGZvciByb3cgaW4gcm93czoKICAgICAgICBfLCBjb250cm9sID0gci5jb250ZXh0cyhyb3dbJ3NldElkJ10pCiAgICAgICAgci5yZXF1aXJlKHIucmVhZChjb250cm9sIC8gJ29mZnNpdGUtc3VtbWFyeS5qc29uJykgPT0gcm93LCAnQUNDRVBURURfT0ZGU0lURV9QUk9PRl9DSEFOR0VEJykKICAgICAgICB0aW1lciA9IHIucmVhZChjb250cm9sIC8gJ3RpbWVyLWludm9jYXRpb24uanNvbicpCiAgICAgICAgci5yZXF1aXJlKHJlLmZ1bGxtYXRjaCgnW2EtZjAtOV17MzJ9JywgdGltZXJbJ2ludm9jYXRpb25JZCddKQogICAgICAgICAgICAgICAgICBhbmQgMCA8PSB0aW1lclsnc3RhcnRNb25vdG9uaWMnXSAtIHRpbWVyWyd0cmlnZ2VyTW9ub3RvbmljJ10gPD0gNTAwMDAwMCwKICAgICAgICAgICAgICAgICAgJ1NDSEVEVUxFRF9QUk9PRl9SRVFVSVJFRCcpCiAgICByLnJ1bnRpbWUoY29uZmlnLCBoZWxwZXJzKQogICAgcmV0dXJuIHJvd3NbLTFdCgoKZGVmIHJlc3RvcmVfY29udGV4dChyb3csIGhlbHBlcnMpOgogICAgcmVzdG9yZSA9IGhlbHBlcnNbJ3Jlc3RvcmUtZGF0YWJhc2UnXQogICAgdGFyZ2V0ID0gci5ST09UIC8gJ3Jlc3RvcmUnIC8gcm93WydzZXRJZCddCiAgICByZXN0b3JlLlNFVCA9IHJvd1snc2V0SWQnXTsgcmVzdG9yZS5TTkFQU0hPVCA9IHJvd1snc25hcHNob3RJZCddCiAgICByZXN0b3JlLlRBUkdFVCA9IHRhcmdldDsgcmVzdG9yZS5EQVRBID0gdGFyZ2V0IC8gJ3BnZGF0YSc7IHJlc3RvcmUuU09DS0VUID0gdGFyZ2V0IC8gJ3NvY2tldCcKICAgIHJlc3RvcmUuQ09OVFJPTCA9IHIuUk9PVCAvICdjb250cm9sJyAvIHJvd1snc2V0SWQnXQogICAgIyBIaXN0b3JpY2FsIHNxbCgpIGRlZmF1bHQgaXMgdGhlIHNhbWUgcHJpdmF0ZSBEQjsgcGF0aHMgYXJlIG1vZHVsZSBnbG9iYWxzLgogICAgcmV0dXJuIHJlc3RvcmUKCgpkZWYgY2xvc2UoY29uZmlnLCBoZWxwZXJzKToKICAgIHN0YXRlID0gci5yZWFkKHIuU1RBVEUgLyAnc3RhdGUuanNvbicpCiAgICByb3cgPSBzdGF0ZVsnY29tcGxldGVkJ11bLTFdOyByZXN0b3JlID0gcmVzdG9yZV9jb250ZXh0KHJvdywgaGVscGVycykKICAgIHRhcmdldCA9IHJlc3RvcmUuVEFSR0VUCiAgICAjIHN5c3RlbWQgaGFzIHRlcm1pbmF0ZWQgdGhlIGVudGlyZSBwcml2YXRlIHVuaXQgYmVmb3JlIHRoaXMgaW5kZXBlbmRlbnQgcG9zdC4KICAgICMgQSBzdGFsZSBwb3N0bWFzdGVyLnBpZCBhZnRlciBTSUdLSUxMIGlzIHJldGFpbmVkLCBuZXZlciB1c2VkIHRvIHRhcmdldCBhbm90aGVyIFBJRC4KICAgIGZvciBlbnRyeSBpbiBwYXRobGliLlBhdGgoJy9wcm9jJykuaXRlcmRpcigpOgogICAgICAgIGlmIGVudHJ5Lm5hbWUuaXNkaWdpdCgpOgogICAgICAgICAgICB0cnk6CiAgICAgICAgICAgICAgICBhcmdzID0gKGVudHJ5IC8gJ2NtZGxpbmUnKS5yZWFkX2J5dGVzKCkuc3BsaXQoYidcMCcpCiAgICAgICAgICAgICAgICByLnJlcXVpcmUobm90IChhcmdzIGFuZCBhcmdzWzBdID09IChyZXN0b3JlLlBHICsgJ3Bvc3RncmVzJykuZW5jb2RlKCkKICAgICAgICAgICAgICAgICAgICAgICAgICBhbmQgc3RyKHJlc3RvcmUuREFUQSkuZW5jb2RlKCkgaW4gYXJncyksICdQUklWQVRFX0NMVVNURVJfU1RJTExfUlVOTklORycpCiAgICAgICAgICAgIGV4Y2VwdCAoRmlsZU5vdEZvdW5kRXJyb3IsIFByb2Nlc3NMb29rdXBFcnJvcik6CiAgICAgICAgICAgICAgICBwYXNzCiAgICBzYXZlZCA9IHRhcmdldCAvICdwYXJlbnQtYWNsLmpzb24nCiAgICBpZiBzYXZlZC5leGlzdHMoKToKICAgICAgICB2YWx1ZSA9IHIucmVhZChzYXZlZCk7IHJlc3RvcmUucmVzdG9yZV9wYXJlbnRzKHZhbHVlWydwYXJlbnRzJ10sIHZhbHVlWydwb3N0Z3Jlc1VpZCddKQogICAgaGVscGVyc1sncHJlcGFyZSddLnJ1bnRpbWUoKQogICAgci5hdG9taWModGFyZ2V0IC8gJ2Nsb3N1cmUuanNvbicsIHsnY2x1c3Rlcic6ICdTVE9QUEVEJywgJ3BhcmVudFBlcm1pc3Npb25zJzogJ1BSSVZBVEVfMDcwMCcsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnbGl2ZVN0YWdpbmdQYXVzZWQnOiBGYWxzZSwgJ2FydGlmYWN0c1JldGFpbmVkJzogVHJ1ZX0pCgoKZGVmIHJlc3RvcmVfbGF0ZXN0KGNvbmZpZywgaGVscGVycyk6CiAgICBnbG9iYWwgUEhBU0UKICAgIHJvdyA9IHNlbGVjdGVkKGNvbmZpZywgaGVscGVycyk7IHJlc3RvcmUgPSByZXN0b3JlX2NvbnRleHQocm93LCBoZWxwZXJzKQogICAgY2FwLCBvZmZzaXRlLCBwcmVwYXJlID0gaGVscGVyc1snY2FwdHVyZSddLCBoZWxwZXJzWydvZmZzaXRlJ10sIGhlbHBlcnNbJ3ByZXBhcmUnXQogICAgdGFyZ2V0ID0gcmVzdG9yZS5UQVJHRVQKICAgIHIucmVxdWlyZShub3QgdGFyZ2V0LmV4aXN0cygpIGFuZCBub3QgKHIuU1RBVEUgLyAncmVzdG9yZS1hdHRlbXB0Lmpzb24nKS5leGlzdHMoKSwgJ1JFU1RPUkVfQlVER0VUX09ORScpCiAgICB1bml0X25hbWUgPSAncGFzc3Zlcm8tc3RhZ2UtcmVjdXJyaW5nLXJlc3RvcmUtJyArIHJvd1snc2V0SWQnXSArICcuc2VydmljZScKICAgIG9iamVjdF9yZXBseSA9IHIuY29tbWFuZChbJy91c3IvYmluL2J1c2N0bCcsICdjYWxsJywgJ29yZy5mcmVlZGVza3RvcC5zeXN0ZW1kMScsCiAgICAgICAgJy9vcmcvZnJlZWRlc2t0b3Avc3lzdGVtZDEnLCAnb3JnLmZyZWVkZXNrdG9wLnN5c3RlbWQxLk1hbmFnZXInLCAnR2V0VW5pdCcsICdzJywgdW5pdF9uYW1lXSkuZGVjb2RlKCkuc3RyaXAoKQogICAgci5yZXF1aXJlKHJlLmZ1bGxtYXRjaChyJ28gIi9vcmcvZnJlZWRlc2t0b3Avc3lzdGVtZDEvdW5pdC9bQS1aYS16MC05X10rIicsIG9iamVjdF9yZXBseSksICdQUklWQVRFX1VOSVRfSURFTlRJVFknKQogICAgb2JqZWN0X3BhdGggPSBvYmplY3RfcmVwbHlbMzotMV0KICAgIHByb3BlcnRpZXMgPSByLmNvbW1hbmQoWycvdXNyL2Jpbi9zeXN0ZW1jdGwnLCAnc2hvdycsIHVuaXRfbmFtZSwKICAgICAgICAnLS1wcm9wZXJ0eT1UeXBlLEtpbGxNb2RlLEtpbGxTaWduYWwsUmVzdGFydCxFeGVjU3RvcFBvc3QnXSkuZGVjb2RlKCkKICAgIHZhbHVlcyA9IGRpY3QobGluZS5zcGxpdCgnPScsIDEpIGZvciBsaW5lIGluIHByb3BlcnRpZXMuc3BsaXRsaW5lcygpIGlmICc9JyBpbiBsaW5lKQogICAgci5yZXF1aXJlKHZhbHVlc1snVHlwZSddID09ICdleGVjJyBhbmQgdmFsdWVzWydLaWxsTW9kZSddID09ICdjb250cm9sLWdyb3VwJyBhbmQgdmFsdWVzWydLaWxsU2lnbmFsJ10gPT0gJzknCiAgICAgICAgICAgICAgYW5kIHZhbHVlc1snUmVzdGFydCddID09ICdubycgYW5kIGNhcC5kdXJhdGlvbl9wcm9wZXJ0eShvYmplY3RfcGF0aCwgJ1J1bnRpbWVNYXhVU2VjJykgPT0gOTAwMDAwMDAwCiAgICAgICAgICAgICAgYW5kIGNhcC5kdXJhdGlvbl9wcm9wZXJ0eShvYmplY3RfcGF0aCwgJ1RpbWVvdXRTdG9wVVNlYycpID09IDM1MDAwMDAwCiAgICAgICAgICAgICAgYW5kICdhcmd2W109L3Vzci9iaW4vcHl0aG9uMyAtQiAnICsgc3RyKEhFUkUgLyAncmVjdXJyaW5nX2FjY2VwdGFuY2UucHknKSArICcgLS1jbG9zZScgaW4gdmFsdWVzWydFeGVjU3RvcFBvc3QnXSwKICAgICAgICAgICAgICAnSU5ERVBFTkRFTlRfUFJJVkFURV9SRVNUT1JFX0NMT1NVUkVfUkVRVUlSRUQnKQogICAgIyBEdXJhYmxlIGF0dGVtcHQgcmVzZXJ2YXRpb24gYmVmb3JlIGFueSBkb3dubG9hZC9jbHVzdGVyIG9wZXJhdGlvbjsgbmV2ZXIgcmVmaWxsLgogICAgci5hdG9taWMoci5TVEFURSAvICdyZXN0b3JlLWF0dGVtcHQuanNvbicsIHsnc2V0SWQnOiByb3dbJ3NldElkJ10sICdhdXRvbWF0aWNSZXRyeSc6IEZhbHNlfSkKICAgIHRhcmdldC5ta2Rpcihtb2RlPTBvNzAwKQogICAgcmVwb3NpdG9yeSA9IG9mZnNpdGUuUmVwb3NpdG9yeShwcmVwYXJlKQogICAgci5yZXF1aXJlKGpzb24ubG9hZHMocmVwb3NpdG9yeS5ydW4oWydjYXQnLCAnY29uZmlnJ10pKVsnaWQnXSA9PSBjb25maWdbJ3JlcG9zaXRvcnlJZCddLCAnUkVQT1NJVE9SWV9DSEFOR0VEJykKICAgIHNuYXBzaG90cyA9IHIuc2VsZWN0X3NuYXBzaG90cyhyZXBvc2l0b3J5LnNuYXBzaG90cygpKQogICAgci5yZXF1aXJlKHN1bSh4WydpZCddID09IHJvd1snc25hcHNob3RJZCddIGFuZCB4WydwYXRocyddID09IFtzdHIoci5ST09UIC8gJ3NldHMnIC8gcm93WydzZXRJZCddKV0KICAgICAgICAgICAgICAgICAgZm9yIHggaW4gc25hcHNob3RzKSA9PSAxLCAnTEFURVNUX1NOQVBTSE9UX0lERU5USVRZJykKICAgIFBIQVNFID0gJ0RPV05MT0FEX0xBVEVTVF9ORVdfQjJfU0VUJwogICAgcmVwb3NpdG9yeS5ydW4oWydyZXN0b3JlJywgcm93WydzbmFwc2hvdElkJ10sICctLXRhcmdldCcsIHN0cih0YXJnZXQgLyAnZG93bmxvYWQnKV0pCiAgICBzb3VyY2UgPSB0YXJnZXQgLyAnZG93bmxvYWQnIC8gKHIuUk9PVCAvICdzZXRzJyAvIHJvd1snc2V0SWQnXSkucmVsYXRpdmVfdG8oJy8nKQogICAgb2Zmc2l0ZS5TRVRfSUQgPSByb3dbJ3NldElkJ10KICAgIG1hbmlmZXN0LCBwYXlsb2FkLCBkaWdlc3QgPSBvZmZzaXRlLnZlcmlmeV9zZXQoc291cmNlLCBjYXApCiAgICByLnJlcXVpcmUoZGlnZXN0ID09IHJvd1snbWFuaWZlc3RTaGEyNTYnXSBhbmQgcGF5bG9hZCA9PSByb3dbJ3BheWxvYWRCeXRlcyddLCAnRE9XTkxPQURFRF9TRVRfQ0hBTkdFRCcpCiAgICByLmF0b21pYyh0YXJnZXQgLyAnZG93bmxvYWQtcHJvb2YuanNvbicsIHsnc2V0SWQnOiByb3dbJ3NldElkJ10sICdzbmFwc2hvdElkJzogcm93WydzbmFwc2hvdElkJ10sCiAgICAgICAgICAgICAnYWxsRG93bmxvYWRlZEJ5dGVzJzogJ01BVENIX01BTklGRVNUJywgJ3BheWxvYWRCeXRlcyc6IHBheWxvYWQsICdtYW5pZmVzdFNoYTI1Nic6IGRpZ2VzdH0pCiAgICBtZXRhID0gci5yZWFkKHNvdXJjZSAvICdkYXRhYmFzZS9tYW5pZmVzdC5qc29uJykKICAgIHBhcmVudHMgPSBbci5ST09ULCByLlJPT1QgLyAncmVzdG9yZScsIHRhcmdldF0KICAgIHBvc3RncmVzID0gcHdkLmdldHB3bmFtKCdwb3N0Z3JlcycpOyBhY2NvdW50ID0gcHJlcGFyZS5hY2NvdW50KCdwb3N0Z3JlcycpCiAgICBiYXNlbGluZSA9IHJlc3RvcmUuYWNsX2Jhc2VsaW5lKHBhcmVudHMpCiAgICByLmF0b21pYyh0YXJnZXQgLyAncGFyZW50LWFjbC5qc29uJywgeydwYXJlbnRzJzogYmFzZWxpbmUsICdwb3N0Z3Jlc1VpZCc6IHBvc3RncmVzLnB3X3VpZH0pCiAgICBmb3IgcGF0aCBpbiBwYXJlbnRzOgogICAgICAgIG9zLnNldHhhdHRyKHBhdGgsIHJlc3RvcmUuQUNMX05BTUUsIHJlc3RvcmUudHJhdmVyc2FsX2FjbChwb3N0Z3Jlcy5wd191aWQpLCBmb2xsb3dfc3ltbGlua3M9RmFsc2UpCiAgICAgICAgci5yZXF1aXJlKHJlc3RvcmUuZ2V0X2FjbChwYXRoKSA9PSByZXN0b3JlLnRyYXZlcnNhbF9hY2wocG9zdGdyZXMucHdfdWlkKSwgJ1BSSVZBVEVfVFJBVkVSU0FMX0FDTCcpCiAgICBmb3IgcGF0aCBpbiAocmVzdG9yZS5EQVRBLCByZXN0b3JlLlNPQ0tFVCk6CiAgICAgICAgcGF0aC5ta2Rpcihtb2RlPTBvNzAwKTsgb3MuY2hvd24ocGF0aCwgcG9zdGdyZXMucHdfdWlkLCBwb3N0Z3Jlcy5wd19naWQpCiAgICBQSEFTRSA9ICdJU09MQVRFRF9QRzE2X0lOSVRfQU5EX1JFU1RPUkUnCiAgICBkYXRhYmFzZSA9IG1ldGFbJ2NhdGFsb2cnXVsnZGF0YWJhc2UnXTsgb3duZXIgPSBkYXRhYmFzZVsnb3duZXInXQogICAgcmVzdG9yZS5ydW4oW3Jlc3RvcmUuUEcgKyAnaW5pdGRiJywgJy1EJywgc3RyKHJlc3RvcmUuREFUQSksICctLW5vLWNsZWFuJywgJy0tZW5jb2Rpbmc9VVRGOCcsCiAgICAgICAgJy0tbG9jYWxlLXByb3ZpZGVyPWxpYmMnLCAnLS1sYy1jb2xsYXRlPScgKyBkYXRhYmFzZVsnY29sbGF0ZSddLCAnLS1sYy1jdHlwZT0nICsgZGF0YWJhc2VbJ2N0eXBlJ10sCiAgICAgICAgJy0tYXV0aC1sb2NhbD1wZWVyJywgJy0tYXV0aC1ob3N0PXJlamVjdCddLCBhY2NvdW50PWFjY291bnQsIHRpbWVvdXQ9OTApCiAgICAocmVzdG9yZS5EQVRBIC8gJ3BnX2lkZW50LmNvbmYnKS53cml0ZV90ZXh0KCdyZWNvdmVyeV9vcGVyYXRvciByb290IHBvc3RncmVzXG5yZWNvdmVyeV9vcGVyYXRvciBwb3N0Z3JlcyBwb3N0Z3Jlc1xuJykKICAgIChyZXN0b3JlLkRBVEEgLyAncGdfaGJhLmNvbmYnKS53cml0ZV90ZXh0KCdsb2NhbCBhbGwgcG9zdGdyZXMgcGVlciBtYXA9cmVjb3Zlcnlfb3BlcmF0b3JcbmxvY2FsIGFsbCBhbGwgcmVqZWN0XG4nKQogICAgZm9yIG5hbWUgaW4gKCdwZ19pZGVudC5jb25mJywgJ3BnX2hiYS5jb25mJyk6CiAgICAgICAgb3MuY2hvd24ocmVzdG9yZS5EQVRBIC8gbmFtZSwgcG9zdGdyZXMucHdfdWlkLCBwb3N0Z3Jlcy5wd19naWQpOyAocmVzdG9yZS5EQVRBIC8gbmFtZSkuY2htb2QoMG82MDApCiAgICByZXN0b3JlLnJ1bihbcmVzdG9yZS5QRyArICdwZ19jdGwnLCAnLUQnLCBzdHIocmVzdG9yZS5EQVRBKSwgJy1sJywgc3RyKHJlc3RvcmUuREFUQSAvICdyZXN0b3JlLmxvZycpLAogICAgICAgICctdycsICctdCcsICczMCcsICdzdGFydCcsICctbycsICItYyBsaXN0ZW5fYWRkcmVzc2VzPScnIC1jIHBvcnQ9NTU0MzQgLWMgdW5peF9zb2NrZXRfZGlyZWN0b3JpZXM9IiArCiAgICAgICAgc3RyKHJlc3RvcmUuU09DS0VUKSArICcgLWMgdW5peF9zb2NrZXRfcGVybWlzc2lvbnM9MDcwMCAtYyBhdXRvdmFjdXVtPW9mZiAtYyBtYXhfY29ubmVjdGlvbnM9MTAnXSwgYWNjb3VudD1hY2NvdW50KQogICAgaWRlbnRpdHkgPSByZXN0b3JlLnNxbCgiU0VMRUNUIGpzb25fYnVpbGRfb2JqZWN0KCdkYXRhJyxjdXJyZW50X3NldHRpbmcoJ2RhdGFfZGlyZWN0b3J5JyksJ3RjcCcsY3VycmVudF9zZXR0aW5nKCdsaXN0ZW5fYWRkcmVzc2VzJyksJ3BvcnQnLGN1cnJlbnRfc2V0dGluZygncG9ydCcpKSIsIGRhdGFiYXNlPSdwb3N0Z3JlcycpCiAgICByLnJlcXVpcmUoaWRlbnRpdHkgPT0geydkYXRhJzogc3RyKHJlc3RvcmUuREFUQSksICd0Y3AnOiAnJywgJ3BvcnQnOiAnNTU0MzQnfSwgJ1BSSVZBVEVfQ0xVU1RFUl9JREVOVElUWScpCiAgICByZXN0b3JlLnNxbChyZXN0b3JlLnJvbGVfc3FsKG1ldGFbJ2NhdGFsb2cnXVsncm9sZXMnXSksIGRhdGFiYXNlPSdwb3N0Z3JlcycsIHJlYWRvbmx5PUZhbHNlKQogICAgcmVzdG9yZS5zcWwoJ0NSRUFURSBEQVRBQkFTRSAnICsgcmVzdG9yZS5xdW90ZShyZXN0b3JlLkRCKSArICcgT1dORVIgJyArIHJlc3RvcmUucXVvdGUob3duZXIpICsKICAgICAgICAgICAgICAgICIgVEVNUExBVEUgdGVtcGxhdGUwIEVOQ09ESU5HICdVVEY4JyBMQ19DT0xMQVRFICIgKyByZXN0b3JlLmxpdGVyYWwoZGF0YWJhc2VbJ2NvbGxhdGUnXSkgKwogICAgICAgICAgICAgICAgJyBMQ19DVFlQRSAnICsgcmVzdG9yZS5saXRlcmFsKGRhdGFiYXNlWydjdHlwZSddKSwgZGF0YWJhc2U9J3Bvc3RncmVzJywgcmVhZG9ubHk9RmFsc2UpCiAgICB3aXRoIG9wZW4oc291cmNlIC8gJ2RhdGFiYXNlL3Bhc3N2ZXJvX2FjY2VwdGFuY2UuZHVtcCcsICdyYicpIGFzIGR1bXA6CiAgICAgICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oW3Jlc3RvcmUuUEcgKyAncGdfcmVzdG9yZScsICctLWV4aXQtb24tZXJyb3InLCAnLS1zaW5nbGUtdHJhbnNhY3Rpb24nLAogICAgICAgICAgICAnLWgnLCBzdHIocmVzdG9yZS5TT0NLRVQpLCAnLXAnLCAnNTU0MzQnLCAnLVUnLCAncG9zdGdyZXMnLCAnLWQnLCByZXN0b3JlLkRCXSwKICAgICAgICAgICAgc3RkaW49ZHVtcCwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgZW52PXJlc3RvcmUuRU5WLCB0aW1lb3V0PTEyMCkKICAgIHIucmVxdWlyZShyZXN1bHQucmV0dXJuY29kZSA9PSAwLCAnUFJJVkFURV9QR19SRVNUT1JFX0ZBSUxFRCcpCiAgICByZXN0b3JlLmRhdGFiYXNlX2FjbChkYXRhYmFzZVsnYWNsJ10sIGFwcGx5PVRydWUpCiAgICByZXN0b3JlLnNxbCgnQUxURVIgREFUQUJBU0UgJyArIHJlc3RvcmUucXVvdGUocmVzdG9yZS5EQikgKyAnIFNFVCBkZWZhdWx0X3RyYW5zYWN0aW9uX3JlYWRfb25seT1vbicsIHJlYWRvbmx5PUZhbHNlKQogICAgUEhBU0UgPSAnVkVSSUZZX05FV19TQ0hFTUFfV0lUSF9BQ0NFUFRFRF9FWEFDVF9FUVVJVkFMRU5DRVMnCiAgICB2ZXJpZmllciA9IGhlbHBlcnNbJ3ZlcmlmeS1kYXRhYmFzZSddOyBjYXRhbG9nID0gaGVscGVyc1sncmVjdXJyaW5nX2NhdGFsb2cnXQogICAgY2F0YWxvZy5SRVZJRVdFRF9DT05TVFJBSU5UUyA9IHZlcmlmaWVyLlJFVklFV0VEX0NPTlNUUkFJTlRTCiAgICBjdXJyZW50ID0gcmVzdG9yZS5zcWwoY2FwLkNBVEFMT0cpCiAgICAjIFByaXZhdGUgc2NoZW1hLW9ubHkgZGlhZ25vc2lzIHN1cnZpdmVzIGEgc3RyaWN0IHZlcmlmaWVyIFNUT1AgYW5kIGluZGVwZW5kZW50IGNsZWFudXAuCiAgICByLmF0b21pYyh0YXJnZXQgLyAnY2F0YWxvZy1zb3VyY2UuanNvbicsIG1ldGFbJ2NhdGFsb2cnXSkKICAgIHIuYXRvbWljKHRhcmdldCAvICdjYXRhbG9nLXJlc3RvcmVkLmpzb24nLCBjdXJyZW50KQogICAgZXF1aXZhbGVudHMgPSBjYXRhbG9nLnZlcmlmeV9jYXRhbG9nKG1ldGFbJ2NhdGFsb2cnXSwgY3VycmVudCwgcmVzdG9yZSkKICAgIHIucmVxdWlyZShhbGwoY3VycmVudFsnZGF0YWJhc2UnXVtrZXldID09IGRhdGFiYXNlW2tleV0gZm9yIGtleSBpbiAoJ293bmVyJywgJ2VuY29kaW5nJywgJ2NvbGxhdGUnLCAnY3R5cGUnKSkKICAgICAgICAgICAgICBhbmQgcmVzdG9yZS5kYXRhYmFzZV9hY2woY3VycmVudFsnZGF0YWJhc2UnXVsnYWNsJ10pID09IHJlc3RvcmUuZGF0YWJhc2VfYWNsKGRhdGFiYXNlWydhY2wnXSksICdEQVRBQkFTRV9TRVRUSU5HU19BQ0wnKQogICAgdGFibGVzID0gcmVzdG9yZS5zcWwoY2FwLlRBQkxFUykKICAgIHIucmVxdWlyZShsZW4odGFibGVzKSA9PSBjb25maWdbJ3RhYmxlcyddIGFuZCBsZW4oY3VycmVudFsnbWlncmF0aW9ucyddKSA9PSBjb25maWdbJ21pZ3JhdGlvbnMnXVsnY291bnQnXSwgJ05FV19TQ0hFTUFfU0NPUEUnKQogICAgci5yZXF1aXJlKHtuYW1lOiByZXN0b3JlLnNxbCgnU0VMRUNUIGNvdW50KCopIEZST00gJyArIGNhcC5pZGVudGlmaWVyKG5hbWUpKSBmb3IgbmFtZSBpbiB0YWJsZXN9ID09IG1ldGFbJ2NvdW50cyddLCAnQUxMX1RBQkxFX0NPVU5UUycpCiAgICByLnJlcXVpcmUocmVzdG9yZS5zcWwoY2FwLlNFUVVFTkNFUykgPT0gbWV0YVsnc2VxdWVuY2VzJ10sICdBTExfU0VRVUVOQ0VTJykKICAgIHN0b3JhZ2UgPSByLnJlYWQoc291cmNlIC8gJ3N0b3JhZ2UvbWFuaWZlc3QuanNvbicpOyByZWZlcmVuY2VzID0gaGVscGVyc1sncmVmZXJlbmNlcyddCiAgICBhc3NldHMgPSByZXN0b3JlLnNxbChyZWZlcmVuY2VzLlFVRVJZKQogICAgb3JkZXIgPSBsYW1iZGEgcm93czogc29ydGVkKHJvd3MsIGtleT1sYW1iZGEgaXRlbTogKGl0ZW1bJ2J1Y2tldCddLCBpdGVtWydrZXknXSkpCiAgICByLnJlcXVpcmUob3JkZXIoYXNzZXRzWydyZWZlcmVuY2VzJ10pID09IG9yZGVyKHN0b3JhZ2VbJ3JlZmVyZW5jZXMnXSkKICAgICAgICAgICAgICBhbmQgYXNzZXRzWydlbmFibGVkQ2FtcGFpZ25zJ10gPT0gc3RvcmFnZVsnZW5hYmxlZENhbXBhaWducyddCiAgICAgICAgICAgICAgYW5kIHJlZmVyZW5jZXMucmVjb25jaWxlKHN0b3JhZ2VbJ29iamVjdHMnXSwgYXNzZXRzWydyZWZlcmVuY2VzJ10pID09IHN0b3JhZ2VbJ3JlY29uY2lsaWF0aW9uJ10sICdORVdfQVNTRVRfUkVGRVJFTkNFX0NPTlNJU1RFTkNZJykKICAgIHIuYXRvbWljKHRhcmdldCAvICdjYXRhbG9nLWVxdWl2YWxlbmNlcy5qc29uJywgZXF1aXZhbGVudHMpCiAgICBQSEFTRSA9ICdSRVVTRV9BQ0NFUFRFRF9BUFBMSUNBVElPTl9SRUFERVInCiAgICBidWlsZF9wYXRoID0gci5ST09UIC8gJ29wZXJhdG9yL2FwcGxpY2F0aW9uLXJlYWQtYnVpbGQuanNvbicKICAgIGNhcC5wcml2YXRlKGJ1aWxkX3BhdGgpCiAgICByLnJlcXVpcmUob2Zmc2l0ZS5kaWdlc3QoYnVpbGRfcGF0aCkgPT0gY29uZmlnWydyZWFkZXJCdWlsZFNoYTI1NiddLCAnUkVBREVSX0JVSUxEX1BJTicpCiAgICBidWlsZCA9IHIucmVhZChidWlsZF9wYXRoKQogICAgci5yZXF1aXJlKGJ1aWxkWydhcHBsaWNhdGlvbk1vZHVsZXMnXSA9PSBjb25maWdbJ3JlYWRlck1vZHVsZXMnXSwgJ1JFQURFUl9NT0RVTEVfUFJPVkVOQU5DRScpCiAgICBidW5kbGUgPSByLlJPT1QgLyAnb3BlcmF0b3InIC8gKCdhcHBsaWNhdGlvbi1yZWFkLScgKyBidWlsZFsnYnVuZGxlU2hhMjU2J10gKyAnLmNqcycpCiAgICBjYXAucHJpdmF0ZShidW5kbGUpOyByLnJlcXVpcmUob2Zmc2l0ZS5kaWdlc3QoYnVuZGxlKSA9PSBidWlsZFsnYnVuZGxlU2hhMjU2J10sICdSRUFERVJfQlVORExFX1BJTicpCiAgICByZWFkZXJfY29uZmlnID0gdGFyZ2V0IC8gJ2FwcGxpY2F0aW9uLXJlYWQuanNvbicKICAgIHIuYXRvbWljKHJlYWRlcl9jb25maWcsIHsnc291cmNlJzogc3RyKHNvdXJjZSksICdzb2NrZXQnOiBzdHIocmVzdG9yZS5TT0NLRVQpLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgJ2RhdGFiYXNlJzogcmVzdG9yZS5EQiwgJ29iamVjdHMnOiBzdG9yYWdlWydvYmplY3RzJ119KQogICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oWycvdXNyL2Jpbi9ub2RlJywgc3RyKGJ1bmRsZSksIHN0cihyZWFkZXJfY29uZmlnKV0sIGNhcHR1cmVfb3V0cHV0PVRydWUsCiAgICAgICAgICAgIHRpbWVvdXQ9OTAsIGVudj17J1BBVEgnOiAnL3Vzci9iaW46L2JpbicsICdMQU5HJzogJ0MnLCAnTk9ERV9QQVRIJzogc3RyKHIuQVBQIC8gJ25vZGVfbW9kdWxlcycpfSkKICAgIHIucmVxdWlyZShyZXN1bHQucmV0dXJuY29kZSA9PSAwIGFuZCBsZW4ocmVzdWx0LnN0ZG91dCkgPCA2NTUzNiwgJ05FV19TRVRfQVBQTElDQVRJT05fUkVBRCcpCiAgICBhcHBsaWNhdGlvbiA9IGpzb24ubG9hZHMocmVzdWx0LnN0ZG91dCkKICAgIHIucmVxdWlyZShhcHBsaWNhdGlvblsnYXBwbGljYXRpb25SZWFkJ10gPT0gJ1BBU1NfUFJJVkFURV9SRUNPVkVSWV9QT1JUUycKICAgICAgICAgICAgICBhbmQgYXBwbGljYXRpb25bJ3Byb2R1Y3QnXSA9PSAnUEFTU19BUFBMSUNBVElPTl9DQVRBTE9HX0VYUE9SVCcKICAgICAgICAgICAgICBhbmQgYXBwbGljYXRpb25bJ3BkZiddID09ICdQQVNTX0FQUExJQ0FUSU9OX0JPVU5ERURfQllURVNfQU5EX01FVEFEQVRBJwogICAgICAgICAgICAgIGFuZCBhcHBsaWNhdGlvblsnaW1hZ2UnXSA9PSAnUEFTU19BUFBMSUNBVElPTl9ET1dOTE9BRF9BTkRfUkVDSEVDSycKICAgICAgICAgICAgICBhbmQgYXBwbGljYXRpb25bJ3NjaGVtYVdyaXRlcyddID09IGFwcGxpY2F0aW9uWydidXNpbmVzc1dyaXRlcyddID09ICdOT05FJwogICAgICAgICAgICAgIGFuZCBhcHBsaWNhdGlvblsnc210cENhbGxzJ10gPT0gMCwgJ0FQUExJQ0FUSU9OX1JFQURfUkVTVUxUJykKICAgIHIucmVxdWlyZShyZXN0b3JlLnNxbChjYXAuQ0FUQUxPRykgPT0gY3VycmVudCwgJ1JFQURFUl9DSEFOR0VEX0NBVEFMT0cnKQogICAgci5hdG9taWModGFyZ2V0IC8gJ3N1bW1hcnkuanNvbicsIHsncmVzdG9yZSc6ICdQQVNTX0xBVEVTVF9ORVdfQjJfREJfQU5EX0ZJTEVTJywgKipyb3csCiAgICAgICAgICAgICAndGFibGVzJzogbGVuKHRhYmxlcyksICdtaWdyYXRpb25zJzogbGVuKGN1cnJlbnRbJ21pZ3JhdGlvbnMnXSksICdhcHBsaWNhdGlvbic6IGFwcGxpY2F0aW9uLAogICAgICAgICAgICAgJ3NjaGVtYUFuZEJ1c2luZXNzV3JpdGVzJzogJ1BSSVZBVEVfUkVTVE9SRV9PTkxZJywgJ3NtdHBDYWxscyc6IDAsICdsaXZlU3RhZ2luZ1BhdXNlZCc6IEZhbHNlLAogICAgICAgICAgICAgJ3N0b3JhZ2VQcm92aWRlclJlc3RvcmUnOiAnTk9UX1BFUkZPUk1FRCcsICdmdWxsV2ViQXV0aFNjYW5uZXJSZWNvdmVyeSc6ICdOT1RfVEVTVEVEJ30pCiAgICBwcmludChqc29uLmR1bXBzKHsncmVzdG9yZUJvZHknOiAnUEFTUycsICdzZXRJZCc6IHJvd1snc2V0SWQnXX0pKQoKCmRlZiByZXRlbnRpb24oY29uZmlnLCBoZWxwZXJzKToKICAgIHJvdyA9IHNlbGVjdGVkKGNvbmZpZywgaGVscGVycykKICAgIHIucmVxdWlyZShub3QgKHIuU1RBVEUgLyAncmV0ZW50aW9uLWF0dGVtcHQuanNvbicpLmV4aXN0cygpLCAnUkVURU5USU9OX0RSWV9SVU5fQlVER0VUX09ORScpCiAgICByZXBvc2l0b3J5ID0gaGVscGVyc1snb2Zmc2l0ZSddLlJlcG9zaXRvcnkoaGVscGVyc1sncHJlcGFyZSddKQogICAgci5yZXF1aXJlKGpzb24ubG9hZHMocmVwb3NpdG9yeS5ydW4oWydjYXQnLCAnY29uZmlnJ10pKVsnaWQnXSA9PSBjb25maWdbJ3JlcG9zaXRvcnlJZCddLCAnUkVQT1NJVE9SWV9DSEFOR0VEJykKICAgIGNhbmRpZGF0ZXMgPSByLnNlbGVjdF9zbmFwc2hvdHMocmVwb3NpdG9yeS5zbmFwc2hvdHMoKSkKICAgIHIuYXRvbWljKHIuU1RBVEUgLyAncmV0ZW50aW9uLWF0dGVtcHQuanNvbicsIHsnbGF0ZXN0U2V0Jzogcm93WydzZXRJZCddLCAnZHJ5UnVuT25seSc6IFRydWV9KQogICAgIyBIaXN0b3JpY2FsIHdyYXBwZXIgaW50ZW50aW9uYWxseSBkaXNhbGxvd3MgZm9yZ2V0OyB0aGlzIHNpbmdsZSBhdWRpdGVkIHBhdGggaXMgZHJ5LXJ1biBvbmx5LgogICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oWycvdXNyL2xvY2FsL2Jpbi9yZXN0aWMnLCAnLS1uby1jYWNoZScsICctLW5vLWxvY2snLCAnLS1yZXBvJywgcmVwb3NpdG9yeS5yZXBvLAogICAgICAgICctLXBhc3N3b3JkLWZpbGUnLCAnL2V0Yy9wYXNzdmVyby9iYWNrdXAvcmVzdGljLXBhc3N3b3JkJywgJ2ZvcmdldCcsICctLWRyeS1ydW4nLCAnLS1qc29uJywKICAgICAgICAnLS1ob3N0JywgJ3Bhc3N2ZXJvLXN0YWdpbmctcmVjb3ZlcnknLCAnLS10YWcnLCAncGFzc3Zlcm8tc3RhZ2luZy1yZWNvdmVyeScsICctLWdyb3VwLWJ5JywgJ2hvc3QnLAogICAgICAgICctLWtlZXAtZGFpbHknLCAnMTQnLCAnLS1rZWVwLXdlZWtseScsICc4JywgJy0ta2VlcC1tb250aGx5JywgJzYnXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGltZW91dD02MCwKICAgICAgICBlbnY9eydQQVRIJzogJy91c3IvYmluOi9iaW4nLCAnTEFORyc6ICdDJywgKipyZXBvc2l0b3J5LmtleXN9KQogICAgci5yZXF1aXJlKHJlc3VsdC5yZXR1cm5jb2RlID09IDAgYW5kIGxlbihyZXN1bHQuc3Rkb3V0KSA8IDEwMjQgKiogMiwgJ1JFVEVOVElPTl9EUllfUlVOX0ZBSUxFRCcpCiAgICBncm91cHMgPSBqc29uLmxvYWRzKHJlc3VsdC5zdGRvdXQpCiAgICBrbm93biA9IHtpdGVtWydpZCddIGZvciBpdGVtIGluIGNhbmRpZGF0ZXN9CiAgICBkZWNpc2lvbiA9IFtdCiAgICBmb3IgZ3JvdXAgaW4gZ3JvdXBzOgogICAgICAgIGZvciBrZXkgaW4gKCdrZWVwJywgJ3JlbW92ZScpOgogICAgICAgICAgICByb3dzID0gci5zZWxlY3Rfc25hcHNob3RzKGdyb3VwLmdldChrZXkpIG9yIFtdKQogICAgICAgICAgICByLnJlcXVpcmUoYWxsKGl0ZW1bJ2lkJ10gaW4ga25vd24gZm9yIGl0ZW0gaW4gcm93cyksICdSRVRFTlRJT05fT1VUU0lERV9WQUxJREFURURfSU5WRU5UT1JZJykKICAgICAgICAgICAgZGVjaXNpb24uZXh0ZW5kKHsnc25hcHNob3RJZCc6IGl0ZW1bJ2lkJ10sICdkZWNpc2lvbic6IGtleX0gZm9yIGl0ZW0gaW4gcm93cykKICAgIHIucmVxdWlyZShsZW4oZGVjaXNpb24pID09IGxlbihrbm93bikgYW5kIHt4WydzbmFwc2hvdElkJ10gZm9yIHggaW4gZGVjaXNpb259ID09IGtub3duLAogICAgICAgICAgICAgICdSRVRFTlRJT05fQ09NUExFVEVfREVDSVNJT04nKQogICAgci5hdG9taWMoci5TVEFURSAvICdyZXRlbnRpb24uanNvbicsIHsncmV0ZW50aW9uJzogJ1BBU1NfRFJZX1JVTl9PTkxZJywgJ3JlcG9zaXRvcnlJZCc6IGNvbmZpZ1sncmVwb3NpdG9yeUlkJ10sCiAgICAgICAgICAgICAnc2VsZWN0b3InOiB7J2hvc3QnOiAncGFzc3Zlcm8tc3RhZ2luZy1yZWNvdmVyeScsICd0YWcnOiAncGFzc3Zlcm8tc3RhZ2luZy1yZWNvdmVyeScsICdncm91cEJ5JzogJ2hvc3QnfSwKICAgICAgICAgICAgICdwb2xpY3knOiB7J2RhaWx5JzogMTQsICd3ZWVrbHknOiA4LCAnbW9udGhseSc6IDZ9LCAncHJvZHVjdGlvbkNhbmRpZGF0ZXMnOiAwLAogICAgICAgICAgICAgJ2RlY2lzaW9ucyc6IGRlY2lzaW9uLCAnZGVsZXRlZFNuYXBzaG90cyc6IDB9KQoKCmRlZiBzaWduYWxzKGNvbmZpZywgaGVscGVycyk6CiAgICByLnJlcXVpcmUobm90IChyLlNUQVRFIC8gJ3NpZ25hbC1wcm9vZi5qc29uJykuZXhpc3RzKCksICdTSUdOQUxfVEVTVF9CVURHRVRfT05FJykKICAgIG5vdyA9IGludCh0aW1lLnRpbWUoKSkKICAgIGNhc2VzID0geydCQUNLVVBfRkFJTEVEJzogeydmYWlsdXJlJzogeydyZWFzb24nOiAnQ09OVFJPTExFRF9GSVhUVVJFJ319LAogICAgICAgICAgICAgJ1NFVF9JTkNPTVBMRVRFJzogeydhdHRlbXB0Jzogeydjb21wbGV0ZSc6IEZhbHNlfX0sICdWQUxJRF9TRVRfTUlTU0lORyc6IHt9LAogICAgICAgICAgICAgJ1NFVF9TVEFMRSc6IHsndmFsaWQnOiB7J2NhcHR1cmVFcG9jaCc6IG5vdyAtIDkwMDAxfX0sCiAgICAgICAgICAgICAnSEVBTFRIWSc6IHsndmFsaWQnOiB7J2NhcHR1cmVFcG9jaCc6IG5vdyAtIDkwMDAwfX19CiAgICByLnJlcXVpcmUoYWxsKHIuc2lnbmFsKHZhbHVlLCBub3cpID09IGV4cGVjdGVkIGZvciBleHBlY3RlZCwgdmFsdWUgaW4gY2FzZXMuaXRlbXMoKSksICdDT05UUk9MTEVEX1NJR05BTF9DTEFTU0lGSUNBVElPTicpCiAgICBwYXRoID0gci5TVEFURSAvICdjb250cm9sbGVkLWRlZHVwLmpzb24nCiAgICByLnJlcXVpcmUoci5yZXNlcnZlX2FsZXJ0KHBhdGgsICdTRVRfU1RBTEUnLCAnY29udHJvbGxlZC1maXh0dXJlJywgbm93KQogICAgICAgICAgICAgIGFuZCBub3Qgci5yZXNlcnZlX2FsZXJ0KHBhdGgsICdTRVRfU1RBTEUnLCAnY29udHJvbGxlZC1maXh0dXJlJywgbm93ICsgOTAwMDEpCiAgICAgICAgICAgICAgYW5kIHIucmVhZChwYXRoKVsnZGVsaXZlcnknXSA9PSAnVU5LTk9XTicsICdDT05UUk9MTEVEX05PX0JMSU5EX1JFVFJZJykKICAgIGlmIGNvbmZpZ1sndGVzdFRlbGVncmFtQXBwcm92ZWQnXToKICAgICAgICByLm1vbml0b3IoY29uZmlnLCBoZWxwZXJzLCB0ZXN0PVRydWUpCiAgICByLmF0b21pYyhyLlNUQVRFIC8gJ3NpZ25hbC1wcm9vZi5qc29uJywgeydzaWduYWxzJzogJ1BBU1NfQ09OVFJPTExFRF9OT19MSVZFX0JBQ0tVUF9DT1JSVVBUSU9OJywKICAgICAgICAgICAgICdjYXNlcyc6IGxpc3QoY2FzZXMpLCAnZGVkdXAnOiAnUEFTU19VTktOT1dOX05PVF9SRVRSSUVEJywKICAgICAgICAgICAgICd0ZWxlZ3JhbVRlc3QnOiAnUFJPVklERVJfQUNDRVBURUQnIGlmIGNvbmZpZ1sndGVzdFRlbGVncmFtQXBwcm92ZWQnXSBlbHNlICdOT1RfQVBQUk9WRURfTk9UX1NFTlQnLAogICAgICAgICAgICAgJ2luYm94UmVjZWlwdCc6ICdOT1RfUFJPVkVOJywgJ2xpdmVCYWNrdXBTdGF0ZUFsdGVyZWQnOiBGYWxzZX0pCgoKZGVmIGZpbmFsaXplKGNvbmZpZywgaGVscGVycyk6CiAgICByb3cgPSBzZWxlY3RlZChjb25maWcsIGhlbHBlcnMpCiAgICB0YXJnZXQgPSByLlJPT1QgLyAncmVzdG9yZScgLyByb3dbJ3NldElkJ10KICAgIHIucmVxdWlyZShyLnJlYWQodGFyZ2V0IC8gJ3N1bW1hcnkuanNvbicpWydyZXN0b3JlJ10gPT0gJ1BBU1NfTEFURVNUX05FV19CMl9EQl9BTkRfRklMRVMnCiAgICAgICAgICAgICAgYW5kIHIucmVhZCh0YXJnZXQgLyAnY2xvc3VyZS5qc29uJylbJ2NsdXN0ZXInXSA9PSAnU1RPUFBFRCcKICAgICAgICAgICAgICBhbmQgci5yZWFkKHIuU1RBVEUgLyAncmV0ZW50aW9uLmpzb24nKVsncmV0ZW50aW9uJ10gPT0gJ1BBU1NfRFJZX1JVTl9PTkxZJwogICAgICAgICAgICAgIGFuZCByLnJlYWQoci5TVEFURSAvICdzaWduYWwtcHJvb2YuanNvbicpWydzaWduYWxzJ10gPT0gJ1BBU1NfQ09OVFJPTExFRF9OT19MSVZFX0JBQ0tVUF9DT1JSVVBUSU9OJywgJ0FfRF9SRVFVSVJFRCcpCiAgICBzdGF0ZSA9IHIucmVhZChyLlNUQVRFIC8gJ3N0YXRlLmpzb24nKTsgc3RhdGVbJ21vZGUnXSA9ICdDT05USU5VT1VTJwogICAgci5hdG9taWMoci5TVEFURSAvICdzdGF0ZS5qc29uJywgc3RhdGUpCiAgICByLmF0b21pYyhyLlNUQVRFIC8gJ2FjY2VwdGFuY2UuanNvbicsIHsnQSc6ICdQQVNTX1RXT19SRUFMX1NDSEVEVUxFRF9ORVdfT0ZGU0lURV9TRVRTJywKICAgICAgICAgICAgICdCJzogJ1BBU1NfTEFURVNUX05FV19TRVRfUFJJVkFURV9SRVNUT1JFX0FORF9SRUFERVInLCAnQyc6ICdQQVNTX1NUQUdJTkdfUkVURU5USU9OX0RSWV9SVU4nLAogICAgICAgICAgICAgJ0QnOiAnUEFTU19DT05UUk9MTEVEX1NJR05BTFMnLCAnY29udGludW91c0RhaWx5U2NoZWR1bGUnOiAnQVBQUk9WRURfUFJPTU9URUQnLAogICAgICAgICAgICAgJ3JldGVudGlvbkRlbGV0aW9uJzogJ05PVF9BUFBST1ZFRCcsICdwcm9kdWN0aW9uQ2hhbmdlZCc6IEZhbHNlfSkKCgpkZWYgbWFpbigpOgogICAgY29uZmlnLCBoZWxwZXJzID0gci5zY29wZShjbG9zaW5nPXN5cy5hcmd2WzFdID09ICctLWNsb3NlJykKICAgIG1vZGUgPSBzeXMuYXJndlsxXQogICAgaWYgbW9kZSA9PSAnLS1jbG9zZSc6CiAgICAgICAgY2xvc2UoY29uZmlnLCBoZWxwZXJzKTsgcmV0dXJuCiAgICBmZCA9IHIubG9jayhyLlNUQVRFIC8gJ2pvYi5sb2NrJykKICAgIHRyeToKICAgICAgICB7Jy0tcmVzdG9yZSc6IHJlc3RvcmVfbGF0ZXN0LCAnLS1yZXRlbnRpb24nOiByZXRlbnRpb24sICctLXNpZ25hbHMnOiBzaWduYWxzLAogICAgICAgICAnLS1maW5hbGl6ZSc6IGZpbmFsaXplfVttb2RlXShjb25maWcsIGhlbHBlcnMpCiAgICBmaW5hbGx5OgogICAgICAgIG9zLmNsb3NlKGZkKQoKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICB0cnk6CiAgICAgICAgbWFpbigpCiAgICBleGNlcHQgQmFzZUV4Y2VwdGlvbiBhcyBlcnJvcjoKICAgICAgICByZWFzb24gPSBzdHIoZXJyb3IpIGlmIHJlLmZ1bGxtYXRjaCgnW0EtWjAtOV9dezEsMTYwfScsIHN0cihlcnJvcikpIGVsc2UgdHlwZShlcnJvcikuX19uYW1lX18KICAgICAgICByZXN1bHQgPSB7J3Jlc3VsdCc6ICdTVE9QJywgJ3BoYXNlJzogUEhBU0UsICdyZWFzb24nOiByZWFzb24sICdhdXRvbWF0aWNSZXRyeSc6IEZhbHNlfQogICAgICAgIGlmIG9zLmdldGV1aWQoKSA9PSAwIGFuZCByLlNUQVRFLmlzX2RpcigpOgogICAgICAgICAgICBwYXRoID0gci5TVEFURSAvICdhY2NlcHRhbmNlLWZpcnN0LWZhaWx1cmUuanNvbicKICAgICAgICAgICAgaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICAgICAgICAgICAgICByLmF0b21pYyhwYXRoLCByZXN1bHQpCiAgICAgICAgcHJpbnQoanNvbi5kdW1wcyhyZXN1bHQpLCBmbHVzaD1UcnVlKTsgc3lzLmV4aXQoMSkK'}, 'recurring_catalog.py': {'sha256': 'b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7', 'base64': 'IiIiTmV3LXNjaGVtYSBhZGFwdGVyIG9mIHRoZSBhY2NlcHRlZCBleGFjdCBjYXRhbG9nIGVxdWl2YWxlbmNlIHZlcmlmaWVyLgoKT25seSB0aGUgaGlzdG9yaWNhbCBmaXhlZCBzaXgvc2l4IGNhcmRpbmFsaXR5IGlzIHJlbW92ZWQuIFJldmlld2VkIGNvbnN0cmFpbnQKcGFpcnMgY29tZSBmcm9tIHRoZSBzZXBhcmF0ZWx5IGhhc2gtcGlubmVkIGhpc3RvcmljYWwgdmVyaWZpZXIgYXQgcnVudGltZS4KVW5rbm93biBkaWZmZXJlbmNlcyBzdGlsbCBmYWlsOyBubyBicm9hZCBTUUwvdGV4dCBub3JtYWxpemF0aW9uIGlzIHBlcmZvcm1lZC4KIiIiCmltcG9ydCBoYXNobGliCmltcG9ydCBqc29uCgpSRVZJRVdFRF9DT05TVFJBSU5UUyA9IHt9CgoKZGVmIHJlcXVpcmUodmFsdWUsIHJlYXNvbik6CiAgICBpZiBub3QgdmFsdWU6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKHJlYXNvbikKCgpkZWYgc2lnbmF0dXJlKHZhbHVlKToKICAgIHJldHVybiBoYXNobGliLnNoYTI1Nihqc29uLmR1bXBzKHZhbHVlLCBzb3J0X2tleXM9VHJ1ZSkuZW5jb2RlKCkpLmhleGRpZ2VzdCgpCgoKZGVmIHZlcmlmeV9jYXRhbG9nKHNvdXJjZSxjdXJyZW50LHJlc3RvcmUpOgogICAgIyBObyBnZW5lcmljIHdoaXRlc3BhY2UvcGFyZW50aGVzaXMvY2FzdCBub3JtYWxpemF0aW9uLiBPbmx5IHNpeCBmdWxseSByZXZpZXdlZCBleGFjdCBwYWlycy4KICAgIGltcG9ydCBjb3B5CiAgICBsZWZ0PWNvcHkuZGVlcGNvcHkoc291cmNlKTtyaWdodD1jb3B5LmRlZXBjb3B5KGN1cnJlbnQpCiAgICBsZWZ0LnBvcCgnZGF0YWJhc2UnKTtyaWdodC5wb3AoJ2RhdGFiYXNlJykKICAgIGV4Y2VwdGlvbnM9eydjb25zdHJhaW50cyc6W10sJ3JlbGF0aW9ucyc6W119CiAgICByZXF1aXJlKGxlbihsZWZ0Wydjb25zdHJhaW50cyddKT09bGVuKHJpZ2h0Wydjb25zdHJhaW50cyddKSwnQ09OU1RSQUlOVF9JTlZFTlRPUlknKQogICAgZm9yIGEsYiBpbiB6aXAobGVmdFsnY29uc3RyYWludHMnXSxyaWdodFsnY29uc3RyYWludHMnXSk6CiAgICAgICAgaWYgYT09Yjpjb250aW51ZQogICAgICAgIGtleT0oYVsndGFibGUnXSxhWyduYW1lJ10pCiAgICAgICAgcmVxdWlyZShrZXk9PShiWyd0YWJsZSddLGJbJ25hbWUnXSkgYW5kIGtleSBpbiBSRVZJRVdFRF9DT05TVFJBSU5UUwogICAgICAgICAgICAgICAgYW5kIHtrOnYgZm9yIGssdiBpbiBhLml0ZW1zKCkgaWYgayE9J2RlZmluaXRpb24nfT09e2s6diBmb3Igayx2IGluIGIuaXRlbXMoKSBpZiBrIT0nZGVmaW5pdGlvbid9CiAgICAgICAgICAgICAgICBhbmQgKHNpZ25hdHVyZShhWydkZWZpbml0aW9uJ10pLHNpZ25hdHVyZShiWydkZWZpbml0aW9uJ10pKT09UkVWSUVXRURfQ09OU1RSQUlOVFNba2V5XSwKICAgICAgICAgICAgICAgICdVTlJFVklFV0VEX0NPTlNUUkFJTlRfRElGRkVSRU5DRScpCiAgICAgICAgZXhjZXB0aW9uc1snY29uc3RyYWludHMnXS5hcHBlbmQoeyd0YWJsZSc6a2V5WzBdLCduYW1lJzprZXlbMV0sJ3NvdXJjZVNoYTI1Nic6c2lnbmF0dXJlKGFbJ2RlZmluaXRpb24nXSksCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJ3Jlc3RvcmVkU2hhMjU2JzpzaWduYXR1cmUoYlsnZGVmaW5pdGlvbiddKX0pCiAgICAgICAgYlsnZGVmaW5pdGlvbiddPWFbJ2RlZmluaXRpb24nXQogICAgcmVxdWlyZShsZW4obGVmdFsncmVsYXRpb25zJ10pPT1sZW4ocmlnaHRbJ3JlbGF0aW9ucyddKSwnUkVMQVRJT05fSU5WRU5UT1JZJykKICAgIGZvciBhLGIgaW4gemlwKGxlZnRbJ3JlbGF0aW9ucyddLHJpZ2h0WydyZWxhdGlvbnMnXSk6CiAgICAgICAgaWYgYT09Yjpjb250aW51ZQogICAgICAgIG93bmVyPSdwYXNzdmVyb19taWdyYXRvcicKICAgICAgICByZXF1aXJlKHtrOnYgZm9yIGssdiBpbiBhLml0ZW1zKCkgaWYgayE9J2FjbCd9PT17azp2IGZvciBrLHYgaW4gYi5pdGVtcygpIGlmIGshPSdhY2wnfQogICAgICAgICAgICAgICAgYW5kIGFbJ293bmVyJ109PW93bmVyIGFuZCBhWydraW5kJ109PSdyJyBhbmQgYlsnYWNsJ10gaXMgTm9uZQogICAgICAgICAgICAgICAgYW5kIGFbJ2FjbCddPT0ne3Bhc3N2ZXJvX21pZ3JhdG9yPWFyd2REeHQvcGFzc3Zlcm9fbWlncmF0b3J9JywgJ1VOUkVWSUVXRURfUkVMQVRJT05fQUNMX0RJRkZFUkVOQ0UnKQogICAgICAgIGlkZW50PXJlc3RvcmUubGl0ZXJhbChhWyduYW1lJ10pCiAgICAgICAgcHJvamVjdGlvbj0ianNvbl9idWlsZF9vYmplY3QoJ2dyYW50b3InLHBnX2dldF91c2VyYnlpZChncmFudG9yKSwnZ3JhbnRlZScsQ0FTRSBXSEVOIGdyYW50ZWU9MCBUSEVOICdQVUJMSUMnIEVMU0UgcGdfZ2V0X3VzZXJieWlkKGdyYW50ZWUpIEVORCwncHJpdmlsZWdlJyxwcml2aWxlZ2VfdHlwZSwnb3B0aW9uJyxpc19ncmFudGFibGUpIgogICAgICAgIGFnZ3JlZ2F0ZT0iY29hbGVzY2UoanNvbl9hZ2coIitwcm9qZWN0aW9uKyIgT1JERVIgQlkgZ3JhbnRvcixncmFudGVlLHByaXZpbGVnZV90eXBlLGlzX2dyYW50YWJsZSksJ1tdJzo6anNvbikiCiAgICAgICAgYWNsPXJlc3RvcmUuc3FsKCJTRUxFQ1QganNvbl9idWlsZF9vYmplY3QoJ3NvdXJjZScsKFNFTEVDVCAiK2FnZ3JlZ2F0ZSsiIEZST00gYWNsZXhwbG9kZSgiKwogICAgICAgICAgICByZXN0b3JlLmxpdGVyYWwoYVsnYWNsJ10pKyI6OmFjbGl0ZW1bXSkpLCAncmVzdG9yZWQnLChTRUxFQ1QgIithZ2dyZWdhdGUrCiAgICAgICAgICAgICIgRlJPTSBwZ19jbGFzcyBjIEpPSU4gcGdfbmFtZXNwYWNlIG4gT04gbi5vaWQ9Yy5yZWxuYW1lc3BhY2UgQ1JPU1MgSk9JTiBMQVRFUkFMIGFjbGV4cGxvZGUoY29hbGVzY2UoYy5yZWxhY2wsYWNsZGVmYXVsdCgncicsYy5yZWxvd25lcikpKSBwIFdIRVJFIG4ubnNwbmFtZT0ncHVibGljJyBBTkQgYy5yZWxuYW1lPSIraWRlbnQrIikpIikKICAgICAgICByZXF1aXJlKGFjbFsnc291cmNlJ109PWFjbFsncmVzdG9yZWQnXSBhbmQgbGVuKGFjbFsnc291cmNlJ10pPT03LCdSRVNUT1JFRF9FRkZFQ1RJVkVfVEFCTEVfQUNMJykKICAgICAgICBleGNlcHRpb25zWydyZWxhdGlvbnMnXS5hcHBlbmQoeyduYW1lJzphWyduYW1lJ10sJ293bmVyJzpvd25lciwnc291cmNlQWNsJzphWydhY2wnXSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAncmVzdG9yZWRBY2wnOk5vbmUsJ2VmZmVjdGl2ZUFjbCc6YWNsWydyZXN0b3JlZCddfSkKICAgICAgICBiWydhY2wnXT1hWydhY2wnXQogICAgcmVxdWlyZShsZWZ0PT1yaWdodCwnUkVTVE9SRURfQ0FUQUxPR19VTlJFVklFV0VEX0RJRkZFUkVOQ0UnKQogICAgIyBDb3VudHMgdmFyeSB3aXRoIHRoZSBuZXcgc2NoZW1hOyBldmVyeSBhbGxvd2VkIGRpZmZlcmVuY2UgYWJvdmUgcmVtYWlucyBleGFjdC4KICAgIHJldHVybiBleGNlcHRpb25zCg=='}, 'offsite.py': {'sha256': '4349476eafa6067ca0690fa027b1baad1159b8e0d17d2be8301bc04c7482514f', 'base64': 'IiIiT25lIGFwcHJvdmVkIGNhcHR1cmVkIHNldCB0byBpc29sYXRlZCBCMiBwcmVmaXgsIHRoZW4gcmVhbCBwcml2YXRlIGJ5dGUgcmVzdG9yZS4iIiIKaW1wb3J0IGRhdGV0aW1lCmltcG9ydCBoYXNobGliCmltcG9ydCBpbXBvcnRsaWIudXRpbAppbXBvcnQganNvbgppbXBvcnQgb3MKaW1wb3J0IHBhdGhsaWIKaW1wb3J0IHJlCmltcG9ydCBzaHV0aWwKaW1wb3J0IHN0YXQKaW1wb3J0IHN1YnByb2Nlc3MKaW1wb3J0IHN5cwppbXBvcnQgeG1sLmV0cmVlLkVsZW1lbnRUcmVlIGFzIEVUCgpST09UID0gcGF0aGxpYi5QYXRoKCcvdmFyL2xpYi9wYXNzdmVyby1zdGFnaW5nLXJlY292ZXJ5JykKU0VUX0lEID0gJzIwMjYxMDAxVDIxMjM1NFonCkNBUFRVUkVfUElOID0gJ2Q0YzY0NGNmMDEwMGVmOTRlOTYyNzdiZmUzNzI2MTZkOTk4YmFjMDVkYWQyZDlhMDY4Y2Q4OTM4ZWYxMGI1ZmEnCkhPU1QgPSAncGFzc3Zlcm8tc3RhZ2luZy1yZWNvdmVyeScKR0lCID0gMTAyNCAqKiAzClBIQVNFID0gJ1ZFUklGWV9DQVBUVVJFRF9TRVQnClJFTU9URV9XUklURVMgPSBGYWxzZQpDT05UUk9MID0gTm9uZQoKCmNsYXNzIFN0b3AoRXhjZXB0aW9uKToKICAgIHBhc3MKCgpkZWYgcmVxdWlyZShjb25kaXRpb24sIHJlYXNvbik6CiAgICBpZiBub3QgY29uZGl0aW9uOgogICAgICAgIHJhaXNlIFN0b3AocmVhc29uKQoKCmRlZiBjYXB0dXJlX2hlbHBlcigpOgogICAgcGF0aCA9IFJPT1QgLyAnb3BlcmF0b3InIC8gKCdjYXB0dXJlLScgKyBDQVBUVVJFX1BJTiArICcucHknKQogICAgaW5mbyA9IHBhdGgubHN0YXQoKQogICAgcmVxdWlyZShzdGF0LlNfSVNSRUcoaW5mby5zdF9tb2RlKSBhbmQgaW5mby5zdF91aWQgPT0gMCBhbmQgbm90IGluZm8uc3RfbW9kZSAmIDBvMDc3LAogICAgICAgICAgICAnQ0FQVFVSRV9IRUxQRVJfUE9TVFVSRScpCiAgICByZXF1aXJlKGhhc2hsaWIuc2hhMjU2KHBhdGgucmVhZF9ieXRlcygpKS5oZXhkaWdlc3QoKSA9PSBDQVBUVVJFX1BJTiwgJ0NBUFRVUkVfSEVMUEVSX0lERU5USVRZJykKICAgIHNwZWMgPSBpbXBvcnRsaWIudXRpbC5zcGVjX2Zyb21fZmlsZV9sb2NhdGlvbignYWNjZXB0ZWRfY2FwdHVyZV9vZmZzaXRlJywgcGF0aCkKICAgIGNhcCA9IGltcG9ydGxpYi51dGlsLm1vZHVsZV9mcm9tX3NwZWMoc3BlYykKICAgIHNwZWMubG9hZGVyLmV4ZWNfbW9kdWxlKGNhcCkKICAgIHJldHVybiBjYXAKCgpkZWYgZGlnZXN0KHBhdGgpOgogICAgdmFsdWUgPSBoYXNobGliLnNoYTI1NigpCiAgICB3aXRoIG9wZW4ocGF0aCwgJ3JiJykgYXMgaGFuZGxlOgogICAgICAgIGZvciBjaHVuayBpbiBpdGVyKGxhbWJkYTogaGFuZGxlLnJlYWQoMTAyNCAqIDEwMjQpLCBiJycpOgogICAgICAgICAgICB2YWx1ZS51cGRhdGUoY2h1bmspCiAgICByZXR1cm4gdmFsdWUuaGV4ZGlnZXN0KCkKCgpkZWYgdmVyaWZ5X3NldCh3b3JrLCBjYXApOgogICAgY2FwLnByaXZhdGUod29yaywgVHJ1ZSkKICAgIG1hbmlmZXN0ID0gY2FwLnJlYWQod29yayAvICdyZWNvdmVyeS1zZXQuanNvbicpCiAgICByZXF1aXJlKG1hbmlmZXN0WydzY2hlbWEnXSA9PSAxIGFuZCBtYW5pZmVzdFsnc2V0SWQnXSA9PSBTRVRfSUQsICdSRUNPVkVSWV9TRVRfSURFTlRJVFknKQogICAgZW50cmllcyA9IG1hbmlmZXN0WydmaWxlcyddCiAgICByZXF1aXJlKGlzaW5zdGFuY2UoZW50cmllcywgZGljdCkgYW5kIDEgPD0gbGVuKGVudHJpZXMpIDw9IDEwMDAwLCAnU0VUX0ZJTEVfQ09VTlQnKQogICAgZm91bmQgPSB7fQogICAgZm9yIHBhdGggaW4gd29yay5yZ2xvYignKicpOgogICAgICAgIGluZm8gPSBwYXRoLmxzdGF0KCkKICAgICAgICByZXF1aXJlKHN0YXQuU19JU1JFRyhpbmZvLnN0X21vZGUpIG9yIHN0YXQuU19JU0RJUihpbmZvLnN0X21vZGUpLCAnU0VUX1NQRUNJQUxfRklMRScpCiAgICAgICAgY2FwLnByaXZhdGUocGF0aCwgc3RhdC5TX0lTRElSKGluZm8uc3RfbW9kZSkpCiAgICAgICAgaWYgc3RhdC5TX0lTUkVHKGluZm8uc3RfbW9kZSk6CiAgICAgICAgICAgIGZvdW5kW3N0cihwYXRoLnJlbGF0aXZlX3RvKHdvcmspKV0gPSBwYXRoCiAgICByZXF1aXJlKHNldChmb3VuZCkgPT0gc2V0KGVudHJpZXMpIHwgeydyZWNvdmVyeS1zZXQuanNvbid9LCAnU0VUX0ZJTEVfSU5WRU5UT1JZJykKICAgIGZvciBuYW1lLCBleHBlY3RlZCBpbiBlbnRyaWVzLml0ZW1zKCk6CiAgICAgICAgcGFydHMgPSBwYXRobGliLlB1cmVQb3NpeFBhdGgobmFtZSkKICAgICAgICByZXF1aXJlKG5vdCBwYXJ0cy5pc19hYnNvbHV0ZSgpIGFuZCBzdHIocGFydHMpID09IG5hbWUKICAgICAgICAgICAgICAgIGFuZCBhbGwocGFydCBub3QgaW4gKCcuJywgJy4uJykgZm9yIHBhcnQgaW4gcGFydHMucGFydHMpCiAgICAgICAgICAgICAgICBhbmQgJ1xcJyBub3QgaW4gbmFtZSBhbmQgJ1wwJyBub3QgaW4gbmFtZSwgJ1NFVF9GSUxFX1BBVEgnKQogICAgICAgIHJlcXVpcmUodHlwZShleHBlY3RlZFsnYnl0ZXMnXSkgaXMgaW50IGFuZCBleHBlY3RlZFsnYnl0ZXMnXSA+PSAwCiAgICAgICAgICAgICAgICBhbmQgcmUuZnVsbG1hdGNoKCdbYS1mMC05XXs2NH0nLCBleHBlY3RlZFsnc2hhMjU2J10pLCAnU0VUX0ZJTEVfTUVUQURBVEEnKQogICAgICAgIHJlcXVpcmUoZm91bmRbbmFtZV0uc3RhdCgpLnN0X3NpemUgPT0gZXhwZWN0ZWRbJ2J5dGVzJ10KICAgICAgICAgICAgICAgIGFuZCBkaWdlc3QoZm91bmRbbmFtZV0pID09IGV4cGVjdGVkWydzaGEyNTYnXSwgJ1NFVF9GSUxFX0NIRUNLU1VNJykKICAgIHBheWxvYWQgPSBzdW0ocGF0aC5zdGF0KCkuc3Rfc2l6ZSBmb3IgcGF0aCBpbiBmb3VuZC52YWx1ZXMoKSkKICAgIHJlcXVpcmUocGF5bG9hZCA8PSBHSUIgYW5kIG1hbmlmZXN0WydwYXlsb2FkQnl0ZXMnXSA9PSBzdW0oeFsnYnl0ZXMnXSBmb3IgeCBpbiBlbnRyaWVzLnZhbHVlcygpKSwKICAgICAgICAgICAgJ1NFVF9QQVlMT0FEX0xJTUlUJykKICAgIHJldHVybiBtYW5pZmVzdCwgcGF5bG9hZCwgZGlnZXN0KHdvcmsgLyAncmVjb3Zlcnktc2V0Lmpzb24nKQoKCmNsYXNzIFJlcG9zaXRvcnk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgcHJlcGFyZSk6CiAgICAgICAgbG9jYXRvciA9IHByZXBhcmUucHJvdGVjdGVkKCcvZXRjL3Bhc3N2ZXJvL2JhY2t1cC9yZXN0aWMtcmVwb3NpdG9yeScpLmRlY29kZSgpLnN0cmlwKCkKICAgICAgICBwcmVwYXJlLnByb3RlY3RlZCgnL2V0Yy9wYXNzdmVyby9iYWNrdXAvcmVzdGljLXBhc3N3b3JkJykKICAgICAgICBzZWxmLmtleXMgPSBwcmVwYXJlLmNyZWRlbnRpYWxzKHByZXBhcmUucHJvdGVjdGVkKCcvZXRjL3Bhc3N2ZXJvL2JhY2t1cC9yZXN0aWMuZW52JykuZGVjb2RlKCkpCiAgICAgICAgc2VsZi5ob3N0LCBzZWxmLnJlZ2lvbiwgc2VsZi5idWNrZXQsIHNlbGYucmVwbyA9IHByZXBhcmUuZGVzdGluYXRpb24obG9jYXRvcikKICAgICAgICBzZWxmLnByZXBhcmUgPSBwcmVwYXJlCgogICAgZGVmIGVtcHR5X3ByZWZpeChzZWxmKToKICAgICAgICByZXF1ZXN0ID0gc2VsZi5wcmVwYXJlLnMzX2xpc3RfcmVxdWVzdChzZWxmLmhvc3QsIHNlbGYucmVnaW9uLCBzZWxmLmJ1Y2tldCwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlbGYua2V5cywgZGF0ZXRpbWUuZGF0ZXRpbWUubm93KGRhdGV0aW1lLnRpbWV6b25lLnV0YykpCiAgICAgICAgd2l0aCBzZWxmLnByZXBhcmUucmVzcG9uc2UocmVxdWVzdCkgYXMgcmVzcG9uc2U6CiAgICAgICAgICAgIGJvZHkgPSByZXNwb25zZS5yZWFkKDQgKiAxMDI0ICoqIDIgKyAxKQogICAgICAgIHJlcXVpcmUobGVuKGJvZHkpIDw9IDQgKiAxMDI0ICoqIDIsICdCMl9MSVNUX1NJWkUnKQogICAgICAgIGxpc3RpbmcgPSBFVC5mcm9tc3RyaW5nKGJvZHkpCiAgICAgICAgcmVxdWlyZShsaXN0aW5nLnRhZy5lbmRzd2l0aCgnTGlzdEJ1Y2tldFJlc3VsdCcpCiAgICAgICAgICAgICAgICBhbmQgbGlzdGluZy5maW5kdGV4dCgneyp9UHJlZml4JykgPT0gc2VsZi5wcmVwYXJlLlBSRUZJWCArICcvJywgJ0IyX1BSRUZJWF9JREVOVElUWScpCiAgICAgICAgdHJ1bmNhdGVkID0gbGlzdGluZy5maW5kdGV4dCgneyp9SXNUcnVuY2F0ZWQnKQogICAgICAgIHJlcXVpcmUodHJ1bmNhdGVkIGluICgndHJ1ZScsICdmYWxzZScpLCAnQjJfTElTVF9TSEFQRScpCiAgICAgICAgcmV0dXJuIHRydW5jYXRlZCA9PSAnZmFsc2UnIGFuZCBub3QgbGlzdGluZy5maW5kYWxsKCd7Kn1Db250ZW50cycpCgogICAgZGVmIHJ1bihzZWxmLCBhcmdzLCB3cml0aW5nPUZhbHNlKToKICAgICAgICBnbG9iYWwgUkVNT1RFX1dSSVRFUwogICAgICAgIHJlcXVpcmUoYXJncyBhbmQgYXJnc1swXSBpbiAoJ2luaXQnLCAnY2F0JywgJ3NuYXBzaG90cycsICdiYWNrdXAnLCAnZHVtcCcsICdscycsICdyZXN0b3JlJyksCiAgICAgICAgICAgICAgICAnUkVTVElDX09QRVJBVElPTl9TQ09QRScpCiAgICAgICAgcmVxdWlyZSh3cml0aW5nID09IChhcmdzWzBdIGluICgnaW5pdCcsICdiYWNrdXAnKSksICdSRVNUSUNfV1JJVEVfU0NPUEUnKQogICAgICAgIGlmIHdyaXRpbmc6CiAgICAgICAgICAgIFJFTU9URV9XUklURVMgPSBUcnVlCiAgICAgICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oWycvdXNyL2xvY2FsL2Jpbi9yZXN0aWMnLCAnLS1uby1jYWNoZScsCiAgICAgICAgICAgICooW10gaWYgd3JpdGluZyBlbHNlIFsnLS1uby1sb2NrJ10pLCAnLS1yZXBvJywgc2VsZi5yZXBvLCAnLS1wYXNzd29yZC1maWxlJywKICAgICAgICAgICAgJy9ldGMvcGFzc3Zlcm8vYmFja3VwL3Jlc3RpYy1wYXNzd29yZCcsICphcmdzXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwKICAgICAgICAgICAgdGltZW91dD05MDAgaWYgYXJnc1swXSBpbiAoJ2JhY2t1cCcsICdyZXN0b3JlJykgZWxzZSA2MCwKICAgICAgICAgICAgZW52PXsnUEFUSCc6ICcvdXNyL2JpbjovYmluJywgJ0xBTkcnOiAnQycsICoqc2VsZi5rZXlzfSkKICAgICAgICBpZiByZXN1bHQucmV0dXJuY29kZSAhPSAwOgogICAgICAgICAgICBkZW5pZWQgPSBhbnkoeCBpbiByZXN1bHQuc3RkZXJyLmxvd2VyKCkgZm9yIHggaW4KICAgICAgICAgICAgICAgICAgICAgICAgIChiJ2FjY2Vzc2RlbmllZCcsIGInYWNjZXNzIGRlbmllZCcsIGInaW52YWxpZGFjY2Vzc2tleWlkJywgYidzaWduYXR1cmVkb2Vzbm90bWF0Y2gnKSkKICAgICAgICAgICAgcmFpc2UgU3RvcCgnUkVTVElDXycgKyBhcmdzWzBdLnVwcGVyKCkgKyAnX0VYSVRfJyArIHN0cihyZXN1bHQucmV0dXJuY29kZSkKICAgICAgICAgICAgICAgICAgICAgICArICgnX0FDQ0VTU19PUl9TSUdOQVRVUkVfREVOSUVEJyBpZiBkZW5pZWQgZWxzZSAnJykpCiAgICAgICAgcmVxdWlyZShsZW4ocmVzdWx0LnN0ZG91dCkgPD0gMzIgKiAxMDI0ICoqIDIsICdSRVNUSUNfUkVTUE9OU0VfU0laRScpCiAgICAgICAgcmV0dXJuIHJlc3VsdC5zdGRvdXQKCiAgICBkZWYgc25hcHNob3RzKHNlbGYpOgogICAgICAgIHJvd3MgPSBqc29uLmxvYWRzKHNlbGYucnVuKFsnc25hcHNob3RzJywgJy0tanNvbiddKSkKICAgICAgICByb3dzID0gW10gaWYgcm93cyBpcyBOb25lIGVsc2Ugcm93cwogICAgICAgIHJlcXVpcmUoaXNpbnN0YW5jZShyb3dzLCBsaXN0KSwgJ1NOQVBTSE9UX0xJU1RfU0hBUEUnKQogICAgICAgIGZvciByb3cgaW4gcm93czoKICAgICAgICAgICAgcmVxdWlyZShyZS5mdWxsbWF0Y2goJ1thLWYwLTldezY0fScsIHJvdy5nZXQoJ2lkJywgJycpKSBhbmQgcm93LmdldCgnaG9zdG5hbWUnKSA9PSBIT1NUCiAgICAgICAgICAgICAgICAgICAgYW5kIEhPU1QgaW4gcm93LmdldCgndGFncycsIFtdKSBhbmQgcm93LmdldCgncGF0aHMnKQogICAgICAgICAgICAgICAgICAgIGFuZCBhbGwoaXNpbnN0YW5jZShwYXRoLCBzdHIpIGFuZCByZS5mdWxsbWF0Y2goCiAgICAgICAgICAgICAgICAgICAgICAgIHJlLmVzY2FwZShzdHIoUk9PVCAvICdzZXRzJykpICsgcicvWzAtOV17OH1UWzAtOV17Nn1aJywgcGF0aCkKICAgICAgICAgICAgICAgICAgICAgICAgZm9yIHBhdGggaW4gcm93WydwYXRocyddKSwgJ1NUQUdJTkdfUkVQT1NJVE9SWV9JREVOVElUWScpCiAgICAgICAgcmV0dXJuIHJvd3MKCgpkZWYgdmFsaWRhdGVfdHJlZShib2R5LCBzbmFwc2hvdF9pZCwgd29yaywgbWFuaWZlc3QpOgogICAgZXhwZWN0ZWQgPSB7c3RyKHdvcmsgLyBuYW1lKTogaXRlbVsnYnl0ZXMnXSBmb3IgbmFtZSwgaXRlbSBpbiBtYW5pZmVzdFsnZmlsZXMnXS5pdGVtcygpfQogICAgZXhwZWN0ZWRbc3RyKHdvcmsgLyAncmVjb3Zlcnktc2V0Lmpzb24nKV0gPSAod29yayAvICdyZWNvdmVyeS1zZXQuanNvbicpLnN0YXQoKS5zdF9zaXplCiAgICBkaXJlY3RvcmllcyA9IHtzdHIocGFyZW50KSBmb3IgbmFtZSBpbiBleHBlY3RlZCBmb3IgcGFyZW50IGluIHBhdGhsaWIuUHVyZVBvc2l4UGF0aChuYW1lKS5wYXJlbnRzfQogICAgZm91bmQgPSB7fQogICAgaGVhZGVyID0gMAogICAgZm9yIGxpbmUgaW4gYm9keS5zcGxpdGxpbmVzKCk6CiAgICAgICAgcm93ID0ganNvbi5sb2FkcyhsaW5lKQogICAgICAgIGtpbmQgPSByb3cuZ2V0KCdtZXNzYWdlX3R5cGUnLCByb3cuZ2V0KCdzdHJ1Y3RfdHlwZScpKQogICAgICAgIGlmIGtpbmQgPT0gJ3NuYXBzaG90JzoKICAgICAgICAgICAgcmVxdWlyZShyb3cuZ2V0KCdpZCcpID09IHNuYXBzaG90X2lkLCAnU05BUFNIT1RfVFJFRV9JREVOVElUWScpCiAgICAgICAgICAgIGhlYWRlciArPSAxCiAgICAgICAgZWxzZToKICAgICAgICAgICAgcmVxdWlyZShraW5kID09ICdub2RlJywgJ1NOQVBTSE9UX1RSRUVfU0hBUEUnKQogICAgICAgICAgICBpZiByb3cuZ2V0KCd0eXBlJykgPT0gJ2ZpbGUnOgogICAgICAgICAgICAgICAgbmFtZSA9IHJvdy5nZXQoJ3BhdGgnKQogICAgICAgICAgICAgICAgcmVxdWlyZShuYW1lIGluIGV4cGVjdGVkIGFuZCBuYW1lIG5vdCBpbiBmb3VuZCBhbmQgcm93LmdldCgnc2l6ZScpID09IGV4cGVjdGVkW25hbWVdLAogICAgICAgICAgICAgICAgICAgICAgICAnU05BUFNIT1RfVFJFRV9GSUxFUycpCiAgICAgICAgICAgICAgICBmb3VuZFtuYW1lXSA9IHJvd1snc2l6ZSddCiAgICAgICAgICAgIGVsc2U6CiAgICAgICAgICAgICAgICByZXF1aXJlKHJvdy5nZXQoJ3R5cGUnKSA9PSAnZGlyJyBhbmQgcm93LmdldCgncGF0aCcpIGluIGRpcmVjdG9yaWVzLAogICAgICAgICAgICAgICAgICAgICAgICAnU05BUFNIT1RfVFJFRV9TUEVDSUFMX09SX09VVFNJREVfU0NPUEUnKQogICAgcmVxdWlyZShoZWFkZXIgPT0gMSBhbmQgZm91bmQgPT0gZXhwZWN0ZWQsICdTTkFQU0hPVF9UUkVFX0lOQ09NUExFVEUnKQoKCmRlZiBtYWluKGNhcD1Ob25lLCByZXBvc2l0b3J5PU5vbmUpOgogICAgZ2xvYmFsIFBIQVNFLCBDT05UUk9MCiAgICBvcy51bWFzaygwbzA3NykKICAgIHJlcXVpcmUob3MuZ2V0ZXVpZCgpID09IDAgYW5kIG9zLnVuYW1lKCkubm9kZW5hbWUgPT0gJ3NydjE4MzQ2NDcnLCAnT1BFUkFUT1JfSE9TVCcpCiAgICBjYXAgPSBjYXAgb3IgY2FwdHVyZV9oZWxwZXIoKQogICAgd29yaywgY29udHJvbCA9IGNhcC52YWxpZGF0ZV9jb250ZXh0KFNFVF9JRCkKICAgIENPTlRST0wgPSBjb250cm9sCiAgICBwcmVwYXJlLCByZWZlcmVuY2VzID0gY2FwLmhlbHBlcnMoKQogICAgc2F2ZWQgPSBjYXAucmVhZChjb250cm9sIC8gJ3N1bW1hcnkuanNvbicpCiAgICBjbG9zdXJlID0gY2FwLnJlYWQoY29udHJvbCAvICdjbG9zdXJlLmpzb24nKQogICAgcmVxdWlyZShzYXZlZFsnY2FwdHVyZSddID09ICdQQVNTJyBhbmQgc2F2ZWRbJ3NldElkJ10gPT0gU0VUX0lECiAgICAgICAgICAgIGFuZCBjbG9zdXJlWydzdGFnaW5nUmVzdW1lZCddIGlzIFRydWUgYW5kIGNsb3N1cmVbJ3NlcnZpY2VSZXN1bHQnXSA9PSAnc3VjY2VzcycKICAgICAgICAgICAgYW5kIDAgPCBjbG9zdXJlWydwYXVzZVNlY29uZHMnXSA8PSAxMjAsICdDQVBUVVJFX0NMT1NVUkVfTk9UX0FDQ0VQVEVEJykKICAgIGNsYWltID0gY2FwLnJlYWQoUk9PVCAvIGNhcC5BRERJVElPTkFMX0NMQUlNKQogICAgcmVxdWlyZShjbGFpbVsnc2V0SWQnXSA9PSBTRVRfSUQgYW5kIGNsYWltWydwcmlvclNldElkJ10gPT0gY2FwLkZBSUxFRF9TRVQKICAgICAgICAgICAgYW5kIGNsYWltWydwcmlvckNsYWltU2hhMjU2J10gPT0gZGlnZXN0KFJPT1QgLyBjYXAuRklSU1RfQ0xBSU0pLCAnUkVUQUlORURfQ0xBSU1fQ0hBTkdFRCcpCiAgICBhdHRlbXB0ID0gY29udHJvbCAvICdvZmZzaXRlLWF0dGVtcHQuanNvbicKICAgIHJlcXVpcmUobm90IGF0dGVtcHQuZXhpc3RzKCkgYW5kIG5vdCBhdHRlbXB0LmlzX3N5bWxpbmsoKSwgJ09GRlNJVEVfQUxSRUFEWV9BVFRFTVBURUQnKQogICAgcmVzdG9yZV9yb290ID0gUk9PVCAvICdyZXN0b3JlJwogICAgaWYgcmVzdG9yZV9yb290LmV4aXN0cygpIG9yIHJlc3RvcmVfcm9vdC5pc19zeW1saW5rKCk6CiAgICAgICAgY2FwLnByaXZhdGUocmVzdG9yZV9yb290LCBUcnVlKQogICAgdGFyZ2V0ID0gcmVzdG9yZV9yb290IC8gU0VUX0lECiAgICByZXF1aXJlKG5vdCB0YXJnZXQuZXhpc3RzKCkgYW5kIG5vdCB0YXJnZXQuaXNfc3ltbGluaygpLCAnUkVTVE9SRV9UQVJHRVRfQUxSRUFEWV9FWElTVFMnKQogICAgbWFuaWZlc3QsIHBheWxvYWQsIG1hbmlmZXN0X3NoYSA9IHZlcmlmeV9zZXQod29yaywgY2FwKQogICAgcmVxdWlyZShwYXlsb2FkID09IHNhdmVkWydwYXlsb2FkQnl0ZXMnXSA9PSA5NjQxNzIsICdBQ0NFUFRFRF9DQVBUVVJFX1BBWUxPQURfQ0hBTkdFRCcpCiAgICByZXF1aXJlKHNodXRpbC5kaXNrX3VzYWdlKFJPT1QpLmZyZWUgPj0gNCAqIEdJQiwgJ0ZSRUVfU1BBQ0VfTElNSVQnKQogICAgcHJlcGFyZS5ydW50aW1lKCkKICAgIGNhcC5nYXRlcyhwcmVwYXJlKQogICAgcmVxdWlyZShkaWdlc3QocGF0aGxpYi5QYXRoKCcvdXNyL2xvY2FsL3NiaW4vcGFzc3Zlcm8tcG9zdGdyZXMtYmFja3VwJykpID09IHByZXBhcmUuUElOLAogICAgICAgICAgICAnUFJPRFVDVElPTl9CQUNLVVBfU09VUkNFX0NIQU5HRUQnKQogICAgYmluYXJ5ID0gcGF0aGxpYi5QYXRoKCcvdXNyL2xvY2FsL2Jpbi9yZXN0aWMnKQogICAgaW5mbyA9IGJpbmFyeS5sc3RhdCgpCiAgICByZXF1aXJlKHN0YXQuU19JU1JFRyhpbmZvLnN0X21vZGUpIGFuZCBpbmZvLnN0X3VpZCA9PSAwIGFuZCBub3QgaW5mby5zdF9tb2RlICYgMG8wMjIKICAgICAgICAgICAgYW5kIG9zLmFjY2VzcyhiaW5hcnksIG9zLlhfT0spLCAnRVhJU1RJTkdfUkVTVElDX1BPU1RVUkUnKQogICAgaGVscF9yZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbc3RyKGJpbmFyeSksICdyZXN0b3JlJywgJy0taGVscCddLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0aW1lb3V0PTEwLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbnY9eydQQVRIJzogJy91c3IvYmluOi9iaW4nLCAnTEFORyc6ICdDJ30pCiAgICByZXF1aXJlKGhlbHBfcmVzdWx0LnJldHVybmNvZGUgPT0gMCBhbmQgYictLXZlcmlmeScgaW4gaGVscF9yZXN1bHQuc3Rkb3V0LAogICAgICAgICAgICAnRVhJU1RJTkdfUkVTVElDX1JFU1RPUkVfVkVSSUZZX1VOQVZBSUxBQkxFJykKICAgIHJlcG9zaXRvcnkgPSByZXBvc2l0b3J5IG9yIFJlcG9zaXRvcnkocHJlcGFyZSkKICAgIFBIQVNFID0gJ1ZFUklGWV9FWEFDVF9TVEFHSU5HX0IyX1BSRUZJWCcKICAgIGVtcHR5ID0gcmVwb3NpdG9yeS5lbXB0eV9wcmVmaXgoKQogICAgaWYgbm90IGVtcHR5OgogICAgICAgIGNvbmZpZyA9IGpzb24ubG9hZHMocmVwb3NpdG9yeS5ydW4oWydjYXQnLCAnY29uZmlnJ10pKQogICAgICAgIGJlZm9yZSA9IHJlcG9zaXRvcnkuc25hcHNob3RzKCkKICAgICAgICByZXF1aXJlKGJlZm9yZSwgJ05PTkVNUFRZX1BSRUZJWF9XSVRIT1VUX0lERU5USUZJRURfU05BUFNIT1RTJykKICAgICAgICBwcmVwYXJlZCA9IGNhcC5yZWFkKFJPT1QgLyAncHJlcGFyYXRpb24nIC8gY2FwLlNFRUQgLyAncHJlcGFyZWQuanNvbicpWydyZXBvc2l0b3J5J10KICAgICAgICBpZiBwcmVwYXJlZC5nZXQoJ2V4aXN0cycpOgogICAgICAgICAgICByZXF1aXJlKGNvbmZpZy5nZXQoJ2lkJykgPT0gcHJlcGFyZWRbJ2lkJ10sICdQUkVQQVJFRF9SRVBPU0lUT1JZX0NIQU5HRUQnKQogICAgZWxzZToKICAgICAgICBiZWZvcmUgPSBbXQogICAgICAgIGNvbmZpZyA9IE5vbmUKICAgIGlmIGNvbmZpZyBpcyBub3QgTm9uZToKICAgICAgICByZXF1aXJlKGNvbmZpZy5nZXQoJ3ZlcnNpb24nKSBpbiAoMSwgMikgYW5kIHJlLmZ1bGxtYXRjaCgnW2EtZjAtOV17NjR9JywgY29uZmlnLmdldCgnaWQnLCAnJykpLAogICAgICAgICAgICAgICAgJ1JFUE9TSVRPUllfRk9STUFUJykKICAgIHJlcXVpcmUobm90IGFueShzdHIod29yaykgaW4gcm93WydwYXRocyddIGZvciByb3cgaW4gYmVmb3JlKSwgJ1NFVF9BTFJFQURZX0lOX0IyX01BTlVBTF9SRVZJRVcnKQogICAgY2FwLndyaXRlKGF0dGVtcHQsIHsnc2V0SWQnOiBTRVRfSUQsICdtYW5pZmVzdFNoYTI1Nic6IG1hbmlmZXN0X3NoYSwgJ2F1dG9tYXRpY1JldHJ5JzogRmFsc2V9KQogICAgaWYgZW1wdHk6CiAgICAgICAgUEhBU0UgPSAnSU5JVF9BUFBST1ZFRF9TVEFHSU5HX1JFUE9TSVRPUllfT05MWScKICAgICAgICByZXBvc2l0b3J5LnJ1bihbJ2luaXQnXSwgd3JpdGluZz1UcnVlKQogICAgICAgIGNvbmZpZyA9IGpzb24ubG9hZHMocmVwb3NpdG9yeS5ydW4oWydjYXQnLCAnY29uZmlnJ10pKQogICAgICAgIHJlcXVpcmUoY29uZmlnLmdldCgndmVyc2lvbicpIGluICgxLCAyKSBhbmQgcmUuZnVsbG1hdGNoKCdbYS1mMC05XXs2NH0nLCBjb25maWcuZ2V0KCdpZCcsICcnKSksCiAgICAgICAgICAgICAgICAnSU5JVElBTElaRURfUkVQT1NJVE9SWV9GT1JNQVQnKQogICAgY2FwLndyaXRlKGNvbnRyb2wgLyAnb2Zmc2l0ZS1yZXBvc2l0b3J5Lmpzb24nLCB7J3ByZWZpeCc6IHByZXBhcmUuUFJFRklYICsgJy8nLAogICAgICAgICAgICAgICdyZXBvc2l0b3J5SWQnOiBjb25maWdbJ2lkJ10sICdtYW5pZmVzdFNoYTI1Nic6IG1hbmlmZXN0X3NoYSwgJ3NldElkJzogU0VUX0lEfSkKICAgIFBIQVNFID0gJ0JBQ0tVUF9FWEFDVF9DQVBUVVJFRF9TRVQnCiAgICBwcmludChqc29uLmR1bXBzKHsnb2Zmc2l0ZSc6ICdVUExPQURJTkdfQ0FQVFVSRURfU0VUJywgJ3NldElkJzogU0VUX0lELAogICAgICAgICAgICAgICAgICAgICAgJ3N0YWdpbmdQYXVzZVJlcXVlc3RlZCc6IEZhbHNlLCAncGF5bG9hZEJ5dGVzJzogcGF5bG9hZH0pLCBmbHVzaD1UcnVlKQogICAgcmVwb3NpdG9yeS5ydW4oWydiYWNrdXAnLCAnLS1qc29uJywgJy0tZm9yY2UnLCAnLS1ob3N0JywgSE9TVCwgJy0tdGFnJywgSE9TVCwKICAgICAgICAgICAgICAgICAgICAnLS10YWcnLCAnc2V0OicgKyBTRVRfSUQsIHN0cih3b3JrKV0sIHdyaXRpbmc9VHJ1ZSkKICAgIGFmdGVyID0gcmVwb3NpdG9yeS5zbmFwc2hvdHMoKQogICAgcmVxdWlyZSh7cm93WydpZCddIGZvciByb3cgaW4gYmVmb3JlfSA8PSB7cm93WydpZCddIGZvciByb3cgaW4gYWZ0ZXJ9LCAnRVhJU1RJTkdfU05BUFNIT1RTX0NIQU5HRUQnKQogICAgYWRkZWQgPSBbcm93IGZvciByb3cgaW4gYWZ0ZXIgaWYgcm93WydpZCddIG5vdCBpbiB7b2xkWydpZCddIGZvciBvbGQgaW4gYmVmb3JlfV0KICAgIHJlcXVpcmUobGVuKGFkZGVkKSA9PSAxIGFuZCBhZGRlZFswXVsncGF0aHMnXSA9PSBbc3RyKHdvcmspXQogICAgICAgICAgICBhbmQgJ3NldDonICsgU0VUX0lEIGluIGFkZGVkWzBdLmdldCgndGFncycsIFtdKSwgJ05FV19TTkFQU0hPVF9JREVOVElUWScpCiAgICBzbmFwc2hvdF9pZCA9IGFkZGVkWzBdWydpZCddCiAgICBjYXAud3JpdGUoY29udHJvbCAvICdvZmZzaXRlLXNuYXBzaG90Lmpzb24nLCB7J3NldElkJzogU0VUX0lELCAnc25hcHNob3RJZCc6IHNuYXBzaG90X2lkLAogICAgICAgICAgICAgICdyZXBvc2l0b3J5SWQnOiBjb25maWdbJ2lkJ10sICdtYW5pZmVzdFNoYTI1Nic6IG1hbmlmZXN0X3NoYX0pCiAgICByZXF1aXJlKHZlcmlmeV9zZXQod29yaywgY2FwKSA9PSAobWFuaWZlc3QsIHBheWxvYWQsIG1hbmlmZXN0X3NoYSksICdDQVBUVVJFX0NIQU5HRURfRFVSSU5HX1VQTE9BRCcpCiAgICByZXF1aXJlKGhhc2hsaWIuc2hhMjU2KHJlcG9zaXRvcnkucnVuKFsnZHVtcCcsIHNuYXBzaG90X2lkLAogICAgICAgICAgICBzdHIod29yayAvICdyZWNvdmVyeS1zZXQuanNvbicpXSkpLmhleGRpZ2VzdCgpID09IG1hbmlmZXN0X3NoYSwgJ0IyX01BTklGRVNUX0NIRUNLU1VNJykKICAgIHZhbGlkYXRlX3RyZWUocmVwb3NpdG9yeS5ydW4oWydscycsICctLWpzb24nLCBzbmFwc2hvdF9pZF0pLCBzbmFwc2hvdF9pZCwgd29yaywgbWFuaWZlc3QpCiAgICByZXF1aXJlKHNodXRpbC5kaXNrX3VzYWdlKFJPT1QpLmZyZWUgPj0gNCAqIEdJQiwgJ1BSRV9ET1dOTE9BRF9GUkVFX1NQQUNFX0xJTUlUJykKICAgIGlmIG5vdCByZXN0b3JlX3Jvb3QuZXhpc3RzKCk6CiAgICAgICAgcmVzdG9yZV9yb290Lm1rZGlyKG1vZGU9MG83MDApCiAgICB0YXJnZXQubWtkaXIobW9kZT0wbzcwMCwgZXhpc3Rfb2s9RmFsc2UpCiAgICBkb3dubG9hZCA9IHRhcmdldCAvICdkb3dubG9hZCcKICAgIGRvd25sb2FkLm1rZGlyKG1vZGU9MG83MDApCiAgICBQSEFTRSA9ICdSRVNUT1JFX0VYQUNUX0IyX1NOQVBTSE9UX1RPX05FV19QUklWQVRFX0ZJTEVTWVNURU0nCiAgICByZXBvc2l0b3J5LnJ1bihbJ3Jlc3RvcmUnLCBzbmFwc2hvdF9pZCwgJy0tdGFyZ2V0Jywgc3RyKGRvd25sb2FkKSwgJy0tdmVyaWZ5J10pCiAgICByZXN0b3JlZCA9IGRvd25sb2FkIC8gd29yay5yZWxhdGl2ZV90bygnLycpCiAgICByZXF1aXJlKHZlcmlmeV9zZXQocmVzdG9yZWQsIGNhcCkgPT0gKG1hbmlmZXN0LCBwYXlsb2FkLCBtYW5pZmVzdF9zaGEpLCAnRE9XTkxPQURFRF9TRVRfTUlTTUFUQ0gnKQogICAgc3RvcmFnZSA9IGNhcC5yZWFkKHJlc3RvcmVkIC8gJ3N0b3JhZ2UnIC8gJ21hbmlmZXN0Lmpzb24nKQogICAgcmVjb25jaWxpYXRpb24gPSByZWZlcmVuY2VzLnJlY29uY2lsZShzdG9yYWdlWydvYmplY3RzJ10sIHN0b3JhZ2VbJ3JlZmVyZW5jZXMnXSkKICAgIHJlcXVpcmUocmVjb25jaWxpYXRpb24gPT0gc3RvcmFnZVsncmVjb25jaWxpYXRpb24nXSwgJ1JFU1RPUkVEX0FTU0VUX1JFQ09OQ0lMSUFUSU9OJykKICAgIGZvciBpdGVtIGluIHN0b3JhZ2VbJ29iamVjdHMnXToKICAgICAgICBwYXRoID0gcmVzdG9yZWQgLyAnc3RvcmFnZScgLyAnb2JqZWN0cycgLyBpdGVtWydidWNrZXQnXSAvIGl0ZW1bJ2ZpbGUnXQogICAgICAgIHJlcXVpcmUocGF0aC5zdGF0KCkuc3Rfc2l6ZSA9PSBpdGVtWydzaXplJ10gYW5kIGRpZ2VzdChwYXRoKSA9PSBpdGVtWydzaGEyNTYnXSwKICAgICAgICAgICAgICAgICdSRVNUT1JFRF9BU1NFVF9DSEVDS1NVTScpCiAgICBwcmVwYXJlLnJ1bnRpbWUoKQogICAgY2FwLmdhdGVzKHByZXBhcmUpCiAgICByZXF1aXJlKHNodXRpbC5kaXNrX3VzYWdlKFJPT1QpLmZyZWUgPj0gNCAqIEdJQiwgJ0ZJTkFMX0ZSRUVfU1BBQ0VfTElNSVQnKQogICAgcmVzdWx0ID0geydvZmZzaXRlJzogJ1BBU1NfUkVBTF9CMl9TTkFQU0hPVF9ET1dOTE9BREVEX0FORF9CWVRFU19WRVJJRklFRCcsICdzZXRJZCc6IFNFVF9JRCwKICAgICAgICAnc25hcHNob3RJZCc6IHNuYXBzaG90X2lkLCAncmVwb3NpdG9yeUlkJzogY29uZmlnWydpZCddLCAnYjJQcmVmaXgnOiBwcmVwYXJlLlBSRUZJWCArICcvJywKICAgICAgICAncGF5bG9hZEJ5dGVzJzogcGF5bG9hZCwgJ21hbmlmZXN0U2hhMjU2JzogbWFuaWZlc3Rfc2hhLCAnYWxsU2V0RmlsZXNDaGVja3N1bW1lZCc6IFRydWUsCiAgICAgICAgJ3N0b3JhZ2VPYmplY3RzJzogbGVuKHN0b3JhZ2VbJ29iamVjdHMnXSksICdzdG9yYWdlQnl0ZXMnOiBzdW0oeFsnc2l6ZSddIGZvciB4IGluIHN0b3JhZ2VbJ29iamVjdHMnXSksCiAgICAgICAgJ2RhdGFiYXNlQXNzZXRSZWZlcmVuY2VzJzogbGVuKHN0b3JhZ2VbJ3JlZmVyZW5jZXMnXSksCiAgICAgICAgJ2FjY2VwdGVkQ2xlYW51cFRvbWJzdG9uZXMnOiBsZW4ocmVjb25jaWxpYXRpb25bJ2FjY2VwdGVkQ2xlYW51cFRvbWJzdG9uZXMnXSksCiAgICAgICAgJ3N0YWdpbmcnOiAnT05MSU5FX1VOUEFVU0VEJywgJ3JlbWluZGVyVGltZXInOiAnRElTQUJMRURfSU5BQ1RJVkUnLCAnY2FtcGFpZ25zRW5hYmxlZCc6IDAsCiAgICAgICAgJ2RhdGFiYXNlUmVzdG9yZSc6ICdOT1RfWUVUX1JVTicsICdpc29sYXRlZEFwcGxpY2F0aW9uUmVhZCc6ICdOT1RfWUVUX1JVTicsCiAgICAgICAgJ3Jlc3RvcmVDbHVzdGVyJzogJ05PVF9DUkVBVEVEJywgJ3N0b3JhZ2VQcm92aWRlclJlc3RvcmUnOiAnTk9UX1BFUkZPUk1FRCcsCiAgICAgICAgJ3NtdHBDYWxscyc6IDAsICd0ZWxlZ3JhbUNhbGxzJzogMCwgJ2F1dG9tYXRpY1JldHJ5JzogRmFsc2UsICdhcnRpZmFjdHNSZXRhaW5lZCc6IFRydWV9CiAgICBjYXAud3JpdGUoY29udHJvbCAvICdvZmZzaXRlLXN1bW1hcnkuanNvbicsIHJlc3VsdCkKICAgIGNhcC53cml0ZSh0YXJnZXQgLyAnZG93bmxvYWQtcHJvb2YuanNvbicsIHJlc3VsdCkKICAgIHByaW50KGpzb24uZHVtcHMocmVzdWx0KSkKCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgdHJ5OgogICAgICAgIG1haW4oKQogICAgZXhjZXB0IEJhc2VFeGNlcHRpb24gYXMgZXJyb3I6CiAgICAgICAgbWVzc2FnZSA9IHN0cihlcnJvcikKICAgICAgICByZWFzb24gPSBtZXNzYWdlIGlmIHJlLmZ1bGxtYXRjaChyJ1tBLVowLTlfXXsxLDE2MH0nLCBtZXNzYWdlKSBlbHNlIHR5cGUoZXJyb3IpLl9fbmFtZV9fCiAgICAgICAgcmVzdWx0ID0geydvZmZzaXRlJzogJ1NUT1AnLCAncGhhc2UnOiBQSEFTRSwgJ3JlYXNvbic6IHJlYXNvbiwKICAgICAgICAgICAgICAgICAgJ3JlbW90ZVdyaXRlc01heUhhdmVPY2N1cnJlZCc6IFJFTU9URV9XUklURVMsICdzdGFnaW5nUGF1c2VSZXF1ZXN0ZWQnOiBGYWxzZSwKICAgICAgICAgICAgICAgICAgJ3Jlc3RvcmVDbHVzdGVyJzogJ05PVF9DUkVBVEVEJywgJ2FydGlmYWN0c1JldGFpbmVkJzogVHJ1ZSwKICAgICAgICAgICAgICAgICAgJ3JldHJ5JzogJ01BTlVBTF9SRVZJRVdfUkVRVUlSRUQnLCAnc210cENhbGxzJzogMCwgJ3RlbGVncmFtQ2FsbHMnOiAwfQogICAgICAgIGlmIENPTlRST0wgaXMgbm90IE5vbmU6CiAgICAgICAgICAgIHRyeToKICAgICAgICAgICAgICAgIHN0YW1wID0gZGF0ZXRpbWUuZGF0ZXRpbWUubm93KGRhdGV0aW1lLnRpbWV6b25lLnV0Yykuc3RyZnRpbWUoJyVZJW0lZFQlSCVNJVMlZlonKQogICAgICAgICAgICAgICAgd2l0aCBvcGVuKENPTlRST0wgLyAoJ29mZnNpdGUtc3RvcC0nICsgc3RhbXAgKyAnLmpzb24nKSwgJ3gnKSBhcyBoYW5kbGU6CiAgICAgICAgICAgICAgICAgICAganNvbi5kdW1wKHJlc3VsdCwgaGFuZGxlKQogICAgICAgICAgICAgICAgICAgIGhhbmRsZS53cml0ZSgnXG4nKQogICAgICAgICAgICBleGNlcHQgRXhjZXB0aW9uOgogICAgICAgICAgICAgICAgcGFzcwogICAgICAgIHByaW50KGpzb24uZHVtcHMocmVzdWx0KSkKICAgICAgICBzeXMuZXhpdCgxKQo='}, 'config.json': {'sha256': '399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62', 'base64': 'ewogICJhcHByb3ZlZCI6IHRydWUsCiAgImJ1aWxkSWQiOiAibU1WUE9qRlBrdzVMNDJSSXF6aVM0IiwKICAiY2Fub25pY2FsU2hhMjU2IjogImY3MDM5ZGUyMmQ1MDhiYWFjOWQ3MGNkYTEzZWVkOWE5OGI1NTBhZjkzZjhiMGY5MmZhZGJlYTlmYTgxMDZjNDAiLAogICJoZWxwZXJzIjogewogICAgImNhcHR1cmUiOiAiZDRjNjQ0Y2YwMTAwZWY5NGU5NjI3N2JmZTM3MjYxNmQ5OThiYWMwNWRhZDJkOWEwNjhjZDg5MzhlZjEwYjVmYSIsCiAgICAib2Zmc2l0ZSI6ICI0MzQ5NDc2ZWFmYTYwNjdjYTA2OTBmYTAyN2IxYmFhZDExNTliOGUwZDE3ZDJiZTgzMDFiYzA0Yzc0ODI1MTRmIiwKICAgICJwcmVwYXJlIjogImQ1MTliZjBmMDM5OTk2ZjNhYzk4MzgxODJiYTI4MjE4ZjMxMDU1ZTQyZTViYTY3NWQ1NzIzMzZmNjdjNWU0NzMiLAogICAgInJlY3VycmluZ19jYXRhbG9nIjogImIwYjg0YjFhMDYwMzVjMDQ5NDk3NzdkNjY0ZmZlNzNlOTM2MmIwNjMzNTdmNzJlZTcyMDUwOTdjMWIyNTEzZjciLAogICAgInJlZmVyZW5jZXMiOiAiMmM0NWQ4NDA4OWU5OTYwNjgxYjMzMThmYTRlZDJkNWMzMDIxZWIyNDUzYWFkNzA3MzdlZjZkNjk0MDRhZTM3NiIsCiAgICAicmVzdG9yZS1kYXRhYmFzZSI6ICI1ZmIyOTZmOTZjMzdmYjNlYmZiNjgxZjUzNGU2ZGYwMWNmMzkyYzlmYjhiOTkzYzMyMmY2OTZkMjA3OTRmZDBmIiwKICAgICJ2ZXJpZnktZGF0YWJhc2UiOiAiY2ZhZGYxNDNhZDdhMmU3OWJhOTYzNWEwMWU3ZTE2N2EzNGFhMDY2NjliZTc5ODMzOTZhYmE1Njk3MzQ2OTYyNCIKICB9LAogICJtaWdyYXRpb25zIjogewogICAgImNvdW50IjogMzMsCiAgICAiZGlnZXN0IjogImEzMzA1MjMyYTcxMWQyYmY1NmRhNDYxMjZlYjg1ZjI0IiwKICAgICJmaW5pc2hlZCI6IHRydWUKICB9LAogICJyZWFkZXJCdWlsZFNoYTI1NiI6ICJiMTFjNTA5OThkODdmMTM0YzM2MTFjNGU1MzM3NjA0OTkwMzE1YjgzYjE4ZDQzZWFmZTkxNDAzNjM1MzUxZTg1IiwKICAicmVhZGVyTW9kdWxlcyI6IHsKICAgICJzcmMvYXBwbGljYXRpb24vZG9jdW1lbnRzL2J5dGVzLnRzIjogImIwOWE5ZDFlYzJkMTBlOWEzMzAzNTJiYzE1YTk5MjcxZGQzZGU4OTRkOWZkYjExNDVjYmE2MzkzMDRlYzk3MTAiLAogICAgInNyYy9hcHBsaWNhdGlvbi9kb2N1bWVudHMvY29udHJhY3RzLnRzIjogImZkYjVmNDQ0ODQyNGMyMTc1MDg5OTU1ZGE3OGEzMDRlY2MxYjQyNDBiMTY0ZTY3NTg4MGFkNzkwNTM5ZjI2ZDMiLAogICAgInNyYy9hcHBsaWNhdGlvbi9kb2N1bWVudHMvcGRmLnRzIjogIjA3Njk3ZGI4ODUwZjc4MmJjZTNlZmU0NDdmNTQzMGMyNDkxY2EwNjU4ODA5N2Y0ODJjNzUwMWY4MGIwMDlmZDgiLAogICAgInNyYy9hcHBsaWNhdGlvbi9lcnJvcnMvYXBwbGljYXRpb24tZXJyb3IudHMiOiAiODliZmQ2MmE2YWI5NDY4MWU4NWNiOGIzZDU3ZjRiMDliMDAyYTYzODQzMGRlNzdlYzA3NDQ5N2VkNDkzZWJjMSIsCiAgICAic3JjL2FwcGxpY2F0aW9uL3Blcm1pc3Npb25zL3Byb2R1Y3QtcGVybWlzc2lvbnMudHMiOiAiZTcxNmYxMTA3MjI3NzlkYWRiOWJhNWY5NjcxM2EwY2VjMzBjMmIzYTI0M2UzOWQxOWNhNWIxNzkwZjI0MGMxOSIsCiAgICAic3JjL2FwcGxpY2F0aW9uL3Byb2R1Y3RzL2V4cG9ydC1jYXRhbG9nL2NvbnRyYWN0cy50cyI6ICI3MWI0YWI0OGYwMTdlYzExMzVjMTA1MzY4MDczNmUxZDY2ZTBiNWVkNWVlZTc4ZmY5ZjA1MjQyYTFiNzYwZDA1IiwKICAgICJzcmMvYXBwbGljYXRpb24vcHJvZHVjdHMvZXhwb3J0LWNhdGFsb2cvY3N2LnRzIjogIjM0MTlkNTQwZGM0ZWI4ZTJmYTAxMDRjNjE5ODUwYTMyOTVkODdlNDNmZDQzNDVjYWE1Njc4YzgxODMwMGYwYzYiLAogICAgInNyYy9hcHBsaWNhdGlvbi9wcm9kdWN0cy9leHBvcnQtY2F0YWxvZy9leHBvcnQtY2F0YWxvZy50cyI6ICJkYTMwZjk1ZmE3ZTU2MzA4MTlhNjMzMzM1MDk5Yjk3MDhiNjJkYWE1NTJiM2ExMGIyM2VkMzIwMmIwYzJiNzA4IiwKICAgICJzcmMvYXBwbGljYXRpb24vcHJvZHVjdHMvaW1hZ2VzL2NvbnRyYWN0cy50cyI6ICIxMTdjZWZmNDBhMGU0OTkyM2NiMjJiNDRmNmQzZTNhYTNjZDc0MjJiNjkzYzg5M2RjMGViYzU4MGVlYmVkNGMxIiwKICAgICJzcmMvYXBwbGljYXRpb24vcHJvZHVjdHMvaW1hZ2VzL3NlcnZpY2UudHMiOiAiN2ZiNWZlMTIxNDM3MzdkYjg4MTgzYjg0MmUzNGQyY2FhOTA3MmQ5YzYzMDBlZTUxM2UzNGNjODMxMjQ5YzQ4YyIsCiAgICAic3JjL2FwcGxpY2F0aW9uL3Byb2R1Y3RzL3Byb2R1Y3Qtc2VhcmNoLnRzIjogIjc3NTQ4ZWFhM2I2NTAzMzM2NzVjYmNhNTQxOWI0YWEyODI5NDdiZDY0ODIyMmM2NjAzMzNmZmJmZmRhN2VmN2QiCiAgfSwKICAicmVwb3NpdG9yeUlkIjogIjkwNTgzNThkOTdiZGQzYjdlMmVmNTZjNTNlYTEzMmY0YjdiZTc0NzUyZjIxM2NiZmJjYzA5M2M1MzMxYjliMzUiLAogICJ0YWJsZXMiOiA1NiwKICAidGVzdFRlbGVncmFtQXBwcm92ZWQiOiBmYWxzZSwKICAid29ya2VyIjogewogICAgImxhdW5jaC5weSI6ICI4MTJjNmU5OTMxNDM2MjVhZGU1MzRkMWNiMmJmOTFlY2FhZmU0MzE4NDRjMWQxMzcwNWVmNjk0NDllMDA1NDQyIiwKICAgICJ3b3JrZXIuY2pzIjogImZmOWY4YWJkYTNmZmRiMGZhNzUwMThiZmQ3OWEwMGJiYTMzOTJmZDJkNzJiMTE0ZTBkNDllYTk3OThlMTViNjMiCiAgfQp9Cg=='}, 'passvero-staging-backup.service': {'sha256': '609ae194de0f6bdef8c91d7a1a1932173f6aca81092a28da623a702413d3d99b', 'base64': 'W1VuaXRdCkRlc2NyaXB0aW9uPVBhc3N2ZXJvIHN0YWdpbmctb25seSBEQiBhbmQgcHJpdmF0ZSBTdG9yYWdlIGJhY2t1cApPbkZhaWx1cmU9cGFzc3Zlcm8tc3RhZ2luZy1iYWNrdXAtbW9uaXRvci5zZXJ2aWNlCltTZXJ2aWNlXQpUeXBlPW9uZXNob3QKVXNlcj1yb290ClVNYXNrPTAwNzcKRXhlY0NvbmRpdGlvbj0vdXNyL2Jpbi9weXRob24zIC1CIC91c3IvbG9jYWwvbGliZXhlYy9wYXNzdmVyby1zdGFnaW5nLWJhY2t1cC9yZWN1cnJpbmcucHkgLS1lbGlnaWJsZQpFeGVjU3RhcnQ9L3Vzci9iaW4vcHl0aG9uMyAtQiAvdXNyL2xvY2FsL2xpYmV4ZWMvcGFzc3Zlcm8tc3RhZ2luZy1iYWNrdXAvcmVjdXJyaW5nLnB5IC0tc2NoZWR1bGVkCkV4ZWNTdG9wUG9zdD0vdXNyL2Jpbi9weXRob24zIC1CIC91c3IvbG9jYWwvbGliZXhlYy9wYXNzdmVyby1zdGFnaW5nLWJhY2t1cC9yZWN1cnJpbmcucHkgLS1wb3N0ClRpbWVvdXRTdGFydFNlYz0zNW1pbgpUaW1lb3V0U3RvcFNlYz0zNXMKS2lsbE1vZGU9Y29udHJvbC1ncm91cApLaWxsU2lnbmFsPVNJR0tJTEwKUmVzdGFydD1ubwpTdGFuZGFyZE91dHB1dD1udWxsClN0YW5kYXJkRXJyb3I9bnVsbAo='}, 'passvero-staging-backup.timer': {'sha256': '6808757a8377a118f57999447cc0d5ceb769484069915765248ca856bb445301', 'base64': 'W1VuaXRdCkRlc2NyaXB0aW9uPURhaWx5IFBhc3N2ZXJvIHN0YWdpbmcgYmFja3VwLCBubyBib290IGNhdGNoLXVwCltUaW1lcl0KT25DYWxlbmRhcj0qLSotKiAwNDozMDowMCBVVEMKQWNjdXJhY3lTZWM9MXMKUmFuZG9taXplZERlbGF5U2VjPTAKUGVyc2lzdGVudD1mYWxzZQpVbml0PXBhc3N2ZXJvLXN0YWdpbmctYmFja3VwLnNlcnZpY2UKW0luc3RhbGxdCldhbnRlZEJ5PXRpbWVycy50YXJnZXQK'}, 'passvero-staging-backup-monitor.service': {'sha256': '1e2c941c516a76bdb974703ed49cf21a8a6e6a6a6c7d9f172c969a415045e72f', 'base64': 'W1VuaXRdCkRlc2NyaXB0aW9uPUluZGVwZW5kZW50IHN0YWdpbmcgYmFja3VwIHNpZ25hbHMsIGV4aXN0aW5nIHByb3RlY3RlZCBUZWxlZ3JhbSBkZXN0aW5hdGlvbgpbU2VydmljZV0KVHlwZT1vbmVzaG90ClVzZXI9cm9vdApVTWFzaz0wMDc3CkV4ZWNTdGFydD0vdXNyL2Jpbi9weXRob24zIC1CIC91c3IvbG9jYWwvbGliZXhlYy9wYXNzdmVyby1zdGFnaW5nLWJhY2t1cC9yZWN1cnJpbmcucHkgLS1tb25pdG9yClRpbWVvdXRTdGFydFNlYz0zMHMKUmVzdGFydD1ubwpTdGFuZGFyZE91dHB1dD1udWxsClN0YW5kYXJkRXJyb3I9bnVsbAo='}, 'passvero-staging-backup-monitor.timer': {'sha256': '092e0e0d1eb3e3c63803095ceac733b57090c7197ee34c06c0465ab5dcdb7689', 'base64': 'W1VuaXRdCkRlc2NyaXB0aW9uPUhvdXJseSBzdGFnaW5nLW9ubHkgYmFja3VwIGZyZXNobmVzcwpbVGltZXJdCk9uQ2FsZW5kYXI9Ki0qLSogKjoyMDowMCBVVEMKQWNjdXJhY3lTZWM9MXMKUmFuZG9taXplZERlbGF5U2VjPTAKUGVyc2lzdGVudD1mYWxzZQpVbml0PXBhc3N2ZXJvLXN0YWdpbmctYmFja3VwLW1vbml0b3Iuc2VydmljZQpbSW5zdGFsbF0KV2FudGVkQnk9dGltZXJzLnRhcmdldAo='}}
+import base64,datetime,hashlib,importlib.util,json,os,pathlib,stat,subprocess
+os.umask(0o077)
+assert os.geteuid()==0 and os.uname().nodename=='srv1834647','OPERATOR_HOST'
+root=pathlib.Path('/var/lib/passvero-staging-recovery')
+code=pathlib.Path('/usr/local/libexec/passvero-staging-backup')
+state=root/'recurring'
+assert root.is_dir() and root.lstat().st_uid==0 and stat.S_IMODE(root.stat().st_mode)==0o700
+assert not code.exists() and not code.is_symlink() and not state.exists(),'EXISTING_INSTALLATION_STOP'
+# Preflight every destination/input before writing. No secret value is printed.
+for name,item in PAYLOAD.items():
+    assert hashlib.sha256(base64.b64decode(item['base64'])).hexdigest()==item['sha256']
+    if name.endswith(('.service','.timer')):
+        assert not (pathlib.Path('/etc/systemd/system')/name).exists(),'EXISTING_UNIT_STOP'
+config=json.loads(base64.b64decode(PAYLOAD['config.json']['base64']))
+for name,pin in config['helpers'].items():
+    if name not in ('offsite','recurring_catalog'):
+        path=root/'operator'/(name+'-'+pin+'.py')
+        assert path.is_file() and not path.is_symlink() and path.lstat().st_uid==0 and not path.stat().st_mode&0o077
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==pin,'ACCEPTED_HELPER_CHANGED'
+code.mkdir(mode=0o700);state.mkdir(mode=0o700)
+for name,item in PAYLOAD.items():
+    destination=(pathlib.Path('/etc/systemd/system') if name.endswith(('.service','.timer')) else code)/name
+    fd=os.open(destination,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o644 if name.endswith(('.service','.timer')) else 0o600)
+    with os.fdopen(fd,'wb') as handle:handle.write(base64.b64decode(item['base64']));handle.flush();os.fsync(handle.fileno())
+now=datetime.datetime.now(datetime.timezone.utc)
+first=now.replace(hour=4,minute=30,second=0,microsecond=0)
+if first<=now:first+=datetime.timedelta(days=1)
+(state/'state.json').write_text(json.dumps({'mode':'ACCEPTANCE','attempts':0,'hold':False,'completed':[],
+                                         'firstDueEpoch':int(first.timestamp())},sort_keys=True)+'\n')
+spec=importlib.util.spec_from_file_location('installed_recurring',code/'recurring.py')
+adapter=importlib.util.module_from_spec(spec);spec.loader.exec_module(adapter)
+policy,helpers=adapter.scope();adapter.runtime(policy,helpers)
+# Service validation and enablement only after all runtime/repository pins validate.
+repository=helpers['offsite'].Repository(helpers['prepare'])
+assert json.loads(repository.run(['cat','config']))['id']==policy['repositoryId']
+adapter.select_snapshots(repository.snapshots())
+subprocess.run(['/usr/bin/systemd-analyze','verify',*[str(pathlib.Path('/etc/systemd/system')/name) for name in PAYLOAD if name.endswith(('.service','.timer'))]],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+subprocess.run(['/usr/bin/systemctl','daemon-reload'],check=True)
+subprocess.run(['/usr/bin/systemctl','enable','--now','passvero-staging-backup.timer','passvero-staging-backup-monitor.timer'],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+print(json.dumps({'installation':'PASS_ENABLED_ACCEPTANCE_BUDGET_TWO','firstDueUTC':first.isoformat(),
+                  'secondDueUTC':(first+datetime.timedelta(days=1)).isoformat(),'testTelegram':'NOT_SENT_NOT_APPROVED',
+                  'waitFor':'TWO_ORDINARY_DAILY_TIMER_INVOCATIONS','manualCapture':False}))
+PASSVERO_STAGING_INSTALL
+```
+
+### VPS TERMINAL Results — read once after second scheduled due
+
+```sh
+# PENDING_OPERATOR_COMMAND — VPS TERMINAL RESULTS: read once after secondDueUTC
+sudo /usr/bin/python3 -B - <<'PASSVERO_STAGING_RESULTS'
+import json,pathlib,subprocess
+root=pathlib.Path('/var/lib/passvero-staging-recovery');state=root/'recurring'
+value=json.loads((state/'state.json').read_text())
+output={'state':value}
+for name in ('monitor-result.json','acceptance-first-failure.json','acceptance.json','retention.json','signal-proof.json'):
+    path=state/name
+    if path.is_file():output[name]=json.loads(path.read_text())
+for row in value.get('completed',[]):
+    set_id=row['setId'];assert len(set_id)==16 and set_id.endswith('Z')
+    control=root/'control'/set_id
+    output[set_id]={'timer':json.loads((control/'timer-invocation.json').read_text()),'closure':json.loads((control/'closure.json').read_text())}
+output['units']=subprocess.run(['/usr/bin/systemctl','show','passvero-staging-backup.timer','passvero-staging-backup-monitor.timer','--property=Id,ActiveState,UnitFileState,LastTriggerUSec,NextElapseUSecRealtime'],check=True,capture_output=True,text=True).stdout
+print(json.dumps(output,indent=2,sort_keys=True))
+PASSVERO_STAGING_RESULTS
+```
+
+### VPS TERMINAL B–D — after returned successful A; same combined approval
+
+```sh
+# PENDING_OPERATOR_COMMAND — VPS TERMINAL B–D: after returned A proof, same approval
+sudo /usr/bin/python3 -B - <<'PASSVERO_STAGING_ACCEPTANCE'
+import json,pathlib,subprocess
+code=pathlib.Path('/usr/local/libexec/passvero-staging-backup');state=pathlib.Path('/var/lib/passvero-staging-recovery/recurring')
+value=json.loads((state/'state.json').read_text())
+assert value['attempts']==2 and len(value['completed'])==2 and not value['hold'],'A_REQUIRED'
+set_id=value['completed'][-1]['setId']
+helper=code/'recurring_acceptance.py'
+# Independent post stops/verifies private cluster and restores parent ACLs even on death.
+args=['/usr/bin/systemd-run','--quiet','--wait','--unit','passvero-stage-recurring-restore-'+set_id,
+'--property=Type=exec','--property=Restart=no','--property=KillMode=control-group','--property=KillSignal=SIGKILL',
+'--property=RuntimeMaxSec=15min','--property=TimeoutStopSec=35s',
+'--property=StandardOutput=null','--property=StandardError=null',
+'--property=ExecStopPost=/usr/bin/python3 -B '+str(helper)+' --close',
+'/usr/bin/python3','-B',str(helper),'--restore']
+subprocess.run(args,check=True,timeout=950)
+for mode in ('--retention','--signals','--finalize'):
+    subprocess.run(['/usr/bin/python3','-B',str(helper),mode],check=True,timeout=120)
+print(json.dumps({'acceptance':json.loads((state/'acceptance.json').read_text()),
+                  'sets':value['completed'],
+                  'restore':json.loads((pathlib.Path('/var/lib/passvero-staging-recovery/restore')/set_id/'summary.json').read_text()),
+                  'restoreClosure':json.loads((pathlib.Path('/var/lib/passvero-staging-recovery/restore')/set_id/'closure.json').read_text()),
+                  'retention':json.loads((state/'retention.json').read_text()),
+                  'signals':json.loads((state/'signal-proof.json').read_text())},indent=2,sort_keys=True))
+PASSVERO_STAGING_ACCEPTANCE
+```
+
+### VPS TERMINAL Disable / rollback — retain artifacts, allow active job resume
+
+```sh
+# PENDING_OPERATOR_COMMAND — VPS TERMINAL DISABLE/ROLLBACK: pause new staging schedule
+sudo /usr/bin/python3 -B - <<'PASSVERO_STAGING_DISABLE'
+import importlib.util,json,pathlib,subprocess
+code=pathlib.Path('/usr/local/libexec/passvero-staging-backup');state=pathlib.Path('/var/lib/passvero-staging-recovery/recurring')
+# Stop only the new timers. Never terminate an active capture or SMTP worker.
+subprocess.run(['/usr/bin/systemctl','disable','--now','passvero-staging-backup.timer','passvero-staging-backup-monitor.timer'],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+spec=importlib.util.spec_from_file_location('rollback_adapter',code/'recurring.py')
+r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
+value=r.read(state/'state.json');value['hold']=True;r.atomic(state/'state.json',value)
+active=subprocess.run(['/usr/bin/systemctl','show','passvero-staging-backup.service','--property=ActiveState','--value'],check=True,capture_output=True,text=True).stdout.strip()
+print(json.dumps({'schedule':'DISABLED','monitor':'DISABLED','jobHold':True,'activeJob':active,
+                  'activeJobPolicy':'ALLOW_FINISH_AND_INDEPENDENT_RESUME','setsAndEvidence':'RETAINED',
+                  'productionAndReminderEnablementChanged':False,'filesRemoved':0}))
+PASSVERO_STAGING_DISABLE
+```
+
+### Historical read-only preparation — returned PASS, do not rerun
+
+The block below produced the linked 09.10 read-only inventory. Its PENDING label is
+historical; no additional inventory is requested. No schedule/capture/pause/send occurred.
+
+<!-- BEGIN RECURRING_READ_ONLY_VPS -->
+```sh
+#!/bin/sh
+# VPS TERMINAL — READ ONLY; PENDING_OPERATOR_COMMAND
+# No install, writes, pause, worker, SMTP, Telegram, init or retention execution.
+sudo /usr/bin/python3 -I -B - <<'PY_RECURRING_READ_ONLY'
+"""Read-only operator inventory for recurring staging backup preparation.
+
+Imports only the pinned accepted preparation/capture helpers; never calls main,
+capture, worker, restore, retention or alert transport. No files are written.
+"""
+import ast
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import pathlib
+import re
+import shutil
+import stat
+import subprocess
+import sys
+
+ROOT = pathlib.Path('/var/lib/passvero-staging-recovery')
+APP = pathlib.Path('/var/www/passvero-acceptance')
+CANONICAL = pathlib.Path('/var/lib/passvero-onboarding-deploy-2cb9d6e/application/manifest.json')
+PREP_PIN = 'd519bf0f039996f3ac9838182ba28218f31055e42e5ba675d572336f67c5e473'
+CAP_PIN = 'd4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa'
+PROPERTIES = ('LoadState', 'ActiveState', 'UnitFileState', 'Result', 'MainPID',
+              'TimeoutStartUSec', 'TimeoutStopUSec', 'OnFailure', 'TimersCalendar',
+              'NextElapseUSecRealtime', 'LastTriggerUSec', 'Persistent', 'RandomizedDelayUSec')
+UNITS = ('passvero-postgres-backup.timer', 'passvero-postgres-backup.service',
+         'passvero-backup-freshness.timer', 'passvero-subscription-reminders.timer',
+         'passvero-subscription-reminders.service', 'pm2-passvero-staging.service',
+         'passvero-staging-backup.timer', 'passvero-staging-backup.service')
+PHASE = 'OPERATOR_SCOPE'
+
+
+class Stop(Exception):
+    pass
+
+
+def require(value, reason):
+    if not value:
+        raise Stop(reason)
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def metadata(path, content_hash=True):
+    if not path.exists() and not path.is_symlink():
+        return {'exists': False}
+    info = path.lstat()
+    require(stat.S_ISREG(info.st_mode) and info.st_uid == 0 and not info.st_mode & 0o022,
+            'INPUT_FILE_POSTURE')
+    result = {'exists': True, 'bytes': info.st_size, 'uid': info.st_uid,
+              'mode': oct(stat.S_IMODE(info.st_mode))}
+    if content_hash:
+        result['sha256'] = digest(path)
+    return result
+
+
+def load_accepted(name, pin):
+    path = ROOT / 'operator' / (name + '-' + pin + '.py')
+    require(metadata(path).get('sha256') == pin, 'ACCEPTED_HELPER_IDENTITY')
+    spec = importlib.util.spec_from_file_location('accepted_' + name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def unit_report(text):
+    return {key: value for line in text.splitlines() if '=' in line
+            for key, value in [line.split('=', 1)] if key in PROPERTIES}
+
+
+def read_unit(unit):
+    require(unit in UNITS, 'UNIT_SCOPE')
+    result = subprocess.run(['/usr/bin/systemctl', 'show', unit,
+                             '--property=' + ','.join(PROPERTIES)],
+                            capture_output=True, timeout=10, env={'PATH': '/usr/bin:/bin', 'LANG': 'C'})
+    # An absent proposed unit is useful inventory, not permission to create it.
+    report = unit_report(result.stdout.decode())
+    require(report and (result.returncode == 0 or report.get('LoadState') == 'not-found'),
+            'UNIT_READ_FAILED')
+    return report
+
+
+def repository_identity(config):
+    require(config.get('version') in (1, 2)
+            and re.fullmatch('[a-f0-9]{64}', config.get('id', '')), 'EXISTING_STAGING_REPOSITORY_REQUIRED')
+    return config['id']
+
+
+def snapshot_summary(rows):
+    require(isinstance(rows, list) and rows, 'EXISTING_STAGING_SNAPSHOTS_REQUIRED')
+    output = []
+    for row in rows:
+        paths = row.get('paths', [])
+        require(re.fullmatch('[a-f0-9]{64}', row.get('id', ''))
+                and row.get('hostname') == 'passvero-staging-recovery'
+                and 'passvero-staging-recovery' in row.get('tags', []) and len(paths) == 1
+                and re.fullmatch(re.escape(str(ROOT / 'sets')) + r'/[0-9]{8}T[0-9]{6}Z', paths[0]),
+                'STAGING_SNAPSHOT_SELECTOR')
+        output.append({'snapshotId': row['id'], 'setId': paths[0].rsplit('/', 1)[1],
+                       'time': row.get('time'), 'host': 'passvero-staging-recovery'})
+    return output
+
+
+def alert_contract(source):
+    # Emit grammar/identifiers, not source lines or arbitrary literals. An existing
+    # production state path prevents treating that helper as a staging-safe API.
+    result = {'productionStateReferenced': '/var/lib/passvero-backup' in source,
+              'existingTokenPathReferenced': '/etc/passvero/backup/telegram-bot-token' in source,
+              'existingChatPathReferenced': '/etc/passvero/backup/telegram-chat-id' in source,
+              'sendMessageReferenced': 'sendMessage' in source, 'functions': []}
+    try:
+        tree = ast.parse(source)
+        result['language'] = 'python'
+        result['functions'] = [node.name for node in tree.body if isinstance(node, ast.FunctionDef)]
+        result['cliArgumentNames'] = sorted({arg.value for node in ast.walk(tree)
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+            and node.func.attr == 'add_argument' for arg in node.args
+            if isinstance(arg, ast.Constant) and isinstance(arg.value, str)
+            and re.fullmatch(r'--?[a-z][a-z-]{0,40}', arg.value)})
+    except SyntaxError:
+        result['language'] = 'shell_or_other'
+    return result
+
+
+def stop_report(error, phase):
+    reason = str(error) if isinstance(error, Stop) and re.fullmatch('[A-Z0-9_]{1,120}', str(error)) else type(error).__name__
+    return {'recurringPreflight': 'STOP', 'phase': phase, 'reason': reason,
+            'databaseWrites': 0, 'remoteWrites': 0, 'filesWritten': 0,
+            'workerExecuted': False, 'smtpCalls': 0, 'telegramCalls': 0,
+            'retry': 'RETURN_FIRST_OUTPUT_NO_AUTOMATIC_RETRY'}
+
+
+def main():
+    global PHASE
+    sys.dont_write_bytecode = True
+    require(os.geteuid() == 0 and os.uname().nodename == 'srv1834647', 'OPERATOR_HOST')
+    prepare = load_accepted('prepare', PREP_PIN)
+    cap = load_accepted('capture', CAP_PIN)
+    PHASE = 'RUNTIME_DB_AND_WRITERS_READ_ONLY'
+    process, env = prepare.runtime()
+    db = prepare.sql('''SELECT json_build_object('database',current_database(),
+      'port',current_setting('port'),'directory',current_setting('data_directory'),
+      'bytes',pg_database_size(current_database()),
+      'tables',(SELECT count(*) FROM pg_tables WHERE schemaname='public'),
+      'migrations',(SELECT json_build_object('count',count(*),'finished',bool_and(finished_at IS NOT NULL AND rolled_back_at IS NULL),'digest',md5(string_agg(migration_name||':'||checksum,',' ORDER BY migration_name))) FROM _prisma_migrations),
+      'pendingDocuments',(SELECT count(*) FROM "Document" WHERE status='PENDING_UPLOAD' OR "malwareScanStatus"='PENDING'),
+      'pendingImages',(SELECT count(*) FROM "ProductImageAsset" WHERE state='PENDING'),
+      'enabledCampaigns',(SELECT count(*) FROM "ReminderCampaign" WHERE enabled),
+      'outbox',(SELECT coalesce(json_object_agg(status,total),'{}') FROM (SELECT CASE WHEN status IN ('PENDING','CLAIMED','SENDING','SENT','CANCELLED','FAILED','DELIVERY_UNKNOWN') THEN status ELSE 'UNEXPECTED' END AS status,count(*) total FROM "SubscriptionReminder" GROUP BY 1) x),
+      'clients',(SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND backend_type='client backend' AND pid<>pg_backend_pid()),
+      'preparedTransactions',(SELECT count(*) FROM pg_prepared_xacts WHERE database=current_database()))''')
+    require(db['database'] == 'passvero_acceptance' and db['port'] == '5433'
+            and db['directory'] == '/var/lib/postgresql/16/acceptance', 'DATABASE_SCOPE')
+    canonical = json.loads(prepare.protected(CANONICAL))
+    build = (APP / '.next/BUILD_ID').read_text().strip()
+    require(canonical['build_id'] == build and re.fullmatch('[A-Za-z0-9_-]{1,128}', build), 'BUILD_IDENTITY')
+    units = {unit: read_unit(unit) for unit in UNITS}
+    PHASE = 'PRIVATE_STORAGE_INVENTORY_READ_ONLY'
+    objects = cap.inventory(prepare, env)
+    storage = {'objects': len(objects), 'bytes': sum(item['size'] for item in objects),
+               'buckets': list(prepare.BUCKETS),
+               'inventorySha256': hashlib.sha256(json.dumps(objects, sort_keys=True).encode()).hexdigest()}
+    PHASE = 'EXACT_STAGING_B2_PREFIX_READ_ONLY'
+    _, _, _, repository = prepare.destination(prepare.protected('/etc/passvero/backup/restic-repository').decode().strip())
+    keys = prepare.credentials(prepare.protected('/etc/passvero/backup/restic.env').decode())
+    repository_id = repository_identity(json.loads(prepare.restic(repository, keys, ['cat', 'config'])))
+    snapshots = snapshot_summary(json.loads(prepare.restic(repository, keys, ['snapshots', '--json'])))
+    require(repository_id == '9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35',
+            'ACCEPTED_STAGING_REPOSITORY_CHANGED')
+    PHASE = 'EXISTING_HELPER_POSTURE_READ_ONLY'
+    scripts = {}
+    for name in ('passvero-postgres-backup', 'passvero-backup-freshness', 'passvero-backup-alert'):
+        path = pathlib.Path('/usr/local/sbin') / name
+        scripts[name] = metadata(path)
+        if scripts[name]['exists'] and name == 'passvero-backup-alert':
+            scripts[name]['interface'] = alert_contract(path.read_text())
+    protected_inputs = {name: metadata(pathlib.Path('/etc/passvero/backup') / name, False)
+                        for name in ('restic-password', 'restic.env', 'telegram-bot-token', 'telegram-chat-id')}
+    helpers = {path.name: metadata(path) for path in sorted((ROOT / 'operator').glob('*.py'))}
+    process_after, _ = prepare.runtime()
+    require(process_after == process, 'RUNTIME_CHANGED_DURING_READ_ONLY_PREFLIGHT')
+    result = {'recurringPreflight': 'PASS_READ_ONLY', 'observedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              'database': db, 'buildId': build, 'canonicalSha256': digest(CANONICAL),
+              'canonicalArtifactCount': len(canonical['files']), 'units': units,
+              'stagingProcessesInAppDirectory': cap.source_workers(prepare),
+              'storage': storage, 'stagingPrefix': prepare.PREFIX + '/', 'repositoryId': repository_id,
+              'snapshots': snapshots, 'diskFreeBytes': shutil.disk_usage(ROOT).free,
+              'scripts': scripts, 'protectedInputsMetadataOnly': protected_inputs, 'acceptedHelpers': helpers,
+              'workerLauncher': metadata(pathlib.Path('/usr/local/libexec/passvero-subscription-reminders/launch.py')),
+              'workerBundle': metadata(pathlib.Path('/usr/local/libexec/passvero-subscription-reminders/worker.cjs')),
+              'databaseWrites': 0, 'remoteWrites': 0, 'filesWritten': 0, 'workerExecuted': False,
+              'smtpCalls': 0, 'telegramCalls': 0, 'stagingPauseRequested': False,
+              'evidenceLevel': 'READ_ONLY_INVENTORY_NOT_CAPTURE_OR_RUNTIME_HEALTH_ACCEPTANCE'}
+    print(json.dumps(result, indent=2, sort_keys=True), flush=True)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except BaseException as error:
+        print(json.dumps(stop_report(error, PHASE)), flush=True)
+        sys.exit(1)
+
+PY_RECURRING_READ_ONLY
+```
+<!-- END RECURRING_READ_ONLY_VPS -->
+
 ## Final result — approved one-off staging recovery COMPLETE
 
 Recorded2026-10-02 Europe/Zagreb from returned operator output. No operator command
@@ -5832,3 +6732,182 @@ existing data means STOP; no new key or access-policy change is inferred.
 creation before approval. Complete context-labelled operator blocks and sanitized
 expected results will follow approval of the exact proposal. No mutation block is
 pending now. Existing reminders acceptance remains closed and unchanged.
+
+### 2026-10-12 — A PASS; B schema STOP safely closed; one approved continuation pending
+
+[Operator checkpoint summary](../../../codex/evidence/backup-recovery/operator-recurring-a-and-b-checkpoint-20261012.json)
+and [exact saved constraint definitions](../../../codex/evidence/backup-recovery/operator-recurring-schema-differences-20261012.json)
+record user-returned output, not a new live query. A **PASS_TWO_REAL_SCHEDULED_NEW_OFFSITE_SETS**:
+11/12 October sets `20261011T043000Z` / `20261012T043000Z`, both valid offsite trees/manifests;
+attempts=2, hold=false, ACCEPTANCE; closure success, web/writer timer baseline restored,
+pauses 6.947s/5.04s. Monitor HEALTHY at 12.10 14:20UTC/16:20CEST; latest set age
+35,391s. Backup/monitor timers active/enabled; next scheduled capture 13.10 04:30UTC.
+No Telegram alarm absence used as proof; A remains accepted without re-running captures.
+
+B downloaded latest snapshot `b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368`,
+manifest `2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1`,
+1,417,314 payload bytes MATCH_MANIFEST. Original attempt reserved; STOP at
+VERIFY_NEW_SCHEMA_WITH_ACCEPTED_EXACT_EQUIVALENCES / UNREVIEWED_CONSTRAINT_DIFFERENCE.
+ExecStopPost exit0, private cluster STOPPED, parentPermissions PRIVATE_0700,
+no private processes, staging not paused; summary absent. Restore is **not PASS**.
+310 constraints/order match; 8 exact textual pairs differ (5 already reviewed,
+2 newly introduced constraints and 1 changed campaign budget pair). 56 relations/order
+match; six explicit-owner ACL vs null-owner-default shapes match historical rule,
+but effective ACL is **NOT_PROVEN**, pending unchanged independent SQL comparison.
+
+User explicitly approves only the three exact hash overrides below and one continuation
+of the existing cluster. No broad SQL normalization, automatic retry or counter reset.
+A separate `recurring_resume.py` loads unchanged pinned historical/recurring helpers and
+applies overrides only in memory; original config, adapter, catalog, acceptance helper,
+worker/build/canonical/release pins and timer definitions remain unchanged. Only a new
+hash-named helper is installed; it cannot capture, download, initdb or pg_restore.
+One durable resume marker prevents reuse. Existing local set/manifest/download proof,
+original attempt/failure/closure, parent inode/owner/ACL identity, PG16/auth configuration,
+unit independent post, no active private process/port conflict, then SQL data-directory/
+no-TCP/port/read-only identity and saved catalog equality gate all remaining checks.
+
+Hash pairs are SHA256(JSON string, sort_keys=True), **source → restored**, not file hashes:
+
+- `AccessRequestAdminNotification.AccessRequestAdminNotification_state`: old NOT_ALLOWED; new `c9e085a6e449958b82e992f0ca3fee7e7d2b3c5dd93ce613dcf17d92d428c68d` → `d980c409e72377b44907f2ea6454d1904fa5e9d7cf258d8c66f3838d0645feb4`.
+
+- `OrganizationReminderEnrollment.OrganizationReminderEnrollment_origin_check`: old NOT_ALLOWED; new `6f1db9d5d6358287f27c84d4fdc3546277d6d7901e140439c56bcd170303f230` → `871d9e64c1fa9a5a10aff25433c9f761e44206f9c52d7c16a98f85556d0399c2`.
+
+- `ReminderCampaign.reminder_campaign_budget`: old `91ddd21f16057e49cc79af46397097dc9505477f96682a8a34bb2e24f9b257f4` → `2eded7720504308a08c823cff5976e4786de2b4211b777613001336b2583ca44`; new `a1a55c449dde67006d8292963958807f34a84c21e2163bf1e0f61285ae18a453` → `b4fa3f629815b8f7cb273dca1281a4e88efb793bd93b63f4486151287b5d9fb5`.
+
+The override replaces (does not retain) the old campaign pair in this continuation.
+Historical verifier stays unchanged. Catalog verifier still rejects other differences,
+and independently queries effective ACL using aclexplode/coalesced acldefault;
+shape match is never ACL PASS. Remaining database settings/ACL/counts/sequences,
+Storage references and accepted product/PDF/image application reader remain required.
+
+Local focused regression: **10 tests PASS**, including old rejection/new exact acceptance,
+unknown definition/name/nonconstraint rejection, unequal effective SQL ACL rejection,
+wrong set and second continuation refusal, closure success/failure and sanitized CHECK_ID.
+No application build, unrelated tests or local/live DB was run. Operator block shell,
+embedded Python, payload hashes and preservation checked separately.
+
+**PENDING_OPERATOR_COMMAND:** [complete standalone VPS TERMINAL B continuation](../../../codex/evidence/backup-recovery/VPS-TERMINAL-RESUME-B-20261012.sh).
+Independent systemd post closes private cluster on success/error/timeout/death, restores
+saved parent ACL baseline and checks staging/writer timer baseline. Return body and post
+failures separately with CHECK_ID and normalized reason, without raw sensitive stderr.
+No automatic retry. Return full output before C/D/finalize. C/D still NOT_RUN, mode
+still ACCEPTANCE, **COMPLETE=NO**. No production, marketing/legal changes, pin changes,
+cleanup/deletion, commit or push. Existing disable/rollback block is unchanged and must
+not be invoked merely to retry this attempt.
+
+### 2026-10-12 — returned B continuation PASS; C/D pending
+
+[Returned continuation summary](../../../codex/evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json):
+B PASS, unit exit0, exact installed helper SHA e87d47efed9c8f6775e1bd4b0e3eeb6ad5ed88482d3c4841c41875288e0906e2.
+Existing latest set/snapshot/manifest reused; no second download/initdb/pg_restore.
+56 tables/33 migrations, exact catalog equivalences, independent effective table ACL SQL,
+database settings/ACL/counts/sequences and Storage references passed the complete helper.
+Product CSV, bounded PDF bytes/metadata and image download/recheck PASS; SMTP calls0,
+reader schema/business writes NONE. Original failure remains historical evidence.
+Independent closure: STOPPED, PRIVATE_0700, PASS_EXPECTED_STAGING,
+writerTimerBaseline RESTORED; artifacts retained; body/closure failure null.
+State and original pins unchanged. Backup/monitor/reminder timers active/enabled/waiting;
+reminder service inactive/dead. Full web/auth/scanner recovery NOT_TESTED;
+Storage provider restore NOT_PERFORMED. No expansion or repeat of those tests.
+
+A remains accepted PASS. C and D NOT_RUN; CONTINUOUS promotion NOT_RUN; COMPLETE=NO.
+C remains the existing one staging 14/8/6 dry-run (no snapshot deletion), but the reviewed
+helper invokes `restic forget --dry-run --no-lock`. The earlier explicit “bez forget/prune”
+boundary requires a narrow clarification before invoking that literal subcommand.
+No C/D/finalize command has been executed or original B repeated. Marketing deploy,
+release pins, production, legal/marketing diffs, commit/push remain untouched.
+
+
+### 2026-10-12 — C literal dry-run explicitly approved; operator execution pending
+
+User resolves earlier “bez forget/prune” only for the existing staging
+`restic forget --dry-run --no-lock`: exact repository ID
+`9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35`,
+prefix `passvero-staging-recovery-v1`, host/tag `passvero-staging-recovery`,
+group-by host, policy 14 daily / 8 weekly / 6 monthly. No prune or actual deletion.
+[Separate C operator block](../../../codex/evidence/backup-recovery/VPS-TERMINAL-C-DRY-RUN-20261012.sh)
+checks pinned helpers, accepted A/B and private closure, one-attempt budget, repo ID,
+prefix and all snapshot selectors before dry-run; mismatch STOP. After dry-run it
+checks complete decisions and unchanged snapshot ID inventory. Normalized failure
+records CHECK_ID without retry. A/B remain PASS; C PENDING_OPERATOR_COMMAND, D NOT_RUN,
+CONTINUOUS promotion pending; COMPLETE=NO. No source/build/tests/live execution in
+this preparation. Return C output before the already-approved D/no-Telegram step.
+
+
+### 2026-10-12 — C returned PASS; one D and guarded finalize pending
+
+[Returned C summary](../../../codex/evidence/backup-recovery/operator-recurring-c-pass-20261012.json):
+preflight exact staging repository/prefix/host/tag/path scope PASS, 14/8/6 dry-run
+with no-lock and no prune. All 3 validated snapshots keep; deletedSnapshots0,
+productionCandidates0, snapshotInventoryUnchanged=true. Third pre-existing snapshot
+retained; it is not counted as a new scheduled A capture. C PASS is a dry-run proof,
+not enforced retention deletion. A and B remain accepted; do not repeat them.
+
+[One D operator block](../../../codex/evidence/backup-recovery/VPS-TERMINAL-D-FINALIZE-20261012.sh):
+pinned original helper; require accepted A/B/C, private closure and testTelegram=false;
+one durable D marker and controlled classifier/dedup proof, without live-state corruption
+or Telegram call. Only if D succeeds, original guarded finalize promotes mode to
+CONTINUOUS. Verify only mode changed, backup/monitor active/enabled, writer baseline
+and original pins unchanged; return A–D acceptance, full state/unit schedules and last
+monitor observation. Actual provider/inbox delivery remains NOT_PROVEN.
+Execution PENDING_OPERATOR_COMMAND; D/finalize not yet accepted, COMPLETE=NO.
+No new capture/restore/dry-run, source/build/tests, live execution, production,
+marketing/legal modification, pin changes, deletion, commit or push.
+
+## STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING — COMPLETE 2026-10-12
+
+**COMPLETE — approved bounded A–D acceptance passed; CONTINUOUS mode promoted.**
+Authority: user-returned [final D/promotion output](../../../codex/evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json),
+[A/B checkpoint](../../../codex/evidence/backup-recovery/operator-recurring-a-and-b-checkpoint-20261012.json),
+[B continuation PASS](../../../codex/evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json)
+and [C PASS](../../../codex/evidence/backup-recovery/operator-recurring-c-pass-20261012.json).
+These are operator-supplied point-in-time evidence; no new remote query or ongoing
+future-run guarantee is inferred. All earlier WAITING/STOP/pending checkpoints remain
+history and are superseded for current acceptance status by this section.
+
+| Phase | Exact result / scope |
+| --- | --- |
+| A | Two genuine scheduled sets: `20261011T043000Z` snapshot `a0b7c30d7fcbe1363d28d36b2bde4d18e8d1c4b996960605a9fc6b6d21fb7ff3`, manifest `88a73f32fafce767c3139ec62b11f6d64ce2aef0f3f052d5a8b93c36345d357d`; `20261012T043000Z` snapshot `b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368`, manifest `2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1`. Both offsite tree/manifest PASS, 1,417,313 / 1,417,314 payload bytes. Pauses 6.947 / 5.04s, successful staging and writer timer baseline resume. |
+| B | Latest set reused after original strict-schema STOP; one explicitly approved existing-cluster continuation, no second download/initdb/pg_restore/reset. Exact 310-constraint equivalences, independent effective ACL SQL, DB settings/counts/sequences, 56 tables/33 migrations, Storage references, product CSV/PDF/image application reads PASS. Original failure retained. |
+| C | Exact staging repository/prefix/host/tag scope, 14 daily / 8 weekly / 6 monthly dry-run PASS. All three inventoried snapshots keep; zero deleted/production candidates, snapshot inventory unchanged. Pre-existing third set not counted as a scheduled A capture. |
+| D | Controlled BACKUP_FAILED / SET_INCOMPLETE / VALID_SET_MISSING / SET_STALE / HEALTHY classification PASS, UNKNOWN dedup not retried. No live backup state corruption or test Telegram. Guarded A–D finalize succeeded. |
+
+Final state: attempts=2, latest attempt complete, hold=false, mode=CONTINUOUS;
+only mode changed in finalize, reviewed adapter/config/helper/release pins unchanged.
+Repository ID `9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35`,
+separate prefix `passvero-staging-recovery-v1`. Private cluster STOPPED,
+parentPermissions PRIVATE_0700, stagingRuntime PASS_EXPECTED_STAGING,
+writerTimerBaseline RESTORED, artifacts retained. Reminder timer active/enabled/waiting,
+service inactive/dead in returned observation; no email or delivery proof inferred.
+
+Regular backup timer active/enabled/waiting: daily **04:30 UTC / 06:30 CEST** at this
+observation, next **13.10.2026 06:30 Europe/Zagreb CEST**. Fixed UTC schedule means
+local wall time changes after DST. Monitor timer active/enabled/waiting, hourly :20 UTC;
+last **12.10 15:20 UTC / 17:20 CEST**, next **12.10 18:20 CEST** in returned output.
+Last monitor observedEpoch1791818400 HEALTHY: latest valid set age 38,991 seconds
+(**10h49m51s**), under configured stale threshold >25h. Target RPO24h remains a target;
+accepted two scheduled runs do not guarantee every future run or end-to-end RTO.
+
+### Limits and retained disable / rollback procedure
+
+- Retention deletion NOT_APPROVED / snapshotDeletion NOT_PERFORMED; C proves dry-run
+  decisions only, no forget without dry-run or prune is enabled/authorized.
+- Test Telegram NOT_APPROVED_NOT_SENT; provider and inbox receipt NOT_PROVEN for D.
+  Earlier actual failure alarm receipt is historical and does not prove future delivery.
+- Full web/auth-session/fresh-scanner recovery NOT_TESTED; Storage provider re-upload/
+  restore NOT_PERFORMED. Accepted private application DB/file read is the proved scope.
+- No production backup/restore/freshness/retention change or repeat; no reboot,
+  deletion, pin protection bypass, application build, unrelated tests, commit or push.
+- Marketing deploy remains deferred pending separately approved release-pin alignment.
+  COMPLETE for this backup slice does not authorize deploy or changing protected pins.
+  Marketing and legal source diffs remain unchanged.
+
+Existing reviewed [disable/rollback block](#vps-terminal-disable--rollback--retain-artifacts-allow-active-job-resume)
+is retained unchanged, **not executed**: disable/stop only the two new staging timers,
+set job hold=true, allow any active capture to finish and independently resume staging/
+writer baseline; retain sets, restore data, helper/evidence artifacts. Do not kill a
+capture/SMTP worker, remove files, reset counters or modify production/reminder enablement.
+Re-enablement/release changes remain separate operator work; do not rerun acceptance blocks.
+
+Documentation closure: exact evidence, current report/roadmap/manifest updated;
+bounded local hashes/link/whitespace verification only, no additional live action/tests.

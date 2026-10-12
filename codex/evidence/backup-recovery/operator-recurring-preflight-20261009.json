@@ -1,0 +1,317 @@
+{
+  "acceptedHelpers": {
+    "capture-0278b8c57cd609bbedcb42ab2d39c614ff2b8e7cc979b1a5e0eec25b5e279865.py": {
+      "bytes": 35979,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "0278b8c57cd609bbedcb42ab2d39c614ff2b8e7cc979b1a5e0eec25b5e279865",
+      "uid": 0
+    },
+    "capture-d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa.py": {
+      "bytes": 40794,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "d4c644cf0100ef94e96277bfe372616d998bac05dad2d9a068cd8938ef10b5fa",
+      "uid": 0
+    },
+    "diagnose-catalog-07dce4ea1391b55a600931b91aca0a15a7e5046d7740b310b4fd65afe5f0fa24.py": {
+      "bytes": 8725,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "07dce4ea1391b55a600931b91aca0a15a7e5046d7740b310b4fd65afe5f0fa24",
+      "uid": 0
+    },
+    "prepare-d519bf0f039996f3ac9838182ba28218f31055e42e5ba675d572336f67c5e473.py": {
+      "bytes": 18978,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "d519bf0f039996f3ac9838182ba28218f31055e42e5ba675d572336f67c5e473",
+      "uid": 0
+    },
+    "prepare-f344ef9d17e58ff7c77c9cf9b07be36dddc77a71a95ce021bc61920347236122.py": {
+      "bytes": 18972,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "f344ef9d17e58ff7c77c9cf9b07be36dddc77a71a95ce021bc61920347236122",
+      "uid": 0
+    },
+    "references-2c45d84089e9960681b3318fa4ed2d5c3021eb2453aad70737ef6d69404ae376.py": {
+      "bytes": 6764,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "2c45d84089e9960681b3318fa4ed2d5c3021eb2453aad70737ef6d69404ae376",
+      "uid": 0
+    },
+    "restore-database-15fedf7fe4feecc12c79778a551ebba8f8c56793eabf04bb7d8e33a0be753034.py": {
+      "bytes": 15050,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "15fedf7fe4feecc12c79778a551ebba8f8c56793eabf04bb7d8e33a0be753034",
+      "uid": 0
+    },
+    "restore-database-5fb296f96c37fb3ebfb681f534e6df01cf392c9fb8b993c322f696d20794fd0f.py": {
+      "bytes": 20689,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "5fb296f96c37fb3ebfb681f534e6df01cf392c9fb8b993c322f696d20794fd0f",
+      "uid": 0
+    },
+    "restore-database-9e092b115fe1d60e3497e39a714935b02fc9063b1fd241e2609c96199d7fd2d7.py": {
+      "bytes": 17733,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "9e092b115fe1d60e3497e39a714935b02fc9063b1fd241e2609c96199d7fd2d7",
+      "uid": 0
+    },
+    "verify-application-c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee.py": {
+      "bytes": 9740,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "c3b794a89ccfe7a7b95da3ae7580cfa3c7606ec94d693be4930a5824f5f73aee",
+      "uid": 0
+    },
+    "verify-application-e168795c416c97deb477d22999bf01438bf2e502b76bc3acfb8073e350204abf.py": {
+      "bytes": 12652,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "e168795c416c97deb477d22999bf01438bf2e502b76bc3acfb8073e350204abf",
+      "uid": 0
+    },
+    "verify-database-cfadf143ad7a2e79ba9635a01e7e167a34aa06669be7983396aba56973469624.py": {
+      "bytes": 12939,
+      "exists": true,
+      "mode": "0o600",
+      "sha256": "cfadf143ad7a2e79ba9635a01e7e167a34aa06669be7983396aba56973469624",
+      "uid": 0
+    }
+  },
+  "buildId": "mMVPOjFPkw5L42RIqziS4",
+  "canonicalArtifactCount": 842,
+  "canonicalSha256": "f7039de22d508baac9d70cda13eed9a98b550af93f8b0f92fadbea9fa8106c40",
+  "database": {
+    "bytes": 14146583,
+    "clients": 0,
+    "database": "passvero_acceptance",
+    "directory": "/var/lib/postgresql/16/acceptance",
+    "enabledCampaigns": 1,
+    "migrations": {
+      "count": 33,
+      "digest": "a3305232a711d2bf56da46126eb85f24",
+      "finished": true
+    },
+    "outbox": {
+      "CANCELLED": 2,
+      "SENT": 4
+    },
+    "pendingDocuments": 0,
+    "pendingImages": 0,
+    "port": "5433",
+    "preparedTransactions": 0,
+    "tables": 56
+  },
+  "databaseWrites": 0,
+  "diskFreeBytes": 87238836224,
+  "evidenceLevel": "READ_ONLY_INVENTORY_NOT_CAPTURE_OR_RUNTIME_HEALTH_ACCEPTANCE",
+  "filesWritten": 0,
+  "observedAt": "2026-10-09T14:21:28.458656+00:00",
+  "protectedInputsMetadataOnly": {
+    "restic-password": {
+      "bytes": 65,
+      "exists": true,
+      "mode": "0o600",
+      "uid": 0
+    },
+    "restic.env": {
+      "bytes": 132,
+      "exists": true,
+      "mode": "0o600",
+      "uid": 0
+    },
+    "telegram-bot-token": {
+      "bytes": 47,
+      "exists": true,
+      "mode": "0o600",
+      "uid": 0
+    },
+    "telegram-chat-id": {
+      "bytes": 11,
+      "exists": true,
+      "mode": "0o600",
+      "uid": 0
+    }
+  },
+  "recurringPreflight": "PASS_READ_ONLY",
+  "remoteWrites": 0,
+  "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+  "scripts": {
+    "passvero-backup-alert": {
+      "bytes": 11151,
+      "exists": true,
+      "interface": {
+        "cliArgumentNames": [
+          "--clear-marker-alerts"
+        ],
+        "existingChatPathReferenced": true,
+        "existingTokenPathReferenced": true,
+        "functions": [
+          "validate_event",
+          "state_file_for",
+          "build_message",
+          "_load_last_sent",
+          "_write_state_atomic",
+          "dispatch_event",
+          "clear_marker_alerts",
+          "send_telegram_message",
+          "read_protected_single_line",
+          "validate_state_directory",
+          "main"
+        ],
+        "language": "python",
+        "productionStateReferenced": true,
+        "sendMessageReferenced": true
+      },
+      "mode": "0o750",
+      "sha256": "12ec655fc8dfdfa15d7aa004be948861754ae1e6371c1cbf743faa0ae342db15",
+      "uid": 0
+    },
+    "passvero-backup-freshness": {
+      "bytes": 5929,
+      "exists": true,
+      "mode": "0o750",
+      "sha256": "46cc593f4e38d72c77ad8549cf27a9a2ae6eb9489a9ddd83ccce35f8d9d78524",
+      "uid": 0
+    },
+    "passvero-postgres-backup": {
+      "bytes": 32011,
+      "exists": true,
+      "mode": "0o750",
+      "sha256": "5b6360633efb636f0aa9784b4e1a9d73aabe39a9c69f824cc99b9189407d7e75",
+      "uid": 0
+    }
+  },
+  "smtpCalls": 0,
+  "snapshots": [
+    {
+      "host": "passvero-staging-recovery",
+      "setId": "20261001T212354Z",
+      "snapshotId": "2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2",
+      "time": "2026-10-01T23:35:25.715241133+02:00"
+    }
+  ],
+  "stagingPauseRequested": false,
+  "stagingPrefix": "passvero-staging-recovery-v1/",
+  "stagingProcessesInAppDirectory": 1,
+  "storage": {
+    "buckets": [
+      "passvero-staging-documents",
+      "passvero-staging-images"
+    ],
+    "bytes": 368798,
+    "inventorySha256": "2af2e3f02ae1c3626cd7478da033366988b25d801680a591a90b04b75d24c32f",
+    "objects": 7
+  },
+  "telegramCalls": 0,
+  "units": {
+    "passvero-backup-freshness.timer": {
+      "ActiveState": "active",
+      "LastTriggerUSec": "Fri 2026-10-09 16:00:00 CEST",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "Fri 2026-10-09 17:00:00 CEST",
+      "OnFailure": "",
+      "Persistent": "yes",
+      "RandomizedDelayUSec": "0",
+      "Result": "success",
+      "TimersCalendar": "{ OnCalendar=*-*-* *:00:00 ; next_elapse=Fri 2026-10-09 17:00:00 CEST }",
+      "UnitFileState": "enabled"
+    },
+    "passvero-postgres-backup.service": {
+      "ActiveState": "inactive",
+      "LoadState": "loaded",
+      "MainPID": "0",
+      "OnFailure": "passvero-postgres-backup-failure-alert.service",
+      "Result": "success",
+      "TimeoutStartUSec": "3h",
+      "TimeoutStopUSec": "1min 30s",
+      "UnitFileState": "static"
+    },
+    "passvero-postgres-backup.timer": {
+      "ActiveState": "active",
+      "LastTriggerUSec": "Fri 2026-10-09 04:07:55 CEST",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "Sat 2026-10-10 04:06:41 CEST",
+      "OnFailure": "",
+      "Persistent": "yes",
+      "RandomizedDelayUSec": "10min",
+      "Result": "success",
+      "TimersCalendar": "{ OnCalendar=*-*-* 02:00:00 UTC ; next_elapse=Sat 2026-10-10 04:00:00 CEST }",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.service": {
+      "ActiveState": "inactive",
+      "LoadState": "not-found",
+      "MainPID": "0",
+      "OnFailure": "",
+      "Result": "success",
+      "TimeoutStartUSec": "1min 30s",
+      "TimeoutStopUSec": "1min 30s",
+      "UnitFileState": ""
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "inactive",
+      "LastTriggerUSec": "",
+      "LoadState": "not-found",
+      "NextElapseUSecRealtime": "",
+      "OnFailure": "",
+      "Persistent": "no",
+      "RandomizedDelayUSec": "0",
+      "Result": "success",
+      "UnitFileState": ""
+    },
+    "passvero-subscription-reminders.service": {
+      "ActiveState": "inactive",
+      "LoadState": "loaded",
+      "MainPID": "0",
+      "OnFailure": "",
+      "Result": "success",
+      "TimeoutStartUSec": "3min 30s",
+      "TimeoutStopUSec": "1min 30s",
+      "UnitFileState": "static"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "LastTriggerUSec": "Fri 2026-10-09 16:20:29 CEST",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "",
+      "OnFailure": "",
+      "Persistent": "no",
+      "RandomizedDelayUSec": "0",
+      "Result": "success",
+      "UnitFileState": "enabled"
+    },
+    "pm2-passvero-staging.service": {
+      "ActiveState": "active",
+      "LoadState": "loaded",
+      "MainPID": "1543",
+      "OnFailure": "",
+      "Result": "success",
+      "TimeoutStartUSec": "1min 30s",
+      "TimeoutStopUSec": "1min 30s",
+      "UnitFileState": "enabled"
+    }
+  },
+  "workerBundle": {
+    "bytes": 5491901,
+    "exists": true,
+    "mode": "0o644",
+    "sha256": "ff9f8abda3ffdb0fa75018bfd79a00bba3392fd2d72b114e0d49ea9798e15b63",
+    "uid": 0
+  },
+  "workerExecuted": false,
+  "workerLauncher": {
+    "bytes": 3183,
+    "exists": true,
+    "mode": "0o644",
+    "sha256": "812c6e993143625ade534d1cb2bf91ecaafe431844c1d13705ef69449e005442",
+    "uid": 0
+  }
+}

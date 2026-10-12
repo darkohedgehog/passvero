@@ -1,0 +1,40 @@
+{
+  "attempts": 0,
+  "automaticRetry": false,
+  "correction": "PASS_INSTALLED_PIN_MATCH_HOLD_RELEASED",
+  "failureHistoryRetained": true,
+  "firstDueEuropeZagreb": "2026-10-11T06:30:00+02:00",
+  "firstDueUTC": "2026-10-11T04:30:00+00:00",
+  "hold": false,
+  "installedSha256": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+  "manualCapture": false,
+  "mode": "ACCEPTANCE",
+  "oldSha256": "00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294",
+  "postchecks": {
+    "backup": "NOT_ACTIVE",
+    "reminderService": "INACTIVE",
+    "reminderTimer": "ENABLED_ACTIVE",
+    "residualReminderProcesses": 0,
+    "transientCapture": "NOT_ACTIVE",
+    "web": "ONLINE_STAGING_TCP3001"
+  },
+  "prechecks": {
+    "backup": "NOT_ACTIVE",
+    "reminderService": "INACTIVE",
+    "reminderTimer": "ENABLED_ACTIVE",
+    "residualReminderProcesses": 0,
+    "transientCapture": "NOT_ACTIVE",
+    "web": "ONLINE_STAGING_TCP3001"
+  },
+  "productionChanged": false,
+  "secondDueEuropeZagreb": "2026-10-12T06:30:00+02:00",
+  "secondDueUTC": "2026-10-12T04:30:00+00:00",
+  "serviceResetFailed": false,
+  "smtpCalls": 0,
+  "telegramCalls": 0,
+  "timerConfigurationChanged": false,
+  "typedMonotonicReads": {
+    "startMicroseconds": 738347225648,
+    "triggerMicroseconds": 738347034136
+  }
+}

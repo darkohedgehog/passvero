@@ -1,0 +1,67 @@
+{
+  "A": "PASS_TWO_REAL_SCHEDULED_NEW_OFFSITE_SETS",
+  "B": {
+    "closure": {
+      "artifactsRetained": true,
+      "cluster": "STOPPED",
+      "liveStagingPaused": false,
+      "parentPermissions": "PRIVATE_0700"
+    },
+    "download": "MATCH_MANIFEST",
+    "execStopPostStatus": 0,
+    "originalRestoreAttemptReserved": true,
+    "phase": "VERIFY_NEW_SCHEMA_WITH_ACCEPTED_EXACT_EQUIVALENCES",
+    "privateTargetProcessIds": [],
+    "reason": "UNREVIEWED_CONSTRAINT_DIFFERENCE",
+    "result": "STOP",
+    "summaryPresent": false
+  },
+  "C": "NOT_RUN",
+  "COMPLETE": false,
+  "D": "NOT_RUN",
+  "attempts": 2,
+  "continuationApproval": "USER_APPROVED_EXACT_THREE_PAIRS_AND_ONE_EXISTING_CLUSTER_CONTINUATION",
+  "continuationExecution": "PENDING_OPERATOR_COMMAND",
+  "date": "2026-10-12",
+  "hold": false,
+  "mode": "ACCEPTANCE",
+  "monitor": {
+    "observedEpoch": 1791814800,
+    "signal": "HEALTHY"
+  },
+  "offsiteForBoth": "PASS_VALID_OFFSITE_TREE_AND_MANIFEST",
+  "provenance": "SUMMARY_OF_USER_RETURNED_VPS_RESULTS_NOT_A_NEW_LIVE_QUERY",
+  "relations": {
+    "allMatchExistingAclShape": true,
+    "countRestored": 56,
+    "countSource": 56,
+    "differenceNames": [
+      "BackgroundJob",
+      "IntegrationMapping",
+      "Invitation",
+      "Notification",
+      "ScanEvent",
+      "_prisma_migrations"
+    ],
+    "effectiveAclVerified": false,
+    "orderEqual": true
+  },
+  "sets": [
+    {
+      "captureEpoch": 1791693010,
+      "manifestSha256": "88a73f32fafce767c3139ec62b11f6d64ce2aef0f3f052d5a8b93c36345d357d",
+      "pauseSeconds": 6.947,
+      "payloadBytes": 1417313,
+      "setId": "20261011T043000Z",
+      "snapshotId": "a0b7c30d7fcbe1363d28d36b2bde4d18e8d1c4b996960605a9fc6b6d21fb7ff3"
+    },
+    {
+      "captureEpoch": 1791779409,
+      "manifestSha256": "2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1",
+      "pauseSeconds": 5.04,
+      "payloadBytes": 1417314,
+      "setId": "20261012T043000Z",
+      "snapshotId": "b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368"
+    }
+  ]
+}

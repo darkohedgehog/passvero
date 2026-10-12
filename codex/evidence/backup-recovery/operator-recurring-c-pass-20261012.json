@@ -1,0 +1,42 @@
+{
+  "C": "PASS",
+  "COMPLETE": false,
+  "D": "NOT_RUN",
+  "automaticRetry": false,
+  "decisions": [
+    {
+      "decision": "keep",
+      "snapshotId": "b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368"
+    },
+    {
+      "decision": "keep",
+      "snapshotId": "a0b7c30d7fcbe1363d28d36b2bde4d18e8d1c4b996960605a9fc6b6d21fb7ff3"
+    },
+    {
+      "decision": "keep",
+      "snapshotId": "2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2"
+    }
+  ],
+  "deletedSnapshots": 0,
+  "dryRun": true,
+  "noLock": true,
+  "policy": {
+    "daily": 14,
+    "monthly": 6,
+    "weekly": 8
+  },
+  "prefix": "passvero-staging-recovery-v1",
+  "preflight": "PASS_STAGING_REPO_AND_SELECTOR",
+  "productionCandidates": 0,
+  "provenance": "USER_RETURNED_C_OUTPUT_SUMMARY_NOT_NEW_LIVE_QUERY",
+  "prune": false,
+  "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+  "retention": "PASS_DRY_RUN_ONLY",
+  "selector": {
+    "groupBy": "host",
+    "host": "passvero-staging-recovery",
+    "tag": "passvero-staging-recovery"
+  },
+  "snapshotCount": 3,
+  "snapshotInventoryUnchanged": true
+}

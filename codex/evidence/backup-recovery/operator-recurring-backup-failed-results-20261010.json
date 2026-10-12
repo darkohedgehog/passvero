@@ -1,0 +1,21 @@
+{
+  "monitor-result.json": {
+    "observedEpoch": 1791638400,
+    "signal": "BACKUP_FAILED"
+  },
+  "state": {
+    "attempts": 0,
+    "completed": [],
+    "failure": {
+      "automaticRetry": false,
+      "phase": "SCOPE",
+      "reason": "ValueError",
+      "result": "STOP",
+      "setId": "preparation"
+    },
+    "firstDueEpoch": 1791606600,
+    "hold": true,
+    "mode": "ACCEPTANCE"
+  },
+  "units": "NextElapseUSecRealtime=Sun 2026-10-11 06:30:00 CEST\nLastTriggerUSec=Sat 2026-10-10 06:30:00 CEST\nId=passvero-staging-backup.timer\nActiveState=active\nUnitFileState=enabled\n\nNextElapseUSecRealtime=Sat 2026-10-10 16:20:00 CEST\nLastTriggerUSec=Sat 2026-10-10 15:20:00 CEST\nId=passvero-staging-backup-monitor.timer\nActiveState=active\nUnitFileState=enabled\n"
+}

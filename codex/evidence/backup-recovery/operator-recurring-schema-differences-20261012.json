@@ -1,0 +1,154 @@
+{
+  "constraintDifferences": [
+    {
+      "name": "AccessRequest_values",
+      "restored": {
+        "definition": "CHECK ((((locale)::text = ANY (ARRAY[('hr'::character varying)::text, ('en'::character varying)::text, ('de'::character varying)::text, ('sr'::character varying)::text, ('sl'::character varying)::text, ('pl'::character varying)::text])) AND ((status)::text = ANY (ARRAY[('PENDING'::character varying)::text, ('APPROVED'::character varying)::text, ('REJECTED'::character varying)::text])) AND ((\"deliveryStatus\")::text = ANY (ARRAY[('NOT_STARTED'::character varying)::text, ('DELIVERY_IN_PROGRESS'::character varying)::text, ('SENT'::character varying)::text, ('DELIVERY_UNKNOWN'::character varying)::text])) AND (length(TRIM(BOTH FROM \"contactName\")) > 0) AND (length(TRIM(BOTH FROM \"organizationDisplayName\")) > 0) AND ((email)::text = lower(TRIM(BOTH FROM email)))))",
+        "name": "AccessRequest_values",
+        "table": "AccessRequest"
+      },
+      "restoredDefinitionSha256": "9ff77e28b8664ccfde1ace0319a1a81dd39f74fd44263b602d263d30401fc804",
+      "source": {
+        "definition": "CHECK ((((locale)::text = ANY ((ARRAY['hr'::character varying, 'en'::character varying, 'de'::character varying, 'sr'::character varying, 'sl'::character varying, 'pl'::character varying])::text[])) AND ((status)::text = ANY ((ARRAY['PENDING'::character varying, 'APPROVED'::character varying, 'REJECTED'::character varying])::text[])) AND ((\"deliveryStatus\")::text = ANY ((ARRAY['NOT_STARTED'::character varying, 'DELIVERY_IN_PROGRESS'::character varying, 'SENT'::character varying, 'DELIVERY_UNKNOWN'::character varying])::text[])) AND (length(TRIM(BOTH FROM \"contactName\")) > 0) AND (length(TRIM(BOTH FROM \"organizationDisplayName\")) > 0) AND ((email)::text = lower(TRIM(BOTH FROM email)))))",
+        "name": "AccessRequest_values",
+        "table": "AccessRequest"
+      },
+      "sourceDefinitionSha256": "81301f24f95fb27e37feeb9cd6d7e0e147a267520f05c892e0e160f8125f6088",
+      "table": "AccessRequest"
+    },
+    {
+      "name": "AccessRequestAdminNotification_state",
+      "restored": {
+        "definition": "CHECK (((((status)::text = 'PENDING'::text) AND (attempts = 0) AND (\"attemptId\" IS NULL) AND (\"startedAt\" IS NULL) AND (\"sentAt\" IS NULL)) OR (((status)::text = ANY (ARRAY[('IN_PROGRESS'::character varying)::text, ('DELIVERY_UNKNOWN'::character varying)::text, ('REJECTED'::character varying)::text])) AND ((attempts >= 1) AND (attempts <= 3)) AND (\"attemptId\" IS NOT NULL) AND (\"startedAt\" IS NOT NULL) AND (\"sentAt\" IS NULL)) OR (((status)::text = 'SENT'::text) AND ((attempts >= 1) AND (attempts <= 3)) AND (\"attemptId\" IS NOT NULL) AND (\"startedAt\" IS NOT NULL) AND (\"sentAt\" IS NOT NULL))))",
+        "name": "AccessRequestAdminNotification_state",
+        "table": "AccessRequestAdminNotification"
+      },
+      "restoredDefinitionSha256": "d980c409e72377b44907f2ea6454d1904fa5e9d7cf258d8c66f3838d0645feb4",
+      "source": {
+        "definition": "CHECK (((((status)::text = 'PENDING'::text) AND (attempts = 0) AND (\"attemptId\" IS NULL) AND (\"startedAt\" IS NULL) AND (\"sentAt\" IS NULL)) OR (((status)::text = ANY ((ARRAY['IN_PROGRESS'::character varying, 'DELIVERY_UNKNOWN'::character varying, 'REJECTED'::character varying])::text[])) AND ((attempts >= 1) AND (attempts <= 3)) AND (\"attemptId\" IS NOT NULL) AND (\"startedAt\" IS NOT NULL) AND (\"sentAt\" IS NULL)) OR (((status)::text = 'SENT'::text) AND ((attempts >= 1) AND (attempts <= 3)) AND (\"attemptId\" IS NOT NULL) AND (\"startedAt\" IS NOT NULL) AND (\"sentAt\" IS NOT NULL))))",
+        "name": "AccessRequestAdminNotification_state",
+        "table": "AccessRequestAdminNotification"
+      },
+      "sourceDefinitionSha256": "c9e085a6e449958b82e992f0ca3fee7e7d2b3c5dd93ce613dcf17d92d428c68d",
+      "table": "AccessRequestAdminNotification"
+    },
+    {
+      "name": "CatalogImportBatch_bounds",
+      "restored": {
+        "definition": "CHECK (((\"totalRows\" >= 1) AND (\"totalRows\" <= 10000) AND ((status)::text = ANY (ARRAY[('ACTIVE'::character varying)::text, ('COMPLETE'::character varying)::text, ('CANCELLED'::character varying)::text])) AND ((\"contentHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((\"selectionHash\")::text ~ '^[0-9a-f]{64}$'::text)))",
+        "name": "CatalogImportBatch_bounds",
+        "table": "CatalogImportBatch"
+      },
+      "restoredDefinitionSha256": "f6dcc955092bd4f32769dd1d2d3d5b9f54a00a3e0433a4143789c778cdef4491",
+      "source": {
+        "definition": "CHECK ((((\"totalRows\" >= 1) AND (\"totalRows\" <= 10000)) AND ((status)::text = ANY ((ARRAY['ACTIVE'::character varying, 'COMPLETE'::character varying, 'CANCELLED'::character varying])::text[])) AND ((\"contentHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((\"selectionHash\")::text ~ '^[0-9a-f]{64}$'::text)))",
+        "name": "CatalogImportBatch_bounds",
+        "table": "CatalogImportBatch"
+      },
+      "sourceDefinitionSha256": "e113b45fd925046c451975696169b37e876584fa4936344fb8bdad9e1cb6a221",
+      "table": "CatalogImportBatch"
+    },
+    {
+      "name": "CatalogImportRow_state",
+      "restored": {
+        "definition": "CHECK (((\"rowNumber\" >= 1) AND (\"rowNumber\" <= 10000) AND ((\"rowHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((((status)::text = 'PENDING'::text) AND (\"productId\" IS NULL) AND (error IS NULL)) OR (((status)::text = 'SUCCEEDED'::text) AND (\"productId\" IS NOT NULL) AND (error IS NULL)) OR (((status)::text = 'FAILED'::text) AND (\"productId\" IS NULL) AND (error IS NOT NULL)))))",
+        "name": "CatalogImportRow_state",
+        "table": "CatalogImportRow"
+      },
+      "restoredDefinitionSha256": "90610191e7fbb3ce5a706c72e349bb6811d9af9f2908cde568425fee6af219af",
+      "source": {
+        "definition": "CHECK ((((\"rowNumber\" >= 1) AND (\"rowNumber\" <= 10000)) AND ((\"rowHash\")::text ~ '^[0-9a-f]{64}$'::text) AND ((((status)::text = 'PENDING'::text) AND (\"productId\" IS NULL) AND (error IS NULL)) OR (((status)::text = 'SUCCEEDED'::text) AND (\"productId\" IS NOT NULL) AND (error IS NULL)) OR (((status)::text = 'FAILED'::text) AND (\"productId\" IS NULL) AND (error IS NOT NULL)))))",
+        "name": "CatalogImportRow_state",
+        "table": "CatalogImportRow"
+      },
+      "sourceDefinitionSha256": "b42b1fd3ab1f7baf2f62fd4467855c436c8d3da48ff6d4b79d4e859a9843ca0e",
+      "table": "CatalogImportRow"
+    },
+    {
+      "name": "OrganizationReminderEnrollment_origin_check",
+      "restored": {
+        "definition": "CHECK (((origin)::text = ANY (ARRAY[('CONTROLLED_ACTIVATION'::character varying)::text, ('EXISTING_APPROVED'::character varying)::text])))",
+        "name": "OrganizationReminderEnrollment_origin_check",
+        "table": "OrganizationReminderEnrollment"
+      },
+      "restoredDefinitionSha256": "871d9e64c1fa9a5a10aff25433c9f761e44206f9c52d7c16a98f85556d0399c2",
+      "source": {
+        "definition": "CHECK (((origin)::text = ANY ((ARRAY['CONTROLLED_ACTIVATION'::character varying, 'EXISTING_APPROVED'::character varying])::text[])))",
+        "name": "OrganizationReminderEnrollment_origin_check",
+        "table": "OrganizationReminderEnrollment"
+      },
+      "sourceDefinitionSha256": "6f1db9d5d6358287f27c84d4fdc3546277d6d7901e140439c56bcd170303f230",
+      "table": "OrganizationReminderEnrollment"
+    },
+    {
+      "name": "reminder_attempt_state",
+      "restored": {
+        "definition": "CHECK (((number >= 1) AND (number <= 3) AND (status = ANY (ARRAY['SENDING'::text, 'ACCEPTED'::text, 'SAFE_RETRY'::text, 'FAILED'::text, 'DELIVERY_UNKNOWN'::text]))))",
+        "name": "reminder_attempt_state",
+        "table": "ReminderAttempt"
+      },
+      "restoredDefinitionSha256": "e45d54d56558d9c09c71777c70fb9d959a62599902b7e899dbecfac85318bd63",
+      "source": {
+        "definition": "CHECK ((((number >= 1) AND (number <= 3)) AND (status = ANY (ARRAY['SENDING'::text, 'ACCEPTED'::text, 'SAFE_RETRY'::text, 'FAILED'::text, 'DELIVERY_UNKNOWN'::text]))))",
+        "name": "reminder_attempt_state",
+        "table": "ReminderAttempt"
+      },
+      "sourceDefinitionSha256": "2a9cb2a90f812ebc10703440c72d947bde5046278a1294c22e30accd74137edd",
+      "table": "ReminderAttempt"
+    },
+    {
+      "name": "reminder_campaign_budget",
+      "restored": {
+        "definition": "CHECK (((\"maxDispatches\" >= 1) AND (\"maxDispatches\" <= 100000) AND ((dispatches >= 0) AND (dispatches <= \"maxDispatches\")) AND ((\"enrollmentOrganizationId\" IS NOT NULL) OR (\"maxDispatches\" <= 100))))",
+        "name": "reminder_campaign_budget",
+        "table": "ReminderCampaign"
+      },
+      "restoredDefinitionSha256": "b4fa3f629815b8f7cb273dca1281a4e88efb793bd93b63f4486151287b5d9fb5",
+      "source": {
+        "definition": "CHECK ((((\"maxDispatches\" >= 1) AND (\"maxDispatches\" <= 100000)) AND ((dispatches >= 0) AND (dispatches <= \"maxDispatches\")) AND ((\"enrollmentOrganizationId\" IS NOT NULL) OR (\"maxDispatches\" <= 100))))",
+        "name": "reminder_campaign_budget",
+        "table": "ReminderCampaign"
+      },
+      "sourceDefinitionSha256": "a1a55c449dde67006d8292963958807f34a84c21e2163bf1e0f61285ae18a453",
+      "table": "ReminderCampaign"
+    },
+    {
+      "name": "ck_scan_event_referrer_host_format",
+      "restored": {
+        "definition": "CHECK (((\"referrerHost\" IS NULL) OR ((char_length(\"referrerHost\") >= 1) AND (char_length(\"referrerHost\") <= 253) AND (\"referrerHost\" !~ '[[:space:]/?#@]'::text))))",
+        "name": "ck_scan_event_referrer_host_format",
+        "table": "ScanEvent"
+      },
+      "restoredDefinitionSha256": "4a220d17be617db99961376ab390b8c902bf3d383954c574011b50bbaed814d6",
+      "source": {
+        "definition": "CHECK (((\"referrerHost\" IS NULL) OR (((char_length(\"referrerHost\") >= 1) AND (char_length(\"referrerHost\") <= 253)) AND (\"referrerHost\" !~ '[[:space:]/?#@]'::text))))",
+        "name": "ck_scan_event_referrer_host_format",
+        "table": "ScanEvent"
+      },
+      "sourceDefinitionSha256": "7add4f175867c9e5d769f45d899dab24b65f7d1003ad88fb72fd91cacde2d7b4",
+      "table": "ScanEvent"
+    }
+  ],
+  "constraintOrderEqual": true,
+  "databaseQueries": 0,
+  "mutations": "NONE",
+  "otherCatalogSectionsEqual": {
+    "columns": true,
+    "defaultAcls": true,
+    "enums": true,
+    "functions": true,
+    "indexes": true,
+    "largeObjects": true,
+    "migrations": true,
+    "nonPublicSchemas": true,
+    "pendingDocuments": true,
+    "pendingImages": true,
+    "relations": false,
+    "roles": true,
+    "schemas": true
+  },
+  "provenance": "USER_RETURNED_VPS_READ_ONLY_OUTPUT_2026-10-12",
+  "restoredConstraintCount": 310,
+  "setId": "20261012T043000Z",
+  "sourceConstraintCount": 310
+}

@@ -1,5 +1,219 @@
 # Existing backup coverage and staging recovery completion
 
+Latest 2026-10-12 checkpoint: **A–D PASS / CONTINUOUS / COMPLETE**. See the final COMPLETE section below.
+
+## Recurring staging continuation — 2026-10-09
+
+Task `STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING`: **COMPLETE_A_D_PASS_CONTINUOUS**.
+Earlier dated checkpoints below are retained history. [One plan, exact approval boundaries and complete
+pinned VPS blocks](../docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md#staging_recurring_db_storage_backup_and_monitoring--2026-10-09).
+
+### 2026-10-10 — correction installed PASS; hold released; wait regular schedule
+
+[Returned correction install output](evidence/backup-recovery/operator-monotonic-correction-installed-pass-20261010.json):
+**PASS_INSTALLED_PIN_MATCH_HOLD_RELEASED**; installed adapter SHA
+`14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418` matches reviewed
+correction. Typed D-Bus reads returned exact source microseconds. Both pre/post checks:
+no active backup/transient capture; staging web online/TCP3001; reminder timer enabled
+and active, service inactive, no residual reminder processes. attempts=0, hold=false,
+ACCEPTANCE mode. First failure/old adapter history retained; no manual capture, automatic
+retry, reset-failed, SMTP/Telegram call, timer configuration or production change.
+This is operator installation/precondition evidence, not a successful scheduled set;
+exact correction execution timestamp was not included in returned JSON.
+
+Confirmed first due **2026-10-11 04:30 UTC / 06:30 Europe/Zagreb CEST**;
+second due **2026-10-12 04:30 UTC / 06:30 Europe/Zagreb CEST**.
+A **WAITING_TWO_SUCCESSFUL_SCHEDULED_SETS**, B/C/D **NOT_RUN**, new set/restore IDs NONE.
+Do not rerun correction or local accepted checks. Wait without polling/manual capture;
+use existing results block once after **2026-10-12 05:10 UTC / 07:10 CEST**.
+On new failure preserve exact normalized diagnosis/closure and HOLD for review before
+another acceptance attempt. Marketing deploy remains deferred; B–D await two successes.
+Earlier pending/held checkpoints below are historical and superseded by this output.
+
+[Returned inventory](evidence/backup-recovery/operator-recurring-preflight-20261009.json)
+PASS_READ_ONLY at `2026-10-09T14:21:28.458656+00:00`: 56 tables/33 migrations, 7 objects /
+368,798B, 87,238,836,224B free. Reminder timer enabled/active, service inactive, one
+campaign. This updates the operational inventory; historical reminder-off closure below
+remains historical. Build `mMVPOjFPkw5L42RIqziS4`, whole canonical842 entries pinned.
+
+Existing staging repo/prefix/credentials, capture/Storage/snapshot/offsite primitives,
+exact restore-verifier rules and accepted eleven-module application reader reused.
+Production backup/retention/freshness/Telegram script/state unchanged. Since its existing
+alert CLI is production-specific, new staging-state transport uses the existing protected
+bot/chat with its own durable UNKNOWN dedup; no token/chat value printed or copied.
+Historical helpers unchanged; separate adapter never invokes historical main entrypoints.
+
+Local: 24 focused tests PASS; AST/operator shell+Python/payload pins/links/whitespace
+PASS. Application source unchanged; no build. Main `1ba7b34c78d56960014d18e5f4cfef637e057d26`,
+pre-existing roadmap review retained. [Diff/payload/block manifest](evidence/backup-recovery/recurring-preparation-manifest.json).
+Returned operators: read-only preflight PASS and [installation A
+PASS_ENABLED_ACCEPTANCE_BUDGET_TWO](evidence/backup-recovery/operator-recurring-installation-pass-20261009.json).
+This proves reviewed timers installed/enabled in ACCEPTANCE mode at operator execution;
+exact installation timestamp was not supplied. Ongoing runtime health and successful
+capture/monitor execution are not inferred from installation output.
+Execution approval explicitly confirmed existing protected Telegram recipient and exact
+2/1/1/1 acceptance budgets. No test Telegram sent; no manual capture.
+Approved daily04:30UTC / target24h / stale>25h / hourly:20UTC are installed settings;
+14/8/6 retention is dry-run only, not enforced deletion.
+First due **2026-10-10 04:30 UTC / 06:30 Europe/Zagreb (CEST)**;
+second due **2026-10-11 04:30 UTC / 06:30 Europe/Zagreb (CEST)**.
+A **WAITING_TWO_REAL_SCHEDULED_SETS**; B/C/D **NOT_RUN**, new IDs **NONE**.
+One returned results-read after **2026-10-11 05:10 UTC / 07:10 CEST** allows the approved
+35min job deadline plus closure/buffer; no polling/filler tests or manual capture.
+Installation block A is complete and must not be rerun. On failure preserve first
+normalized diagnosis/resume and HOLD; report next regular term affected before continuing.
+
+
+Latest returned [results read before first trigger](evidence/backup-recovery/operator-recurring-results-before-first-trigger-20261009.json):
+backup/monitor timers enabled and active, LastTrigger empty; attempts=0, completed=[],
+hold=false, ACCEPTANCE mode. This is early inventory, not failed capture or A acceptance;
+no capture/restore budget consumed. Next backup remains 10.10 04:30UTC/06:30CEST;
+second remains 11.10 04:30UTC/06:30CEST. No new live action/retry warranted.
+The required results-read remains after 11.10 05:10UTC/07:10CEST; retain existing approval.
+
+Acceptance budget two true scheduled captures/one latest restore/one dry-run/one
+controlled signal proof; then continuous mode promotion. Disable stops only new timers,
+HOLDs new job, lets active guard resume; retain all artifacts. No production change,
+Supabase re-upload, full web/auth/scanner recovery/reboot/deletion/commit/push.
+Until actual A–D results return, recurrence/new-set recovery/monitoring are NOT_PROVEN.
+Provider/inbox delivery NOT_PROVEN in no-test-message variant; actual retention deletion
+requires separate approval. Update this same report with accepted IDs after execution.
+
+
+### 2026-10-10 — failed first scheduled trigger; HOLD retained
+
+[Returned failure results](evidence/backup-recovery/operator-recurring-backup-failed-results-20261010.json):
+backup timer triggered 10.10 04:30UTC/06:30CEST; normalized STOP phase=SCOPE,
+reason=ValueError, setId=preparation, attempts=0, completed=[], hold=true.
+SCOPE is the initial phase label, retained through timer-identity parsing before
+reserve_attempt; it does not locate an exception inside scope(). Original exception
+message/trace/line/input were not saved (output=null; normalization retained type only).
+Concrete root cause **NOT_PROVEN**. Narrow candidate requiring direct evidence: two
+systemctl monotonic values converted by int() before reservation. Do not infer their
+actual formatting from local code alone.
+
+Next timer remains 11.10 04:30UTC/06:30CEST, enabled/active, but hold=true makes
+ExecCondition --eligible skip capture. No automatic capture retry or budget refill.
+No capture attempt was reserved; the reviewed path has not reached online preparation,
+writer drain, web pause or upload. Current web/reminder baseline and actual local/B2
+inventory are **NOT_PROVEN by this results output**; no new valid set is accepted.
+User reports receiving the real BACKUP_FAILED Telegram alarm; that is operator receipt
+for this failure only, not D acceptance or proof of future successful delivery.
+One combined read-only diagnostic pending: installed adapter identity, raw monotonic
+values/int parsing + numeric D-Bus values, service/runtime/writer states, control/set
+proofs and existing staging repository snapshot inventory. No adapter main/worker/job,
+restart, hold reset, schedule/pin change, deletion, B–D or marketing deploy.
+Correction proposal remains conditional on returned exact cause: fix only the evidenced
+pre-reservation input handling plus its targeted regression/normalized diagnosis;
+keep hold and live pins unchanged in this diagnosis step. No live retry approved here.
+
+
+### 2026-10-10 — exact cause confirmed; no corrective mutation
+
+[Returned combined read-only diagnosis](evidence/backup-recovery/operator-recurring-failure-read-only-cause-20261010.json),
+observed `2026-10-10T14:14:52.272251+00:00`, matches installed reviewed adapter SHA
+`00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294`.
+Exact defective step: `scheduled()` parses timer `LastTriggerUSecMonotonic` via `int()`.
+`systemctl show` returned **`1w 1d 13h 5min 47.034136s`**, which raises ValueError;
+D-Bus same property is typed uint64 microseconds **738347034136**. Service start property
+was numeric **738347225648** and its int conversion passed. Difference is **191512us /
+0.191512s**, within the existing 5s trigger guard. The defect is the adapter's formatted
+CLI output assumption, not evidence of an incorrect timer schedule or missed capture.
+SCOPE was misleadingly retained until reservation; saved original diagnosis has only
+ValueError, but returned exact property/conversion proof now locates the cause without
+rerunning the job. No additional read-only proof is needed for this cause.
+
+State unchanged during read: attempts=0/completed=[], hold=true, ACCEPTANCE, no active
+pointer. Stop occurred before reservation/precopy/drain/pause/upload. Current PM2 app
+online, staging environment verified, TCP3001 accepting. Reminder timer enabled/active,
+service inactive/success/status0, residual launcher/bundle processes=0. These match the
+previous enabled/active timer baseline; no resume was required because no pause/drain
+was reached. No HTTP/auth/scanner acceptance, business-history or email replay proof
+is claimed by this read-only check.
+
+Local inventory contains only historical sets/control `20261001T203612Z` (retained
+incomplete Oct1 attempt without recovery manifest) and `20261001T212354Z` (accepted).
+B2 staging repository contains only accepted snapshot
+`2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2` for the latter set.
+No new/incomplete October10 local set or B2 snapshot exists in returned inventory;
+October10 failure is recorded only as STOP/SCOPE/ValueError/preparation in recurring
+state, not as a valid recovery set. Existing historical incomplete artifacts retained.
+Alarm dedup `BACKUP_FAILED:preparation` has PROVIDER_ACCEPTED and user confirmed receipt;
+no test message or extra dispatch was made by diagnosis. This is real-failure evidence,
+not the synthetic D acceptance.
+
+Next regular trigger **2026-10-11 04:30UTC / 06:30 Europe/Zagreb CEST** remains enabled,
+but ExecCondition/HOLD blocks capture. Two actual capture reservations remain unused;
+no budget reset/refill is required. B–D and marketing deploy remain stopped.
+One bounded proposed correction: replace only the two scheduled monotonic input reads
+with strict typed D-Bus uint64 microsecond reads; keep identity/delay/age guards and
+all limits, add targeted formatting regression plus a specific pre-reservation failure
+phase/normalized property code. Proposed local correction is not implemented here.
+Live adapter pin replacement, hold release and resuming scheduled acceptance are outside
+this diagnosis and must be reviewed/authorized explicitly; no manual capture or catch-up.
+
+
+### 2026-10-10 — approved narrow monotonic correction, local PASS, pending operator
+
+User explicitly approved only the confirmed scheduled() defect correction, exact pin
+alignment/installation and guarded hold release; no manual capture/retry/catch-up,
+production changes, unrelated backup changes, B–D or marketing deploy.
+The changed reader gets typed D-Bus uint64 microseconds for the two monotonic values;
+never parses systemctl's formatted duration. Existing invocation identity, 0..5s
+start/trigger delay, <30s trigger age, and reservation boundary remain unchanged.
+Phase now `TIMER_INVOCATION_PRE_RESERVATION`; normalized codes identify
+`TIMER_START_MONOTONIC_READ_FAILED/INVALID` or
+`TIMER_TRIGGER_MONOTONIC_READ_FAILED/INVALID`. No raw errors/secrets are printed.
+
+Local red/green: the two initial regression tests first reproduced the recorded
+ValueError; then **17 adapter tests PASS / 0 FAIL**, including recorded values,
+wrong bus type, zero/overflow/read failure, identity/delay/age guards and existing
+reservation/hold/drain/resume tests. Only the relevant adapter test file was run;
+initial unrelated acceptance/preflight proofs retained, no app build/restore/global suite.
+AST comparison to exact old installed payload: only scheduled() and new typed reader
+changed; all other functions identical. Changed adapter/test/operator block syntax,
+exact old/new/compressed payload pins and whitespace PASS. These are local checks,
+not installed correction or scheduled acceptance proof.
+
+Old confirmed adapter SHA: `00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294`.
+Reviewed corrected adapter SHA: `14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418`.
+Config/helper/reader/catalog/offsite and all four staging unit pins remain exact and
+unchanged. Original installation/diagnostic blocks retain historical old pins and must
+not be rerun. A new pinned correction block below replaces only recurring.py after
+verifying the exact old bytes and unchanged companion pins; no weakened identity check.
+The bootstrap package generator automatically hashes current source; historical initial
+embedded A block is retained as its original payload, not regenerated in this correction.
+
+Operator preconditions under existing exclusive job lock: installed old pin matches;
+ACCEPTANCE, attempts=0/completed=[], hold=true, exact known first failure, no active
+pointer/job/transient capture; web online/staging/3001 accepting; reminder timer enabled
+and active, service inactive, no residual worker, worker bytes unchanged. Any failed
+precondition returns STOP without installing or releasing hold. No worker drain/pause
+or retry loop during this handoff. Checks are repeated against the installed new pin
+before hold release, with pure typed-property reads (no adapter main/capture invocation).
+Old adapter and whole original failure/state are preserved in root-private correction
+artifacts. Hold release archives the resolved failure in state, preserving alerts/dedup;
+attempts stays zero, no reset/refill. firstDueEpoch becomes actual next ordinary timer
+due so initial-set freshness grace reflects the approved resumed schedule. Monitor
+result may retain old BACKUP_FAILED until the next ordinary hourly read; no test alert.
+
+**PENDING_OPERATOR_COMMAND — INSTALL CORRECTION / GUARDED HOLD RELEASE.** Not yet run.
+Block writes only corrected adapter and private archive/receipt/state. Units, config,
+credentials, production, reminders and existing artifacts untouched; no daemon reload,
+reset-failed, service/timer start/restart, manual capture or business action. Failure after
+replacement retains HOLD and normalized first installation diagnosis for review; no
+automatic rollback/retry. The script refuses hold release within 60s of next due to
+avoid racing the daily trigger; return STOP output for review rather than retrying.
+
+If correction completes safely before **2026-10-11 04:30 UTC**, first/second captures
+are **11.10 and 12.10 04:30 UTC / 06:30 Europe/Zagreb CEST**. If a term passes while held,
+use the next two ordinary dates; typed timer next-due output determines actual dates.
+One results-read only after second due +40min (expected **12.10 05:10 UTC / 07:10 CEST**).
+No forced missed run. A still requires two successful scheduled sets; on new failure
+save precise diagnosis/HOLD and review. B–D and marketing deploy remain pending.
+Until operator output returns, latest confirmed installed adapter is 00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294,
+attempts=0/hold=true, and 11.10 capture is still blocked.
+
 ## Final result — approved one-off staging recovery COMPLETE
 
 Recorded2026-10-02 Europe/Zagreb from returned operator output. No operator command
@@ -1097,3 +1311,182 @@ SMTP_CALLS=0; TELEGRAM_CALLS=0; COMMIT_CREATED=NO; PUSH_CREATED=NO;
 SHARED_PRODUCTION_REPOSITORY_FOR_STAGING=REJECTED_BY_INSTALLED_CONTRACT;
 OPERATIONAL_PLAN=APPROVED; OPERATIONAL_COMPLETION=PENDING_OPERATOR_COMMAND_APPROVED_CAPTURE_DELTA; ADDITIONAL_PAUSE_APPROVAL=USER_APPROVED_ONCE_UNUSED_CONFIRMED;
 AUTOMATIC_STAGING_BACKUP_SCHEDULE=NOT_INTRODUCED.
+
+### 2026-10-12 — A PASS; B schema STOP safely closed; one approved continuation pending
+
+[Operator checkpoint summary](evidence/backup-recovery/operator-recurring-a-and-b-checkpoint-20261012.json)
+and [exact saved constraint definitions](evidence/backup-recovery/operator-recurring-schema-differences-20261012.json)
+record user-returned output, not a new live query. A **PASS_TWO_REAL_SCHEDULED_NEW_OFFSITE_SETS**:
+11/12 October sets `20261011T043000Z` / `20261012T043000Z`, both valid offsite trees/manifests;
+attempts=2, hold=false, ACCEPTANCE; closure success, web/writer timer baseline restored,
+pauses 6.947s/5.04s. Monitor HEALTHY at 12.10 14:20UTC/16:20CEST; latest set age
+35,391s. Backup/monitor timers active/enabled; next scheduled capture 13.10 04:30UTC.
+No Telegram alarm absence used as proof; A remains accepted without re-running captures.
+
+B downloaded latest snapshot `b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368`,
+manifest `2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1`,
+1,417,314 payload bytes MATCH_MANIFEST. Original attempt reserved; STOP at
+VERIFY_NEW_SCHEMA_WITH_ACCEPTED_EXACT_EQUIVALENCES / UNREVIEWED_CONSTRAINT_DIFFERENCE.
+ExecStopPost exit0, private cluster STOPPED, parentPermissions PRIVATE_0700,
+no private processes, staging not paused; summary absent. Restore is **not PASS**.
+310 constraints/order match; 8 exact textual pairs differ (5 already reviewed,
+2 newly introduced constraints and 1 changed campaign budget pair). 56 relations/order
+match; six explicit-owner ACL vs null-owner-default shapes match historical rule,
+but effective ACL is **NOT_PROVEN**, pending unchanged independent SQL comparison.
+
+User explicitly approves only the three exact hash overrides below and one continuation
+of the existing cluster. No broad SQL normalization, automatic retry or counter reset.
+A separate `recurring_resume.py` loads unchanged pinned historical/recurring helpers and
+applies overrides only in memory; original config, adapter, catalog, acceptance helper,
+worker/build/canonical/release pins and timer definitions remain unchanged. Only a new
+hash-named helper is installed; it cannot capture, download, initdb or pg_restore.
+One durable resume marker prevents reuse. Existing local set/manifest/download proof,
+original attempt/failure/closure, parent inode/owner/ACL identity, PG16/auth configuration,
+unit independent post, no active private process/port conflict, then SQL data-directory/
+no-TCP/port/read-only identity and saved catalog equality gate all remaining checks.
+
+Hash pairs are SHA256(JSON string, sort_keys=True), **source → restored**, not file hashes:
+
+- `AccessRequestAdminNotification.AccessRequestAdminNotification_state`: old NOT_ALLOWED; new `c9e085a6e449958b82e992f0ca3fee7e7d2b3c5dd93ce613dcf17d92d428c68d` → `d980c409e72377b44907f2ea6454d1904fa5e9d7cf258d8c66f3838d0645feb4`.
+
+- `OrganizationReminderEnrollment.OrganizationReminderEnrollment_origin_check`: old NOT_ALLOWED; new `6f1db9d5d6358287f27c84d4fdc3546277d6d7901e140439c56bcd170303f230` → `871d9e64c1fa9a5a10aff25433c9f761e44206f9c52d7c16a98f85556d0399c2`.
+
+- `ReminderCampaign.reminder_campaign_budget`: old `91ddd21f16057e49cc79af46397097dc9505477f96682a8a34bb2e24f9b257f4` → `2eded7720504308a08c823cff5976e4786de2b4211b777613001336b2583ca44`; new `a1a55c449dde67006d8292963958807f34a84c21e2163bf1e0f61285ae18a453` → `b4fa3f629815b8f7cb273dca1281a4e88efb793bd93b63f4486151287b5d9fb5`.
+
+The override replaces (does not retain) the old campaign pair in this continuation.
+Historical verifier stays unchanged. Catalog verifier still rejects other differences,
+and independently queries effective ACL using aclexplode/coalesced acldefault;
+shape match is never ACL PASS. Remaining database settings/ACL/counts/sequences,
+Storage references and accepted product/PDF/image application reader remain required.
+
+Local focused regression: **10 tests PASS**, including old rejection/new exact acceptance,
+unknown definition/name/nonconstraint rejection, unequal effective SQL ACL rejection,
+wrong set and second continuation refusal, closure success/failure and sanitized CHECK_ID.
+No application build, unrelated tests or local/live DB was run. Operator block shell,
+embedded Python, payload hashes and preservation checked separately.
+
+**PENDING_OPERATOR_COMMAND:** [complete standalone VPS TERMINAL B continuation](evidence/backup-recovery/VPS-TERMINAL-RESUME-B-20261012.sh).
+Independent systemd post closes private cluster on success/error/timeout/death, restores
+saved parent ACL baseline and checks staging/writer timer baseline. Return body and post
+failures separately with CHECK_ID and normalized reason, without raw sensitive stderr.
+No automatic retry. Return full output before C/D/finalize. C/D still NOT_RUN, mode
+still ACCEPTANCE, **COMPLETE=NO**. No production, marketing/legal changes, pin changes,
+cleanup/deletion, commit or push. Existing disable/rollback block is unchanged and must
+not be invoked merely to retry this attempt.
+
+### 2026-10-12 — returned B continuation PASS; C/D pending
+
+[Returned continuation summary](evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json):
+B PASS, unit exit0, exact installed helper SHA e87d47efed9c8f6775e1bd4b0e3eeb6ad5ed88482d3c4841c41875288e0906e2.
+Existing latest set/snapshot/manifest reused; no second download/initdb/pg_restore.
+56 tables/33 migrations, exact catalog equivalences, independent effective table ACL SQL,
+database settings/ACL/counts/sequences and Storage references passed the complete helper.
+Product CSV, bounded PDF bytes/metadata and image download/recheck PASS; SMTP calls0,
+reader schema/business writes NONE. Original failure remains historical evidence.
+Independent closure: STOPPED, PRIVATE_0700, PASS_EXPECTED_STAGING,
+writerTimerBaseline RESTORED; artifacts retained; body/closure failure null.
+State and original pins unchanged. Backup/monitor/reminder timers active/enabled/waiting;
+reminder service inactive/dead. Full web/auth/scanner recovery NOT_TESTED;
+Storage provider restore NOT_PERFORMED. No expansion or repeat of those tests.
+
+A remains accepted PASS. C and D NOT_RUN; CONTINUOUS promotion NOT_RUN; COMPLETE=NO.
+C remains the existing one staging 14/8/6 dry-run (no snapshot deletion), but the reviewed
+helper invokes `restic forget --dry-run --no-lock`. The earlier explicit “bez forget/prune”
+boundary requires a narrow clarification before invoking that literal subcommand.
+No C/D/finalize command has been executed or original B repeated. Marketing deploy,
+release pins, production, legal/marketing diffs, commit/push remain untouched.
+
+
+### 2026-10-12 — C literal dry-run explicitly approved; operator execution pending
+
+User resolves earlier “bez forget/prune” only for the existing staging
+`restic forget --dry-run --no-lock`: exact repository ID
+`9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35`,
+prefix `passvero-staging-recovery-v1`, host/tag `passvero-staging-recovery`,
+group-by host, policy 14 daily / 8 weekly / 6 monthly. No prune or actual deletion.
+[Separate C operator block](evidence/backup-recovery/VPS-TERMINAL-C-DRY-RUN-20261012.sh)
+checks pinned helpers, accepted A/B and private closure, one-attempt budget, repo ID,
+prefix and all snapshot selectors before dry-run; mismatch STOP. After dry-run it
+checks complete decisions and unchanged snapshot ID inventory. Normalized failure
+records CHECK_ID without retry. A/B remain PASS; C PENDING_OPERATOR_COMMAND, D NOT_RUN,
+CONTINUOUS promotion pending; COMPLETE=NO. No source/build/tests/live execution in
+this preparation. Return C output before the already-approved D/no-Telegram step.
+
+
+### 2026-10-12 — C returned PASS; one D and guarded finalize pending
+
+[Returned C summary](evidence/backup-recovery/operator-recurring-c-pass-20261012.json):
+preflight exact staging repository/prefix/host/tag/path scope PASS, 14/8/6 dry-run
+with no-lock and no prune. All 3 validated snapshots keep; deletedSnapshots0,
+productionCandidates0, snapshotInventoryUnchanged=true. Third pre-existing snapshot
+retained; it is not counted as a new scheduled A capture. C PASS is a dry-run proof,
+not enforced retention deletion. A and B remain accepted; do not repeat them.
+
+[One D operator block](evidence/backup-recovery/VPS-TERMINAL-D-FINALIZE-20261012.sh):
+pinned original helper; require accepted A/B/C, private closure and testTelegram=false;
+one durable D marker and controlled classifier/dedup proof, without live-state corruption
+or Telegram call. Only if D succeeds, original guarded finalize promotes mode to
+CONTINUOUS. Verify only mode changed, backup/monitor active/enabled, writer baseline
+and original pins unchanged; return A–D acceptance, full state/unit schedules and last
+monitor observation. Actual provider/inbox delivery remains NOT_PROVEN.
+Execution PENDING_OPERATOR_COMMAND; D/finalize not yet accepted, COMPLETE=NO.
+No new capture/restore/dry-run, source/build/tests, live execution, production,
+marketing/legal modification, pin changes, deletion, commit or push.
+
+## STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING — COMPLETE 2026-10-12
+
+**COMPLETE — approved bounded A–D acceptance passed; CONTINUOUS mode promoted.**
+Authority: user-returned [final D/promotion output](evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json),
+[A/B checkpoint](evidence/backup-recovery/operator-recurring-a-and-b-checkpoint-20261012.json),
+[B continuation PASS](evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json)
+and [C PASS](evidence/backup-recovery/operator-recurring-c-pass-20261012.json).
+These are operator-supplied point-in-time evidence; no new remote query or ongoing
+future-run guarantee is inferred. All earlier WAITING/STOP/pending checkpoints remain
+history and are superseded for current acceptance status by this section.
+
+| Phase | Exact result / scope |
+| --- | --- |
+| A | Two genuine scheduled sets: `20261011T043000Z` snapshot `a0b7c30d7fcbe1363d28d36b2bde4d18e8d1c4b996960605a9fc6b6d21fb7ff3`, manifest `88a73f32fafce767c3139ec62b11f6d64ce2aef0f3f052d5a8b93c36345d357d`; `20261012T043000Z` snapshot `b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368`, manifest `2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1`. Both offsite tree/manifest PASS, 1,417,313 / 1,417,314 payload bytes. Pauses 6.947 / 5.04s, successful staging and writer timer baseline resume. |
+| B | Latest set reused after original strict-schema STOP; one explicitly approved existing-cluster continuation, no second download/initdb/pg_restore/reset. Exact 310-constraint equivalences, independent effective ACL SQL, DB settings/counts/sequences, 56 tables/33 migrations, Storage references, product CSV/PDF/image application reads PASS. Original failure retained. |
+| C | Exact staging repository/prefix/host/tag scope, 14 daily / 8 weekly / 6 monthly dry-run PASS. All three inventoried snapshots keep; zero deleted/production candidates, snapshot inventory unchanged. Pre-existing third set not counted as a scheduled A capture. |
+| D | Controlled BACKUP_FAILED / SET_INCOMPLETE / VALID_SET_MISSING / SET_STALE / HEALTHY classification PASS, UNKNOWN dedup not retried. No live backup state corruption or test Telegram. Guarded A–D finalize succeeded. |
+
+Final state: attempts=2, latest attempt complete, hold=false, mode=CONTINUOUS;
+only mode changed in finalize, reviewed adapter/config/helper/release pins unchanged.
+Repository ID `9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35`,
+separate prefix `passvero-staging-recovery-v1`. Private cluster STOPPED,
+parentPermissions PRIVATE_0700, stagingRuntime PASS_EXPECTED_STAGING,
+writerTimerBaseline RESTORED, artifacts retained. Reminder timer active/enabled/waiting,
+service inactive/dead in returned observation; no email or delivery proof inferred.
+
+Regular backup timer active/enabled/waiting: daily **04:30 UTC / 06:30 CEST** at this
+observation, next **13.10.2026 06:30 Europe/Zagreb CEST**. Fixed UTC schedule means
+local wall time changes after DST. Monitor timer active/enabled/waiting, hourly :20 UTC;
+last **12.10 15:20 UTC / 17:20 CEST**, next **12.10 18:20 CEST** in returned output.
+Last monitor observedEpoch1791818400 HEALTHY: latest valid set age 38,991 seconds
+(**10h49m51s**), under configured stale threshold >25h. Target RPO24h remains a target;
+accepted two scheduled runs do not guarantee every future run or end-to-end RTO.
+
+### Limits and retained disable / rollback procedure
+
+- Retention deletion NOT_APPROVED / snapshotDeletion NOT_PERFORMED; C proves dry-run
+  decisions only, no forget without dry-run or prune is enabled/authorized.
+- Test Telegram NOT_APPROVED_NOT_SENT; provider and inbox receipt NOT_PROVEN for D.
+  Earlier actual failure alarm receipt is historical and does not prove future delivery.
+- Full web/auth-session/fresh-scanner recovery NOT_TESTED; Storage provider re-upload/
+  restore NOT_PERFORMED. Accepted private application DB/file read is the proved scope.
+- No production backup/restore/freshness/retention change or repeat; no reboot,
+  deletion, pin protection bypass, application build, unrelated tests, commit or push.
+- Marketing deploy remains deferred pending separately approved release-pin alignment.
+  COMPLETE for this backup slice does not authorize deploy or changing protected pins.
+  Marketing and legal source diffs remain unchanged.
+
+Existing reviewed [disable/rollback block](../docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md#vps-terminal-disable--rollback--retain-artifacts-allow-active-job-resume)
+is retained unchanged, **not executed**: disable/stop only the two new staging timers,
+set job hold=true, allow any active capture to finish and independently resume staging/
+writer baseline; retain sets, restore data, helper/evidence artifacts. Do not kill a
+capture/SMTP worker, remove files, reset counters or modify production/reminder enablement.
+Re-enablement/release changes remain separate operator work; do not rerun acceptance blocks.
+
+Documentation closure: exact evidence, current report/roadmap/manifest updated;
+bounded local hashes/link/whitespace verification only, no additional live action/tests.

@@ -1,0 +1,8 @@
+{
+  "firstDueUTC": "2026-10-10T04:30:00+00:00",
+  "installation": "PASS_ENABLED_ACCEPTANCE_BUDGET_TWO",
+  "manualCapture": false,
+  "secondDueUTC": "2026-10-11T04:30:00+00:00",
+  "testTelegram": "NOT_SENT_NOT_APPROVED",
+  "waitFor": "TWO_ORDINARY_DAILY_TIMER_INVOCATIONS"
+}

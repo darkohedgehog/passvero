@@ -1,0 +1,259 @@
+{
+  "acceptedEvidence": {
+    "acceptance": {
+      "A": "PASS_TWO_REAL_SCHEDULED_NEW_OFFSITE_SETS",
+      "B": "PASS_LATEST_NEW_SET_PRIVATE_RESTORE_AND_READER",
+      "C": "PASS_STAGING_RETENTION_DRY_RUN",
+      "D": "PASS_CONTROLLED_SIGNALS",
+      "continuousDailySchedule": "APPROVED_PROMOTED",
+      "productionChanged": false,
+      "retentionDeletion": "NOT_APPROVED"
+    },
+    "attempts": 2,
+    "constraintPairs": [
+      {
+        "constraint": "AccessRequestAdminNotification_state",
+        "newPair": [
+          "c9e085a6e449958b82e992f0ca3fee7e7d2b3c5dd93ce613dcf17d92d428c68d",
+          "d980c409e72377b44907f2ea6454d1904fa5e9d7cf258d8c66f3838d0645feb4"
+        ],
+        "oldPair": null,
+        "table": "AccessRequestAdminNotification"
+      },
+      {
+        "constraint": "OrganizationReminderEnrollment_origin_check",
+        "newPair": [
+          "6f1db9d5d6358287f27c84d4fdc3546277d6d7901e140439c56bcd170303f230",
+          "871d9e64c1fa9a5a10aff25433c9f761e44206f9c52d7c16a98f85556d0399c2"
+        ],
+        "oldPair": null,
+        "table": "OrganizationReminderEnrollment"
+      },
+      {
+        "constraint": "reminder_campaign_budget",
+        "newPair": [
+          "a1a55c449dde67006d8292963958807f34a84c21e2163bf1e0f61285ae18a453",
+          "b4fa3f629815b8f7cb273dca1281a4e88efb793bd93b63f4486151287b5d9fb5"
+        ],
+        "oldPair": [
+          "91ddd21f16057e49cc79af46397097dc9505477f96682a8a34bb2e24f9b257f4",
+          "2eded7720504308a08c823cff5976e4786de2b4211b777613001336b2583ca44"
+        ],
+        "table": "ReminderCampaign"
+      }
+    ],
+    "hold": false,
+    "installedAdapterSha256": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+    "latestResults": "codex/evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json",
+    "mode": "CONTINUOUS",
+    "privateCluster": "STOPPED",
+    "provenance": "USER_RETURNED_OPERATOR_OUTPUT_POINT_IN_TIME",
+    "runtimePayloadHashes": {
+      "config.json": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+      "offsite.py": "4349476eafa6067ca0690fa027b1baad1159b8e0d17d2be8301bc04c7482514f",
+      "passvero-staging-backup-monitor.service": "1e2c941c516a76bdb974703ed49cf21a8a6e6a6a6c7d9f172c969a415045e72f",
+      "passvero-staging-backup-monitor.timer": "092e0e0d1eb3e3c63803095ceac733b57090c7197ee34c06c0465ab5dcdb7689",
+      "passvero-staging-backup.service": "609ae194de0f6bdef8c91d7a1a1932173f6aca81092a28da623a702413d3d99b",
+      "passvero-staging-backup.timer": "6808757a8377a118f57999447cc0d5ceb769484069915765248ca856bb445301",
+      "recurring.py": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+      "recurring_acceptance.py": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7",
+      "recurring_catalog.py": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7"
+    },
+    "stagingWriterBaseline": "RESTORED"
+  },
+  "authority": "FINAL_BACKUP_COMMIT_CONTENT_MANIFEST",
+  "baseCommit": "1ba7b34c78d56960014d18e5f4cfef637e057d26",
+  "branch": "main",
+  "commitMessage": "feat(backup): add recurring staging DB and storage recovery",
+  "committedPathCount": 29,
+  "files": {
+    "codex/EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md": "16e8914866ebee55a9af73fc0b0c06f59a283ed7c06eb7b0153b46c36bf95f79",
+    "codex/IMPLEMENTATION_ROADMAP.md": "550bcf57f3594fd9cb20de92aeb653b70e8fec10dd9178b6f480df75c4123203",
+    "codex/evidence/backup-recovery/VPS-TERMINAL-C-DRY-RUN-20261012.sh": "18a1da21d7ac925efb4c1bf2dbbf69b377524b20b6c8a8caeb92c396d5d40ab2",
+    "codex/evidence/backup-recovery/VPS-TERMINAL-D-FINALIZE-20261012.sh": "cdbb1e3e8b6c70ee1bf1c4d742ccfbd13e4a0ea8effdd91791e697d432bd8936",
+    "codex/evidence/backup-recovery/VPS-TERMINAL-RESUME-B-20261012.sh": "7891ba93b8d02ae76849273aacb714a02434a36224650ca51134e9f5bb34855b",
+    "codex/evidence/backup-recovery/operator-monotonic-correction-installed-pass-20261010.json": "966dd6d5771a416e51fc39030bde9935dcd2066024f8886830f585346a03a66f",
+    "codex/evidence/backup-recovery/operator-recurring-a-and-b-checkpoint-20261012.json": "b11583a8690897afdd9e3410ba1d8b4ca3aede73ea94209b1f0da805e651eda7",
+    "codex/evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json": "bd798cf6393f26dbc48e28efbf3d73b0df8260657179987409f6435c5ed63fe1",
+    "codex/evidence/backup-recovery/operator-recurring-backup-failed-results-20261010.json": "0bb07a3178c94d8e53cafd5a34c4071be03b446450328dba1176c1a6bb018926",
+    "codex/evidence/backup-recovery/operator-recurring-c-pass-20261012.json": "ff96648e67f17828519c34d7499bae087971e05233bac8886e6339b02990966f",
+    "codex/evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json": "87c19f25c598db09ac1d6976c84ab3dac9eca6722275ee55bf0e4cc564e41b4c",
+    "codex/evidence/backup-recovery/operator-recurring-failure-read-only-cause-20261010.json": "4f97579e4aea7b98ef6ccea6cba6f5ca3f02064571295817793815cdb8b50fed",
+    "codex/evidence/backup-recovery/operator-recurring-installation-pass-20261009.json": "8502f673c3f432b31b9c8ce2a49e8d38fceb88943da79e2f94b8878e8e9cf0d7",
+    "codex/evidence/backup-recovery/operator-recurring-preflight-20261009.json": "e866e827e34eb6fc2ad48289017be387e5ec1e9ddeb23450cc0c6cc298d9f7f9",
+    "codex/evidence/backup-recovery/operator-recurring-results-before-first-trigger-20261009.json": "8b53787e667a0c8eeafba7bcc8db7fd4710094c6628945a16f6dcd25b04edd5e",
+    "codex/evidence/backup-recovery/operator-recurring-schema-differences-20261012.json": "c43b755199421daab352cb80fc92e0c41d589733013d211b22d27de3f2e2e736",
+    "codex/evidence/backup-recovery/recurring-preparation-manifest.json": "0cc747140d6d6f69bd0f1d5ff29ebe98b2f942353d4085a384a1c53d0d6c0ec2",
+    "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md": "747b1381fb1c36e9d53998fa2f3cb2a02c20588852d03fa2f482da203b4c6fa5",
+    "scripts/staging-recovery/recurring.py": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+    "scripts/staging-recovery/recurring_acceptance.py": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7",
+    "scripts/staging-recovery/recurring_catalog.py": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7",
+    "scripts/staging-recovery/recurring_package.py": "301c8673480f9c1279b7aeb42e6b594219f02660a3dd29ae139d9bfe8c6b449d",
+    "scripts/staging-recovery/recurring_preflight.py": "0c7673779fb601cd007e4fea7370a2e588c9795c28c1f6619bc18c9220151363",
+    "scripts/staging-recovery/recurring_resume.py": "e87d47efed9c8f6775e1bd4b0e3eeb6ad5ed88482d3c4841c41875288e0906e2",
+    "tests/operations/test_staging_recurring.py": "f855d32a79ca928565c80782f839d2ad622d60ab8ff6f16dbf09c08194bd3aff",
+    "tests/operations/test_staging_recurring_acceptance.py": "53ce8bee70928f347d921d08639e8d2d1e3fb3c95022f10cb77747eae014a329",
+    "tests/operations/test_staging_recurring_preflight.py": "f75e3383c80c646f61581e9b5e5fa2b33ee04a95452c1dfab681d8e643757d83",
+    "tests/operations/test_staging_recurring_resume.py": "227b228925fdc5756a96ffc7b83453636f1f7ba2691691eb8a9e2e3a4d2de56f"
+  },
+  "origin": "https://github.com/darkohedgehog/passvero.git",
+  "preparationManifest": {
+    "path": "codex/evidence/backup-recovery/recurring-preparation-manifest.json",
+    "role": "Accepted preparation/runtime history, not authority for commit file hashes. Its roadmap hash covers the preserved combined worktree; final files map above covers committed roadmap bytes. Historical pending checks are superseded by returned A-D evidence."
+  },
+  "preservedOutsideCommit": {
+    "app/[locale]/about/page.tsx": "63042305710bc8d6a1d10f582fb64bf6ce6efaa0e0e713dace53b00fb4e75576",
+    "app/[locale]/contact/page.tsx": "04dccb4fbade13e4179f910f4a9d84d95fd1d3b72d447137f4b20e6bddf2dde1",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1",
+    "codex/PUBLIC_PRICING_AND_MARKETING_CONTRACT_ALIGNMENT_STAGING.md": "0f4e7b977fb8ff357a77b34cd9b52777281fc6f3cc625434856e34d08b134cb5",
+    "codex/evidence/public-pricing/operator-preflight-20261009.json": "a5db23c7ea4cb74ef27c236c758534d1464a5d24a15267b67097dd020c3c56c1",
+    "codex/evidence/public-pricing/reviewed-package-20261009/application.tar.gz": "8c3e74a998966976aa92777a37fb1b040b2d02dea1ac49c4a1f148744e062a1e",
+    "codex/evidence/public-pricing/reviewed-package-20261009/artifact-manifest.json": "8222518bd18a446278df3e375a2fdfe1af92c598cddecc46d072c6b745e13817",
+    "codex/evidence/public-pricing/reviewed-package-20261009/build.log": "98218128fef7c2bd8ce935635dad21eec0ae030abe7ae963a44a467d0328c451",
+    "codex/evidence/public-pricing/reviewed-package-20261009/copy-check.json": "ec967d21330054a932f98523ba17e4c8f382ea5baf78675a1b5282a9abfe78e9",
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-desktop.png": "51c38b2f72bb6676dc8e6859f0418298cd596ae421de8bc9d4e7d79f57f4dcf6",
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-mobile.png": "848d539d3265ccb4f9c5a472df2c7de4129ff4ed26b36d20ede8471e6c6bb888",
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-pricing-desktop.png": "151e1f56d9b46cde9f6f684d069899d4d86fa6e77a22e3e0721fdc1e5f671b31",
+    "codex/evidence/public-pricing/reviewed-package-20261009/de-pricing-mobile.png": "4c97386ec1147d1f8c0f2da072b000b18a6788d5fd184798144e0cef77164a3e",
+    "codex/evidence/public-pricing/reviewed-package-20261009/documentation-manifest.json": "d52f633643d3c1ca03e2c818c135a76680b2f3ebde6f34901ebcc6cdf374ec4e",
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-desktop.png": "ac067062e9829e65523e3e9d86e5f7c0b2178c0725b2c8ae65d922a272f7e423",
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-mobile.png": "39e0890b8530bc430bf878ea6a4520f8a8d6268a4960f97f784200ca5c6cd6dd",
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-pricing-desktop.png": "b354c036f66b5bd6737dedc2fd9b1e0d459e817d098897fb1ff0909727388e91",
+    "codex/evidence/public-pricing/reviewed-package-20261009/en-pricing-mobile.png": "03349b83f79dddbc1b6d45dac012d928bb31b4be1ac2282be1bf4281a36cccbd",
+    "codex/evidence/public-pricing/reviewed-package-20261009/handoff-verification.json": "543e4ec5c64189e405b456feb0f57d3111110df76f4259160804b2ae1246f0ca",
+    "codex/evidence/public-pricing/reviewed-package-20261009/hero-check.log": "a3d6eceeea805dacf09d4f927ba30f528df465f791163aad1d7d09a39e2fd2bb",
+    "codex/evidence/public-pricing/reviewed-package-20261009/hero-results.json": "8a9c91ddfd997617f11117cc27b1dcd25f7e8d3dc45f7f293307c020c61a2c3e",
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-desktop.png": "5800744817cb6ae647b6ece70b17980dc72750b9e685641a4f47697488906f16",
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-mobile.png": "13626058b4ee443d7fab2158211d47545bc193c3ba4312b4978ddfb16b879599",
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-pricing-desktop.png": "765d5887fe358ab05903ac366c3c348eeb853bc92d93c8c270964c05f9bf4393",
+    "codex/evidence/public-pricing/reviewed-package-20261009/hr-pricing-mobile.png": "1ee05632ada5f6fd29ca76762a852d2c47b6f450345bfeee7e481089018ef983",
+    "codex/evidence/public-pricing/reviewed-package-20261009/lint.log": "9800fe24ae26888e877df4a536bbc7bbc9b6907ecba63bfa6b7eab8402d159c6",
+    "codex/evidence/public-pricing/reviewed-package-20261009/marketing-tests.log": "05b2cae8b7e8a2adb55e6fafb703586fe3a8149987dced652c64e89d3155372b",
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-desktop.png": "e76526b8f1fdc0238e4e2bd6f017e0967ca5c827ed058c7f6a3ccca2b2ad08fe",
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-mobile.png": "2a6f0934d820d03a4db5107c786942878ceb5297ff66fad2fa749e9199a7ed21",
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-pricing-desktop.png": "f0650741d425f48b523acca401f7ae69cad8f4bb82525586f5097a3b8be10fc2",
+    "codex/evidence/public-pricing/reviewed-package-20261009/pl-pricing-mobile.png": "53ca07d61f9d4cb38ef9e04e8a3ca6b9417ed7284b42fc16ad362062ae130e90",
+    "codex/evidence/public-pricing/reviewed-package-20261009/preservation-manifest.json": "c48446573788f29817dd15d61c87031ab1f519560cdb0d14de79adf777c3105b",
+    "codex/evidence/public-pricing/reviewed-package-20261009/roadmap-before.md": "4da6853e89f8a013f483a831effda9b68ead67f52397ef8d80139a499cb8400e",
+    "codex/evidence/public-pricing/reviewed-package-20261009/roadmap-task-only.diff": "5d69cf7ff50bdf91c2fcb605f9756bbc739472cf4c67e881e9df721ca9f2eddc",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-desktop.png": "65841182fd0506c89b0e00787f858574092e4c14a1f6b8d5c7a7094a3d822192",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-mobile.png": "0e2049194b01096d855becbde2e44baecb28ef93b069852fb5ea6f199ff96f45",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-pricing-desktop.png": "dd14f1b643ff0280887b599c712e262cd4fd0834c28f0863c4f4dc1d332423bb",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sl-pricing-mobile.png": "4571db52cb994a1970f0642b5f26fe5aed84fec8f7ef36cf3e579cd3aa5efbbf",
+    "codex/evidence/public-pricing/reviewed-package-20261009/source-manifest.json": "e1ba9855643e00c6d7513d1c569f08096fe963cf3109165aa55f5a8c0e8fae6d",
+    "codex/evidence/public-pricing/reviewed-package-20261009/source-review.diff": "51f0a7a86042f79e2352f64f245aa43147691d9aaaea806683fba272698bda32",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-desktop.png": "732996790d8b26b8c29436f02a71f6900766ac9f219ee2d5d6052e55cd95e18d",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-mobile.png": "19d8fcaaa38bd691af52015917ce3c925a948afee07dcb6880d0aa16851809db",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-pricing-desktop.png": "84a253bd5f76f3d4d85131bfab2c2eb8a1cccb585382c5fffa0da701336af97a",
+    "codex/evidence/public-pricing/reviewed-package-20261009/sr-pricing-mobile.png": "58c08a8c2973e69ba17f1786cc7adc96ca0624712225c88a7068f23adc6082a5",
+    "codex/evidence/public-pricing/reviewed-package-20261009/targeted-lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "codex/evidence/public-pricing/reviewed-package-20261009/typescript.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "codex/evidence/public-pricing/reviewed-package-20261009/visual-check.log": "1898ba4f54a2e7471076aadcffbe3d88a4f35faabe2e1cfad747a62a39a08c17",
+    "codex/evidence/public-pricing/reviewed-package-20261009/visual-results.json": "4c3e2d73fd7645f3839a2350d9dfca194bade29ef44c17c2d5f8d3b17ec53dff",
+    "messages/de.json": "fbcf8f8bd47c819cfc671017f9d94fb6c594da4f29e5b2087603e13c32a20e38",
+    "messages/en.json": "55400862d3894f5bd0b34b82a85d2a65568fd2d2df2a8300cc11c1af60287277",
+    "messages/hr.json": "016a67ce195d82a4f16e70a4f937082fc848f134463ab10841b4fec6d4e4b65e",
+    "messages/pl.json": "834783fb0c16d39c0995ff0d98e41ed8f5cdcc4703da955a68a9e3260bacb604",
+    "messages/sl.json": "21e7017638d9cc5390006e3292dc512387b49a6da3ef3407fb95466a7591e6f4",
+    "messages/sr.json": "a0d83eca9e2bb7c8434a1b109791e5248622ac11a22567fafc13fd0c4dca6bc0",
+    "src/components/marketing/compliance-section.tsx": "aef2d7461d39fb1cb24edf70cd85a715b2c4549849ee494aef8483bee56ebafc",
+    "src/components/marketing/dashboard-preview-section.tsx": "1ad97be888c46713803794031d99b60b1dc31161979f5dbae43395a3821a209d",
+    "src/components/marketing/hero-section.tsx": "ff36bf7b57dba993b506225e60108aea3c503af06936d441cf3119130e840236",
+    "src/components/marketing/pricing-section.tsx": "9acd08ec131291b12b11d9e3c2b4901cae24c8a85b9b1feda1f9c42b804c22a7"
+  },
+  "review": {
+    "attemptsAndHistory": "Durable budgets/attempts; failure HOLD; original failure and corrected-adapter history retained; no automatic retry or refill.",
+    "configHelperAndApplicationReaderPins": "PASS",
+    "decodedPayloadCount": 11,
+    "decodedPayloads": [
+      {
+        "bytes": 15606,
+        "container": "codex/evidence/backup-recovery/VPS-TERMINAL-RESUME-B-20261012.sh",
+        "sha256": "e87d47efed9c8f6775e1bd4b0e3eeb6ad5ed88482d3c4841c41875288e0906e2"
+      },
+      {
+        "bytes": 30622,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418"
+      },
+      {
+        "bytes": 29302,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294"
+      },
+      {
+        "bytes": 18270,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7"
+      },
+      {
+        "bytes": 3394,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7"
+      },
+      {
+        "bytes": 15554,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "4349476eafa6067ca0690fa027b1baad1159b8e0d17d2be8301bc04c7482514f"
+      },
+      {
+        "bytes": 2647,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62"
+      },
+      {
+        "bytes": 593,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "609ae194de0f6bdef8c91d7a1a1932173f6aca81092a28da623a702413d3d99b"
+      },
+      {
+        "bytes": 228,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "6808757a8377a118f57999447cc0d5ceb769484069915765248ca856bb445301"
+      },
+      {
+        "bytes": 305,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "1e2c941c516a76bdb974703ed49cf21a8a6e6a6a6c7d9f172c969a415045e72f"
+      },
+      {
+        "bytes": 224,
+        "container": "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md",
+        "sha256": "092e0e0d1eb3e3c63803095ceac733b57090c7197ee34c06c0465ab5dcdb7689"
+      }
+    ],
+    "disableRollback": "Existing reviewed staging-only disable/hold block retained, not executed.",
+    "embeddedOperatorBlockHashes": "PASS_ALL_NINE",
+    "exactAcceptedFileHashes": "PASS",
+    "guards": "Exact host/runtime/build/canonical/migrations/helpers/workers; typed D-Bus invocation/start/trigger guards; no wildcard bypass.",
+    "historicalHelpers": "UNCHANGED",
+    "importantOrCriticalFindings": [],
+    "liveAccess": "NONE",
+    "monitoring": "Controlled signals and UNKNOWN dedup PASS; no test Telegram; provider/inbox NOT_PROVEN.",
+    "newDocumentationLinkTargets": "PASS",
+    "recoveryLimits": "Private DB/file/application read PASS; full web/auth/fresh scanner NOT_TESTED, Storage provider restore NOT_PERFORMED.",
+    "resume": "Independent systemd ExecStopPost and finally writer timer baseline restore; private restore cgroup closure and saved ACL recovery.",
+    "retention": "14/8/6 dry-run only, mandatory --dry-run --no-lock, no prune/deletion.",
+    "runtimePins": "UNCHANGED_NO_REPIN_FOR_GIT_HEAD",
+    "sensitiveArtifacts": "Reviewed source, scripts, evidence and decoded text payloads; no actual credential/token/connection string, raw dump, PDF/image bytes or build bundle. One literal postgres://admin:secret@server is a synthetic sanitization regression fixture, not a credential. Evidence retains only schema, counts, hashes, metadata and necessary operator identifiers.",
+    "stagingIsolation": "Separate B2 prefix/repository, exact staging host/tag/set-path selector, independent staging monitor state; production operations unchanged.",
+    "testsAndBuild": "NOT_REPEATED_ACCEPTED_UNCHANGED_CONTENT",
+    "verifier": "Only approved exact ordered hash pairs and exact owner/default ACL shape; independent SQL aclexplode privileges comparison; unknown differences rejected."
+  },
+  "self": {
+    "includedInCommit": true,
+    "path": "codex/evidence/backup-recovery/recurring-release-manifest.json",
+    "sha256Excluded": "Avoid self-referential digest; verify this file using the Git blob and release review digest."
+  },
+  "sharedDocuments": {
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "commitContent": "Existing HEAD plus recurring backup 09-12 October history and COMPLETE section only.",
+      "committedSha256": "550bcf57f3594fd9cb20de92aeb653b70e8fec10dd9178b6f480df75c4123203",
+      "preservedWorktreeSha256": "3a8f4f356d087163468508e723f45eaea620806c9b755a981f3aedc5a8a688d7",
+      "remainingContent": "Pre-existing 08 October broader readiness review including marketing/pricing and legal priorities, and two legal decision-register sections; not included in backup commit.",
+      "remainingDiffFormat": "git diff --no-index /private/tmp/passvero-backup-release-review/roadmap-index.md codex/IMPLEMENTATION_ROADMAP.md",
+      "remainingDiffSha256": "59c818e2cb0117a2fbff8d382d8316fec62929d55c7b57907c3ff8fb7a9a44bf"
+    }
+  },
+  "task": "STAGING_RECURRING_BACKUP_REVIEW_COMMIT_AND_PUSH"
+}

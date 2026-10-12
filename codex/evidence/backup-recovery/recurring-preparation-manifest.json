@@ -1,0 +1,280 @@
+{
+  "CApproval": {
+    "execution": "RETURNED_PASS_DRY_RUN_ZERO_DELETION",
+    "host": "passvero-staging-recovery",
+    "operatorBlockSha256": "18a1da21d7ac925efb4c1bf2dbbf69b377524b20b6c8a8caeb92c396d5d40ab2",
+    "policy": [
+      14,
+      8,
+      6
+    ],
+    "prefix": "passvero-staging-recovery-v1",
+    "prune": false,
+    "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+    "status": "EXPLICIT_USER_APPROVED_LITERAL_FORGET_DRY_RUN_NO_LOCK",
+    "tag": "passvero-staging-recovery"
+  },
+  "COMPLETE": true,
+  "DOperator": {
+    "automaticRetry": false,
+    "conditionalFinalize": "ONLY_AFTER_D_PASS",
+    "execution": "RETURNED_PASS_AND_GUARDED_CONTINUOUS_PROMOTION",
+    "operatorBlockSha256": "cdbb1e3e8b6c70ee1bf1c4d742ccfbd13e4a0ea8effdd91791e697d432bd8936",
+    "testTelegram": false
+  },
+  "acceptance": {
+    "A": "PASS_TWO_REAL_SCHEDULED_NEW_OFFSITE_SETS",
+    "B": "PASS_LATEST_NEW_SET_PRIVATE_RESTORE_AND_READER",
+    "C": "PASS_STAGING_RETENTION_DRY_RUN",
+    "D": "PASS_CONTROLLED_SIGNALS",
+    "continuousDailySchedule": "APPROVED_PROMOTED",
+    "productionChanged": false,
+    "retentionDeletion": "NOT_APPROVED"
+  },
+  "approval": {
+    "acceptanceBudgets": {
+      "controlledSignalChecks": 1,
+      "isolatedRestores": 1,
+      "retentionDryRuns": 1,
+      "scheduledCaptures": 2
+    },
+    "freshnessUTC": ":20 hourly",
+    "retention": [
+      14,
+      8,
+      6
+    ],
+    "retentionMode": "DRY_RUN_ONLY",
+    "scheduleUTC": "04:30 daily",
+    "staleHours": 25,
+    "targetRpoHours": 24,
+    "telegramDestination": "EXISTING_PROTECTED_CONFIGURED_CHAT",
+    "testTelegram": false
+  },
+  "attemptsReported": 2,
+  "baseCommit": "1ba7b34c78d56960014d18e5f4cfef637e057d26",
+  "checks": {
+    "applicationAndHistoricalHelpers": "UNCHANGED",
+    "embeddedBlocksMatchReviewedSource": "PASS",
+    "focusedPythonTests": {
+      "failed": 0,
+      "passed": 24
+    },
+    "index": "UNCHANGED_EMPTY",
+    "newDocumentationLinks": "PASS",
+    "operatorShellAndEmbeddedPythonSyntax": "PASS",
+    "payloadHashes": "PASS",
+    "preExistingRoadmapReviewPreserved": "PASS",
+    "pythonAST": "PASS",
+    "whitespace": "PASS"
+  },
+  "completion": {
+    "date": "2026-10-12",
+    "disableRollback": "EXISTING_BLOCK_UNCHANGED_NOT_EXECUTED",
+    "freshnessAgeSeconds": 38991,
+    "fullWebAuthScanner": "NOT_TESTED",
+    "localVerification": "DOCUMENTATION_HASH_LINK_WHITESPACE_ONLY_NO_TESTS_BUILD_LIVE_ACTION",
+    "marketingDeploy": "DEFERRED_SEPARATE_RELEASE_PIN_ALIGNMENT_APPROVAL",
+    "monitorObservedUTC": "2026-10-12T15:20:00+00:00",
+    "monitorSignal": "HEALTHY",
+    "nextCaptureUTC": "2026-10-13T04:30:00Z",
+    "provenance": "USER_RETURNED_OPERATOR_OUTPUT",
+    "providerInboxReceipt": "NOT_PROVEN",
+    "retentionDeletion": "NOT_APPROVED_NOT_PERFORMED",
+    "storageProviderRestore": "NOT_PERFORMED",
+    "telegramTest": "NOT_APPROVED_NOT_SENT",
+    "timers": "BACKUP_AND_MONITOR_ACTIVE_ENABLED"
+  },
+  "continuation": {
+    "COMPLETE": true,
+    "approval": "EXPLICIT_USER_APPROVAL_THREE_EXACT_PAIRS_AND_ONE_EXISTING_CLUSTER_CONTINUATION",
+    "automaticRetry": false,
+    "constraintPairs": [
+      {
+        "constraint": "AccessRequestAdminNotification_state",
+        "newPair": [
+          "c9e085a6e449958b82e992f0ca3fee7e7d2b3c5dd93ce613dcf17d92d428c68d",
+          "d980c409e72377b44907f2ea6454d1904fa5e9d7cf258d8c66f3838d0645feb4"
+        ],
+        "oldPair": null,
+        "table": "AccessRequestAdminNotification"
+      },
+      {
+        "constraint": "OrganizationReminderEnrollment_origin_check",
+        "newPair": [
+          "6f1db9d5d6358287f27c84d4fdc3546277d6d7901e140439c56bcd170303f230",
+          "871d9e64c1fa9a5a10aff25433c9f761e44206f9c52d7c16a98f85556d0399c2"
+        ],
+        "oldPair": null,
+        "table": "OrganizationReminderEnrollment"
+      },
+      {
+        "constraint": "reminder_campaign_budget",
+        "newPair": [
+          "a1a55c449dde67006d8292963958807f34a84c21e2163bf1e0f61285ae18a453",
+          "b4fa3f629815b8f7cb273dca1281a4e88efb793bd93b63f4486151287b5d9fb5"
+        ],
+        "oldPair": [
+          "91ddd21f16057e49cc79af46397097dc9505477f96682a8a34bb2e24f9b257f4",
+          "2eded7720504308a08c823cff5976e4786de2b4211b777613001336b2583ca44"
+        ],
+        "table": "ReminderCampaign"
+      }
+    ],
+    "counterResets": 0,
+    "effectiveAcl": "PASS_EXISTING_INDEPENDENT_SQL_CHECK",
+    "execution": "RETURNED_PASS_EXISTING_CLUSTER_CLOSED",
+    "helperSha256": "e87d47efed9c8f6775e1bd4b0e3eeb6ad5ed88482d3c4841c41875288e0906e2",
+    "initdbCalls": 0,
+    "localChecks": {
+      "VPSExecution": "PENDING_OPERATOR_COMMAND",
+      "applicationBuild": "NOT_RUN",
+      "compressedPayloadAndInstalledHelperDigest": "PASS_LOCAL_PREPARED_NOT_INSTALLED",
+      "focusedRegression": "10_PASS_0_FAILED",
+      "index": "EMPTY",
+      "manifestLinksWhitespace": "PASS",
+      "operatorShellAndEmbeddedPythonSyntax": "PASS",
+      "originalPinnedHelpersAndLegalMarketingBaseline": "UNCHANGED",
+      "unrelatedTests": "NOT_RUN"
+    },
+    "localRegressionTests": {
+      "failed": 0,
+      "passed": 10
+    },
+    "newDownloads": 0,
+    "operatorBlockSha256": "7891ba93b8d02ae76849273aacb714a02434a36224650ca51134e9f5bb34855b",
+    "operatorEvidence": "codex/evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json",
+    "originalHelpersAndReleasePinsChanged": false,
+    "overrides": "PROCESS_LOCAL_ONLY",
+    "pgRestoreCalls": 0
+  },
+  "correction": {
+    "attemptsReset": false,
+    "compressedPayloadSha256": "aba4b73bb8692631dfbf2c2a0024b204efd3c3c2cbb3ea5d113044e22f6b8ab1",
+    "execution": "RETURNED_PASS_INSTALLED_PIN_MATCH_HOLD_RELEASED",
+    "expectedFirstDueUTCIfInstalledBeforeTerm": "2026-10-11T04:30:00+00:00",
+    "expectedSecondDueUTCIfInstalledBeforeTerm": "2026-10-12T04:30:00+00:00",
+    "historyDeleted": false,
+    "localChecks": {
+      "adapterTests": {
+        "failed": 0,
+        "passed": 17
+      },
+      "pins": "PASS_EXACT_OLD_NEW_PAYLOAD_AND_COMPANIONS",
+      "regressionRed": "TWO_RECORDED_VALUEERROR_FAILURES",
+      "syntax": "PASS_CHANGED_PYTHON_AND_SHELL",
+      "unchangedFunctionsAst": "ALL_EXCEPT_SCHEDULED_AND_NEW_TYPED_READER_IDENTICAL",
+      "whitespace": "PASS"
+    },
+    "manualCapture": false,
+    "nearDueReleaseMarginSeconds": 60,
+    "newSha256": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+    "oldSha256": "00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294",
+    "operatorBlockSha256": "2795a6abb4988ae039303d8dbb15b2fbb2e67c1c95db45b1093dbfa0000a38e2"
+  },
+  "correctionApproval": "EXPLICIT_USER_APPROVAL_NARROW_INSTALL_PINS_PRECHECKS_HOLD_RELEASE_REGULAR_DAILY_ONLY",
+  "documentationDiffSha256": "06b4a90195fa8cbc20ba5005731e9bcfdce7f6d97fbc60a0065c469ac56c5786",
+  "executionApproval": "EXPLICIT_USER_CONFIRMATION_IN_CONVERSATION",
+  "files": {
+    "codex/EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md": "16e8914866ebee55a9af73fc0b0c06f59a283ed7c06eb7b0153b46c36bf95f79",
+    "codex/IMPLEMENTATION_ROADMAP.md": "3a8f4f356d087163468508e723f45eaea620806c9b755a981f3aedc5a8a688d7",
+    "codex/evidence/backup-recovery/VPS-TERMINAL-C-DRY-RUN-20261012.sh": "18a1da21d7ac925efb4c1bf2dbbf69b377524b20b6c8a8caeb92c396d5d40ab2",
+    "codex/evidence/backup-recovery/VPS-TERMINAL-D-FINALIZE-20261012.sh": "cdbb1e3e8b6c70ee1bf1c4d742ccfbd13e4a0ea8effdd91791e697d432bd8936",
+    "codex/evidence/backup-recovery/VPS-TERMINAL-RESUME-B-20261012.sh": "7891ba93b8d02ae76849273aacb714a02434a36224650ca51134e9f5bb34855b",
+    "codex/evidence/backup-recovery/operator-monotonic-correction-installed-pass-20261010.json": "966dd6d5771a416e51fc39030bde9935dcd2066024f8886830f585346a03a66f",
+    "codex/evidence/backup-recovery/operator-recurring-a-and-b-checkpoint-20261012.json": "b11583a8690897afdd9e3410ba1d8b4ca3aede73ea94209b1f0da805e651eda7",
+    "codex/evidence/backup-recovery/operator-recurring-b-continuation-pass-20261012.json": "bd798cf6393f26dbc48e28efbf3d73b0df8260657179987409f6435c5ed63fe1",
+    "codex/evidence/backup-recovery/operator-recurring-backup-failed-results-20261010.json": "0bb07a3178c94d8e53cafd5a34c4071be03b446450328dba1176c1a6bb018926",
+    "codex/evidence/backup-recovery/operator-recurring-c-pass-20261012.json": "ff96648e67f17828519c34d7499bae087971e05233bac8886e6339b02990966f",
+    "codex/evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json": "87c19f25c598db09ac1d6976c84ab3dac9eca6722275ee55bf0e4cc564e41b4c",
+    "codex/evidence/backup-recovery/operator-recurring-failure-read-only-cause-20261010.json": "4f97579e4aea7b98ef6ccea6cba6f5ca3f02064571295817793815cdb8b50fed",
+    "codex/evidence/backup-recovery/operator-recurring-installation-pass-20261009.json": "8502f673c3f432b31b9c8ce2a49e8d38fceb88943da79e2f94b8878e8e9cf0d7",
+    "codex/evidence/backup-recovery/operator-recurring-preflight-20261009.json": "e866e827e34eb6fc2ad48289017be387e5ec1e9ddeb23450cc0c6cc298d9f7f9",
+    "codex/evidence/backup-recovery/operator-recurring-results-before-first-trigger-20261009.json": "8b53787e667a0c8eeafba7bcc8db7fd4710094c6628945a16f6dcd25b04edd5e",
+    "codex/evidence/backup-recovery/operator-recurring-schema-differences-20261012.json": "c43b755199421daab352cb80fc92e0c41d589733013d211b22d27de3f2e2e736",
+    "docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md": "747b1381fb1c36e9d53998fa2f3cb2a02c20588852d03fa2f482da203b4c6fa5",
+    "scripts/staging-recovery/recurring.py": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+    "scripts/staging-recovery/recurring_acceptance.py": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7",
+    "scripts/staging-recovery/recurring_catalog.py": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7",
+    "scripts/staging-recovery/recurring_package.py": "301c8673480f9c1279b7aeb42e6b594219f02660a3dd29ae139d9bfe8c6b449d",
+    "scripts/staging-recovery/recurring_preflight.py": "0c7673779fb601cd007e4fea7370a2e588c9795c28c1f6619bc18c9220151363",
+    "scripts/staging-recovery/recurring_resume.py": "e87d47efed9c8f6775e1bd4b0e3eeb6ad5ed88482d3c4841c41875288e0906e2",
+    "tests/operations/test_staging_recurring.py": "f855d32a79ca928565c80782f839d2ad622d60ab8ff6f16dbf09c08194bd3aff",
+    "tests/operations/test_staging_recurring_acceptance.py": "53ce8bee70928f347d921d08639e8d2d1e3fb3c95022f10cb77747eae014a329",
+    "tests/operations/test_staging_recurring_preflight.py": "f75e3383c80c646f61581e9b5e5fa2b33ee04a95452c1dfab681d8e643757d83",
+    "tests/operations/test_staging_recurring_resume.py": "227b228925fdc5756a96ffc7b83453636f1f7ba2691691eb8a9e2e3a4d2de56f"
+  },
+  "firstDueUTC": "2026-10-11T04:30:00+00:00",
+  "holdReported": false,
+  "initialInstallationPayloadHashes": {
+    "config.json": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+    "offsite.py": "4349476eafa6067ca0690fa027b1baad1159b8e0d17d2be8301bc04c7482514f",
+    "passvero-staging-backup-monitor.service": "1e2c941c516a76bdb974703ed49cf21a8a6e6a6a6c7d9f172c969a415045e72f",
+    "passvero-staging-backup-monitor.timer": "092e0e0d1eb3e3c63803095ceac733b57090c7197ee34c06c0465ab5dcdb7689",
+    "passvero-staging-backup.service": "609ae194de0f6bdef8c91d7a1a1932173f6aca81092a28da623a702413d3d99b",
+    "passvero-staging-backup.timer": "6808757a8377a118f57999447cc0d5ceb769484069915765248ca856bb445301",
+    "recurring.py": "00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294",
+    "recurring_acceptance.py": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7",
+    "recurring_catalog.py": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7"
+  },
+  "installedAdapterSha256LastConfirmed": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+  "latestOperatorResultsClassification": "A_D_PASS_CONTINUOUS_TIMERS_ENABLED_PRIVATE_CLUSTER_CLOSED",
+  "latestOperatorResultsEvidence": "codex/evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json",
+  "liveMutations": "OPERATOR_RETURNED_A_D_PASS_AND_CONTINUOUS_PROMOTION_NO_PRODUCTION_OR_RELEASE_PIN_CHANGE",
+  "modeReported": "CONTINUOUS",
+  "newIncompleteLocalOrB2Set": "NONE_IN_RETURNED_INVENTORY",
+  "newSetIds": [
+    "20261011T043000Z",
+    "20261012T043000Z"
+  ],
+  "nextRegularTermCapture": "SCHEDULED_2026-10-13T04:30:00Z_CONTINUOUS_NOT_EXECUTED_BY_HANDOFF",
+  "operatorBlockHashes": {
+    "VPS-TERMINAL-A-INSTALL-ENABLE.sh": "411cbd6ebe8b9275d175f14ebf41827761ecf102cad9ac64332d25ab950ad0ca",
+    "VPS-TERMINAL-B-D-ACCEPTANCE.sh": "5b03a74397a8e3682317f94a86f9491206007bbc1fe1f235bdd53b3266808170",
+    "VPS-TERMINAL-C-DRY-RUN-20261012.sh": "18a1da21d7ac925efb4c1bf2dbbf69b377524b20b6c8a8caeb92c396d5d40ab2",
+    "VPS-TERMINAL-D-FINALIZE-20261012.sh": "cdbb1e3e8b6c70ee1bf1c4d742ccfbd13e4a0ea8effdd91791e697d432bd8936",
+    "VPS-TERMINAL-DISABLE-ROLLBACK.sh": "8c40ad06f8e27cccbc1daa3ba098b40b38a09672b02c7a89f33c37046bdeea58",
+    "VPS-TERMINAL-INSTALL-MONOTONIC-FIX.sh": "2795a6abb4988ae039303d8dbb15b2fbb2e67c1c95db45b1093dbfa0000a38e2",
+    "VPS-TERMINAL-READ-ONLY-PREFLIGHT.sh": "60720cbec539742f000ca762972b2317e884c254bd3a80bdf6f2a31cfb359df0",
+    "VPS-TERMINAL-RESULTS.sh": "c0c401c00a7d61382420bca70f9a3824b757b2f8412395d95794030a1ef870ff",
+    "VPS-TERMINAL-RESUME-B-20261012.sh": "7891ba93b8d02ae76849273aacb714a02434a36224650ca51134e9f5bb34855b"
+  },
+  "operatorCorrectionEvidence": "codex/evidence/backup-recovery/operator-monotonic-correction-installed-pass-20261010.json",
+  "operatorEvidence": "PASS_READ_ONLY_2026-10-09T14:21:28.458656+00:00",
+  "operatorInstallationEvidence": "codex/evidence/backup-recovery/operator-recurring-installation-pass-20261009.json",
+  "payloadHashes": {
+    "config.json": "399a693588167747cd565fdf179ecfc2dc5a6c6d756a7498bdf73f93fe959d62",
+    "offsite.py": "4349476eafa6067ca0690fa027b1baad1159b8e0d17d2be8301bc04c7482514f",
+    "passvero-staging-backup-monitor.service": "1e2c941c516a76bdb974703ed49cf21a8a6e6a6a6c7d9f172c969a415045e72f",
+    "passvero-staging-backup-monitor.timer": "092e0e0d1eb3e3c63803095ceac733b57090c7197ee34c06c0465ab5dcdb7689",
+    "passvero-staging-backup.service": "609ae194de0f6bdef8c91d7a1a1932173f6aca81092a28da623a702413d3d99b",
+    "passvero-staging-backup.timer": "6808757a8377a118f57999447cc0d5ceb769484069915765248ca856bb445301",
+    "recurring.py": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+    "recurring_acceptance.py": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7",
+    "recurring_catalog.py": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7"
+  },
+  "phase": "COMPLETE_A_D_PASS_CONTINUOUS",
+  "preservedRoadmapDiffSha256": "2da0abfcf985784db1935f351f7b588fc65c45edf29fd333d5fb58f57c788142",
+  "proposedCorrectedAdapterSha256": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+  "readOnlyFailureBlock": {
+    "sha256": "e7737ac999a3c841712077f1f0c7299ff394fd0266c852f24d991090b2f69fa3",
+    "status": "RETURNED_CAUSE_CONFIRMED_DO_NOT_RERUN",
+    "syntax": "PYTHON_AST_AND_SHELL_PASS_NOT_EXECUTED"
+  },
+  "remaining": "Approved backup slice COMPLETE. No acceptance repeat. Regular schedule/monitoring stay enabled; marketing deployment/release-pin alignment requires separate approval.",
+  "restoreId": "20261012T043000Z",
+  "resultsReadNotBeforeUTC": "2026-10-12T05:10:00+00:00",
+  "resumeStatus": "PASS_PRIVATE_CLUSTER_STOPPED_PRIVATE_0700_STAGING_EXPECTED_WRITER_BASELINE_RESTORED",
+  "rootCause": {
+    "dbusMicroseconds": 738347034136,
+    "error": "ValueError_FROM_INT_FORMATTED_DURATION",
+    "function": "scheduled",
+    "property": "LastTriggerUSecMonotonic",
+    "serviceTriggerDeltaMicroseconds": 191512,
+    "systemctlShow": "1w 1d 13h 5min 47.034136s"
+  },
+  "secondDueUTC": "2026-10-12T04:30:00+00:00",
+  "selfHashExcluded": true,
+  "task": "STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING",
+  "testTelegramApproved": false
+}

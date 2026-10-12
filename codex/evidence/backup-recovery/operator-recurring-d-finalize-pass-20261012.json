@@ -1,0 +1,123 @@
+{
+  "D": "PASS",
+  "acceptance": {
+    "A": "PASS_TWO_REAL_SCHEDULED_NEW_OFFSITE_SETS",
+    "B": "PASS_LATEST_NEW_SET_PRIVATE_RESTORE_AND_READER",
+    "C": "PASS_STAGING_RETENTION_DRY_RUN",
+    "D": "PASS_CONTROLLED_SIGNALS",
+    "continuousDailySchedule": "APPROVED_PROMOTED",
+    "productionChanged": false,
+    "retentionDeletion": "NOT_APPROVED"
+  },
+  "automaticRetry": false,
+  "lastMonitorResult": {
+    "observedEpoch": 1791818400,
+    "signal": "HEALTHY"
+  },
+  "pinsUnchanged": true,
+  "restoreClosure": {
+    "artifactsRetained": true,
+    "cluster": "STOPPED",
+    "liveStagingPaused": false,
+    "parentPermissions": "PRIVATE_0700",
+    "stagingRuntime": "PASS_EXPECTED_STAGING",
+    "writerTimerBaseline": "RESTORED"
+  },
+  "signals": {
+    "cases": [
+      "BACKUP_FAILED",
+      "SET_INCOMPLETE",
+      "VALID_SET_MISSING",
+      "SET_STALE",
+      "HEALTHY"
+    ],
+    "dedup": "PASS_UNKNOWN_NOT_RETRIED",
+    "inboxReceipt": "NOT_PROVEN",
+    "liveBackupStateAltered": false,
+    "signals": "PASS_CONTROLLED_NO_LIVE_BACKUP_CORRUPTION",
+    "telegramTest": "NOT_APPROVED_NOT_SENT"
+  },
+  "snapshotDeletion": "NOT_PERFORMED",
+  "state": {
+    "adapterSha256": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+    "attempt": {
+      "complete": true,
+      "setId": "20261012T043000Z"
+    },
+    "attempts": 2,
+    "completed": [
+      {
+        "captureEpoch": 1791693010,
+        "manifestSha256": "88a73f32fafce767c3139ec62b11f6d64ce2aef0f3f052d5a8b93c36345d357d",
+        "offsite": "PASS_VALID_OFFSITE_TREE_AND_MANIFEST",
+        "pauseSeconds": 6.947,
+        "payloadBytes": 1417313,
+        "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+        "setId": "20261011T043000Z",
+        "snapshotId": "a0b7c30d7fcbe1363d28d36b2bde4d18e8d1c4b996960605a9fc6b6d21fb7ff3"
+      },
+      {
+        "captureEpoch": 1791779409,
+        "manifestSha256": "2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1",
+        "offsite": "PASS_VALID_OFFSITE_TREE_AND_MANIFEST",
+        "pauseSeconds": 5.04,
+        "payloadBytes": 1417314,
+        "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+        "setId": "20261012T043000Z",
+        "snapshotId": "b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368"
+      }
+    ],
+    "firstDueEpoch": 1791693000,
+    "hold": false,
+    "mode": "CONTINUOUS",
+    "resolvedPreReservationFailure": {
+      "automaticRetry": false,
+      "phase": "SCOPE",
+      "reason": "ValueError",
+      "result": "STOP",
+      "setId": "preparation"
+    },
+    "valid": {
+      "captureEpoch": 1791779409,
+      "manifestSha256": "2c74bc8b0d55710472a9f554eaf73ac00e3f951c9f479c659d38f29b2e3516f1",
+      "offsite": "PASS_VALID_OFFSITE_TREE_AND_MANIFEST",
+      "pauseSeconds": 5.04,
+      "payloadBytes": 1417314,
+      "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+      "setId": "20261012T043000Z",
+      "snapshotId": "b28b2c9ebdb22eb01ffa6b8fabd2704637cc29b55916c08a6828db7019627368"
+    }
+  },
+  "units": {
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup-monitor.timer",
+      "LastTriggerUSec": "Mon 2026-10-12 17:20:00 CEST",
+      "NextElapseUSecRealtime": "Mon 2026-10-12 18:20:00 CEST",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup.timer",
+      "LastTriggerUSec": "Mon 2026-10-12 06:30:00 CEST",
+      "NextElapseUSecRealtime": "Tue 2026-10-13 06:30:00 CEST",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-subscription-reminders.service": {
+      "ActiveState": "inactive",
+      "Id": "passvero-subscription-reminders.service",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-subscription-reminders.timer",
+      "LastTriggerUSec": "Mon 2026-10-12 17:36:44 CEST",
+      "NextElapseUSecRealtime": "",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    }
+  }
+}

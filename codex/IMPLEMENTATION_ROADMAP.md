@@ -1,5 +1,53 @@
 # Passvero — stanje implementacije i redosled nastavka
 
+## STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING — 2026-10-09
+
+**COMPLETE 12.10.2026: A–D PASS, CONTINUOUS, hold=false; backup/monitor active/enabled.**
+Raniji checkpointi čekanja/STOP-a ispod su historijski; završni dokazi navedeni su na kraju. Prethodni 08.10
+readiness pregled i necommitovani diff su sačuvani. [Jedan plan, konačni opseg odobrenja
+i potpuni operatorski blokovi](../docs/superpowers/runbooks/existing-backup-coverage-staging-recovery.md#staging_recurring_db_storage_backup_and_monitoring--2026-10-09),
+[postojeći završni izveštaj](EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md#recurring-staging-continuation--2026-10-09).
+Poslednji [operatorski correction output](evidence/backup-recovery/operator-monotonic-correction-installed-pass-20261010.json):
+novi pin podudaran, attempts=0/hold=false, web online, reminder timer enabled/active,
+servis inactive, bez aktivnog capture-a ili preostalog workera; istorija failure-a očuvana.
+Potvrđeni termini **11. i 12.10.2026. 04:30UTC / 06:30 Europe/Zagreb CEST**.
+Čekamo dva uspešna redovna seta; jedan results-read posle **12.10 05:10UTC / 07:10CEST**.
+A još nije prihvaćen, B–D NOT_RUN; marketing deploy odložen. Bez ponavljanja instalacije,
+lokalnih provera, ručnog capture-a ili polling-a. Prethodni HOLD/pending navodi ispod
+su istorijski checkpointi, ne trenutno poslednje potvrđeno stanje.
+
+Operatorski read-only preflight PASS (09.10 14:21UTC): 56 tabela/33 migracije, 7 Storage
+objekata/368,798B, ~81GiB slobodno; reminder timer enabled/active, jedna kampanja.
+To je poslednji dokumentovani inventar, ne live capture/recovery prihvatanje.
+Adapter i četiri pinovana operatorska bloka lokalno provereni (24 fokusirana testa).
+Ponovo se koristi staging B2 prefix/repo, prihvaćeni helperi i application reader;
+production backup/monitoring nepromenjeni. Prema instalacionom outputu uključeni su
+dnevni04:30UTC / targetRPO24h i monitoring
+stale>25h/hourly:20UTC, 14/8/6 retencija **samo dry-run**, zaseban staging signal u
+postojećem zaštićenom Telegram chatu; **bez testne poruke**. Prirodni reminder drain
+pre pauze, nezavisni resume; najviše2 zakazana capture-a/1 restore, potom A–D promocija.
+**A čeka zakazane dokaze; B–D NOT_RUN; novi set/restore ID-jevi NONE.**
+Raspored/nadzor enabled prema [operatorskoj instalaciji](evidence/backup-recovery/operator-recurring-installation-pass-20261009.json);
+uspešni poslovi i signali još NOT_PROVEN.
+Korisnik je potvrdio paket i postojeći zaštićeni Telegram chat; bez testne poruke.
+Termini: 10.10. i 11.10.2026. u **04:30 UTC / 06:30 Europe/Zagreb (CEST)**.
+Potvrđeni [read-only uzrok i stanje](evidence/backup-recovery/operator-recurring-failure-read-only-cause-20261010.json):
+`int()` nad `LastTriggerUSecMonotonic="1w 1d 13h 5min 47.034136s"` pada pre
+rezervacije; D-Bus daje typed mikrosekunde. attempts=0/completed=[], hold=true;
+web online/3001 accepting, reminder timer enabled/active, servis success/inactive,
+nema preostalog workera ni novog lokalnog/B2 seta. Stari nepotpuni 01.10 artefakti
+su istorijski i ostaju sačuvani. Sutrašnji 11.10 04:30UTC/06:30CEST capture blokira HOLD.
+Korekcija odobrena: typed D-Bus monotonic čitanje i precizan predrezervacioni kod;
+17 relevantnih adapter testova PASS, ostale funkcije identične starom payloadu.
+Pregledani pinovani operatorski correction/hold-release blok u postojećem runbooku
+čeka output. Poslednje potvrđeno live stanje i dalje old adapter/attempts=0/hold=true;
+instalacija, puštanje hold-a i novi capture-i nisu potvrđeni. Pre release-a blok proverava
+pinove, ekskluzivni job lock, neaktivni capture, web i idle writere; čuva failure/adapter
+istoriju. Bez ručnog pokretanja, retry-ja, restarta ili promene rasporeda.
+Ako završi pre 11.10 04:30UTC, očekujemo **11. i 12.10 04:30UTC/06:30CEST**, results-read
+12.10 posle **05:10UTC/07:10CEST**; inače naredna dva redovna dana prema operator outputu.
+B–D i marketing deploy ostaju odloženi; pri novom neuspehu HOLD i pregled.
+
 ## UX polish iz korisničke provere — 2026-10-04
 
 [Jedinstveni pregled i odvojeni dokazi](CSV_IMPORT_IMAGE_UPLOAD_AND_PRODUCT_PRESENTATION_UX_POLISH.md).
@@ -1218,3 +1266,55 @@ projection and user confirmation. No production change, commit or push.
   performed live. Final evidence/manifest in codex/evidence/reminder-future-enrollment.
   No further acceptance action pending in this approved scope; no production,
   commercial writes, new live identity/period, commit/push or inbox claim.
+
+
+### STAGING_RECURRING_DB_STORAGE_BACKUP_AND_MONITORING — 2026-10-12 checkpoint
+
+A PASS: two real scheduled 11/12 October offsite sets, resume/monitor evidence accepted.
+B STOP at exact schema-equivalence gate; downloaded bytes valid, independent closure
+STOPPED/PRIVATE_0700, no private processes. Eight constraint/six relation shape diffs
+reviewed; effective ACL and remaining DB/application checks NOT_PROVEN. One explicitly
+approved exact-three-pair continuation of existing cluster prepared locally (10 focused
+regressions PASS), PENDING_OPERATOR_COMMAND; no second download/initdb/pg_restore/reset.
+C/D NOT_RUN; CONTINUOUS promotion pending, COMPLETE=NO.
+See [current report](EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md).
+Marketing deploy deferred until separately approved release-pin alignment; legal/marketing
+diffs, production, backup release pins and existing disable/rollback remain unchanged.
+
+
+### 2026-10-12 — recurring B continuation returned PASS
+
+Supersedes prior B STOP/pending checkpoint: A and B PASS. Existing latest cluster
+continuation passed effective ACL/DB/Storage/application checks and independent
+STOPPED/PRIVATE_0700/staging/writer closure; pins/state unchanged. Full web/auth/scanner
+recovery remains NOT_TESTED; Storage provider restore NOT_PERFORMED.
+C/D and CONTINUOUS promotion NOT_RUN, COMPLETE=NO. Resolve only the literal
+`forget --dry-run` vs earlier “bez forget/prune” boundary before existing C.
+No new capture/restore series; marketing deploy and release-pin alignment remain deferred.
+
+
+### 2026-10-12 — recurring C PASS; D/finalize pending
+
+Supersedes prior C clarification/pending checkpoint: A–C PASS. Exact staging
+14/8/6 retention dry-run kept all 3 snapshots, zero deletion/production candidates
+and unchanged inventory. One D/no-Telegram plus conditional guarded CONTINUOUS
+promotion PENDING_OPERATOR_COMMAND. COMPLETE=NO until returned final output.
+No new acceptance series or release-pin/marketing/production changes.
+
+
+## 2026-10-12 — staging recurring backup slice COMPLETE
+
+A–D returned PASS; regular CONTINUOUS schedule promoted, hold=false, attempts=2,
+backup/monitor active/enabled. Next capture 13.10 04:30UTC/06:30CEST; last monitor
+HEALTHY 12.10 15:20UTC/17:20CEST. Latest set private restore continuation and
+independent STOPPED/PRIVATE_0700/staging/writer closure accepted. C dry-run kept
+3 snapshots with zero deletion/production candidates; D classification/dedup PASS
+without Telegram test, provider/inbox NOT_PROVEN. Full web/auth/scanner recovery
+NOT_TESTED, Storage provider restore NOT_PERFORMED.
+Exact IDs, limits and retained non-executed disable/rollback are in
+[current report](EXISTING_BACKUP_COVERAGE_AND_STAGING_RECOVERY_COMPLETION.md#staging_recurring_db_storage_backup_and_monitoring--complete-2026-10-12)
+and [final output](evidence/backup-recovery/operator-recurring-d-finalize-pass-20261012.json).
+No repeated acceptance/tests, source/release pin/production changes, commit or push.
+Marketing deploy remains deferred until separately approved release-pin alignment;
+legal/marketing diffs retained. This completes only the approved recurring backup
+slice and does not declare all production readiness or authorize deployment.

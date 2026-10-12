@@ -1,0 +1,314 @@
+{
+  "activePointerExists": false,
+  "adapterIdentity": {
+    "matchesReviewed": true,
+    "sha256": "00d96cd5467a8f401b9515ed604c09a33d5ae695a6a3aa13990c2168634e6294"
+  },
+  "alerts.json": {
+    "delivery": "PROVIDER_ACCEPTED",
+    "reservedAt": 1791606601,
+    "sent": {
+      "BACKUP_FAILED:preparation": 1791606601
+    },
+    "signal": "BACKUP_FAILED"
+  },
+  "b2SnapshotInventory": {
+    "mode": "NO_CACHE_NO_LOCK_READ_ONLY",
+    "prefix": "passvero-staging-recovery-v1/",
+    "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+    "snapshots": [
+      {
+        "setId": "20261001T212354Z",
+        "snapshotId": "2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2",
+        "time": "2026-10-01T23:35:25.715241133+02:00"
+      }
+    ]
+  },
+  "captureExecuted": false,
+  "databaseWrites": 0,
+  "diagnostic": "READ_ONLY_FAILURE_INVENTORY",
+  "filesWritten": 0,
+  "localSetAndControlInventory": [
+    {
+      "area": "sets",
+      "files": {},
+      "regularFileCount": 9,
+      "setId": "20261001T203612Z"
+    },
+    {
+      "area": "sets",
+      "files": {
+        "recovery-set.json": {
+          "bytes": 3074,
+          "exists": true,
+          "sha256": "2c5ccd0b89064cc0b431444337ab7700c1638914cfd23f1b9366d22ac13d3132"
+        }
+      },
+      "regularFileCount": 15,
+      "setId": "20261001T212354Z"
+    },
+    {
+      "area": "control",
+      "files": {
+        "closure.json": {
+          "bytes": 169,
+          "exists": true,
+          "proof": {
+            "pauseSeconds": 2.743,
+            "pm2Online": true,
+            "port3001Reachable": true,
+            "serviceResult": "exit-code",
+            "stagingPauseRequested": true,
+            "stagingResumed": true
+          },
+          "sha256": "e7151ec172291f55f448f2ee4b692a27fe44f0d46bc5dbedc915ed9768f4568a"
+        },
+        "pause-intent.json": {
+          "bytes": 58,
+          "exists": true,
+          "proof": {
+            "monotonic": 18722.220380451,
+            "originalPid": 1611
+          },
+          "sha256": "c2acfe7151a613be102bb385882b64d516fd5b2a30ac967ec316a9dfd0e56201"
+        },
+        "selected.json": {
+          "bytes": 1494,
+          "exists": true,
+          "sha256": "dfa98e35e0854aee0bed76f0f66cc6244482034c04f0bf4484fbe27e2dc5fb9a"
+        }
+      },
+      "regularFileCount": 6,
+      "setId": "20261001T203612Z"
+    },
+    {
+      "area": "control",
+      "files": {
+        "capture-core.json": {
+          "bytes": 138,
+          "exists": true,
+          "proof": {
+            "capture": "PASS",
+            "lockedTables": 51,
+            "outsideDbClients": 0,
+            "stagingWriters": 0,
+            "storageMetadataAndBytesUnchanged": true
+          },
+          "sha256": "dca5228463922a37e9dd6af38827cbe9210e313704281a395207322001bc4e48"
+        },
+        "closure.json": {
+          "bytes": 167,
+          "exists": true,
+          "proof": {
+            "pauseSeconds": 3.034,
+            "pm2Online": true,
+            "port3001Reachable": true,
+            "serviceResult": "success",
+            "stagingPauseRequested": true,
+            "stagingResumed": true
+          },
+          "sha256": "34f6c57b2698bb2720e98e2b9efe31510226016b942d94be2f371a03582ca6d0"
+        },
+        "offsite-attempt.json": {
+          "bytes": 149,
+          "exists": true,
+          "proof": {
+            "automaticRetry": false,
+            "manifestSha256": "2c5ccd0b89064cc0b431444337ab7700c1638914cfd23f1b9366d22ac13d3132",
+            "setId": "20261001T212354Z"
+          },
+          "sha256": "b88b446464f3391ce4b6effac117a551c01e670ec71fdfcb088c2ec5be5d256a"
+        },
+        "offsite-summary.json": {
+          "bytes": 933,
+          "exists": true,
+          "proof": {
+            "acceptedCleanupTombstones": 4,
+            "allSetFilesChecksummed": true,
+            "artifactsRetained": true,
+            "automaticRetry": false,
+            "b2Prefix": "passvero-staging-recovery-v1/",
+            "campaignsEnabled": 0,
+            "databaseAssetReferences": 9,
+            "databaseRestore": "NOT_YET_RUN",
+            "isolatedApplicationRead": "NOT_YET_RUN",
+            "manifestSha256": "2c5ccd0b89064cc0b431444337ab7700c1638914cfd23f1b9366d22ac13d3132",
+            "offsite": "PASS_REAL_B2_SNAPSHOT_DOWNLOADED_AND_BYTES_VERIFIED",
+            "payloadBytes": 964172,
+            "reminderTimer": "DISABLED_INACTIVE",
+            "repositoryId": "9058358d97bdd3b7e2ef56c53ea132f4b7be74752f213cbfbcc093c5331b9b35",
+            "restoreCluster": "NOT_CREATED",
+            "setId": "20261001T212354Z",
+            "smtpCalls": 0,
+            "snapshotId": "2c317b57154c0ded8436b56ee9d970a8f7601dc63f89e310829a9172a8aa7ca2",
+            "staging": "ONLINE_UNPAUSED",
+            "storageBytes": 6145,
+            "storageObjects": 5,
+            "storageProviderRestore": "NOT_PERFORMED",
+            "telegramCalls": 0
+          },
+          "sha256": "1be4a2d58bb13cfbfab96d1553f01e0cd5619d2a8b932254f3c7ee7bbfdca2c1"
+        },
+        "pause-intent.json": {
+          "bytes": 59,
+          "exists": true,
+          "proof": {
+            "monotonic": 21583.224412812,
+            "originalPid": 23455
+          },
+          "sha256": "d0aef3ee2a909320a9ffa7f911d7ff3729fb4173cb1a84fb93a1059e1ae820a4"
+        },
+        "selected.json": {
+          "bytes": 1559,
+          "exists": true,
+          "sha256": "67ef89df1a1a839027cde333d108b32ebb87689f7fdf30842a0bacf551e9503b"
+        }
+      },
+      "regularFileCount": 31,
+      "setId": "20261001T212354Z"
+    }
+  ],
+  "monitor-result.json": {
+    "observedEpoch": 1791638400,
+    "signal": "BACKUP_FAILED"
+  },
+  "observedUTC": "2026-10-10T14:14:52.272251+00:00",
+  "reminderProcesses": {
+    "launcherOrBundleProcessCount": 0,
+    "workerExecutedByDiagnostic": false
+  },
+  "remoteWrites": 0,
+  "restartCalls": 0,
+  "smtpCalls": 0,
+  "state": {
+    "attempts": 0,
+    "completed": [],
+    "failure": {
+      "automaticRetry": false,
+      "phase": "SCOPE",
+      "reason": "ValueError",
+      "result": "STOP",
+      "setId": "preparation"
+    },
+    "firstDueEpoch": 1791606600,
+    "hold": true,
+    "mode": "ACCEPTANCE"
+  },
+  "stateUnchangedDuringRead": true,
+  "telegramCalls": 0,
+  "timerMonotonicInputs": {
+    "ExecMainStartTimestampMonotonic": {
+      "dbusMicroseconds": 738347225648,
+      "installedIntConversion": "PASS",
+      "systemctlShow": "738347225648"
+    },
+    "LastTriggerUSecMonotonic": {
+      "dbusMicroseconds": 738347034136,
+      "installedIntConversion": "ValueError",
+      "systemctlShow": "1w 1d 13h 5min 47.034136s"
+    }
+  },
+  "units": {
+    "passvero-staging-backup-monitor.service": {
+      "ActiveState": "inactive",
+      "ExecMainCode": "1",
+      "ExecMainStartTimestampMonotonic": "770147047942",
+      "ExecMainStatus": "0",
+      "Id": "passvero-staging-backup-monitor.service",
+      "InvocationID": "fe2d7e283a9440e0bf6ff6205f69b9f7",
+      "LoadState": "loaded",
+      "MainPID": "0",
+      "Result": "success",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup-monitor.timer",
+      "InvocationID": "51af25a29bc142d3a5bf16bf13f0c9b0",
+      "LastTriggerUSec": "Sat 2026-10-10 15:20:00 CEST",
+      "LastTriggerUSecMonotonic": "1w 1d 21h 55min 47.037615s",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "Sat 2026-10-10 16:20:00 CEST",
+      "Result": "success",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.service": {
+      "ActiveState": "failed",
+      "ExecMainCode": "1",
+      "ExecMainStartTimestampMonotonic": "738347225648",
+      "ExecMainStatus": "1",
+      "Id": "passvero-staging-backup.service",
+      "InvocationID": "4e7a0623a33b44b5989419d9cb0e2aa4",
+      "LoadState": "loaded",
+      "MainPID": "0",
+      "Result": "exit-code",
+      "SubState": "failed",
+      "UnitFileState": "static"
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup.timer",
+      "InvocationID": "ae99485bddfa482c9ec3532b97502c6e",
+      "LastTriggerUSec": "Sat 2026-10-10 06:30:00 CEST",
+      "LastTriggerUSecMonotonic": "1w 1d 13h 5min 47.034136s",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "Sun 2026-10-11 06:30:00 CEST",
+      "Result": "success",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-subscription-reminders.service": {
+      "ActiveState": "inactive",
+      "ExecMainCode": "1",
+      "ExecMainStartTimestampMonotonic": "773398595376",
+      "ExecMainStatus": "0",
+      "Id": "passvero-subscription-reminders.service",
+      "InvocationID": "3619920f96b24d48b981a53cc8239102",
+      "LoadState": "loaded",
+      "MainPID": "0",
+      "Result": "success",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-subscription-reminders.timer",
+      "InvocationID": "fe021b1f89764aca80e97d32edc01251",
+      "LastTriggerUSec": "Sat 2026-10-10 16:14:12 CEST",
+      "LastTriggerUSecMonotonic": "1w 1d 22h 49min 58.574907s",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "",
+      "Result": "success",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "pm2-passvero-staging.service": {
+      "ActiveState": "active",
+      "ExecMainCode": "0",
+      "ExecMainStartTimestampMonotonic": "18883012",
+      "ExecMainStatus": "0",
+      "Id": "pm2-passvero-staging.service",
+      "InvocationID": "de9e18193c584e8d8f9029f9ef88658f",
+      "LoadState": "loaded",
+      "MainPID": "1543",
+      "Result": "success",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "webRuntime": {
+    "environmentScope": "STAGING_VERIFIED",
+    "httpAuthScannerAcceptance": "NOT_RUN",
+    "pm2": {
+      "cwd": "/var/www/passvero-acceptance",
+      "name": "passvero-acceptance",
+      "pid": 691099,
+      "pmId": 0,
+      "status": "online"
+    },
+    "webTcp3001": "ACCEPTING"
+  },
+  "workerExecuted": false
+}
