@@ -1,0 +1,9 @@
+{
+  "result": "STOP",
+  "CHECK_ID": "EXACT_CANDIDATE_PINS",
+  "reason": "NEW_ASSET_ALREADY_PRESENT_STOP",
+  "automaticRetry": false,
+  "source": "USER_SUPPLIED_OPERATOR_OUTPUT",
+  "helperSha256": "51643fedef4bf28e642219f1074382c7e5b64ec50ab61210b5caacb6fb19385f",
+  "mutations": "NONE; helper is read-only"
+}

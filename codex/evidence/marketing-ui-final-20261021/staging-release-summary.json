@@ -1,0 +1,16 @@
+{
+  "buildId": "RVDJVB4UmvCtP7UnxGKi2",
+  "artifactManifestSha256": "d8d63fb009d6c0db28ac02826e65be7dd7ff0c1c1f1008ff918c9a5d6247fe1f",
+  "archiveSha256": "866a4ddcf930c23202dd1e041af1ce60130b42315d970d6eb6c7a29e1e33dc0c",
+  "members": 847,
+  "bytes": 7656563,
+  "bundledBarcode": [
+    ".next/server/chunks/6074.js"
+  ],
+  "bundledCsv": [
+    ".next/server/app/api/products/import/route.js"
+  ],
+  "sourceCommit": "e0616fc20f53e0e9ad0bbb12a3aa099db5481695",
+  "metadataAudit": "PASS_36_CANONICAL_HREFLANG_OG_AND_36_SITEMAP_URLS",
+  "testsRepeated": false
+}

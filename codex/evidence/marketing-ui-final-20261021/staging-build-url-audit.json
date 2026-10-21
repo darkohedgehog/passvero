@@ -1,0 +1,914 @@
+{
+  "activeArtifactSwap": "NOT_PERFORMED",
+  "buildId": "RVDJVB4UmvCtP7UnxGKi2",
+  "generatedFilesScanned": 267,
+  "metadataPages": [
+    {
+      "canonical": "https://staging.passvero.eu/de/about",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/about",
+        "en": "https://staging.passvero.eu/en/about",
+        "hr": "https://staging.passvero.eu/about",
+        "pl": "https://staging.passvero.eu/pl/about",
+        "sl": "https://staging.passvero.eu/sl/about",
+        "sr": "https://staging.passvero.eu/sr/about",
+        "x-default": "https://staging.passvero.eu/about"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/de/about.html",
+      "sha256": "2e363c379bd78940a1d94750a7af55211b139e307407ccaca804f919a93594b4",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/de/about"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/de/contact",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/contact",
+        "en": "https://staging.passvero.eu/en/contact",
+        "hr": "https://staging.passvero.eu/contact",
+        "pl": "https://staging.passvero.eu/pl/contact",
+        "sl": "https://staging.passvero.eu/sl/contact",
+        "sr": "https://staging.passvero.eu/sr/contact",
+        "x-default": "https://staging.passvero.eu/contact"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/de/contact.html",
+      "sha256": "f337c26de75155f578394ad9b067856f365f5b87dd5ec3beb3b743bcf58ea274",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/de/contact"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/de/cookies",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/cookies",
+        "en": "https://staging.passvero.eu/en/cookies",
+        "hr": "https://staging.passvero.eu/cookies",
+        "pl": "https://staging.passvero.eu/pl/cookies",
+        "sl": "https://staging.passvero.eu/sl/cookies",
+        "sr": "https://staging.passvero.eu/sr/cookies",
+        "x-default": "https://staging.passvero.eu/cookies"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/de/cookies.html",
+      "sha256": "4d2109b345036e6acdf2070ec6d5cc4e456eb06a8bd7d9842ae41eaee2d3c5b0",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/de/cookies"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/de/privacy",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/privacy",
+        "en": "https://staging.passvero.eu/en/privacy",
+        "hr": "https://staging.passvero.eu/privacy",
+        "pl": "https://staging.passvero.eu/pl/privacy",
+        "sl": "https://staging.passvero.eu/sl/privacy",
+        "sr": "https://staging.passvero.eu/sr/privacy",
+        "x-default": "https://staging.passvero.eu/privacy"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/de/privacy.html",
+      "sha256": "f2bb2a9b20813199c485fceb72387c831768a9dfb0e679a5d8f6cba93b966a25",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/de/privacy"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/de/terms",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/terms",
+        "en": "https://staging.passvero.eu/en/terms",
+        "hr": "https://staging.passvero.eu/terms",
+        "pl": "https://staging.passvero.eu/pl/terms",
+        "sl": "https://staging.passvero.eu/sl/terms",
+        "sr": "https://staging.passvero.eu/sr/terms",
+        "x-default": "https://staging.passvero.eu/terms"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/de/terms.html",
+      "sha256": "b770df3839079f9ed7e330a3dae949b6226b9e1e38fb2c068aad0c08a03f63df",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/de/terms"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/de",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de",
+        "en": "https://staging.passvero.eu/en",
+        "hr": "https://staging.passvero.eu",
+        "pl": "https://staging.passvero.eu/pl",
+        "sl": "https://staging.passvero.eu/sl",
+        "sr": "https://staging.passvero.eu/sr",
+        "x-default": "https://staging.passvero.eu"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/de.html",
+      "sha256": "9e3e2fa8152b1c56b1defb5927dc96f558b4d9d1eceb56f1e8e6ed58062c9da6",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/de"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/en/about",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/about",
+        "en": "https://staging.passvero.eu/en/about",
+        "hr": "https://staging.passvero.eu/about",
+        "pl": "https://staging.passvero.eu/pl/about",
+        "sl": "https://staging.passvero.eu/sl/about",
+        "sr": "https://staging.passvero.eu/sr/about",
+        "x-default": "https://staging.passvero.eu/about"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/en/about.html",
+      "sha256": "a6ca872febfcb4bfe47ef80d062fe68c1a63c0b400f2e9a1ffa62d530d29a4c1",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/en/about"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/en/contact",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/contact",
+        "en": "https://staging.passvero.eu/en/contact",
+        "hr": "https://staging.passvero.eu/contact",
+        "pl": "https://staging.passvero.eu/pl/contact",
+        "sl": "https://staging.passvero.eu/sl/contact",
+        "sr": "https://staging.passvero.eu/sr/contact",
+        "x-default": "https://staging.passvero.eu/contact"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/en/contact.html",
+      "sha256": "9fb78cdb3af80026b736f1ac44c88915e12e392a6fa1a6abac8976e08ae35e2f",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/en/contact"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/en/cookies",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/cookies",
+        "en": "https://staging.passvero.eu/en/cookies",
+        "hr": "https://staging.passvero.eu/cookies",
+        "pl": "https://staging.passvero.eu/pl/cookies",
+        "sl": "https://staging.passvero.eu/sl/cookies",
+        "sr": "https://staging.passvero.eu/sr/cookies",
+        "x-default": "https://staging.passvero.eu/cookies"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/en/cookies.html",
+      "sha256": "80a59caf43c3cd8810be6f8898519998bbeb77878807fa1cb8a6cb6c31c36eb8",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/en/cookies"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/en/privacy",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/privacy",
+        "en": "https://staging.passvero.eu/en/privacy",
+        "hr": "https://staging.passvero.eu/privacy",
+        "pl": "https://staging.passvero.eu/pl/privacy",
+        "sl": "https://staging.passvero.eu/sl/privacy",
+        "sr": "https://staging.passvero.eu/sr/privacy",
+        "x-default": "https://staging.passvero.eu/privacy"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/en/privacy.html",
+      "sha256": "df5496b7c1245fe0e2c75dc8b19a1bf46927b55b36a92d0805235be22a38a511",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/en/privacy"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/en/terms",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/terms",
+        "en": "https://staging.passvero.eu/en/terms",
+        "hr": "https://staging.passvero.eu/terms",
+        "pl": "https://staging.passvero.eu/pl/terms",
+        "sl": "https://staging.passvero.eu/sl/terms",
+        "sr": "https://staging.passvero.eu/sr/terms",
+        "x-default": "https://staging.passvero.eu/terms"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/en/terms.html",
+      "sha256": "34678af8e8cca5792273ce945622da2903c70e57bd46eeb5ca367e104a332937",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/en/terms"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/en",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de",
+        "en": "https://staging.passvero.eu/en",
+        "hr": "https://staging.passvero.eu",
+        "pl": "https://staging.passvero.eu/pl",
+        "sl": "https://staging.passvero.eu/sl",
+        "sr": "https://staging.passvero.eu/sr",
+        "x-default": "https://staging.passvero.eu"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/en.html",
+      "sha256": "94025a76c8c4d718cbc9b8c844d5df0142c8ddb59d73794b2675da3fb1efbe4f",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/en"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/about",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/about",
+        "en": "https://staging.passvero.eu/en/about",
+        "hr": "https://staging.passvero.eu/about",
+        "pl": "https://staging.passvero.eu/pl/about",
+        "sl": "https://staging.passvero.eu/sl/about",
+        "sr": "https://staging.passvero.eu/sr/about",
+        "x-default": "https://staging.passvero.eu/about"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/hr/about.html",
+      "sha256": "2ab23d65260444c653744995eba7824671331fd5f772039113582c87574e0219",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/about"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/contact",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/contact",
+        "en": "https://staging.passvero.eu/en/contact",
+        "hr": "https://staging.passvero.eu/contact",
+        "pl": "https://staging.passvero.eu/pl/contact",
+        "sl": "https://staging.passvero.eu/sl/contact",
+        "sr": "https://staging.passvero.eu/sr/contact",
+        "x-default": "https://staging.passvero.eu/contact"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/hr/contact.html",
+      "sha256": "1e60bdc8bad73f9ddffa8994b724b959d8daf530e5e34059b330252c1a404b63",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/contact"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/cookies",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/cookies",
+        "en": "https://staging.passvero.eu/en/cookies",
+        "hr": "https://staging.passvero.eu/cookies",
+        "pl": "https://staging.passvero.eu/pl/cookies",
+        "sl": "https://staging.passvero.eu/sl/cookies",
+        "sr": "https://staging.passvero.eu/sr/cookies",
+        "x-default": "https://staging.passvero.eu/cookies"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/hr/cookies.html",
+      "sha256": "74db824ee8512b509cfbcf17b96435b2ec253a681ddb4c2de8a8367f38e4ca51",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/cookies"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/privacy",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/privacy",
+        "en": "https://staging.passvero.eu/en/privacy",
+        "hr": "https://staging.passvero.eu/privacy",
+        "pl": "https://staging.passvero.eu/pl/privacy",
+        "sl": "https://staging.passvero.eu/sl/privacy",
+        "sr": "https://staging.passvero.eu/sr/privacy",
+        "x-default": "https://staging.passvero.eu/privacy"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/hr/privacy.html",
+      "sha256": "d07b028a1212aa0fdfc678ffff52142281c8a1a06bfc1fbbd991fbf83e3d323c",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/privacy"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/terms",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/terms",
+        "en": "https://staging.passvero.eu/en/terms",
+        "hr": "https://staging.passvero.eu/terms",
+        "pl": "https://staging.passvero.eu/pl/terms",
+        "sl": "https://staging.passvero.eu/sl/terms",
+        "sr": "https://staging.passvero.eu/sr/terms",
+        "x-default": "https://staging.passvero.eu/terms"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/hr/terms.html",
+      "sha256": "2c05a33281a9ff5370cdd2ba04a16ce6963b25eab6fe38a56bb688ed59761289",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/terms"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de",
+        "en": "https://staging.passvero.eu/en",
+        "hr": "https://staging.passvero.eu",
+        "pl": "https://staging.passvero.eu/pl",
+        "sl": "https://staging.passvero.eu/sl",
+        "sr": "https://staging.passvero.eu/sr",
+        "x-default": "https://staging.passvero.eu"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/hr.html",
+      "sha256": "7a9bda5b92d27dcebd8dd4ee3756bc9f532261c4bcca327659320a8197027798",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/pl/about",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/about",
+        "en": "https://staging.passvero.eu/en/about",
+        "hr": "https://staging.passvero.eu/about",
+        "pl": "https://staging.passvero.eu/pl/about",
+        "sl": "https://staging.passvero.eu/sl/about",
+        "sr": "https://staging.passvero.eu/sr/about",
+        "x-default": "https://staging.passvero.eu/about"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/pl/about.html",
+      "sha256": "7347e4f0975183ee2c794d6c51fc502beb921e82a59bca06cba01c97bf3d9d56",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/pl/about"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/pl/contact",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/contact",
+        "en": "https://staging.passvero.eu/en/contact",
+        "hr": "https://staging.passvero.eu/contact",
+        "pl": "https://staging.passvero.eu/pl/contact",
+        "sl": "https://staging.passvero.eu/sl/contact",
+        "sr": "https://staging.passvero.eu/sr/contact",
+        "x-default": "https://staging.passvero.eu/contact"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/pl/contact.html",
+      "sha256": "2d5cbf0b71751644e542305733b9b55683bde9501f66cdf586ea1b1c31f4d093",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/pl/contact"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/pl/cookies",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/cookies",
+        "en": "https://staging.passvero.eu/en/cookies",
+        "hr": "https://staging.passvero.eu/cookies",
+        "pl": "https://staging.passvero.eu/pl/cookies",
+        "sl": "https://staging.passvero.eu/sl/cookies",
+        "sr": "https://staging.passvero.eu/sr/cookies",
+        "x-default": "https://staging.passvero.eu/cookies"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/pl/cookies.html",
+      "sha256": "d69e8378eb35910943d57b6292bbed1cc3c0909c311ad363a2b914687e51bbf4",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/pl/cookies"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/pl/privacy",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/privacy",
+        "en": "https://staging.passvero.eu/en/privacy",
+        "hr": "https://staging.passvero.eu/privacy",
+        "pl": "https://staging.passvero.eu/pl/privacy",
+        "sl": "https://staging.passvero.eu/sl/privacy",
+        "sr": "https://staging.passvero.eu/sr/privacy",
+        "x-default": "https://staging.passvero.eu/privacy"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/pl/privacy.html",
+      "sha256": "deb09077a7163dc7bab626a03c9a3794100fa5d507ca00da41620e578a2fa337",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/pl/privacy"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/pl/terms",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/terms",
+        "en": "https://staging.passvero.eu/en/terms",
+        "hr": "https://staging.passvero.eu/terms",
+        "pl": "https://staging.passvero.eu/pl/terms",
+        "sl": "https://staging.passvero.eu/sl/terms",
+        "sr": "https://staging.passvero.eu/sr/terms",
+        "x-default": "https://staging.passvero.eu/terms"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/pl/terms.html",
+      "sha256": "1b4046e8a570d4a3cdb2cb2c0fbc65a10f6434fed68b0518c26956aff88c2327",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/pl/terms"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/pl",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de",
+        "en": "https://staging.passvero.eu/en",
+        "hr": "https://staging.passvero.eu",
+        "pl": "https://staging.passvero.eu/pl",
+        "sl": "https://staging.passvero.eu/sl",
+        "sr": "https://staging.passvero.eu/sr",
+        "x-default": "https://staging.passvero.eu"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/pl.html",
+      "sha256": "704097a31a362822c8eb045f2e10b27ebb13a79a38f8deea14f1f7c968303570",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/pl"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sl/about",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/about",
+        "en": "https://staging.passvero.eu/en/about",
+        "hr": "https://staging.passvero.eu/about",
+        "pl": "https://staging.passvero.eu/pl/about",
+        "sl": "https://staging.passvero.eu/sl/about",
+        "sr": "https://staging.passvero.eu/sr/about",
+        "x-default": "https://staging.passvero.eu/about"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sl/about.html",
+      "sha256": "d3ec5ab6cfc766adfe6064f2f24423b2fb3b48f98dd9a9d46d6684050cce3b80",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sl/about"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sl/contact",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/contact",
+        "en": "https://staging.passvero.eu/en/contact",
+        "hr": "https://staging.passvero.eu/contact",
+        "pl": "https://staging.passvero.eu/pl/contact",
+        "sl": "https://staging.passvero.eu/sl/contact",
+        "sr": "https://staging.passvero.eu/sr/contact",
+        "x-default": "https://staging.passvero.eu/contact"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sl/contact.html",
+      "sha256": "f4d4df487849442166fa679b6debaa3c04b7e048cdf024b087ac2418111f24e0",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sl/contact"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sl/cookies",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/cookies",
+        "en": "https://staging.passvero.eu/en/cookies",
+        "hr": "https://staging.passvero.eu/cookies",
+        "pl": "https://staging.passvero.eu/pl/cookies",
+        "sl": "https://staging.passvero.eu/sl/cookies",
+        "sr": "https://staging.passvero.eu/sr/cookies",
+        "x-default": "https://staging.passvero.eu/cookies"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sl/cookies.html",
+      "sha256": "4dd7c3aff1985bda3f42d4cacbaf5a00fddb5643d390e44bb1d12a36ddbace1d",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sl/cookies"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sl/privacy",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/privacy",
+        "en": "https://staging.passvero.eu/en/privacy",
+        "hr": "https://staging.passvero.eu/privacy",
+        "pl": "https://staging.passvero.eu/pl/privacy",
+        "sl": "https://staging.passvero.eu/sl/privacy",
+        "sr": "https://staging.passvero.eu/sr/privacy",
+        "x-default": "https://staging.passvero.eu/privacy"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sl/privacy.html",
+      "sha256": "6bcf5ce1a96776cfbd96e6e451eb6931d8059374b0b56a0a74bfcd65da7e163f",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sl/privacy"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sl/terms",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/terms",
+        "en": "https://staging.passvero.eu/en/terms",
+        "hr": "https://staging.passvero.eu/terms",
+        "pl": "https://staging.passvero.eu/pl/terms",
+        "sl": "https://staging.passvero.eu/sl/terms",
+        "sr": "https://staging.passvero.eu/sr/terms",
+        "x-default": "https://staging.passvero.eu/terms"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sl/terms.html",
+      "sha256": "cc82a6b667b2930c751ba52ef13b83162e4faaa6e6f4c84446fb1e4e576b46ec",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sl/terms"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sl",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de",
+        "en": "https://staging.passvero.eu/en",
+        "hr": "https://staging.passvero.eu",
+        "pl": "https://staging.passvero.eu/pl",
+        "sl": "https://staging.passvero.eu/sl",
+        "sr": "https://staging.passvero.eu/sr",
+        "x-default": "https://staging.passvero.eu"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sl.html",
+      "sha256": "910a67c8241424d217fba0233611b9faf448ff857cb84aa28f79b9e6d1987fac",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sl"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sr/about",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/about",
+        "en": "https://staging.passvero.eu/en/about",
+        "hr": "https://staging.passvero.eu/about",
+        "pl": "https://staging.passvero.eu/pl/about",
+        "sl": "https://staging.passvero.eu/sl/about",
+        "sr": "https://staging.passvero.eu/sr/about",
+        "x-default": "https://staging.passvero.eu/about"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sr/about.html",
+      "sha256": "438de9afa436cd6cf2f5e2cd74d5540a0a548661ccab1fd860547ba77246eef0",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sr/about"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sr/contact",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/contact",
+        "en": "https://staging.passvero.eu/en/contact",
+        "hr": "https://staging.passvero.eu/contact",
+        "pl": "https://staging.passvero.eu/pl/contact",
+        "sl": "https://staging.passvero.eu/sl/contact",
+        "sr": "https://staging.passvero.eu/sr/contact",
+        "x-default": "https://staging.passvero.eu/contact"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sr/contact.html",
+      "sha256": "ad8015da60fcb6ed80b281db94fe3fa61d5a3283247568ae6d827337b89db390",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sr/contact"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sr/cookies",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/cookies",
+        "en": "https://staging.passvero.eu/en/cookies",
+        "hr": "https://staging.passvero.eu/cookies",
+        "pl": "https://staging.passvero.eu/pl/cookies",
+        "sl": "https://staging.passvero.eu/sl/cookies",
+        "sr": "https://staging.passvero.eu/sr/cookies",
+        "x-default": "https://staging.passvero.eu/cookies"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sr/cookies.html",
+      "sha256": "06fa4fff1cb99534215ef863b785f05f2ccfa6f46eb57927138528e7596cfce1",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sr/cookies"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sr/privacy",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/privacy",
+        "en": "https://staging.passvero.eu/en/privacy",
+        "hr": "https://staging.passvero.eu/privacy",
+        "pl": "https://staging.passvero.eu/pl/privacy",
+        "sl": "https://staging.passvero.eu/sl/privacy",
+        "sr": "https://staging.passvero.eu/sr/privacy",
+        "x-default": "https://staging.passvero.eu/privacy"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sr/privacy.html",
+      "sha256": "ab35524b5d5437d2e6affe336570ab83e5bf368590995537638ef1d40f2750a1",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sr/privacy"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sr/terms",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de/terms",
+        "en": "https://staging.passvero.eu/en/terms",
+        "hr": "https://staging.passvero.eu/terms",
+        "pl": "https://staging.passvero.eu/pl/terms",
+        "sl": "https://staging.passvero.eu/sl/terms",
+        "sr": "https://staging.passvero.eu/sr/terms",
+        "x-default": "https://staging.passvero.eu/terms"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sr/terms.html",
+      "sha256": "3131e7214a032d2b2683ea43c9e7f4ebfbb018497021afc4aeb37e56e3c5f62f",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sr/terms"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    },
+    {
+      "canonical": "https://staging.passvero.eu/sr",
+      "hreflang": {
+        "de": "https://staging.passvero.eu/de",
+        "en": "https://staging.passvero.eu/en",
+        "hr": "https://staging.passvero.eu",
+        "pl": "https://staging.passvero.eu/pl",
+        "sl": "https://staging.passvero.eu/sl",
+        "sr": "https://staging.passvero.eu/sr",
+        "x-default": "https://staging.passvero.eu"
+      },
+      "path": "/tmp/passvero-marketing-final-20261021/staging-build-source/.next/server/app/sr.html",
+      "sha256": "4193d35ab16974115f10a91a8b95a8a847bfb842d03e37655a897b462b6b34bb",
+      "social": {
+        "og:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ],
+        "og:url": [
+          "https://staging.passvero.eu/sr"
+        ],
+        "twitter:image": [
+          "https://staging.passvero.eu/og/passvero-og.png"
+        ]
+      }
+    }
+  ],
+  "origin": "https://staging.passvero.eu",
+  "result": "PASS_STAGING_ARTIFACT_URL_AUDIT",
+  "robotsSha256": "9b4a08fbcc1d0120ef21742a2275f30c131ad0668fcbfdb20fc6c5f7e5618dfb",
+  "sitemapSha256": "cca2cf14b528848497a8fa598169d4bb807f3757434601cd352ee25f11409b33",
+  "sitemapUrls": 36,
+  "sourceCommit": "e0616fc20f53e0e9ad0bbb12a3aa099db5481695",
+  "testsRepeated": false
+}

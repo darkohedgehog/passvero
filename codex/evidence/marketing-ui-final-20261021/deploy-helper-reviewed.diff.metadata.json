@@ -1,0 +1,7 @@
+{
+  "format": "WHITESPACE_NORMALIZED_REVIEW_DISPLAY_NOT_EXECUTABLE_PATCH",
+  "originalPath": "/tmp/passvero-marketing-final-20261021/original-deploy-helper-reviewed.diff",
+  "originalSha256": "56d38e75b32d4e470b8f6802df168b76aedbd898c5c7e1b35bc64f1c9362a815",
+  "displaySha256": "c9d837a29f3184fde004d8f388d2c80798a5a9cf8935f11bc69123484bc7a306",
+  "operationalHelpersUnchanged": true
+}

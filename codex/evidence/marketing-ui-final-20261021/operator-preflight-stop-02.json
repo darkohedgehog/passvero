@@ -1,0 +1,11 @@
+{
+  "result": "STOP_DIAGNOSED",
+  "check": "EFFECTIVE_BUILD_SETTINGS",
+  "exitCode": -6,
+  "stderrClass": "OTHER",
+  "stderrBytes": 0,
+  "stdoutBytes": 192,
+  "automaticRetry": false,
+  "mutations": "NONE",
+  "source": "USER_SUPPLIED_OPERATOR_OUTPUT"
+}

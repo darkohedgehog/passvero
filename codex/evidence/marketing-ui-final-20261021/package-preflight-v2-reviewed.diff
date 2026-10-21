@@ -1,0 +1,14 @@
+--- preflight.py
++++ preflight-v2.py
+@@ -161,7 +161,10 @@
+     updated['build_id'] = NEW_BUILD
+     updated['marketing_artifact_manifest_sha256'] = ARTIFACT
+     updated['files'] = {name: item for name, item in prior['files'].items() if not name.startswith(('.next/', 'messages/'))}
+-    require(not any(name in prior['files'] for name in ('public/marketing/hero-passport-restored.png', 'public/marketing/dashboard-preview-restored.png')), 'NEW_ASSET_ALREADY_PRESENT_STOP')
++    for name in ('public/marketing/hero-passport-restored.png', 'public/marketing/dashboard-preview-restored.png'):
++        require(name in prior['files'] and name not in artifact['files']
++                and updated['files'].get(name) == prior['files'][name], 'RETAINED_ILLUSTRATION_MANIFEST_CHANGED')
++        require(digest(regular(APP / name)) == prior['files'][name]['sha256'], 'RETAINED_ILLUSTRATION_BYTES_CHANGED')
+     updated['files'].update(artifact['files'])
+     candidate_bytes = (json.dumps(updated, sort_keys=True, indent=2) + '\n').encode()
+     new_config = dict(config)

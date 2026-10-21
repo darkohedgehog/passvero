@@ -1,0 +1,196 @@
+--- accepted-20261012/deploy-reviewed.py
++++ reviewed-20261021/deploy-reviewed.py
+@@ -22,18 +22,18 @@
+ CODE = P('/usr/local/libexec/passvero-staging-backup')
+ BACKUP = P('/var/lib/passvero-staging-recovery/recurring')
+ CANONICAL = P('/var/lib/passvero-onboarding-deploy-2cb9d6e/application/manifest.json')
+-ROOT = P('/var/lib/passvero-marketing-visual-deploy-20261012')
+-OLD_BUILD = '853RYrj-r5cyoSGuJudap'
+-NEW_BUILD = '_tkSUOn0PCoHjpx8V7FVr'
+-OLD_CANONICAL = 'b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9'
+-NEW_CANONICAL = 'e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590'
+-OLD_CONFIG = 'c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a'
+-NEW_CONFIG = 'a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839'
+-ARTIFACT_PIN = 'f99e967366651aeca151d68a5c9b243196023b8eb10e0294df767c9c2d985c82'
+-ARCHIVE_PIN = '0fa2668e2ce1eaa5aac34fb7e7ff44add1bd66aeca7c13d2439d448ac73ce3e0'
++ROOT = P('/var/lib/passvero-marketing-ui-deploy-20261021')
++OLD_BUILD = '_tkSUOn0PCoHjpx8V7FVr'
++NEW_BUILD = 'RVDJVB4UmvCtP7UnxGKi2'
++OLD_CANONICAL = 'e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590'
++NEW_CANONICAL = 'e8fd04e3716ca71d1f9f32e88176897718739fedd48ff29afba5c2cd0093f467'
++OLD_CONFIG = 'a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839'
++NEW_CONFIG = 'a85326aea9316f6bc94ee255f33956f062b8788a0f3d74cefe3075ed9f1d1e7f'
++ARTIFACT_PIN = 'd8d63fb009d6c0db28ac02826e65be7dd7ff0c1c1f1008ff918c9a5d6247fe1f'
++ARCHIVE_PIN = '866a4ddcf930c23202dd1e041af1ce60130b42315d970d6eb6c7a29e1e33dc0c'
+ TIMERS = ('passvero-staging-backup.timer', 'passvero-staging-backup-monitor.timer')
+ CHECK_ID = 'SCOPE'
+-ASSETS = ('public/marketing/hero-passport-restored.png', 'public/marketing/dashboard-preview-restored.png')
++ASSETS = ('public/marketing/flags/LICENSE', 'public/marketing/flags/de.svg', 'public/marketing/flags/gb.svg', 'public/marketing/flags/hr.svg', 'public/marketing/flags/pl.svg', 'public/marketing/flags/rs.svg', 'public/marketing/flags/si.svg', 'public/marketing/passvero-logo.png')
+
+
+ def require(value, reason):
+@@ -91,7 +91,9 @@
+     value = run(['/usr/bin/busctl', 'get-property', 'org.freedesktop.systemd1', reply[3:-1],
+                  'org.freedesktop.systemd1.Timer', 'NextElapseUSecRealtime'])
+     require(re.fullmatch(r't [0-9]{1,20}', value), 'TIMER_TYPED_DUE_REQUIRED')
+-    return int(value[2:]) / 1000000
++    numeric = int(value[2:])
++    require(0 < numeric < 18446744073709551615, 'TIMER_DUE_VALUE_REQUIRED')
++    return numeric / 1000000
+
+
+ def load(name, path, pin):
+@@ -169,6 +171,69 @@
+         require(current['ActiveState'] == 'active' and current['UnitFileState'] == 'enabled', 'TIMER_NOT_RESTORED')
+
+
++OLD_LOGO = 'aa8ada632a5cc358731896f68d336e82cb27f318e367363c757c7c3fb713184d'
++
++
++def verify_old_public():
++    parent = APP / 'public/marketing'
++    require(parent.is_dir() and not parent.is_symlink()
++            and parent.resolve().is_relative_to(APP.resolve()), 'PUBLIC_PARENT_SCOPE')
++    require(sha(read(parent / 'passvero-logo.png')) == OLD_LOGO, 'OLD_LOGO_CHANGED')
++    require(not (parent / 'flags').exists() and not (parent / 'flags').is_symlink(), 'OLD_FLAGS_NOT_ABSENT')
++
++
++def verify_new_target(name, target):
++    manifest = json.loads(read(ROOT / 'artifact-manifest.json'))['files']
++    require(name in ('public/marketing/passvero-logo.png', 'public/marketing/flags'), 'PUBLIC_TARGET_SCOPE')
++    if name.endswith('.png'):
++        require(sha(read(target)) == manifest[name]['sha256'], 'NEW_LOGO_CHANGED')
++        return
++    require(target.is_dir() and not target.is_symlink(), 'NEW_FLAG_DIRECTORY_POSTURE')
++    expected = {key: value for key, value in manifest.items() if key.startswith(name + '/')}
++    actual = {}
++    for path in target.rglob('*'):
++        require(not path.is_symlink(), 'FLAG_SYMLINK')
++        if path.is_file():
++            key = name + '/' + str(path.relative_to(target))
++            body = read(path)
++            actual[key] = {'sha256': sha(body), 'bytes': len(body)}
++        else:
++            require(path.is_dir(), 'FLAG_SPECIAL_FILE')
++    require(actual == expected, 'NEW_FLAG_INVENTORY_CHANGED')
++
++
++def verify_new_public():
++    for name in ('public/marketing/passvero-logo.png', 'public/marketing/flags'):
++        verify_new_target(name, APP / name)
++
++
++def restore_public():
++    logo_name = 'public/marketing/passvero-logo.png'
++    target = APP / logo_name
++    previous = ROOT / 'previous-public/marketing/passvero-logo.png'
++    retained = ROOT / 'prepared' / logo_name
++    require(not previous.is_symlink() and not target.is_symlink(), 'ROLLBACK_LOGO_SYMLINK')
++    if previous.exists():
++        require(sha(read(previous)) == OLD_LOGO, 'SAVED_OLD_LOGO_CHANGED')
++        if target.exists():
++            verify_new_target(logo_name, target)
++            require(not retained.exists() and not retained.is_symlink(), 'RETAINED_NEW_LOGO_TARGET_EXISTS')
++            target.rename(retained)
++        previous.rename(target)
++    else:
++        require(sha(read(target)) == OLD_LOGO, 'OLD_LOGO_NOT_RESTORED')
++    flags_name = 'public/marketing/flags'
++    flags = APP / flags_name
++    retained_flags = ROOT / 'prepared' / flags_name
++    require(not flags.is_symlink() and not retained_flags.is_symlink(), 'ROLLBACK_FLAGS_SYMLINK')
++    if flags.exists():
++        verify_new_target(flags_name, flags)
++        require(not retained_flags.exists(), 'RETAINED_FLAGS_TARGET_EXISTS')
++        flags.rename(retained_flags)
++    require(retained_flags.is_dir(), 'NEW_FLAGS_NOT_RETAINED')
++    verify_old_public()
++
++
+ def deployment():
+     global CHECK_ID
+     require(not (ROOT / 'canonical-deploy-attempt.json').exists(), 'ONE_REVIEWED_CANONICAL_DEPLOY_ONLY')
+@@ -177,8 +242,8 @@
+     config = json.loads(config_bytes)
+     prepare, cap = helpers(config)
+     # Reuse the exact reviewed read-only preflight; no backup helper main is called.
+-    preflight = load('reviewed_marketing_preflight', ROOT / 'preflight.py',
+-                     'e74a2a3b8c1387015bfa7e8a05ad19394242095905a8dde1000ae2ddbf10bfed')
++    preflight = load('reviewed_marketing_preflight', ROOT / 'preflight-v2.py',
++                     'c24643dc7ab1663edcfb520574cddeeac1450030e0b38b21edf2ba01bc543543')
+     preflight.INPUT = ROOT
+     preflight.main()
+     old_bytes = read(CANONICAL)
+@@ -199,11 +264,7 @@
+     require(ROOT.lstat().st_uid == 0 and stat.S_IMODE(ROOT.stat().st_mode) == 0o700
+             and not ROOT.is_symlink() and APP.is_dir() and not APP.is_symlink(), 'DEPLOY_DIRECTORY_POSTURE')
+     require(ROOT.stat().st_dev == APP.stat().st_dev, 'ATOMIC_RENAME_FILESYSTEM_REQUIRED')
+-    for name in ASSETS:
+-        target = APP / name
+-        require(not target.exists() and not target.is_symlink(), 'NEW_ASSET_TARGET_EXISTS')
+-        require(target.parent.is_dir() and not target.parent.is_symlink()
+-                and target.parent.resolve().is_relative_to(APP.resolve()), 'PUBLIC_ASSET_PARENT_SCOPE')
++    verify_old_public()
+     prepared = ROOT / 'prepared'
+     require(not prepared.exists(), 'PREPARATION_ALREADY_PRESENT')
+     prepared.mkdir(mode=0o700)
+@@ -269,21 +330,27 @@
+             require((APP / name).is_dir() and not (APP / name).is_symlink(), 'APPLICATION_DIRECTORY_SCOPE')
+             (APP / name).rename(previous)
+             (prepared / name).rename(APP / name)
+-        for name in ASSETS:
+-            (prepared / name).rename(APP / name)
++        verify_old_public()
++        previous_logo = ROOT / 'previous-public/marketing/passvero-logo.png'
++        require(not previous_logo.exists() and not previous_logo.is_symlink(), 'PREVIOUS_LOGO_TARGET_EXISTS')
++        previous_logo.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
++        (APP / 'public/marketing/passvero-logo.png').rename(previous_logo)
++        (prepared / 'public/marketing/passvero-logo.png').rename(APP / 'public/marketing/passvero-logo.png')
++        (prepared / 'public/marketing/flags').rename(APP / 'public/marketing/flags')
+         atomic(CANONICAL, new_canonical)
+         atomic(CODE / 'config.json', json_bytes(new_config))
+         cap.pm2(prepare, 'restart', 12)
+         CHECK_ID = 'VERIFY_NEW_ALIGNED_RELEASE'
+         verify_manifest(read(CANONICAL), NEW_CANONICAL, NEW_BUILD)
+         require(sha(read(CODE / 'config.json')) == NEW_CONFIG, 'NEW_CONFIG_PIN_MISMATCH')
++        verify_new_public()
+         process = health(prepare)
+         require(read(BACKUP / 'state.json') == state, 'BACKUP_STATE_CHANGED')
+         for key in ('ActiveState', 'UnitFileState'):
+             require(unit('passvero-subscription-reminders.timer')[key] == writer[key], 'WRITER_TIMER_CHANGED')
+         record('canonical-deploy-body-pass.json', {'deployment': 'PASS', 'buildId': NEW_BUILD, 'canonicalSha256': NEW_CANONICAL,
+             'configSha256': NEW_CONFIG, 'artifacts': len(candidate['files']), 'httpsTls': '200_0_CANONICAL_ROOT',
+-            'runtime': process, 'backupStateUnchanged': True, 'captureRestoreWorkerSmtpTelegramCalls': 0})
++            'runtime': process, 'publicAssets': 'LOGO_REPLACED_FLAGS_ADDED_ILLUSTRATIONS_RETAINED', 'backupStateUnchanged': True, 'captureRestoreWorkerSmtpTelegramCalls': 0})
+     finally:
+         os.close(lock_fd)
+
+@@ -300,18 +367,11 @@
+                 require(not preserved.exists(), 'FAILED_ARTIFACT_TARGET_EXISTS')
+                 (APP / name).rename(preserved)
+             previous.rename(APP / name)
+-    for name in ASSETS:
+-        target = APP / name
+-        retained = ROOT / 'prepared' / name
+-        require(not target.is_symlink() and not retained.is_symlink(), 'ROLLBACK_ASSET_SYMLINK')
+-        if target.exists():
+-            expected = json.loads(read(ROOT / 'artifact-manifest.json'))['files'][name]
+-            require(sha(read(target)) == expected['sha256'] and not retained.exists(), 'ROLLBACK_ASSET_CHANGED')
+-            target.rename(retained)
+-        require(retained.is_file(), 'ROLLBACK_ASSET_NOT_RETAINED')
++    restore_public()
+     atomic(CANONICAL, read(ROOT / 'old-canonical.json'))
+     atomic(CODE / 'config.json', read(ROOT / 'old-config.json'))
+     verify_manifest(read(CANONICAL), OLD_CANONICAL, OLD_BUILD)
++    verify_old_public()
+     require(sha(read(CODE / 'config.json')) == OLD_CONFIG, 'ROLLBACK_CONFIG_CHANGED')
+     cap.pm2(prepare, 'restart', 12)
+     health(prepare)
+@@ -349,6 +409,7 @@
+         if healthy_new:
+             verify_manifest(read(CANONICAL), NEW_CANONICAL, NEW_BUILD)
+             require(sha(read(CODE / 'config.json')) == NEW_CONFIG, 'CLOSURE_NEW_CONFIG_CHANGED')
++            verify_new_public()
+             health(prepare)
+         else:
+             paired_rollback(prepare, cap)

@@ -103,7 +103,7 @@
     "codex/IMPLEMENTATION_ROADMAP.md": "5e3822088ca01b701293a884992bd58ba2529cac32af7f7acdf8557028aca1d3",
     "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
   },
-  "stagingDeployPerformed": false,
+  "stagingDeployPerformed": true,
   "productionChanges": "NONE",
   "tasks": [
     "MARKETING_UI_POLISH_LANGUAGE_CONTROLS_AND_COLOR_SYSTEM",
@@ -151,7 +151,7 @@
     "indexInitially": "EMPTY",
     "sourceHashes": "MATCH",
     "jsonDelta": "Compliance.scopeNote only in six locales",
-    "deployGate": "STOP_CANONICAL_ORIGIN_MISMATCH",
+    "deployGate": "PASS_DEPLOY_AND_READ_ONLY_VISUAL_USER_STAGING_REVIEW_PENDING",
     "canonicalEvidence": {
       "hr": {
         "path": ".next/server/app/hr.html",
@@ -191,7 +191,7 @@
       }
     },
     "testsAndBuildRepeated": false,
-    "stagingDeployPerformed": false,
+    "stagingDeployPerformed": true,
     "productionChanges": "NONE",
     "buildLogPreservation": {
       "originalPath": "/tmp/passvero-marketing-cta-20261021/build.log",
@@ -199,6 +199,135 @@
       "committedPath": "codex/evidence/marketing-ui-final-20261021/accepted-build.log",
       "committedSha256": "38e898e26d44f331bbd904e040276d8145e749372347d8a2790b0286522b5025",
       "normalization": "Line endings/trailing whitespace only; original retained; no rebuild"
+    },
+    "buildDisposition": "Original preview build rejected; exactly one separately authorized staging-origin replacement build; no tests repeated"
+  },
+  "gitOutcome": {
+    "implementationCommit": "e0616fc20f53e0e9ad0bbb12a3aa099db5481695",
+    "message": "style(marketing): polish navigation colors and page presentation",
+    "filesCommitted": 37,
+    "sourceAssets": 23,
+    "documentationAndEvidence": 14,
+    "push": "PASS_NON_FORCE",
+    "headEqualsOriginMainEqualsActualRemote": true,
+    "actualRemoteMain": "e0616fc20f53e0e9ad0bbb12a3aa099db5481695",
+    "index": "EMPTY",
+    "stagingDeployPerformed": true,
+    "deployStatus": "PASS_READ_ONLY_VISUAL_USER_STAGING_REVIEW_PENDING",
+    "acceptedBuildId": "Edl3N_JJEbBPamNQ84Jxn",
+    "replacementBuildDecision": "APPROVED_ONE_STAGING_BUILD_COMPLETED",
+    "operatorPreflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+    "currentStagingBuild": "RVDJVB4UmvCtP7UnxGKi2",
+    "rollbackLocation": "/var/lib/passvero-marketing-ui-deploy-20261021",
+    "testsBuildBackupAcceptanceRepeated": false,
+    "productionChanges": "NONE",
+    "legalDraftSha256": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1",
+    "preexistingRoadmapPreserved": true,
+    "documentationClosureCommit": "THIS_DOCUMENTATION_ONLY_COMMIT_NO_RUNTIME_REBUILD_DEPLOY_OR_REPIN",
+    "actualRemoteMainEvidenceScope": "Implementation push readback; final documentation commit remote identity is reported after its push"
+  },
+  "stagingBuildAuthorization": {
+    "sameReviewedSourceOnly": true,
+    "canonicalOrigin": "https://staging.passvero.eu",
+    "requiresFreshOperatorBaseline": true,
+    "testsRepeated": false,
+    "secretsAndBusinessConfigurationChanges": "FORBIDDEN",
+    "metadataAuditRequired": [
+      "canonical",
+      "hreflang",
+      "Open Graph",
+      "structured URLs",
+      "no preview placeholders"
+    ]
+  },
+  "preflightFailure": {
+    "operatorEvidence": "codex/evidence/marketing-ui-final-20261021/operator-preflight-stop-01.json",
+    "diagnostic": "codex/evidence/marketing-ui-final-20261021/VPS-TERMINAL-DIAGNOSE-PREFLIGHT-01.sh",
+    "diagnosticSha256": "ca3a185064c919e870c353366d1c9fbde864800fbb7fc1017ad449f3f8a6d698",
+    "cause": "CHILD_ABORT_OBSERVED; full inherited Node/PM2 environment is a candidate cause, not proven",
+    "buildPerformed": false,
+    "deployPerformed": false,
+    "latestOperatorEvidence": "codex/evidence/marketing-ui-final-20261021/operator-preflight-stop-02.json",
+    "preparedCorrection": {
+      "helper": "codex/evidence/marketing-ui-final-20261021/VPS-TERMINAL-PREFLIGHT.sh",
+      "sha256": "5535207398cffa386077d708584c61a9f1e5e0f0362b1350aa08c8875dcb71da",
+      "delta": "same verified Node binary; staging UID; explicit diagnostic child environment instead of inheriting all runtime env",
+      "executedOnVps": true,
+      "failureExitCodesRemainStop": true
     }
+  },
+  "stagingRelease": {
+    "buildId": "RVDJVB4UmvCtP7UnxGKi2",
+    "artifactManifestSha256": "d8d63fb009d6c0db28ac02826e65be7dd7ff0c1c1f1008ff918c9a5d6247fe1f",
+    "archiveSha256": "866a4ddcf930c23202dd1e041af1ce60130b42315d970d6eb6c7a29e1e33dc0c",
+    "members": 847,
+    "bytes": 7656563,
+    "bundledBarcode": [
+      ".next/server/chunks/6074.js"
+    ],
+    "bundledCsv": [
+      ".next/server/app/api/products/import/route.js"
+    ],
+    "sourceCommit": "e0616fc20f53e0e9ad0bbb12a3aa099db5481695",
+    "metadataAudit": "PASS_36_CANONICAL_HREFLANG_OG_AND_36_SITEMAP_URLS",
+    "testsRepeated": false,
+    "sourceDirectory": "/tmp/passvero-marketing-final-20261021/staging-build-source",
+    "archivePath": "/tmp/passvero-marketing-ui-release-20261021/application.tar.gz",
+    "preflightSha256": "51643fedef4bf28e642219f1074382c7e5b64ec50ab61210b5caacb6fb19385f",
+    "operatorUploadDirectory": "/tmp/passvero-marketing-ui-release-20261021",
+    "uploadedHashesVerified": true,
+    "urlAudit": "PASS",
+    "urlAuditPath": "codex/evidence/marketing-ui-final-20261021/staging-build-url-audit.json",
+    "sourceHashes": "ALL_23_MATCH_IMPLEMENTATION_COMMIT",
+    "baselineEvidence": "codex/evidence/marketing-ui-final-20261021/operator-baseline-pass.json",
+    "packagePreflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+    "deployPerformed": true,
+    "runtimePinsChanged": true,
+    "buildLogOriginalSha256": "d8abbcb6cbf753c006d82baaa6573255f45b974c1fc3fb529e45ea8bee08d00b",
+    "buildLogCommitCopySha256": "d7ecc8200c37fa2a1e56eba10e08b6a08ca1c688c9a55e792ec936bf5ae9f632",
+    "isolatedBuildEngine": "webpack",
+    "testSeriesRepeated": false,
+    "packagePreflightV2": {
+      "path": "/tmp/passvero-marketing-ui-release-20261021/preflight-v2.py",
+      "sha256": "c24643dc7ab1663edcfb520574cddeeac1450030e0b38b21edf2ba01bc543543",
+      "scope": "Replace stale absence guard with exact retained illustration manifest/byte verification",
+      "buildAndArchiveUnchanged": true,
+      "operatorExecuted": true
+    },
+    "packagePreflightEvidence": "codex/evidence/marketing-ui-final-20261021/operator-package-preflight-pass.json",
+    "newCanonicalSha256": "e8fd04e3716ca71d1f9f32e88176897718739fedd48ff29afba5c2cd0093f467",
+    "newConfigSha256": "a85326aea9316f6bc94ee255f33956f062b8788a0f3d74cefe3075ed9f1d1e7f",
+    "deployHelperSha256": "3fbd9ce3c7ec17df90957772facaf1bdf156f1062c47c5df0c9aae6545e3a242",
+    "launchHelperSha256": "16acb66ff4616a4cb4beb8e69eed20827c1936a899aa89e9a01f69ea3aac490b",
+    "rollbackLocation": "/var/lib/passvero-marketing-ui-deploy-20261021",
+    "rollbackStatus": "PREPARED_NOT_EXECUTED",
+    "launchStatus": "PASS_DEPLOY_AND_INDEPENDENT_CLOSURE",
+    "launchWindowStopEvidence": "codex/evidence/marketing-ui-final-20261021/operator-launch-window-stop-01.json",
+    "ordinaryMonitorReadback": "codex/evidence/marketing-ui-final-20261021/monitor-ordinary-term-readback.json",
+    "deployment": "PASS",
+    "release": "NEW_ALIGNED",
+    "canonicalMembers": 852,
+    "retainedCanonicalFiles": 5,
+    "backupStateUnchanged": true,
+    "writerTimerUnchanged": true,
+    "backupMonitorTimersRestored": true,
+    "captureRestoreWorkerSmtpTelegramCalls": 0,
+    "userStagingVisualAcceptance": "PENDING",
+    "visualReview": "PASS_12_LOCALE_VIEWPORTS",
+    "operatorDeployEvidence": "codex/evidence/marketing-ui-final-20261021/operator-deploy-closure-pass.json",
+    "visualEvidence": "codex/evidence/marketing-ui-final-20261021/staging-results.json"
+  },
+  "userStagingVisualReview": "PENDING",
+  "deploymentReadback": {
+    "runtimeArtifactAccess": "Unprivileged darko direct .next/BUILD_ID read denied by existing permissions; permissions unchanged. Exact 852-member operator verification and public HTTPS HTML build identity used.",
+    "httpsBuildId": "RVDJVB4UmvCtP7UnxGKi2",
+    "httpsLogoSha256": "7562e3e4bf6a8865e4facdf50dd306ed9b7a2d938392634b9e8c8260314d19bf",
+    "publicReview": "GET/HEAD only; zero forms/business writes",
+    "legalAndUnrelatedDiff": "PRESERVED_UNCOMMITTED",
+    "productionChanges": "NONE",
+    "backupAcceptanceRepeated": false,
+    "testsRepeated": false,
+    "authorizedReplacementBuilds": 1,
+    "documentationOnlyCommitRequiresRuntimeRepin": false
   }
 }

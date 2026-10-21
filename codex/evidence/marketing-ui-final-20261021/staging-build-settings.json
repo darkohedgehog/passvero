@@ -1,0 +1,20 @@
+{
+  "node": "v24.15.0",
+  "packageSha256": "b8e98604501f008c052dcaf7e141c453902fb87c22770938098dc345e720efb0",
+  "lockSha256": "4312618b27164f25b095ffe693410bcb4f84537cf6d30738732fca8192e6a7ae",
+  "nextPublicTurnstile": {
+    "present": true,
+    "sha256": "fe67e573629eb1744c18576097b2e0b56f49aab14aab694cab05227053d3b5fd"
+  },
+  "nextConfigExplicitEnv": {},
+  "runtimeEnvironment": "staging",
+  "operatorObservedUTC": "2026-10-21T16:05:04.516748+00:00",
+  "canonicalOrigin": "https://staging.passvero.eu",
+  "stagingNode": "v24.22.0",
+  "stagingPackageSha256": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+  "stagingLockSha256": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+  "reconciliation": "EXACT_PREVIOUSLY_REVIEWED_BASELINE",
+  "testsRepeated": false,
+  "buildEngine": "webpack",
+  "sourceCommit": "e0616fc20f53e0e9ad0bbb12a3aa099db5481695"
+}

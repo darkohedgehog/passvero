@@ -1,0 +1,8 @@
+{
+  "result": "STOP",
+  "reason": "READ_COMMAND_FAILED",
+  "automaticRetry": false,
+  "mutations": "NONE",
+  "source": "USER_SUPPLIED_OPERATOR_OUTPUT",
+  "specificCommand": "NOT_RECORDED_BY_ORIGINAL_WRAPPER"
+}

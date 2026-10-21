@@ -1,0 +1,17 @@
+{
+  "observedUTC": "2026-10-21T16:21:06.813546+00:00",
+  "source": "UNPRIVILEGED_READ_ONLY_SSH_SYSTEMCTL_SHOW",
+  "service": "passvero-staging-backup-monitor.service",
+  "serviceResult": "success",
+  "ExecMainStatus": 0,
+  "ExecMainStartTimestamp": "Wed 2026-10-21 18:20:00 CEST",
+  "ExecMainExitTimestamp": "Wed 2026-10-21 18:20:00 CEST",
+  "ActiveState": "inactive",
+  "SubState": "dead",
+  "timerActiveState": "active",
+  "timerSubState": "waiting",
+  "nextMonitorDeadline": "Wed 2026-10-21 19:20:00 CEST",
+  "manualJobsStarted": 0,
+  "mutations": "NONE",
+  "notANewBackupAcceptance": true
+}

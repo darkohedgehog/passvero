@@ -1668,3 +1668,29 @@ not be deployed or patched/relabelled. One staging-origin build decision and the
 fresh bounded operator preflight are pending; no pin/runtime/scanner/automation
 changes made. See [final review and operator handoff](MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md#approved-marketing-ui-final-review--2026-10-21).
 Preexisting roadmap/readiness/legal changes remain outside this task's Git slice.
+
+Git implementation commit `e0616fc20f53e0e9ad0bbb12a3aa099db5481695` (37 files) and ordinary non-force push PASS;
+HEAD/origin/main/actual remote main agree. Index empty; legal/readiness diff retained.
+Staging remains blocked on the documented canonical origin mismatch, with no VPS/pin
+mutation or new runtime rollback. Final documentation commit is deferred pending
+operator output and the replacement-build/deploy disposition.
+
+Fresh operator baseline PASS on2026-10-21 16:05UTC; current staging _tkSUOn0PCoHjpx8V7FVr
+and all759 canonical members/pins match. One authorized isolated staging-origin
+webpack build `RVDJVB4UmvCtP7UnxGKi2` PASS, with36 canonical/hreflang/OG sets and
+267 generated outputs audited; no tests repeated.847-member package uploaded/hash
+verified in private /tmp only. Exact package/pin preflight and fresh timer-window
+guard are pending; no deploy or pin/scanner/automation changes performed.
+
+Staging deployment and independent closure now PASS: build `RVDJVB4UmvCtP7UnxGKi2`,
+852 canonical members, exact build/canonical release pins NEW_ALIGNED. Backup state
+and history preserved; backup/monitor timer baseline restored, writer unchanged.
+No scanner/producer/config changes, backup acceptance, worker or transport calls.
+Read-only desktop/mobile review PASS for all six languages, including header/logo,
+metadata, language/login controls, CTA and overflow. Mobile final CTA has24px image
+separation after lazy-image decode. User final staging appearance review PENDING.
+Rollback retained at `/var/lib/passvero-marketing-ui-deploy-20261021`, not executed.
+One authorized staging-origin replacement build; no tests or broad acceptance rerun.
+Final documentation-only commit/push records this result without rebuild/deploy/repin;
+separate legal/readiness changes remain uncommitted and production changes NONE.
+See final report and `evidence/marketing-ui-final-20261021/source-manifest.json`.

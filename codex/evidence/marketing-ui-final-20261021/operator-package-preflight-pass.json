@@ -1,0 +1,72 @@
+{
+  "attempts": 11,
+  "backupStateSha256": "dfa9e3acefda6de13fb068f8b0e5c37694b110c66cea9ef093ac564183c93414",
+  "captureRestoreWorkerSmtpTelegramCalls": 0,
+  "configKeysChanged": [
+    "buildId",
+    "canonicalSha256"
+  ],
+  "currentRuntime": {
+    "cwd": "/var/www/passvero-acceptance",
+    "name": "passvero-acceptance",
+    "pid": 173622,
+    "pmId": 0,
+    "status": "online"
+  },
+  "flagDirectory": "ABSENT_CONFIRMED",
+  "hold": false,
+  "legalNamespaces": "UNCHANGED_FROM_DEPLOYED",
+  "mode": "CONTINUOUS",
+  "mutations": "NONE",
+  "newArtifacts": 847,
+  "newBuild": "RVDJVB4UmvCtP7UnxGKi2",
+  "newCanonicalSha256": "e8fd04e3716ca71d1f9f32e88176897718739fedd48ff29afba5c2cd0093f467",
+  "newConfigSha256": "a85326aea9316f6bc94ee255f33956f062b8788a0f3d74cefe3075ed9f1d1e7f",
+  "observedUTC": "2026-10-21T16:13:32.070079+00:00",
+  "oldBuild": "_tkSUOn0PCoHjpx8V7FVr",
+  "oldCanonicalSha256": "e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590",
+  "oldConfigSha256": "a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839",
+  "oldLogoSha256": "aa8ada632a5cc358731896f68d336e82cb27f318e367363c757c7c3fb713184d",
+  "preflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+  "retainedCanonicalFiles": 5,
+  "units": {
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup-monitor.timer",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "Wed 2026-10-21 18:20:00 CEST",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.service": {
+      "ActiveState": "inactive",
+      "Id": "passvero-staging-backup.service",
+      "LoadState": "loaded",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup.timer",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "Thu 2026-10-22 06:30:00 CEST",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-subscription-reminders.service": {
+      "ActiveState": "inactive",
+      "Id": "passvero-subscription-reminders.service",
+      "LoadState": "loaded",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-subscription-reminders.timer",
+      "LoadState": "loaded",
+      "NextElapseUSecRealtime": "",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "result": "PASS_READ_ONLY_MARKETING_STAGING_REVIEW",
+  "build": "RVDJVB4UmvCtP7UnxGKi2",
+  "origin": "https://staging.passvero.eu",
+  "results": [
+    {
+      "locale": "hr",
+      "width": 1440,
+      "canonical": "https://staging.passvero.eu",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "canonical": "https://staging.passvero.eu/sr",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "canonical": "https://staging.passvero.eu/en",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "canonical": "https://staging.passvero.eu/de",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "canonical": "https://staging.passvero.eu/sl",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "canonical": "https://staging.passvero.eu/pl",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "canonical": "https://staging.passvero.eu",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "canonical": "https://staging.passvero.eu/sr",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "canonical": "https://staging.passvero.eu/en",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "canonical": "https://staging.passvero.eu/de",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "canonical": "https://staging.passvero.eu/sl",
+      "overflow": false,
+      "status": "PASS"
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "canonical": "https://staging.passvero.eu/pl",
+      "overflow": false,
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "blockedNonReadRequests": [],
+  "formSubmissions": 0,
+  "businessWrites": 0,
+  "scannerBackupAcceptanceCalls": 0,
+  "userStagingVisualAcceptance": "PENDING"
+}

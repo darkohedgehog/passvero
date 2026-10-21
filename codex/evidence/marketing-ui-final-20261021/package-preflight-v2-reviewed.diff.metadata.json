@@ -1,0 +1,7 @@
+{
+  "format": "WHITESPACE_NORMALIZED_REVIEW_DISPLAY_NOT_EXECUTABLE_PATCH",
+  "originalPath": "/tmp/passvero-marketing-final-20261021/original-package-preflight-v2-reviewed.diff",
+  "originalSha256": "31acb6949322e1c53191be814e0ca3af36c9fd565a06e8df04798af0b0a72fe6",
+  "displaySha256": "31acb6949322e1c53191be814e0ca3af36c9fd565a06e8df04798af0b0a72fe6",
+  "operationalHelpersUnchanged": true
+}
