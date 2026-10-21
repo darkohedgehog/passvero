@@ -1,0 +1,7 @@
+{
+  "result": "STOP",
+  "CHECK_ID": "CONTINUATION_AUTH",
+  "reason": "OPERATOR_OBSERVATION_TIMEOUT",
+  "automaticRetry": false,
+  "instruction": "RETURN_OUTPUT_NO_RETRY_INDEPENDENT_CLOSE"
+}

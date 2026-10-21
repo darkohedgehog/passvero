@@ -1,0 +1,281 @@
+{
+  "jobs": {
+    "activeRelevantProcesses": [],
+    "commandLines": "NOT_EXPOSED"
+  },
+  "scanner": {
+    "attemptHistory": [
+      {
+        "attempt": "recovery-20260923-01",
+        "phase": "ROLLED_BACK"
+      },
+      {
+        "attempt": "recovery-20260923-02",
+        "phase": "ROLLED_BACK"
+      },
+      {
+        "attempt": "recovery-20260923-03",
+        "phase": "COMPLETE"
+      },
+      {
+        "attempt": "recovery-20261002-release-8qni-01",
+        "phase": "COMPLETE"
+      }
+    ],
+    "files": {
+      "/etc/passvero-signature-health.json": {
+        "bytes": 622,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o600",
+        "sha256": "28df856a3a8516f8c33d35bc652b5358dd0dcdd49d185be01a64eb1264a22593",
+        "symlink": false,
+        "uid": 0
+      },
+      "/usr/local/libexec/passvero-signature-health.cjs": {
+        "bytes": 786047,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "725d3494983cfce68bdcacd30f9078606aa6c87c4b9d12a5674ea3770da7464b",
+        "symlink": false,
+        "uid": 0
+      },
+      "/usr/local/libexec/passvero-signature-recovery-v3/pins.json": {
+        "bytes": 1593,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "24f0c02990df2c255269923c44a2a470bde1c5f1dd69b3d8f30a056b5c77c44d",
+        "symlink": false,
+        "uid": 0
+      },
+      "/usr/local/libexec/passvero-signature-recovery-v3/producer.cjs": {
+        "bytes": 786047,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "725d3494983cfce68bdcacd30f9078606aa6c87c4b9d12a5674ea3770da7464b",
+        "symlink": false,
+        "uid": 0
+      },
+      "/usr/local/libexec/passvero-signature-recovery-v3/reader.cjs": {
+        "bytes": 765178,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "877c9bed25e195479d28dcad7e5ff506798a09b6b2edfe93c92691e228f97e62",
+        "symlink": false,
+        "uid": 0
+      },
+      "/usr/local/libexec/passvero-signature-recovery-v3/recover-release-8QNIYVVZWEsQaCL9uLZ5Q.py": {
+        "bytes": 23980,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0",
+        "symlink": false,
+        "uid": 0
+      }
+    },
+    "freshReader": "NOT_INFERRED_FROM_SNAPSHOT_FILE",
+    "installedHelpers": [
+      {
+        "path": "/usr/local/libexec/passvero-signature-recovery-v3/recover-release-8QNIYVVZWEsQaCL9uLZ5Q.py",
+        "releasePins": [
+          "8QNIYVVZWEsQaCL9uLZ5Q"
+        ],
+        "sha256": "3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0"
+      },
+      {
+        "path": "/usr/local/libexec/passvero-signature-recovery-v3/recover.py",
+        "releasePins": [
+          "qwLCXFTd9EEGdvqaB9SZS"
+        ],
+        "sha256": "4a16d96c560e8b3a958cd12254d3b7236688d6e78121d470b184a24513cdc2d7"
+      }
+    ],
+    "socketGroupConsumers": [
+      {
+        "pid": 1544,
+        "uid": 1001
+      },
+      {
+        "pid": 1614,
+        "uid": 1001
+      }
+    ]
+  },
+  "rollback": {
+    "/var/lib/passvero-marketing-visual-deploy-20261012/deploy-reviewed.py": {
+      "bytes": 19479,
+      "exists": true,
+      "gid": 0,
+      "mode": "0o600",
+      "sha256": "db04d71b65c6b382b0796bdf3fe32aea07b9fd97c82b13c996b0c26be1af2082",
+      "symlink": false,
+      "uid": 0
+    },
+    "/var/lib/passvero-marketing-visual-deploy-20261012/old-canonical.json": {
+      "bytes": 139518,
+      "exists": true,
+      "gid": 0,
+      "mode": "0o600",
+      "sha256": "b2a5866a532ecc9912fae5ebeb83086ff0a5f2d162b40a5c031723471ab898e9",
+      "symlink": false,
+      "uid": 0
+    },
+    "/var/lib/passvero-marketing-visual-deploy-20261012/old-config.json": {
+      "bytes": 2647,
+      "exists": true,
+      "gid": 0,
+      "mode": "0o600",
+      "sha256": "c93266b5d07a7afcfb97ab9ebbbac49dc342348ec61344dc1e9d53f1e8ea1f9a",
+      "symlink": false,
+      "uid": 0
+    },
+    "/var/lib/passvero-marketing-visual-deploy-20261012/previous-.next/BUILD_ID": {
+      "bytes": 21,
+      "exists": true,
+      "gid": 1001,
+      "mode": "0o640",
+      "sha256": "762b13848a8ab9383c93879430de0dc47b6e9e1358362da2322b4af156a61ecf",
+      "symlink": false,
+      "uid": 1001
+    },
+    "/var/lib/passvero-marketing-visual-deploy-20261012/previous-messages/hr.json": {
+      "bytes": 71967,
+      "exists": true,
+      "gid": 1001,
+      "mode": "0o640",
+      "sha256": "016a67ce195d82a4f16e70a4f937082fc848f134463ab10841b4fec6d4e4b65e",
+      "symlink": false,
+      "uid": 1001
+    },
+    "/var/lib/passvero-marketing-visual-deploy-20261012/rollback-attempt.json": {
+      "exists": false
+    }
+  },
+  "startup": {
+    "dump": {
+      "bytes": 14963,
+      "exists": true,
+      "gid": 1001,
+      "mode": "0o640",
+      "sha256": "a2812d4ca989d0de812465dff345d3983c48587be0cc58e0b6ede0721038e277",
+      "symlink": false,
+      "uid": 1001
+    },
+    "savedApplications": [
+      {
+        "args": [
+          "start",
+          "--hostname",
+          "127.0.0.1",
+          "--port",
+          "3001"
+        ],
+        "cwd": "/var/www/passvero-acceptance",
+        "executable": "/var/www/passvero-acceptance/node_modules/next/dist/bin/next",
+        "interpreter": "/usr/bin/node",
+        "name": "passvero-acceptance"
+      }
+    ],
+    "pgClusters": "16 acceptance 5433 online postgres /var/lib/postgresql/16/acceptance /var/log/postgresql/postgresql-16-acceptance.log\n16 main       5432 online postgres /var/lib/postgresql/16/main       /var/log/postgresql/postgresql-16-main.log"
+  },
+  "activeUnits": [
+    "apparmor.service",
+    "blk-availability.service",
+    "clamav-daemon.service",
+    "clamav-daemon.socket",
+    "clamav-freshclam.service",
+    "cloud-config.service",
+    "cloud-final.service",
+    "cloud-init-local.service",
+    "cloud-init.service",
+    "console-setup.service",
+    "cron.service",
+    "dbus.service",
+    "fail2ban.service",
+    "finalrd.service",
+    "getty@tty1.service",
+    "keyboard-setup.service",
+    "kmod-static-nodes.service",
+    "lvm2-monitor.service",
+    "monarx-agent.service",
+    "networkd-dispatcher.service",
+    "nginx.service",
+    "passvero-qpdf-broker.socket",
+    "passvero-signature-health.timer",
+    "passvero-staging-backup-monitor.timer",
+    "passvero-staging-backup.timer",
+    "passvero-subscription-reminders.timer",
+    "plymouth-quit-wait.service",
+    "plymouth-quit.service",
+    "plymouth-read-write.service",
+    "pm2-darko.service",
+    "pm2-passvero-staging.service",
+    "postgresql.service",
+    "postgresql@16-acceptance.service",
+    "postgresql@16-main.service",
+    "qemu-guest-agent.service",
+    "rsyslog.service",
+    "serial-getty@ttyS0.service",
+    "setvtrgb.service",
+    "ssh.service",
+    "sysstat.service",
+    "systemd-binfmt.service",
+    "systemd-fsck@dev-disk-by\\x2dlabel-BOOT.service",
+    "systemd-fsck@dev-disk-by\\x2dlabel-UEFI.service",
+    "systemd-journal-flush.service",
+    "systemd-journald.service",
+    "systemd-logind.service",
+    "systemd-modules-load.service",
+    "systemd-networkd-wait-online.service",
+    "systemd-networkd.service",
+    "systemd-random-seed.service",
+    "systemd-remount-fs.service",
+    "systemd-resolved.service",
+    "systemd-sysctl.service",
+    "systemd-timesyncd.service",
+    "systemd-tmpfiles-setup-dev-early.service",
+    "systemd-tmpfiles-setup-dev.service",
+    "systemd-tmpfiles-setup.service",
+    "systemd-udev-trigger.service",
+    "systemd-udevd.service",
+    "systemd-update-utmp.service",
+    "systemd-user-sessions.service",
+    "ufw.service",
+    "unattended-upgrades.service",
+    "user-runtime-dir@1000.service",
+    "user@1000.service"
+  ],
+  "stagingStartupUnit": {
+    "ActiveState": "active",
+    "After": "systemd-journald.socket sysinit.target system.slice basic.target network.target",
+    "DropInPaths": "",
+    "FragmentPath": "/etc/systemd/system/pm2-passvero-staging.service",
+    "Group": "passvero-staging",
+    "Id": "pm2-passvero-staging.service",
+    "LoadState": "loaded",
+    "MainPID": "1544",
+    "Requires": "sysinit.target system.slice",
+    "SubState": "running",
+    "TriggeredBy": "",
+    "Triggers": "",
+    "UnitFileState": "enabled",
+    "User": "passvero-staging",
+    "Wants": "",
+    "sourceFiles": {
+      "/etc/systemd/system/pm2-passvero-staging.service": {
+        "bytes": 455,
+        "exists": true,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "3468e23a282b5422279afa54567f185d7e17491ff08d7ec2147d24dcba745a34",
+        "symlink": false,
+        "uid": 0
+      }
+    }
+  }
+}

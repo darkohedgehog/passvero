@@ -1,0 +1,77 @@
+--- conditional-lock-release.py (historical preserved)
++++ conditional-lock-release-env-candidate.py (local candidate only)
+@@ -20 +20 @@
+-ROOT = Path('/var/lib/passvero-signature-lock-release-20261020-01')
++ROOT = Path('/var/lib/passvero-signature-lock-release-20261020-01/env-launch-continuation')
+@@ -29,0 +30 @@
++SERVICE_UNIT_PIN = '5becee91793921e6bae866b3c2f9523e4dfa2208b9709c2413191f38b7c31afe'
+@@ -33 +34 @@
+-              'Triggers,TriggeredBy,FragmentPath,DropInPaths,ExecStart,ExecStartPre,ExecStartPost,'
++              'Triggers,TriggeredBy,FragmentPath,DropInPaths,ExecStartPre,ExecStartPost,'
+@@ -95,0 +97,62 @@
++def producer_launch_contract():
++    """Exact current protected declaration, not a reconstruction of installer history.
++    Compare all argv values privately; never emit environment values or their hashes.
++    """
++    object_path = '/org/freedesktop/systemd1/unit/passvero_2dsignature_2dhealth_2eservice'
++    fragment = Path('/etc/systemd/system/passvero-signature-health.service')
++
++    def prop(interface, name, signature):
++        response = run(['/usr/bin/busctl', '--system', '--json=short', 'get-property',
++                        'org.freedesktop.systemd1', object_path, interface, name])
++        need(response.returncode == 0, 'TYPED_EXECSTART_UNAVAILABLE')
++        parsed = json.loads(response.stdout)
++        need(isinstance(parsed, dict) and parsed.get('type') == signature and 'data' in parsed,
++             'TYPED_EXECSTART_INVALID')
++        value = parsed['data']
++        need((signature == 's' and isinstance(value, str))
++             or (signature == 'as' and isinstance(value, list) and all(isinstance(v, str) for v in value))
++             or (signature == 'b' and type(value) is bool)
++             or (signature == 'a(sasbttttuii)' and isinstance(value, list)), 'TYPED_PROPERTY_VALUE_INVALID')
++        return value
++
++    def metadata():
++        interface = 'org.freedesktop.systemd1.Unit'
++        return (prop(interface, 'Id', 's'), prop(interface, 'FragmentPath', 's'),
++                prop(interface, 'DropInPaths', 'as'), prop(interface, 'NeedDaemonReload', 'b'))
++
++    before = metadata()
++    need(before == (SERVICE, str(fragment), [], False), 'LOADED_PRODUCER_UNIT_DRIFT')
++    body = safe_read(fragment, 32768)
++    need(sha(body) == SERVICE_UNIT_PIN, 'PROTECTED_PRODUCER_UNIT_PIN_CHANGED')
++    section, commands = None, []
++    for line in body.decode('utf-8').splitlines():
++        text = line.strip()
++        if not text or text.startswith(('#', ';')): continue
++        if text.startswith('[') and text.endswith(']'):
++            section = text
++            continue
++        if section == '[Service]' and '=' in line:
++            key, value = line.split('=', 1)
++            if key.strip() == 'ExecStart': commands.append(value.strip())
++    need(len(commands) == 1, 'PROTECTED_EXECSTART_COUNT_CHANGED')
++    command = commands[0]
++    # Only the plain grammar confirmed by diagnostic05; never emulate shell/expansion.
++    need(not any(c in command for c in ('\\', '"', "'", '$', '%'))
++         and not any(ord(c) < 32 and c != '\t' for c in command), 'UNREVIEWED_UNIT_EXECSTART_GRAMMAR')
++    declared = command.split()
++    entries = prop('org.freedesktop.systemd1.Service', 'ExecStart', 'a(sasbttttuii)')
++    need(isinstance(entries, list) and len(entries) == 1, 'PRODUCER_EXECSTART_COUNT_DRIFT')
++    entry = entries[0]
++    need(isinstance(entry, list) and len(entry) == 10, 'PRODUCER_EXECSTART_SHAPE_INVALID')
++    executable, args, ignore_failure = entry[:3]
++    need(executable == '/usr/bin/env' and ignore_failure is False, 'PRODUCER_LAUNCH_POLICY_DRIFT')
++    need(isinstance(args, list) and len(args) == 8
++         and all(isinstance(arg, str) and len(arg) <= 8192 for arg in args), 'PRODUCER_ARGV_SHAPE_DRIFT')
++    need(args[0:2] == ['/usr/bin/env', '-i']
++         and args[2].startswith('PATH=') and args[3].startswith('LANG=')
++         and args[4:] == ['/usr/bin/node', str(PRODUCER), '--config', str(CONFIG)],
++         'PRODUCER_EXACT_LAUNCH_STRUCTURE_DRIFT')
++    need(args == declared, 'PRODUCER_PRIVATE_ARGV_DECLARATION_MISMATCH')
++    need(metadata() == before and safe_read(fragment, 32768) == body, 'PRODUCER_LAUNCH_CHANGED_DURING_READ')
++
++
+@@ -103,2 +166 @@
+-    expected = '/usr/bin/node /usr/local/libexec/passvero-signature-health.cjs --config /etc/passvero-signature-health.json'
+-    need('path=/usr/bin/node ;' in s.get('ExecStart', '') and 'argv[]=' + expected + ' ;' in s.get('ExecStart', ''), 'PRODUCER_ENTRYPOINT_DRIFT')
++    producer_launch_contract()

@@ -414,3 +414,80 @@ The adjacent `.sha256` manifest lists 13 files (implementation, tests, contract,
 roadmap, report and two sanitized evidence files). The manifest itself is an
 additional file: 14 changed/new files total. Final whitespace and exact manifest
 coverage are checked locally. Index remains empty; the diff is ready for review.
+
+## Continuity disposition — priprema 2026-10-21, bez novog recovery izvršavanja
+
+Novi [objedinjeni pregled u postojećem PDF triage izveštaju](STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE.md)
+beleži uspešno uklanjanje potvrđenog napuštenog locka i vraćanje producer tajmera,
+zasebno od sledećeg UNTRUSTED/UPDATER/EVIDENCE_CONTINUITY_REQUIRED ciklusa i reader
+odbijanja. To nije recovery/PDF PASS, niti dokaz da je reboot uzrok kontinuiteta.
+Prihvaćeni AUTOMATIC_STARTUP=PASS ostaje istorijski prihvaćen; FULL_SERVICE_RECOVERY
+ostaje NOT_PROVEN. Raniji oktobarski/septembarski rezultati iznad ostaju istorijski.
+
+Postojeći reviewed recovery helper0e3938d0… već sadrži tačan build
+_tkSUOn0PCoHjpx8V7FVr. Relevantni parser/producer/IO su byte-identični prihvaćenoj
+osnovi; nema nove source/pin semantike, builda ili ponavljanja testova.
+[Jedan kompletan read-only blok10](evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-10-UPDATER-CONTINUITY-RECOVERY-READONLY.sh)
+je jedini sadašnji operatorski korak. On utvrđuje normalizovani continuity
+podslučaj i aktuelne existing recovery preduslove, bez recover/main poziva.
+Mutativni approval paket ostaje uslovljen tim jednim outputom, posebno consumer
+opsegom zajedničkog scanner prekida i cooldown/record stanjem. Budući novi attempt
+predlog je recovery-20261021-continuity-01; nije kreiran niti zakazan termin.
+Nema ponovnog rmdir-a, restarta, producer/reader/scan poziva, backup acceptance-a,
+commita ili pusha u ovoj pripremi.
+
+
+### Output10 završen — konkretan approval paket, bez recovery izvršavanja
+
+[Sačuvani output10](evidence/staging-reported-pdf-scan-failure-20261020/operator-10-updater-continuity-recovery-readonly.json)
+identifikuje drugu initialization granicu na liniji501 sadašnjeg loga:
+REPEATED_INITIALIZATION_BOUNDARY. Istorijski input hash/uzrok granice nisu zabeleženi;
+reboot nije pripisan kao uzrok. Existing guard, helper0e3938d0…, current exact build,
+producer/reader/config pinovi i confinement prošli su. Freshclam cooldown se ne
+resetuje. Nema unresolved recovery record-a; postojeći flock je samo trenutna proba.
+
+[Finalizovani objedinjeni paket i obuhvat prekida](STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE.md#output10-disposition-i-paket-za-odobrenje--2026-10-21)
+koristi isti helper i novi ID recovery-20261021-continuity-01. Jedan
+[blok11](evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-11-EXISTING-CONTINUITY-RECOVERY.sh)
+je PENDING_OPERATOR_COMMAND **posle zasebnog odobrenja** zajedničkog scanner prekida.
+Ne pokretati stare auth/continuation/reboot blokove. ExecStopPost je nezavisan i
+koristi existing accepted/contain; nema novog recovery algoritma ili ručnog producer-a.
+Tri redovne publikacije i stvarni reader ostaju acceptance. Na failure: STOP,
+containment i pregled; zasebni uslovni
+[blok12](evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-12-EXPLICIT-ROLLBACK-ONLY-IF-APPROVED.sh)
+nije automatski i ne vraća signature trust. Producer ostaje disabled na rollback-u.
+Tek posle PASS korisnik proverava PDF scan/status/CLEAN/download kroz UI.
+
+RECOVERY_EXECUTED=NO; LOCK_REMOVAL_REPEATED=NO; SCAN_CALLS=0;
+REBOOT_REPEATED=NO; BACKUP_ACCEPTANCE_REPEATED=NO;
+AUTOMATIC_STARTUP=PASS; FULL_SERVICE_RECOVERY=NOT_PROVEN.
+
+
+### 2026-10-21 — recovery-20261021-continuity-01 COMPLETE
+
+[Operatorski rezultat11](evidence/staging-reported-pdf-scan-failure-20261020/operator-11-continuity-recovery-result.json):
+exit0/COMPLETE, reader ACCEPTED, nezavisni closure PASS bez closure failure-a.
+Tri redovne prihvaćene publikacije145729 →145730 →145731 u31.199s, svaki TTL60s.
+Producer timer active/waiting/enabled; Freshclam/clamd/socket active/running/enabled.
+Raniji approval/PENDING status iznad je istorijski; postupak je operator izvršio
+jednom. Nema potrebe za blokom12 ili novom recovery serijom. Ovo je point-in-time
+recovery prihvatanje, ne dokaz ranijeg uzroka ili trajne freshness.
+
+Korisnik sada proverava konkretni prijavljeni PDF kroz UI: scan → status CLEAN →
+preuzimanje. UI_PDF_ACCEPTANCE=PENDING_USER; AUTOMATIC_STARTUP=PASS ostaje prihvaćen;
+FULL_SERVICE_RECOVERY=NOT_PROVEN. Agent nije izvršavao live radnje. Nema novog
+scan-a iz terminala, reboot-a, ponovnog lock removal-a ili backup acceptance-a.
+
+
+### 21.10.2026 — UI_PDF_ACCEPTANCE=PASS — USER_CONFIRMED
+
+[Naknadna korisnička potvrda](evidence/staging-reported-pdf-scan-failure-20261020/user-12-ui-confirmation.json)
+završava prethodni PENDING_USER: novi proizvod, uspešna objava, PDF preuzimanje,
+QR link i očekivani DPP elementi rade prema korisniku. Nije naveden Document ID,
+tačan scan status ili byte-checksum poređenje. Recovery/reader/closure PASS ostaju
+istorijski operatorski dokazi, ne nova runtime provera. Problem PDF toka je zatvoren
+u tom potvrđenom staging opsegu. AUTOMATIC_STARTUP=PASS; FULL_SERVICE_RECOVERY=NOT_PROVEN
+ostaje za širi host-loss/provider/full isolated service restore i production scope.
+[Završni objedinjeni pregled](STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE.md#korisnička-ui-potvrda-i-završna-release-priprema--21102026)
+i [release manifest](evidence/staging-recovery-release-20261021/final-manifest.json).
+Nema novih testova, live radnji, commita ili pusha u dokumentacijskoj pripremi.

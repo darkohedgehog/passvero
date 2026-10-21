@@ -1,0 +1,143 @@
+{
+  "scope": "EXPLICIT_RECOVERY_SOURCE_OPERATOR_PAYLOAD_EVIDENCE_DOCUMENTATION_ONLY",
+  "method": "LOCAL_STATIC_CONTENT_AND_DECOMPRESSED_INLINE_OPERATOR_SOURCE_REVIEW_NO_EXECUTION",
+  "initialReviewedFiles": 186,
+  "initialBytesRead": 2099734,
+  "inlineSourcePayloadCount": 12,
+  "inlinePayloads": [
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "decodedSha256": "dd7090f39c2c0659b9dc50be5d6da8d817b81de7e8c217fe81c12ce47fc5a64b",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "decodedSha256": "dd7090f39c2c0659b9dc50be5d6da8d817b81de7e8c217fe81c12ce47fc5a64b",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "decodedSha256": "9ffb339b9baf81d371e11ece1ac333f3c9dab0d73de6e88a159d572af14d201b",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "decodedSha256": "9ffb339b9baf81d371e11ece1ac333f3c9dab0d73de6e88a159d572af14d201b",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "decodedSha256": "d2b61f44deccabaef39f50fb114f728e77ecbee32750f176594ec70c0d99584f",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "decodedSha256": "d2b61f44deccabaef39f50fb114f728e77ecbee32750f176594ec70c0d99584f",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-auth-scanner-continuation-20261020/VPS-TERMINAL-00-READONLY-PREFLIGHT.sh",
+      "decodedSha256": "1583bb5874e62e6ceb48004506915de01c2641c0e1a5d5bc936c23db115b8deb",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-auth-scanner-continuation-20261020/VPS-TERMINAL-01-INSTALL-RAW-HELPER-AND-ADAPTER.sh",
+      "decodedSha256": "1583bb5874e62e6ceb48004506915de01c2641c0e1a5d5bc936c23db115b8deb",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-08-CLOSURE-ONLY-TIMER-RETURN.sh",
+      "decodedSha256": "acd74b41720bb59a1bd22a896a310fa70b3f4ba182fef6de1f623acf54f9562b",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-09-PRECISE-OWNER-CONDITIONAL-LOCK-RELEASE.sh",
+      "decodedSha256": "2cac1aee2fdc2bd12a72fa3a59c8a9c0d38ed239a8da5ce32b0cabcab5338b5b",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-03-CONDITIONAL-EMPTY-LOCK-RELEASE.sh",
+      "decodedSha256": "92c739870e077d7e6998e583176bf188103dca3c6a5646c5437100e51b177322",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-06-ENV-CONTRACT-LOCK-CONTINUATION-CANDIDATE.sh",
+      "decodedSha256": "c6d2d1b153920872aba24e17a47fa26ec601e41cf717a7dad957f2dd57af3a13",
+      "kind": "INLINE_OPERATOR_SOURCE_NOT_BUILD_ARCHIVE"
+    }
+  ],
+  "sensitiveValuesExposed": false,
+  "credentialsFound": false,
+  "connectionStringPatternDisposition": "ONE_SYNTHETIC_EXCEPTION_SENTINEL_IN_LOCAL_REDACTION_TEST_NOT_A_RUNTIME_CONNECTION_STRING",
+  "privateDataReview": "ONE_APPROVED_OPERATOR_EMAIL_AND_REQUIRED_ACTOR_IDS_RETAINED_FOR_AUTHORITY_TRACE_OTHER_EMAIL_LIKE_MATCHES_ARE_SYSTEMD_TEMPLATE_UNITS_NO_DOCUMENT_CONTENT_OR_SESSION_DATA",
+  "binaryBuildDumpPackagesFound": false,
+  "inlineSourcePayloads": "HASH_BOUND_TEXT_OPERATOR_SOURCE_NOT_GENERATED_APPLICATION_BUILD_PACKAGE",
+  "fixturePolicy": "ONLY_GENERATOR_SOURCE_AND_REFERENCE_HASHES_NO_PDF_IMAGE_BINARY_FIXTURES",
+  "testExecution": "NOT_RUN",
+  "build": "NOT_RUN",
+  "vpsOrNetworkAccess": "NOT_PERFORMED",
+  "unresolvedFindings": [],
+  "finalCommitPathsReviewed": 192,
+  "decodedInlineSourcePayloadsReviewed": 12,
+  "finalSecretReview": "PASS_NO_RUNTIME_CREDENTIALS_ONE_SYNTHETIC_TEST_SENTINEL",
+  "finalBinaryBuildDumpReview": "PASS_NONE_IN_SELECTED_COMMIT_BYTES",
+  "finalDocumentationLinks": 292,
+  "finalDocumentationMissingLinks": [],
+  "whitespace": "PASS_CONTENT_WITH_EXPLICIT_UNIFIED_DIFF_CONTEXT_MARKER_EXCEPTIONS",
+  "intentionalWhitespaceExceptions": [
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/scanner-exact-pin.diff",
+      "line": 11
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction.diff",
+      "line": 5
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction.diff",
+      "line": 6
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction.diff",
+      "line": 57
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction.diff",
+      "line": 58
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/attempt-binding.diff",
+      "line": 5
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/attempt-binding.diff",
+      "line": 25
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/attempt-binding.diff",
+      "line": 34
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/attempt-binding.diff",
+      "line": 61
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/raw-tty-local-fix.diff",
+      "line": 4
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/raw-tty-local-fix.diff",
+      "line": 5
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/raw-tty-local-fix.diff",
+      "line": 59
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/raw-tty-local-fix.diff",
+      "line": 60
+    }
+  ],
+  "originalRoadmapFullPrefixPreserved": true,
+  "indexUnchanged": true
+}

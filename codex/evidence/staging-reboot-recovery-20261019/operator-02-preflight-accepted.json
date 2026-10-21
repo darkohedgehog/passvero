@@ -1,0 +1,159 @@
+{
+  "actor": {
+    "product": {
+      "draftId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+      "id": "c1c24c7c-334b-48bf-ba34-ac5fb930f1c2",
+      "lifecycle": "ACTIVE",
+      "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+      "publishedId": null
+    },
+    "users": [
+      {
+        "authEmailMatches": true,
+        "hasPassword": true,
+        "membershipId": "b954c03b-9c81-4760-bd63-83127b56bbb6",
+        "membershipRole": "ADMIN",
+        "membershipStatus": "ACTIVE",
+        "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+        "organizationStatus": "ACTIVE",
+        "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+        "verified": true
+      }
+    ]
+  },
+  "actorRights": {
+    "authority": "ACTIVE_ORGANIZATION_MEMBERSHIP_NOT_PLATFORM_GRANT",
+    "entitlementQuotaAndActualSession": "APPLICATION_GATES_STILL_REQUIRED_BEFORE_UPLOAD_PUBLISH",
+    "rolePermissions": [
+      "PRODUCT_READ",
+      "PRODUCT_EDIT",
+      "PRODUCT_PUBLISH"
+    ]
+  },
+  "production": {
+    "https": "200 0",
+    "localHttps": "200 0",
+    "pm2": [
+      {
+        "cwd": "/var/www/passvero",
+        "name": "passvero",
+        "status": "online"
+      }
+    ],
+    "target": {
+      "origin": "https://passvero.eu/",
+      "upstream": "LOOPBACK_3000_IN_SAME_TLS_SERVER_BLOCK"
+    },
+    "units": {
+      "nginx.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/nginx.service",
+        "Group": "",
+        "Id": "nginx.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": ""
+      },
+      "pm2-darko.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/etc/systemd/system/pm2-darko.service",
+        "Group": "",
+        "Id": "pm2-darko.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": "darko"
+      },
+      "postgresql@16-main.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/postgresql@.service",
+        "Group": "",
+        "Id": "postgresql@16-main.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled-runtime",
+        "User": ""
+      }
+    }
+  },
+  "productionJobWindow": {
+    "changed": false,
+    "timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-postgres-backup.timer",
+      "Id": "passvero-postgres-backup.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    },
+    "typedNextDueEpoch": 1792461838.070758
+  },
+  "timers": {
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-staging-backup-monitor.timer",
+      "Id": "passvero-staging-backup-monitor.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-staging-backup.timer",
+      "Id": "passvero-staging-backup.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-subscription-reminders.timer",
+      "Id": "passvero-subscription-reminders.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    }
+  },
+  "preflight": "PASS_REVIEW_BEFORE_Q",
+  "observedEpoch": 1792423277.457482,
+  "rebootScheduled": false,
+  "smtpEntryCalls": 0,
+  "due": {
+    "passvero-staging-backup-monitor.timer": 1792426800.0,
+    "passvero-staging-backup.timer": 1792470600.0
+  },
+  "backup": {
+    "ageSeconds": 39066.944,
+    "attemptComplete": true,
+    "attempts": 9,
+    "failure": null,
+    "hold": false,
+    "mode": "CONTINUOUS",
+    "monitorResult": {
+      "observedEpoch": 1792423200,
+      "signal": "HEALTHY"
+    },
+    "retainedCaptureRecord": {
+      "classification": "RETAINED_COMPLETED_CAPTURE_RECORD",
+      "closure": {
+        "pauseSeconds": 4.283,
+        "serviceResult": "success",
+        "stagingResumed": true,
+        "timerBaselineRestored": true
+      },
+      "serviceState": "inactive",
+      "setId": "20261019T043000Z"
+    },
+    "sha256": "4497e68e42c7924f2df9252651b0c9cf26cf9a3141bab36e4a7b56e4ee392de6",
+    "validCaptureEpoch": 1792384210,
+    "validSet": "20261019T043000Z"
+  }
+}

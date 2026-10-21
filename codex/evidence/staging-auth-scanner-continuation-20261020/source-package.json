@@ -1,0 +1,11 @@
+{
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "files": {
+    "continuation-reviewed.py": "d39f3aa4dd5b49c0fabd207e8bb7bbddc8b9203b92f26c7f85417a7367dbdd06",
+    "preflight.py": "de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10",
+    "reboot-reviewed.py": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+    "recover-release-reviewed.py": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+    "remaining-backup-and-actor-readonly.py": "e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6"
+  },
+  "scope": "CONTINUATION_ONLY_NOT_REBOOT"
+}

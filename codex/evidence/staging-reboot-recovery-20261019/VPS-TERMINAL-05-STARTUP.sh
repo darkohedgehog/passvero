@@ -1,0 +1,27 @@
+# VPS TERMINAL / PENDING_OPERATOR_COMMAND — startup
+# Only after the documented predecessor PASS; failure goes to independent closure.
+sudo /usr/bin/python3 -I -B - <<'PASSVERO_REBOOT_PHASE'
+import json,re
+try:
+    import hashlib,importlib.util,json,os,pathlib,stat
+    P=pathlib.Path
+    assert os.geteuid()==0 and os.uname().nodename=='srv1834647','OPERATOR_HOST'
+    root=P('/var/lib/passvero-reboot-recovery-20261019')
+    st=root.lstat();assert stat.S_ISDIR(st.st_mode) and not root.is_symlink() and st.st_uid==0 and stat.S_IMODE(st.st_mode)==0o700,'ROOT_POSTURE'
+    expected_manifest='dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa'
+    manifest=root/'package.json'
+    assert not manifest.is_symlink() and hashlib.sha256(manifest.read_bytes()).hexdigest()==expected_manifest,'PACKAGE_MANIFEST_CHANGED'
+    for name,pin in json.loads(manifest.read_text())['files'].items():
+     path=root/name;info=path.lstat()
+     assert stat.S_ISREG(info.st_mode) and not path.is_symlink() and info.st_uid==0 and not info.st_mode&0o077,'SOURCE_POSTURE'
+     assert hashlib.sha256(path.read_bytes()).hexdigest()==pin,'REVIEWED_SOURCE_CHANGED'
+    spec=importlib.util.spec_from_file_location('one_reviewed_reboot',root/'reboot-reviewed.py')
+    h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+    raise SystemExit(h.main('startup'))
+except SystemExit:
+    raise
+except BaseException as error:
+    reason=str(error) if re.fullmatch("[A-Z0-9_]{1,160}",str(error)) else type(error).__name__
+    print(json.dumps({"result":"STOP","CHECK_ID":'LOAD_05_STARTUP',"reason":reason,"automaticRetry":False}))
+    raise SystemExit(1)
+PASSVERO_REBOOT_PHASE

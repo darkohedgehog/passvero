@@ -1,0 +1,7 @@
+{
+  "CHECK_ID": "AUTH_GATE",
+  "automaticRetry": false,
+  "instruction": "Independent close/containment; no repeat/reboot/worker call",
+  "reason": "UnsupportedOperation",
+  "result": "STOP"
+}

@@ -1,0 +1,13 @@
+{
+  "installation": "INSTALLED_SOURCE_ONLY",
+  "attemptId": "recovery-20261019-reboot-01",
+  "helperSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+  "packageSha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa",
+  "priorHelperSha256": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+  "priorManifestSha256": "9d165f83cecc87aa5a3cee557d36fc2c95f043f13bd32d345b5a4cef06eda622",
+  "originalPreserved": true,
+  "candidateSha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+  "backupPinsChanged": false,
+  "servicesChanged": false,
+  "rebootScheduled": false
+}

@@ -1,0 +1,76 @@
+--- historical-aborted-package/reboot-reviewed.py
++++ reboot-reviewed.py
+@@ -149,7 +149,44 @@
+         time.sleep(1)
+ 
+ 
+-def idle(base, deploy):
++def writer_guard(paused=False):
++    timer_name = 'passvero-subscription-reminders.timer'
++    service_name = 'passvero-subscription-reminders.service'
++    # Exact bytes establish the reviewed static configuration independently of
++    # systemd's runtime TriggeredBy/Triggers relationships after disable --now.
++    for name, pin in (
++        (timer_name, '585a8e11b9279ab5b3c8b82ba0215eb85e03c43ae887654fc8e3ed8d177335ab'),
++        (service_name, '256207cc6675d90956b135c4e4a07938ea0fde5749659a2416a7c35ea9fb56cc')):
++        require(sha(read(P('/etc/systemd/system') / name)) == pin, 'WRITER_STATIC_CONFIGURATION_DRIFT')
++    states = {}
++    for name in (timer_name, service_name):
++        value = unit(name)
++        properties = {'Triggers', 'DropInPaths'}
++        if name == service_name: properties.add('MainPID')
++        extra = dict(line.split('=', 1) for line in run(['/usr/bin/systemctl', 'show', name,
++            '--property=' + ','.join(sorted(properties))]).splitlines() if '=' in line)
++        require(set(extra) == properties and
++                all(key in value for key in ('Id', 'LoadState', 'ActiveState', 'SubState',
++                    'UnitFileState', 'TriggeredBy', 'FragmentPath')), 'WRITER_STATE_INCOMPLETE')
++        require(value['Id'] == name and value['LoadState'] == 'loaded' and
++                value['FragmentPath'] == '/etc/systemd/system/' + name and not extra['DropInPaths'],
++                'WRITER_CONFIGURATION_NOT_REVIEWED')
++        states[name] = {**value, **extra}
++    timer, service = states[timer_name], states[service_name]
++    require(service['ActiveState'] == 'inactive' and service['SubState'] == 'dead' and
++            service['MainPID'] == '0' and service['UnitFileState'] == 'static', 'WRITER_NOT_IDLE_NO_KILL')
++    require(not service['Triggers'] and not timer['TriggeredBy'], 'UNREVIEWED_SENDING_TRIGGER')
++    allowed_service_triggers = ('', timer_name) if paused else (timer_name,)
++    allowed_timer_targets = ('', service_name) if paused else (service_name,)
++    require(service['TriggeredBy'] in allowed_service_triggers and
++            timer['Triggers'] in allowed_timer_targets, 'UNREVIEWED_SENDING_TRIGGER')
++    require((timer['ActiveState'], timer['SubState'], timer['UnitFileState']) ==
++            (('inactive', 'dead', 'disabled') if paused else ('active', 'waiting', 'enabled')),
++            'WRITER_PAUSE_NOT_CONFIRMED' if paused else 'WRITER_BASELINE_NOT_CONFIRMED')
++    return states
++
++
++def idle(base, deploy, paused=False):
+     deploy.idle(); base.jobs()
+     require(unit('passvero-reboot-scanner-20261014.service')['ActiveState'] in ('inactive', 'failed'),
+             'THIS_OPERATION_SCANNER_ACTIVE')
+@@ -157,8 +194,7 @@
+     require(unit('passvero-subscription-reminders.service')['ActiveState'] == 'inactive', 'WRITER_NOT_IDLE_NO_KILL')
+     status = base.reminders()
+     require(status['safeToFinalizePause'], 'UNRESOLVED_DELIVERY_STOP')
+-    require(unit('passvero-subscription-reminders.service')['TriggeredBy'] == 'passvero-subscription-reminders.timer',
+-            'UNREVIEWED_SENDING_TRIGGER')
++    writer_guard(paused=paused)
+     return status
+ 
+ 
+@@ -353,7 +389,7 @@
+             'production': proof['production'], 'dumpSha256': sha(read(P('/home/passvero-staging/.pm2/dump.pm2')))})
+         for name in (TIMERS[2], TIMERS[0], TIMERS[1]):
+             run(['/usr/bin/systemctl', 'disable', '--now', name])
+-        idle(base, deploy)
++        idle(base, deploy, paused=True)
+         require(delivery(base) == data('baseline.json')['delivery'], 'DELIVERY_RACE_DURING_PAUSE_STOP')
+         require(all(unit(name)['ActiveState'] == 'inactive' and unit(name)['UnitFileState'] == 'disabled'
+                     for name in TIMERS), 'PAUSE_NOT_PERSISTENT')
+@@ -372,7 +408,7 @@
+     require((ROOT / 'quiesced.json').exists(), 'Q_NOT_COMPLETE'); unchanged()
+     require(not (ROOT / 'first-failure.json').exists(), 'UNRESOLVED_OPERATION_FAILURE')
+     with locked(BACKUP / 'job.lock'):
+-        release(deploy); idle(base, deploy)
++        release(deploy); idle(base, deploy, paused=True)
+         require(all(unit(name)['ActiveState'] == 'inactive' and unit(name)['UnitFileState'] == 'disabled'
+                     for name in TIMERS), 'AUTOMATION_NOT_PAUSED')
+         record('reboot-intent.json', {'previousBootId': boot_id(), 'requestedEpoch': time.time(),

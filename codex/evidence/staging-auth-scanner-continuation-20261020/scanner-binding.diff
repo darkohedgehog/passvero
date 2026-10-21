@@ -1,0 +1,65 @@
+--- reviewed-library/scanner
++++ continuation-adapter/scanner
+@@ -1,29 +1,30 @@
+ def scanner():
+-    base, scoped, deploy = components(); elapsed(900); unchanged(); release(deploy)
+-    require((ROOT / 'auth-pass.json').exists(), 'AUTH_GATE_NOT_PASS')
+-    record('scanner-attempt.json', {'recoveryBudget': 1, 'automaticRetry': False})
+-    observed = readers(45)
++    h = H
++    base, scoped, deploy = h.components(); budget(900); h.unchanged(); h.release(deploy)
++    h.require((ROOT / 'auth-pass.json').exists(), 'AUTH_GATE_NOT_PASS')
++    h.record('scanner-attempt.json', {'recoveryBudget': 1, 'automaticRetry': False})
++    observed = h.readers(45)
+     if observed:
+         result = {'scanner': 'PASS_NATURAL_SCHEDULED_READER', 'recovery': 'NOT_REQUIRED', 'publications': observed}
+     else:
+-        require(time.time() - data('baseline.json')['t0'] < 340, 'RECOVERY_REMAINING_BUDGET_TOO_SHORT')
+-        helper = scanner_module(); helper.LinuxHost(ATTEMPT).guard()
+-        args = ['/usr/bin/systemd-run', '--quiet', '--wait', '--unit', 'passvero-reboot-scanner-20261019',
++        h.require(time.monotonic() - h.data('baseline.json')['startMonotonic'] < 340, 'RECOVERY_REMAINING_BUDGET_TOO_SHORT')
++        helper = h.scanner_module(); helper.LinuxHost(ID).guard()
++        args = ['/usr/bin/systemd-run', '--quiet', '--wait', '--unit', UNIT,
+             '--property=Type=exec', '--property=Restart=no', '--property=KillMode=control-group',
+             '--property=KillSignal=SIGKILL', '--property=RuntimeMaxSec=9min', '--property=TimeoutStopSec=20s',
+             '--property=UMask=0077', '--property=StandardOutput=append:' + str(ROOT / 'scanner-output.log'),
+             '--property=StandardError=null',
+-            '--property=ExecStopPost=/usr/bin/python3 -I -B ' + str(ROOT / 'reboot-reviewed.py') + ' scanner-close',
+-            '/usr/bin/python3', '-I', '-B', str(ROOT / 'recover-release-reviewed.py'), 'recover', '--id', ATTEMPT]
++            '--property=ExecStopPost=/usr/bin/python3 -I -B ' + str(ROOT / 'continuation-reviewed.py') + ' scanner-close',
++            '/usr/bin/python3', '-I', '-B', str(ROOT / 'recover-release-reviewed.py'), 'recover', '--id', ID]
+         try:
+-            run(args, timeout=560)
++            h.run(args, timeout=560)
+         except Exception:
+             phase, reason = 'UNKNOWN', 'SCANNER_UNIT_FAILED'
+-            journal = helper.LinuxHost(ATTEMPT).archive / 'state.json'
+-            if journal.exists(): phase = json.loads(read(journal)).get('phase', 'UNKNOWN').upper()
++            journal = helper.LinuxHost(ID).archive / 'state.json'
++            if journal.exists(): phase = json.loads(h.read(journal)).get('phase', 'UNKNOWN').upper()
+             output = ROOT / 'scanner-output.log'
+             if output.exists():
+-                text = read(output).decode(); decoder = json.JSONDecoder()
++                text = h.read(output).decode(); decoder = json.JSONDecoder()
+                 while text.strip():
+                     text = text.lstrip()
+                     try: value, end = decoder.raw_decode(text)
+@@ -31,12 +32,12 @@
+                     text = text[end:]
+                     if value.get('recovery') == 'STOP' and re.fullmatch('[A-Za-z0-9_]{1,120}', value.get('reason', '')):
+                         reason = value['reason']
+-            record('scanner-failure.json', {'CHECK_ID': 'SCANNER_' + phase, 'reason': reason, 'automaticRetry': False})
++            h.record('scanner-failure.json', {'CHECK_ID': 'SCANNER_' + phase, 'reason': reason, 'automaticRetry': False})
+             raise RuntimeError(reason)
+         finally:
+-            closure = scanner_close()
+-            require(closure['scannerClosure'] == 'PASS_COMPLETE', 'SCANNER_RECOVERY_FAILED_CLOSED')
+-        elapsed(900)
++            closure = h.scanner_close()
++            h.require(closure['scannerClosure'] == 'PASS_COMPLETE', 'SCANNER_RECOVERY_FAILED_CLOSED')
++        budget(900)
+         result = {'scanner': 'PASS_ONE_RECOVERY', 'recovery': 'RECOVERED', 'publications':
+-                  json.loads(read(helper.LinuxHost(ATTEMPT).archive / 'scheduled.json'))}
+-    record('scanner-pass.json', result); return result
++                  json.loads(h.read(helper.LinuxHost(ID).archive / 'scheduled.json'))}
++    h.record('scanner-pass.json', result); return result

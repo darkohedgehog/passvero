@@ -1,0 +1,9 @@
+{
+  "files": {
+    "preflight.py": "de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10",
+    "reboot-reviewed.py": "472cb2edc9516b6e28edda0810faaa26fc6a0f6af3c418b19df588a623bdceec",
+    "recover-release-reviewed.py": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+    "remaining-backup-and-actor-readonly.py": "e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6"
+  },
+  "scope": "ONE_MANUAL_STAGING_REBOOT_20261014"
+}

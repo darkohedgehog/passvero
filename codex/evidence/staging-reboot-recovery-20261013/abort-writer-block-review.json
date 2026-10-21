@@ -1,0 +1,20 @@
+{
+  "result": "PASS_TARGETED_STATIC_REVIEW",
+  "blockSha256": "e5b6b46926236846e7cdc4e90916c4d810d9deceffdecca5eafad07eb28bf5d3",
+  "bootstrap": "UNCHANGED_FROM_09_EXACT_SOURCE_MANIFEST",
+  "mutations": "ONE_ENABLE_NOW_SAVED_REMINDER_TIMER_PLUS_PRIVATE_EVIDENCE",
+  "guards": [
+    "sameBoot",
+    "noRebootIntentOrLaterPhase",
+    "exactFailureAndPartialClosure",
+    "exactWriterUnitHashesNoDropins",
+    "savedEnabledBaseline",
+    "idleJobsNoUnresolvedSending",
+    "unchangedDeliveryBeforeResume",
+    "unchangedReleaseBackupStateTimers"
+  ],
+  "workerInvocation": false,
+  "ordinaryApprovedSendingMayResume": true,
+  "executed": false,
+  "syntax": "PASS_PYTHON_AST_AND_BASH_N"
+}

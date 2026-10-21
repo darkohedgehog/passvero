@@ -1,0 +1,71 @@
+--- reviewed-20261014/reboot-reviewed.py
++++ new-attempt-20261019/reboot-reviewed.py
+@@ -19,7 +19,7 @@
+ import time
+ 
+ P = pathlib.Path
+-ROOT = P('/var/lib/passvero-reboot-recovery-20261014')
++ROOT = P('/var/lib/passvero-reboot-recovery-20261019')
+ APP = P('/var/www/passvero-acceptance')
+ BACKUP = P('/var/lib/passvero-staging-recovery/recurring')
+ CODE = P('/usr/local/libexec/passvero-staging-backup')
+@@ -30,9 +30,9 @@
+ CONFIG_PIN = 'a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839'
+ DEPLOY_PIN = 'db04d71b65c6b382b0796bdf3fe32aea07b9fd97c82b13c996b0c26be1af2082'
+ SCANNER_PIN = '0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44'
+-START = datetime.datetime(2026, 10, 14, 15, 25, tzinfo=datetime.timezone.utc).timestamp()
++START = datetime.datetime(2026, 10, 19, 15, 25, tzinfo=datetime.timezone.utc).timestamp()
+ END = START + 1800
+-ATTEMPT = 'recovery-20261014-reboot-01'
++ATTEMPT = 'recovery-20261019-reboot-01'
+ TIMERS = ('passvero-staging-backup.timer', 'passvero-staging-backup-monitor.timer',
+           'passvero-subscription-reminders.timer')
+ PRODUCTION_UNITS = ('pm2-darko.service', 'postgresql@16-main.service', 'nginx.service')
+@@ -188,7 +188,7 @@
+ 
+ def idle(base, deploy, paused=False):
+     deploy.idle(); base.jobs()
+-    require(unit('passvero-reboot-scanner-20261014.service')['ActiveState'] in ('inactive', 'failed'),
++    require(unit('passvero-reboot-scanner-20261019.service')['ActiveState'] in ('inactive', 'failed'),
+             'THIS_OPERATION_SCANNER_ACTIVE')
+     require(unit('passvero-postgres-backup.service')['ActiveState'] == 'inactive', 'PRODUCTION_BACKUP_BUSY')
+     require(unit('passvero-subscription-reminders.service')['ActiveState'] == 'inactive', 'WRITER_NOT_IDLE_NO_KILL')
+@@ -332,7 +332,7 @@
+ 
+ def prepare_info():
+     base, scoped, deploy = components()
+-    require(datetime.datetime.now(datetime.timezone.utc).date() == datetime.date(2026, 10, 14)
++    require(datetime.datetime.now(datetime.timezone.utc).date() == datetime.date(2026, 10, 19)
+             and time.time() < START, 'APPROVED_PREPARATION_DAY_OR_TIME_MISMATCH')
+     release(deploy); idle(base, deploy)
+     return {'preparation': 'PASS_READ_ONLY_REVIEW_BEFORE_INSTALL', 'production': production(),
+@@ -481,7 +481,7 @@
+     else:
+         require(time.time() - data('baseline.json')['t0'] < 340, 'RECOVERY_REMAINING_BUDGET_TOO_SHORT')
+         helper = scanner_module(); helper.LinuxHost(ATTEMPT).guard()
+-        args = ['/usr/bin/systemd-run', '--quiet', '--wait', '--unit', 'passvero-reboot-scanner-20261014',
++        args = ['/usr/bin/systemd-run', '--quiet', '--wait', '--unit', 'passvero-reboot-scanner-20261019',
+             '--property=Type=exec', '--property=Restart=no', '--property=KillMode=control-group',
+             '--property=KillSignal=SIGKILL', '--property=RuntimeMaxSec=9min', '--property=TimeoutStopSec=20s',
+             '--property=UMask=0077', '--property=StandardOutput=append:' + str(ROOT / 'scanner-output.log'),
+@@ -573,7 +573,7 @@
+     complete_flow = (ROOT / 'flow-pass.json').exists()
+     with locked(BACKUP / 'job.lock'):
+         deploy.idle()
+-        require(unit('passvero-reboot-scanner-20261014.service')['ActiveState'] in ('inactive', 'failed'),
++        require(unit('passvero-reboot-scanner-20261019.service')['ActiveState'] in ('inactive', 'failed'),
+                 'SCANNER_STILL_ACTIVE_CONTAIN_BEFORE_CLOSE')
+         for name in TIMERS:
+             safe = config_ok and ((name == TIMERS[1]) or (state_same and release_ok and app_ready
+@@ -637,9 +637,9 @@
+ 
+ def contain():
+     unchanged(); result = {'containment': 'SENDING_AND_BACKUP_REMAIN_PAUSED', 'artifactsRetained': True}
+-    if unit('passvero-reboot-scanner-20261014.service')['ActiveState'] in ('active', 'activating', 'deactivating'):
++    if unit('passvero-reboot-scanner-20261019.service')['ActiveState'] in ('active', 'activating', 'deactivating'):
+         require((ROOT / 'scanner-attempt.json').exists(), 'UNREVIEWED_SCANNER_UNIT')
+-        run(['/usr/bin/systemctl', 'stop', 'passvero-reboot-scanner-20261014.service'], timeout=35)
++        run(['/usr/bin/systemctl', 'stop', 'passvero-reboot-scanner-20261019.service'], timeout=35)
+     helper = scanner_module(); host = helper.LinuxHost(ATTEMPT)
+     if (host.archive / 'state.json').exists():
+         host.contain(); result['scanner'] = 'FAIL_CLOSED'

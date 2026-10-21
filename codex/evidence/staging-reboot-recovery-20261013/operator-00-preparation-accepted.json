@@ -1,0 +1,61 @@
+{
+  "newScannerSha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+  "preparation": "PASS_READ_ONLY_REVIEW_BEFORE_INSTALL",
+  "production": {
+    "https": "200 0",
+    "localHttps": "200 0",
+    "pm2": [
+      {
+        "cwd": "/var/www/passvero",
+        "name": "passvero",
+        "status": "online"
+      }
+    ],
+    "target": {
+      "origin": "https://passvero.eu/",
+      "upstream": "LOOPBACK_3000_IN_SAME_TLS_SERVER_BLOCK"
+    },
+    "units": {
+      "nginx.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/nginx.service",
+        "Group": "",
+        "Id": "nginx.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": ""
+      },
+      "pm2-darko.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/etc/systemd/system/pm2-darko.service",
+        "Group": "",
+        "Id": "pm2-darko.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": "darko"
+      },
+      "postgresql@16-main.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/postgresql@.service",
+        "Group": "",
+        "Id": "postgresql@16-main.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled-runtime",
+        "User": ""
+      }
+    }
+  },
+  "rebootScheduled": false,
+  "release": "_tkSUOn0PCoHjpx8V7FVr",
+  "rollback": {
+    "files": 757,
+    "oldBuild": "853RYrj-r5cyoSGuJudap"
+  },
+  "runtimeMutations": "NONE"
+}

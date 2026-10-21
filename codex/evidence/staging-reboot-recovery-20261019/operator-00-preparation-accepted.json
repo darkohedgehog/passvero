@@ -1,0 +1,206 @@
+{
+  "actor": {
+    "product": {
+      "draftId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+      "id": "c1c24c7c-334b-48bf-ba34-ac5fb930f1c2",
+      "lifecycle": "ACTIVE",
+      "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+      "publishedId": null
+    },
+    "users": [
+      {
+        "authEmailMatches": true,
+        "hasPassword": true,
+        "membershipId": "b954c03b-9c81-4760-bd63-83127b56bbb6",
+        "membershipRole": "ADMIN",
+        "membershipStatus": "ACTIVE",
+        "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+        "organizationStatus": "ACTIVE",
+        "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+        "verified": true
+      }
+    ]
+  },
+  "actorRights": {
+    "authority": "ACTIVE_ORGANIZATION_MEMBERSHIP_NOT_PLATFORM_GRANT",
+    "entitlementQuotaAndActualSession": "APPLICATION_GATES_STILL_REQUIRED_BEFORE_UPLOAD_PUBLISH",
+    "rolePermissions": [
+      "PRODUCT_READ",
+      "PRODUCT_EDIT",
+      "PRODUCT_PUBLISH"
+    ]
+  },
+  "attemptId": "recovery-20261019-reboot-01",
+  "automaticRetry": false,
+  "backup": {
+    "ageSeconds": 36911.697,
+    "attemptComplete": true,
+    "attempts": 9,
+    "failure": null,
+    "hold": false,
+    "mode": "CONTINUOUS",
+    "monitorResult": {
+      "observedEpoch": 1792419600,
+      "signal": "HEALTHY"
+    },
+    "retainedCaptureRecord": {
+      "classification": "RETAINED_COMPLETED_CAPTURE_RECORD",
+      "closure": {
+        "pauseSeconds": 4.283,
+        "serviceResult": "success",
+        "stagingResumed": true,
+        "timerBaselineRestored": true
+      },
+      "serviceState": "inactive",
+      "setId": "20261019T043000Z"
+    },
+    "sha256": "4497e68e42c7924f2df9252651b0c9cf26cf9a3141bab36e4a7b56e4ee392de6",
+    "validCaptureEpoch": 1792384210,
+    "validSet": "20261019T043000Z"
+  },
+  "due": {
+    "passvero-staging-backup-monitor.timer": 1792423200.0,
+    "passvero-staging-backup.timer": 1792470600.0
+  },
+  "executionUnlocked": false,
+  "finalWindowGate": "02_AFTER_REGULAR_17_20_MONITOR",
+  "newHelperSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+  "observedEpoch": 1792421122.04881,
+  "preparation": "PASS_NEW_ATTEMPT_READ_ONLY_REVIEW_BEFORE_INSTALL",
+  "priorInstalled": {
+    "closure": "PASS_ABORTED_BEFORE_REBOOT_BASELINE_RESTORED",
+    "helperSha256": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+    "history": "READ_ONLY_RETAINED",
+    "manifestSha256": "9d165f83cecc87aa5a3cee557d36fc2c95f043f13bd32d345b5a4cef06eda622",
+    "root": "/var/lib/passvero-reboot-recovery-20261014"
+  },
+  "production": {
+    "https": "200 0",
+    "localHttps": "200 0",
+    "pm2": [
+      {
+        "cwd": "/var/www/passvero",
+        "name": "passvero",
+        "status": "online"
+      }
+    ],
+    "target": {
+      "origin": "https://passvero.eu/",
+      "upstream": "LOOPBACK_3000_IN_SAME_TLS_SERVER_BLOCK"
+    },
+    "units": {
+      "nginx.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/nginx.service",
+        "Group": "",
+        "Id": "nginx.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": ""
+      },
+      "pm2-darko.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/etc/systemd/system/pm2-darko.service",
+        "Group": "",
+        "Id": "pm2-darko.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": "darko"
+      },
+      "postgresql@16-main.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/postgresql@.service",
+        "Group": "",
+        "Id": "postgresql@16-main.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled-runtime",
+        "User": ""
+      }
+    }
+  },
+  "productionJobWindow": {
+    "changed": false,
+    "timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-postgres-backup.timer",
+      "Id": "passvero-postgres-backup.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    },
+    "typedNextDueEpoch": 1792461838.070758
+  },
+  "rebootScheduled": false,
+  "release": "_tkSUOn0PCoHjpx8V7FVr",
+  "rollback": {
+    "files": 757,
+    "oldBuild": "853RYrj-r5cyoSGuJudap"
+  },
+  "runtime": {
+    "authEndpoint": "127.0.0.1:5433/passvero_acceptance",
+    "credentials": "NOT_EXPOSED",
+    "databaseEndpoint": "127.0.0.1:5433/passvero_acceptance",
+    "prepareSha256": "d519bf0f039996f3ac9838182ba28218f31055e42e5ba675d572336f67c5e473",
+    "process": {
+      "cwd": "/var/www/passvero-acceptance",
+      "name": "passvero-acceptance",
+      "pid": 220635,
+      "pmId": 0,
+      "status": "online"
+    },
+    "storageBucket": "passvero-staging-documents"
+  },
+  "runtimeMutations": "NONE",
+  "scannerSha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+  "startupBaseline": "MATCH_ACCEPTED_DUMP_AND_UNIT",
+  "timers": {
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-staging-backup-monitor.timer",
+      "Id": "passvero-staging-backup-monitor.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-staging-backup.timer",
+      "Id": "passvero-staging-backup.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "FragmentPath": "/etc/systemd/system/passvero-subscription-reminders.timer",
+      "Id": "passvero-subscription-reminders.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "TriggeredBy": "",
+      "UnitFileState": "enabled"
+    }
+  },
+  "writer": {
+    "activeLeases": 0,
+    "attemptStatus": {
+      "ACCEPTED": 4
+    },
+    "pendingCandidates": 0,
+    "policyEnabled": true,
+    "reminderStatus": {
+      "CANCELLED": 2,
+      "SENT": 4
+    },
+    "safeToFinalizePause": true,
+    "unresolved": 0
+  }
+}

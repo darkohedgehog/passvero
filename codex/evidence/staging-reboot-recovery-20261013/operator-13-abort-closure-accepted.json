@@ -1,0 +1,65 @@
+{
+  "source": "USER_RETURNED_13_OUTPUT",
+  "closure": "PASS_ABORTED_BEFORE_REBOOT_BASELINE_RESTORED",
+  "automaticRetry": false,
+  "automaticStartup": "NOT_PROVEN",
+  "backupStateUnchanged": true,
+  "firstFailureAndPartialClosure": "RETAINED",
+  "ordinaryApprovedSending": "RESUMED_BY_SAVED_TIMER_NO_MANUAL_WORKER_CALL",
+  "rebootRequested": false,
+  "production": {
+    "https": "200 0",
+    "localHttps": "200 0",
+    "pm2": [
+      {
+        "cwd": "/var/www/passvero",
+        "name": "passvero",
+        "status": "online"
+      }
+    ],
+    "target": {
+      "origin": "https://passvero.eu/",
+      "upstream": "LOOPBACK_3000_IN_SAME_TLS_SERVER_BLOCK"
+    },
+    "units": {
+      "nginx.service": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "pm2-darko.service": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "postgresql@16-main.service": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled-runtime"
+      }
+    }
+  },
+  "writerService": {
+    "ActiveState": "activating",
+    "FragmentPath": "/etc/systemd/system/passvero-subscription-reminders.service",
+    "Group": "",
+    "Id": "passvero-subscription-reminders.service",
+    "LoadState": "loaded",
+    "SubState": "start",
+    "TriggeredBy": "passvero-subscription-reminders.timer",
+    "UnitFileState": "static",
+    "User": ""
+  },
+  "writerTimer": {
+    "ActiveState": "active",
+    "FragmentPath": "/etc/systemd/system/passvero-subscription-reminders.timer",
+    "Id": "passvero-subscription-reminders.timer",
+    "LoadState": "loaded",
+    "SubState": "running",
+    "TriggeredBy": "",
+    "UnitFileState": "enabled"
+  },
+  "review": "BASELINE_RESTORED_ABORT_CLOSED_NOT_FULL_SERVICE_RECOVERY",
+  "workerCompletionOrInboxReceipt": "NOT_PROVEN",
+  "backupMonitorEvidence": "operator-09-partial-closure-review.json"
+}

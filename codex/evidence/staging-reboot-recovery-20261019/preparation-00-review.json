@@ -1,0 +1,18 @@
+{
+  "result": "PASS_REVIEWED_BEFORE_SOURCE_ONLY_INSTALL",
+  "observedLocal": "2026-10-19T16:45:22.048810+02:00",
+  "source": "operator-00-preparation-accepted.json",
+  "attemptId": "recovery-20261019-reboot-01",
+  "newHelperSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+  "installedIdentity": "EXPECTED_PREVIOUS_CLOSED_ATTEMPT_MATCH",
+  "backup": "COMPLETED_TODAY_ATTEMPTS_9_CONTINUOUS_NO_HOLD_HEALTHY",
+  "writer": "IDLE_SAFE_NO_UNRESOLVED_OR_ACTIVE_LEASES",
+  "production": "ONLINE_PUBLIC_LOCAL_TLS_200_0",
+  "actor": "ACTIVE_ORG_ADMIN_EXPECTED_PRODUCT_DRAFT",
+  "rollbackFiles": 757,
+  "nextOperatorBlock": "01_INSTALL_REVIEWED_SOURCE_PENDING_OPERATOR_COMMAND_RETURN_OUTPUT",
+  "rebootUnlocked": false,
+  "finalGate": "02_AFTER_REGULAR_MONITOR_17_20_REVIEW_BEFORE_17_25",
+  "runtimeMutations": "NONE",
+  "automaticStartup": "NOT_PROVEN"
+}

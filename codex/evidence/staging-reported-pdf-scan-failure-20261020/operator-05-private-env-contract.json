@@ -1,0 +1,72 @@
+{
+  "diagnostic": "SIGNATURE_PRODUCER_PRIVATE_ENV_LAUNCH_CONTRACT",
+  "unit": "passvero-signature-health.service",
+  "automaticRetry": false,
+  "rawValuesExposed": false,
+  "individualValueHashesPublished": false,
+  "VPS_MUTATIONS": "NO",
+  "LOCK_REMOVAL": "NOT_PERFORMED",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "NEW_WINDOW_SCHEDULED": "NO",
+  "status": "PRIVATE_ENV_CONTRACT_READ_COMPLETE_RETURN_OUTPUT_AND_STOP",
+  "observedUTC": "2026-10-20T16:52:19.707629+00:00",
+  "launch": {
+    "executable": "/usr/bin/env",
+    "entryCount": 1,
+    "argvCount": 8,
+    "argv0": "/usr/bin/env",
+    "envPrefix": [
+      {
+        "argvIndex": 1,
+        "kind": "ENV_OPTION",
+        "option": "-i",
+        "protectedUnitComparison": "MATCH"
+      },
+      {
+        "argvIndex": 2,
+        "kind": "ENV_ASSIGNMENT",
+        "name": "PATH",
+        "value": "NOT_EXPOSED",
+        "protectedUnitValueComparison": "MATCH",
+        "comparisonSource": "/etc/systemd/system/passvero-signature-health.service::ExecStart (root-owned protected installed declaration)",
+        "reviewedRecoveryRunIntent": "MISMATCH"
+      },
+      {
+        "argvIndex": 3,
+        "kind": "ENV_ASSIGNMENT",
+        "name": "LANG",
+        "value": "NOT_EXPOSED",
+        "protectedUnitValueComparison": "MATCH",
+        "comparisonSource": "/etc/systemd/system/passvero-signature-health.service::ExecStart (root-owned protected installed declaration)",
+        "reviewedRecoveryRunIntent": "MATCH"
+      }
+    ],
+    "commandChain": [
+      "/usr/bin/node",
+      "/usr/local/libexec/passvero-signature-health.cjs",
+      "--config",
+      "/etc/passvero-signature-health.json"
+    ],
+    "ignoreFailure": false
+  },
+  "protectedInstalledSource": {
+    "path": "/etc/systemd/system/passvero-signature-health.service",
+    "uid": 0,
+    "gid": 0,
+    "mode": "0o644",
+    "wholeUnitSha256": "5becee91793921e6bae866b3c2f9523e4dfa2208b9709c2413191f38b7c31afe",
+    "scope": "WHOLE_PROTECTED_UNIT_IDENTITY_NOT_A_HASH_OF_AN_INDIVIDUAL_SECRET",
+    "loadedArgvVsDeclaredExecStart": "MATCH"
+  },
+  "originalInstallerHistory": "UNVERIFIED_NOT_PRESENT_IN_REVIEWED_LOCAL_SOURCE",
+  "producerArtifact": {
+    "path": "/usr/local/libexec/passvero-signature-health.cjs",
+    "reviewedBundlePinComparison": "MATCH"
+  },
+  "envPrefixStructure": "MATCH_SUPPORTED_STRUCTURE",
+  "closureOrLockAction": "NONE_READONLY_ONLY",
+  "disposition": "MISMATCH_OR_UNVERIFIED_STOP_BEFORE_LOCK_CONTINUATION"
+}

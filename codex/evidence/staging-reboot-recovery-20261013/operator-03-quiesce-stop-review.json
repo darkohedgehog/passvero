@@ -1,0 +1,16 @@
+{
+  "operatorOutput": {
+    "CHECK_ID": "QUIESCE",
+    "automaticRetry": false,
+    "instruction": "Independent close/containment; no repeat/reboot/worker call",
+    "reason": "UNREVIEWED_SENDING_TRIGGER",
+    "result": "STOP"
+  },
+  "review": "TRIGGEREDBY_GUARD_RUNS_BEFORE_AND_AFTER_TIMER_DISABLE",
+  "cause": "PENDING_OPERATOR_CLOSURE_STATE_NOT_PROVEN",
+  "possiblePartialMutation": "TIMERS_MAY_ALREADY_BE_DISABLED_BEFORE_POST_PAUSE_IDLE_GUARD",
+  "next": "09_INDEPENDENT_CLOSE_PENDING_OPERATOR_COMMAND_RETURN_OUTPUT",
+  "rebootAllowed": false,
+  "retryAllowed": false,
+  "runtimeSourceChanged": false
+}

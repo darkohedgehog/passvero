@@ -1,0 +1,362 @@
+--- /dev/null
++++ new-explicit-continuation-adapter/continuation-reviewed.py
+@@ -0,0 +1,359 @@
++"""Operator-gated continuation adapter. Focused local doubles proof is recorded.
++No reboot/startup mode. The reviewed raw-TTY library bytes remain unchanged.
++"""
++import json
++import os
++import pathlib
++import re
++import time
++
++ID = 'continuation-20261020-auth-flow-01'
++ROOT = pathlib.Path('/var/lib/passvero-auth-flow-continuation-20261020-01')
++PRIOR = pathlib.Path('/var/lib/passvero-reboot-recovery-20261019')
++UNIT = 'passvero-auth-flow-scanner-20261020-01'
++LOCAL_CONTINUATION_PROOF_ACCEPTED = True
++LIBRARY_PIN = '4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1'
++INSTALLED_PIN = '303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7'
++PRIOR_MANIFEST_PIN = 'dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa'
++H = None
++
++
++def configure(h, base, scoped, scanner):
++    global H
++    H = h
++    # Explicit continuation namespace, not old main()/modes or fabricated startup markers.
++    h.ROOT = ROOT
++    h.ATTEMPT = ID
++    h.BOOTSTRAP_COMPONENTS = (base, scoped, h.load('pinned_deploy', h.DEPLOY, h.DEPLOY_PIN))
++    h.BOOTSTRAP_SCANNER = scanner
++    if (ROOT / 'baseline.json').exists():
++        h.END = h.data('baseline.json')['t0'] + 1800
++
++
++def historical_reference():
++    h = H
++    manifest = h.read(PRIOR / 'package.json')
++    h.require(h.sha(manifest) == PRIOR_MANIFEST_PIN, 'PRIOR_INSTALLED_MANIFEST_DRIFT')
++    h.require(h.sha(h.read(PRIOR / 'reboot-reviewed.py')) == INSTALLED_PIN, 'PRIOR_INSTALLED_HELPER_DRIFT')
++    for name, pin in json.loads(manifest)['files'].items():
++        h.require(name in ('preflight.py', 'preparation-readonly.py', 'reboot-reviewed.py',
++                          'recover-release-reviewed.py', 'remaining-backup-and-actor-readonly.py'), 'PRIOR_SCOPE')
++        h.require(h.sha(h.read(PRIOR / name)) == pin, 'PRIOR_MEMBER_DRIFT')
++    startup = json.loads(h.read(PRIOR / 'startup-pass.json'))
++    closed = json.loads(h.read(PRIOR / 'abort-writer-resume-pass.json'))
++    h.require(startup['AUTOMATIC_STARTUP'] == 'PASS'
++              and startup['bootId'] == '379fc52e-5524-4b93-b6ec-b036d1953db7', 'ACCEPTED_STARTUP_REFERENCE_DRIFT')
++    h.require(closed['closure'] == 'PASS_POST_STARTUP_ABORT_BASELINE_RESTORED', 'PRIOR_NOT_CLOSED')
++    return {'classification': 'HISTORICAL_ACCEPTED_NOT_NEW_STARTUP_OBSERVATION',
++            'startup': startup['AUTOMATIC_STARTUP'], 'acceptedBootId': startup['bootId'],
++            'priorClosed': closed['closure'], 'installedHelperSha256': INSTALLED_PIN}
++
++
++def target_empty():
++    h = H; base, scoped, _ = h.components()
++    actor = scoped.actor(); rights = scoped.validate_actor(actor)
++    h.require(actor['users'][0]['membershipRole'] == 'ADMIN'
++              and actor['users'][0]['membershipId'] == 'b954c03b-9c81-4760-bd63-83127b56bbb6', 'ACTOR_MEMBERSHIP_DRIFT')
++    product = actor['product']
++    h.require(product['draftId'] == 'a2e0ebe2-8305-4975-84f2-83b16d505536'
++              and product['publishedId'] is None, 'TARGET_ALREADY_CHANGED_NO_DUPLICATE_FLOW')
++    fixture = base.fixture()
++    h.require(not fixture['imageReferences'] and not fixture['documentReferences'], 'TARGET_ALREADY_HAS_REFERENCES_STOP_NO_UPLOAD')
++    existing = base.sql('''SELECT json_build_object(
++      'images',(SELECT count(*) FROM "ProductImageAsset" WHERE "organizationId"='bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0' AND "originalFilename"='SYNTHETIC-STAGING-REBOOT-20261014.png'),
++      'pdfs',(SELECT count(*) FROM "Document" WHERE "organizationId"='bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0' AND ("originalFilename"='SYNTHETIC-STAGING-REBOOT-20261013.pdf' OR "checksumSha256"='fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec')))''')
++    h.require(existing == {'images': 0, 'pdfs': 0}, 'PRIOR_FIXTURE_ASSET_PRESENT_REVIEW_REUSE_NO_DUPLICATE')
++    return {'actor': actor, 'rights': rights, 'existingFixtureAssets': existing}
++
++
++def sending_gate():
++    h = H; base, _, _ = h.components()
++    value = base.sql('SELECT json_build_object(\'unresolvedAccessNotices\',count(*)) FROM "AccessRequestAdminNotification" WHERE status NOT IN (\'SENT\',\'REJECTED\')')
++    h.require(value == {'unresolvedAccessNotices': 0}, 'UNRESOLVED_ACCESS_NOTICE_SENDING_STOP')
++    return value
++
++
++def paused_idle():
++    h = H; base, _, deploy = h.components()
++    deploy.idle(); base.jobs(); h.writer_guard(paused=True)
++    h.require(h.unit(UNIT + '.service')['ActiveState'] in ('inactive', 'failed'), 'CONTINUATION_RECOVERY_ACTIVE')
++    h.require(base.reminders()['safeToFinalizePause'], 'UNRESOLVED_SENDING')
++    sending_gate()
++
++
++def preflight():
++    h = H; base, _, deploy = h.components()
++    h.require(not (ROOT / 'baseline.json').exists(), 'CONTINUATION_ALREADY_STARTED_NO_REOPEN')
++    history = historical_reference()
++    h.release(deploy); runtime = base.runtime(); backup = base.backup()
++    h.drain_writer(); h.idle(base, deploy); sending_gate()
++    h.require(h.unit(UNIT + '.service')['ActiveState'] in ('inactive', 'failed'), 'CONTINUATION_UNIT_ACTIVE')
++    due = h.due(deploy, 2700); production_job = h.production_job_window(deploy)
++    timers = {name: h.unit(name) for name in h.TIMERS}
++    h.require(all(v['ActiveState'] == 'active' and v['UnitFileState'] == 'enabled' for v in timers.values()), 'AUTOMATION_BASELINE_DRIFT')
++    target = target_empty()
++    scanner = h.scanner_module(); scanner.LinuxHost(ID).guard()
++    with h.locked(scanner.RECORDS / 'operator.lock'):
++        for path in scanner.RECORDS.glob('*/state.json'):
++            h.require(json.loads(h.read(path)).get('phase') in ('COMPLETE', 'ROLLED_BACK'), 'UNRESOLVED_SCANNER_RECOVERY')
++        h.require(not (scanner.RECORDS / ID).exists(), 'RECOVERY_ID_ALREADY_USED')
++    reader = scanner.LinuxHost(ID).reader()
++    return {'preflight': 'CURRENT_SCOPED_FACTS_ONLY', 'executionUnlocked': False,
++            'continuationId': ID, 'observedEpoch': time.time(), 'history': history,
++            'runtime': runtime, 'backup': backup, 'timers': timers, 'due': due,
++            'productionJobWindow': production_job, 'target': target,
++            'reader': reader, 'recovery': 'SKIP_IF_FRESH_ACCEPTED_ELSE_ONE_REVIEWED_ATTEMPT',
++            'scannerHelperSha256': h.SCANNER_PIN, 'rollback': h.verify_rollback(deploy),
++            'localFixtures': 'SEPARATE_LOCAL_MAC_HASH_RESULT_REQUIRED_NO_SERVER_TRANSFER_NEEDED',
++            'newContinuationProof': 'PASS_LOCAL_TWO_PATH_DOUBLES_ONLY_NOT_LIVE', 'mutations': 'NONE'}
++
++
++def budget(seconds):
++    h = H; baseline = h.data('baseline.json')
++    h.require(h.boot_id() == baseline['bootId'], 'BOOT_CHANGED_NO_REBOOT_ALLOWED')
++    h.require(0 <= time.monotonic() - baseline['startMonotonic'] <= seconds, 'CONTINUATION_BUDGET_EXPIRED')
++
++
++def coordinate():
++    h = H; base, _, deploy = h.components()
++    h.require(not (ROOT / 'baseline.json').exists(), 'CONTINUATION_ALREADY_STARTED')
++    fresh = preflight()
++    with h.locked(h.BACKUP / 'job.lock'):
++        h.release(deploy); h.drain_writer(); h.idle(base, deploy); target_empty()
++        due = h.due(deploy, 2700); h.production_job_window(deploy)
++        h.record('baseline.json', {'t0': time.time(), 'startMonotonic': time.monotonic(),
++            'bootId': h.boot_id(), 'timers': fresh['timers'], 'due': due,
++            'backupSha256': h.sha(h.read(h.BACKUP / 'state.json')), 'delivery': h.delivery(base),
++            'startupReference': fresh['history'], 'pauseScope': 'WRITER_ONLY'})
++        h.END = h.data('baseline.json')['t0'] + 1800
++        h.run(['/usr/bin/systemctl', 'disable', '--now', h.TIMERS[2]])
++        paused_idle()
++        h.require(h.delivery(base) == h.data('baseline.json')['delivery'], 'SENDING_RACE_DURING_PAUSE')
++        h.record('coordinated.json', {'result': 'WRITER_PAUSED_BACKUP_MONITOR_UNCHANGED'})
++    return h.data('coordinated.json')
++
++
++def auth():
++    h = H; base, scoped, _ = h.components(); budget(600)
++    h.require((ROOT / 'coordinated.json').exists(), 'COORDINATION_REQUIRED')
++    h.require(not (ROOT / 'first-failure.json').exists(), 'CLOSED_OR_FAILED_CONTINUATION')
++    h.record('auth-attempt.json', {'automaticRetry': False})
++    scoped.validate_actor(scoped.actor())
++    observations = {'newPasswordLogin': h.ask('New password login, no reset/verification email', 600),
++                    'organizationContext': h.ask('Exact approved organization, ADMIN membership, product/draft and entitlement/quota UI', 600)}
++    scoped.validate_actor(scoped.actor())
++    t0 = h.data('baseline.json')['t0']
++    proof = base.sql('''SELECT json_build_object(
++      'freshActiveSessions',count(DISTINCT s.id),
++      'freshSelectedOrganizationSessions',count(DISTINCT s.id) FILTER (WHERE c."selectedOrganizationId"='bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0'))
++      FROM "AuthIdentity" i JOIN "AuthProviderSession" s ON s."userId"=i."providerSubject"
++      LEFT JOIN "AuthSessionSelection" c ON c.provider='BETTER_AUTH' AND c."providerSessionId"=s.id
++      WHERE i."userId"='40e51001-912c-4bcf-aa45-d866632aac85' AND i.provider='BETTER_AUTH' AND i."revokedAt" IS NULL
++      AND s."createdAt">=to_timestamp(%s) AND s."expiresAt">clock_timestamp()''' % t0)
++    h.require(proof == {'freshActiveSessions': 1, 'freshSelectedOrganizationSessions': 1}, 'FRESH_SERVER_SESSION_AND_ORG_SELECTION_NOT_PROVEN')
++    budget(600); h.record('auth-pass.json', {'observations': observations, 'serverProof': proof})
++    return h.data('auth-pass.json')
++
++
++# scanner() is derived separately from the accepted helper; only the continuation
++# unit, ExecStopPost path and budget entrypoints change. See scanner-binding.diff.
++def scanner():
++    h = H
++    base, scoped, deploy = h.components(); budget(900); h.unchanged(); h.release(deploy)
++    h.require((ROOT / 'auth-pass.json').exists(), 'AUTH_GATE_NOT_PASS')
++    h.record('scanner-attempt.json', {'recoveryBudget': 1, 'automaticRetry': False})
++    observed = h.readers(45)
++    if observed:
++        result = {'scanner': 'PASS_NATURAL_SCHEDULED_READER', 'recovery': 'NOT_REQUIRED', 'publications': observed}
++    else:
++        h.require(time.monotonic() - h.data('baseline.json')['startMonotonic'] < 340, 'RECOVERY_REMAINING_BUDGET_TOO_SHORT')
++        helper = h.scanner_module(); helper.LinuxHost(ID).guard()
++        args = ['/usr/bin/systemd-run', '--quiet', '--wait', '--unit', UNIT,
++            '--property=Type=exec', '--property=Restart=no', '--property=KillMode=control-group',
++            '--property=KillSignal=SIGKILL', '--property=RuntimeMaxSec=9min', '--property=TimeoutStopSec=20s',
++            '--property=UMask=0077', '--property=StandardOutput=append:' + str(ROOT / 'scanner-output.log'),
++            '--property=StandardError=null',
++            '--property=ExecStopPost=/usr/bin/python3 -I -B ' + str(ROOT / 'continuation-reviewed.py') + ' scanner-close',
++            '/usr/bin/python3', '-I', '-B', str(ROOT / 'recover-release-reviewed.py'), 'recover', '--id', ID]
++        try:
++            h.run(args, timeout=560)
++        except Exception:
++            phase, reason = 'UNKNOWN', 'SCANNER_UNIT_FAILED'
++            journal = helper.LinuxHost(ID).archive / 'state.json'
++            if journal.exists(): phase = json.loads(h.read(journal)).get('phase', 'UNKNOWN').upper()
++            output = ROOT / 'scanner-output.log'
++            if output.exists():
++                text = h.read(output).decode(); decoder = json.JSONDecoder()
++                while text.strip():
++                    text = text.lstrip()
++                    try: value, end = decoder.raw_decode(text)
++                    except ValueError: break
++                    text = text[end:]
++                    if value.get('recovery') == 'STOP' and re.fullmatch('[A-Za-z0-9_]{1,120}', value.get('reason', '')):
++                        reason = value['reason']
++            h.record('scanner-failure.json', {'CHECK_ID': 'SCANNER_' + phase, 'reason': reason, 'automaticRetry': False})
++            raise RuntimeError(reason)
++        finally:
++            closure = h.scanner_close()
++            h.require(closure['scannerClosure'] == 'PASS_COMPLETE', 'SCANNER_RECOVERY_FAILED_CLOSED')
++        budget(900)
++        result = {'scanner': 'PASS_ONE_RECOVERY', 'recovery': 'RECOVERED', 'publications':
++                  json.loads(h.read(helper.LinuxHost(ID).archive / 'scheduled.json'))}
++    h.record('scanner-pass.json', result); return result
++
++
++
++def begin_flow():
++    h = H; budget(1200)
++    h.require((ROOT / 'auth-pass.json').exists() and (ROOT / 'scanner-pass.json').exists(), 'AUTH_SCANNER_GATES_REQUIRED')
++    h.require(not (ROOT / 'first-failure.json').exists(), 'CONTINUATION_FAILED')
++    paused_idle(); target_empty()
++    h.require(h.scanner_module().LinuxHost(ID).reader() is not None, 'FRESH_READER_REQUIRED_BEFORE_UPLOAD')
++    h.record('flow-intent.json', {'imageUploads': 1, 'pdfUploads': 1, 'explicitScans': 1,
++                                'publishes': 1, 'automaticRetry': False})
++    return {'flow': 'ONE_UI_FLOW_UNLOCKED_NO_TERMINAL_UPLOAD_OR_SCAN_CALL'}
++
++
++def flow_proof():
++    h = H; budget(1200)
++    h.require((ROOT / 'flow-intent.json').exists(), 'ONE_FLOW_INTENT_REQUIRED')
++    # Existing DB image/CLEAN/version/audit/public-code and three operator observations.
++    result = h.flow_proof()
++    budget(1200)
++    h.record('functional-items.json', {'newLoginAndContext': h.data('auth-pass.json'),
++        'scannerReadiness': h.data('scanner-pass.json'),
++        'image': 'PASS_EXISTING_DB_AND_UI_GUARDS', 'pdfClean': 'PASS_EXISTING_DIGEST_POLICY_GUARDS',
++        'authorizedDownload': result['observations']['Authorized CLEAN PDF download SHA256 matched approved fixture'],
++        'publicDppAndAttachment': result['observations']['Published synthetic public DPP and image/PDF access without session'],
++        'audit': 'RETAINED_IN_FLOW_PASS_JSON', 'baselineRestored': 'PENDING_INDEPENDENT_CLOSE'})
++    return h.data('functional-items.json')
++
++
++def close():
++    h = H
++    if not (ROOT / 'baseline.json').exists():
++        return {'closure': 'NOT_STARTED_NO_AUTOMATION_CHANGES'}
++    if (ROOT / 'closure.json').exists():
++        return h.data('closure.json')
++    baseline = h.data('baseline.json'); pending = {}; restored = []
++    base, _, deploy = h.components()
++    with h.locked(h.BACKUP / 'job.lock'):
++        h.require(h.unit(UNIT + '.service')['ActiveState'] in ('inactive', 'failed'), 'CONTAIN_OWN_RECOVERY_BEFORE_CLOSE')
++        same_state = h.sha(h.read(h.BACKUP / 'state.json')) == baseline['backupSha256']
++        same_delivery = False; app_ready = False; paused_ready = False; clean_target_abort = False
++        try:
++            same_delivery = h.delivery(base) == baseline['delivery']
++            h.release(deploy); base.runtime()
++            h.require(h.http('https://staging.passvero.eu/') == '200 0', 'APP_NOT_READY')
++            app_ready = True
++            deploy.idle(); base.jobs(); h.writer_guard(paused=True)
++            h.require(base.reminders()['safeToFinalizePause'], 'UNRESOLVED_SENDING')
++            sending_gate()
++            paused_ready = True
++            target_empty(); clean_target_abort = True
++        except Exception:
++            pass
++        complete = (ROOT / 'functional-items.json').exists()
++        recovery_started = (ROOT / 'scanner-attempt.json').exists()
++        reader_ready = False
++        try: reader_ready = h.scanner_module().LinuxHost(ID).reader() is not None
++        except Exception: pass
++        safe_abort = clean_target_abort and not recovery_started
++        sending_safe = app_ready and paused_ready and same_state and same_delivery and (
++            (complete and reader_ready) or safe_abort)
++        if sending_safe:
++            h.require(baseline['timers'][h.TIMERS[2]]['ActiveState'] == 'active'
++                      and baseline['timers'][h.TIMERS[2]]['UnitFileState'] == 'enabled', 'SAVED_WRITER_BASELINE_NOT_ENABLED')
++            h.run(['/usr/bin/systemctl', 'enable', '--now', h.TIMERS[2]])
++            value = h.unit(h.TIMERS[2]); trigger = h.unit('passvero-subscription-reminders.service')
++            h.require(value['ActiveState'] == 'active' and value['UnitFileState'] == 'enabled'
++                      and trigger['TriggeredBy'] == h.TIMERS[2], 'WRITER_RESUME_NOT_VERIFIED')
++            restored.append(h.TIMERS[2])
++        else:
++            pending[h.TIMERS[2]] = 'APP_OR_DELIVERY_OR_SCANNER_FLOW_GATE_NOT_PROVEN_REVIEW_REQUIRED'
++        # These timers were never paused by this continuation. Never trigger/catch up a job.
++        for name in h.TIMERS[:2]:
++            value = h.unit(name)
++            if value['ActiveState'] != 'active' or value['UnitFileState'] != 'enabled':
++                pending[name] = 'UNEXPECTED_EXTERNAL_TIMER_CHANGE_NO_AUTOMATIC_REPAIR'
++        if not same_state: pending['backupState'] = 'CHANGED_REVIEW_REQUIRED'
++        if not same_delivery: pending['delivery'] = 'NOT_PROVEN_UNCHANGED'
++    result = {'closure': 'PASS_BASELINE_RESTORED' if not pending else 'PARTIAL_AUTOMATION_RESTORE',
++        'restored': restored, 'pending': pending, 'backupStateUnchanged': same_state,
++        'deliveryUnchangedBeforeSendingResume': same_delivery,
++        'backupAndMonitorChangedByContinuation': False,
++        'functionalContinuation': 'PASS_CURRENT_STATE_ONLY' if complete and not pending else 'NOT_PROVEN',
++        'historicalAutomaticStartup': 'PASS_ACCEPTED_REFERENCE_ONLY',
++        'historicalFullServiceRecovery': 'NOT_PROVEN_NOT_RETROACTIVELY_CHANGED',
++        'ordinaryApprovedSending': 'RESUMED_BY_SAVED_TIMER' if restored else 'NOT_RESUMED',
++        'artifactsRetained': True, 'automaticRetry': False}
++    h.record('closure.json', result)
++    return result
++
++
++def contain():
++    h = H
++    h.require((ROOT / 'scanner-attempt.json').exists(), 'NO_OWN_SCANNER_ATTEMPT')
++    if h.unit(UNIT + '.service')['ActiveState'] in ('active', 'activating', 'deactivating'):
++        h.run(['/usr/bin/systemctl', 'stop', UNIT + '.service'], timeout=35)
++    host = h.scanner_module().LinuxHost(ID)
++    if (host.archive / 'state.json').exists():
++        host.contain()
++    return {'containment': 'OWN_ATTEMPT_ONLY_ARTIFACTS_RETAINED', 'next': 'CLOSE'}
++
++
++def main(mode):
++    h = H
++    h.require(os.geteuid() == 0 and os.uname().nodename == 'srv1834647', 'OPERATOR_HOST')
++    if mode != 'preflight':
++        h.require(ROOT.is_dir() and not ROOT.is_symlink(), 'CONTINUATION_NOT_INSTALLED')
++    actions = {'preflight': preflight, 'coordinate': coordinate, 'auth': auth, 'scanner': scanner,
++               'begin-flow': begin_flow, 'flow-proof': flow_proof, 'close': close,
++               'contain': contain, 'scanner-close': h.scanner_close}
++    h.require(mode in actions, 'MODE_NOT_REVIEWED_NO_REBOOT_OR_STARTUP_MODE')
++    if mode not in ('preflight', 'close', 'contain', 'scanner-close'):
++        h.require(LOCAL_CONTINUATION_PROOF_ACCEPTED, 'NEW_CONTINUATION_EXECUTABLE_PROOF_PENDING_STOP')
++    try:
++        if mode in ('preflight', 'scanner-close'):
++            result = actions[mode]()
++        else:
++            with h.locked(ROOT / 'operation.lock'): result = actions[mode]()
++        print(json.dumps(result, indent=2, sort_keys=True)); return 0
++    except BaseException as error:
++        reason = str(error) if re.fullmatch('[A-Za-z0-9_]{1,160}', str(error)) else type(error).__name__
++        result = {'result': 'STOP', 'CHECK_ID': 'CONTINUATION_' + mode.upper().replace('-', '_'),
++                  'reason': reason, 'automaticRetry': False, 'instruction': 'RETURN_OUTPUT_NO_RETRY_INDEPENDENT_CLOSE'}
++        if mode != 'preflight' and not (ROOT / 'first-failure.json').exists():
++            h.record('first-failure.json', result)
++        print(json.dumps(result, indent=2)); return 1
++
++
++if __name__ == '__main__':
++    # Transient ExecStopPost uses the same private source package, independently of parent lock.
++    import hashlib
++    import importlib.util
++    import stat
++    import sys
++    manifest_path = ROOT / 'source-package.json'
++    info = ROOT.lstat()
++    if not stat.S_ISDIR(info.st_mode) or ROOT.is_symlink() or info.st_uid != 0 or stat.S_IMODE(info.st_mode) != 0o700:
++        raise SystemExit('CONTINUATION_ROOT_POSTURE')
++    info = manifest_path.lstat()
++    if manifest_path.is_symlink() or info.st_uid != 0 or stat.S_IMODE(info.st_mode) != 0o600:
++        raise SystemExit('CONTINUATION_MANIFEST_POSTURE')
++    pins = json.loads(manifest_path.read_text())['files']
++    expected_names = {'reboot-reviewed.py', 'preflight.py', 'remaining-backup-and-actor-readonly.py',
++                      'recover-release-reviewed.py', 'continuation-reviewed.py'}
++    if set(pins) != expected_names: raise SystemExit('CONTINUATION_PACKAGE_SCOPE')
++    modules = {}
++    for name, pin in pins.items():
++        path = ROOT / name; info = path.lstat()
++        if (not stat.S_ISREG(info.st_mode) or path.is_symlink() or info.st_uid != 0
++                or stat.S_IMODE(info.st_mode) != 0o600 or hashlib.sha256(path.read_bytes()).hexdigest() != pin):
++            raise SystemExit('CONTINUATION_SOURCE_CHANGED')
++        if name == 'continuation-reviewed.py': continue
++        spec = importlib.util.spec_from_file_location('continuation_' + name.replace('.', '_'), path)
++        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module); modules[name] = module
++    configure(modules['reboot-reviewed.py'], modules['preflight.py'],
++              modules['remaining-backup-and-actor-readonly.py'], modules['recover-release-reviewed.py'])
++    raise SystemExit(main(sys.argv[1]))

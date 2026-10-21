@@ -1,0 +1,315 @@
+{
+  "diagnostic": "SIGNATURE_PRODUCER_PENDING_CLOSURE_PROCESS_IDENTIFICATION",
+  "observedUTC": "2026-10-21T11:44:36.074205+00:00",
+  "automaticRetry": false,
+  "PROCESS_KILL": "NO",
+  "LOCK_REMOVAL": "NOT_PERFORMED",
+  "SERVICE_TIMER_MUTATIONS": "NO",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "TIMER_RESTORE": "PARTIAL_PENDING",
+  "historicalBlockingProcess": "NOT_RECORDED_NOT_RECONSTRUCTED",
+  "matches": [
+    {
+      "pid": 1300,
+      "ppid": 1,
+      "uids": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "startTicks": "1104",
+      "processIdentity": "PID_PLUS_START_TICKS_IN_CURRENT_BOOT",
+      "executable": "/usr/bin/python3.12",
+      "cgroups": [
+        {
+          "path": "/system.slice/networkd-dispatcher.service",
+          "units": [
+            "networkd-dispatcher.service"
+          ]
+        }
+      ],
+      "classification": "UNREVIEWED_ROOT_INTERPRETER",
+      "matchingCriteria": {
+        "knownArgumentTokens": [],
+        "knownCgroupTokens": [],
+        "rootInterpreter": true,
+        "qpdfException": false
+      },
+      "diagnosticSelfExactIdentity": false,
+      "originalGuardExclusion": null,
+      "wouldBlockOriginalGuardAtThisObservation": true,
+      "safeArguments": [
+        {
+          "index": 0,
+          "argument": "/usr/bin/python3",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 1,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 2,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        }
+      ],
+      "lockUse": "NOT_INFERRED_FROM_INTERPRETER_OR_TOKEN_MATCH"
+    },
+    {
+      "pid": 1353,
+      "ppid": 1,
+      "uids": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "startTicks": "1158",
+      "processIdentity": "PID_PLUS_START_TICKS_IN_CURRENT_BOOT",
+      "executable": "/usr/bin/python3.12",
+      "cgroups": [
+        {
+          "path": "/system.slice/unattended-upgrades.service",
+          "units": [
+            "unattended-upgrades.service"
+          ]
+        }
+      ],
+      "classification": "UNREVIEWED_ROOT_INTERPRETER",
+      "matchingCriteria": {
+        "knownArgumentTokens": [],
+        "knownCgroupTokens": [],
+        "rootInterpreter": true,
+        "qpdfException": false
+      },
+      "diagnosticSelfExactIdentity": false,
+      "originalGuardExclusion": null,
+      "wouldBlockOriginalGuardAtThisObservation": true,
+      "safeArguments": [
+        {
+          "index": 0,
+          "argument": "/usr/bin/python3",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 1,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 2,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        }
+      ],
+      "lockUse": "NOT_INFERRED_FROM_INTERPRETER_OR_TOKEN_MATCH"
+    },
+    {
+      "pid": 172899,
+      "ppid": 1,
+      "uids": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "startTicks": "13295055",
+      "processIdentity": "PID_PLUS_START_TICKS_IN_CURRENT_BOOT",
+      "executable": "/usr/bin/python3.12",
+      "cgroups": [
+        {
+          "path": "/system.slice/fail2ban.service",
+          "units": [
+            "fail2ban.service"
+          ]
+        }
+      ],
+      "classification": "UNREVIEWED_ROOT_INTERPRETER",
+      "matchingCriteria": {
+        "knownArgumentTokens": [],
+        "knownCgroupTokens": [],
+        "rootInterpreter": true,
+        "qpdfException": false
+      },
+      "diagnosticSelfExactIdentity": false,
+      "originalGuardExclusion": null,
+      "wouldBlockOriginalGuardAtThisObservation": true,
+      "safeArguments": [
+        {
+          "index": 0,
+          "argument": "/usr/bin/python3",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 1,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 2,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 3,
+          "argument": "<REDACTED>",
+          "knownGuardTokens": []
+        }
+      ],
+      "lockUse": "NOT_INFERRED_FROM_INTERPRETER_OR_TOKEN_MATCH"
+    },
+    {
+      "pid": 204632,
+      "ppid": 204631,
+      "uids": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "startTicks": "15945728",
+      "processIdentity": "PID_PLUS_START_TICKS_IN_CURRENT_BOOT",
+      "executable": "/usr/bin/python3.12",
+      "cgroups": [
+        {
+          "path": "/user.slice/user-1000.slice/session-346.scope",
+          "units": [
+            "session-346.scope"
+          ]
+        }
+      ],
+      "classification": "UNREVIEWED_ROOT_INTERPRETER",
+      "matchingCriteria": {
+        "knownArgumentTokens": [],
+        "knownCgroupTokens": [],
+        "rootInterpreter": true,
+        "qpdfException": false
+      },
+      "diagnosticSelfExactIdentity": true,
+      "originalGuardExclusion": "SELF",
+      "wouldBlockOriginalGuardAtThisObservation": false,
+      "safeArguments": [
+        {
+          "index": 0,
+          "argument": "/usr/bin/python3",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 1,
+          "argument": "-I",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 2,
+          "argument": "-B",
+          "knownGuardTokens": []
+        },
+        {
+          "index": 3,
+          "argument": "-",
+          "knownGuardTokens": []
+        }
+      ],
+      "lockUse": "NOT_INFERRED_FROM_INTERPRETER_OR_TOKEN_MATCH"
+    }
+  ],
+  "exitedDuringRead": [],
+  "limitations": [],
+  "savedBaseline": {
+    "at": "2026-10-21T11:35:28.393974+00:00",
+    "timer": {
+      "enabled": "enabled",
+      "active": "active"
+    }
+  },
+  "savedClosure": {
+    "at": "2026-10-21T11:35:29.547419+00:00",
+    "closure": "PARTIAL_TIMER_RESTORE_REQUIRES_OPERATOR_REVIEW",
+    "timerRestored": false,
+    "partial": true,
+    "pending": [
+      "PRODUCER_RECOVERY_OR_UNREVIEWED_ROOT_INTERPRETER_ACTIVE"
+    ]
+  },
+  "unitsBefore": {
+    "passvero-signature-health.service": {
+      "MainPID": "0",
+      "ControlPID": "0",
+      "Id": "passvero-signature-health.service",
+      "Triggers": "",
+      "TriggeredBy": "",
+      "LoadState": "loaded",
+      "ActiveState": "failed",
+      "SubState": "failed",
+      "UnitFileState": "static",
+      "pendingSystemdJob": {
+        "id": 0,
+        "objectPath": "/"
+      }
+    },
+    "passvero-signature-health.timer": {
+      "Id": "passvero-signature-health.timer",
+      "Triggers": "passvero-signature-health.service",
+      "TriggeredBy": "",
+      "LoadState": "loaded",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled",
+      "pendingSystemdJob": {
+        "id": 0,
+        "objectPath": "/"
+      }
+    }
+  },
+  "diagnosticIdentity": {
+    "pid": 204632,
+    "startTicks": "15945728",
+    "euid": 0,
+    "executable": "/usr/bin/python3.12",
+    "invocation": "sudo /usr/bin/python3 -I -B - with heredoc",
+    "selfNotSilentlyExcluded": true,
+    "originalGuardSelfAncestorExclusionExplainedPerMatch": true
+  },
+  "processesWithoutReadableExeSkippedLikeOriginalGuard": 80,
+  "bootId": "379fc52e-5524-4b93-b6ec-b036d1953db7",
+  "clockTicksPerSecond": 100,
+  "unitsAfter": {
+    "passvero-signature-health.service": {
+      "MainPID": "0",
+      "ControlPID": "0",
+      "Id": "passvero-signature-health.service",
+      "Triggers": "",
+      "TriggeredBy": "",
+      "LoadState": "loaded",
+      "ActiveState": "failed",
+      "SubState": "failed",
+      "UnitFileState": "static",
+      "pendingSystemdJob": {
+        "id": 0,
+        "objectPath": "/"
+      }
+    },
+    "passvero-signature-health.timer": {
+      "Id": "passvero-signature-health.timer",
+      "Triggers": "passvero-signature-health.service",
+      "TriggeredBy": "",
+      "LoadState": "loaded",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled",
+      "pendingSystemdJob": {
+        "id": 0,
+        "objectPath": "/"
+      }
+    }
+  },
+  "currentBlockingMatchCount": 3,
+  "status": "ONE_READONLY_OBSERVATION_COMPLETE_RETURN_OUTPUT_AND_STOP",
+  "completeness": "BOUNDED_PROC_ENUMERATION_NOT_AN_ATOMIC_PROCESS_SNAPSHOT"
+}

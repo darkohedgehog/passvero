@@ -1,0 +1,71 @@
+{
+  "task": "STAGING_REBOOT_ORIGINAL_FIXTURE_RECOVERY",
+  "attemptId": "recovery-20261019-reboot-01",
+  "result": "EXACT_ORIGINAL_PDF_AND_IMAGE_RESTORED",
+  "fixturePrerequisiteClosed": true,
+  "fixtures": {
+    "pdf": {
+      "status": "RESTORED_EXACT_ORIGINAL",
+      "path": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261013.pdf",
+      "expectedSha256": "fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec",
+      "actualSha256": "fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec",
+      "bytes": 671,
+      "mode": "0600",
+      "binarySignature": "MATCH",
+      "gitPayload": "EXCLUDED"
+    },
+    "image": {
+      "status": "RESTORED_EXACT_ORIGINAL",
+      "path": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261014.png",
+      "expectedSha256": "1ed5c1e5d6eff56de570af9a250598b0b7cd6547a1ce8c1634982918ed6a334d",
+      "actualSha256": "1ed5c1e5d6eff56de570af9a250598b0b7cd6547a1ce8c1634982918ed6a334d",
+      "bytes": 2059,
+      "mode": "0600",
+      "binarySignature": "MATCH",
+      "gitPayload": "EXCLUDED"
+    }
+  },
+  "stableDirectory": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019",
+  "directoryMode": "0700",
+  "existingIgnoreRule": ".superpowers/brainstorm/",
+  "generator": "original-fixture-generators.py",
+  "generatorSha256": "fb5994556794837d0c553f3c7314f90c205edf1eeb714e1b5e7050059bd27615",
+  "generatorReview": "MEMORY_ONLY_BYTES_ARRAYS_ARITHMETIC_STRUCT_ZLIB_NO_NETWORK_SUBPROCESS_SENDING_OR_IMPORT_SIDE_EFFECTS",
+  "provenance": {
+    "sessionId": "01a12637-4b19-7483-918c-a7bdacd5aff0",
+    "recordedSessionPath": "/Users/darkozivic/.codex/sessions/2026/10/10/rollout-2026-10-10T16-28-40-01a12637-4b19-7483-918c-a7bdacd5aff0.jsonl",
+    "pdfGeneratorCompletedCommandLine": 2749,
+    "imageGeneratorCompletedCommandLine": 3013,
+    "executionScope": "ONLY_EXTRACTED_MEMORY_GENERATOR_FRAGMENTS_NOT_RECORDED_OPERATIONAL_COMMANDS"
+  },
+  "targetedSearch": {
+    "repositories": [
+      "codex/evidence",
+      "scripts"
+    ],
+    "documentedTemporaryRoots": [
+      "/tmp/passvero-reboot-recovery-20261013",
+      "/tmp/passvero-reboot-recovery-20261014",
+      "/tmp/passvero-synthetic-visuals"
+    ],
+    "archive": "DOCUMENTED_SINGLE_SESSION_COMMAND_RECORDS",
+    "unrelatedPrivateFilesSearched": false,
+    "result": "ORIGINAL_TMP_DIRECTORIES_EMPTY_SAVED_MEMORY_GENERATORS_FOUND"
+  },
+  "correctedDisplayInterpretation": "EARLIER_COMMENTARY_MISTOOK_LOG_ESCAPING_FOR_LITERAL_BINARY_CONTENT; RAW_HEADER_HEX_CONFIRMS_NORMAL_PDF_AND_PNG_SIGNATURES",
+  "candidateReplacement": "NOT_REQUIRED_NO_CANDIDATE_ADOPTED",
+  "acceptedExecutableSourcesChanged": false,
+  "acceptedHashesChanged": false,
+  "operatorsBlocksExecuted": false,
+  "testsExecuted": 0,
+  "renderingOrSyntaxSeriesExecuted": 0,
+  "VPS_ACCESS": "NO",
+  "TESTS_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "NEW_WINDOW_SCHEDULED": "NO",
+  "CONFIRMED_PDF_HASH_PRESERVED": "YES",
+  "FIXTURES_READY": "YES",
+  "readinessScope": "LOCAL_FIXTURE_IDENTITY_ONLY_NOT_LIVE_UPLOAD_OR_FULL_RECOVERY",
+  "window": "2026-10-19 17:25\u201317:55 Europe/Zagreb_UNCHANGED",
+  "nextOperatorStep": "19_10_FROM_16_45_00_READ_ONLY_RETURN_OUTPUT_REVIEW_BEFORE_01"
+}

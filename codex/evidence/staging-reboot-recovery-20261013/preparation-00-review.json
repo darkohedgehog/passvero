@@ -1,0 +1,13 @@
+{
+  "result": "PASS_ACCEPTED_OPERATOR_PREPARATION_READBACK",
+  "source": "operator-00-preparation-accepted.json",
+  "blockSha256": "6cfa1d8a7826ee7ea8b929a4ca042acbebc65eb3e9cb7c5737fdb02b137e9926",
+  "packageReady": true,
+  "preparationPrerequisites": [],
+  "executionStarted": false,
+  "scannerInstalled": false,
+  "startupRecoveryProven": false,
+  "next": "01_SOURCE_INSTALL_PENDING_OPERATOR_COMMAND_ONLY_IN_EXECUTION_PHASE",
+  "volatilePreExecutionGate": "02_BEFORE_17_25_AND_03_RECHECK",
+  "backupAcceptanceRepeated": false
+}

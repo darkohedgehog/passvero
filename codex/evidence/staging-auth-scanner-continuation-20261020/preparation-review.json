@@ -1,0 +1,45 @@
+{
+  "scope": "STAGING_AUTH_SCANNER_FLOW_CONTINUATION_PACKAGE",
+  "status": "PASS_LOCAL_TWO_PATH_PROOF_PACKAGE_FINALIZED",
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "sourcePackageSha256": "3035dfbbf0bcbd126c40fd0a64b4c187988e93aea13c7bbf9cdef22760dc6c15",
+  "reviewedRawLibrarySha256": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+  "reviewedScannerRecoverySha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+  "newAdapterSha256": "d39f3aa4dd5b49c0fabd207e8bb7bbddc8b9203b92f26c7f85417a7367dbdd06",
+  "libraryByteIdentity": "PASS_UNCHANGED_REUSE_PRIOR_SEVEN_PTY_TESTS_NOT_REPEATED",
+  "newExecutableDiffs": [
+    "continuation-adapter.diff",
+    "scanner-binding.diff",
+    "context-binding.json"
+  ],
+  "newLogicCoveredByLocalDoublesNotLiveProof": [
+    "continuation baseline/namespace and one-flow state",
+    "server fresh session plus organization-selection SQL gate",
+    "writer-only pause and independent failure closure",
+    "new scanner unit/ExecStopPost binding"
+  ],
+  "localProof": {
+    "path": "local-continuation-proof.json",
+    "status": "PASS_TWO_PATHS_INDEPENDENT_CLOSE_BOTH",
+    "testPath": "test_continuation_local.py",
+    "liveEvidence": false
+  },
+  "enforcedBlock": "LOCAL_PROOF_TRUE_EXACT_PAYLOAD_REVIEW_AND_ALL_OPERATOR_GATES_RETAINED",
+  "readOnlyFirstBlock": "VPS-TERMINAL-00-READONLY-PREFLIGHT.sh",
+  "referenceChecks": "PASS_FIVE_SOURCE_MEMBERS_NINE_VPS_PAYLOAD_OR_EXACT_MANIFEST_BINDINGS",
+  "fixtureHashes": "PASS_LOCAL_PREPARATION_ONLY",
+  "localTestsRepeated": false,
+  "testsExecuted": 2,
+  "syntaxSeriesExecuted": 0,
+  "PTYDiagnosticsExecuted": 0,
+  "backupAcceptanceRepeated": false,
+  "VPSAccess": false,
+  "candidateInstalled": false,
+  "transfersPerformed": false,
+  "newMaintenanceWindowScheduled": false,
+  "closedAttemptReopened": false,
+  "historicalFailingLine": "NOT_RECORDED_NOT_DEFINITIVELY_PROVEN",
+  "historicalStartup": "PASS_ACCEPTED_REFERENCE_NOT_NEW_OBSERVATION",
+  "fullServiceRecovery": "NOT_PROVEN",
+  "preservedExistingFilesCount": 113
+}

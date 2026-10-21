@@ -1,0 +1,13 @@
+{
+  "proof": "ONE_LOCAL_CLASSIFICATION_FIXTURE",
+  "result": "PASS",
+  "saved07GenericRootFalsePositiveRemoved": true,
+  "producerReferenceAndLineageFailClosed": true,
+  "perServiceAllowlist": false,
+  "liveSystemdProcSemantics": "NOT_PROVEN",
+  "operationalHarnessExecuted": false,
+  "networkVpsAuthScannerCalls": 0,
+  "classificationFunctionsSha256": "eabeedbeee8d56da0a88ee9cd0fe6aea9afd8b71bb6ed8ab758c7ea4dd975f18",
+  "executionCount": 1,
+  "laterChangesDidNotAlterTestedPureFunctions": true
+}

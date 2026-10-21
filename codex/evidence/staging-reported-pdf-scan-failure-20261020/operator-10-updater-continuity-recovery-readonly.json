@@ -1,0 +1,374 @@
+{
+  "diagnostic": "SIGNATURE_UPDATER_CONTINUITY_AND_EXISTING_RECOVERY_DISPOSITION",
+  "observedUTC": "2026-10-21T12:27:19.663708+00:00",
+  "automaticRetry": false,
+  "RECOVERY_EXECUTED": "NO",
+  "LOCK_REMOVAL_REPEATED": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "AUTOMATIC_STARTUP": "PASS",
+  "FULL_SERVICE_RECOVERY": "NOT_PROVEN",
+  "SERVICE_TIMER_MUTATIONS": "NO",
+  "PRODUCER_EXECUTED_BY_DIAGNOSTIC": "NO",
+  "readerCalls": 0,
+  "sections": {
+    "configIdentity": {
+      "sha256": "28df856a3a8516f8c33d35bc652b5358dd0dcdd49d185be01a64eb1264a22593",
+      "accepted09PinMatch": true,
+      "timeZone": "Europe/Zagreb"
+    },
+    "recoveryArtifactIdentities": {
+      "pinsJson": "MATCH",
+      "producerReaderAndUnits": {
+        "/usr/local/libexec/passvero-signature-health.cjs": "MATCH",
+        "/usr/local/libexec/passvero-signature-recovery-v3/producer.cjs": "MATCH",
+        "/usr/local/libexec/passvero-signature-recovery-v3/reader.cjs": "MATCH",
+        "/etc/systemd/system/passvero-signature-health.service": "MATCH",
+        "/etc/systemd/system/passvero-signature-health.timer": "MATCH"
+      },
+      "helper": "MATCH"
+    },
+    "existingRecoveryGuard": {
+      "status": "PASS_UNCHANGED_EXISTING_GUARDS",
+      "helperPath": "/var/lib/passvero-auth-flow-continuation-20261020-01/recover-release-reviewed.py",
+      "helperSha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+      "expectedBuild": "_tkSUOn0PCoHjpx8V7FVr",
+      "futureAttemptId": "recovery-20261021-continuity-01",
+      "futureAttemptAlreadyExists": false,
+      "futurePaths": {
+        "archive": "/var/lib/passvero-signature-trust/records/recovery/recovery-20261021-continuity-01",
+        "db": "/var/lib/passvero-signature-trust/db/recovery-recovery-20261021-continuity-01",
+        "updaterLog": "/var/lib/passvero-signature-trust/updater/recovery-recovery-20261021-continuity-01.log",
+        "daemonLog": "/var/lib/passvero-signature-trust/daemon/recovery-recovery-20261021-continuity-01.log"
+      },
+      "recoveryExecuted": false
+    },
+    "releaseIdentity": {
+      "build": "_tkSUOn0PCoHjpx8V7FVr",
+      "canonicalSha256": "e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590",
+      "result": "MATCH_EXACT_RELEASE_IDENTITIES",
+      "artifactScope": "REUSE_ACCEPTED_EXECUTABLE_MANIFEST_NO_FULL_ARTIFACT_CHECKSUM_SERIES"
+    },
+    "updaterContinuity": {
+      "path": "/var/lib/passvero-signature-trust/updater/recovery-recovery-20261002-release-8qni-01.log",
+      "identity": {
+        "device": 2049,
+        "inode": 1573048,
+        "bytes": 173352,
+        "uid": 108,
+        "gid": 113,
+        "mode": "0o600",
+        "mtimeNs": 1792585378425585033,
+        "ctimeNs": 1792585378425585033
+      },
+      "wholeLogSha256": "5fead88032fd99cf295276b6c3cc7b8c07dd7d104722c1da1dd9d632688c03c9",
+      "trace": {
+        "reason": "EVIDENCE_CONTINUITY_REQUIRED",
+        "subcase": "REPEATED_INITIALIZATION_BOUNDARY",
+        "lineNumber": 501,
+        "timestampMs": 1791555625000,
+        "validationHistory": {
+          "daily": 28148,
+          "main": 63,
+          "bytecode": 339
+        },
+        "expectedComponent": "daily",
+        "initializationBoundariesThroughFailure": [
+          {
+            "lineNumber": 1,
+            "timestampMs": 1790970875000
+          },
+          {
+            "lineNumber": 501,
+            "timestampMs": 1791555625000
+          }
+        ]
+      },
+      "markerSummary": {
+        "initializationBoundaryCount": 7,
+        "firstBoundaryLines": [
+          1,
+          501,
+          794,
+          913
+        ],
+        "warningErrorCooldownLikeLineCount": 0,
+        "firstWarningLineNumbers": [],
+        "rotationOrRestartCause": "NOT_INFERRED_FROM_BOUNDARY_ALONE",
+        "cooldownCurrentlyActive": "NOT_DETERMINED_FROM_BINARY_OR_OLD_LOG_MARKERS"
+      },
+      "historicalInvocationInputHash": "NOT_RECORDED",
+      "attribution": "CURRENT_RETAINED_BYTES_NOT_PROOF_OF_EXACT_HISTORICAL_INPUT"
+    },
+    "saved09Report": {
+      "timestampUs": "1792584586803972",
+      "invocationId": "6ddfa4ae552d49c98b11afe13cadd5e1",
+      "result": "UNTRUSTED",
+      "reason": "EVIDENCE_CONTINUITY_REQUIRED",
+      "phase": "UPDATER",
+      "durationMs": 3732.5936580000002
+    },
+    "latestExistingReport": {
+      "timestampUs": "1792585639054051",
+      "invocationId": "aedc2305a1594ec29523312e3b09b518",
+      "result": "UNTRUSTED",
+      "reason": "EVIDENCE_CONTINUITY_REQUIRED",
+      "phase": "UPDATER",
+      "durationMs": 770.543532
+    },
+    "databaseAndCooldown": {
+      "activeDirectory": "/var/lib/passvero-signature-trust/db/recovery-recovery-20261002-release-8qni-01",
+      "artifacts": [
+        {
+          "component": "main",
+          "extension": ".cvd",
+          "versionHeader": 63,
+          "identity": {
+            "device": 2049,
+            "inode": 2144468,
+            "bytes": 89072577,
+            "uid": 108,
+            "gid": 113,
+            "mode": "0o600",
+            "mtimeNs": 1790970883356363058,
+            "ctimeNs": 1790970887700366843
+          },
+          "authenticity": "NOT_INFERRED_FROM_HEADER_NO_SIGNATURE_PAYLOAD_READ"
+        },
+        {
+          "component": "daily",
+          "extension": ".cld",
+          "versionHeader": 28160,
+          "identity": {
+            "device": 2049,
+            "inode": 2368720,
+            "bytes": 86427648,
+            "uid": 108,
+            "gid": 113,
+            "mode": "0o600",
+            "mtimeNs": 1792567373120964806,
+            "ctimeNs": 1792567378302965203
+          },
+          "authenticity": "NOT_INFERRED_FROM_HEADER_NO_SIGNATURE_PAYLOAD_READ"
+        },
+        {
+          "component": "bytecode",
+          "extension": ".cvd",
+          "versionHeader": 339,
+          "identity": {
+            "device": 2049,
+            "inode": 2144470,
+            "bytes": 281702,
+            "uid": 108,
+            "gid": 113,
+            "mode": "0o600",
+            "mtimeNs": 1790970887749366885,
+            "ctimeNs": 1790970888033367133
+          },
+          "authenticity": "NOT_INFERRED_FROM_HEADER_NO_SIGNATURE_PAYLOAD_READ"
+        }
+      ],
+      "freshclamDat": {
+        "present": true,
+        "identity": {
+          "device": 2049,
+          "inode": 2144463,
+          "bytes": 90,
+          "uid": 108,
+          "gid": 113,
+          "mode": "0o600",
+          "mtimeNs": 1790970875013355772,
+          "ctimeNs": 1790970875014355773
+        },
+        "protectedOwner108RegularFile": true,
+        "cooldownState": "BINARY_NOT_INTERPRETED_MUST_BE_PRESERVED_NO_RESET"
+      },
+      "oldDatabaseDeletion": "NOT_PERFORMED"
+    },
+    "recoveryRecordsAndLocks": {
+      "records": [
+        {
+          "id": "recovery-20260923-01",
+          "phase": "ROLLED_BACK"
+        },
+        {
+          "id": "recovery-20260923-03",
+          "phase": "COMPLETE"
+        },
+        {
+          "id": "recovery-20260923-02",
+          "phase": "ROLLED_BACK"
+        },
+        {
+          "id": "recovery-20261002-release-8qni-01",
+          "phase": "COMPLETE"
+        }
+      ],
+      "unresolved": false,
+      "existingRecoveryFlock": "EXCLUSIVE_AVAILABLE_DURING_PROBE_NOT_RESERVED",
+      "producerMkdirLockPresentAtObservation": false,
+      "producerLockUseOrAbandonment": "NOT_INFERRED_NO_REMOVAL"
+    },
+    "unitsAndPotentialConsumers": {
+      "units": {
+        "passvero-signature-health.service": {
+          "MainPID": "0",
+          "ControlPID": "0",
+          "Id": "passvero-signature-health.service",
+          "LoadState": "loaded",
+          "ActiveState": "failed",
+          "SubState": "failed",
+          "UnitFileState": "static",
+          "NeedDaemonReload": "no",
+          "InvocationID": "aedc2305a1594ec29523312e3b09b518",
+          "dropInDisposition": "NONE"
+        },
+        "passvero-signature-health.timer": {
+          "Id": "passvero-signature-health.timer",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled",
+          "NeedDaemonReload": "no",
+          "InvocationID": "9b8e4ce49f914543ab229109895f0f73",
+          "dropInDisposition": "NONE"
+        },
+        "clamav-freshclam.service": {
+          "MainPID": "172889",
+          "ControlPID": "0",
+          "Id": "clamav-freshclam.service",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled",
+          "NeedDaemonReload": "no",
+          "InvocationID": "0f59a57a73c74dfba2a707ccd66629b9",
+          "dropInDisposition": "PRESENT_OR_UNVERIFIED_NOT_EXPOSED"
+        },
+        "clamav-daemon.service": {
+          "MainPID": "172970",
+          "ControlPID": "0",
+          "Id": "clamav-daemon.service",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled",
+          "NeedDaemonReload": "no",
+          "InvocationID": "86e0520b44dd4e8eb2806c50a51ecfdc",
+          "dropInDisposition": "PRESENT_OR_UNVERIFIED_NOT_EXPOSED"
+        },
+        "clamav-daemon.socket": {
+          "ControlPID": "0",
+          "Id": "clamav-daemon.socket",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled",
+          "NeedDaemonReload": "no",
+          "InvocationID": "6c48553ec78a421695f69ec5af5b15e7",
+          "dropInDisposition": "PRESENT_OR_UNVERIFIED_NOT_EXPOSED"
+        },
+        "pm2-passvero-staging.service": {
+          "MainPID": "1551",
+          "ControlPID": "0",
+          "Id": "pm2-passvero-staging.service",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled",
+          "NeedDaemonReload": "no",
+          "InvocationID": "0606acfd183d4f4f8d6923e024d27cd0",
+          "dropInDisposition": "NONE"
+        }
+      },
+      "potentialConsumersByExistingPermissionScope": [
+        {
+          "pid": 1551,
+          "startTicks": "1350",
+          "uids": [
+            1001,
+            1001,
+            1001,
+            1001
+          ],
+          "socketGroup988": true,
+          "scannerConfinement": null,
+          "executable": "/usr/bin/node",
+          "systemdUnits": [
+            "pm2-passvero-staging.service"
+          ]
+        },
+        {
+          "pid": 172889,
+          "startTicks": "13295021",
+          "uids": [
+            108,
+            108,
+            108,
+            108
+          ],
+          "socketGroup988": false,
+          "scannerConfinement": {
+            "unit": "clamav-freshclam.service",
+            "executableMatch": true,
+            "uids108Match": true,
+            "enforcedProfileMatch": true,
+            "reviewedCgroupMatch": true
+          },
+          "executable": "/usr/bin/freshclam",
+          "systemdUnits": [
+            "clamav-freshclam.service"
+          ]
+        },
+        {
+          "pid": 172970,
+          "startTicks": "13297776",
+          "uids": [
+            108,
+            108,
+            108,
+            108
+          ],
+          "socketGroup988": false,
+          "scannerConfinement": {
+            "unit": "clamav-daemon.service",
+            "executableMatch": true,
+            "uids108Match": true,
+            "enforcedProfileMatch": true,
+            "reviewedCgroupMatch": true
+          },
+          "executable": "/usr/sbin/clamd",
+          "systemdUnits": [
+            "clamav-daemon.service"
+          ]
+        },
+        {
+          "pid": 173622,
+          "startTicks": "13339359",
+          "uids": [
+            1001,
+            1001,
+            1001,
+            1001
+          ],
+          "socketGroup988": true,
+          "scannerConfinement": null,
+          "executable": "/usr/bin/node",
+          "systemdUnits": [
+            "pm2-passvero-staging.service"
+          ]
+        }
+      ],
+      "scope": "GROUP_PERMISSION_AND_SCANNER_UID_NOT_EXHAUSTIVE_ROOT_ACCESS_OR_PROOF_OF_CONNECTED_SOCKET_CLIENTS"
+    }
+  },
+  "limitations": [],
+  "executionUnlocked": false,
+  "traceContract": {
+    "parserSourceSha256": "99c86c753d03c2776ae501fbac49b6a267acc88ffc40882607650a68438f7328",
+    "acceptedSourceBase": "1fc84aa8ccc3118f8158029e8edf99275c8f7f6e",
+    "scope": "READONLY_CONTINUITY_TRACE_NOT_PRODUCER_OR_FULL_HEALTH_ACCEPTANCE"
+  },
+  "status": "ONE_READONLY_OBSERVATION_COMPLETE_RETURN_OUTPUT_AND_STOP"
+}

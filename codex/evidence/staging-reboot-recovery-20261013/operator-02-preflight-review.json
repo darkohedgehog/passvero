@@ -1,0 +1,48 @@
+{
+  "source": "USER_RETURNED_BLOCK_02_OUTPUT",
+  "result": "PASS_REVIEW_BEFORE_Q_ACCEPTED",
+  "observedEpoch": 1791991285.9294624,
+  "observedLocal": "2026-10-14T17:21:25.929462+02:00",
+  "actorUserId": "40e51001-912c-4bcf-aa45-d866632aac85",
+  "membershipId": "b954c03b-9c81-4760-bd63-83127b56bbb6",
+  "membershipRole": "ADMIN",
+  "membershipStatus": "ACTIVE",
+  "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+  "productId": "c1c24c7c-334b-48bf-ba34-ac5fb930f1c2",
+  "draftId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+  "publishedId": null,
+  "applicationSessionEntitlementQuota": "STILL_REQUIRED",
+  "backup": {
+    "ageSeconds": 39074.006,
+    "attemptComplete": true,
+    "attempts": 4,
+    "failure": null,
+    "hold": false,
+    "mode": "CONTINUOUS",
+    "validSet": "20261014T043001Z",
+    "validCaptureEpoch": 1791952211,
+    "sha256": "0cd3ae8e75346ce1daf5d5acaf2d634cdf29353562be2f89cc1f35e076bd668e",
+    "monitorResult": {
+      "observedEpoch": 1791991200,
+      "signal": "HEALTHY"
+    },
+    "closure": {
+      "pauseSeconds": 5.726,
+      "serviceResult": "success",
+      "stagingResumed": true,
+      "timerBaselineRestored": true
+    },
+    "serviceState": "inactive"
+  },
+  "due": {
+    "passvero-staging-backup-monitor.timer": 1791994800.0,
+    "passvero-staging-backup.timer": 1792038600.0,
+    "productionBackup": 1792030079.415173
+  },
+  "production": "PM2_ONLINE_PUBLIC_AND_LOCAL_TLS_200_0",
+  "automationTimers": "ALL_THREE_ACTIVE_WAITING_ENABLED",
+  "smtpEntryCalls": 0,
+  "rebootScheduled": false,
+  "next": "03_PENDING_OPERATOR_COMMAND_17_25_TO_17_26_ONLY",
+  "automaticRetry": false
+}

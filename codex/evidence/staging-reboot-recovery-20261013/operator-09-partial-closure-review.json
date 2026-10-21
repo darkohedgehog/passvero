@@ -1,0 +1,23 @@
+{
+  "source": "USER_RETURNED_09_OUTPUT",
+  "closure": "PARTIAL_AUTOMATION_RESTORE",
+  "artifactsRetained": true,
+  "automaticStartup": "NOT_PROVEN",
+  "backupStateUnchanged": true,
+  "verificationDeliveryUnchangedBeforeResume": true,
+  "release": "_tkSUOn0PCoHjpx8V7FVr",
+  "restored": [
+    "passvero-staging-backup.timer",
+    "passvero-staging-backup-monitor.timer"
+  ],
+  "timerDue": {
+    "passvero-staging-backup-monitor.timer": 1791994800.0,
+    "passvero-staging-backup.timer": 1792038600.0
+  },
+  "pending": {
+    "passvero-subscription-reminders.timer": "APP_SCANNER_OR_FLOW_GATE_NOT_READY_OPERATOR_DARKO"
+  },
+  "production": "PM2_ONLINE_PUBLIC_AND_LOCAL_TLS_200_0",
+  "review": "BACKUP_MONITOR_RESTORED_WRITER_PENDING_PRE_REBOOT_ABORT",
+  "next": "13_ABORT_WRITER_BASELINE_RESTORE_PENDING_OPERATOR_COMMAND"
+}

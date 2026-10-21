@@ -1,0 +1,88 @@
+{
+  "source": "USER_SUPPLIED_OPERATOR_OUTPUT",
+  "representation": "REVIEWED_PROJECTION_NOT_RAW_TERMINAL_TRANSCRIPT",
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "observedEpoch": 1792509905.7170486,
+  "observedUTC": "2026-10-20T15:25:05.717049+00:00",
+  "preflight": "CURRENT_SCOPED_FACTS_ONLY",
+  "executionUnlocked": false,
+  "mutations": "NONE",
+  "localProof": "PASS_LOCAL_TWO_PATH_DOUBLES_ONLY_NOT_LIVE",
+  "backup": {
+    "validSet": "20261020T043000Z",
+    "attempts": 10,
+    "attemptComplete": true,
+    "failure": null,
+    "mode": "CONTINUOUS",
+    "hold": false,
+    "ageSeconds": 39296.893,
+    "stateSha256": "a729a653f8787ddee0060c74b535a2bbac4ace6d6de3ee62bc478505ca80982a",
+    "monitorResult": {
+      "observedEpoch": 1792509600,
+      "signal": "HEALTHY"
+    },
+    "retainedCaptureClosure": {
+      "pauseSeconds": 4.785,
+      "serviceResult": "success",
+      "stagingResumed": true,
+      "timerBaselineRestored": true
+    },
+    "retainedCaptureServiceState": "inactive"
+  },
+  "timerBaseline": "ALL_THREE_ACTIVE_ENABLED_WAITING_AT_OBSERVATION",
+  "due": {
+    "monitor": 1792513200.0,
+    "stagingBackup": 1792557000.0,
+    "productionBackup": 1792548398.976974
+  },
+  "remainingSecondsAtObservation": {
+    "monitor": 3294.2829513549805,
+    "stagingBackup": 47094.28295135498,
+    "productionBackup": 38493.25992536545
+  },
+  "dueReserveRequirementSeconds": 2700,
+  "dueReserve": "PASS_AT_OBSERVATION_ONLY_RECHECKED_BY_INSTALL_AND_COORDINATION",
+  "reader": null,
+  "scannerReadiness": "NOT_PROVEN_READER_NULL_NOT_DIAGNOSED_AS_ROOT_CAUSE",
+  "scannerDisposition": "NO_RECOVERY_NOW_AUTH_THEN_04_NATURAL_READER_OR_ONE_REVIEWED_RECOVERY",
+  "scannerHelperSha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+  "runtime": "EXPECTED_STAGING_ONLINE_AT_OBSERVATION",
+  "actor": {
+    "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+    "membershipId": "b954c03b-9c81-4760-bd63-83127b56bbb6",
+    "membershipRole": "ADMIN",
+    "membershipStatus": "ACTIVE",
+    "organizationStatus": "ACTIVE",
+    "authEmailMatches": true,
+    "hasPassword": true,
+    "verified": true,
+    "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+    "authority": "ACTIVE_ORGANIZATION_MEMBERSHIP_NOT_PLATFORM_GRANT",
+    "rolePermissions": [
+      "PRODUCT_READ",
+      "PRODUCT_EDIT",
+      "PRODUCT_PUBLISH"
+    ],
+    "applicationGates": "ENTITLEMENT_QUOTA_AND_ACTUAL_SESSION_STILL_REQUIRED"
+  },
+  "target": {
+    "id": "c1c24c7c-334b-48bf-ba34-ac5fb930f1c2",
+    "draftId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+    "publishedId": null,
+    "existingFixtureAssets": {
+      "images": 0,
+      "pdfs": 0
+    }
+  },
+  "history": "ACCEPTED_CLOSED_STARTUP_REFERENCE_ONLY_NO_REOPEN",
+  "review": "NO_REPORTED_PREFLIGHT_BLOCKER_LOCAL_FIXTURE_OUTPUT_STILL_REQUIRED",
+  "nextOperatorBlock": "LOCAL-MAC-00-FIXTURE-INTEGRITY.sh",
+  "installation": "NOT_REPORTED_PERFORMED",
+  "auth": "NOT_RUN",
+  "scannerFlow": "NOT_RUN",
+  "AUTOMATIC_STARTUP": "PASS",
+  "FULL_SERVICE_RECOVERY": "NOT_PROVEN",
+  "agentVPSAccess": false,
+  "testsRepeated": false,
+  "backupAcceptanceRepeated": false
+}

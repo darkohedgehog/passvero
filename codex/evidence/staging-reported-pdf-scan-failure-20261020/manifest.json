@@ -1,0 +1,973 @@
+{
+  "task": "STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE",
+  "status": "RECOVERY_COMPLETE_UI_PDF_ACCEPTANCE_PASS_USER_CONFIRMED",
+  "productId": "10813121-1ffa-4c94-91d4-82b2a9ee6757",
+  "expectedOrganizationDisplayName": "SYNTHETIC — Subscription commercial acceptance",
+  "organizationIdSource": "SCOPED_PRODUCT_JOIN_NOT_PREVIOUS_FIXTURE",
+  "userReportedDocument": "Izjava o sukladnosti",
+  "userObservedDate": "2026-10-20",
+  "manualEditorAccess": "USER_REPORTED_NOT_SERVER_SESSION_PROOF",
+  "operatorBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-01-READONLY-PDF-TRIAGE.sh",
+  "maximumRuns": 1,
+  "automaticRetry": false,
+  "databaseAccess": "ONE_REPEATABLE_READ_READ_ONLY_STAGING_SNAPSHOT",
+  "candidateAssociationLimit": 8,
+  "terminalAuditLimitPerDocument": 6,
+  "currentReaderRuns": 1,
+  "readerSha256": "877c9bed25e195479d28dcad7e5ff506798a09b6b2edfe93c92691e228f97e62",
+  "qpdfClamdChecks": "SYSTEMCTL_PROPERTIES_ONLY_NO_SOCKET_CONNECTION_OR_PROCESS_START",
+  "historicalCause": "SAVED_SIGNATURES_UNTRUSTED_WITH_MATCHING_TERMINAL_AUDIT_DEEPER_HEALTH_REASON_NOT_RECORDED",
+  "currentHealth": "SEPARATE_POINT_IN_TIME_NOT_HISTORICAL_PROOF",
+  "diagnosticExecuted": true,
+  "VPSAccess": false,
+  "DBStorageWrites": 0,
+  "newScanCalls": 0,
+  "authCalls": 0,
+  "serviceChanges": true,
+  "testsBuildOrBackupAcceptanceRepeated": false,
+  "AUTOMATIC_STARTUP": "PASS",
+  "FULL_SERVICE_RECOVERY": "NOT_PROVEN",
+  "verification": {
+    "pythonPayloadSyntax": "PASS_AST_PARSE_ONLY",
+    "links": "PASS",
+    "whitespace": "PASS",
+    "applicationTestsBuild": "NOT_RUN",
+    "shellSyntax": "PASS_BASH_N_ONLY"
+  },
+  "files": [
+    {
+      "path": "codex/STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE.md",
+      "bytes": 111230,
+      "sha256": "cb7c9ba815f3ca2d332030a3694a95ae7f5d4453b088a4c666f29268143405f8"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-01-READONLY-PDF-TRIAGE.sh",
+      "bytes": 10061,
+      "sha256": "2ceb5924fcc5ce8618f543cf6082c34498e752f59ce90b44e208b259da78eeb0"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-01-readonly-result.json",
+      "bytes": 10610,
+      "sha256": "6372d08453fc9b14c8820f2a41ad99ce8e2005a3088b2f9733667dc58b1e5190"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-02-existing-producer-report.json",
+      "bytes": 595,
+      "sha256": "c2136ee9af79a44d08b689540015341fd1a5cffc5bcbc8284519b1278405032f"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-02-EXISTING-PRODUCER-REPORT.sh",
+      "bytes": 6031,
+      "sha256": "044d6dcb5ca2b9c467c586dae165070d2696b33b347ae731b72f755e20d02744"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/conditional-lock-release.py",
+      "bytes": 22273,
+      "sha256": "92c739870e077d7e6998e583176bf188103dca3c6a5646c5437100e51b177322"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-03-CONDITIONAL-EMPTY-LOCK-RELEASE.sh",
+      "bytes": 14844,
+      "sha256": "291758bf6cc6c2ea2adb388881e028adc2fb16bc33e7db37a1b5dbede28bc7c2"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-03-entrypoint-stop-no-timer-change.json",
+      "bytes": 779,
+      "sha256": "7624119a4ddad61a1161f43f832f4707593701a69d30df8e59c1c1dea00c9660"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-04-STRUCTURED-PRODUCER-EXECSTART.sh",
+      "bytes": 5352,
+      "sha256": "c34359e04fa255d70c31620fdf396304fd9aefdf6d0e18bfdf087488928162bd"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-04-structured-execstart-env-wrapper.json",
+      "bytes": 1769,
+      "sha256": "18481c0e2d2325938148a97111a774e71f6e98402cd5f4e6a675ad9c6067a5ec"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-05-PRIVATE-ENV-LAUNCH-CONTRACT.sh",
+      "bytes": 9802,
+      "sha256": "2ce47c1c9bb1de6c014fbcd04fdaaf9676337fda152b6335ed78f180f11f5f1e"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-05-private-env-contract.json",
+      "bytes": 2530,
+      "sha256": "bea8b6664fe6e01cb0f3d12133fbd6b05bf4bad1b90ed14917066b0080549b27"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/conditional-lock-release-env-candidate.py",
+      "bytes": 25702,
+      "sha256": "c6d2d1b153920872aba24e17a47fa26ec601e41cf717a7dad957f2dd57af3a13"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/env-launch-guard-candidate.diff",
+      "bytes": 4582,
+      "sha256": "079638b1515fe974cc7ef1496377d9928def4ce15b9b902e74364b8acbe51ab4"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-06-ENV-CONTRACT-LOCK-CONTINUATION-CANDIDATE.sh",
+      "bytes": 18934,
+      "sha256": "9178650ecb5f7579d141f4e9a3ccedfb6208510b3175cc5dd243353fecc112bb"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-06-process-guard-stop-partial-closure.json",
+      "bytes": 1818,
+      "sha256": "f8bb553c72288fcaad6f2f8a3ac6854ff441cf0ee9ebe0e443d3ce2f8720b5b8"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-07-PENDING-CLOSURE-PROCESS-IDENTIFICATION.sh",
+      "bytes": 10148,
+      "sha256": "dad4c056a54cf37cc1d29f59f7f02f22122c8e8398d088e91ade49b6c4ae0be9"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-07-current-process-identities.json",
+      "bytes": 8322,
+      "sha256": "a2b79eedf5b3ccb379982ff6511b1bd63625003e1cb4f5626a63db84533eecb8"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/producer-timer-closure-only.py",
+      "bytes": 24033,
+      "sha256": "acd74b41720bb59a1bd22a896a310fa70b3f4ba182fef6de1f623acf54f9562b"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-08-CLOSURE-ONLY-TIMER-RETURN.sh",
+      "bytes": 12245,
+      "sha256": "23ae0c49313503002b02fdda2d71b954c3959f785141571da20bbc3394b9cc81"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-08-timer-restored-natural-cycle-busy.json",
+      "bytes": 1669,
+      "sha256": "f1326e2145998c41d001a146fc4bb1e2e3c197f0fb78dba0aea25244c09d6c3d"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/precise-owner-lock-release.py",
+      "bytes": 38135,
+      "sha256": "2cac1aee2fdc2bd12a72fa3a59c8a9c0d38ed239a8da5ce32b0cabcab5338b5b"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-09-PRECISE-OWNER-CONDITIONAL-LOCK-RELEASE.sh",
+      "bytes": 21155,
+      "sha256": "05e01426f14dcf01a758254ff1decec157e8bc4954ad633882c176f6e5f72ad0"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/precise-owner-local.diff",
+      "bytes": 23365,
+      "sha256": "a081ecfe0195fccffd2a45c8bcece24ce9e921d1f14c21817bd783455a02196b"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/check_precise_owner_local.py",
+      "bytes": 3271,
+      "sha256": "c53d34eba57d203880686a477cc3dcb06428b9ca1280bc6ede34995e08ab5f4a"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/precise-owner-local-proof.json",
+      "bytes": 499,
+      "sha256": "ef72fe714f317925805dabd134635aa5a251a59f78e70bdf0d8fc3d5fe8dfd28"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-09-lock-removed-timer-restored-updater-untrusted.json",
+      "bytes": 3117,
+      "sha256": "562ce7c92ce3b7d5f774d9e660cbd36653b3d3c7be8a154056eee4458d901803"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-10-UPDATER-CONTINUITY-RECOVERY-READONLY.sh",
+      "bytes": 20445,
+      "sha256": "46d1c10747d8ce6389b5c650bc16493f0412f23b3c0e8fb2fcdf8da4954e232a"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/updater-continuity-local-review.json",
+      "bytes": 2956,
+      "sha256": "da182a74796f81844090116e012afbdbad6e1afbd026b162ed33ae8b3053e3ab"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/existing-recovery-exact-pin-history.diff",
+      "bytes": 266,
+      "sha256": "1d11a7c50f5243e7d8257d115943bc99711cb6dac6732630bda37f18eafd05bc"
+    },
+    {
+      "path": "codex/DOCUMENT_SIGNATURE_HEALTH_POST_RESTART_RECOVERY.md",
+      "bytes": 32662,
+      "sha256": "2b40d17791c88e5bb008200c17999cd2755d54ab5d7bcf7b241bfd85c7cbb25a"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-10-updater-continuity-recovery-readonly.json",
+      "bytes": 12544,
+      "sha256": "61d4100cfd99e25458adef577b171c8aacd0d37e96b2a35775d7a721d60c9b76"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-11-EXISTING-CONTINUITY-RECOVERY.sh",
+      "bytes": 9570,
+      "sha256": "2fbb4e530fa9a9997cb56a3e6f6f2c4539c73bbf3d13e6d6f81dcff0984de398"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/recovery-11-stoppost-source.py.txt",
+      "bytes": 1804,
+      "sha256": "907e70ef1550543c7fcf191a4c6f986e824238c68a797cd76de504455c0e4ccc"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-12-EXPLICIT-ROLLBACK-ONLY-IF-APPROVED.sh",
+      "bytes": 4818,
+      "sha256": "d5e1326343b60fccd8a6dca63b3e7d32437a5aeaa8c0df9570d3f22f19342012"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/recovery-12-stoppost-source.py.txt",
+      "bytes": 1958,
+      "sha256": "8ca7f6552eba4d6db61964643131ae3c06b20e3665b2128ccee657e24bb164f3"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/continuity-recovery-approval-manifest.json",
+      "bytes": 2606,
+      "sha256": "e183db9acc5f0cb7bfc58c288cf1b736e7ab62f95f98e6cd57885fa3e4b86220"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-11-continuity-recovery-result.json",
+      "bytes": 2101,
+      "sha256": "0c76a724e09afec21a20b47d53f4856522cdaf74a5819f9dfda97030562a60ab"
+    },
+    {
+      "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/user-12-ui-confirmation.json",
+      "bytes": 1046,
+      "sha256": "665335be45bdd0f5e3276eb35b49a7748191097e109c9aedc23e92eea41c0bb9"
+    }
+  ],
+  "selfHash": "EXCLUDED_TO_AVOID_RECURSION",
+  "executionActor": "OPERATOR_ONLY_NO_AGENT_VPS_ACCESS",
+  "operatorEvidence": {
+    "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-01-readonly-result.json",
+    "source": "USER_SUPPLIED_JSON",
+    "observedUTC": "2026-10-20T16:14:12.347538+00:00",
+    "runsReported": 1
+  },
+  "finding": {
+    "organizationId": "ffe171d1-b6a6-43d5-83bb-890e2fa23c9f",
+    "documentId": "4cf09f57-bddd-4073-b2ea-cb643f70de41",
+    "associationCount": 3,
+    "distinctDocumentCount": 1,
+    "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+    "failureCode": "SIGNATURES_UNTRUSTED",
+    "terminalAudit": "3c6d1a24-5f67-4ecd-afa2-d0a0b6124be2",
+    "terminalPath": "SCAN_FINALIZE",
+    "downloadBlocked": "EXPECTED_FAIL_CLOSED_ERROR_NOT_CLEAN",
+    "malwareDetected": "NOT_PROVEN",
+    "scanHealthBranchAndInnerReason": "NOT_RECORDED",
+    "currentReaderAccepted": false,
+    "currentProducer": "FAILED_EXIT_1",
+    "currentHealthIsHistoricalCauseProof": false,
+    "recommendedNextAction": "ONE_OPERATOR_READONLY10_RESULT_THEN_FINALIZE_EXISTING_RECOVERY_APPROVAL_PACKAGE_OR_ONE_CONCRETE_BLOCKER",
+    "recommendationExecuted": false
+  },
+  "producerReportDiagnostic": {
+    "operatorBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-02-EXISTING-PRODUCER-REPORT.sh",
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-02-existing-producer-report.json",
+    "runsReported": 1,
+    "invocationId": "c2e7fae26fd04da4935ff4d79fe9352c",
+    "report": {
+      "timestamp": "2026-10-20T16:21:55.282823+00:00",
+      "result": "BUSY",
+      "phase": "ACQUIRE",
+      "reason": null,
+      "durationMs": 0.8007139999999993
+    },
+    "proven": "CONCRETE_INVOCATION_RETURNED_BUSY_BEFORE_PUBLICATION_AND_CLI_EXITED_1",
+    "sourceMappedCause": "ACQUIRE_FALSE_EEXIST_ON_DIRECTORY_LOCK_PATH",
+    "lockHolderTypeAndStaleness": "NOT_RECORDED",
+    "causalLinkToEarlierPDFOrReader": "NOT_PROVEN_BY_LATER_REPORT",
+    "priorInterventionCause": "NOT_RECORDED_DO_NOT_ATTRIBUTE",
+    "recommendation": "SEPARATELY_AUTHORIZE_ONE_GUARDED_STALE_EMPTY_DIRECTORY_LOCK_RELEASE_ONLY_IF_INACTIVE_PRODUCER_AND_NO_RACE_PROVEN",
+    "recommendationExecuted": false,
+    "futureFunctionalVerification": "APPLICATION_UI_NO_NEW_TERMINAL_ACCEPTANCE_OR_HARNESS"
+  },
+  "conditionalLockRelease": {
+    "scope": "ONE_EXACT_EMPTY_ABANDONED_DIRECTORY_RMDIR_WITH_GUARDED_TIMER_COORDINATION",
+    "authorized": true,
+    "operatorBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-03-CONDITIONAL-EMPTY-LOCK-RELEASE.sh",
+    "workerSource": "codex/evidence/staging-reported-pdf-scan-failure-20261020/conditional-lock-release.py",
+    "operationDirectory": "/var/lib/passvero-signature-lock-release-20261020-01",
+    "exactLock": "/var/lib/passvero-signature-health/health.json.lock",
+    "executed": true,
+    "removalPerformed": false,
+    "exclusiveOperatorWindowRequired": true,
+    "rootLaunchFence": "EXISTING_RECOVERY_FLOCK_AND_TIMER_PROCESS_GATES_NO_GLOBAL_ROOT_EXEC_BLOCK",
+    "noConcurrentAdminActionsRequired": true,
+    "processAbsence": "UNIT_PLUS_STABLE_PROC_IDENTITY_AND_FAIL_CLOSED_UNKNOWN_ROOT_INTERPRETERS",
+    "closure": "NO_TIMER_CHANGE_STARTED",
+    "naturalCycleMaximumObserved": 1,
+    "manualProducerRuns": 0,
+    "scanCalls": 0,
+    "existingHealthCounterHistoryChangedDirectly": false,
+    "runtimeProof": "STOP_PRODUCER_ENTRYPOINT_DRIFT_BEFORE_BASELINE_PAUSE_OR_RMDIR",
+    "localVerification": "AST_SHELL_SYNTAX_PAYLOAD_SCOPE_LINKS_WHITESPACE_ONLY_NO_TEST_MATRIX",
+    "executionActor": "OPERATOR_ONLY",
+    "abandonmentConfirmed": false,
+    "timerChanged": false,
+    "pending": [],
+    "scheduledCycle": "NOT_OBSERVED_OPERATION_STOPPED",
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-03-entrypoint-stop-no-timer-change.json",
+    "attemptClosed": true,
+    "retryAllowed": false,
+    "entrypointFinding": {
+      "expectedExecutable": "/usr/bin/node",
+      "actualExecStart": "NOT_RECORDED",
+      "semanticVsFormattingMismatch": "NOT_DETERMINED",
+      "actualArtifactOrConfigurationDrift": "NOT_PROVEN",
+      "nextRecommendation": "ONE_STRUCTURED_EXECSTART_READONLY_IDENTITY_REVIEW_NOT_EXECUTED"
+    }
+  },
+  "structuredExecStartDisposition": {
+    "status": "STOP_REAL_LAUNCHER_MISMATCH_AND_REDACTED_ARGUMENTS",
+    "block": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-04-STRUCTURED-PRODUCER-EXECSTART.sh",
+    "expectedExecutable": "/usr/bin/node",
+    "expectedArgv": [
+      "/usr/bin/node",
+      "/usr/local/libexec/passvero-signature-health.cjs",
+      "--config",
+      "/etc/passvero-signature-health.json"
+    ],
+    "expectedEntryCount": 1,
+    "expectationProvenance": "EXISTING_LOCAL_GUARD_NOT_INDEPENDENTLY_SAVED_INSTALLED_ARGV",
+    "observed": {
+      "entryCount": 1,
+      "entries": [
+        {
+          "index": 0,
+          "executable": "/usr/bin/env",
+          "argv": [
+            "/usr/bin/env",
+            "<REDACTED_UNREVIEWED_ARGUMENT>",
+            "<REDACTED_UNREVIEWED_ARGUMENT>",
+            "<REDACTED_UNREVIEWED_ARGUMENT>",
+            "/usr/bin/node",
+            "/usr/local/libexec/passvero-signature-health.cjs",
+            "--config",
+            "/etc/passvero-signature-health.json"
+          ],
+          "ignoreFailure": false,
+          "redactedArgumentIndexes": [
+            1,
+            2,
+            3
+          ],
+          "executableRedacted": false
+        }
+      ]
+    },
+    "transport": "BUSCTL_TYPED_JSON_DBUS_EXECSTART_A_SASBTTTTUII",
+    "redaction": "UNREVIEWED_ARGUMENTS_REDACTED_COMPARISON_NOT_CONFIRMED",
+    "executed": true,
+    "localGuardCorrectionImplemented": false,
+    "oldOperationReopened": false,
+    "VPS_MUTATIONS": "NO",
+    "LOCK_REMOVAL": "NOT_PERFORMED",
+    "PRODUCER_MANUAL_RUN": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "NEW_WINDOW_SCHEDULED": "NO",
+    "executionActor": "OPERATOR_ONLY",
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-04-structured-execstart-env-wrapper.json",
+    "loadedUnit": {
+      "Id": "passvero-signature-health.service",
+      "FragmentPath": "/etc/systemd/system/passvero-signature-health.service",
+      "DropInPaths": []
+    },
+    "classification": "EXPECTED_DIRECT_NODE_VERSUS_OBSERVED_ENV_WRAPPER_NOT_FORMATTING_ONLY",
+    "actualServiceChangeOverTime": "NOT_PROVEN_NO_PRIOR_INSTALLED_ARGV",
+    "redactedArguments": "NOT_CONFIRMED_DO_NOT_INFER_VALUES",
+    "localGuardCorrectionPrepared": false,
+    "updatedLockPayloadPrepared": false,
+    "followupBlockPrepared": false,
+    "nextAction": "REVIEW_COMPLETE_EXISTING_ENV_LAUNCH_CONTRACT_ONLY_WITH_SECRET_SAFE_PROVENANCE_NO_AUTOMATIC_ALLOWLIST_EXPANSION"
+  },
+  "envLaunchContractReview": {
+    "task": "SIGNATURE_PRODUCER_ENV_LAUNCH_CONTRACT_AND_LOCK_CONTINUATION",
+    "status": "CURRENT_PROTECTED_CONTRACT_MATCH_LOCAL_CANDIDATE_ONLY",
+    "operatorBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-05-PRIVATE-ENV-LAUNCH-CONTRACT.sh",
+    "executed": true,
+    "localSourcesReviewed": [
+      "scripts/recover-document-signature-health.py",
+      "scripts/produce-document-signature-health.ts",
+      "src/infrastructure/documents/signature-health-producer-io.ts",
+      "codex/evidence/signature-recovery/release-alignment-source-manifest.json",
+      "codex/evidence/signature-recovery/release-alignment-recovery-result.json",
+      "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-04-structured-execstart-env-wrapper.json"
+    ],
+    "confirmed": [
+      "ONE_ENV_EXECSTART_EIGHT_ORDERED_ARGS_IGNORE_FAILURE_FALSE",
+      "EXACT_MINUS_I_PATH_LANG_POSITIONS",
+      "COMPLETE_LOADED_ARGV_MATCHES_PROTECTED_CURRENT_DECLARATION_PRIVATELY",
+      "PRODUCER_BUNDLE_PIN_MATCH"
+    ],
+    "unverified": [
+      "ORIGINAL_INSTALLER_APPROVAL_AND_CHANGE_HISTORY"
+    ],
+    "privateComparisonSources": [
+      "EXACT_PROTECTED_CURRENT_UNIT_FRAGMENT_DECLARATION",
+      "PRODUCER_CONFIG_TIMEZONE",
+      "EXISTING_REVIEWED_RECOVERY_RUN_NONSECRET_INTENT"
+    ],
+    "sourceTrustDistinction": "INSTALLED_DECLARATION_NOT_ORIGINAL_HISTORICAL_APPROVAL",
+    "individualSecretValuesOrHashesExposed": false,
+    "guardDiffPrepared": true,
+    "lockContinuationPrepared": true,
+    "oldAttemptReopened": false,
+    "VPS_MUTATIONS": "NO",
+    "LOCK_REMOVAL": "NOT_PERFORMED",
+    "PRODUCER_MANUAL_RUN": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "NEW_WINDOW_SCHEDULED": "NO",
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-05-private-env-contract.json",
+    "observedUTC": "2026-10-20T16:52:19.707629+00:00",
+    "rawDiagnosticDisposition": "MISMATCH_OR_UNVERIFIED_STOP_BEFORE_LOCK_CONTINUATION",
+    "localDispositionBasis": "RECOVERY_RUN_PATH_COMPARISON_IS_DIFFERENT_PROGRAM_CONTEXT_NOT_PRODUCER_SERVICE_AUTHORITY_CURRENT_DECLARATION_IS_PRIVATE_MATCH",
+    "mismatch": {
+      "field": "PATH",
+      "source": "SEPARATE_RECOVERY_HELPER_SUBPROCESS_ENVIRONMENT",
+      "producerInstalledVsDeclared": "MATCH",
+      "originalProducerIntentInference": "NOT_MADE"
+    },
+    "currentProtectedSource": {
+      "path": "/etc/systemd/system/passvero-signature-health.service",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o644",
+      "wholeUnitSha256": "5becee91793921e6bae866b3c2f9523e4dfa2208b9709c2413191f38b7c31afe",
+      "authorityScope": "EXACT_CURRENT_INSTALLED_DECLARATION_NOT_HISTORICAL_INSTALLER_APPROVAL"
+    },
+    "nextAction": "SEPARATELY_APPROVED_OPERATOR_EXECUTION_OF_ONE_GUARDED_CANDIDATE06_NO_GENERAL_DIAGNOSTICS_OR_NEW_WINDOW"
+  },
+  "lockContinuationCandidate": {
+    "status": "EXECUTED_ONCE_STOP_PROCESS_GUARD_PARTIAL_TIMER_RESTORE",
+    "label": "VPS TERMINAL / PENDING_OPERATOR_COMMAND",
+    "source": "codex/evidence/staging-reported-pdf-scan-failure-20261020/conditional-lock-release-env-candidate.py",
+    "sourceSha256": "c6d2d1b153920872aba24e17a47fa26ec601e41cf717a7dad957f2dd57af3a13",
+    "reviewDiff": "codex/evidence/staging-reported-pdf-scan-failure-20261020/env-launch-guard-candidate.diff",
+    "block": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-06-ENV-CONTRACT-LOCK-CONTINUATION-CANDIDATE.sh",
+    "blockSha256": "9178650ecb5f7579d141f4e9a3ccedfb6208510b3175cc5dd243353fecc112bb",
+    "historicalSourceSha256": "92c739870e077d7e6998e583176bf188103dca3c6a5646c5437100e51b177322",
+    "historicalDirectory": "/var/lib/passvero-signature-lock-release-20261020-01",
+    "additiveEvidenceDirectory": "/var/lib/passvero-signature-lock-release-20261020-01/env-launch-continuation",
+    "transientUnit": "passvero-signature-lock-release-20261020-01-env-continuation",
+    "priorClosedAttemptReopened": false,
+    "originalHelperBlockAndEvidencePreserved": true,
+    "executionAuthorizedByThisPreparation": false,
+    "executed": true,
+    "privateArgumentValueSource": "EXACT_HASH_PINNED_ROOT_OWNED_UNIT_READ_PRIVATELY_NOT_EMBEDDED",
+    "fullArgvEqualityRequired": true,
+    "unknownLauncherOrArgumentAllowed": false,
+    "allOriginalWorkerFunctionsUnchangedExceptContracts": true,
+    "lockAbandonmentConfirmed": false,
+    "lockRemoved": false,
+    "exclusiveOperatorWindowRequired": true,
+    "rootConcurrencyFenceLimitation": "TIMER_AND_RECOVERY_FLOCK_DO_NOT_FENCE_ARBITRARY_PARALLEL_ROOT_EXEC_STOP_IF_EXCLUSIVITY_UNRELIABLE",
+    "closure": "PARTIAL_TIMER_RESTORE_REQUIRES_OPERATOR_REVIEW",
+    "futureNaturalProducerCyclesMaximum": 1,
+    "futureManualProducerRuns": 0,
+    "futureUiVerification": "USER_ONLY_SCAN_STATUS_CLEAN_DOWNLOAD_NOT_TERMINAL",
+    "localVerification": {
+      "sourceAndOuterPayloadSyntax": "PASS_AST_ONLY",
+      "shellSyntax": "PASS_BASH_N_ONLY",
+      "embeddedPayloadAndSourcePin": "PASS_EXACT",
+      "reviewDiff": "PASS_ONLY_LAUNCH_GUARD_PIN_EVIDENCE_PATH",
+      "manifestFiles": "PASS",
+      "modifiedLinks": "PASS",
+      "whitespace": "PASS",
+      "tests": "NOT_RUN",
+      "build": "NOT_RUN",
+      "liveProbe": "NOT_RUN"
+    },
+    "executionAuthorization": "USER_EXPLICIT_ONE_TIME_OPERATOR_EXECUTION",
+    "executionEvidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-06-process-guard-stop-partial-closure.json",
+    "executionActor": "OPERATOR_ONLY",
+    "pauseVerifiedBySourcePath": true,
+    "timerRestored": false,
+    "finalTimerState": "NOT_SEPARATELY_RECORDED_TREAT_AS_PAUSED_PENDING_SAFE_CLOSURE",
+    "pending": [
+      "PRODUCER_RECOVERY_OR_UNREVIEWED_ROOT_INTERPRETER_ACTIVE"
+    ],
+    "failureCheckId": "LOCK_RELEASE_BODY",
+    "failureReason": "PRODUCER_RECOVERY_OR_UNREVIEWED_ROOT_INTERPRETER_ACTIVE",
+    "matchedProcessIdentity": "NOT_RECORDED",
+    "matchedProcessClassification": "NOT_RECORDED",
+    "scheduledCycle": "NOT_OBSERVED_OPERATION_STOPPED",
+    "readerResult": "NOT_RUN",
+    "retryAllowed": false,
+    "latestReadOnlyTimerObservation": {
+      "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-07-current-process-identities.json",
+      "observedUTC": "2026-10-21T11:44:36.074205+00:00",
+      "active": "inactive",
+      "enabled": "disabled",
+      "pendingJobId": 0
+    }
+  },
+  "pendingClosureProcessIdentification": {
+    "task": "SIGNATURE_PRODUCER_PENDING_CLOSURE_PROCESS_IDENTIFICATION",
+    "status": "READ_COMPLETE_THREE_OTHER_SYSTEM_SERVICE_ROOT_INTERPRETERS_BLOCK_EXISTING_CLOSURE",
+    "block": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-07-PENDING-CLOSURE-PROCESS-IDENTIFICATION.sh",
+    "blockSha256": "dad4c056a54cf37cc1d29f59f7f02f22122c8e8398d088e91ade49b6c4ae0be9",
+    "guardSource": "codex/evidence/staging-reported-pdf-scan-failure-20261020/conditional-lock-release-env-candidate.py",
+    "guardSourceSha256": "c6d2d1b153920872aba24e17a47fa26ec601e41cf717a7dad957f2dd57af3a13",
+    "maximumRuns": 1,
+    "maximumProcEntries": 4096,
+    "deadlineSeconds": 25,
+    "maximumMatches": 64,
+    "maximumExitedRecords": 64,
+    "diagnosticSelf": "EXACT_IDENTITY_EXPLICITLY_LISTED_IF_PREDICATE_MATCH_NOT_SILENTLY_EXCLUDED",
+    "processes": "ONE_BOUNDED_PROC_ENUMERATION_PRE_POST_IDENTITY_NOT_ATOMIC_SNAPSHOT",
+    "secretHandling": "FIXED_SAFE_ARGUMENT_ALLOWLIST_OTHER_VALUES_REDACTED_NO_ENVIRONMENT",
+    "systemdJobs": "TYPED_DBUS_UNIT_JOB_UO_READONLY",
+    "historicalBlockingIdentity": "NOT_RECORDED_NO_RETROACTIVE_ATTRIBUTION",
+    "currentIdentities": [
+      {
+        "pid": 1300,
+        "ppid": 1,
+        "uids": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "startTicks": "1104",
+        "executable": "/usr/bin/python3.12",
+        "cgroups": [
+          {
+            "path": "/system.slice/networkd-dispatcher.service",
+            "units": [
+              "networkd-dispatcher.service"
+            ]
+          }
+        ],
+        "classification": "UNREVIEWED_ROOT_INTERPRETER",
+        "originalGuardExclusion": null,
+        "wouldBlockOriginalGuardAtThisObservation": true
+      },
+      {
+        "pid": 1353,
+        "ppid": 1,
+        "uids": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "startTicks": "1158",
+        "executable": "/usr/bin/python3.12",
+        "cgroups": [
+          {
+            "path": "/system.slice/unattended-upgrades.service",
+            "units": [
+              "unattended-upgrades.service"
+            ]
+          }
+        ],
+        "classification": "UNREVIEWED_ROOT_INTERPRETER",
+        "originalGuardExclusion": null,
+        "wouldBlockOriginalGuardAtThisObservation": true
+      },
+      {
+        "pid": 172899,
+        "ppid": 1,
+        "uids": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "startTicks": "13295055",
+        "executable": "/usr/bin/python3.12",
+        "cgroups": [
+          {
+            "path": "/system.slice/fail2ban.service",
+            "units": [
+              "fail2ban.service"
+            ]
+          }
+        ],
+        "classification": "UNREVIEWED_ROOT_INTERPRETER",
+        "originalGuardExclusion": null,
+        "wouldBlockOriginalGuardAtThisObservation": true
+      },
+      {
+        "pid": 204632,
+        "ppid": 204631,
+        "uids": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "startTicks": "15945728",
+        "executable": "/usr/bin/python3.12",
+        "cgroups": [
+          {
+            "path": "/user.slice/user-1000.slice/session-346.scope",
+            "units": [
+              "session-346.scope"
+            ]
+          }
+        ],
+        "classification": "UNREVIEWED_ROOT_INTERPRETER",
+        "originalGuardExclusion": "SELF",
+        "wouldBlockOriginalGuardAtThisObservation": false
+      }
+    ],
+    "currentProducerTimerState": {
+      "passvero-signature-health.service": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Id": "passvero-signature-health.service",
+        "Triggers": "",
+        "TriggeredBy": "",
+        "LoadState": "loaded",
+        "ActiveState": "failed",
+        "SubState": "failed",
+        "UnitFileState": "static",
+        "pendingSystemdJob": {
+          "id": 0,
+          "objectPath": "/"
+        }
+      },
+      "passvero-signature-health.timer": {
+        "Id": "passvero-signature-health.timer",
+        "Triggers": "passvero-signature-health.service",
+        "TriggeredBy": "",
+        "LoadState": "loaded",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled",
+        "pendingSystemdJob": {
+          "id": 0,
+          "objectPath": "/"
+        }
+      }
+    },
+    "executed": true,
+    "closureBlockPrepared": false,
+    "closureExecutionRequiresSeparateApproval": true,
+    "timerResumeMayTriggerNaturalProducerImmediately": true,
+    "guardChanged": false,
+    "testsRepeated": false,
+    "buildRun": false,
+    "verification": "LOCAL_PAYLOAD_REFERENCE_PIN_MANIFEST_LINK_WHITESPACE_ONLY",
+    "PROCESS_KILL": "NO",
+    "LOCK_REMOVAL": "NOT_PERFORMED",
+    "SERVICE_TIMER_MUTATIONS": "NO",
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "TIMER_RESTORE": "PARTIAL_PENDING",
+    "executionActor": "OPERATOR_ONLY",
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-07-current-process-identities.json",
+    "observedUTC": "2026-10-21T11:44:36.074205+00:00",
+    "currentBlockingMatchCount": 3,
+    "knownProducerRecoveryPredicateMatches": 0,
+    "otherServiceArgumentOrMainPidContract": "NOT_INDEPENDENTLY_VERIFIED_REDACTED_ARGUMENTS",
+    "currentConclusion": "THREE_OS_SERVICE_CGROUP_ROOT_PYTHON_MATCHES_GENERIC_INTERPRETER_PREDICATE_NOT_LOCK_USE_PROOF",
+    "remainingBlocker": "EXISTING_CLOSURE_REJECTS_THREE_CURRENT_ROOT_INTERPRETERS_GUARD_OR_ALLOWLIST_CHANGE_FORBIDDEN_IN_THIS_TASK",
+    "nextAction": "SEPARATELY_AUTHORIZE_NARROW_CLOSURE_ONLY_CONTRACT_CORRECTION_FOR_BASELINE_RESTORE_NOT_LOCK_REMOVAL_OR_NEW_DIAGNOSTIC_SERIES"
+  },
+  "closureOnlyTimerReturn": {
+    "status": "EXECUTED_TIMER_BASELINE_RESTORED_NATURAL_CYCLE_BUSY_NO_SECOND_INTERVENTION",
+    "source": "codex/evidence/staging-reported-pdf-scan-failure-20261020/producer-timer-closure-only.py",
+    "sourceSha256": "acd74b41720bb59a1bd22a896a310fa70b3f4ba182fef6de1f623acf54f9562b",
+    "block": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-08-CLOSURE-ONLY-TIMER-RETURN.sh",
+    "blockSha256": "23ae0c49313503002b02fdda2d71b954c3959f785141571da20bbc3394b9cc81",
+    "label": "VPS TERMINAL / PENDING_OPERATOR_COMMAND",
+    "executed": true,
+    "preparationAuthorized": true,
+    "automaticRetry": false,
+    "timer": "passvero-signature-health.timer",
+    "targetBaseline": {
+      "enabled": "enabled",
+      "active": "active"
+    },
+    "onlyServiceTimerMutation": "systemctl enable --now passvero-signature-health.timer",
+    "mayImmediatelyTriggerNaturalProducer": true,
+    "rmdirProcessGuardChanged": false,
+    "generalRootInterpreterAllowlistAdded": false,
+    "closureOnlyProcessScope": "KNOWN_PRODUCER_RECOVERY_MAINTENANCE_MARKERS_UNIT_PIDS_JOBS_AND_RECOVERY_FLOCK_RECORDS_NOT_GENERIC_ROOT_INTERPRETER_BAN",
+    "systemServicesStopped": false,
+    "lockFilesystemOperations": "NONE",
+    "expectedConfigSha256": "28df856a3a8516f8c33d35bc652b5358dd0dcdd49d185be01a64eb1264a22593",
+    "expectedTimerUnitSha256": "5db45222db3785a90940b52f8480e2eeb1b912083c111aca18e70ff0075902f4",
+    "expectedServiceUnitSha256": "5becee91793921e6bae866b3c2f9523e4dfa2208b9709c2413191f38b7c31afe",
+    "exclusiveOperatorCoordinationRequired": true,
+    "arbitraryRootExecGloballyFenced": false,
+    "futureEvidenceDirectory": "/var/lib/passvero-signature-lock-release-20261020-01/env-launch-continuation/timer-baseline-closure-only",
+    "historicalPartialEvidenceOverwritten": false,
+    "futureNaturalCycleObservationsMaximum": 1,
+    "naturalCycleObservationSeconds": 35,
+    "BUSYDisposition": "REPORT_NO_SECOND_INTERVENTION",
+    "reader": "NOT_RUN_IN_THIS_CLOSURE_ONLY_SCOPE",
+    "independentFinalReadback": "FINALLY_READ_ONLY_EVEN_ON_EXCEPTION_NOT_SIGKILL_OR_HOST_FAILURE_GUARANTEE",
+    "PASSRequiresActualActiveEnabledReadback": true,
+    "verification": "PASS_STATIC_PAYLOAD_EXACT_PROTECTED_FUNCTIONS_REFERENCE_HASH_MANIFEST_WHITESPACE_NO_TEST_MATRIX",
+    "PROCESS_KILL": "NO",
+    "LOCK_REMOVAL": "NOT_PERFORMED",
+    "SERVICE_TIMER_MUTATIONS": "PERFORMED_BY_OPERATOR_TIMER_BASELINE_RETURN_ONLY",
+    "PRODUCER_MANUAL_RUN": "NO",
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "TIMER_RESTORE": "PASS",
+    "executionActor": "OPERATOR_USER_SUPPLIED_OUTPUT",
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-08-timer-restored-natural-cycle-busy.json",
+    "timerReadback": {
+      "Id": "passvero-signature-health.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled",
+      "Triggers": "passvero-signature-health.service"
+    },
+    "finalTimerReadback": {
+      "Id": "passvero-signature-health.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "Triggers": "passvero-signature-health.service"
+    },
+    "scheduledCycle": {
+      "timestampUs": "1792583617582900",
+      "invocationId": "2bc2556429a34f5998904577f3a7ae4f",
+      "result": "BUSY",
+      "reason": null,
+      "phase": "ACQUIRE",
+      "durationMs": 0.7159339999999901
+    },
+    "pendingTimerRestore": [],
+    "secondIntervention": false,
+    "lockAbandonmentConfirmed": false,
+    "newHealthPublication": false,
+    "newReaderAcceptance": "NOT_TESTED",
+    "historicalPartialRecordRewritten": false
+  },
+  "currentDisposition": {
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-09-lock-removed-timer-restored-updater-untrusted.json",
+    "lockAbandonment": "CONFIRMED_UNDER_EXCLUSIVE_OPERATOR_WINDOW_AND_KNOWN_LAUNCH_GATES",
+    "lockRemoval": "PERFORMED",
+    "removedIdentity": {
+      "device": 2049,
+      "inode": 2161968,
+      "mode": "0700",
+      "uid": 0,
+      "gid": 0,
+      "ctimeNs": 1791900359945693579,
+      "mtimeNs": 1791900359945693579,
+      "empty": true
+    },
+    "timerRestore": "PASS",
+    "timerReadback": {
+      "Id": "passvero-signature-health.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "Triggers": "passvero-signature-health.service"
+    },
+    "pendingTimerReturn": [],
+    "naturalCycle": {
+      "timestampUs": "1792584586803972",
+      "invocationId": "6ddfa4ae552d49c98b11afe13cadd5e1",
+      "result": "UNTRUSTED",
+      "reason": "EVIDENCE_CONTINUITY_REQUIRED",
+      "phase": "UPDATER",
+      "durationMs": 3732.5936580000002
+    },
+    "reader": {
+      "returnCode": 1,
+      "accepted": false
+    },
+    "healthRecovery": "NOT_PROVEN",
+    "updaterParserCategory": "EVIDENCE_CONTINUITY_REQUIRED",
+    "updaterParserSubcaseAndLine": "NOT_RECORDED",
+    "readerInnerReason": "NOT_RECORDED",
+    "uiProbeUnlocked": false,
+    "furtherIntervention": "NOT_PERFORMED_NOT_PREPARED",
+    "historicalPartialAndStops": "RETAINED_UNCHANGED"
+  },
+  "preciseOwnerConditionalRelease": {
+    "task": "SIGNATURE_HEALTH_PRECISE_OWNER_CHECK_AND_CONDITIONAL_LOCK_RELEASE",
+    "status": "EXECUTED_LOCK_REMOVED_TIMER_RESTORED_STOP_UPDATER_CONTINUITY_AND_READER_REJECTED",
+    "operatorBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-09-PRECISE-OWNER-CONDITIONAL-LOCK-RELEASE.sh",
+    "blockSha256": "05e01426f14dcf01a758254ff1decec157e8bc4954ad633882c176f6e5f72ad0",
+    "source": "codex/evidence/staging-reported-pdf-scan-failure-20261020/precise-owner-lock-release.py",
+    "sourceSha256": "2cac1aee2fdc2bd12a72fa3a59c8a9c0d38ed239a8da5ce32b0cabcab5338b5b",
+    "reviewDiff": "codex/evidence/staging-reported-pdf-scan-failure-20261020/precise-owner-local.diff",
+    "preparationAndScopedOperatorExecutionAuthorized": true,
+    "executed": true,
+    "executionActor": "OPERATOR_USER_SUPPLIED_JSON",
+    "operationDirectory": "/var/lib/passvero-signature-lock-release-20261020-01/precise-owner-release",
+    "transientUnit": "passvero-signature-lock-release-20261021-precise",
+    "processGuard": "EXACT_PRODUCER_EXEC_ARGV_KNOWN_RECOVERY_MAINTENANCE_REFERENCES_CGROUPS_AND_DESCENDANT_PROVENANCE",
+    "genericRootInterpreterBan": false,
+    "unrelatedSystemServiceAllowlist": false,
+    "selfControllerRunnerExemptions": "EXACT_PID_START_EXEC_UID_ARGV_AND_RUNNER_PARENT_IDENTITY_PUBLICLY_RECORDED",
+    "knownRecoveryCoordination": "EXISTING_EXCLUSIVE_RECOVERY_FLOCK_AND_RECORD_PHASE_GATES",
+    "scheduledProducerCoordination": "EXACT_TIMER_PAUSE_SERVICE_DRAIN_PIDS_AND_TYPED_PENDING_JOB_GATES",
+    "pendingJobs": "UNIT_JOB_UO_PLUS_MANAGER_LISTJOBS_A_USSSOO_WITH_ONE_OUTPUT_MESSAGE_ARRAY",
+    "manualProducerCoordination": "EXCLUSIVE_OPERATOR_WINDOW_REQUIRED_NO_PARALLEL_MANUAL_ROOT_ADMIN_LAUNCH",
+    "rawProducerSharesRecoveryFlock": false,
+    "globalArbitraryRootExecFence": false,
+    "stopIfExclusiveManualCoordinationCannotBeGuaranteed": true,
+    "newReadOnlyGuardValidatedBeforeTimerPause": true,
+    "serviceDrainSecondsMaximum": 20,
+    "rmdirCallsMaximum": 1,
+    "exactLock": "/var/lib/passvero-signature-health/health.json.lock",
+    "expectedInitialLockAndParentIdentitySource": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-06-process-guard-stop-partial-closure.json",
+    "expectedConfigUnitIdentitySource": "SAME_ACCEPTED06_AND_CLOSURE08_HASHES_NO_RUNTIME_REPIN",
+    "independentClosure": "EXECSTOPPOST_BASELINE_ONLY_NO_HEALTH_LOCK_ABSENCE_OR_RMDIR_SUCCESS_REQUIREMENT",
+    "closureTimerMayImmediatelyRunProducer": true,
+    "firstBodyBlockerAndClosureSeparate": true,
+    "newNaturalCycleMaximum": 1,
+    "naturalCycleObservationSeconds": 35,
+    "readerRunsMaximum": 1,
+    "readerIdentity": "EXISTING_PINNED_READER_EXISTING_STAGING_UID1001",
+    "failureDisposition": "STOP_NO_SECOND_RMDIR_NO_RETRY_NO_RECOVERY",
+    "localProof": "codex/evidence/staging-reported-pdf-scan-failure-20261020/precise-owner-local-proof.json",
+    "localProofCode": "codex/evidence/staging-reported-pdf-scan-failure-20261020/check_precise_owner_local.py",
+    "localProofRuns": 1,
+    "localProofScope": "SAVED07_FALSE_POSITIVE_PLUS_ONE_COMPOSITE_SYNTHETIC_PRODUCER_REFERENCE_LINEAGE_FIXTURE_PURE_AST_FUNCTIONS_ONLY",
+    "newLiveSystemdProcProof": "NOT_PROVEN_PRECONDITION_READS_INSIDE_AUTHORIZED_BLOCK_STOP_ON_UNSUPPORTED_DATA",
+    "verification": "PASS_NARROW_DIFF_AST_BASH_N_PAYLOAD_PIN_ARGV_PROTECTED_FUNCTIONS_MANIFEST_LINKS_WHITESPACE",
+    "LOCK_ABANDONMENT": "CONFIRMED",
+    "LOCK_REMOVAL": "PERFORMED",
+    "PRODUCER_MANUAL_RUN": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "lastAcceptedTimerRestore": "PASS_FROM_OPERATOR08_NOT_A_NEW09_OBSERVATION",
+    "newTimerClosure": {
+      "timerRestored": true,
+      "partial": false,
+      "pending": [],
+      "at": "2026-10-21T12:09:40.816098+00:00",
+      "closure": "PASS_TIMER_BASELINE_RESTORED",
+      "timerReadback": {
+        "Id": "passvero-signature-health.timer",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled",
+        "Triggers": "passvero-signature-health.service"
+      },
+      "timer": {
+        "enabled": "enabled",
+        "active": "active"
+      }
+    },
+    "newProducerCycle": {
+      "timestampUs": "1792584586803972",
+      "invocationId": "6ddfa4ae552d49c98b11afe13cadd5e1",
+      "result": "UNTRUSTED",
+      "reason": "EVIDENCE_CONTINUITY_REQUIRED",
+      "phase": "UPDATER",
+      "durationMs": 3732.5936580000002
+    },
+    "newReader": {
+      "returnCode": 1,
+      "accepted": false
+    },
+    "uiProbeUnlocked": false,
+    "evidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-09-lock-removed-timer-restored-updater-untrusted.json",
+    "TIMER_RESTORE": "PASS",
+    "maintenanceUnitReturnCode": 0,
+    "exactUpdaterParserBranch": "NOT_RECORDED",
+    "historicalLockCreator": "NOT_RECORDED",
+    "producerHealthAccepted": false,
+    "secondIntervention": false
+  },
+  "updaterContinuityRecoveryReview": {
+    "task": "SIGNATURE_UPDATER_CONTINUITY_AND_EXISTING_RECOVERY_DISPOSITION",
+    "status": "RECOVERY_COMPLETE_PENDING_USER_UI",
+    "readOnlyBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-10-UPDATER-CONTINUITY-RECOVERY-READONLY.sh",
+    "blockSha256": "46d1c10747d8ce6389b5c650bc16493f0412f23b3c0e8fb2fcdf8da4954e232a",
+    "localReview": "codex/evidence/staging-reported-pdf-scan-failure-20261020/updater-continuity-local-review.json",
+    "existingExactPinHistoryDiff": "codex/evidence/staging-reported-pdf-scan-failure-20261020/existing-recovery-exact-pin-history.diff",
+    "newRecoverySourceChangeRequiredLocally": false,
+    "newRuntimePinsChanged": false,
+    "installedHelperExpectedSha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+    "installedHelperReadOnlyPath": "/var/lib/passvero-auth-flow-continuation-20261020-01/recover-release-reviewed.py",
+    "diagnosticMaximumRuns": 1,
+    "diagnosticDeadlineSeconds": 40,
+    "diagnosticExecuted": true,
+    "sourceContinuitySubcase": "REPEATED_INITIALIZATION_BOUNDARY_CURRENT_RETAINED_BYTES_LINE_501",
+    "historicalInputHash": "NOT_RECORDED_NO_RETROACTIVE_EQUIVALENCE_CLAIM",
+    "readOnlyGuardEntry": "EXACT_PINNED_LINUXHOST_GUARD_ONLY_WITH_READONLY_SYSTEMCTL_HOOK",
+    "recoveryApplicability": "PASS_EXISTING_GUARDS_AT_OBSERVATION_RECHECK_AT_EXECUTION",
+    "fullMutativeApprovalPackageReady": true,
+    "pendingFacts": "SEPARATE_RECOVERY_APPROVAL_AND_IMMEDIATE_EXECUTION_GUARDS_NO_NEW_DIAGNOSTIC_SERIES",
+    "proposedAttemptId": "recovery-20261021-continuity-01",
+    "proposedAttemptCreated": false,
+    "existingPhaseLimitsSeconds": {
+      "producerDrain": 20,
+      "typeSimpleIdentity": 5,
+      "updater": 300,
+      "daemonReadiness": 120,
+      "scheduledAcceptance": 100
+    },
+    "lastReviewedRecoveryWrapper": {
+      "runtimeMaxSeconds": 540,
+      "timeoutStopSeconds": 20
+    },
+    "futureApprovalImpact": "EXISTING_PRODUCER_TIMER_FRESHCLAM_CLAMD_SOCKET_OLD_EPOCH_ARCHIVE_NEW_EPOCH_CONFIG_PATHS_OFFICIAL_CVD_DOWNLOAD",
+    "noCurrentPermissionForRecoveryMutation": false,
+    "newMaintenanceWindowScheduled": false,
+    "unchangedAcceptedTestsReused": true,
+    "testsBuildRepeated": false,
+    "verification": "PASS_NEW_BLOCK_STATIC_SYNTAX_INLINE_BINDINGS_37_MANIFEST_MEMBERS_9_LINKS_WHITESPACE_NO_TESTS_OR_LIVE_EXECUTION",
+    "RECOVERY_EXECUTED": "YES",
+    "LOCK_REMOVAL_REPEATED": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "AUTOMATIC_STARTUP": "PASS",
+    "FULL_SERVICE_RECOVERY": "NOT_PROVEN",
+    "operatorResult": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-10-updater-continuity-recovery-readonly.json",
+    "approvalManifest": "codex/evidence/staging-reported-pdf-scan-failure-20261020/continuity-recovery-approval-manifest.json",
+    "recoveryExecuted": true,
+    "executionResult": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-11-continuity-recovery-result.json"
+  },
+  "continuityRecoveryExecution": {
+    "operatorEvidence": "codex/evidence/staging-reported-pdf-scan-failure-20261020/operator-11-continuity-recovery-result.json",
+    "attempt": "recovery-20261021-continuity-01",
+    "result": "PASS_RECOVERY_PENDING_USER_UI",
+    "phase": "COMPLETE",
+    "unitReturnCode": 0,
+    "independentClosure": "PASS_COMPLETE_EXISTING_READER_ACCEPTED",
+    "closureFailure": null,
+    "reader": "ACCEPTED",
+    "sequences": [
+      145729,
+      145730,
+      145731
+    ],
+    "publicationSpanSeconds": 31.199,
+    "expiryDeltaMs": 60000,
+    "timer": "ACTIVE_WAITING_ENABLED",
+    "scannerUnits": "ACTIVE_RUNNING_ENABLED",
+    "historicalCause": "NOT_PROVEN_BY_NEW_EPOCH_SUCCESS",
+    "UI_PDF_ACCEPTANCE": "PASS_USER_CONFIRMED",
+    "agentVpsAccess": false,
+    "testsBuildRepeated": false,
+    "RECOVERY_EXECUTED": "YES",
+    "LOCK_REMOVAL_REPEATED": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "AUTOMATIC_STARTUP": "PASS",
+    "FULL_SERVICE_RECOVERY": "NOT_PROVEN"
+  },
+  "userUiConfirmation": {
+    "path": "codex/evidence/staging-reported-pdf-scan-failure-20261020/user-12-ui-confirmation.json",
+    "evidenceClass": "USER_CONFIRMED",
+    "date": "2026-10-21",
+    "notOperatorOrAutomatedProof": true,
+    "noNewRuntimeObservation": true,
+    "UI_PDF_ACCEPTANCE": "PASS_USER_CONFIRMED",
+    "exactScanStatus": "NOT_RECORDED",
+    "documentId": "NOT_RECORDED",
+    "byteChecksumComparison": "NOT_RECORDED"
+  }
+}

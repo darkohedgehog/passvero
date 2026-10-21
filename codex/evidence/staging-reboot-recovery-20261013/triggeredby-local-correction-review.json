@@ -1,0 +1,199 @@
+{
+  "status": "LOCAL_TRIGGEREDBY_GUARD_CORRECTION_COMPLETE",
+  "cause": {
+    "proven": "SAME_PRE_PAUSE_TRIGGEREDBY_EQUALITY_USED_AFTER_DISABLE_NOW_REJECTED_POST_PAUSE_STATE",
+    "evidence": [
+      "operator-03-quiesce-stop-review.json",
+      "operator-09-partial-closure-review.json",
+      "operator-13-abort-closure-accepted.json"
+    ],
+    "rawTriggeredByAtFailure": "NOT_CAPTURED",
+    "localReproduction": "OLD_QUIESCE_FAILS_UNREVIEWED_SENDING_TRIGGER_WITH_EMPTY_POST_PAUSE_RUNTIME_RELATION",
+    "liveSystemdProof": false
+  },
+  "guard": {
+    "staticConfiguration": "EXACT_EXISTING_SERVICE_TIMER_BYTES_NO_DROPINS",
+    "prePause": "LOADED_EXPECTED_IDS_PATHS_ACTIVE_WAITING_ENABLED_TIMER_EXACT_TARGET_AND_TRIGGER",
+    "postPause": "INACTIVE_DEAD_DISABLED_TIMER_STATIC_BINDING_UNCHANGED_RUNTIME_RELATION_EMPTY_OR_EXPECTED_ONLY",
+    "service": "INACTIVE_DEAD_STATIC_MAINPID_0_NO_OTHER_TRIGGERS",
+    "additionalPaths": "UNEXPECTED_RUNTIME_TRIGGERS_TARGETS_OR_DROPINS_STOP; ROOT_MANUAL_OR_EXTERNAL_LAUNCH_CANNOT_BE_EXCLUDED_BY_TRIGGEREDBY_ALONE",
+    "existingProcessJobsLocksAndSendingGate": "RETAINED"
+  },
+  "tests": {
+    "command": "python3 -I -B codex/evidence/staging-reboot-recovery-20261013/check-triggeredby-guard.py",
+    "count": 6,
+    "result": "PASS",
+    "doublesOnly": true,
+    "initialTestHarnessError": "RENAMED_UNITTEST_RUN_OVERRIDE_TO_COMMAND_DOUBLE_NO_EXTERNAL_CALL",
+    "red": "ORIGINAL_POST_PAUSE_GUARD_REJECTION_REPRODUCED",
+    "closureFunction": "AST_IDENTICAL_AND_TWO_REAL_CLOSE_FUNCTION_DOUBLE_CASES_PASS",
+    "syntaxAndSourceBindings": "13_AFFECTED_BLOCKS_PASS",
+    "applicationBuildOrBroadTests": "NOT_RUN"
+  },
+  "oldHelperSha256": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+  "newLocalHelperSha256": "472cb2edc9516b6e28edda0810faaa26fc6a0f6af3c418b19df588a623bdceec",
+  "installedHelper": "OLD_HISTORICAL_SHA_NOT_REPLACED",
+  "installedSourceManifestSha256": "9d165f83cecc87aa5a3cee557d36fc2c95f043f13bd32d345b5a4cef06eda622",
+  "localCandidateSourceManifestSha256": "a0ca795825ee1be073cb81548fcaa84a97164a14f04bf46d2a05eb257cce0b60",
+  "historicalEvidenceHashes": {
+    "codex/evidence/staging-reboot-recovery-20261013/operator-preflight-summary-20261013.json": "3b56a22ca55c8a8fe201d3df080b7a6a2aa50643493f52f26f6bcaa122e6b92c",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-09-partial-closure-review.json": "6f47b24ecc39d7c2c56339e2c545847e77371220b72a438b9ead47900943534f",
+    "codex/evidence/staging-reboot-recovery-20261013/preflight-review-20261013.json": "3b8588ccd32582541b21ae33929893f27026074a342e7448342df0edfae124de",
+    "codex/evidence/staging-reboot-recovery-20261013/package-member-failure-review.json": "a96bd1af6218e462ed1fd8d7f7db58510aede593749ff453fb7f761639777793",
+    "codex/evidence/staging-reboot-recovery-20261013/abort-writer-block-review.json": "461578c8522ef45257bf233b5bbaa7647fa876c466b6fab93a288be7cd81386c",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-03-quiesce-stop-review.json": "84b54c0983fe0a72cb749e048268b86b89a15960913db3c83574af44170cc99b",
+    "codex/evidence/staging-reboot-recovery-20261013/saved-details-review-20261013.json": "1f5b251a177d363c0f645f827cffb681d34f5d78c29da775e4a0835ad0e5d332",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-saved-preflight-details-20261013.json": "d52a501e7117f7083c77e7d3dd2f6630c0c057ffce6dbb9213db5e2c4872fbda",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-02-preflight-review.json": "f56fdc5172d18711475a1eb7b2cd3a9d75fcb1d6021f584bdaec80f5461a6271",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-00-preparation-accepted.json": "8ead0cca3d52cd9e588934a3f0d0f94bf9c30dca863f3f8fb9ffc4c0589ab793",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-13-abort-closure-accepted.json": "0aeaaf1e60100b7d3193d2409194141fcb16fe6d897bd6c22feaba00102d4636",
+    "codex/evidence/staging-reboot-recovery-20261013/preparation-00-review.json": "3910e9ab5232ce93cfc00a61b1bbf518facc6a7d4a17290f0f1cac188f2c7009",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-01-installation-accepted.json": "cbfe78edea0026e08b121bcce182b3f0a998eec32acf7b2f3d7a3913105f8554",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-scoped-finalization-accepted.json": "91026f8f37ab35ccf8fd1a03ef964e82e91738351cf67baec6765b6edc8f9db9"
+  },
+  "historicalSnapshotFiles": [
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "sha256": "6cfa1d8a7826ee7ea8b929a4ca042acbebc65eb3e9cb7c5737fdb02b137e9926"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "sha256": "21508ffff6a70c59bdcca4ab2c475efa9baabe77f9e1758fca01f1d96a300e1e"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-02-PREFLIGHT.sh",
+      "sha256": "cce51d4cbb1a8257ff272c07cbe0d81accd82d3b27c1642b5eba5d7d2485b619"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-03-QUIESCE.sh",
+      "sha256": "d2c1b09b88aa9addb6eafa8d9d52c50bc034bf94411b3889bf9d3a44bc8ba8f8"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh",
+      "sha256": "7deda8a4b27acbd35a25db087ccc44c9390b87bd5274fc0bd5f2a10926212176"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-05-STARTUP.sh",
+      "sha256": "57222b955e8ac539183b5e7a399b8838420437d3fc7cf9cfbd9d7fe0f2b25d5c"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-06-AUTH-GATE.sh",
+      "sha256": "d75444f447965e5e03a9a1d3381b4bd400aa957e043c695c88a6a101e99e661b"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh",
+      "sha256": "31411cb2e235237a67b94b172d9538066cf3b19d03d2f2609a4c1363e920a84b"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-08-FLOW-PROOF.sh",
+      "sha256": "f2c7816d87bcabefbe8c92b32549752b62b6a6b63c6c5ee54f0b8c8b72047c6e"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh",
+      "sha256": "78c4259338339decd4d8c68873b1df3420faffe698882f09323563479e2251a9"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-10-CONTAIN.sh",
+      "sha256": "d069597d1343bb68aa95e10b85ef8898ef390cad0b22d56c08dfeb94bef8b807"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh",
+      "sha256": "32e0b85121f847b73e4ab53550a2599b294db89f519b971586b1da00fddd5eb0"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh",
+      "sha256": "13397f4a11ba20bd85527b965fc8ab007b8e77656d1d73c5e7cccc3458bcf334"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-13-ABORT-WRITER-BASELINE-RESTORE.sh",
+      "sha256": "e5b6b46926236846e7cdc4e90916c4d810d9deceffdecca5eafad07eb28bf5d3"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-PREFLIGHT.sh",
+      "sha256": "999e771b0bb851d14f07f16b68c9daa199211f4e495dceb286f93ddc8cfe5e4f"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-REMAINING-BACKUP-AND-ACTOR.sh",
+      "sha256": "ac8fa66637b06de9ea9700b28507334a866e211ec28b2b2e9a7afd2c85e1d937"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/installed-package-manifest.json",
+      "sha256": "9d165f83cecc87aa5a3cee557d36fc2c95f043f13bd32d345b5a4cef06eda622"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/package-manifest.json",
+      "sha256": "646870a8233541345bc6484ae30775cd449d80010be0d424c7ab7f243be5d8cd"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/reboot-reviewed.py",
+      "sha256": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1"
+    }
+  ],
+  "VPS_CHANGES": "NO",
+  "REBOOT_EXECUTED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "AUTOMATIC_STARTUP": "NOT_PROVEN",
+  "newWindowScheduled": false,
+  "operationalState": "CLOSED_ATTEMPT_UNCHANGED_NEW_LOCAL_CANDIDATE_NOT_INSTALLABLE_WITHOUT_NEW_REVIEWED_IDENTITY_WINDOW",
+  "changedExistingPackageFiles": [
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-10-CONTAIN.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-02-PREFLIGHT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-05-STARTUP.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/installed-package-manifest.json",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-03-QUIESCE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/check-triggeredby-guard.py",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-08-FLOW-PROOF.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/reboot-reviewed.py",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-06-AUTH-GATE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh"
+  ],
+  "exactReviewedChangeSet": [
+    "codex/IMPLEMENTATION_ROADMAP.md",
+    "codex/STAGING_REBOOT_RECOVERY_OPERATOR_PACKAGE_PREPARATION.md",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-02-PREFLIGHT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-03-QUIESCE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-05-STARTUP.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-06-AUTH-GATE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-08-FLOW-PROOF.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-10-CONTAIN.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/check-triggeredby-guard.py",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-02-PREFLIGHT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-03-QUIESCE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-05-STARTUP.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-06-AUTH-GATE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-08-FLOW-PROOF.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-10-CONTAIN.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-13-ABORT-WRITER-BASELINE-RESTORE.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-PREFLIGHT.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-REMAINING-BACKUP-AND-ACTOR.sh",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/installed-package-manifest.json",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/package-manifest.json",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/reboot-reviewed.py",
+    "codex/evidence/staging-reboot-recovery-20261013/installed-package-manifest.json",
+    "codex/evidence/staging-reboot-recovery-20261013/package-manifest.json",
+    "codex/evidence/staging-reboot-recovery-20261013/reboot-reviewed.py",
+    "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction-review.json",
+    "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction.diff"
+  ],
+  "filesCount": 40
+}

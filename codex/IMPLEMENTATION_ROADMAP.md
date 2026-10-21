@@ -1476,3 +1476,178 @@ content proofs reused. Legal excluded/preserved; rollback prepared, not executed
 no production change, acceptance replay, commit/push. Index empty, marketing/legal
 worktree intentionally preserved.
 [Completion report, exact manifest and rollback](MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md).
+
+### STAGING_FULL_SERVICE_RECOVERY_AND_REBOOT_STARTUP_PLAN — PLAN_READY (12.10.2026)
+
+Jedan objedinjeni dokumentacijski plan razdvaja startup sa očuvanim podacima,
+prihvaćeni izolovani DB/file restore, auth/provider okruženje i scanner/updater trust.
+A–D i B app read ostaju prihvaćeni; nema B2 download/initdb/pg_restore/checksum replay-a.
+Dokumentovan je zastareo scanner recovery pin8QNI… naspram prihvaćenog builda
+_tkSUOn0PCoHjpx8V7FVr; stvarni installed status čeka jedan budući preflight, bez bypass-a.
+Predlog jednog prozora13.10 12:25–12:55UTC: web/auth10min, puni tok20min,
+maintenance30min; najviše jedan reboot, jedan uslovni pregledani scanner recovery i
+jedan sintetički korisnički tok. Host-wide production prekid/console, timer/sending
+pauza, fixture/publish scope, minimalni startup/helper alignment i provider DR granica
+čine jedan paket do5 odluka. Bez odobrenog shared-host prekida nema reboot-a;
+provider restore ostaje NOT_PERFORMED, dugoročan unattended rad nije dokaz ove serije.
+[Plan, acceptance i jedinstveni paket](STAGING_FULL_SERVICE_RECOVERY_AND_REBOOT_STARTUP_PLAN.md).
+PLAN_READY / EXECUTION_NOT_STARTED / BACKUP_ACCEPTANCE_NOT_REPEATED.
+Samo plan i ovaj append; postojeće readiness/pravne dopune i pravni nacrt sačuvani,
+bez VPS/panela, izvršnog source-a, operacija, testova/builda, commita ili pusha.
+
+
+### STAGING_REBOOT_RECOVERY_OPERATOR_PACKAGE_PREPARATION — PENDING_PREFLIGHT (12.10.2026)
+
+Pripremljen [jedan operatorski paket](STAGING_REBOOT_RECOVERY_OPERATOR_PACKAGE_PREPARATION.md)
+i [manifest](evidence/staging-reboot-recovery-20261013/package-manifest.json): kompletan
+read-only preflight, zaseban exact-release scanner kandidat (jedan literal, original
+sačuvan), pet lokalnih guard regresija i benigni sintetički PDF van Git-a. Potvrđeni
+su shared-host prekid/Hostinger console i termin13.10 14:25–14:55CEST; reboot nije
+zakazan. Operator prisutan od14:05, P posle redovnog monitora14:20; Q–K ostaju
+PENDING_INSTALLED_OUTPUT do pregleda stvarnog startup/production targeta, namenskog
+actor ID-ja, scanner consumer/pin i nezavisnog closure/rollback obuhvata. Sintetički
+proizvod c1c24c7c-334b-48bf-ba34-ac5fb930f1c2 ima istorijski dokaz namene; nalog nije
+proglašen sintetičkim samo po članstvu/nazivu. Ciljevi10/20min,30min eskalacija
+(nije garantovani host RTO); jedan reboot/uslovni scanner recovery/korisnički tok.
+Backup A–D se ponovo koristi; execution/instalacija/commit/push nisu započeti.
+Pravni nacrt i prethodni roadmap prefix sačuvani. Konačni READY nije proglašen dok
+kritični installed preduslovi i mutacioni blokovi nisu pregledani.
+
+
+Reboot paket —13.10 preflight16:12CEST: release759/pins/runtime metadata PASS,
+originalni STOP i expired termin sačuvani. Lokalni active.json presence guard
+ispravljen uz8-case ciljanu regresiju PASS; runtime backup nije menjan. Actor
+synthetic namena i image/public fixture scope nedokazani, Q–K zaključani. Detalji
+u §8 operatorskog paketa; nema novog reboot termina ili acceptance tvrdnje.
+
+
+Saved-file reboot pregled13.10: staging startup unit/dump potvrđeni, oba PG
+klastera online; startup diff NONE. Scanner hashes match uz stari installed pin;
+rollback metadata match. Novi termin, actor/image, backup reconciliation i konačni
+production HTTP/closure scope ostaju pending; bez novih live provera ili mutacija.
+
+
+Reboot finalization zahtev:14.10 17:00–17:30CEST potvrđen, ali monitor17:20 i45min
+guard daju schedule STOP;17:25–17:55 je samo predlog. Odobren existing ADMIN actor
+na navedenom synthetic proizvodu i1 benign image upload; te odluke se ne otvaraju
+ponovo. Jedan scoped backup/closure/lock + actor/membership read-only blok spreman,
+čeka operator output. Dva nova targeted testa PASS; stare provere nisu ponavljane.
+Konačni executors/closure i READY pending; nema runtime promene. Detalji §10 paketa.
+
+
+Reboot paket finalizovan za potvrđeni14.10 17:25–17:55CEST: scoped backup/closure/
+lock i ADMIN membership/prava PASS, attempts3/history/freshness samo point-in-time.
+Kompletni blokovi00–12, root-private operation journal, separate exact scanner clone,
+one-reboot budget i independent partial closure spremni za review. Startup diff NONE.
+Novi ops kod8 targeted provera PASS;13 shell/Python/embedded source checks PASS.
+Još je potreban00 read-only production mapping/retained rollback readback pre READY;
+volatile02 ostaje neposredno predQ. Izvršenje nije počelo, reboot nije zakazan,
+backupA–D nije ponavljan. Pravni/odvojeni roadmap prefix sačuvani.
+
+### Reboot paket — ispravka bootstrap registra posle STOP-a
+
+- Sačuvan operatorski `LOAD_00_PREPARATION_READONLY / PACKAGE_MEMBER_CHANGED`; stale hash u blokovima00/01 usklađen sa nepromenjenim pregledanim helperom. Lokalna payload/pins/manifest i negative-guard provera PASS.
+- Read-only00 output ostaje jedini pripremni readback. Bez instalacije, runtime promena ili reboot-a; `EXECUTION_NOT_STARTED / REBOOT_NOT_SCHEDULED / BACKUP_ACCEPTANCE_NOT_REPEATED`.
+
+### Reboot operatorski paket — pripremni00 PASS
+
+- Operatorski read-only output00 prihvaćen: production PM2/cwd/HTTPS i local TLS `200 0`, staging `_tkSUOn0PCoHjpx8V7FVr`, exact scanner kandidat i retained rollback757 fajlova potvrđeni. `OPERATOR_PACKAGE_READY`; volatile02/03 gate-ovi ostaju pred izvršenje.
+- Bez source instalacije ili runtime mutacija; `EXECUTION_NOT_STARTED / REBOOT_NOT_SCHEDULED / BACKUP_ACCEPTANCE_NOT_REPEATED`. Termin14.10.2026 17:25–17:55 Europe/Zagreb ostaje operatorski prozor, ne automatski zakazan reboot.
+
+### Reboot paket — operatorska source instalacija01
+
+- `INSTALLED_SOURCE_ONLY` prihvaćen; original preserved, exact scanner kandidat podudaran. Backup pinovi i servisi nepromenjeni; scanner recovery nije pokrenut.
+- Sledeći02 preflight17:21–pre17:25 Europe/Zagreb posle redovnog monitora; reviewed PASS otključava03. Koordinacija/reboot još nisu započeti ni zakazani; backup acceptance nije ponavljan.
+
+### Reboot paket —02 volatile preflight prihvaćen
+
+- Operatorski `PASS_REVIEW_BEFORE_Q`,14.10.2026 17:21:25 lokalno; backup attempts4, CONTINUOUS/hold=false, današnji completed set i HEALTHY monitor. Tajmeri active/enabled, production TLS200/0; sledeći termini van prozora.
+-03 koordinacija PENDING_OPERATOR_COMMAND samo17:25–17:26 uz fresh proof/drift guard. Nema reboot-a ili pauze potvrđene ovim outputom.
+
+### Reboot03 STOP — nezavisno zatvaranje pending
+
+- `QUIESCE / UNREVIEWED_SENDING_TRIGGER`, bez automatskog ponavljanja/reboot-a. Guard je i pre/post pause; delimična pauza nije isključena.09 closure PENDING_OPERATOR_COMMAND; konačno stanje automatizacija još nije potvrđeno. Runtime helperi/pinovi nepromenjeni.
+
+### Reboot abort —09 partial closure
+
+- Backup/monitor redovni termini vraćeni; state/delivery nepromenjeni, production online. Writer timer pending; automatic startup NOT_PROVEN. Zaseban13 guarded pre-reboot abort baseline restore PENDING_OPERATOR_COMMAND, bez reboot/recovery/ručne dispatch komande.
+
+### Reboot pokušaj zatvoren pre reboot-a —13 PASS
+
+- `PASS_ABORTED_BEFORE_REBOOT_BASELINE_RESTORED`: writer timer active/enabled, redovni servis activating/start; bez ručnog worker-a. Backup/monitor vraćeni, state nepromenjen, production online/TLS200/0; failure/partial closure sačuvani.
+- Reboot nije zahtevan; automatic startup/full service recovery NOT_PROVEN. Nema retry-ja ni daljeg koraka ovog pokušaja. TriggeredBy pre/post-pause korekcija i novi termin ostaju za zasebnu pripremu; backup A–D nisu ponavljani.
+
+### Lokalna TriggeredBy guard korekcija
+
+- Pre/post-pause guard razdvojen uz exact static unit hashove, bez drop-inova, runtime allowlist samo poznata veza/prazno posle pauze, service inactive/MainPID0 i obavezan disabled/inactive timer. Nezavisni closure nepromenjen; šest focused doubles testova PASS.
+- Zatvoreni pokušaj i njegovi outputi netaknuti; prethodni source/blokovi arhivirani. Lokalni payload/manifest kandidati nisu instalirani niti spremni za stari attempt. Bez VPS promena/novog termina/reboot-a, automatic startup NOT_PROVEN, backup acceptance nije ponavljan.
+
+###19.10.2026 — novi staging reboot pokušaj, samo priprema
+
+- Zaseban attempt `recovery-20261019-reboot-01`, state `/var/lib/passvero-reboot-recovery-20261019`, prozor17:25–17:55 Europe/Zagreb; operator od16:45. [Paket](STAGING_REBOOT_RECOVERY_NEW_ATTEMPT_20261019.md).
+- Pregledani helper472cb2ed… potvrđen; samo literalne date/identity reference prevezane, novi303c110e…; pet source payload članova,13 blokova. Prethodna istorija/BASELINE_RESTORED i pravni nacrt netaknuti. Bez ponavljanja šest testova/syntax serije/build/A–D.
+-00 objedinjeni read-only output i01 readback PENDING_OPERATOR_COMMAND;02 posle redovnog17:20 monitora pre17:25 obavezan. Stari sintetički PDF/image nedostaju u/tmp; originalni prihvaćeni fajlovi pre punog toka su otvoren preduslov. Nema operativne spremnosti ili novog izvršenja.
+- `NEW_ATTEMPT_PREPARED / EXECUTION_NOT_STARTED / REBOOT_NOT_SCHEDULED / LOCAL_TESTS_NOT_REPEATED / BACKUP_ACCEPTANCE_NOT_REPEATED`; AUTOMATIC_STARTUP/ FULL_SERVICE_RECOVERY NOT_PROVEN. Bez instalacije/servis promena/commita/pusha.
+
+###19.10 reboot — originalni lokalni fixture-i obnovljeni
+
+- Originalni671B PDF i2059B PNG obnovljeni iz sačuvanih memory-only generatora; oba accepted SHA256 identična. Stabilni private0700/0600 fajlovi u postojećem Git-ignored `.superpowers/brainstorm/staging-reboot-fixtures-20261019/`; bez zamene hashova/flow verifiera.
+- Fixture blocker zatvoren, ali00/01/02 operatorski gate-ovi pending. Termin19.10 17:25–17:55 nepromenjen; bez transfera, VPS pristupa, testova/builda/backup acceptance-a, instalacije/reboot-a, commita/pusha.
+
+###19.10 —00 pripremni operatorski PASS pregledan
+
+-16:45:22 lokalno: exact novi helper/attempt/release i prethodni closed installed identitet podudarni; današnji backup attempts9/CONTINUOUS/hold=false i HEALTHY, writer unresolved/leases0; actor ACTIVE org ADMIN/draft očekivan, production TLS200/0. Startup baseline i757 rollback članova potvrđeni.
+-01 source-only install otključan, readback pending; reboot i dalje zaključan do02 posle redovnog17:20 monitora i pregledanih03/04 koraka. Bez agentovog VPS pristupa ili ponovljenih testova/acceptance-a.
+
+###19.10 —01 source-only instalacija pregledana
+
+- INSTALLED_SOURCE_ONLY za novi attempt; helper303c110e…/package dd9335c9… podudarni, prethodni helper/manifest i original scanner preserved. Backup pinovi/servisi nepromenjeni; reboot nije zakazan.
+-02 PENDING_OPERATOR_COMMAND17:21–pre17:25 nakon redovnog monitora17:20; reviewed PASS pre početka uslov za03. Bez ponavljanja01 ili acceptance-a.
+
+###19.10 —02 finalni preflight prihvaćen
+
+-17:21:17 lokalno PASS_REVIEW_BEFORE_Q: backup attempts9/današnji completed set, isti state/CONTINUOUS/hold=false, monitor17:20 HEALTHY; svi tajmeri active/enabled, actor/draft očekivani i production TLS200/0. Actual termini monitor18:20, staging capture20.10.06:30, production20.10.04:03:58 van prozora.
+-03 QUIESCE PENDING_OPERATOR_COMMAND samo17:25–17:26 uz fresh proof/idle/drift gate.04/reboot još nije otključan; nema ponavljanja02/acceptance-a.
+
+###19.10 -03 QUIESCED
+
+- QUIESCED prihvacen, bez reboot/SMTP poziva; jedan04 pending unutar existing deadline-a. Startup NOT_PROVEN.
+
+###19.10 -05 automatic startup PASS
+
+- Novi boot379fc52e-5524-4b93-b6ec-b036d1953db7, startup/AUTOMATIC_STARTUP PASS; production online/TLS200/0.06 auth gate pending, full recovery/closure jos nisu dokazani. Bez drugog reboot-a.
+
+###19.10 -06 AUTH_GATE STOP
+
+- UnsupportedOperation bez retry-ja; scanner/flow nisu otkljucani.09 independent closure pending;05 automatic startup PASS sacuvan, full service recovery NOT_PROVEN. Bez drugog reboot-a ili worker poziva.
+
+###19.10 -09 partial closure / writer pending
+
+- Backup/monitor vraćeni, state/delivery unchanged, production online/TLS200/0 i automatic startup PASS. Samo writer pending; pun flow nije završen.
+- Zaseban13 post-startup AUTH_GATE technical-abort baseline restore PENDING_OPERATOR_COMMAND: exact accepted boot/failure/closure, bez auth/scanner retry-ja i bez ručnog worker-a. Normalno odobreno slanje može se nastaviti tek nakon njegovih guardova. Runtime source/pinovi nepromenjeni.
+
+###19.10 — pokušaj zatvoren / post-startup baseline restored
+
+-13 PASS_POST_STARTUP_ABORT_BASELINE_RESTORED: writer timer active/enabled, redovni servis activating/start; backup/monitor vraćeni prema09, state unchanged, production online/TLS200/0. Failure i partial closure retained; nema dodatnog reboot-a ili ručnog worker-a.
+-AUTOMATIC_STARTUP PASS za novi boot ostaje prihvaćen; FULL_SERVICE_RECOVERY NOT_PROVEN zbog AUTH_GATE/UnsupportedOperation i nezavršenog scanner/user toka. Nema daljih komandi, retry-ja ili novog termina. Završetak writer posla/inbox receipt nisu dokazani. Bez ponavljanja backup acceptance-a/commita/pusha.
+
+
+## STAGING_RECOVERY_UI_CONFIRMATION_AND_RELEASE_PREPARATION — 21.10.2026.
+
+**Završeni staging startup i scanner/PDF korisnički tok imaju odvojene prihvaćene dokaze.**
+AUTOMATIC_STARTUP=PASS ostaje operatorov dokaz19.10; recovery21.10 je COMPLETE,
+reader ACCEPTED i nezavisni closure PASS, sa tri publikacije145729 →145730 →145731.
+To su istorijska opažanja, ne današnja nova health provera. Korisnik je naknadno
+potvrdio novi proizvod, objavu, PDF preuzimanje, QR link i očekivane DPP elemente:
+UI_PDF_ACCEPTANCE=PASS_USER_CONFIRMED. Nisu potvrđeni byte-checksum, tačan scan status
+ili konkretan Document ID. [Završni nalaz i granice dokaza](STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE.md#korisnička-ui-potvrda-i-završna-release-priprema--21102026).
+
+Stari harness STOP/NOT_RUN ostaju istorijski; ne otvaraju se ponovo.
+FULL_SERVICE_RECOVERY=NOT_PROVEN odnosi se na potpuni host-loss/izolovani web/auth/
+provider restore, dugoročni continuity i zasebni production rollout/rollback opseg;
+završeni staging PDF problem nije otvorena prepreka. Startup i backup A–D se ne ponavljaju.
+**Nastavak: UI dorade, zatim konkretna priprema produkcije** — tačan release/config/
+DB/auth/Storage/scanner manifest, operativni nadzor i rollback, uz zasebno odobrenje.
+[Pregledani release skup i roadmap-only patch](evidence/staging-recovery-release-20261021/README.md).
+Sada samo priprema za odluku o commitu/pushu; bez stageovanja, novih testova/builda,
+live radnji, production promena ili objave odvojenog pravnog nacrta.

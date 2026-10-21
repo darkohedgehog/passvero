@@ -1,0 +1,109 @@
+{
+  "preflight": "STOP",
+  "observedUTC": "2026-10-13T14:12:20.294726+00:00",
+  "failures": [
+    {
+      "CHECK_ID": "BACKUP",
+      "reason": "CAPTURE_ACTIVE_RECORD"
+    },
+    {
+      "CHECK_ID": "TIMERS",
+      "reason": "NEXT_TERM_TOO_CLOSE",
+      "unit": "passvero-staging-backup-monitor.timer"
+    }
+  ],
+  "criticalPending": [
+    "REVIEW_INSTALLED_STARTUP_AND_PRODUCTION_TARGETS",
+    "CONFIRM_DEDICATED_SYNTHETIC_ACCOUNT_ID_AND_PROVENANCE",
+    "REVIEW_SCANNER_HELPER_AND_CONSUMER_SCOPE",
+    "REVIEW_ROLLBACK_AND_CLOSURE_WRAPPER",
+    "FINALIZE_MUTATING_BLOCKS_AND_MANIFEST_BEFORE_REBOOT"
+  ],
+  "executionUnlocked": false,
+  "mutations": "NONE",
+  "sections": {
+    "release": {
+      "buildId": "_tkSUOn0PCoHjpx8V7FVr",
+      "canonicalSha256": "e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590",
+      "configSha256": "a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839",
+      "executableFilesVerified": 759,
+      "helpers": {
+        "recurring.py": "14a2358709bf79fee6fd17321f1e6d55170740e098fb6cf1756fbda4c3713418",
+        "recurring_acceptance.py": "fa000e06f767a0f637a033bd57f11517397ebd715daa85fd67f5db51f28afdc7",
+        "recurring_catalog.py": "b0b84b1a06035c04949777d664ffe73e9362b063357f72ee7205097c1b2513f7"
+      }
+    },
+    "runtime": {
+      "authEndpoint": "127.0.0.1:5433/passvero_acceptance",
+      "credentials": "NOT_EXPOSED",
+      "databaseEndpoint": "127.0.0.1:5433/passvero_acceptance",
+      "prepareSha256": "d519bf0f039996f3ac9838182ba28218f31055e42e5ba675d572336f67c5e473",
+      "process": {
+        "cwd": "/var/www/passvero-acceptance",
+        "name": "passvero-acceptance",
+        "pid": 1614,
+        "pmId": 0,
+        "status": "online"
+      },
+      "storageBucket": "passvero-staging-documents"
+    },
+    "backup": null,
+    "fixture": {
+      "candidateMembers": [
+        {
+          "hasPassword": true,
+          "role": "ADMIN",
+          "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+          "verified": true
+        }
+      ],
+      "documentReferences": [],
+      "imageReferences": [],
+      "product": {
+        "active": true,
+        "classification": "UNRESOLVED",
+        "createdById": "40e51001-912c-4bcf-aa45-d866632aac85",
+        "draftId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+        "historicalSkuMatches": true,
+        "id": "c1c24c7c-334b-48bf-ba34-ac5fb930f1c2",
+        "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+        "publishedId": null
+      },
+      "versions": [
+        {
+          "id": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+          "status": "DRAFT"
+        }
+      ]
+    },
+    "reminders": {
+      "activeLeases": 0,
+      "attemptStatus": {
+        "ACCEPTED": 4
+      },
+      "pendingCandidates": 0,
+      "policyEnabled": true,
+      "reminderStatus": {
+        "CANCELLED": 2,
+        "SENT": 4
+      },
+      "safeToFinalizePause": true,
+      "unresolved": 0
+    },
+    "timers": {
+      "passvero-staging-backup-monitor.timer": {
+        "dueUTC": "2026-10-13T14:20:00+00:00",
+        "secondsRemaining": 459.705,
+        "typedMicroseconds": 1791901200000000,
+        "wholeWindowAndReserve": false
+      },
+      "passvero-staging-backup.timer": {
+        "dueUTC": "2026-10-14T04:30:00+00:00",
+        "secondsRemaining": 51459.705,
+        "typedMicroseconds": 1791952200000000,
+        "wholeWindowAndReserve": true
+      }
+    }
+  },
+  "fullOutputFile": "/tmp/passvero-reboot-preflight-20261013.xCke3H"
+}

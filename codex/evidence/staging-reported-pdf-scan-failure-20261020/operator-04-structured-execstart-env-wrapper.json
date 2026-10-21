@@ -1,0 +1,59 @@
+{
+  "diagnostic": "SIGNATURE_PRODUCER_STRUCTURED_EXECSTART_DISPOSITION",
+  "unit": "passvero-signature-health.service",
+  "expected": {
+    "executable": "/usr/bin/node",
+    "argv": [
+      "/usr/bin/node",
+      "/usr/local/libexec/passvero-signature-health.cjs",
+      "--config",
+      "/etc/passvero-signature-health.json"
+    ],
+    "entryCount": 1,
+    "basis": "EXISTING_LOCAL_GUARD_EXPECTATION_NOT_PREVIOUSLY_CAPTURED_INSTALLED_ARGV"
+  },
+  "automaticRetry": false,
+  "VPS_MUTATIONS": "NO",
+  "LOCK_REMOVAL": "NOT_PERFORMED",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "NEW_WINDOW_SCHEDULED": "NO",
+  "status": "STRUCTURED_EXECSTART_READ_COMPLETE_RETURN_OUTPUT_AND_STOP",
+  "observedUTC": "2026-10-20T16:43:05.516685+00:00",
+  "loadedUnit": {
+    "Id": "passvero-signature-health.service",
+    "FragmentPath": "/etc/systemd/system/passvero-signature-health.service",
+    "DropInPaths": []
+  },
+  "observed": {
+    "entryCount": 1,
+    "entries": [
+      {
+        "index": 0,
+        "executable": "/usr/bin/env",
+        "argv": [
+          "/usr/bin/env",
+          "<REDACTED_UNREVIEWED_ARGUMENT>",
+          "<REDACTED_UNREVIEWED_ARGUMENT>",
+          "<REDACTED_UNREVIEWED_ARGUMENT>",
+          "/usr/bin/node",
+          "/usr/local/libexec/passvero-signature-health.cjs",
+          "--config",
+          "/etc/passvero-signature-health.json"
+        ],
+        "ignoreFailure": false,
+        "redactedArgumentIndexes": [
+          1,
+          2,
+          3
+        ],
+        "executableRedacted": false
+      }
+    ]
+  },
+  "redactionApplied": true,
+  "exactComparison": "NOT_CONFIRMED_REDACTED_FIELDS",
+  "failingHistoricalFormattedText": "NOT_RECORDED_NOT_RECONSTRUCTED"
+}

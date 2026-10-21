@@ -1,0 +1,15 @@
+{
+  "source": "EXPLICIT_USER_AUTHORIZATION",
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "scope": "ONE_EXECUTION_OF_BLOCK_01_SOURCE_ONLY_INSTALL",
+  "block": "codex/evidence/staging-auth-scanner-continuation-20261020/VPS-TERMINAL-01-INSTALL-RAW-HELPER-AND-ADAPTER.sh",
+  "blockSha256": "e98395512c2cee0067223528dadadb76c23b354478802abc1e5ab11a7ca30e2b",
+  "operatorExecutesOnVPS": true,
+  "agentExecutesOnVPS": false,
+  "prerequisites": "CURRENT_PREFLIGHT_EXACT_HASHES_AND_ORIGINAL_PRESERVATION_REQUIRED",
+  "failurePolicy": "STOP_NO_RETRY_NO_GUARD_BYPASS",
+  "nextGate": "RETURN_FULL_OUTPUT_STOP_BEFORE_02",
+  "authScannerUserFlowAuthorized": false,
+  "rebootAuthorized": false,
+  "executionReported": false
+}

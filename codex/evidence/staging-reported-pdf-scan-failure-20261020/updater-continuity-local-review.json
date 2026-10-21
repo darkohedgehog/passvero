@@ -1,0 +1,59 @@
+{
+  "task": "SIGNATURE_UPDATER_CONTINUITY_AND_EXISTING_RECOVERY_DISPOSITION",
+  "status": "LOCAL_REVIEW_COMPLETE_AWAIT_ONE_READONLY_OPERATOR_OUTPUT",
+  "sourceContinuityBranches": [
+    "REPEATED_INITIALIZATION_BOUNDARY",
+    "RECORD_BEFORE_RETAINED_INITIALIZATION",
+    "UPTODATE_WITHOUT_MATCHING_VALIDATED_VERSION_OR_WITH_PENDING_ANNOUNCEMENT"
+  ],
+  "reportedHistoricalSubcase": "NOT_RECORDED",
+  "currentSubcase": "AWAIT_OPERATOR_OUTPUT",
+  "localSourceCompatibility": [
+    {
+      "path": "src/infrastructure/documents/freshclam-evidence.ts",
+      "sha256": "99c86c753d03c2776ae501fbac49b6a267acc88ffc40882607650a68438f7328",
+      "acceptedBase": "1fc84aa8ccc3118f8158029e8edf99275c8f7f6e",
+      "byteIdentical": true
+    },
+    {
+      "path": "src/infrastructure/documents/signature-health-producer.ts",
+      "sha256": "e58d7e71d31fab372fd006dd164b61db8aaa2f2238ea485d2cce92c578aee269",
+      "acceptedBase": "1fc84aa8ccc3118f8158029e8edf99275c8f7f6e",
+      "byteIdentical": true
+    },
+    {
+      "path": "src/infrastructure/documents/signature-health-producer-io.ts",
+      "sha256": "1bc928b4440215a2b7b4fa83bb9cc666b185f0b45f6a3d9ce281e7906a8d6869",
+      "acceptedBase": "1fc84aa8ccc3118f8158029e8edf99275c8f7f6e",
+      "byteIdentical": true
+    }
+  ],
+  "reviewedRecoverySource": "codex/evidence/staging-auth-scanner-continuation-20261020/recover-release-reviewed.py",
+  "reviewedRecoverySha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+  "olderRecoverySource": "scripts/recover-document-signature-health.py",
+  "olderRecoverySha256": "3c1f0e5c4a04a57bc52d7e3ad3043f450cc9476a8b649e125354c75ce00f34d0",
+  "existingOnlyLiteralDifference": {
+    "old": "8QNIYVVZWEsQaCL9uLZ5Q",
+    "reviewed": "_tkSUOn0PCoHjpx8V7FVr"
+  },
+  "newRecoverySourceDiffRequired": false,
+  "newRecoveryArchitectureOrHarness": false,
+  "installedReadOnlyTarget": "/var/lib/passvero-auth-flow-continuation-20261020-01/recover-release-reviewed.py",
+  "guardInvocation": "PINNED_LINUXHOST_GUARD_ONLY_READONLY_SYSTEMCTL_HOOK_NO_MAIN_OR_RECOVER",
+  "routeApplicability": "EXISTING_FRESH_BASE_EPOCH_ROUTE_CONDITIONAL_ON_ONE_CURRENT_READONLY_RESULT",
+  "futureAttemptId": "recovery-20261021-continuity-01",
+  "futureAttemptCreated": false,
+  "readOnlyBlock": "codex/evidence/staging-reported-pdf-scan-failure-20261020/VPS-TERMINAL-10-UPDATER-CONTINUITY-RECOVERY-READONLY.sh",
+  "readOnlyBlockSha256": "46d1c10747d8ce6389b5c650bc16493f0412f23b3c0e8fb2fcdf8da4954e232a",
+  "readOnlyMaximumRuns": 1,
+  "fullRecoveryApprovalPackage": "PENDING_CURRENT_BRANCH_PIN_CONSUMER_COOLDOWN_AND_RECORD_FACTS",
+  "localChecks": "AST_BASH_N_EXISTING_EXACT_LITERAL_DIFF_REFERENCES_HASH_MANIFEST_WHITESPACE_ONLY",
+  "testsBuildRun": false,
+  "RECOVERY_EXECUTED": "NO",
+  "LOCK_REMOVAL_REPEATED": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "AUTOMATIC_STARTUP": "PASS",
+  "FULL_SERVICE_RECOVERY": "NOT_PROVEN"
+}

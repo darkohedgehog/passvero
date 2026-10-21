@@ -1,0 +1,19 @@
+{
+  "diagnostic": "SIGNATURE_HEALTH_EXISTING_PRODUCER_REPORT_READONLY",
+  "unit": "passvero-signature-health.service",
+  "status": "EXISTING_FAILED_INVOCATION_REPORT_FOUND",
+  "producerReport": {
+    "timestamp": "2026-10-20T16:21:55.282823+00:00",
+    "result": "BUSY",
+    "phase": "ACQUIRE",
+    "reason": null,
+    "durationMs": 0.8007139999999993
+  },
+  "automaticRetry": false,
+  "SERVICE_MUTATIONS": "NO",
+  "PRODUCER_EXECUTED_BY_DIAGNOSTIC": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "invocationId": "c2e7fae26fd04da4935ff4d79fe9352c"
+}

@@ -1,0 +1,569 @@
+{
+  "scope": "STAGING_REBOOT_RECOVERY_NEW_ATTEMPT_PREPARATION",
+  "status": "ATTEMPT_CLOSED_POST_STARTUP_ABORT_BASELINE_RESTORED",
+  "attemptId": "recovery-20261019-reboot-01",
+  "stateDirectory": "/var/lib/passvero-reboot-recovery-20261019",
+  "scannerUnit": "passvero-reboot-scanner-20261019.service",
+  "executionReady": false,
+  "executionStarted": false,
+  "rebootScheduled": false,
+  "window": {
+    "local": "2026-10-19 17:25\u201317:55 Europe/Zagreb",
+    "startUTC": "2026-10-19T15:25:00Z",
+    "endUTC": "2026-10-19T15:55:00Z",
+    "operatorFrom": "16:45 Europe/Zagreb",
+    "automaticScheduling": false
+  },
+  "sourceManifest": {
+    "path": "codex/evidence/staging-reboot-recovery-20261019/installed-package-manifest.json",
+    "sha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa",
+    "scopeNote": "HISTORICAL_INSTALLED_PACKAGE_HELPER_RESOLVES_TO_PRESERVED_SNAPSHOT_NOT_NEW_WORKTREE_CANDIDATE"
+  },
+  "helper": {
+    "reviewedBaseSha256": "472cb2edc9516b6e28edda0810faaa26fc6a0f6af3c418b19df588a623bdceec",
+    "newBoundSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+    "delta": "LITERAL_BINDINGS_ONLY",
+    "installed": true
+  },
+  "priorInstalledExpected": {
+    "root": "/var/lib/passvero-reboot-recovery-20261014",
+    "helperSha256": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+    "manifestSha256": "9d165f83cecc87aa5a3cee557d36fc2c95f043f13bd32d345b5a4cef06eda622",
+    "observedNow": false,
+    "overwriteAllowed": false
+  },
+  "review": "new-attempt-preparation-review.json",
+  "remainingPrerequisites": [],
+  "budgets": {
+    "reboots": 1,
+    "conditionalScannerRecovery": 1,
+    "userFlows": 1,
+    "imageUploads": 1,
+    "pdfUploads": 1,
+    "automaticRetry": false
+  },
+  "automaticStartup": "PASS",
+  "fullServiceRecovery": "NOT_PROVEN",
+  "localTestsRepeated": false,
+  "syntaxSeriesRepeated": false,
+  "backupAcceptanceRepeated": false,
+  "VPSChanges": false,
+  "operatorBlocks": [
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "sha256": "26e78c6eb485ab3152f53a6a9ca9f518767986b84f3ae9e67747e69e398ebc1e",
+      "status": "PASS_READ_ONLY_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "sha256": "b177585e8384012d0502f2cc64360366377fe60d3ab9f86a004521150c22faae",
+      "status": "INSTALLED_SOURCE_ONLY_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-02-PREFLIGHT.sh",
+      "sha256": "3d6ba2c23dffac636052637aa02e8992704e8212196cb78d3039bf881cb512b7",
+      "status": "PASS_REVIEW_BEFORE_Q_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-03-QUIESCE.sh",
+      "sha256": "35fe7c08af5434f711a98f4d635943361326388d118b6bf72a3245bb1141d968",
+      "status": "QUIESCED_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh",
+      "sha256": "5d6cf4d53d26f5de0bcff1c0077ea332f72bcd2a17c482132906bea4e3c72fac",
+      "status": "PENDING_OPERATOR_COMMAND"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-05-STARTUP.sh",
+      "sha256": "aaf20ae1de020691a7b57b1f9689b1a9d8826cfde27470decabb4069040b96f6",
+      "status": "STARTUP_PASS_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-06-AUTH-GATE.sh",
+      "sha256": "79830d0418b67a78635789ae3261576b457c89472fc63e4cf96bb44085c63895",
+      "status": "STOP_UNSUPPORTED_OPERATION_NO_REPEAT"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh",
+      "sha256": "33c8ead7467554ec9c51846a77b98b932a7029e5d6d558958b4a4f769a760fa6",
+      "status": "PENDING_OPERATOR_COMMAND"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-08-FLOW-PROOF.sh",
+      "sha256": "16b8bcd39844432a7c69113bbb6b036eae967a5eccc5e85736a004e1c371b5d0",
+      "status": "PENDING_OPERATOR_COMMAND"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh",
+      "sha256": "3dba830e375252efab39881a52170fc7909fd64a833d5f6abf4502888980dcc3",
+      "status": "PARTIAL_AUTOMATION_RESTORE_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-10-CONTAIN.sh",
+      "sha256": "e9d374cc09fbf59c42dc60cbe9e8450c75080a8482e4cd3a5572bf9d6e6ff068",
+      "status": "PENDING_OPERATOR_COMMAND"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh",
+      "sha256": "a594a8a51b534ffcb171951d88542c6db572351aad531d6219798837a709ed5f",
+      "status": "PENDING_OPERATOR_COMMAND"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh",
+      "sha256": "02a0f61ea4e35490e3af3bea5ae8b348baaeb1696cae84c5e7485666caeb04b9",
+      "status": "PENDING_OPERATOR_COMMAND"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-13-POST-STARTUP-ABORT-WRITER-RESTORE.sh",
+      "sha256": "9df3d7482d37d69337c35d8f65feae8376b0accf99e7a8ef27e14268e95c0be8",
+      "status": "PASS_BASELINE_RESTORED_REVIEWED"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-14-SINGLE-TTY-DIAGNOSTIC.sh",
+      "sha256": "8c6880580944f817cb858557a19806f8a7d48c3156e25d9c6b0453dd11b7c45c",
+      "status": "DIAGNOSTIC_EXECUTED_ONCE_REVIEWED_NO_RETRY"
+    }
+  ],
+  "sharedRoadmap": {
+    "path": "codex/IMPLEMENTATION_ROADMAP.md",
+    "retainedPrefixBytes": 144463,
+    "retainedPrefixSha256": "608cfcfb91dd06d3b425729e72385304d9c004dbc8c6633eb38e84fe702aa7cb",
+    "appendSha256": "f0d5a0d668afd11888fc9a66ce3ed578c96be8216be4986f29a50033772e2765",
+    "worktreeWholeSha256": "4a5132542e2b77afeabce165bfc48c860c6fbe44390924fd17967360b59d017b",
+    "stageCommit": "NOT_AUTHORIZED_NOT_PERFORMED"
+  },
+  "preservedHistoricalHashes": {
+    "codex/evidence/staging-reboot-recovery-20261013/package-manifest.json": "2908a28ec146c345c960d0ae4e4e9e024bfa385797f24be677b4a3b099c56e18",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-REMAINING-BACKUP-AND-ACTOR.sh": "ac8fa66637b06de9ea9700b28507334a866e211ec28b2b2e9a7afd2c85e1d937",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-preflight-summary-20261013.json": "3b56a22ca55c8a8fe201d3df080b7a6a2aa50643493f52f26f6bcaa122e6b92c",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-09-partial-closure-review.json": "6f47b24ecc39d7c2c56339e2c545847e77371220b72a438b9ead47900943534f",
+    "codex/evidence/staging-reboot-recovery-20261013/preflight-review-20261013.json": "3b8588ccd32582541b21ae33929893f27026074a342e7448342df0edfae124de",
+    "codex/evidence/staging-reboot-recovery-20261013/recover-release-reviewed.py": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-10-CONTAIN.sh": "b300257adcd8346a56ed26890240bd39ad7084c2f873641c09a0c0f98a968622",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh": "5121916d58d23a70ab28b873162d34f0f1073fdf1760c3754e3ef3f0be547c9c",
+    "codex/evidence/staging-reboot-recovery-20261013/scanner-exact-pin.diff": "2382f365db3e1019cc077ad56dee77c0dfb46769f41fd1f0eebbff00627dc3df",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-02-PREFLIGHT.sh": "fffb968832b72c9940e5ac51906ea8622fb38c4cb798ebc8da9618110e2f553a",
+    "codex/evidence/staging-reboot-recovery-20261013/package-member-failure-review.json": "a96bd1af6218e462ed1fd8d7f7db58510aede593749ff453fb7f761639777793",
+    "codex/evidence/staging-reboot-recovery-20261013/check-bootstrap-package.py": "29e0f2883b872d43a7479b710daf63dafbf44d6627ec06d0b756e91a6d746c6e",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-05-STARTUP.sh": "50a43445ee666b5b119c11609c9f9a7d63407cc4e83d74d6d964ba33d8e45716",
+    "codex/evidence/staging-reboot-recovery-20261013/abort-writer-block-review.json": "461578c8522ef45257bf233b5bbaa7647fa876c466b6fab93a288be7cd81386c",
+    "codex/evidence/staging-reboot-recovery-20261013/installed-package-manifest.json": "a0ca795825ee1be073cb81548fcaa84a97164a14f04bf46d2a05eb257cce0b60",
+    "codex/evidence/staging-reboot-recovery-20261013/local-checks.json": "0d9eaf5a6bed5d983fe14464c5232f3835af972a5f489d4932910d3690c0dd8e",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-03-QUIESCE.sh": "9cb12e5489d3dbfe945b5c70e40e619263b42091718c6751fa6abb07fe51edb4",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-03-quiesce-stop-review.json": "84b54c0983fe0a72cb749e048268b86b89a15960913db3c83574af44170cc99b",
+    "codex/evidence/staging-reboot-recovery-20261013/saved-details-review-20261013.json": "1f5b251a177d363c0f645f827cffb681d34f5d78c29da775e4a0835ad0e5d332",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-PREFLIGHT.sh": "999e771b0bb851d14f07f16b68c9daa199211f4e495dceb286f93ddc8cfe5e4f",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-saved-preflight-details-20261013.json": "d52a501e7117f7083c77e7d3dd2f6630c0c057ffce6dbb9213db5e2c4872fbda",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-02-preflight-review.json": "f56fdc5172d18711475a1eb7b2cd3a9d75fcb1d6021f584bdaec80f5461a6271",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh": "94e2cd7c294ac8b5c96fe7538728f1d5b2a4dffd4f26b0ebbb5d73a65f8f019f",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh": "dcc24449462aa9f678adfc3327cebb3d8a9ff5c73cad992e1403aaf11f296f29",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-00-preparation-accepted.json": "8ead0cca3d52cd9e588934a3f0d0f94bf9c30dca863f3f8fb9ffc4c0589ab793",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-13-abort-closure-accepted.json": "0aeaaf1e60100b7d3193d2409194141fcb16fe6d897bd6c22feaba00102d4636",
+    "codex/evidence/staging-reboot-recovery-20261013/check-reboot-operation.py": "c72a697bdc8016910bfaf110225931f5303a06e2a09be07b80eb465194ffc2ce",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh": "1edc69f739ca8a9eeef8aefe21c8d0b3072d72ea7facd1527a0acb6b695e9463",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-00-PREPARATION-READONLY.sh": "180ff3310af2d8e768cfb318a9a3d3822d2940d11d3a02bf3c9486dc4e24e95b",
+    "codex/evidence/staging-reboot-recovery-20261013/remaining-backup-and-actor-readonly.py": "e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6",
+    "codex/evidence/staging-reboot-recovery-20261013/check-triggeredby-guard.py": "c6c597fedb34fee685b246cee496ecda39d7e07d0e5ed1ab32b9ffe59316d6d9",
+    "codex/evidence/staging-reboot-recovery-20261013/fixture-scope.json": "9c029df214623d7926d59b49d1b5b64a7bd154f2836f60b1f96f26a62f0845d1",
+    "codex/evidence/staging-reboot-recovery-20261013/check-package.py": "6872ca414c03df8c46b0a730c5948e550f81a74928fd4ffd8c10c3cd9165e9a7",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-08-FLOW-PROOF.sh": "7e39c5400839215b1c6390618ad7b942985866546d49f2f7d7aaa45011faee4a",
+    "codex/evidence/staging-reboot-recovery-20261013/preparation-00-review.json": "3910e9ab5232ce93cfc00a61b1bbf518facc6a7d4a17290f0f1cac188f2c7009",
+    "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction-review.json": "1802410d7c93b91f4f9038aa32f23f20c679bd6817196025277f9b0b9c04c10f",
+    "codex/evidence/staging-reboot-recovery-20261013/reboot-reviewed.py": "472cb2edc9516b6e28edda0810faaa26fc6a0f6af3c418b19df588a623bdceec",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-01-installation-accepted.json": "cbfe78edea0026e08b121bcce182b3f0a998eec32acf7b2f3d7a3913105f8554",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh": "791429f20463648fb578b2f9d6502f3c09ed42bcea6723811daa9211b104b554",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-06-AUTH-GATE.sh": "a1ce8d8d34d7234228158f0153b616c1bf60e3bed691e3480f5e19c5ed49a0e0",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh": "e0143a246a0bf0fd118f94ff190c6114788eadd4e00923f7ef3f4b6364e02cce",
+    "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-13-ABORT-WRITER-BASELINE-RESTORE.sh": "e5b6b46926236846e7cdc4e90916c4d810d9deceffdecca5eafad07eb28bf5d3",
+    "codex/evidence/staging-reboot-recovery-20261013/triggeredby-local-correction.diff": "994123d03053548a586db41b9f0725012edfc36a1c70f35772c4d64eb825e4ab",
+    "codex/evidence/staging-reboot-recovery-20261013/operator-scoped-finalization-accepted.json": "91026f8f37ab35ccf8fd1a03ef964e82e91738351cf67baec6765b6edc8f9db9",
+    "codex/evidence/staging-reboot-recovery-20261013/preflight.py": "de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/package-manifest.json": "646870a8233541345bc6484ae30775cd449d80010be0d424c7ab7f243be5d8cd",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-REMAINING-BACKUP-AND-ACTOR.sh": "ac8fa66637b06de9ea9700b28507334a866e211ec28b2b2e9a7afd2c85e1d937",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-10-CONTAIN.sh": "d069597d1343bb68aa95e10b85ef8898ef390cad0b22d56c08dfeb94bef8b807",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh": "21508ffff6a70c59bdcca4ab2c475efa9baabe77f9e1758fca01f1d96a300e1e",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-02-PREFLIGHT.sh": "cce51d4cbb1a8257ff272c07cbe0d81accd82d3b27c1642b5eba5d7d2485b619",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-05-STARTUP.sh": "57222b955e8ac539183b5e7a399b8838420437d3fc7cf9cfbd9d7fe0f2b25d5c",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/installed-package-manifest.json": "9d165f83cecc87aa5a3cee557d36fc2c95f043f13bd32d345b5a4cef06eda622",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-03-QUIESCE.sh": "d2c1b09b88aa9addb6eafa8d9d52c50bc034bf94411b3889bf9d3a44bc8ba8f8",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-PREFLIGHT.sh": "999e771b0bb851d14f07f16b68c9daa199211f4e495dceb286f93ddc8cfe5e4f",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh": "13397f4a11ba20bd85527b965fc8ab007b8e77656d1d73c5e7cccc3458bcf334",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh": "7deda8a4b27acbd35a25db087ccc44c9390b87bd5274fc0bd5f2a10926212176",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh": "32e0b85121f847b73e4ab53550a2599b294db89f519b971586b1da00fddd5eb0",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-00-PREPARATION-READONLY.sh": "6cfa1d8a7826ee7ea8b929a4ca042acbebc65eb3e9cb7c5737fdb02b137e9926",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-08-FLOW-PROOF.sh": "f2c7816d87bcabefbe8c92b32549752b62b6a6b63c6c5ee54f0b8c8b72047c6e",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/reboot-reviewed.py": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh": "31411cb2e235237a67b94b172d9538066cf3b19d03d2f2609a4c1363e920a84b",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-06-AUTH-GATE.sh": "d75444f447965e5e03a9a1d3381b4bd400aa957e043c695c88a6a101e99e661b",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh": "78c4259338339decd4d8c68873b1df3420faffe698882f09323563479e2251a9",
+    "codex/evidence/staging-reboot-recovery-20261013/historical-aborted-package/VPS-TERMINAL-13-ABORT-WRITER-BASELINE-RESTORE.sh": "e5b6b46926236846e7cdc4e90916c4d810d9deceffdecca5eafad07eb28bf5d3",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1",
+    "codex/STAGING_FULL_SERVICE_RECOVERY_AND_REBOOT_STARTUP_PLAN.md": "ef67817cd9efb32adcb24848a013e862bfb42070e7f404d919f01715add63c5b",
+    "codex/STAGING_REBOOT_RECOVERY_OPERATOR_PACKAGE_PREPARATION.md": "ed07e51862ac7b7e87fda3e1001789aafbf7ed1e29cefef16e681166d4c9cd89"
+  },
+  "files": [
+    {
+      "path": "codex/STAGING_REBOOT_RECOVERY_NEW_ATTEMPT_20261019.md",
+      "bytes": 39228,
+      "sha256": "7f2d4561d05fd30e5e53381c74e9849a69463f70917a9e00634e3aa3a37d6eac"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "bytes": 71045,
+      "sha256": "26e78c6eb485ab3152f53a6a9ca9f518767986b84f3ae9e67747e69e398ebc1e"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "bytes": 74030,
+      "sha256": "b177585e8384012d0502f2cc64360366377fe60d3ab9f86a004521150c22faae"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-02-PREFLIGHT.sh",
+      "bytes": 1680,
+      "sha256": "3d6ba2c23dffac636052637aa02e8992704e8212196cb78d3039bf881cb512b7"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-03-QUIESCE.sh",
+      "bytes": 1674,
+      "sha256": "35fe7c08af5434f711a98f4d635943361326388d118b6bf72a3245bb1141d968"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-04-ONE-MANUAL-REBOOT.sh",
+      "bytes": 1682,
+      "sha256": "5d6cf4d53d26f5de0bcff1c0077ea332f72bcd2a17c482132906bea4e3c72fac"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-05-STARTUP.sh",
+      "bytes": 1674,
+      "sha256": "aaf20ae1de020691a7b57b1f9689b1a9d8826cfde27470decabb4069040b96f6"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-06-AUTH-GATE.sh",
+      "bytes": 1680,
+      "sha256": "79830d0418b67a78635789ae3261576b457c89472fc63e4cf96bb44085c63895"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-07-CONDITIONAL-SCANNER.sh",
+      "bytes": 1686,
+      "sha256": "33c8ead7467554ec9c51846a77b98b932a7029e5d6d558958b4a4f769a760fa6"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-08-FLOW-PROOF.sh",
+      "bytes": 1683,
+      "sha256": "16b8bcd39844432a7c69113bbb6b036eae967a5eccc5e85736a004e1c371b5d0"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-09-INDEPENDENT-CLOSE.sh",
+      "bytes": 1680,
+      "sha256": "3dba830e375252efab39881a52170fc7909fd64a833d5f6abf4502888980dcc3"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-10-CONTAIN.sh",
+      "bytes": 1674,
+      "sha256": "e9d374cc09fbf59c42dc60cbe9e8450c75080a8482e4cd3a5572bf9d6e6ff068"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-11-MANUAL-STAGING-RUNTIME.sh",
+      "bytes": 1703,
+      "sha256": "a594a8a51b534ffcb171951d88542c6db572351aad531d6219798837a709ed5f"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-12-PAIRED-ARTIFACT-ROLLBACK.sh",
+      "bytes": 1707,
+      "sha256": "02a0f61ea4e35490e3af3bea5ae8b348baaeb1696cae84c5e7485666caeb04b9"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-13-POST-STARTUP-ABORT-WRITER-RESTORE.sh",
+      "bytes": 6294,
+      "sha256": "9df3d7482d37d69337c35d8f65feae8376b0accf99e7a8ef27e14268e95c0be8"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-14-SINGLE-TTY-DIAGNOSTIC.sh",
+      "bytes": 3805,
+      "sha256": "8c6880580944f817cb858557a19806f8a7d48c3156e25d9c6b0453dd11b7c45c"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/attempt-binding.diff",
+      "bytes": 4373,
+      "sha256": "42cbebe93059b8263621dd555b0bcfe74da6983a20c8044e3af07bf95ce80fb0"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/check-raw-tty-ask.py",
+      "bytes": 7246,
+      "sha256": "60d768d951de2db2fb5ed32eccc5e0693489d076b02af8e6af9491e2aa05d876"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/final-attempt-closure-review.json",
+      "bytes": 660,
+      "sha256": "5ded83f648239c9286d5136b6becf30f009502e9ecaa1211ffed96863d0247e8"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/fixture-recovery-review.json",
+      "bytes": 3412,
+      "sha256": "199716f2116411e8eb44669cf3ab8f9611fab0178b0586084b0cc3972a9c4f61"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/fixture-scope.json",
+      "bytes": 2573,
+      "sha256": "c807d018e10539407ae79dff8e64b8a3f4e4a2aaf3862b2bd464e6c32d03839a"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/historical-installed-pre-raw-tty/installed-package-manifest.json",
+      "bytes": 567,
+      "sha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/historical-installed-pre-raw-tty/reboot-reviewed.py",
+      "bytes": 40575,
+      "sha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/installed-package-manifest.json",
+      "bytes": 567,
+      "sha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/local-raw-tty-source-manifest.json",
+      "bytes": 978,
+      "sha256": "5f956bdff435116fe9e94267bec1efa8adedf65371e7779820b9d0593013846a"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/new-attempt-preparation-review.json",
+      "bytes": 12028,
+      "sha256": "dcb331b0a1287e9fb2eb1838630c5eff912b17345fb6741b51915cb60d4efe70"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-00-preparation-accepted.json",
+      "bytes": 6406,
+      "sha256": "b007cf1964abd59b63c787fcaf94c67ddc05a53dfb3cd955567a3b7629aee03e"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-01-installation-accepted.json",
+      "bytes": 653,
+      "sha256": "a8830ee0831db92210d2db86df44f891604b2a24af85447a8dab8c57f4672b6b"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-02-preflight-accepted.json",
+      "bytes": 4753,
+      "sha256": "dfe3bd76e608d4ba31ee0a93b8dd8f5a9f69ff2d66196cbba408987957e675fd"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-03-quiesced-accepted.json",
+      "bytes": 78,
+      "sha256": "e899ab0840ccdc64329b52826ed42b9a821ac87e98f1e1a92ef9171ba5a5e0b3"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-05-startup-accepted.json",
+      "bytes": 1485,
+      "sha256": "1a2c163a9695191015b255d640f0e97421db69a3bfa85e4c368adf85606c183d"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-06-auth-stop.json",
+      "bytes": 193,
+      "sha256": "d2d1c3307b89eb3c0e4bf8c7f844022c6c048daa7c2ddb8ee503aba3d0dd8ccf"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-09-partial-closure-accepted.json",
+      "bytes": 1984,
+      "sha256": "fa3379d18698112ad5d87c2e8cf1f86da88422dfd1b40e5ee11744e4b8470bda"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-13-baseline-restored-accepted.json",
+      "bytes": 2444,
+      "sha256": "4ec20938a2c76b9d4c20023cbc62904b224584c45feb41e5c4a632cc11ca496c"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/operator-14-single-tty-result.json",
+      "bytes": 1146,
+      "sha256": "5bf91b5f583b25f504b66707063009b4b9e041b026c0be221bb7032117866713"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/original-fixture-generators.py",
+      "bytes": 1754,
+      "sha256": "fb5994556794837d0c553f3c7314f90c205edf1eeb714e1b5e7050059bd27615"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/post-startup-abort-writer-review.json",
+      "bytes": 1214,
+      "sha256": "0ddfe5d832481604cd80fda9e6429bd6f2b0a754d8b2989c3b82d40335fdb7c4"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/preflight-02-review.json",
+      "bytes": 738,
+      "sha256": "8fafc270330668a1d21ee4566c760528dfc9f321fb8773145b545a00bbde0147"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/preflight.py",
+      "bytes": 20581,
+      "sha256": "de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/preparation-00-review.json",
+      "bytes": 873,
+      "sha256": "dec50eb004fbad71dec6ca89165e0f5e064d258109ce5bf5c820c727cd44c129"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/preparation-readonly.py",
+      "bytes": 4704,
+      "sha256": "7542950280843c0034a4f7b1a9ce717d6632cddb9bc6f6a562ce77b03c2c51b4"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/raw-tty-local-fix-review.json",
+      "bytes": 3091,
+      "sha256": "9725bba7239726cad7eaad08d7d98d214d62031e107cd0cd9c25db290be510db"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/raw-tty-local-fix.diff",
+      "bytes": 2701,
+      "sha256": "3f41eba69cacae27a6222f4382600a83f2560c151ec9381ba0467f4cf0725a1f"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/reboot-reviewed.py",
+      "bytes": 42000,
+      "sha256": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/recover-release-reviewed.py",
+      "bytes": 23980,
+      "sha256": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261019/remaining-backup-and-actor-readonly.py",
+      "bytes": 10465,
+      "sha256": "e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6"
+    }
+  ],
+  "selfHash": "EXCLUDED_TO_AVOID_RECURSION",
+  "fixtureScope": "fixture-scope.json",
+  "fixtureRecoveryReview": "fixture-recovery-review.json",
+  "fixturesReady": true,
+  "fixtureBinaryPayloads": "EXCLUDED_GIT_IGNORED_PRIVATE_LOCAL_ONLY",
+  "localFixtures": {
+    "pdf": {
+      "status": "RESTORED_EXACT_ORIGINAL",
+      "path": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261013.pdf",
+      "expectedSha256": "fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec",
+      "actualSha256": "fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec",
+      "bytes": 671,
+      "mode": "0600",
+      "binarySignature": "MATCH",
+      "gitPayload": "EXCLUDED"
+    },
+    "image": {
+      "status": "RESTORED_EXACT_ORIGINAL",
+      "path": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261014.png",
+      "expectedSha256": "1ed5c1e5d6eff56de570af9a250598b0b7cd6547a1ce8c1634982918ed6a334d",
+      "actualSha256": "1ed5c1e5d6eff56de570af9a250598b0b7cd6547a1ce8c1634982918ed6a334d",
+      "bytes": 2059,
+      "mode": "0600",
+      "binarySignature": "MATCH",
+      "gitPayload": "EXCLUDED"
+    }
+  },
+  "latestLocalReview": "fixture-recovery-review.json",
+  "latestOperatorReview": "final-attempt-closure-review.json",
+  "nextOperatorStep": "NONE_ATTEMPT_CLOSED_NO_RETRY_OR_SECOND_REBOOT",
+  "sourcePreparationInstalled": true,
+  "finalPreflightReviewed": true,
+  "coordinationAttemptStarted": true,
+  "rebootRequested": false,
+  "rebootExecuted": true,
+  "bootId": "379fc52e-5524-4b93-b6ec-b036d1953db7",
+  "baselineRestored": true,
+  "attemptClosed": true,
+  "additionalRebootRequested": false,
+  "unprovenRecoveryScope": [
+    "AUTH_GATE_COMPLETION",
+    "SCANNER_RECOVERY_OR_NATURAL_FRESH_READER_ACCEPTANCE",
+    "ONE_COMPLETE_USER_FLOW",
+    "WRITER_JOB_COMPLETION_OR_INBOX_RECEIPT"
+  ],
+  "stopDisposition": {
+    "document": "codex/STAGING_REBOOT_RECOVERY_NEW_ATTEMPT_20261019.md",
+    "section": "Post-reboot auth/scanner STOP \u2014 dispozicija sa\u010duvanih dokaza",
+    "firstFailedStep": "06_AUTH_GATE",
+    "CHECK_ID": "AUTH_GATE",
+    "recordedReason": "UnsupportedOperation",
+    "evidence": "operator-06-auth-stop.json",
+    "expected": "TWO_ACTUAL_LOGIN_CONTEXT_OBSERVATIONS_AND_AUTH_PASS",
+    "actual": "STOP_GATE_NOT_COMPLETED",
+    "preciseFailingOperation": "NOT_RECORDED",
+    "originalExceptionMessage": "NOT_RECORDED",
+    "originalTraceback": "NOT_RECORDED",
+    "hypothesis": "HARNESS_TTY_RPLUS_BUFFERED_IO_NOT_CONFIRMED",
+    "scannerAcceptance": "NOT_RUN_IN_RECORDED_OPERATOR_SEQUENCE",
+    "flowProof": "NOT_RUN_IN_RECORDED_OPERATOR_SEQUENCE",
+    "actualBrowserLoginOutcome": "NOT_RECORDED",
+    "oneProposedNextAction": "ONE_UNPRIVILEGED_ISOLATED_SAME_INTERPRETER_SSH_PTY_OPEN_RPLUS_PROBE_NO_HARNESS_CALL",
+    "proposalImplemented": false,
+    "proposalExecuted": false,
+    "acceptance": "ONE_SANITIZED_OPERATION_CONTEXT_EXCEPTION_MESSAGE_RESULT_THEN_STOP",
+    "newRebootNeeded": false,
+    "closedAttemptReopened": false,
+    "newWindowScheduled": false,
+    "reviewedOnLocalDate": "2026-10-20",
+    "newOperationalEvidence": "NONE_SAME_SAVED_EVIDENCE_ONLY",
+    "diagnosticContextFields": [
+      "pythonVersion",
+      "effectiveUid",
+      "stdinIsatty",
+      "stdoutIsatty",
+      "operation",
+      "openResultOrExceptionClassAndMessage"
+    ],
+    "diagnosticResult": "REPRODUCED_FOR_EXACT_OPEN_CALL_NONPRIVILEGED_CONTEXT_NOT_HISTORICAL_LINE_PROOF",
+    "historicalCauseScope": "ORIGINAL_LINE_AND_MESSAGE_NOT_RECORDED",
+    "oneRecommendedNextAction": "LOCAL_RAW_TTY_DESCRIPTOR_CORRECTION_IN_ASK_PRESERVE_GUARDS_AND_BUDGETS",
+    "correctionImplemented": false
+  },
+  "singleTTYDiagnostic": {
+    "status": "DIAGNOSTIC_EXECUTED_ONCE_REVIEWED_STOP",
+    "executed": true,
+    "block": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-14-SINGLE-TTY-DIAGNOSTIC.sh",
+    "sha256": "8c6880580944f817cb858557a19806f8a7d48c3156e25d9c6b0453dd11b7c45c",
+    "notAttemptContinuation": true,
+    "expectedAccount": "darko_NONPRIVILEGED",
+    "interpreter": "/usr/bin/python3 -I -B -",
+    "stdin": "QUOTED_HEREDOC",
+    "historicalDifference": "NO_SUDO_HISTORICAL_BLOCK_REQUIRED_EUID_0",
+    "historicalActualTTY": "NOT_RECORDED",
+    "openBudget": 1,
+    "evidence": "~/.passvero-auth-gate-diagnostics/recovery-20261019-reboot-01-single-tty.json",
+    "evidenceMode": "0600_DIRECTORY_0700_EXCLUSIVE_NO_OVERWRITE",
+    "testsOrSyntaxChecksExecuted": 0,
+    "next": "STOP_NO_FURTHER_PROBE_ONE_LOCAL_ASK_IO_CORRECTION_RECOMMENDED_NOT_IMPLEMENTED",
+    "AUTH_CALLS": 0,
+    "SCANNER_CALLS": 0,
+    "SERVICE_CHANGES": "NO",
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "operatorResult": "operator-14-single-tty-result.json",
+    "result": "OPEN_EXCEPTION",
+    "exceptionClass": "io.UnsupportedOperation",
+    "exceptionMessage": "File or stream is not seekable.",
+    "observedUTC": "2026-10-20T14:46:49.135131+00:00",
+    "euid": 1000,
+    "openAttempts": 1,
+    "historicalFailingLine": "NOT_RECORDED",
+    "agentVPSAccess": false
+  },
+  "localRawTTYFix": {
+    "status": "LOCAL_RAW_TTY_FIX_COMPLETE",
+    "review": "raw-tty-local-fix-review.json",
+    "localHelperSha256": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+    "candidateSourceManifest": "local-raw-tty-source-manifest.json",
+    "installedHelperSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+    "installedSourceSnapshot": "historical-installed-pre-raw-tty",
+    "installed": false,
+    "operationalBlocksRebound": false,
+    "newOperationalSeriesPrepared": false,
+    "closedAttemptReopened": false,
+    "focusedPTYTests": {
+      "count": 7,
+      "result": "PASS"
+    },
+    "nextOperatorStep": "NONE_LOCAL_DIFF_ONLY",
+    "futureLiveAuthScannerFlow": "NOT_PERFORMED_NOT_PROVEN"
+  }
+}

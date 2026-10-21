@@ -1,0 +1,21 @@
+{
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "fixtures": {
+    "pdf": {
+      "path": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261013.pdf",
+      "sha256": "fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec",
+      "bytes": 671,
+      "gitPayload": "EXCLUDED_LOCAL_BROWSER_UPLOAD_ONLY"
+    },
+    "image": {
+      "path": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261014.png",
+      "sha256": "1ed5c1e5d6eff56de570af9a250598b0b7cd6547a1ce8c1634982918ed6a334d",
+      "bytes": 2059,
+      "gitPayload": "EXCLUDED_LOCAL_BROWSER_UPLOAD_ONLY"
+    }
+  },
+  "source": "../staging-reboot-recovery-20261019/fixture-scope.json",
+  "verifiedDuringLocalPreparation": true,
+  "notFutureVPSObservation": true,
+  "transferToVPSRequired": false
+}

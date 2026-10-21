@@ -1,0 +1,56 @@
+{
+  "closure": {
+    "timerRestored": false,
+    "partial": true,
+    "pending": [
+      "PRODUCER_RECOVERY_OR_UNREVIEWED_ROOT_INTERPRETER_ACTIVE"
+    ],
+    "at": "2026-10-21T11:35:29.547419+00:00",
+    "closure": "PARTIAL_TIMER_RESTORE_REQUIRES_OPERATOR_REVIEW"
+  },
+  "LOCK_REMOVAL": "NOT_PERFORMED",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "firstStop": {
+    "status": "STOP",
+    "CHECK_ID": "LOCK_RELEASE_BODY",
+    "reason": "PRODUCER_RECOVERY_OR_UNREVIEWED_ROOT_INTERPRETER_ACTIVE",
+    "LOCK_REMOVAL": "NOT_PERFORMED",
+    "PRODUCER_MANUAL_RUN": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO"
+  },
+  "scheduledCycle": "NOT_OBSERVED_OPERATION_STOPPED",
+  "maintenanceUnitReturnCode": 1,
+  "operationDirectory": "/var/lib/passvero-signature-lock-release-20261020-01/env-launch-continuation",
+  "baseline.json": {
+    "timer": {
+      "enabled": "enabled",
+      "active": "active"
+    },
+    "files": {
+      "/etc/passvero-signature-health.json": "28df856a3a8516f8c33d35bc652b5358dd0dcdd49d185be01a64eb1264a22593",
+      "/etc/systemd/system/passvero-signature-health.timer": "5db45222db3785a90940b52f8480e2eeb1b912083c111aca18e70ff0075902f4",
+      "/etc/systemd/system/passvero-signature-health.service": "5becee91793921e6bae866b3c2f9523e4dfa2208b9709c2413191f38b7c31afe"
+    },
+    "parent": {
+      "device": 2049,
+      "inode": 1573155
+    },
+    "lock": {
+      "device": 2049,
+      "inode": 2161968,
+      "mode": "0700",
+      "uid": 0,
+      "gid": 0,
+      "ctimeNs": 1791900359945693579,
+      "mtimeNs": 1791900359945693579,
+      "empty": true
+    },
+    "at": "2026-10-21T11:35:28.393974+00:00",
+    "operatorWindow": "EXCLUSIVE_NO_PARALLEL_ROOT_LAUNCH_REQUIRED"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "evidenceClass": "USER_CONFIRMED",
+  "receivedLocalDate": "2026-10-21",
+  "timeZone": "Europe/Zagreb",
+  "environment": "STAGING",
+  "source": "EXPLICIT_USER_MESSAGE_AFTER_OPERATOR_RECOVERY_PASS",
+  "confirmed": {
+    "newProductCreated": true,
+    "productPublished": true,
+    "pdfDownloadedSuccessfully": true,
+    "qrLinkLoaded": true,
+    "expectedDppElementsDisplayed": true,
+    "checkedUserFlowWorks": true
+  },
+  "notReported": {
+    "newProductId": "NOT_RECORDED",
+    "documentId": "NOT_RECORDED",
+    "exactScanStatus": "NOT_RECORDED",
+    "downloadByteChecksumComparison": "NOT_RECORDED",
+    "specificPriorDocumentAssociation": "NOT_RECORDED",
+    "serverSessionContextProof": "NOT_RECORDED"
+  },
+  "operatorRecoveryEvidence": "operator-11-continuity-recovery-result.json",
+  "evidenceSeparation": "USER_REPORT_NOT_AUTOMATED_OR_OPERATOR_OBSERVATION_NOT_NEW_RUNTIME_HEALTH_CHECK",
+  "UI_PDF_ACCEPTANCE": "PASS_USER_CONFIRMED",
+  "AUTOMATIC_STARTUP": "PASS_ACCEPTED_HISTORICAL_EVIDENCE",
+  "FULL_SERVICE_RECOVERY": "NOT_PROVEN"
+}

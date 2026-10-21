@@ -1,0 +1,33 @@
+{
+  "scope": "SAVED_PREFLIGHT_REVIEW_NOT_NEW_LIVE_COLLECTION",
+  "sourceObservedUTC": "2026-10-13T14:12:20.294726+00:00",
+  "jobs": "NO_MATCHING_ACTIVE_PROCESSES_AT_OBSERVATION",
+  "startup": "ENABLED_ACTIVE_EXACT_STAGING_DUMP_SCOPE",
+  "startupDiff": "NONE_NO_DEMONSTRATED_DEFECT",
+  "automaticPostNewReboot": "NOT_PROVEN",
+  "database": "ACCEPTANCE_5433_MAIN_5432_ONLINE_AT_OBSERVATION",
+  "scannerArtifacts": "MATCH_REVIEWED_PRODUCER_READER_PINS_OLD_ALIGNED_HELPER",
+  "scannerInstalledPin": "8QNIYVVZWEsQaCL9uLZ5Q",
+  "scannerCandidate": "ONE_LITERAL_LOCAL_NOT_INSTALLED",
+  "freshReader": "NOT_PROVEN",
+  "recoveryHistory": "LISTED_PHASES_COMPLETE_OR_ROLLED_BACK",
+  "consumers": "OBSERVED_UID_1001_ONLY_NOT_COMPLETE_CONFINEMENT_PROOF",
+  "rollbackMetadata": "REVIEWED_HELPER_OLD_CANONICAL_CONFIG_MATCH",
+  "previousBuildHash": "MATCH_853RYrj-r5cyoSGuJudap_WITHOUT_NEWLINE",
+  "previousArtifactInventory": "NOT_FULLY_REVERIFIED",
+  "productionCandidateUnits": [
+    "pm2-darko.service",
+    "nginx.service",
+    "postgresql@16-main.service"
+  ],
+  "productionApplicationHttpScope": "NOT_IDENTIFIED_BY_UNIT_NAME_ALONE",
+  "remaining": [
+    "NEW_WINDOW",
+    "ACTOR_PURPOSE_OR_EXPLICIT_SCOPE_AMENDMENT",
+    "SYNTHETIC_IMAGE_SCOPE",
+    "BACKUP_STATE_CLOSURE_LOCK_RECONCILIATION",
+    "FINAL_PRODUCTION_HTTP_AND_CLOSURE_WRAPPER"
+  ],
+  "executionUnlocked": false,
+  "runtimeMutations": false
+}

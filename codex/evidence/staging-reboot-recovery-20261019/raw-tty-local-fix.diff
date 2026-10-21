@@ -1,0 +1,60 @@
+--- historical-installed-pre-raw-tty/reboot-reviewed.py
++++ local-candidate/reboot-reviewed.py
+@@ -442,13 +442,50 @@
+ 
+ 
+ def ask(key, limit=1200):
+-    with open('/dev/tty', 'r+') as terminal:
+-        terminal.write(key + ' — type PASS only after actually observed: '); terminal.flush()
+-        deadline = min(END, data('baseline.json')['t0'] + limit)
+-        remaining = deadline - time.time()
+-        require(remaining > 0 and select.select([terminal], [], [], remaining)[0], 'OPERATOR_OBSERVATION_TIMEOUT')
+-        answer = os.read(terminal.fileno(), 256).decode().strip()
+-    require(answer == 'PASS', 'OPERATOR_OBSERVATION_NOT_PASS')
++    # Translate the existing wall-clock phase budget once; retries and partial
++    # I/O must never extend the resulting monotonic deadline.
++    remaining = min(END, data('baseline.json')['t0'] + limit) - time.time()
++    require(remaining > 0, 'OPERATOR_OBSERVATION_TIMEOUT')
++    deadline = time.monotonic() + remaining
++    fd = os.open('/dev/tty', os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
++    try:
++        def wait(writing=False):
++            while True:
++                remaining = deadline - time.monotonic()
++                require(remaining > 0, 'OPERATOR_OBSERVATION_TIMEOUT')
++                try:
++                    ready = select.select([] if writing else [fd], [fd] if writing else [], [], remaining)
++                except InterruptedError:
++                    continue
++                require(ready[1] if writing else ready[0], 'OPERATOR_OBSERVATION_TIMEOUT')
++                return
++
++        prompt = (key + ' — type PASS only after actually observed: ').encode('utf-8')
++        offset = 0
++        while offset < len(prompt):
++            wait(writing=True)
++            try:
++                written = os.write(fd, prompt[offset:])
++            except (InterruptedError, BlockingIOError):
++                continue
++            require(written > 0, 'OPERATOR_TTY_WRITE_FAILED')
++            offset += written
++        answer = b''
++        allowed = (b'PASS\n', b'PASS\r\n')
++        while True:
++            wait()
++            try:
++                chunk = os.read(fd, 256)
++            except (InterruptedError, BlockingIOError):
++                continue
++            require(chunk, 'OPERATOR_OBSERVATION_EOF')
++            require(time.monotonic() < deadline, 'OPERATOR_OBSERVATION_TIMEOUT')
++            answer += chunk
++            require(any(value.startswith(answer) for value in allowed), 'OPERATOR_OBSERVATION_NOT_PASS')
++            if answer in allowed:
++                break
++    finally:
++        os.close(fd)
+     return {'result': 'PASS', 'source': 'OPERATOR_OBSERVATION', 'epoch': time.time()}
+ 
+ 

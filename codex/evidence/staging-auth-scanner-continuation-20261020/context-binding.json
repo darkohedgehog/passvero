@@ -1,0 +1,19 @@
+{
+  "libraryBytesUnchanged": true,
+  "librarySha256": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+  "explicitNamespaceBindings": {
+    "H.ROOT": "NEW_CONTINUATION_ROOT",
+    "H.ATTEMPT": "NEW_CONTINUATION_ID",
+    "H.END": "ACTUAL_NEW_BASELINE_T0_PLUS_1800"
+  },
+  "reusedModesNeverCalled": [
+    "old.main",
+    "old.auth_gate",
+    "old.quiesce",
+    "old.reboot",
+    "old.startup",
+    "old.close"
+  ],
+  "newLogicProof": "PASS_LOCAL_TWO_PATH_DOUBLES_ONLY_SEE_LOCAL_CONTINUATION_PROOF_JSON",
+  "executionBlock": "OPERATOR_GATES_AND_LIVE_PREFLIGHT_REQUIRED_LOCAL_PROOF_TRUE"
+}

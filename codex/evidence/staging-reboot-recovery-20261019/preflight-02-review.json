@@ -1,0 +1,18 @@
+{
+  "result": "PASS_REVIEW_BEFORE_Q_ACCEPTED",
+  "attemptId": "recovery-20261019-reboot-01",
+  "observedLocal": "2026-10-19T17:21:17.457482+02:00",
+  "source": "operator-02-preflight-accepted.json",
+  "backupStateUnchangedFrom00": true,
+  "backup": "TODAY_COMPLETED_ATTEMPTS_9_CONTINUOUS_HOLD_FALSE_HEALTHY",
+  "actor": "EXPECTED_ACTIVE_ORGANIZATION_ADMIN_AND_DRAFT",
+  "production": "ONLINE_PUBLIC_LOCAL_TLS_200_0",
+  "nextLocalDue": {
+    "monitor": "2026-10-19T18:20:00+02:00",
+    "stagingCapture": "2026-10-20T06:30:00+02:00",
+    "productionBackup": "2026-10-20T04:03:58.070758+02:00"
+  },
+  "next": "03_QUIESCE_PENDING_OPERATOR_COMMAND_17_25_TO_17_26_RETURN_OUTPUT",
+  "rebootUnlocked": false,
+  "automaticStartup": "NOT_PROVEN"
+}

@@ -1,0 +1,28 @@
+{
+  "result": "PASS_SCOPED_NEW_ABORT_CLOSURE_STATIC_REVIEW",
+  "block": "codex/evidence/staging-reboot-recovery-20261019/VPS-TERMINAL-13-POST-STARTUP-ABORT-WRITER-RESTORE.sh",
+  "sha256": "9df3d7482d37d69337c35d8f65feae8376b0accf99e7a8ef27e14268e95c0be8",
+  "sourceManifestSha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa",
+  "guardedFailure": "AUTH_GATE_UnsupportedOperation_ONLY",
+  "acceptedBootId": "379fc52e-5524-4b93-b6ec-b036d1953db7",
+  "guards": [
+    "sameAcceptedNewBoot",
+    "oneRebootEvidence",
+    "startupPassNoManualRecovery",
+    "onlyWriterPendingInAcceptedPartialClosure",
+    "noAuthPassScannerOrFlowAttempt",
+    "exactSourceAndWriterUnitHashesNoDropins",
+    "unchangedReleaseBackupStateAndRegularTimers",
+    "idleJobsWriterMainPID0",
+    "unchangedDeliveryNoUnresolvedSending",
+    "savedWriterEnabledBaseline",
+    "oneImmutableResumeIntent"
+  ],
+  "mutation": "ENABLE_NOW_ONLY_SAVED_REMINDER_TIMER_AND_PRIVATE_EVIDENCE",
+  "ordinaryApprovedSendingMayResume": true,
+  "manualWorkerCall": false,
+  "runtimeHelperOrPinsChanged": false,
+  "executed": false,
+  "syntax": "PASS_SINGLE_CHANGED_BLOCK_AST_AND_BASH_N",
+  "previousTestsBuildAcceptance": "NOT_REPEATED"
+}

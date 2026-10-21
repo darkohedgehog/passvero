@@ -1,0 +1,81 @@
+{
+  "attempt": "recovery-20261021-continuity-01",
+  "automaticRetry": false,
+  "RECOVERY_EXECUTED": "YES",
+  "SCAN_CALLS": 0,
+  "LOCK_REMOVAL_REPEATED": "NO",
+  "unitReturnCode": 0,
+  "unit": {
+    "Result": "success",
+    "LoadState": "not-found",
+    "ActiveState": "inactive",
+    "SubState": "dead"
+  },
+  "closure.json": {
+    "attempt": "recovery-20261021-continuity-01",
+    "automaticRetry": false,
+    "closure": "PASS_COMPLETE_EXISTING_READER_ACCEPTED"
+  },
+  "closure-failure.json": null,
+  "units": {
+    "passvero-signature-health.timer": {
+      "Id": "passvero-signature-health.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-signature-health.service": {
+      "Id": "passvero-signature-health.service",
+      "LoadState": "loaded",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "clamav-freshclam.service": {
+      "Id": "clamav-freshclam.service",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "clamav-daemon.service": {
+      "Id": "clamav-daemon.service",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "clamav-daemon.socket": {
+      "Id": "clamav-daemon.socket",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "phase": "COMPLETE",
+  "firstFailure": "NOT_RECORDED",
+  "scheduledPublications": [
+    {
+      "accepted": true,
+      "expiresAt": 1792586482711,
+      "observedAt": 1792586422711,
+      "sequence": 145729
+    },
+    {
+      "accepted": true,
+      "expiresAt": 1792586498285,
+      "observedAt": 1792586438285,
+      "sequence": 145730
+    },
+    {
+      "accepted": true,
+      "expiresAt": 1792586513910,
+      "observedAt": 1792586453910,
+      "sequence": 145731
+    }
+  ],
+  "reader": "ACCEPTED",
+  "status": "PASS_RECOVERY_PENDING_USER_UI"
+}

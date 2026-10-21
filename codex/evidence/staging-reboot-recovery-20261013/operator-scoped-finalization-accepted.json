@@ -1,0 +1,67 @@
+{
+  "provenance": "USER_RETURNED_OPERATOR_OUTPUT_SANITIZED_EXTRACT",
+  "result": "PASS_SCOPED_PREPARATION_ONLY",
+  "mutations": "NONE",
+  "executionUnlocked": false,
+  "failures": [],
+  "actor": {
+    "emailConfirmedByUser": "zivic.darko79@gmail.com",
+    "userId": "40e51001-912c-4bcf-aa45-d866632aac85",
+    "membershipId": "b954c03b-9c81-4760-bd63-83127b56bbb6",
+    "membershipRole": "ADMIN",
+    "membershipStatus": "ACTIVE",
+    "organizationStatus": "ACTIVE",
+    "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+    "verified": true,
+    "hasPassword": true,
+    "authEmailMatches": true,
+    "rolePermissions": [
+      "PRODUCT_READ",
+      "PRODUCT_EDIT",
+      "PRODUCT_PUBLISH"
+    ],
+    "authority": "ORGANIZATION_MEMBERSHIP_NOT_PLATFORM_GRANT"
+  },
+  "backup": {
+    "attempts": 3,
+    "attemptComplete": true,
+    "mode": "CONTINUOUS",
+    "hold": false,
+    "failure": null,
+    "validSet": "20261013T043001Z",
+    "validCaptureEpoch": 1791865811,
+    "ageSeconds": 38536.583,
+    "sha256": "8b50b1380cbad926e1fe0955470badcfd4b373119611ddc93376d7a95d9e7ca0",
+    "monitorResult": {
+      "observedEpoch": 1791901200,
+      "signal": "HEALTHY"
+    },
+    "closure": {
+      "pauseSeconds": 6.915,
+      "serviceResult": "success",
+      "stagingResumed": true,
+      "timerBaselineRestored": true
+    },
+    "retainedRecord": "RETAINED_COMPLETED_CAPTURE_RECORD",
+    "serviceState": "inactive"
+  },
+  "jobs": {
+    "activeRelevantProcesses": []
+  },
+  "writer": {
+    "timerActive": "active",
+    "timerEnabled": "enabled",
+    "timerSubState": "waiting",
+    "serviceActive": "inactive",
+    "serviceSubState": "dead"
+  },
+  "fullOperatorOutputFile": "/tmp/passvero-reboot-finalization.ny5tKj",
+  "newWindowUserConfirmed": {
+    "startUTC": "2026-10-14T15:25:00Z",
+    "endUTC": "2026-10-14T15:55:00Z",
+    "zone": "Europe/Zagreb",
+    "localStart": "17:25",
+    "localEnd": "17:55"
+  },
+  "newLoginAndQuota": "NOT_RUN_APPLICATION_GATES_BEFORE_UPLOAD"
+}

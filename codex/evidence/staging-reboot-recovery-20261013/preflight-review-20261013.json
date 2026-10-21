@@ -1,0 +1,24 @@
+{
+  "result": "STOP_EXECUTION_LOCKED",
+  "observedUTC": "2026-10-13T14:12:20.294726+00:00",
+  "observedEuropeZagreb": "2026-10-13T16:12:20+02:00",
+  "scheduledWindow": "EXPIRED_NOT_REUSED",
+  "release": "PASS_759_EXECUTABLE_FILES_AND_EXACT_PINS",
+  "runtime": "PASS_METADATA_NOT_LOGIN_ACCEPTANCE",
+  "reminders": "NO_UNRESOLVED_OR_ACTIVE_LEASE_AT_OBSERVATION",
+  "captureActiveRecord": "PREFLIGHT_FALSE_POSITIVE_PRESENCE_ALONE_NOT_PROOF_OF_ACTIVE_JOB",
+  "backupCurrentState": "NOT_PROVEN_SECTION_ABORTED",
+  "localCorrection": "Accept retained record only with exact completed/latest set, successful resume/writer closure, idle service; existing job-lock and process guards preserved",
+  "newRegression": "PASS_ONE_TEST_EIGHT_CASES_NO_SUBPROCESS",
+  "fixture": {
+    "actorId": "40e51001-912c-4bcf-aa45-d866632aac85",
+    "actorSyntheticPurpose": "NOT_PROVEN",
+    "draftId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+    "imageReferences": 0,
+    "documentReferences": 0,
+    "publishedVersion": null
+  },
+  "fullOutputFile": "/tmp/passvero-reboot-preflight-20261013.xCke3H",
+  "remainingInstalledMetadata": "Read saved startup/scanner/jobs/rollback sections; do not rerun full preflight for them",
+  "runtimeMutations": false
+}

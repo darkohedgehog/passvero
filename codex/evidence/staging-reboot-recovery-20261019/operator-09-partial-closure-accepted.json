@@ -1,0 +1,70 @@
+{
+  "artifactsRetained": true,
+  "automaticStartup": "PASS",
+  "backupStateUnchanged": true,
+  "closure": "PARTIAL_AUTOMATION_RESTORE",
+  "operator": "Darko Zivic",
+  "pending": {
+    "passvero-subscription-reminders.timer": "APP_SCANNER_OR_FLOW_GATE_NOT_READY_OPERATOR_DARKO"
+  },
+  "production": {
+    "https": "200 0",
+    "localHttps": "200 0",
+    "pm2": [
+      {
+        "cwd": "/var/www/passvero",
+        "name": "passvero",
+        "status": "online"
+      }
+    ],
+    "target": {
+      "origin": "https://passvero.eu/",
+      "upstream": "LOOPBACK_3000_IN_SAME_TLS_SERVER_BLOCK"
+    },
+    "units": {
+      "nginx.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/nginx.service",
+        "Group": "",
+        "Id": "nginx.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": ""
+      },
+      "pm2-darko.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/etc/systemd/system/pm2-darko.service",
+        "Group": "",
+        "Id": "pm2-darko.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled",
+        "User": "darko"
+      },
+      "postgresql@16-main.service": {
+        "ActiveState": "active",
+        "FragmentPath": "/usr/lib/systemd/system/postgresql@.service",
+        "Group": "",
+        "Id": "postgresql@16-main.service",
+        "LoadState": "loaded",
+        "SubState": "running",
+        "TriggeredBy": "",
+        "UnitFileState": "enabled-runtime",
+        "User": ""
+      }
+    }
+  },
+  "release": "_tkSUOn0PCoHjpx8V7FVr",
+  "restored": [
+    "passvero-staging-backup.timer",
+    "passvero-staging-backup-monitor.timer"
+  ],
+  "timerDue": {
+    "passvero-staging-backup-monitor.timer": 1792426800.0,
+    "passvero-staging-backup.timer": 1792470600.0
+  },
+  "verificationDeliveryUnchangedBeforeResume": true
+}

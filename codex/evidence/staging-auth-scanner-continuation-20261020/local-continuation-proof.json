@@ -1,0 +1,68 @@
+{
+  "scope": "LOCAL_CONTINUATION_ADAPTER_TWO_PATH_PROOF",
+  "result": "PASS",
+  "command": "python3 -I -B codex/evidence/staging-auth-scanner-continuation-20261020/test_continuation_local.py",
+  "exitCode": 0,
+  "testsRun": 2,
+  "failures": 0,
+  "errors": 0,
+  "adapterSha256": "d39f3aa4dd5b49c0fabd207e8bb7bbddc8b9203b92f26c7f85417a7367dbdd06",
+  "testSha256": "f58438a97a469756aa55d24d538d219b78550a25db2bb31add608c692c755ce0",
+  "cases": [
+    {
+      "name": "test_one_successful_continuation_and_independent_close",
+      "result": "PASS",
+      "path": [
+        "new baseline / writer-only pause",
+        "two manual observations + fresh server session and selected organization",
+        "natural ready reader / no recovery",
+        "one flow intent",
+        "synthetic reviewed lower-level flow proof",
+        "separately loaded independent close"
+      ],
+      "closure": "PASS_BASELINE_RESTORED",
+      "functionalContinuation": "PASS_CURRENT_STATE_ONLY_LOCAL_DOUBLE",
+      "baselineBytesPreserved": true,
+      "backupMonitorUnchanged": true
+    },
+    {
+      "name": "test_one_rejected_server_selection_and_independent_close",
+      "result": "PASS",
+      "manualAnswers": [
+        "PASS",
+        "PASS"
+      ],
+      "serverInput": "fresh actor session / different organization selected",
+      "CHECK_ID": "CONTINUATION_AUTH",
+      "reason": "FRESH_SERVER_SESSION_AND_ORG_SELECTION_NOT_PROVEN",
+      "authPassCreated": false,
+      "scannerAndFlowStarted": false,
+      "closure": "PASS_BASELINE_RESTORED",
+      "failureBytesPreserved": true,
+      "baselineBytesPreserved": true,
+      "backupMonitorUnchanged": true
+    }
+  ],
+  "isolation": "Only adapter loaded. Separate temporary roots; lower-level libraries, actor SQL responses, reader, HTTP and systemctl are local doubles. No reviewed operational helper, real terminal, subprocess or network client invoked.",
+  "limitations": [
+    "Does not execute real SQL or prove deployed schema/session behavior",
+    "Does not prove live systemd, sending, scanner recovery or browser flow",
+    "Natural-ready reader branch only; conditional recovery binding retained from prior reviewed source, not newly accepted live",
+    "No installation/bootstrap execution; payload integrity checked separately",
+    "Does not retroactively prove the historical AUTH_GATE failing line"
+  ],
+  "functionalChanges": "No guard correction required by these two paths; explicit local proof flag enabled after authorization and linked to this candidate hash.",
+  "PTY_TESTS_REPEATED": false,
+  "BUILD_REPEATED": false,
+  "STARTUP_ACCEPTANCE_REPEATED": false,
+  "BACKUP_ACCEPTANCE_REPEATED": false,
+  "LIVE_AUTH_CALLS": 0,
+  "LIVE_SCANNER_CALLS": 0,
+  "VPS_ACCESS": false,
+  "INSTALLATION_PERFORMED": false,
+  "REBOOT_REQUIRED": false,
+  "newMaintenanceWindowScheduled": false,
+  "AUTOMATIC_STARTUP": "PASS_ACCEPTED_REFERENCE_ONLY",
+  "FULL_SERVICE_RECOVERY": "NOT_PROVEN",
+  "executionStarted": false
+}

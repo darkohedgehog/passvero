@@ -1,0 +1,15 @@
+{
+  "deployable": false,
+  "files": {
+    "preflight.py": "de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10",
+    "preparation-readonly.py": "7542950280843c0034a4f7b1a9ce717d6632cddb9bc6f6a562ce77b03c2c51b4",
+    "reboot-reviewed.py": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+    "recover-release-reviewed.py": "0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44",
+    "remaining-backup-and-actor-readonly.py": "e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6"
+  },
+  "installedHelperSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+  "installedSourceManifestSha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa",
+  "localHelperSha256": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+  "operationalPayloads": "UNCHANGED_HISTORICAL_INSTALLED_BINDINGS",
+  "scope": "LOCAL_RAW_TTY_CANDIDATE_NOT_INSTALLED_NOT_NEW_OPERATIONAL_ATTEMPT"
+}

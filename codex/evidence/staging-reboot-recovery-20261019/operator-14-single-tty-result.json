@@ -1,0 +1,31 @@
+{
+  "diagnostic": "AUTH_GATE_SINGLE_TTY_OPEN_RPLUS",
+  "relatedAttempt": "recovery-20261019-reboot-01",
+  "observedUTC": "2026-10-20T14:46:49.135131+00:00",
+  "pythonVersion": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "euid": 1000,
+  "isatty": {
+    "stdin": false,
+    "stdout": true,
+    "stderr": true
+  },
+  "historicalInvocation": "sudo /usr/bin/python3 -I -B - with heredoc",
+  "diagnosticInvocation": "/usr/bin/python3 -I -B - with heredoc; no sudo",
+  "historicalActualStdioAndTTYSession": "NOT_RECORDED",
+  "historicalFailingLine": "NOT_RECORDED",
+  "operation": "open('/dev/tty', 'r+')",
+  "openAttempts": 1,
+  "automaticRetry": false,
+  "AUTH_CALLS": 0,
+  "SCANNER_CALLS": 0,
+  "SERVICE_CHANGES": "NO",
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "evidenceFile": "/home/darko/.passvero-auth-gate-diagnostics/recovery-20261019-reboot-01-single-tty.json",
+  "evidenceSaved": true,
+  "result": "OPEN_EXCEPTION",
+  "exceptionClass": "UnsupportedOperation",
+  "exceptionModule": "io",
+  "exceptionMessage": "File or stream is not seekable.",
+  "instruction": "RETURN_THIS_ONE_RESULT_AND_STOP_NO_RETRY"
+}

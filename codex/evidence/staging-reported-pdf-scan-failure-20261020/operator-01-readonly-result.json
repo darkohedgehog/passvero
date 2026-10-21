@@ -1,0 +1,279 @@
+{
+  "diagnostic": "STAGING_REPORTED_PDF_SCAN_FAILURE_TRIAGE",
+  "productId": "10813121-1ffa-4c94-91d4-82b2a9ee6757",
+  "userReportedDate": "2026-10-20",
+  "manualEditorAccess": "USER_REPORTED_NOT_SERVER_SESSION_PROOF",
+  "automaticRetry": false,
+  "mutations": "NONE",
+  "newScanCalls": 0,
+  "storageReads": 0,
+  "authCalls": 0,
+  "messagesSent": 0,
+  "serviceChanges": false,
+  "observedUTC": "2026-10-20T16:14:12.347538+00:00",
+  "savedAttemptEvidence": {
+    "classification": "SAVED_DB_STATE_AND_TERMINAL_AUDIT_NOT_CURRENT_HEALTH",
+    "database": "passvero_acceptance",
+    "dbObservedAt": "2026-10-20T16:14:12.393076+00:00",
+    "product": {
+      "id": "10813121-1ffa-4c94-91d4-82b2a9ee6757",
+      "organizationId": "ffe171d1-b6a6-43d5-83bb-890e2fa23c9f",
+      "organizationDisplayName": "SYNTHETIC — Subscription commercial acceptance",
+      "currentDraftVersionId": "70164221-7d8f-402d-ab93-4719f5d18ac8",
+      "currentPublishedVersionId": "1e234758-af8c-44a1-9491-7f9756605bc7"
+    },
+    "candidateAssociations": [
+      {
+        "associationId": "f26fb88e-066b-41bb-ab80-8b1df9b1d958",
+        "versionId": "70164221-7d8f-402d-ab93-4719f5d18ac8",
+        "versionStatus": "DRAFT",
+        "currentDraft": true,
+        "currentPublished": false,
+        "organizationConsistent": true,
+        "documentId": "4cf09f57-bddd-4073-b2ea-cb643f70de41",
+        "category": "DECLARATION",
+        "locale": null,
+        "isPublic": true,
+        "labelMatchesReport": true,
+        "documentStatus": "AVAILABLE",
+        "uploadedAt": "2026-10-20T15:56:35.008",
+        "updatedAt": "2026-10-20T16:02:57.438",
+        "failedAt": null,
+        "uploadFailureCode": null,
+        "sizeBytes": 750,
+        "checksumSha256": "98c913ee16f40bf9aeb51d3ec924d015a711cb8482b689fbb1987f6c6d9ff4b2",
+        "scan": {
+          "status": "ERROR",
+          "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+          "startedAt": "2026-10-20T16:02:56.991",
+          "scannedAt": null,
+          "sha256": null,
+          "policyVersion": 2,
+          "failureCode": "SIGNATURES_UNTRUSTED",
+          "scanner": null,
+          "engineVersion": null,
+          "signatureVersion": null
+        },
+        "recentTerminalAudit": [
+          {
+            "id": "3c6d1a24-5f67-4ecd-afa2-d0a0b6124be2",
+            "action": "DOCUMENT_MALWARE_SCAN_ERROR",
+            "occurredAt": "2026-10-20T16:02:57.44",
+            "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+            "policyVersion": "2",
+            "failureCode": "SIGNATURES_UNTRUSTED",
+            "recordedTerminalPath": "SCAN_FINALIZE",
+            "matchesCurrentAttempt": true
+          },
+          {
+            "id": "20050b95-6037-4b78-9cc7-b497fb2f4b14",
+            "action": "DOCUMENT_MALWARE_SCAN_ERROR",
+            "occurredAt": "2026-10-20T15:56:38.765",
+            "attemptId": "ff497719-2f0c-4e11-a0d5-9845a285d830",
+            "policyVersion": "2",
+            "failureCode": "SIGNATURES_UNTRUSTED",
+            "recordedTerminalPath": "SCAN_FINALIZE",
+            "matchesCurrentAttempt": false
+          }
+        ]
+      },
+      {
+        "associationId": "c931ec25-1882-4fa9-acab-1908300d8fb6",
+        "versionId": "1e234758-af8c-44a1-9491-7f9756605bc7",
+        "versionStatus": "PUBLISHED",
+        "currentDraft": false,
+        "currentPublished": true,
+        "organizationConsistent": true,
+        "documentId": "4cf09f57-bddd-4073-b2ea-cb643f70de41",
+        "category": "DECLARATION",
+        "locale": null,
+        "isPublic": true,
+        "labelMatchesReport": true,
+        "documentStatus": "AVAILABLE",
+        "uploadedAt": "2026-10-20T15:56:35.008",
+        "updatedAt": "2026-10-20T16:02:57.438",
+        "failedAt": null,
+        "uploadFailureCode": null,
+        "sizeBytes": 750,
+        "checksumSha256": "98c913ee16f40bf9aeb51d3ec924d015a711cb8482b689fbb1987f6c6d9ff4b2",
+        "scan": {
+          "status": "ERROR",
+          "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+          "startedAt": "2026-10-20T16:02:56.991",
+          "scannedAt": null,
+          "sha256": null,
+          "policyVersion": 2,
+          "failureCode": "SIGNATURES_UNTRUSTED",
+          "scanner": null,
+          "engineVersion": null,
+          "signatureVersion": null
+        },
+        "recentTerminalAudit": [
+          {
+            "id": "3c6d1a24-5f67-4ecd-afa2-d0a0b6124be2",
+            "action": "DOCUMENT_MALWARE_SCAN_ERROR",
+            "occurredAt": "2026-10-20T16:02:57.44",
+            "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+            "policyVersion": "2",
+            "failureCode": "SIGNATURES_UNTRUSTED",
+            "recordedTerminalPath": "SCAN_FINALIZE",
+            "matchesCurrentAttempt": true
+          },
+          {
+            "id": "20050b95-6037-4b78-9cc7-b497fb2f4b14",
+            "action": "DOCUMENT_MALWARE_SCAN_ERROR",
+            "occurredAt": "2026-10-20T15:56:38.765",
+            "attemptId": "ff497719-2f0c-4e11-a0d5-9845a285d830",
+            "policyVersion": "2",
+            "failureCode": "SIGNATURES_UNTRUSTED",
+            "recordedTerminalPath": "SCAN_FINALIZE",
+            "matchesCurrentAttempt": false
+          }
+        ]
+      },
+      {
+        "associationId": "22b35d71-19fc-4352-a45f-b1eec8a19e58",
+        "versionId": "bad150a4-2ba5-4556-b18b-feccb164d735",
+        "versionStatus": "SUPERSEDED",
+        "currentDraft": false,
+        "currentPublished": false,
+        "organizationConsistent": true,
+        "documentId": "4cf09f57-bddd-4073-b2ea-cb643f70de41",
+        "category": "DECLARATION",
+        "locale": null,
+        "isPublic": true,
+        "labelMatchesReport": true,
+        "documentStatus": "AVAILABLE",
+        "uploadedAt": "2026-10-20T15:56:35.008",
+        "updatedAt": "2026-10-20T16:02:57.438",
+        "failedAt": null,
+        "uploadFailureCode": null,
+        "sizeBytes": 750,
+        "checksumSha256": "98c913ee16f40bf9aeb51d3ec924d015a711cb8482b689fbb1987f6c6d9ff4b2",
+        "scan": {
+          "status": "ERROR",
+          "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+          "startedAt": "2026-10-20T16:02:56.991",
+          "scannedAt": null,
+          "sha256": null,
+          "policyVersion": 2,
+          "failureCode": "SIGNATURES_UNTRUSTED",
+          "scanner": null,
+          "engineVersion": null,
+          "signatureVersion": null
+        },
+        "recentTerminalAudit": [
+          {
+            "id": "3c6d1a24-5f67-4ecd-afa2-d0a0b6124be2",
+            "action": "DOCUMENT_MALWARE_SCAN_ERROR",
+            "occurredAt": "2026-10-20T16:02:57.44",
+            "attemptId": "1693ba1c-8b86-4b11-aaae-9c55f02c54ae",
+            "policyVersion": "2",
+            "failureCode": "SIGNATURES_UNTRUSTED",
+            "recordedTerminalPath": "SCAN_FINALIZE",
+            "matchesCurrentAttempt": true
+          },
+          {
+            "id": "20050b95-6037-4b78-9cc7-b497fb2f4b14",
+            "action": "DOCUMENT_MALWARE_SCAN_ERROR",
+            "occurredAt": "2026-10-20T15:56:38.765",
+            "attemptId": "ff497719-2f0c-4e11-a0d5-9845a285d830",
+            "policyVersion": "2",
+            "failureCode": "SIGNATURES_UNTRUSTED",
+            "recordedTerminalPath": "SCAN_FINALIZE",
+            "matchesCurrentAttempt": false
+          }
+        ]
+      }
+    ]
+  },
+  "candidateSelection": "REVIEW_VERSION_DOCUMENT_AND_ATTEMPT_IDS_NO_IMPLICIT_SELECTION",
+  "currentHealth": {
+    "classification": "CURRENT_OBSERVATION_ONLY_NOT_HISTORICAL_CAUSE",
+    "observedUTC": "2026-10-20T16:14:12.396185+00:00",
+    "units": {
+      "returnCode": 0,
+      "properties": [
+        {
+          "Result": "success",
+          "ExecMainStatus": "0",
+          "Id": "clamav-daemon.service",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "ActiveEnterTimestamp": "Mon 2026-10-19 17:27:09 CEST",
+          "InactiveEnterTimestamp": ""
+        },
+        {
+          "Result": "success",
+          "Id": "clamav-daemon.socket",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "ActiveEnterTimestamp": "Mon 2026-10-19 17:27:09 CEST",
+          "InactiveEnterTimestamp": ""
+        },
+        {
+          "Result": "success",
+          "ExecMainStatus": "0",
+          "Id": "clamav-freshclam.service",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "ActiveEnterTimestamp": "Mon 2026-10-19 17:27:09 CEST",
+          "InactiveEnterTimestamp": ""
+        },
+        {
+          "Result": "success",
+          "Id": "passvero-qpdf-broker.socket",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "ActiveEnterTimestamp": "Mon 2026-10-19 17:27:09 CEST",
+          "InactiveEnterTimestamp": ""
+        },
+        {
+          "Result": "success",
+          "ExecMainStatus": "0",
+          "Id": "passvero-qpdf-acceptance.service",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "ActiveEnterTimestamp": "Tue 2026-10-20 17:55:35 CEST",
+          "InactiveEnterTimestamp": ""
+        },
+        {
+          "Result": "success",
+          "Id": "passvero-signature-health.timer",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "ActiveEnterTimestamp": "Mon 2026-10-19 17:27:09 CEST",
+          "InactiveEnterTimestamp": ""
+        },
+        {
+          "Result": "exit-code",
+          "ExecMainStatus": "1",
+          "Id": "passvero-signature-health.service",
+          "LoadState": "loaded",
+          "ActiveState": "failed",
+          "SubState": "failed",
+          "ActiveEnterTimestamp": "",
+          "InactiveEnterTimestamp": "Tue 2026-10-20 18:13:58 CEST"
+        }
+      ]
+    },
+    "reader": {
+      "returnCode": 1,
+      "accepted": false
+    }
+  },
+  "historicalLimitations": [
+    "Document stores current/latest attempt only; recent audit is capped at six terminal events per document.",
+    "ERROR normally has scannedAt/provenance null; terminal audit time is separate evidence.",
+    "TIMEOUT alone does not identify PDF validator versus malware scanner; recordedTerminalPath may distinguish saved lease-expiry recovery.",
+    "accepted=false does not identify missing/expired/private/invalid health evidence.",
+    "No historical reader or qpdf/clamd state is inferred from current unit properties."
+  ],
+  "result": "READ_ONLY_DIAGNOSTIC_COMPLETE_RETURN_OUTPUT_AND_STOP"
+}

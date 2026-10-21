@@ -1,0 +1,70 @@
+{
+  "scope": "NEW_OPERATOR_PACKAGE_ONLY",
+  "regressions": {
+    "count": 5,
+    "result": "PASS",
+    "command": "python3 -I -B codex/evidence/staging-reboot-recovery-20261013/check-package.py"
+  },
+  "syntax": {
+    "python": "PASS_AST_PARSE",
+    "shell": "PASS_BASH_N",
+    "inlineSourceIdentity": "PASS"
+  },
+  "links": {
+    "count": 14,
+    "result": "PASS"
+  },
+  "whitespace": "PASS_UNIFIED_DIFF_CONTEXT_PREFIXES_EXEMPT",
+  "legalPreviousPlanRoadmapPrefix": "UNCHANGED",
+  "index": "EMPTY",
+  "head": "UNCHANGED",
+  "initialTestFailure": {
+    "reason": "HTTPS_BRANCH_WAS_NOT_MOCKED",
+    "effect": "ONE_FAILED_CURL_READ_ATTEMPT_NO_ACCEPTED_LIVE_RESULT",
+    "correction": "MOCK_RUN_AND_FORBID_ALL_UNMOCKED_SUBPROCESS_IN_TESTS"
+  },
+  "vpsSshSudoPanelOperations": 0,
+  "installRebootDeployRuntimePinChanges": 0,
+  "backupAcceptanceRepeated": false,
+  "targetedRetainedRecordCorrection": {
+    "result": "PASS",
+    "testsExecuted": 1,
+    "cases": 8,
+    "priorFiveTests": "REUSED_NOT_REPEATED",
+    "runtimeChanges": 0
+  },
+  "finalizationChecks": {
+    "newTestsExecuted": 2,
+    "result": "PASS",
+    "priorAcceptedChecks": "NOT_REPEATED",
+    "guards": [
+      "EXACT_ACTOR_ACTIVE_ORG_MEMBERSHIP_NO_PLATFORM_SUBSTITUTE",
+      "REUSED_BACKUP_GUARD_AST_MATCH"
+    ]
+  },
+  "finalOperationPackage": {
+    "newOperationTests": 8,
+    "result": "PASS_SEVEN_PLUS_ONE_TARGETED",
+    "unmockedSubprocess": "FORBIDDEN",
+    "applicationTestsBuild": "NOT_REPEATED",
+    "backupAcceptance": "NOT_REPEATED",
+    "operatorBlocks": 13,
+    "shellPythonSyntax": "PASS",
+    "embeddedSourcesAndManifestBindings": "PASS",
+    "newWrapperSha256": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+    "liveCallsInThisTask": 0,
+    "pending": "NONE_PREPARATION_00_ACCEPTED_EXECUTION_GATES_REMAIN"
+  },
+  "bootstrapCorrection": {
+    "result": "PASS",
+    "command": "python3 -I -B codex/evidence/staging-reboot-recovery-20261013/check-bootstrap-package.py",
+    "blocks": 2,
+    "positiveCases": 2,
+    "negativeCases": 4,
+    "helperExecution": 0,
+    "networkCalls": 0,
+    "priorChecks": "REUSED_NOT_REPEATED",
+    "previousValidationGap": "EMBEDDED_PINS_LITERAL_NOT_CHECKED"
+  },
+  "preparationReadbackReview": "PASS_NO_TEST_BUILD_OR_ACCEPTANCE_REPEATED"
+}

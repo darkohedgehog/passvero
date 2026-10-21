@@ -1,0 +1,15 @@
+{
+  "result": "PASS_POST_STARTUP_ABORT_CLOSURE_REVIEWED",
+  "source": "operator-13-baseline-restored-accepted.json",
+  "attemptId": "recovery-20261019-reboot-01",
+  "baselineRestored": true,
+  "backupMonitorRestorationEvidence": "operator-09-partial-closure-accepted.json",
+  "automaticStartup": "PASS",
+  "fullServiceRecovery": "NOT_PROVEN",
+  "workerCompletion": "NOT_PROVEN_ACTIVATING_ONLY",
+  "inboxReceipt": "NOT_PROVEN",
+  "attemptClosed": true,
+  "nextOperatorStep": "NONE_NO_RETRY_OR_SECOND_REBOOT",
+  "technicalStopRetained": "AUTH_GATE_UnsupportedOperation",
+  "futureSourceReview": "EXACT_EXCEPTION_CAUSE_NOT_PROVEN_NO_FIX_OR_REPLAY_IN_THIS_TASK"
+}

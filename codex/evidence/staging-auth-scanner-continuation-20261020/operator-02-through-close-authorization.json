@@ -1,0 +1,18 @@
+{
+  "source": "EXPLICIT_USER_AUTHORIZATION",
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "scope": "02_COORDINATION_THROUGH_ONE_AUTH_CONTEXT_SCANNER_SYNTHETIC_FLOW_AND_INDEPENDENT_CLOSE",
+  "block02Sha256": "11ea96b84a6ff541c85cb8077892c21f844f0cbb52d81aba389d49121e04dd87",
+  "operatorExecutes": true,
+  "agentVPSAccess": false,
+  "sameActorOrganizationProductAndBudget": true,
+  "newApprovalPerIncludedStepRequired": false,
+  "stepsDeliveredSequentiallyAfterPreviousOutputReview": true,
+  "failurePolicy": "STOP_FUNCTIONAL_CONTINUATION_USE_REVIEWED_CLOSE_CONTAINMENT_NO_RETRY",
+  "conditionalScannerRecoveryMaximum": 1,
+  "newReboots": 0,
+  "repeatInstallTestsBuildBackupAcceptance": false,
+  "verificationSending": "NONE_NO_NEW_RECIPIENTS_OR_CAMPAIGNS_RESTORE_PREVIOUSLY_APPROVED_BASELINE_AT_CLOSE",
+  "outOfPackageActions": "REPORT_WITHOUT_IMPROVISATION",
+  "executionReported": false
+}

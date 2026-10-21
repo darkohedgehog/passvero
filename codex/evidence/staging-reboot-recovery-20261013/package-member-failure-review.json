@@ -1,0 +1,31 @@
+{
+  "operatorOutput": {
+    "result": "STOP",
+    "CHECK_ID": "LOAD_00_PREPARATION_READONLY",
+    "reason": "PACKAGE_MEMBER_CHANGED",
+    "automaticRetry": false
+  },
+  "cause": "GENERATOR_DICT_REPR_ORDER_LEFT_STALE_REBOOT_REVIEWED_HASH_IN_00_AND_01",
+  "oldHelperPin": "1c00c41ec6c641cd3900464052be70f5cdddd99f8e73dd7ec3e5062e8ec8ea91",
+  "correctHelperPin": "e345ff23ad8ec01b80fb35aea12ba4aa6f5cc39b691f7cc42ff270f6a1543ad1",
+  "correction": "ONLY_BOOTSTRAP_PINS_ASSIGNMENTS_00_01",
+  "sourceAndInstalledManifestChanged": false,
+  "runtimeMutations": 0,
+  "operatorReadback": "PENDING_OPERATOR_COMMAND",
+  "blocks": [
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-00-PREPARATION-READONLY.sh",
+      "oldBlockSha256": "d58a6e5ec889442790b460240bcd4420f98ba1b4225bf01278cc64ec499e8bb5",
+      "newBlockSha256": "6cfa1d8a7826ee7ea8b929a4ca042acbebc65eb3e9cb7c5737fdb02b137e9926",
+      "oldPinsLiteral": "{'reboot-reviewed.py': '1c00c41ec6c641cd3900464052be70f5cdddd99f8e73dd7ec3e5062e8ec8ea91', 'preflight.py': 'de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10', 'remaining-backup-and-actor-readonly.py': 'e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6', 'recover-release-reviewed.py': '0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44'}",
+      "retainedRejectedBlock": "/tmp/VPS-TERMINAL-00-PREPARATION-READONLY.sh.rejected-d58a6e5ec889442790b460240bcd4420f98ba1b4225bf01278cc64ec499e8bb5"
+    },
+    {
+      "path": "codex/evidence/staging-reboot-recovery-20261013/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh",
+      "oldBlockSha256": "52726c40011c9d3702c4c782ccd9352dad792b652a6fd4971eaef1efa9b9a544",
+      "newBlockSha256": "21508ffff6a70c59bdcca4ab2c475efa9baabe77f9e1758fca01f1d96a300e1e",
+      "oldPinsLiteral": "{'reboot-reviewed.py': '1c00c41ec6c641cd3900464052be70f5cdddd99f8e73dd7ec3e5062e8ec8ea91', 'preflight.py': 'de463a599acc2b5a43676c0ab5e957505f4ecee012662835c0733e4413781b10', 'remaining-backup-and-actor-readonly.py': 'e102a5a4cea06b5509d3b7428adab13b3bf942ac7185ad8d240f7a2372257bb6', 'recover-release-reviewed.py': '0e3938d06d6bcbfa9eab0249479bab5e54fe5162a3669a3026a39a0d204c4f44'}",
+      "retainedRejectedBlock": "/tmp/VPS-TERMINAL-01-INSTALL-REVIEWED-SOURCE.sh.rejected-52726c40011c9d3702c4c782ccd9352dad792b652a6fd4971eaef1efa9b9a544"
+    }
+  ]
+}

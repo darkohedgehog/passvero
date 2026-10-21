@@ -1,0 +1,27 @@
+{
+  "closure": {
+    "timerRestored": true,
+    "partial": false,
+    "pending": [],
+    "at": "2026-10-20T16:35:35.589226+00:00",
+    "closure": "NO_TIMER_CHANGE_STARTED"
+  },
+  "LOCK_REMOVAL": "NOT_PERFORMED",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "firstStop": {
+    "status": "STOP",
+    "CHECK_ID": "LOCK_RELEASE_BODY",
+    "reason": "PRODUCER_ENTRYPOINT_DRIFT",
+    "LOCK_REMOVAL": "NOT_PERFORMED",
+    "PRODUCER_MANUAL_RUN": "NO",
+    "SCAN_CALLS": 0,
+    "REBOOT_REPEATED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO"
+  },
+  "scheduledCycle": "NOT_OBSERVED_OPERATION_STOPPED",
+  "maintenanceUnitReturnCode": 1,
+  "operationDirectory": "/var/lib/passvero-signature-lock-release-20261020-01"
+}

@@ -1,0 +1,51 @@
+{
+  "operation": "SIGNATURE_PRODUCER_CLOSURE_ONLY_TIMER_BASELINE_RETURN",
+  "automaticRetry": false,
+  "PROCESS_KILL": "NO",
+  "LOCK_REMOVAL": "NOT_PERFORMED",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "TIMER_RESTORE": "PASS",
+  "mutationAttempted": true,
+  "scheduledCycle": {
+    "timestampUs": "1792583617582900",
+    "invocationId": "2bc2556429a34f5998904577f3a7ae4f",
+    "result": "BUSY",
+    "reason": null,
+    "phase": "ACQUIRE",
+    "durationMs": 0.7159339999999901
+  },
+  "reader": "NOT_RUN_IN_THIS_CLOSURE_ONLY_SCOPE",
+  "preflight": {
+    "knownProducerRecoveryMatches": 0,
+    "otherRootInterpreterCount": 5,
+    "scope": "CLOSURE_ONLY_NOT_LOCK_REMOVAL_NOT_A_GENERAL_ALLOWLIST",
+    "exclusiveOperatorWindowRequired": true
+  },
+  "immediatePreflight": {
+    "knownProducerRecoveryMatches": 0,
+    "otherRootInterpreterCount": 5,
+    "scope": "CLOSURE_ONLY_NOT_LOCK_REMOVAL_NOT_A_GENERAL_ALLOWLIST",
+    "exclusiveOperatorWindowRequired": true
+  },
+  "timerReadback": {
+    "Id": "passvero-signature-health.timer",
+    "LoadState": "loaded",
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "enabled",
+    "Triggers": "passvero-signature-health.service"
+  },
+  "status": "TIMER_BASELINE_RETURNED_ONE_NATURAL_CYCLE_RECORDED",
+  "instruction": "BUSY_RECORDED_NO_LOCK_ACTION_NO_RECOVERY_NO_SECOND_INTERVENTION",
+  "finalTimerReadback": {
+    "Id": "passvero-signature-health.timer",
+    "LoadState": "loaded",
+    "ActiveState": "active",
+    "SubState": "waiting",
+    "UnitFileState": "enabled",
+    "Triggers": "passvero-signature-health.service"
+  }
+}

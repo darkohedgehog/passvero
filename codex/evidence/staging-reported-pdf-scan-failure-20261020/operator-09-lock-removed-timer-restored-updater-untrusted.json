@@ -1,0 +1,104 @@
+{
+  "closure": {
+    "timerRestored": true,
+    "partial": false,
+    "pending": [],
+    "at": "2026-10-21T12:09:40.816098+00:00",
+    "closure": "PASS_TIMER_BASELINE_RESTORED",
+    "timerReadback": {
+      "Id": "passvero-signature-health.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "Triggers": "passvero-signature-health.service"
+    },
+    "timer": {
+      "enabled": "enabled",
+      "active": "active"
+    }
+  },
+  "LOCK_REMOVAL": "PERFORMED",
+  "PRODUCER_MANUAL_RUN": "NO",
+  "SCAN_CALLS": 0,
+  "REBOOT_REPEATED": "NO",
+  "BACKUP_ACCEPTANCE_REPEATED": "NO",
+  "LOCK_ABANDONMENT": "CONFIRMED",
+  "TIMER_RESTORE": "PASS",
+  "reader": {
+    "returnCode": 1,
+    "accepted": false
+  },
+  "scheduledCycle": {
+    "timestampUs": "1792584586803972",
+    "invocationId": "6ddfa4ae552d49c98b11afe13cadd5e1",
+    "result": "UNTRUSTED",
+    "reason": "EVIDENCE_CONTINUITY_REQUIRED",
+    "phase": "UPDATER",
+    "durationMs": 3732.5936580000002
+  },
+  "functionalUiCheck": "PENDING_USER_SCAN_STATUS_DOWNLOAD_NOT_RUN_BY_TERMINAL",
+  "status": "STOP_ONE_REGULAR_CYCLE_OR_READER_REJECTED_NO_RETRY",
+  "maintenanceUnitReturnCode": 0,
+  "operationDirectory": "/var/lib/passvero-signature-lock-release-20261020-01/precise-owner-release",
+  "baseline.json": {
+    "timer": {
+      "enabled": "enabled",
+      "active": "active"
+    },
+    "files": {
+      "/etc/passvero-signature-health.json": "28df856a3a8516f8c33d35bc652b5358dd0dcdd49d185be01a64eb1264a22593",
+      "/etc/systemd/system/passvero-signature-health.timer": "5db45222db3785a90940b52f8480e2eeb1b912083c111aca18e70ff0075902f4",
+      "/etc/systemd/system/passvero-signature-health.service": "5becee91793921e6bae866b3c2f9523e4dfa2208b9709c2413191f38b7c31afe"
+    },
+    "parent": {
+      "device": 2049,
+      "inode": 1573155
+    },
+    "lock": {
+      "device": 2049,
+      "inode": 2161968,
+      "mode": "0700",
+      "uid": 0,
+      "gid": 0,
+      "ctimeNs": 1791900359945693579,
+      "mtimeNs": 1791900359945693579,
+      "empty": true
+    },
+    "parentPosture": {
+      "uid": 0,
+      "gid": 1001,
+      "mode": "0o750"
+    },
+    "at": "2026-10-21T12:09:39.600862+00:00",
+    "operatorWindow": "EXCLUSIVE_NO_PARALLEL_ROOT_LAUNCH_REQUIRED"
+  },
+  "removed.json": {
+    "LOCK_REMOVAL": "PERFORMED",
+    "at": "2026-10-21T12:09:40.753619+00:00",
+    "path": "/var/lib/passvero-signature-health/health.json.lock",
+    "identity": {
+      "device": 2049,
+      "inode": 2161968,
+      "mode": "0700",
+      "uid": 0,
+      "gid": 0,
+      "ctimeNs": 1791900359945693579,
+      "mtimeNs": 1791900359945693579,
+      "empty": true
+    },
+    "absenceChecks": [
+      {
+        "serviceIdle": true,
+        "realProcessScan": "PASS_NO_RELEVANT_LAUNCH_OR_DESCENDANT",
+        "recoveryFlock": "EXCLUSIVE_HELD"
+      },
+      {
+        "serviceIdle": true,
+        "realProcessScan": "PASS_NO_RELEVANT_LAUNCH_OR_DESCENDANT",
+        "recoveryFlock": "EXCLUSIVE_HELD"
+      }
+    ],
+    "abandoned": "CONFIRMED_UNDER_EXCLUSIVE_OPERATOR_WINDOW_AND_KNOWN_LAUNCH_GATES"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "installation": "INSTALLED_SOURCE_ONLY",
+  "continuationId": "continuation-20261020-auth-flow-01",
+  "helperSha256": "4da924e0640d13fbe9858a7bd6a6899891ebcb43ca4f3e6ae52dc09e388722d1",
+  "priorHelperSha256": "303c110ea2ff3fa081f53818a27d20238b2621b3b00f444f0b8d5817ab2d87d7",
+  "priorManifestSha256": "dd9335c96a78f61341b99a5600b251fc95e55e7ceaf390bbc0e46a997dc842aa",
+  "sourcePackageSha256": "3035dfbbf0bcbd126c40fd0a64b4c187988e93aea13c7bbf9cdef22760dc6c15",
+  "servicesChanged": false,
+  "backupPinsChanged": false
+}

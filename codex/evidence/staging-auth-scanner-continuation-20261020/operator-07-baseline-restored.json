@@ -1,0 +1,16 @@
+{
+  "artifactsRetained": true,
+  "automaticRetry": false,
+  "backupAndMonitorChangedByContinuation": false,
+  "backupStateUnchanged": true,
+  "closure": "PASS_BASELINE_RESTORED",
+  "deliveryUnchangedBeforeSendingResume": true,
+  "functionalContinuation": "NOT_PROVEN",
+  "historicalAutomaticStartup": "PASS_ACCEPTED_REFERENCE_ONLY",
+  "historicalFullServiceRecovery": "NOT_PROVEN_NOT_RETROACTIVELY_CHANGED",
+  "ordinaryApprovedSending": "RESUMED_BY_SAVED_TIMER",
+  "pending": {},
+  "restored": [
+    "passvero-subscription-reminders.timer"
+  ]
+}

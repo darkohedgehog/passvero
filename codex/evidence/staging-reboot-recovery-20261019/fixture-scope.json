@@ -1,0 +1,59 @@
+{
+  "organizationId": "bdc5aed5-b05a-42e6-895b-9f2f9f8a79a0",
+  "productId": "c1c24c7c-334b-48bf-ba34-ac5fb930f1c2",
+  "productSyntheticProvenance": "codex/PRODUCT_EDITOR_UI_POLISH_STAGING.md:60; codex/evidence/signature-recovery/20260923-pdf-smoke.json",
+  "actorUserId": "40e51001-912c-4bcf-aa45-d866632aac85",
+  "actorStatus": "HISTORICAL_IDENTITY_EXPECTED_FRESH_00_02_READBACK_REQUIRED",
+  "currentDraftVersionId": "a2e0ebe2-8305-4975-84f2-83b16d505536",
+  "imageAssetId": null,
+  "newDocumentId": null,
+  "publishedVersionId": null,
+  "auditIds": [],
+  "pending": "OPERATOR_00_READBACK_01_INSTALL_02_VOLATILE_AND_ACTUAL_SESSION_QUOTA_GATES",
+  "pdf": {
+    "localPath": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261013.pdf",
+    "bytes": 671,
+    "sha256": "fb914f8e768c1d5708f3bb3e2cd0c18ffd43095b235e06d8920f4f8445c245ec",
+    "pages": 1,
+    "purpose": "BENIGN_SYNTHETIC_UPLOAD_ONCE",
+    "gitPayload": "EXCLUDED",
+    "uploaded": false,
+    "recovery": "RESTORED_EXACT_ORIGINAL_GENERATOR",
+    "previousLocalPath": "/tmp/passvero-reboot-recovery-20261013/SYNTHETIC-STAGING-REBOOT-20261013.pdf"
+  },
+  "limits": {
+    "reboots": 1,
+    "scannerRecoveryAttempts": 1,
+    "userFlows": 1,
+    "pdfUploads": 1,
+    "scans": 1,
+    "publishes": 1,
+    "imageUploads": 1
+  },
+  "implicitCleanup": false,
+  "actorEmail": "zivic.darko79@gmail.com",
+  "image": {
+    "localPath": "/Users/darkozivic/Desktop/Programiranje/passvero/.superpowers/brainstorm/staging-reboot-fixtures-20261019/SYNTHETIC-STAGING-REBOOT-20261014.png",
+    "bytes": 2059,
+    "sha256": "1ed5c1e5d6eff56de570af9a250598b0b7cd6547a1ce8c1634982918ed6a334d",
+    "width": 512,
+    "height": 256,
+    "content": "BENIGN_BLUE_CHECKERBOARD_WITH_SYNTHETIC_DESCRIPTION",
+    "gitPayload": "EXCLUDED",
+    "uploaded": false,
+    "recovery": "RESTORED_EXACT_ORIGINAL_GENERATOR",
+    "previousLocalPath": "/tmp/passvero-reboot-recovery-20261014/SYNTHETIC-STAGING-REBOOT-20261014.png"
+  },
+  "actorPurpose": "EXISTING_OPERATOR_ACCOUNT_APPROVED_FOR_SYNTHETIC_PRODUCT_NOT_CLAIMED_SYNTHETIC_IDENTITY",
+  "membershipId": "b954c03b-9c81-4760-bd63-83127b56bbb6",
+  "membershipRole": "ADMIN",
+  "rolePermissions": [
+    "PRODUCT_READ",
+    "PRODUCT_EDIT",
+    "PRODUCT_PUBLISH"
+  ],
+  "identitySource": "../staging-reboot-recovery-20261013/operator-scoped-finalization-accepted.json",
+  "attemptId": "recovery-20261019-reboot-01",
+  "fixtureRecovery": "EXACT_ORIGINAL_BYTE_IDENTITIES_RECOVERED_LOCAL_ONLY",
+  "uploaded": false
+}
