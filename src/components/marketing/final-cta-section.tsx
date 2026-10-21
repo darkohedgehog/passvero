@@ -34,7 +34,7 @@ export async function FinalCtaSection() {
               width={1254}
               height={1254}
               sizes="(max-width: 639px) 45vw, 290px"
-              className="absolute -bottom-4 left-1/2 h-auto w-[58%] max-w-[16rem] -translate-x-1/2 sm:-bottom-7 sm:left-auto sm:right-[-0.5rem] sm:w-[42%] sm:translate-x-0 lg:-bottom-5 lg:right-[-0.75rem] lg:w-[43%]"
+              className="mx-auto mt-6 block h-auto w-[58%] max-w-[16rem] sm:mr-0 sm:w-[42%] lg:absolute lg:-bottom-5 lg:right-[-0.75rem] lg:mt-0 lg:w-[43%]"
             />
           </div>
         </div>

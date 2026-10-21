@@ -167,3 +167,56 @@ Staged whitespace review found formatting in historical diff/log evidence only.
 Six text copies were normalized; original byte-for-byte evidence is retained outside
 Git with original and commit hashes in the final commit manifest. Unified patches
 still parse; executable source, package and accepted runtime identity are unchanged.
+
+
+## Approved marketing UI final review — 2026-10-21
+
+User accepted the local combined design and authorized the exact marketing commit,
+non-force push to origin/main, staging deploy and minimal coordinated release-pin
+alignment through the existing operator procedure. Source scope is 23 files:
+language control/local flags/login icon, primary workspace CTA, six promo translations,
+caption removal, warm scoped colors, glass header, transparent logo and mobile final-CTA
+separation. Prices, business rules, illustrations and all Legal namespaces are unchanged.
+
+[Final source manifest](evidence/marketing-ui-final-20261021/source-manifest.json),
+[commit-content manifest](evidence/marketing-ui-final-20261021/commit-manifest.json),
+[approved build log](evidence/marketing-ui-final-20261021/accepted-build.log),
+[desktop](evidence/marketing-ui-final-20261021/approved-desktop.png),
+[mobile](evidence/marketing-ui-final-20261021/approved-mobile.png),
+[final mobile CTA](evidence/marketing-ui-final-20261021/approved-mobile-final-cta.png).
+
+Latest accepted build is `Edl3N_JJEbBPamNQ84Jxn`, after the header/logo/mobile corrections.
+Current source hashes match its final combined source manifest and BUILD_ID matches.
+Existing lint/TypeScript/build, six-language responsive/header and targeted mobile
+CTA evidence are reused; no build or test series is repeated for Git integration.
+Actual remote main before integration equals local main HEAD
+`2e0eefad7d250a5751bdb25eb72e8942621990c9`; initial index is empty.
+
+**Staging deployment STOP: canonical origin mismatch.** The accepted build used
+process-only `BETTER_AUTH_URL=https://passvero-preview.invalid`. Its six static home
+pages contain canonical links to that placeholder (including `/en`, `/de`, `/sr`,
+`/sl`, `/pl`) and structured metadata also uses it. Staging requires the origin
+confirmed by fresh read-only preflight; prior reviewed procedure uses
+`https://staging.passvero.eu`. Do not deploy or patch/relabel this package in place.
+No replacement build has been authorized/executed at this review checkpoint.
+A decision on one staging-origin build of the identical source was requested.
+
+[Complete read-only VPS operator block](evidence/marketing-ui-final-20261021/VPS-TERMINAL-PREFLIGHT.sh)
+reads exact current canonical/config/artifact hashes, origin, TLS, automation baseline,
+backup state digest, idle locks/jobs and typed real/monotonic timer deadlines. It
+makes no application, pin, automation, scanner or backup mutation. Operator output
+is required before any dependent release preparation. A PASS baseline alone does
+not clear the known local-package gate or authorize deploying another artifact.
+
+Existing reviewed swap/independent-closure/paired-rollback procedure remains the
+2026-10-12 visual deployment procedure above. Its concrete old/new hashes and rollback
+namespace are historical and must not be reused for this release. No new runtime
+rollback location exists before fresh baseline and a deployable reviewed package.
+Only exact buildId/canonicalSha256 may change in backup config during a later
+coordinated swap; preserve other config, state/history/retention, reminder baseline
+and scanner/producer configuration. No capture/restore/worker/SMTP/Telegram call,
+VPS execution, production change, migration, business write or deployment performed.
+
+Git outcome and eventual operator evidence will be appended after the corresponding
+operations. The entire preexisting roadmap/readiness/legal diff remains outside this
+commit; only this task's new roadmap appendix is staged from a separate index blob.

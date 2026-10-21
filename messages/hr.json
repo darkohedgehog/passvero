@@ -131,7 +131,7 @@
         "description": "Uređujte nacrt bez promjene objavljene verzije."
       }
     },
-    "scopeNote": "PDF provjere obuhvaćaju strukturu datoteke i zlonamjerni sadržaj. Ne potvrđuju istinitost dokumenta, autentičnost proizvoda ili regulatornu usklađenost. GS1 registry, EPCIS/API integracije i analitika skeniranja nisu trenutačno dostupne funkcije."
+    "scopeNote": "Od prvog nacrta do javne putovnice — povežite podatke, slike i dokumentaciju u jasan digitalni prikaz proizvoda."
   },
   "HowItWorks": {
     "label": "Kako funkcionira",

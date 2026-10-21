@@ -31,9 +31,9 @@ export async function DashboardPreviewSection() {
               </li>
             ))}
           </ul>
-          <MarketingButton href={accessHref} variant="secondary" className="mt-8">{t("action")}</MarketingButton>
+          <MarketingButton href={accessHref} variant="primary" className="mt-8">{t("action")}</MarketingButton>
         </div>
-        <div className="relative -mx-3 overflow-hidden rounded-[20px] bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.1)] sm:mx-0">
+        <div className="relative -mx-3 overflow-hidden rounded-[20px] bg-[linear-gradient(135deg,#f5f4f0_0%,#fff_50%,#f5f4f0_100%)] p-2 sm:mx-0">
           <div className="absolute inset-x-[8%] bottom-[2%] h-1/3 rounded-full bg-blue-100/60 blur-3xl" aria-hidden="true" />
           <Image
             src="/marketing/dashboard-preview-restored.png"
@@ -43,7 +43,6 @@ export async function DashboardPreviewSection() {
             sizes="(max-width: 1023px) 100vw, 67vw"
             className="relative h-auto w-full mix-blend-multiply"
           />
-          <p className="relative pb-2 text-center text-[0.6875rem] leading-4 text-slate-500">{t("example.label")}</p>
         </div>
       </MarketingContainer>
     </section>

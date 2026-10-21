@@ -1,0 +1,281 @@
+{
+  "environment": "Local Chrome via Playwright; existing preview on 127.0.0.1:3100",
+  "results": [
+    {
+      "locale": "hr",
+      "width": 1440,
+      "status": "PASS",
+      "geometry": {
+        "left": 120,
+        "right": 1320,
+        "width": 1200,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "status": "PASS",
+      "geometry": {
+        "left": 120,
+        "right": 1320,
+        "width": 1200,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "status": "PASS",
+      "geometry": {
+        "left": 120,
+        "right": 1320,
+        "width": 1200,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "status": "PASS",
+      "geometry": {
+        "left": 120,
+        "right": 1320,
+        "width": 1200,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "status": "PASS",
+      "geometry": {
+        "left": 120,
+        "right": 1320,
+        "width": 1200,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "status": "PASS",
+      "geometry": {
+        "left": 120,
+        "right": 1320,
+        "width": 1200,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "hr",
+      "width": 1024,
+      "status": "PASS",
+      "geometry": {
+        "left": 24,
+        "right": 1000,
+        "width": 976,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "sr",
+      "width": 1024,
+      "status": "PASS",
+      "geometry": {
+        "left": 24,
+        "right": 1000,
+        "width": 976,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "en",
+      "width": 1024,
+      "status": "PASS",
+      "geometry": {
+        "left": 24,
+        "right": 1000,
+        "width": 976,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "de",
+      "width": 1024,
+      "status": "PASS",
+      "geometry": {
+        "left": 24,
+        "right": 1000,
+        "width": 976,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "sl",
+      "width": 1024,
+      "status": "PASS",
+      "geometry": {
+        "left": 24,
+        "right": 1000,
+        "width": 976,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "pl",
+      "width": 1024,
+      "status": "PASS",
+      "geometry": {
+        "left": 24,
+        "right": 1000,
+        "width": 976,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "status": "PASS",
+      "geometry": {
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "status": "PASS",
+      "geometry": {
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "status": "PASS",
+      "geometry": {
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "status": "PASS",
+      "geometry": {
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "status": "PASS",
+      "geometry": {
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "status": "PASS",
+      "geometry": {
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "position": "relative",
+        "radius": "20px",
+        "background": "rgba(245, 244, 240, 0.9)",
+        "blur": "blur(12px)",
+        "overflow": false
+      }
+    }
+  ],
+  "reducedTransparency": {
+    "background": "rgb(245, 244, 240)",
+    "blur": "none"
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { LanguageSwitcher } from "@/src/components/language-switcher";
+import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
 import { BrandLogo } from "@/src/components/marketing/brand-logo";
 import { Link } from "@/src/i18n/navigation";
 
@@ -92,7 +93,7 @@ export function MobileNavigation({
             </div>
             <div className="mt-auto grid gap-4 border-t border-slate-200 pt-6">
               <LanguageSwitcher />
-              <Link className="flex min-h-12 items-center justify-center rounded-[10px] bg-teal-700 px-6 font-semibold text-white" href={ctaHref} onClick={() => setIsOpen(false)}>{ctaLabel}</Link>
+              <Link className="flex min-h-12 items-center justify-center gap-2 rounded-[10px] bg-teal-700 px-6 font-semibold text-white" href={ctaHref} onClick={() => setIsOpen(false)}><MarketingIcon name="login" className="size-4" />{ctaLabel}</Link>
             </div>
           </nav>
         </div>

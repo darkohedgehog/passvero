@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MarketingIcon } from "@/src/components/marketing/marketing-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useTransition, type ChangeEvent } from "react";
@@ -7,6 +8,8 @@ import { useTransition, type ChangeEvent } from "react";
 import { usePathname, useRouter } from "@/src/i18n/navigation";
 import { isAppLocale, routing } from "@/src/i18n/routing";
 import { dashboardLocaleHref } from "@/src/i18n/dashboard-locale-href";
+
+const marketingFlags = { hr: "hr", sr: "rs", en: "gb", de: "de", sl: "si", pl: "pl" } as const;
 
 export function LanguageSwitcher({ variant = "marketing" }: { variant?: "marketing" | "dashboard" }) {
   const locale = useLocale();
@@ -34,21 +37,32 @@ export function LanguageSwitcher({ variant = "marketing" }: { variant?: "marketi
     <label className="relative inline-flex max-w-full items-center text-sm font-medium text-slate-700">
       <span className="sr-only">{t("language")}</span>
       {variant === "dashboard" ? <MarketingIcon name="globe" className="pointer-events-none absolute left-3 size-4 text-teal-800" aria-hidden="true" focusable="false" /> : null}
+      {variant === "marketing" && isAppLocale(locale) ? (
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center gap-2 px-3 text-xs font-semibold text-slate-700">
+          <Image src={`/marketing/flags/${marketingFlags[locale]}.svg`} alt="" width={20} height={15} className="h-[15px] w-5 rounded-[2px]" />
+          {locale.toUpperCase()}
+        </span>
+      ) : null}
       <select
-        aria-label={t("language")}
+        aria-label={variant === "marketing" ? `${t("language")}: ${t(`languages.${locale}`)}` : t("language")}
         className={variant === "dashboard"
           ? "h-11 min-h-11 max-w-full appearance-none rounded-lg border border-teal-700/30 bg-teal-50 py-2 pl-9 pr-9 text-sm font-semibold text-slate-800 shadow-sm hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
-          : "min-h-9 max-w-24 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs text-slate-600 disabled:cursor-wait disabled:opacity-60"}
+          : "min-h-11 w-[6.75rem] appearance-none rounded-lg border border-slate-300 bg-transparent py-2 pl-3 pr-8 text-xs text-transparent hover:bg-navy-950/5 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"}
         disabled={isPending}
         onChange={handleLocaleChange}
         value={locale}
       >
         {routing.locales.map((item) => (
-          <option key={item} value={item}>
+          <option key={item} value={item} className="bg-white text-slate-700">
             {t(`languages.${item}`)}
           </option>
         ))}
       </select>
+      {variant === "marketing" ? (
+        <svg className="pointer-events-none absolute right-3 size-3 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
+          <path d="m7 10 5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : null}
       {variant === "dashboard" ? (
         <svg className="pointer-events-none absolute right-3 size-4 text-teal-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
           <path d="m7 10 5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />

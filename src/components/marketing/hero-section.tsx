@@ -45,7 +45,7 @@ export async function HeroSection() {
             </div>
           </div>
 
-          <div className="relative mx-auto min-w-0 w-full max-w-152 lg:-mb-8 lg:-mt-16 lg:justify-self-end">
+          <div className="relative mx-auto min-w-0 w-full max-w-152 rounded-[20px] bg-[radial-gradient(ellipse_at_center,#fff_0%,transparent_70%)] lg:-mb-8 lg:-mt-16 lg:justify-self-end">
             <Image
               src="/marketing/hero-passport-restored.png"
               alt={t("visualAlt")}
@@ -55,7 +55,6 @@ export async function HeroSection() {
               sizes="(max-width: 1023px) 90vw, 52vw"
               className="mx-auto h-auto w-[min(100%,30rem)] object-contain lg:w-xl"
             />
-            <p className="mt-2 text-center text-[0.6875rem] leading-4 text-slate-500">{t("example.label")}</p>
           </div>
         </div>
 

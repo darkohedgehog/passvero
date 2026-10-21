@@ -1651,3 +1651,20 @@ DB/auth/Storage/scanner manifest, operativni nadzor i rollback, uz zasebno odobr
 [Pregledani release skup i roadmap-only patch](evidence/staging-recovery-release-20261021/README.md).
 Sada samo priprema za odluku o commitu/pushu; bez stageovanja, novih testova/builda,
 live radnji, production promena ili objave odvojenog pravnog nacrta.
+
+
+## MARKETING_UI_FINAL_REVIEW_COMMIT_PUSH_AND_STAGING_DEPLOY — 2026-10-21
+
+User accepted the final local marketing design, including glass header, transparent
+logo and mobile final-CTA separation, and authorized scoped commit/non-force push
+and coordinated staging deployment. Exact source manifest has 23 source/assets;
+commercial rules, illustrations, private UI and Legal namespaces remain unchanged.
+Latest successful local build: `Edl3N_JJEbBPamNQ84Jxn`; source hashes match.
+Existing accepted checks reused; no new build/test or backup acceptance series.
+
+Staging deploy is STOP_CANONICAL_ORIGIN_MISMATCH: accepted local build embeds
+`https://passvero-preview.invalid` in static canonical/structured metadata. It must
+not be deployed or patched/relabelled. One staging-origin build decision and the
+fresh bounded operator preflight are pending; no pin/runtime/scanner/automation
+changes made. See [final review and operator handoff](MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md#approved-marketing-ui-final-review--2026-10-21).
+Preexisting roadmap/readiness/legal changes remain outside this task's Git slice.

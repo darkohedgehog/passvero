@@ -1,0 +1,173 @@
+{
+  "acceptedBuildId": "Edl3N_JJEbBPamNQ84Jxn",
+  "actualRemoteMainBefore": "2e0eefad7d250a5751bdb25eb72e8942621990c9",
+  "baseCommit": "2e0eefad7d250a5751bdb25eb72e8942621990c9",
+  "deployStatus": "STOP_CANONICAL_ORIGIN_MISMATCH",
+  "files": {
+    "app/globals.css": {
+      "bytes": 3720,
+      "sha256": "60a3cd9da10c846472a28595de39f831759d25094c6abf3032b80f111670dd90"
+    },
+    "codex/IMPLEMENTATION_ROADMAP.md": {
+      "bytes": 130191,
+      "sha256": "15f5cb61edb61697b84877ce9e2746765c50aaed9b6b26827adba115ede6a2b8"
+    },
+    "codex/MARKETING_VISUAL_IDENTITY_STAGING_DEPLOY.md": {
+      "bytes": 14810,
+      "sha256": "ae4173e7708e2e5b6ddb4339f6dfafefce0c4d596a4030e59bff027086ac83d8"
+    },
+    "codex/evidence/marketing-ui-final-20261021/VPS-TERMINAL-PREFLIGHT.sh": {
+      "bytes": 5334,
+      "sha256": "84eda20e0180f4e86add756a765d6891abf66cf77b9d3bd89187afb5acf1597a"
+    },
+    "codex/evidence/marketing-ui-final-20261021/accepted-build.log": {
+      "bytes": 4304,
+      "sha256": "38e898e26d44f331bbd904e040276d8145e749372347d8a2790b0286522b5025"
+    },
+    "codex/evidence/marketing-ui-final-20261021/accepted-header-results.json": {
+      "bytes": 6296,
+      "sha256": "f575c8ec66549c0b879ea954a9a282a876d7f9e159339fd096188c9117be8220"
+    },
+    "codex/evidence/marketing-ui-final-20261021/accepted-lint.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "codex/evidence/marketing-ui-final-20261021/accepted-mobile-cta-results.json": {
+      "bytes": 1367,
+      "sha256": "89df6550a7ab1f9e9f98b924782e8a0f594d5185acfaaace7cac3b2f030a8731"
+    },
+    "codex/evidence/marketing-ui-final-20261021/accepted-typescript.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "codex/evidence/marketing-ui-final-20261021/approved-desktop.png": {
+      "bytes": 470479,
+      "sha256": "79ec19e8bc826a4a6ad3a80932c3e0198a51cfd7e06a130cc49d703da0f8888a"
+    },
+    "codex/evidence/marketing-ui-final-20261021/approved-mobile-final-cta.png": {
+      "bytes": 140602,
+      "sha256": "ca2503f0bdecf25254fe8cd0f203b91fd0e1128bf5d52f6db06d4dd1b5fe3b0b"
+    },
+    "codex/evidence/marketing-ui-final-20261021/approved-mobile-menu.png": {
+      "bytes": 42423,
+      "sha256": "98599e5f237580480226017dd37d1925d5cbfa744828cb29c28e5899f1b7cd44"
+    },
+    "codex/evidence/marketing-ui-final-20261021/approved-mobile.png": {
+      "bytes": 199600,
+      "sha256": "d27dc8e00ec817dec6326b1e7ee56958a54d4e5ed5964cbb5bcfb5f80deb8207"
+    },
+    "codex/evidence/marketing-ui-final-20261021/source-manifest.json": {
+      "bytes": 8038,
+      "sha256": "b93945e68135c16d6407d0934c1bfd72cff6f4ad45b9f0b2b0e0541a39f99121"
+    },
+    "messages/de.json": {
+      "bytes": 76997,
+      "sha256": "61c997b490139dc26568005554b03ef331cd1242a3879e8aab5dd8e34199ae8c"
+    },
+    "messages/en.json": {
+      "bytes": 68445,
+      "sha256": "a8c6a5d29683d07d262d29a886ab8fa5e803c8b1b89b07acbaccbea06f42470b"
+    },
+    "messages/hr.json": {
+      "bytes": 71820,
+      "sha256": "1aa0b997a78532c0ed53a8542522c37eb86989ff6e9b3ae875a3382260e1a1b1"
+    },
+    "messages/pl.json": {
+      "bytes": 73883,
+      "sha256": "48f47ee7f94e658e788e1bfa380c65c771b8265c1d5ca6062f92d4e7bbad7c9f"
+    },
+    "messages/sl.json": {
+      "bytes": 70218,
+      "sha256": "432f84559d7bcf60459a8068ef0f7fcaccf75eeefa8efbf6d1cf7b45016780c0"
+    },
+    "messages/sr.json": {
+      "bytes": 69797,
+      "sha256": "1a24d42d60cca6387b1223d00f8a8fa5746fb29dfb464967605ae6841de2c41f"
+    },
+    "public/marketing/flags/LICENSE": {
+      "bytes": 1087,
+      "sha256": "8f1195d55a2fd315a07d812328470ca9ba2abb78c8d317ff19619d5125e00cea"
+    },
+    "public/marketing/flags/de.svg": {
+      "bytes": 221,
+      "sha256": "efd480af5a154a7651f29da23ee0d09dbc892410fb4041898ddf8face336c575"
+    },
+    "public/marketing/flags/gb.svg": {
+      "bytes": 504,
+      "sha256": "c8be1e7208798a4ae692ee1e937065d498bb29e741943f6172b29118b8ed8066"
+    },
+    "public/marketing/flags/hr.svg": {
+      "bytes": 30727,
+      "sha256": "f6db0eb906b48dc7b4d6da48e8a73ccedff47ee2f972d0cca16d231913880154"
+    },
+    "public/marketing/flags/pl.svg": {
+      "bytes": 215,
+      "sha256": "06687a4b90fc00195d0795aea1c26a9f73f1b6ea6a76e358724b2f1f32b7c8f4"
+    },
+    "public/marketing/flags/rs.svg": {
+      "bytes": 181634,
+      "sha256": "b6e08e2eca1ec4c287e5d5d7c36d7d4ad9503ad030133b04cf315f95ab49961c"
+    },
+    "public/marketing/flags/si.svg": {
+      "bytes": 1993,
+      "sha256": "3a5e0cac44baaea6b6d8e91054844b6ea72764f6dbe363c11ea11fd81203733a"
+    },
+    "public/marketing/passvero-logo.png": {
+      "bytes": 193530,
+      "sha256": "7562e3e4bf6a8865e4facdf50dd306ed9b7a2d938392634b9e8c8260314d19bf"
+    },
+    "src/components/language-switcher.tsx": {
+      "bytes": 3724,
+      "sha256": "18aaec2b28f9b359676869c8ee114b059e0f1d2bd36c43a79c3e1ff189c19e13"
+    },
+    "src/components/marketing/dashboard-preview-section.tsx": {
+      "bytes": 2415,
+      "sha256": "d6639ff037404de1d4b3951a0541bbb194d3bf99fa2c968bb1c9f8bd978c29b8"
+    },
+    "src/components/marketing/final-cta-section.tsx": {
+      "bytes": 2544,
+      "sha256": "82677cc501fdddcc1b7667e31c0232f8b8a12ae0478a658d6d8705bb5d13b352"
+    },
+    "src/components/marketing/hero-section.tsx": {
+      "bytes": 3804,
+      "sha256": "0c638f6422e9dce5024689cfba3f7dcd7b1c8aba5cc5596bb4a39f31b236099f"
+    },
+    "src/components/marketing/industries-section.tsx": {
+      "bytes": 1572,
+      "sha256": "9e2d3d04b3bc536a085200c0357e3a71d3eba5b30f2f23e395350bda974611fc"
+    },
+    "src/components/marketing/marketing-icons.tsx": {
+      "bytes": 4041,
+      "sha256": "5fab984bb0055229290f7fb75a756de9e665e4f44746f8ee99405304c8207125"
+    },
+    "src/components/marketing/mobile-navigation.tsx": {
+      "bytes": 3812,
+      "sha256": "e59acb5c2a8a2d4bc35d16a9ad35bc156e89cb173cb3d3f092d1987e5adfe97c"
+    },
+    "src/components/marketing/site-header.tsx": {
+      "bytes": 2257,
+      "sha256": "540ea980e9abdf76065ab2512904ce9ccb8f2552ce778b6b6844102beebae1e6"
+    }
+  },
+  "initialIndex": "EMPTY",
+  "protectedLegalDraft": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1",
+  "review": {
+    "approvedSourceHashes": "MATCH",
+    "legalNamespaces": "UNCHANGED_FROM_HEAD",
+    "noNewBuildOrTests": true,
+    "noTemporaryFilesOrBuildArtifactsInGit": true,
+    "secretPatternScan": "NO_MATCH_IN_REVIEWED_TEXT",
+    "sixLocaleOnlyScopeNoteChanged": true,
+    "stagedWhitespace": "NORMALIZED_BUILD_LOG_COPY_ORIGINAL_PRESERVED"
+  },
+  "selfHashExcluded": true,
+  "selfPath": "codex/evidence/marketing-ui-final-20261021/commit-manifest.json",
+  "sharedRoadmap": {
+    "preexistingDifferencePreserved": true,
+    "preexistingWorktreeSha256": "5e3822088ca01b701293a884992bd58ba2529cac32af7f7acdf8557028aca1d3",
+    "stagedContentSha256": "15f5cb61edb61697b84877ce9e2746765c50aaed9b6b26827adba115ede6a2b8"
+  },
+  "sourceCount": 23,
+  "task": "MARKETING_UI_FINAL_REVIEW_COMMIT_PUSH_AND_STAGING_DEPLOY",
+  "userVisualReview": "ACCEPTED"
+}

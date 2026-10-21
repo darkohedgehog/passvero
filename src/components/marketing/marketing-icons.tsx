@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 
 export type MarketingIconName =
   | "save" | "add" | "edit" | "remove" | "upload" | "download" | "preview" | "publish" | "back"
-  | "globe" | "logout"
+  | "globe" | "logout" | "login"
   | "analytics"
   | "check"
   | "compliance"
@@ -40,6 +40,7 @@ export function MarketingIcon({ name, ...props }: MarketingIconProps) {
 
   const paths: Record<MarketingIconName, React.ReactNode> = {
     globe: <><circle cx="12" cy="12" r="9" /><ellipse cx="12" cy="12" rx="4" ry="9" /><path d="M3 12h18" /></>,
+    login: <><path d="M15 4h5v16h-5M3 12h12m-4-4 4 4-4 4" /></>,
     logout: <><path d="M9 4H4v16h5M10 12h11m-4-4 4 4-4 4" /></>,
     save: <><path d="M5 3h12l4 4v14H3V3h2Z" /><path d="M7 3v6h10V3M7 21v-8h10v8" /></>,
     add: <path d="M12 5v14M5 12h14" />,

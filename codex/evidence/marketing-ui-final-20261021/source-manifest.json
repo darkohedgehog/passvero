@@ -1,0 +1,204 @@
+{
+  "task": "MARKETING_UI_COMBINED_LOCAL_REVIEW",
+  "baseCommit": "2e0eefad7d250a5751bdb25eb72e8942621990c9",
+  "localBuildId": "Edl3N_JJEbBPamNQ84Jxn",
+  "canonicalOriginForLocalVerification": "https://passvero-preview.invalid",
+  "modified": [
+    {
+      "path": "app/globals.css",
+      "sha256": "60a3cd9da10c846472a28595de39f831759d25094c6abf3032b80f111670dd90"
+    },
+    {
+      "path": "src/components/language-switcher.tsx",
+      "sha256": "18aaec2b28f9b359676869c8ee114b059e0f1d2bd36c43a79c3e1ff189c19e13"
+    },
+    {
+      "path": "src/components/marketing/site-header.tsx",
+      "sha256": "540ea980e9abdf76065ab2512904ce9ccb8f2552ce778b6b6844102beebae1e6"
+    },
+    {
+      "path": "src/components/marketing/mobile-navigation.tsx",
+      "sha256": "e59acb5c2a8a2d4bc35d16a9ad35bc156e89cb173cb3d3f092d1987e5adfe97c"
+    },
+    {
+      "path": "src/components/marketing/marketing-icons.tsx",
+      "sha256": "5fab984bb0055229290f7fb75a756de9e665e4f44746f8ee99405304c8207125"
+    },
+    {
+      "path": "src/components/marketing/hero-section.tsx",
+      "sha256": "0c638f6422e9dce5024689cfba3f7dcd7b1c8aba5cc5596bb4a39f31b236099f"
+    },
+    {
+      "path": "src/components/marketing/dashboard-preview-section.tsx",
+      "sha256": "d6639ff037404de1d4b3951a0541bbb194d3bf99fa2c968bb1c9f8bd978c29b8"
+    },
+    {
+      "path": "src/components/marketing/industries-section.tsx",
+      "sha256": "9e2d3d04b3bc536a085200c0357e3a71d3eba5b30f2f23e395350bda974611fc"
+    },
+    {
+      "path": "messages/hr.json",
+      "sha256": "1aa0b997a78532c0ed53a8542522c37eb86989ff6e9b3ae875a3382260e1a1b1"
+    },
+    {
+      "path": "messages/sr.json",
+      "sha256": "1a24d42d60cca6387b1223d00f8a8fa5746fb29dfb464967605ae6841de2c41f"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "a8c6a5d29683d07d262d29a886ab8fa5e803c8b1b89b07acbaccbea06f42470b"
+    },
+    {
+      "path": "messages/de.json",
+      "sha256": "61c997b490139dc26568005554b03ef331cd1242a3879e8aab5dd8e34199ae8c"
+    },
+    {
+      "path": "messages/sl.json",
+      "sha256": "432f84559d7bcf60459a8068ef0f7fcaccf75eeefa8efbf6d1cf7b45016780c0"
+    },
+    {
+      "path": "messages/pl.json",
+      "sha256": "48f47ee7f94e658e788e1bfa380c65c771b8265c1d5ca6062f92d4e7bbad7c9f"
+    },
+    {
+      "path": "public/marketing/passvero-logo.png",
+      "sha256": "7562e3e4bf6a8865e4facdf50dd306ed9b7a2d938392634b9e8c8260314d19bf"
+    },
+    {
+      "path": "src/components/marketing/final-cta-section.tsx",
+      "sha256": "82677cc501fdddcc1b7667e31c0232f8b8a12ae0478a658d6d8705bb5d13b352"
+    }
+  ],
+  "created": [
+    {
+      "path": "public/marketing/flags/LICENSE",
+      "sha256": "8f1195d55a2fd315a07d812328470ca9ba2abb78c8d317ff19619d5125e00cea"
+    },
+    {
+      "path": "public/marketing/flags/de.svg",
+      "sha256": "efd480af5a154a7651f29da23ee0d09dbc892410fb4041898ddf8face336c575"
+    },
+    {
+      "path": "public/marketing/flags/gb.svg",
+      "sha256": "c8be1e7208798a4ae692ee1e937065d498bb29e741943f6172b29118b8ed8066"
+    },
+    {
+      "path": "public/marketing/flags/hr.svg",
+      "sha256": "f6db0eb906b48dc7b4d6da48e8a73ccedff47ee2f972d0cca16d231913880154"
+    },
+    {
+      "path": "public/marketing/flags/pl.svg",
+      "sha256": "06687a4b90fc00195d0795aea1c26a9f73f1b6ea6a76e358724b2f1f32b7c8f4"
+    },
+    {
+      "path": "public/marketing/flags/rs.svg",
+      "sha256": "b6e08e2eca1ec4c287e5d5d7c36d7d4ad9503ad030133b04cf315f95ab49961c"
+    },
+    {
+      "path": "public/marketing/flags/si.svg",
+      "sha256": "3a5e0cac44baaea6b6d8e91054844b6ea72764f6dbe363c11ea11fd81203733a"
+    }
+  ],
+  "excludedPreexistingChanges": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "5e3822088ca01b701293a884992bd58ba2529cac32af7f7acdf8557028aca1d3",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "stagingDeployPerformed": false,
+  "productionChanges": "NONE",
+  "tasks": [
+    "MARKETING_UI_POLISH_LANGUAGE_CONTROLS_AND_COLOR_SYSTEM",
+    "MARKETING_TRANSPARENT_LOGO_AND_SUBTLE_GLASS_HEADER",
+    "MARKETING_LOGO_BACKGROUND_REMOVAL",
+    "MARKETING_MOBILE_FINAL_CTA_OVERLAP_FIX",
+    "MARKETING_UI_FINAL_REVIEW_COMMIT_PUSH_AND_STAGING_DEPLOY"
+  ],
+  "previousLocalBuildId": "qubXRx1kt88DWLKlvDtdc",
+  "headerAddition": {
+    "modified": [
+      "app/globals.css",
+      "src/components/marketing/site-header.tsx"
+    ],
+    "logoAsset": "public/marketing/passvero-logo.png",
+    "logoSha256": "7562e3e4bf6a8865e4facdf50dd306ed9b7a2d938392634b9e8c8260314d19bf",
+    "logoStatus": "TRANSPARENT_PNG_FROM_USER_SUPPLIED_BANNER",
+    "evidenceDirectory": "/tmp/passvero-marketing-header-20261021",
+    "previousAcceptedDiffPreserved": true,
+    "releasePinsChanged": false
+  },
+  "logoReplacement": {
+    "source": "/Users/darkozivic/Desktop/Programiranje/web shop assets/passvero-assets/passvero-banner.png",
+    "asset": "public/marketing/passvero-logo.png",
+    "dimensions": [
+      1450,
+      430
+    ],
+    "hasAlpha": true,
+    "evidenceDirectory": "/tmp/passvero-marketing-logo-20261021",
+    "sourceCodeChanged": false,
+    "lastBuildPrecedesAssetReplacement": false
+  },
+  "finalCtaFix": {
+    "evidenceDirectory": "/tmp/passvero-marketing-cta-20261021",
+    "mobileImagePosition": "normal flow with 24px margin below text",
+    "desktopImagePosition": "absolute, preserved"
+  },
+  "userVisualReview": "ACCEPTED_BY_USER_2026-10-21",
+  "finalReview": {
+    "acceptedBuildInventory": "/tmp/passvero-marketing-final-20261021/accepted-build-inventory.json",
+    "acceptedBuildInventorySha256": "69a32467559e9a6d8ae2de46527f259d6bfea108631ce98d362a133515651110",
+    "acceptedBuildMembers": 1782,
+    "actualRemoteMainBefore": "2e0eefad7d250a5751bdb25eb72e8942621990c9",
+    "indexInitially": "EMPTY",
+    "sourceHashes": "MATCH",
+    "jsonDelta": "Compliance.scopeNote only in six locales",
+    "deployGate": "STOP_CANONICAL_ORIGIN_MISMATCH",
+    "canonicalEvidence": {
+      "hr": {
+        "path": ".next/server/app/hr.html",
+        "sha256": "9e29dcbc856ccb8c0322c18b3b73e0193b5d16393c7cb505c98d2800e9cc017f",
+        "canonical": "https://passvero-preview.invalid",
+        "placeholderPresent": true
+      },
+      "sr": {
+        "path": ".next/server/app/sr.html",
+        "sha256": "54d63007df90e87e1d22b517312361b5a7bc8f8183470fe2d64d8998c613d44e",
+        "canonical": "https://passvero-preview.invalid/sr",
+        "placeholderPresent": true
+      },
+      "en": {
+        "path": ".next/server/app/en.html",
+        "sha256": "c0ed851643c8797298d511a5f293a577ae3c88de1fbc5ba1a2878cb5b6e02dd3",
+        "canonical": "https://passvero-preview.invalid/en",
+        "placeholderPresent": true
+      },
+      "de": {
+        "path": ".next/server/app/de.html",
+        "sha256": "33577a923a69c12ff44a0ff154fb13e0a34935508f6434bc793ab416a41320c2",
+        "canonical": "https://passvero-preview.invalid/de",
+        "placeholderPresent": true
+      },
+      "sl": {
+        "path": ".next/server/app/sl.html",
+        "sha256": "3ab121f4f70fadbe83a0d01299d56afb9906aec49c2d11b83a30421d2ab11105",
+        "canonical": "https://passvero-preview.invalid/sl",
+        "placeholderPresent": true
+      },
+      "pl": {
+        "path": ".next/server/app/pl.html",
+        "sha256": "9e7a02319a8c8359fe052b437e52b344267623c3fd2f581226be69b5082c499f",
+        "canonical": "https://passvero-preview.invalid/pl",
+        "placeholderPresent": true
+      }
+    },
+    "testsAndBuildRepeated": false,
+    "stagingDeployPerformed": false,
+    "productionChanges": "NONE",
+    "buildLogPreservation": {
+      "originalPath": "/tmp/passvero-marketing-cta-20261021/build.log",
+      "originalSha256": "85ae0b8dd666365a906cd196854ed3bebddae5ec3f2db5d0fa16af2cc9d241f0",
+      "committedPath": "codex/evidence/marketing-ui-final-20261021/accepted-build.log",
+      "committedSha256": "38e898e26d44f331bbd904e040276d8145e749372347d8a2790b0286522b5025",
+      "normalization": "Line endings/trailing whitespace only; original retained; no rebuild"
+    }
+  }
+}

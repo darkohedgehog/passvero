@@ -1,0 +1,74 @@
+[
+  {
+    "locale": "hr",
+    "width": 375,
+    "imageTop": 7281.703125,
+    "textBottom": 7257.703125,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "sr",
+    "width": 375,
+    "imageTop": 7221.4375,
+    "textBottom": 7197.4375,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "en",
+    "width": 375,
+    "imageTop": 7254.5625,
+    "textBottom": 7230.5625,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "de",
+    "width": 375,
+    "imageTop": 7607.421875,
+    "textBottom": 7583.421875,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "sl",
+    "width": 375,
+    "imageTop": 7367.421875,
+    "textBottom": 7343.421875,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "pl",
+    "width": 375,
+    "imageTop": 7593.6875,
+    "textBottom": 7569.6875,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "hr",
+    "width": 320,
+    "imageTop": 7697.78125,
+    "textBottom": 7673.78125,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "hr",
+    "width": 768,
+    "imageTop": 5934.5,
+    "textBottom": 5910.5,
+    "position": "static",
+    "status": "PASS"
+  },
+  {
+    "locale": "hr",
+    "width": 1440,
+    "imageTop": 3957.640625,
+    "textBottom": 4089.984375,
+    "position": "absolute",
+    "status": "PASS"
+  }
+]
