@@ -171,6 +171,8 @@
   },
   "CreateDraftFromPublished": {"edit":"Uredi proizvod","continueEditing":"Nastavi uređivanje","pending":"Otvaranje nacrta…","imagesUnsupported":"Uređivanje objavljenih proizvoda sa slikama još nije podržano. Objavljeni proizvod ostaje nepromenjen; pokušajte ponovo kada ova mogućnost bude dostupna.","conflict":"Proizvod se promenio. Osvežite stranicu i nastavite uređivanje.","forbidden":"Nemate ovlašćenje za uređivanje ovog proizvoda.","failure":"Nacrt nije moguće otvoriti. Osvežite stranicu i proverite stanje proizvoda pre ponovnog pokušaja.","reload":"Osveži stranicu"},
   "ProductDocuments": {
+    "choosePdf": "Izaberi PDF",
+    "noFile": "Datoteka nije izabrana",
     "publishedTitle": "Objavljeni dokumenti i sertifikati",
     "draftTitle": "Dokumenti i sertifikati u nacrtu",
     "privateNotice": "Privatni dokumenti i nacrti dostupni su samo ovlašćenim korisnicima. Javna oznaka sama po sebi ne omogućava preuzimanje: potrebni su objava i uspešne provere.",
@@ -558,6 +560,7 @@
     "notProvided": "Nije uneto"
   },
   "Subscription": {
+    "stagingException": "Staging izuzetak",
     "help": "Pomoć i objašnjenja",
     "confirmationHint": "Popunite obavezna polja i označite potvrdu pre nastavka.",
     "title": "Pretplata",

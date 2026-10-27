@@ -204,7 +204,8 @@ export function EditProductDraftForm({
 
       <FormField
         id="edit-product-sku"
-        label={`${labels.organizationSku} (${labels.optional})`}
+        label={labels.organizationSku}
+        optionalLabel={labels.optional}
         error={fieldError?.field === "organizationSku" ? fieldMessage : undefined}
       >
         <input
@@ -257,18 +258,20 @@ export function EditProductDraftForm({
 function FormField({
   id,
   label,
+  optionalLabel,
   error,
   children,
 }: Readonly<{
   id: string;
   label: string;
+  optionalLabel?: string;
   error?: string;
   children: React.ReactNode;
 }>) {
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-semibold text-slate-800">
-        {label}
+        {label}{optionalLabel ? <span className="ml-2 font-normal text-slate-600">({optionalLabel})</span> : null}
       </label>
       {children}
       {error === undefined ? null : (

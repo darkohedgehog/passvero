@@ -171,6 +171,8 @@
   },
   "CreateDraftFromPublished": {"edit":"Uredi izdelek","continueEditing":"Nadaljuj urejanje","pending":"Odpiranje osnutka…","imagesUnsupported":"Urejanje objavljenih izdelkov s slikami še ni podprto. Objavljeni izdelek ostane nespremenjen; poskusite znova, ko bo ta možnost na voljo.","conflict":"Izdelek se je spremenil. Osvežite stran in nadaljujte urejanje.","forbidden":"Nimate dovoljenja za urejanje tega izdelka.","failure":"Osnutka ni bilo mogoče odpreti. Osvežite stran in preverite stanje izdelka, preden poskusite znova.","reload":"Osveži stran"},
   "ProductDocuments": {
+    "choosePdf": "Izberi PDF",
+    "noFile": "Datoteka ni izbrana",
     "publishedTitle": "Objavljeni dokumenti in certifikati",
     "draftTitle": "Dokumenti in certifikati v osnutku",
     "privateNotice": "Zasebni dokumenti in osnutki so na voljo samo pooblaščenim uporabnikom. Javna oznaka sama po sebi ne omogoča prenosa: potrebni so objava in uspešno opravljena preverjanja.",
@@ -558,6 +560,7 @@
     "notProvided": "Ni vneseno"
   },
   "Subscription": {
+    "stagingException": "Izjema v okolju staging",
     "help": "Pomoč in pojasnila",
     "confirmationHint": "Izpolnite obvezna polja in označite potrditev pred nadaljevanjem.",
     "title": "Naročnina",

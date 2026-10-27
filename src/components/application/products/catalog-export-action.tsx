@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ProductActionIcon, editorSecondaryAction } from "./product-editor-ui";
 
 export function CatalogExportAction({ search, labels }: Readonly<{
   search: string;
@@ -35,7 +36,7 @@ export function CatalogExportAction({ search, labels }: Readonly<{
     finally { inFlight.current = false; setPending(false); }
   }
   return <section className="mb-6 space-y-2 rounded-lg border border-slate-200 p-4" aria-busy={pending}>
-    <button type="button" onClick={download} disabled={pending} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium disabled:opacity-50">{pending ? labels.pending : labels.button}</button>
+    <button type="button" onClick={download} disabled={pending} className={editorSecondaryAction}><ProductActionIcon name="download" />{pending ? labels.pending : labels.button}</button>
     <p className="text-sm text-slate-700">{search ? labels.filtered : labels.all}</p>
     <p className="text-sm text-slate-600">{labels.versionHelp}</p>
     <p className="text-sm text-slate-600">{labels.textHelp}</p>

@@ -104,8 +104,8 @@ export function CatalogImport() {
         <p className="min-w-0 break-all text-sm font-medium text-slate-800" role="status">{file?.name ?? t("noFile")}</p>
       </div>
       <p id={fileHintId} className="text-sm text-slate-600">{t("file")}. {t("selectionOnly")}</p>
-      <div className="flex flex-wrap items-end gap-3">
-        <label className="text-sm font-medium">{t("delimiter")}<select className={editorInput} value={options.delimiter} onChange={event => { setOptions({ ...options, delimiter: event.target.value as "," | ";" }); setHeaders([]); invalidate(); }}><option value=",">,</option><option value=";">;</option></select></label>
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end">
+        <label className="min-w-0 text-sm font-medium sm:w-40">{t("delimiter")}<select className={editorInput} value={options.delimiter} onChange={event => { setOptions({ ...options, delimiter: event.target.value as "," | ";" }); setHeaders([]); invalidate(); }}><option value=",">,</option><option value=";">;</option></select></label>
         <button type="button" onClick={() => void act(loadHeaders)} disabled={!file} className={editorSecondaryAction}>{t("readHeader")}</button>
       </div>
     </fieldset>

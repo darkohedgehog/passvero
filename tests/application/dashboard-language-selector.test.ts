@@ -24,7 +24,7 @@ for (const locale of locales) test(`${locale}: shared authenticated header expos
       createElement(NextIntlClientProvider, { locale, messages, timeZone: "Europe/Zagreb", children:
         createElement(DashboardShell, { brandLabel: "Passvero", title: "Products", productsLabel: "Products", signOutLabel: "Sign out", pendingLabel: "Pending", signOutFailureLabel: "Failed", userLabel: "Existing user", organizationName: "Existing organization", children: "Croatian Product content" }) }))));
   assert.match(html, /<select\b/);
-  assert.ok(html.includes(`aria-label="${messages.Common.language}"`));
+  assert.ok(html.includes(`aria-label="${messages.Common.language}: ${messages.Common.languages[locale]}"`));
   assert.equal((html.match(/<option\b/g) ?? []).length, 6);
   assert.match(html, new RegExp(`<option[^>]*value="${locale}"[^>]*selected=""`));
   for (const code of locales) assert.ok(html.includes(messages.Common.languages[code]));

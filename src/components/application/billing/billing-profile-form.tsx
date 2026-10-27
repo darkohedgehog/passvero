@@ -26,11 +26,11 @@ export function BillingProfileForm({profile}:{profile:BillingProfile|null}) {
     {revision===0?<p className="text-sm text-slate-600">{t("empty")}</p>:null}
     <fieldset disabled={pending} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <legend className="px-2 text-lg font-semibold">{t("company")}</legend>
-      <div className="grid min-w-0 gap-5 sm:grid-cols-2">
-        {fields.map(field=><label key={field} className="min-w-0 text-sm font-medium text-slate-800">{t(field)} <span className="font-normal text-slate-600">({t(required.has(field)?"required":"optional")})</span>
+      <div className="billing-fields grid min-w-0 gap-5 sm:grid-cols-2">
+        {fields.map(field=><label key={field} className="min-w-0 text-sm font-medium text-slate-800"><span>{t(field)} <span className="font-normal text-slate-600">({t(required.has(field)?"required":"optional")})</span></span>
           <input className={`${editorInput} mt-2 w-full min-w-0`} name={field} autoComplete={autocomplete[field]} required={required.has(field)} type={field==="billingEmail"?"email":"text"} maxLength={field==="billingEmail"?254:field==="city"?100:field==="postalCode"?32:field.endsWith("Identifier")?64:200} value={values[field]??""} onChange={e=>setValues(v=>({...v,[field]:e.target.value || (required.has(field)?"":null)}))}/>
         </label>)}
-        <label className="min-w-0 text-sm font-medium text-slate-800">{t("countryCode")} <span className="font-normal text-slate-600">({t("required")})</span>
+        <label className="min-w-0 text-sm font-medium text-slate-800"><span>{t("countryCode")} <span className="font-normal text-slate-600">({t("required")})</span></span>
           <select name="countryCode" autoComplete="country" required className={`${editorInput} mt-2 w-full min-w-0`} value={values.countryCode} onChange={e=>setValues(v=>({...v,countryCode:e.target.value}))}>
             <option value="">{t("selectCountry")}</option>{billingCountryCodes.map(code=><option key={code} value={code}>{countries.of(code)} ({code})</option>)}
           </select>

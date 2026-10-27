@@ -205,6 +205,8 @@
   },
   "CreateDraftFromPublished": {"edit":"Edit product","continueEditing":"Continue editing","pending":"Opening draft…","imagesUnsupported":"Editing published products with images is not supported yet. The published product remains unchanged; try again when this capability becomes available.","conflict":"The product changed. Reload the page to continue editing.","forbidden":"You do not have permission to edit this product.","failure":"The draft could not be opened. Reload the page and check the product state before trying again.","reload":"Reload page"},
   "ProductDocuments": {
+    "choosePdf": "Choose PDF",
+    "noFile": "No file selected",
     "publishedTitle": "Published documents and certificates",
     "draftTitle": "Draft documents and certificates",
     "privateNotice": "Private documents and drafts are available only to authorized users. Marking a document public does not by itself enable downloading: publication and successful checks are required.",
@@ -592,6 +594,7 @@
     "notProvided": "Not provided"
   },
   "Subscription": {
+    "stagingException": "Staging exception",
     "help": "Help and explanations",
     "confirmationHint": "Complete the required fields and select the confirmation before continuing.",
     "title": "Subscription",

@@ -24,7 +24,7 @@ test("published and Viewer attachments do not expose an unchecked download or at
  }
 });
 test("editor sees bounded draft management with honest public-intent wording",()=>{
- const html=render(false,true);assert.match(html,/Add document/);assert.match(html,/>Edit</);assert.match(html,/>Remove</);assert.match(html,/Public downloads are not enabled yet/);assert.doesNotMatch(html,/storageKey|checksum|supabase/);
+ const html=render(false,true);assert.match(html,/Add document/);assert.match(html,/>Edit</);assert.match(html,/>Remove</);assert.ok(html.includes(en.ProductDocuments.privateNotice));assert.doesNotMatch(html,/storageKey|checksum|supabase/);
 });
 test("six locales complete and dashboard language leaves HR document locale intact",()=>{
  for(const [locale,messages] of Object.entries({hr,en,de,sr,sl,pl})){
@@ -41,5 +41,5 @@ test("new attachment form has explicit unchecked public intent and all labeled i
  assert.match(html,/name="isPublic"/);assert.doesNotMatch(html,/checked=""/);
  for(const field of ["file","category","displayLabel","locale","description"])assert.match(html,new RegExp(`name="${field}"`));
  assert.match(html,/value="" selected=""/);assert.match(html,/type="file"/);assert.match(html,/accept="application\/pdf,.pdf"/);
- assert.match(html,/min-w-0/);assert.match(html,/<label/);assert.match(html,/Public downloads are not enabled yet/);
+ assert.match(html,/min-w-0/);assert.match(html,/<label/);assert.ok(html.includes(en.ProductDocuments.privateNotice));
 });

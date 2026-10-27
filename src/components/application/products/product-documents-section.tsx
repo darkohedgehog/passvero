@@ -1,8 +1,8 @@
 "use client";
 
-import { ProductActionIcon, editorDangerAction } from "./product-editor-ui";
+import { ProductActionIcon, editorDangerAction, editorPrimaryAction } from "./product-editor-ui";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { DocumentScanControls } from "./document-scan-controls";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -58,6 +58,9 @@ export function AttachmentForm({ productId, evidence, row, onClose, onSuccess }:
   productId: string; evidence: AttachmentEvidence; row: AttachmentDto | null; onClose(): void; onSuccess(): void;
 }>) {
   const t = useTranslations("ProductDocuments");
+  const fileId = useId();
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const flow = useRef<ReturnType<typeof createUploadAttachmentFlow> | null>(null);
   if (flow.current === null) flow.current = createUploadAttachmentFlow(productId, evidence);
   const [pending, setPending] = useState(false);
@@ -92,7 +95,15 @@ export function AttachmentForm({ productId, evidence, row, onClose, onSuccess }:
   return <form onSubmit={submit} onChange={() => setDirty(true)} className="mt-5 min-w-0 rounded-lg bg-slate-50 p-4">
     <fieldset disabled={pending} className="min-w-0 space-y-4">
       <legend className="font-semibold">{t(row ? "edit" : "add")}</legend>
-      {!row ? <label className="block text-sm">{t("file")}<input type="file" name="file" accept="application/pdf,.pdf" required={!uploaded} disabled={uploaded || uploadFailed} className={control} /><span>{t("fileHint")}</span></label> : null}
+      {!row ? <div className="min-w-0 space-y-2">
+        <label htmlFor={fileId} className="block text-sm">{t("file")}</label>
+        <input ref={fileInput} id={fileId} type="file" name="file" accept="application/pdf,.pdf" required={!uploaded} disabled={uploaded || uploadFailed} aria-describedby={`${fileId}-hint`} className="peer sr-only" onChange={event => setFileName(event.target.files?.[0]?.name ?? null)} />
+        <div className="flex min-w-0 flex-col items-start gap-3 rounded-lg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-teal-700 sm:flex-row sm:items-center">
+          <button type="button" className={editorPrimaryAction} disabled={uploaded || uploadFailed} aria-describedby={`${fileId}-hint`} onClick={() => fileInput.current?.click()}><ProductActionIcon name="upload" />{t("choosePdf")}</button>
+          <span role="status" className="min-w-0 break-all text-sm text-slate-700">{fileName ?? t("noFile")}</span>
+        </div>
+        <p id={`${fileId}-hint`} className="text-sm font-normal text-slate-600">{t("fileHint")}</p>
+      </div> : null}
       <label className="block text-sm">{t("category")}<select name="category" defaultValue={row?.category ?? "OTHER"} className={control}>{DOCUMENT_CATEGORIES.map(category => <option key={category} value={category}>{t(`categories.${category}`)}</option>)}</select></label>
       <label className="block text-sm">{t("label")}<input name="displayLabel" defaultValue={row?.displayLabel ?? ""} required className={control} /></label>
       <label className="block text-sm">{t("language")}<select name="locale" defaultValue={row?.locale ?? ""} className={control}><option value="">{t("neutral")}</option>{DOCUMENT_LOCALES.map(locale => <option key={locale} value={locale}>{t(`languages.${locale}`)}</option>)}</select></label>
@@ -102,7 +113,7 @@ export function AttachmentForm({ productId, evidence, row, onClose, onSuccess }:
       <p className="text-sm text-slate-600">{t("privateNotice")}</p>
       {uploaded ? <p role="status">{t("retained")}</p> : null}
       {error ? <p role="alert" className="text-red-800">{t(`errors.${error}`)}</p> : null}
-      <div className="flex flex-wrap gap-2"><button type="submit" className={button} disabled={uploadFailed}><ProductActionIcon name="upload" />{t(pending ? "pending" : uploaded ? "retry" : "save")}</button>
+      <div className="flex flex-wrap gap-2"><button type="submit" className={editorPrimaryAction} disabled={uploadFailed}><ProductActionIcon name="upload" />{t(pending ? "pending" : uploaded ? "retry" : "save")}</button>
         <button type="button" className={button} onClick={() => { if ((!dirty && !uploaded) || window.confirm(t("confirmDiscard"))) onClose(); }}>{t("cancel")}</button></div>
     </fieldset>
   </form>;

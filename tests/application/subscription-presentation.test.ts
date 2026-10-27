@@ -89,3 +89,11 @@ test("expired blocked receipt retains replacement recovery independently of curr
  assert.ok(html.includes(en.Subscription.replacementConsequence));
  assert.doesNotMatch(renderState({...blocked,unresolvedReplacementPeriodId:null}),/<option value="REPLACEMENT"/);
 });
+
+
+test("customer staging exception is never labelled as an active paid period", () => {
+ const html = renderState({ ...state, entitlements: { kind: "PAID", planSlug: "staging-exception", end: "2026-12-01T10:00:00Z", limits: null, blockedReasons: [] }, currentPeriod: null });
+ assert.ok(html.includes(en.Subscription.stagingException));
+ assert.ok(html.includes(en.Subscription.noCurrent));
+ assert.ok(!html.includes(en.Subscription.activePaid));
+});

@@ -123,12 +123,43 @@ function AcceptForm({ request }: { request: RequestDto }) {
     <button type="submit" disabled={!confirmed || mutation.pending || mutation.blocked} className={editorPrimaryAction}><ReviewIcon name="verify"/>{t(mutation.pending ? "pending" : "accept")}</button><MutationMessage mutation={mutation}/>
   </form>;
 }
+function Usage({ label, used, limit, value }: { label: string; used: number; limit: number | undefined; value: string }) {
+  return <div className="min-w-0 space-y-3"><dl><Detail label={label}><span className="font-semibold tabular-nums">{value}</span></Detail></dl>{limit !== undefined && limit > 0 ? <progress aria-label={label} className="block h-2 w-full accent-teal-700" max={limit} value={Math.min(used, limit)} /> : null}</div>;
+}
+function CustomerSubscriptionSummary({ state }: { state: CommercialState }) {
+  const t = useTranslations("Subscription"), f = useFormatting();
+  const rights = state.entitlements;
+  if (!rights) return null;
+  const exception = rights.kind === "PAID" && rights.planSlug === "staging-exception";
+  const status = exception ? t("stagingException") : t(rights.kind === "PAID" ? "activePaid" : rights.kind as "TRIAL");
+  return <section className={`${panel} space-y-6`}>
+    <ReviewHeading icon="receipt">{t("title")}</ReviewHeading>
+    <dl className="grid gap-5 sm:grid-cols-3">
+      <Detail label={t("title")}><ReviewBadge status={exception ? "PENDING" : rights.kind}>{status}</ReviewBadge></Detail>
+      <Detail label={t("plan")}>{exception ? t("stagingException") : rights.planSlug === "trial" ? t("TRIAL") : rights.planSlug ? planName(rights.planSlug) : "—"}</Detail>
+      <Detail label={t("end")}>{rights.end ? f.date(rights.end) : "—"}</Detail>
+    </dl>
+    {state.usage ? <div className="grid gap-5 border-t border-slate-200 pt-5 sm:grid-cols-2">
+      <Usage label={t("storage")} used={state.usage.storageBytes} limit={rights.limits?.maxStorageBytes} value={`${f.storage(state.usage.storageBytes)} / ${rights.limits ? f.storage(rights.limits.maxStorageBytes) : "—"}`} />
+      <Usage label={t("pdfLimit")} used={state.usage.maxPdfAttachmentsPerVersion} limit={rights.limits?.maxPdfAttachments} value={`${f.number(state.usage.maxPdfAttachmentsPerVersion)} / ${rights.limits ? f.number(rights.limits.maxPdfAttachments) : "—"}`} />
+    </div> : null}
+    {rights.blockedReasons.map(reason => <p key={reason}>{t(reason as "STORAGE_LIMIT")}</p>)}
+  </section>;
+}
+function CustomerProductUsage({ state }: { state: CommercialState }) {
+  const t = useTranslations("Subscription"), f = useFormatting();
+  const limits = state.entitlements?.limits ?? state.currentPeriod?.snapshot.limits;
+  return <div className="grid gap-4 sm:grid-cols-2">
+    <div className={panel}><Usage label={t("occupied")} used={state.occupiedPublishedProducts} limit={limits?.maxPublishedProducts} value={`${f.number(state.occupiedPublishedProducts)}${limits ? ` / ${f.number(limits.maxPublishedProducts)}` : ""}`} /></div>
+    <div className={panel}><Usage label={t("stored")} used={state.storedProducts} limit={limits?.maxStoredProducts} value={`${f.number(state.storedProducts)}${limits ? ` / ${f.number(limits.maxStoredProducts)}` : ""}`} /></div>
+  </div>;
+}
 export function CommercialOverview({ state, now, operator = false, allowSimulation = false }: { state: CommercialState; now: string; operator?: boolean; allowSimulation?: boolean }) {
   const t = useTranslations("Subscription"), f = useFormatting();
   return <div className="max-w-6xl space-y-6">
     <p className="text-sm leading-6 text-slate-700">{t("description")}</p>
-    {state.entitlements?<section className={panel}><dl className="grid gap-4 sm:grid-cols-3"><Detail label={t("title")}>{t(state.entitlements.kind==="PAID"?"activePaid":state.entitlements.kind as "TRIAL")}</Detail><Detail label={t("plan")}>{state.entitlements.planSlug==="trial"?t("TRIAL"):state.entitlements.planSlug?planName(state.entitlements.planSlug):"—"}</Detail><Detail label={t("end")}>{state.entitlements.end?f.date(state.entitlements.end):"—"}</Detail>{state.usage?<><Detail label={t("storage")}>{f.storage(state.usage.storageBytes)} / {state.entitlements.limits?f.storage(state.entitlements.limits.maxStorageBytes):"—"}</Detail><Detail label={t("pdfLimit")}>{state.usage.maxPdfAttachmentsPerVersion} / {state.entitlements.limits?.maxPdfAttachments??"—"}</Detail></>:null}</dl>{state.entitlements.blockedReasons.map(reason=><p key={reason}>{t(reason as "STORAGE_LIMIT")}</p>)}</section>:null}
-    <div className="grid gap-4 sm:grid-cols-2"><div className={panel}><dl><Detail label={t("occupied")}>{f.number(state.occupiedPublishedProducts)}{(state.entitlements?.limits??state.currentPeriod?.snapshot.limits) ? ` / ${f.number((state.entitlements?.limits??state.currentPeriod!.snapshot.limits).maxPublishedProducts)}` : ""}</Detail></dl></div><div className={panel}><dl><Detail label={t("stored")}>{f.number(state.storedProducts)}{(state.entitlements?.limits??state.currentPeriod?.snapshot.limits) ? ` / ${f.number((state.entitlements?.limits??state.currentPeriod!.snapshot.limits).maxStoredProducts)}` : ""}</Detail></dl></div></div>
+    {state.entitlements ? operator ? <section className={panel}><dl className="grid gap-4 sm:grid-cols-3"><Detail label={t("title")}>{t(state.entitlements.kind==="PAID"?"activePaid":state.entitlements.kind as "TRIAL")}</Detail><Detail label={t("plan")}>{state.entitlements.planSlug==="trial"?t("TRIAL"):state.entitlements.planSlug?planName(state.entitlements.planSlug):"—"}</Detail><Detail label={t("end")}>{state.entitlements.end?f.date(state.entitlements.end):"—"}</Detail>{state.usage?<><Detail label={t("storage")}>{f.storage(state.usage.storageBytes)} / {state.entitlements.limits?f.storage(state.entitlements.limits.maxStorageBytes):"—"}</Detail><Detail label={t("pdfLimit")}>{state.usage.maxPdfAttachmentsPerVersion} / {state.entitlements.limits?.maxPdfAttachments??"—"}</Detail></>:null}</dl>{state.entitlements.blockedReasons.map(reason=><p key={reason}>{t(reason as "STORAGE_LIMIT")}</p>)}</section> : <CustomerSubscriptionSummary state={state} /> : null}
+    {operator ? <div className="grid gap-4 sm:grid-cols-2"><div className={panel}><dl><Detail label={t("occupied")}>{f.number(state.occupiedPublishedProducts)}{(state.entitlements?.limits??state.currentPeriod?.snapshot.limits) ? ` / ${f.number((state.entitlements?.limits??state.currentPeriod!.snapshot.limits).maxPublishedProducts)}` : ""}</Detail></dl></div><div className={panel}><dl><Detail label={t("stored")}>{f.number(state.storedProducts)}{(state.entitlements?.limits??state.currentPeriod?.snapshot.limits) ? ` / ${f.number((state.entitlements?.limits??state.currentPeriod!.snapshot.limits).maxStoredProducts)}` : ""}</Detail></dl></div></div> : <CustomerProductUsage state={state} />}
     <details className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600"><summary className="w-fit cursor-pointer rounded-md font-semibold text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">{t("help")}</summary><p className="mt-3 leading-6">{t("quotaNotice")}</p></details>
     <section className={`${panel} space-y-4`}><h2 className="text-lg font-semibold">{t("current")}</h2>{state.currentPeriod ? <Period period={state.currentPeriod}/> : <p className="text-sm text-slate-600">{t("noCurrent")}</p>}</section>
     {state.futurePeriods.length ? <section className={`${panel} space-y-5`}><h2 className="text-lg font-semibold">{t("future")}</h2>{state.futurePeriods.map(period => <Period key={period.id} period={period}/>)}</section> : null}

@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     canReadBilling = result.status === "RESOLVED" && hasBillingPermission(result.context,"BILLING_PROFILE_READ");
     canReadProducts = result.status === "RESOLVED" && result.context.membershipStatus === "ACTIVE" && hasProductPermission(result.context, PRODUCT_READ);
   } catch { /* The page renders its existing safe access error. */ }
-  return <div className="min-h-screen bg-slate-50 lg:pl-64">
+  return <div className="customer-workspace min-h-screen bg-[#f5f4f0] lg:pl-64">
     <DashboardNavigation canReadProducts={canReadProducts} canReadBilling={canReadBilling} canReadPlatform={canReadPlatform} canManageCommercial={canManageCommercial} canClassifyRegulatory={canClassifyRegulatory} />
     <EntitlementNotice rights={rights} />
     {children}

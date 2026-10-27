@@ -158,3 +158,45 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Customer workspace only: shared controls must not restyle public or platform UI. */
+.customer-workspace { background-color: #f5f4f0; }
+.customer-workspace main :is(.bg-slate-50, .bg-slate-50\/70, .bg-teal-50\/30) { background-color: #fff; }
+.customer-workspace main label { color: #1e293b; font-weight: 600; line-height: 1.5; }
+.customer-workspace main :where(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]):not([type="submit"]):not([type="button"]), select, textarea) {
+  min-width: 0;
+  min-height: 2.875rem;
+  border: 1px solid #a8b3bf;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  padding: 0.625rem 0.875rem;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.customer-workspace main label > :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { margin-top: 0.5rem; }
+.customer-workspace main textarea { resize: vertical; }
+.customer-workspace main :is(input, select, textarea):focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
+  border-color: #0f766e;
+}
+.customer-workspace main :is(input, select, textarea):is(:disabled, [readonly]) {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+.customer-workspace main :is(input, select, textarea):disabled { cursor: not-allowed; }
+.customer-workspace main :is(input, select, textarea)[aria-invalid="true"] { border-color: #b91c1c; }
+.customer-workspace main :is(input[type="checkbox"], input[type="radio"]) { accent-color: #0f766e; }
+/* Keep the compact visual language overlay above the native accessible select. */
+.customer-workspace main select[data-language-control] { margin-top: 0; min-height: 2.75rem; height: 2.75rem; width: 6.75rem; padding-right: 2rem; color: transparent; font-size: 0.75rem; }
+.customer-workspace main .billing-fields > label { display: flex; flex-direction: column; align-items: stretch; justify-content: space-between; gap: 0.5rem; }
+.customer-workspace main .billing-fields > label > :is(input, select) { margin-top: auto; }
+
+.customer-workspace main select { padding-right: 2.5rem; }
+.customer-workspace main select[data-language-control]:disabled { color: transparent; }
+.customer-workspace main progress { height: 0.5rem; overflow: hidden; border: 0; border-radius: 999px; background: #e2e8f0; accent-color: #0f766e; }
+.customer-workspace main progress::-webkit-progress-bar { border-radius: 999px; background: #e2e8f0; }
+.customer-workspace main progress::-webkit-progress-value { border-radius: 999px; background: #0f766e; }
+.customer-workspace main progress::-moz-progress-bar { border-radius: 999px; background: #0f766e; }

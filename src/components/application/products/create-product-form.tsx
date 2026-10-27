@@ -179,7 +179,8 @@ export function CreateProductForm({
 
       <FormField
         id="create-product-sku"
-        label={`${labels.sku} (${labels.skuOptional})`}
+        label={labels.sku}
+        optionalLabel={labels.skuOptional}
         error={fieldError?.field === "organizationSku" ? fieldMessage : undefined}
       >
         <input
@@ -245,18 +246,20 @@ export function CreateProductForm({
 function FormField({
   id,
   label,
+  optionalLabel,
   error,
   children,
 }: Readonly<{
   id: string;
   label: string;
+  optionalLabel?: string;
   error?: string;
   children: React.ReactNode;
 }>) {
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-semibold text-slate-800">
-        {label}
+        {label}{optionalLabel ? <span className="ml-2 font-normal text-slate-600">({optionalLabel})</span> : null}
       </label>
       {children}
       {error === undefined ? null : (

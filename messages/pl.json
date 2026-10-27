@@ -171,6 +171,8 @@
   },
   "CreateDraftFromPublished": {"edit":"Edytuj produkt","continueEditing":"Kontynuuj edycję","pending":"Otwieranie wersji roboczej…","imagesUnsupported":"Edycja opublikowanych produktów ze zdjęciami nie jest jeszcze obsługiwana. Opublikowany produkt pozostaje bez zmian; spróbuj ponownie, gdy ta funkcja będzie dostępna.","conflict":"Produkt został zmieniony. Odśwież stronę, aby kontynuować edycję.","forbidden":"Nie masz uprawnień do edycji tego produktu.","failure":"Nie udało się otworzyć wersji roboczej. Odśwież stronę i sprawdź stan produktu przed ponowną próbą.","reload":"Odśwież stronę"},
   "ProductDocuments": {
+    "choosePdf": "Wybierz PDF",
+    "noFile": "Nie wybrano pliku",
     "publishedTitle": "Opublikowane dokumenty i certyfikaty",
     "draftTitle": "Dokumenty i certyfikaty wersji roboczej",
     "privateNotice": "Prywatne dokumenty i wersje robocze są dostępne tylko dla uprawnionych użytkowników. Samo oznaczenie dokumentu jako publicznego nie umożliwia pobierania: wymagane są publikacja i pomyślne kontrole.",
@@ -558,6 +560,7 @@
     "notProvided": "Nie podano"
   },
   "Subscription": {
+    "stagingException": "Wyjątek w środowisku staging",
     "help": "Pomoc i wyjaśnienia",
     "confirmationHint": "Uzupełnij wymagane pola i zaznacz potwierdzenie przed kontynuowaniem.",
     "title": "Subskrypcja",

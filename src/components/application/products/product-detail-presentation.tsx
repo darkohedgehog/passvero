@@ -1,3 +1,4 @@
+import { PublishProductScope } from "./publish-product-section";
 import { ProductActionIcon } from "./product-editor-ui";
 import type { PublicDppLabels } from "@/src/components/public-dpp/public-dpp-document";
 import { ProductDetailSnapshotContent } from "./product-detail-snapshot";
@@ -94,6 +95,7 @@ export function ProductDetailPresentation({
   const published = detail.currentPublished;
   const editable = detail.lifecycleStatus === "ACTIVE" && draft !== null;
   return (
+    <PublishProductScope>
     <div className="min-w-0">
       <nav aria-label={labels.overview}>
         <a href={productListHref} className="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center rounded-md text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"><ProductActionIcon name="back" />{labels.backToProducts}</a>
@@ -166,6 +168,7 @@ export function ProductDetailPresentation({
         )}
       </section>
       <div className="mt-8">{manufacturerSection}</div>
+      {editable && publishSection ? <div className="mt-8 border-t border-slate-200 pt-5">{publishSection}</div> : null}
       {qrSection}
       <details className="mt-8 rounded-xl border border-slate-200 p-4">
         <summary className="cursor-pointer rounded text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600">{labels.technicalDetails}</summary>
@@ -176,6 +179,7 @@ export function ProductDetailPresentation({
         <p className="mt-2 text-xs leading-5 text-slate-500">{labels.publicCodeHint}</p>
       </details>
     </div>
+    </PublishProductScope>
   );
 }
 
