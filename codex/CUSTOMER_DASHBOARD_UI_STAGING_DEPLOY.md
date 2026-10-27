@@ -249,3 +249,53 @@ USER_FINAL_UI_REVIEW=PENDING
 BUSINESS_RULES_CHANGED=NO
 BACKUP_ACCEPTANCE_REPEATED=NO
 PRODUCTION_DEPLOY_PERFORMED=NO
+
+## CSV accordion border final alignment — 2026-10-27
+
+The separately approved final correction resolves the darker outer CSV summary
+border recorded above. Commit `2c877f05dfcecd2694139cc1d8f504f912ff3d7d`
+(`style(csv): align import accordion border`) changes one source file, adding only
+`border-slate-200` to the catalog-import summary. The existing global keyboard
+focus outline, inner forms, spacing, text, permissions and import/export behavior
+are unchanged. No global accordion rule was added.
+
+One final staging-origin build `YNJg-e6igvm0cUQHZ1S3I` passed compilation and
+TypeScript. Generated canonical/hreflang/Open Graph metadata uses
+`https://staging.passvero.eu`; 264 generated text responses contain no reviewed
+preview/localhost placeholders. No tests or broad visual series were repeated.
+The exact archive has 839 members; the deployed canonical inventory has 852,
+including all 13 retained files unchanged. See
+[evidence manifest](evidence/csv-accordion-final-20261027/release-manifest.json).
+
+The first launch stopped before mutations because the regular monitor term was
+too close. After that ordinary scheduled term, the operator supplied a fresh
+idle/window PASS; the guarded launch then completed successfully. Operator body
+and independent closure confirm `NEW_ALIGNED`, exact canonical/config pins,
+HTTPS/TLS PASS, unchanged backup state and reminder timer, and restored active,
+enabled backup/monitor timers. Only buildId/canonicalSha256 release config pins
+changed. No scanner/producer changes, manual jobs, business writes, messages,
+backup acceptance or production changes occurred.
+
+Rollback is prepared, not executed:
+`/var/lib/passvero-csv-border-deploy-20261027`, retaining the previous
+`o881QhduK5s1O2SuiT9jr` artifacts and paired canonical/config pins. Older rollback
+history remains unchanged. The reviewed rollback block is in the evidence folder.
+
+Targeted read-only staging review passed for open/closed summary and Tab/Shift+Tab
+focus with Return reopening on desktop and 390x685 mobile. The slate border is
+consistent with adjacent surfaces; the original blue keyboard outline stays clear.
+No file selection, import/export, save or other business action was triggered.
+Public HTTPS returned 200 with TLS verification 0 and the exact new build ID.
+Final user staging confirmation remains PENDING, distinct from this agent review.
+
+Private screenshots remain outside Git:
+[desktop open](/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/desktop-open.png),
+[desktop closed focus](/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/desktop-closed-focus.png),
+[desktop open focus](/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/desktop-open-focus.png),
+[mobile closed focus](/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/mobile-closed-focus.png),
+[mobile open focus](/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/mobile-open-focus.png).
+Their exact hashes are recorded in the targeted review evidence.
+
+The separate legal draft and entire pre-existing roadmap diff retain their exact
+baseline bytes and stay outside this release. Final evidence is a documentation-only
+commit; it requires no additional build, deploy or runtime repin.

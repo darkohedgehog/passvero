@@ -1,0 +1,12 @@
+{
+  "source": "USER_OPERATOR_OUTPUT",
+  "result": "STOP",
+  "CHECK_ID": "FRESH_IDLE_AND_TIMER_WINDOW",
+  "reason": "NEXT_REGULAR_TERM_TOO_CLOSE_NO_DEPLOY",
+  "timerSecondsRemaining": {
+    "passvero-staging-backup.timer": 37697.39,
+    "passvero-staging-backup-monitor.timer": 1097.378
+  },
+  "mutations": "NONE",
+  "automaticRetry": false
+}

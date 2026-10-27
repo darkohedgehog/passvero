@@ -1,0 +1,311 @@
+{
+  "result": "PASS_STAGING_ORIGIN_METADATA",
+  "origin": "https://staging.passvero.eu",
+  "canonicalHreflangOgSets": [
+    {
+      "path": ".next/server/app/de/about.html",
+      "sha256": "dcdd7b1e32feb364bb371845b17018921cf43127c39943ae67853f2edfa2143a",
+      "canonical": "https://staging.passvero.eu/de/about",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/de/about"
+    },
+    {
+      "path": ".next/server/app/de/contact.html",
+      "sha256": "7bb1ef47806844ac1b3deb3c3c0d23cd74c1e5ef6bc56fe8a955a8b71e378538",
+      "canonical": "https://staging.passvero.eu/de/contact",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/de/contact"
+    },
+    {
+      "path": ".next/server/app/de/cookies.html",
+      "sha256": "8d6913ef0292fd9a16366596047d339e7f6b2ccd9ad4f50d38d54a1b6860b00d",
+      "canonical": "https://staging.passvero.eu/de/cookies",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/de/cookies"
+    },
+    {
+      "path": ".next/server/app/de/privacy.html",
+      "sha256": "a719ee64985036fc063dca4ba2be49769ca7d151f516303664291d102bb9dec0",
+      "canonical": "https://staging.passvero.eu/de/privacy",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/de/privacy"
+    },
+    {
+      "path": ".next/server/app/de/terms.html",
+      "sha256": "641cb3d4769c31fb83e351b7bc58d4d29ddbc675b95d732cbf7992c2649618ce",
+      "canonical": "https://staging.passvero.eu/de/terms",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/de/terms"
+    },
+    {
+      "path": ".next/server/app/de.html",
+      "sha256": "5159781fde4c20bd08a68aec510e20c5cae3ec02651cd4f5aa2f14199985694b",
+      "canonical": "https://staging.passvero.eu/de",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/de"
+    },
+    {
+      "path": ".next/server/app/en/about.html",
+      "sha256": "10ee4a5d996a175616eca9ed0fecab40d027276957bb97fda30bbd0b0138dea1",
+      "canonical": "https://staging.passvero.eu/en/about",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/en/about"
+    },
+    {
+      "path": ".next/server/app/en/contact.html",
+      "sha256": "816da859337f41b4e0c5ec91b048d4f67a4e9bc1bf050d6382bd695171dcdb47",
+      "canonical": "https://staging.passvero.eu/en/contact",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/en/contact"
+    },
+    {
+      "path": ".next/server/app/en/cookies.html",
+      "sha256": "03bee78ce0f070b6093bc906c125c23a8efd735e50cd08740459fa9208c336fe",
+      "canonical": "https://staging.passvero.eu/en/cookies",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/en/cookies"
+    },
+    {
+      "path": ".next/server/app/en/privacy.html",
+      "sha256": "7908df745456ae8184d38e249224cfdc47236f59967b3d17df89473798bd4423",
+      "canonical": "https://staging.passvero.eu/en/privacy",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/en/privacy"
+    },
+    {
+      "path": ".next/server/app/en/terms.html",
+      "sha256": "5d598b538de2e399294b71919feccb0e85e4a77a9fd437635e6350f4a97a4ceb",
+      "canonical": "https://staging.passvero.eu/en/terms",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/en/terms"
+    },
+    {
+      "path": ".next/server/app/en.html",
+      "sha256": "04b21b2c06512797e6245c0a261357471121e9f917b27e91185bde74dc02be99",
+      "canonical": "https://staging.passvero.eu/en",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/en"
+    },
+    {
+      "path": ".next/server/app/hr/about.html",
+      "sha256": "4bbc536b320b8ef83defaa4aaad10905b40f191ae1c19f73c760cd5c037aa7c1",
+      "canonical": "https://staging.passvero.eu/about",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/about"
+    },
+    {
+      "path": ".next/server/app/hr/contact.html",
+      "sha256": "021aebb01d10b4be50d0f5e6ecfca85b3732fc56ab74d835b9517d4d6089155d",
+      "canonical": "https://staging.passvero.eu/contact",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/contact"
+    },
+    {
+      "path": ".next/server/app/hr/cookies.html",
+      "sha256": "cdd7638f94a4c7adf347a5433e590d0d97cf2671c38b048a2047b1531ff935cb",
+      "canonical": "https://staging.passvero.eu/cookies",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/cookies"
+    },
+    {
+      "path": ".next/server/app/hr/privacy.html",
+      "sha256": "137ad574692b37f9a4de17186f65046657833e0ce4dd4a50558c17c6a63ebacb",
+      "canonical": "https://staging.passvero.eu/privacy",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/privacy"
+    },
+    {
+      "path": ".next/server/app/hr/terms.html",
+      "sha256": "31a341c1a2df11115837c7cc728beae559fef0a5388a46d973945b3f6d645d68",
+      "canonical": "https://staging.passvero.eu/terms",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/terms"
+    },
+    {
+      "path": ".next/server/app/hr.html",
+      "sha256": "098c6015804f7d1d14b2b6fd9f2234e6b2b482549c9cde1d127f928e59f9c325",
+      "canonical": "https://staging.passvero.eu",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu"
+    },
+    {
+      "path": ".next/server/app/pl/about.html",
+      "sha256": "00df55b159326962bc63e3ad8c222adc7876e0fc2b0bcbc42d2394cebdb51a6e",
+      "canonical": "https://staging.passvero.eu/pl/about",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/pl/about"
+    },
+    {
+      "path": ".next/server/app/pl/contact.html",
+      "sha256": "4ea719aa56ec643130204a22ee382bf6c58cfa6b0a6bd6f20e1bb6fecbab8bf1",
+      "canonical": "https://staging.passvero.eu/pl/contact",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/pl/contact"
+    },
+    {
+      "path": ".next/server/app/pl/cookies.html",
+      "sha256": "49c786c4612f87e4ebc68bc17bac10f18730aa0336adb517552484a23ace9c5a",
+      "canonical": "https://staging.passvero.eu/pl/cookies",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/pl/cookies"
+    },
+    {
+      "path": ".next/server/app/pl/privacy.html",
+      "sha256": "cc9d03b6b44dd85641aad199969c8e6b838bbb5eb1b6f25f8b804f47775bb50c",
+      "canonical": "https://staging.passvero.eu/pl/privacy",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/pl/privacy"
+    },
+    {
+      "path": ".next/server/app/pl/terms.html",
+      "sha256": "f5620196402db6b0cf590c8a63ddafe27438a52927b6df9e8270c3c6db9242fe",
+      "canonical": "https://staging.passvero.eu/pl/terms",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/pl/terms"
+    },
+    {
+      "path": ".next/server/app/pl.html",
+      "sha256": "3bca17ffb221612290e8d282b8cdb85e6e23b428539de8489fe80aa01910811d",
+      "canonical": "https://staging.passvero.eu/pl",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/pl"
+    },
+    {
+      "path": ".next/server/app/sl/about.html",
+      "sha256": "455b8d2b467b450d5363767980f7950e3d0439879f6e24b147aa61e5ad137feb",
+      "canonical": "https://staging.passvero.eu/sl/about",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sl/about"
+    },
+    {
+      "path": ".next/server/app/sl/contact.html",
+      "sha256": "763a37071140838ff8b46804e36c98d36ac858253d25eacdbabc98d789fbcc18",
+      "canonical": "https://staging.passvero.eu/sl/contact",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sl/contact"
+    },
+    {
+      "path": ".next/server/app/sl/cookies.html",
+      "sha256": "f47be575672de17acf02167f9c10c1009ad18b53f905a192c4673ee847b92264",
+      "canonical": "https://staging.passvero.eu/sl/cookies",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sl/cookies"
+    },
+    {
+      "path": ".next/server/app/sl/privacy.html",
+      "sha256": "2f6d24f0a7835662ab5aeb900b7434eca134f8b33c00d4ba6f4300e7cd9182a1",
+      "canonical": "https://staging.passvero.eu/sl/privacy",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sl/privacy"
+    },
+    {
+      "path": ".next/server/app/sl/terms.html",
+      "sha256": "93c39957b6a5444cb71cdf1b5e3f31990e8b490ad2066f3a94e26f1d4a1fef8e",
+      "canonical": "https://staging.passvero.eu/sl/terms",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sl/terms"
+    },
+    {
+      "path": ".next/server/app/sl.html",
+      "sha256": "00080bf5f001d85521469fbe217f7c2184c7c855ce0f9445d57de19d0fbac650",
+      "canonical": "https://staging.passvero.eu/sl",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sl"
+    },
+    {
+      "path": ".next/server/app/sr/about.html",
+      "sha256": "4d3cfe41f521c5869cb869c1cd644bbee322e97f52e0c2ef82e60f47b9e171a5",
+      "canonical": "https://staging.passvero.eu/sr/about",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sr/about"
+    },
+    {
+      "path": ".next/server/app/sr/contact.html",
+      "sha256": "841aed4e1bfa02217377890fb488d4df3775cc2a51af285e2a007645e814c155",
+      "canonical": "https://staging.passvero.eu/sr/contact",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sr/contact"
+    },
+    {
+      "path": ".next/server/app/sr/cookies.html",
+      "sha256": "8ba7fd8d34aeca7fde2a5a9a5f01457070808d11a1c60b169b74806ff682414e",
+      "canonical": "https://staging.passvero.eu/sr/cookies",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sr/cookies"
+    },
+    {
+      "path": ".next/server/app/sr/privacy.html",
+      "sha256": "a80ca37b9a3e1c0164d623f425098b6f19751e94f0944b2b314c79e2c5b41d5d",
+      "canonical": "https://staging.passvero.eu/sr/privacy",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sr/privacy"
+    },
+    {
+      "path": ".next/server/app/sr/terms.html",
+      "sha256": "7cb9d55e602e6e9273afa1b7320f57a4b8d0e4aae52c7a8c256483f8a33f07cf",
+      "canonical": "https://staging.passvero.eu/sr/terms",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sr/terms"
+    },
+    {
+      "path": ".next/server/app/sr.html",
+      "sha256": "e4e150d5dcf999c9ac26985876c9cde509a8b1d3285d1a83c1eefdda076bf32a",
+      "canonical": "https://staging.passvero.eu/sr",
+      "alternateCount": 7,
+      "og": "https://staging.passvero.eu/sr"
+    }
+  ],
+  "sitemapUrls": [
+    "https://staging.passvero.eu/",
+    "https://staging.passvero.eu/sr",
+    "https://staging.passvero.eu/en",
+    "https://staging.passvero.eu/de",
+    "https://staging.passvero.eu/sl",
+    "https://staging.passvero.eu/pl",
+    "https://staging.passvero.eu/about",
+    "https://staging.passvero.eu/sr/about",
+    "https://staging.passvero.eu/en/about",
+    "https://staging.passvero.eu/de/about",
+    "https://staging.passvero.eu/sl/about",
+    "https://staging.passvero.eu/pl/about",
+    "https://staging.passvero.eu/contact",
+    "https://staging.passvero.eu/sr/contact",
+    "https://staging.passvero.eu/en/contact",
+    "https://staging.passvero.eu/de/contact",
+    "https://staging.passvero.eu/sl/contact",
+    "https://staging.passvero.eu/pl/contact",
+    "https://staging.passvero.eu/privacy",
+    "https://staging.passvero.eu/sr/privacy",
+    "https://staging.passvero.eu/en/privacy",
+    "https://staging.passvero.eu/de/privacy",
+    "https://staging.passvero.eu/sl/privacy",
+    "https://staging.passvero.eu/pl/privacy",
+    "https://staging.passvero.eu/cookies",
+    "https://staging.passvero.eu/sr/cookies",
+    "https://staging.passvero.eu/en/cookies",
+    "https://staging.passvero.eu/de/cookies",
+    "https://staging.passvero.eu/sl/cookies",
+    "https://staging.passvero.eu/pl/cookies",
+    "https://staging.passvero.eu/terms",
+    "https://staging.passvero.eu/sr/terms",
+    "https://staging.passvero.eu/en/terms",
+    "https://staging.passvero.eu/de/terms",
+    "https://staging.passvero.eu/sl/terms",
+    "https://staging.passvero.eu/pl/terms"
+  ],
+  "robots": "PASS",
+  "generatedTextResponsesScanned": 264,
+  "binaryBodiesExcluded": [
+    ".next/server/app/apple-icon.png.body",
+    ".next/server/app/favicon.ico.body",
+    ".next/server/app/icon.png.body"
+  ],
+  "testsRepeated": false,
+  "nextConfig": {
+    "basePath": "",
+    "assetPrefix": "",
+    "trailingSlash": false,
+    "output": null,
+    "distDir": ".next"
+  }
+}

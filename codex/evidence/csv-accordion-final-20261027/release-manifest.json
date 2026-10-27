@@ -1,0 +1,75 @@
+{
+  "task": "CSV_ACCORDION_BORDER_FINAL_UI_ALIGNMENT",
+  "baseCommit": "c1af7934401efe616ac50ee500e9076b86b523be",
+  "files": [
+    {
+      "path": "app/[locale]/dashboard/products/page.tsx",
+      "beforeSha256": "bee0eaa55606db1726dd53bcf931afc0483fa3ec976c010a2d89e5b578ccf31a",
+      "afterSha256": "5a8293cf7fffbc8f327e8176153f0f04debdc8775eab09aa86bf9394e00512e1"
+    }
+  ],
+  "delta": "Add border-slate-200 only on catalog import outer summary; existing global focus-visible preserved",
+  "globalFocus": "app/globals.css :focus-visible remains3px blue outline with3px offset; unchanged",
+  "businessBehaviorChanged": false,
+  "spacingTextInnerFormsChanged": false,
+  "preserved": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "b452d6572833975027d33644ecc02876b26dad30adb9dc54812c563daf13ad3a",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "testsRun": false,
+  "stagingOrigin": "https://staging.passvero.eu",
+  "buildSettingsEvidence": "codex/evidence/dashboard-ui-final-20261027/operator-baseline-pass.json plus successful o881 deployment/closure and public HTTPS metadata readback from preceding task",
+  "buildsAuthorized": 1,
+  "sourceCommit": "2c877f05dfcecd2694139cc1d8f504f912ff3d7d",
+  "sourceCommitMessage": "style(csv): align import accordion border",
+  "sourceFileCount": 1,
+  "gitSourcePush": "PASS_HEAD_ORIGIN_ACTUAL_REMOTE_MATCH_BEFORE_DOC_CLOSURE",
+  "build": {
+    "buildId": "YNJg-e6igvm0cUQHZ1S3I",
+    "members": 839,
+    "archiveSha256": "36a0ec847ed240f269887d11baaada65b39ac8cae1054655f936a941a606c903",
+    "artifactManifestSha256": "b2692d78b68363cf1b1073a495029fcd0f66836d740695ca57be9b918e4e6412",
+    "bytes": 7417734,
+    "sourceCommit": "2c877f05dfcecd2694139cc1d8f504f912ff3d7d",
+    "publicAssetMutation": "NONE_ALL_RETAINED",
+    "canonicalMetadata": "PASS_36_SETS",
+    "generatedTextResponsesScanned": 264,
+    "bundledDependencies": {
+      "barcodeMembers": [
+        ".next/server/chunks/6074.js"
+      ],
+      "csvMembers": [
+        ".next/server/app/api/products/import/route.js"
+      ],
+      "noExternalImports": true,
+      "tracesChecked": 83
+    }
+  },
+  "buildCount": 1,
+  "typeScript": "PASS_IN_SINGLE_FINAL_BUILD",
+  "newTests": 0,
+  "testSeriesRun": false,
+  "deploy": "PASS",
+  "closure": "NEW_ALIGNED",
+  "canonicalSha256": "83dc0c660cc32ddd3bc00aede88df122ad06265d141e9383b06bbcbcd3f3da92",
+  "configSha256": "529c802727373c1c5db610e63e093f291d5cdf5cb0faf8e34fe5de4cf1a03bbe",
+  "rollbackLocation": "/var/lib/passvero-csv-border-deploy-20261027",
+  "rollback": "PREPARED_NOT_EXECUTED",
+  "runtimeArtifactMembers": 852,
+  "retainedMembers": 13,
+  "backupStateAndWriterTimer": "UNCHANGED_OPERATOR_CONFIRMED",
+  "backupMonitorTimers": "ENABLED_ACTIVE_WAITING_RESTORED",
+  "scannerProducerChanges": "NONE",
+  "backupAcceptanceRepeated": false,
+  "businessWrites": 0,
+  "productionChanges": "NONE",
+  "targetedVisualReview": "PASS",
+  "userFinalStagingConfirmation": "PENDING",
+  "documentationOnlyCommit": "DOCUMENTATION_ONLY_CLOSURE; final SHA is recorded by Git history and session readback; no rebuild/deploy/repin",
+  "closureStatus": "CSV_UI_IMPLEMENTATION_DEPLOY_AND_TARGETED_REVIEW_COMPLETE",
+  "buildLog": {
+    "committedCopy": "Whitespace-normalized display copy",
+    "originalLocalPath": "/tmp/passvero-csv-border-release-20261027/staging-build.log",
+    "originalSha256": "2c2c2acef1b35c0b9a5c77a288ed9e07b112f810dc3985f838f8dd97ffc5ca9a"
+  }
+}

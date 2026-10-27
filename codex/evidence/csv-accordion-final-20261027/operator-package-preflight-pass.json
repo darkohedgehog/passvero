@@ -1,0 +1,18 @@
+{
+  "source": "USER_OPERATOR_OUTPUT",
+  "observedUTC": "2026-10-27T17:59:54.194815+00:00",
+  "preflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+  "oldBuild": "o881QhduK5s1O2SuiT9jr",
+  "newBuild": "YNJg-e6igvm0cUQHZ1S3I",
+  "newCanonicalSha256": "83dc0c660cc32ddd3bc00aede88df122ad06265d141e9383b06bbcbcd3f3da92",
+  "newConfigSha256": "529c802727373c1c5db610e63e093f291d5cdf5cb0faf8e34fe5de4cf1a03bbe",
+  "backupStateSha256": "9bf03b98e2be0dd2700d62d8ae6d40d1845ac5a74b880defc4fac8636caa86c8",
+  "newArtifacts": 839,
+  "retainedCanonicalFiles": 13,
+  "mutations": "NONE",
+  "configKeysChanged": [
+    "buildId",
+    "canonicalSha256"
+  ],
+  "captureRestoreWorkerSmtpTelegramCalls": 0
+}

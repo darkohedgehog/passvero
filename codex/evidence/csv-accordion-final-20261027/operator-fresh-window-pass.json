@@ -1,0 +1,10 @@
+{
+  "source": "USER_OPERATOR_OUTPUT",
+  "result": "PASS_FRESH_IDLE_WINDOW",
+  "timerSecondsRemaining": {
+    "passvero-staging-backup.timer": 36523.346,
+    "passvero-staging-backup-monitor.timer": 3523.334
+  },
+  "mutations": "NONE",
+  "automaticRetry": false
+}

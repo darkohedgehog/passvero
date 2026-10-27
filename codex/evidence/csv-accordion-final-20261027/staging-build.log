@@ -1,0 +1,130 @@
+▲ Next.js 16.3.4 (webpack)
+✓ Running next.config.ts took 126ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.9s
+  Running TypeScript ...
+  Finished TypeScript in 12.6s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/157) ...
+  Generating static pages using 7 workers (39/157)
+  Generating static pages using 7 workers (78/157)
+  Generating static pages using 7 workers (117/157)
+✓ Generating static pages using 7 workers (157/157) in 1619ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /_not-found
+├   /[locale]
+│ ├ ● /hr
+│ ├ ● /sr
+│ ├ ● /en
+│ └ ● [+3 more paths]
+├   /[locale]/about
+│ ├ ● /hr/about
+│ ├ ● /sr/about
+│ ├ ● /en/about
+│ └ ● [+3 more paths]
+├ ƒ /[locale]/activate-account
+├   /[locale]/contact
+│ ├ ● /hr/contact
+│ ├ ● /sr/contact
+│ ├ ● /en/contact
+│ └ ● [+3 more paths]
+├   /[locale]/cookies
+│ ├ ● /hr/cookies
+│ ├ ● /sr/cookies
+│ ├ ● /en/cookies
+│ └ ● [+3 more paths]
+├ ƒ /[locale]/dashboard
+├ ƒ /[locale]/dashboard/billing
+├ ƒ /[locale]/dashboard/dpp
+├ ƒ /[locale]/dashboard/products
+├ ƒ /[locale]/dashboard/products/[productId]
+├ ƒ /[locale]/dashboard/products/[productId]/content/edit
+├ ƒ /[locale]/dashboard/products/[productId]/edit
+├ ƒ /[locale]/dashboard/products/new
+├ ƒ /[locale]/dashboard/subscription
+├ ƒ /[locale]/forgot-password
+├ ƒ /[locale]/login
+├ ƒ /[locale]/platform/access-requests
+├ ƒ /[locale]/platform/billing
+├ ƒ /[locale]/platform/billing/[organizationId]
+├ ƒ /[locale]/platform/billing/deliveries
+├ ƒ /[locale]/platform/organizations
+├ ƒ /[locale]/platform/organizations/[organizationId]
+├ ƒ /[locale]/platform/regulatory
+├   /[locale]/privacy
+│ ├ ● /hr/privacy
+│ ├ ● /sr/privacy
+│ ├ ● /en/privacy
+│ └ ● [+3 more paths]
+├   /[locale]/request-access
+│ ├ ● /hr/request-access
+│ ├ ● /sr/request-access
+│ ├ ● /en/request-access
+│ └ ● [+3 more paths]
+├ ƒ /[locale]/reset-password
+├   /[locale]/terms
+│ ├ ● /hr/terms
+│ ├ ● /sr/terms
+│ ├ ● /en/terms
+│ └ ● [+3 more paths]
+├ ƒ /[locale]/verify-email
+├ ƒ /api/access-requests
+├ ƒ /api/access-requests/approve
+├ ƒ /api/auth/activate
+├ ƒ /api/auth/context-smoke
+├ ƒ /api/auth/organization-selection
+├ ƒ /api/auth/password-reset/consume
+├ ƒ /api/auth/password-reset/request
+├ ƒ /api/auth/password/change
+├ ƒ /api/auth/sign-in
+├ ƒ /api/auth/sign-out
+├ ƒ /api/auth/verification/consume
+├ ƒ /api/auth/verification/request
+├ ƒ /api/documents
+├ ƒ /api/documents/[documentId]
+├ ƒ /api/documents/[documentId]/scan
+├ ƒ /api/organization/billing-profile
+├ ƒ /api/products/[productId]/cn-classification
+├ ƒ /api/products/[productId]/documents
+├ ƒ /api/products/[productId]/draft
+├ ƒ /api/products/[productId]/draft-translation-content
+├ ƒ /api/products/[productId]/edit
+├ ƒ /api/products/[productId]/gtin
+├ ƒ /api/products/[productId]/image
+├ ƒ /api/products/[productId]/images/[imageId]
+├ ƒ /api/products/[productId]/manufacturer
+├ ƒ /api/products/[productId]/materials
+├ ƒ /api/products/[productId]/publish
+├ ƒ /api/products/[productId]/qr.png
+├ ƒ /api/products/[productId]/qr.svg
+├ ƒ /api/products/[productId]/qr/activate
+├ ƒ /api/products/[productId]/qr/preview.svg
+├ ƒ /api/products/[productId]/translations
+├ ƒ /api/products/create
+├ ƒ /api/products/export
+├ ƒ /api/products/import
+├ ƒ /api/public/products/[publicCode]/images/[imageId]
+├ ƒ /api/regulatory
+├ ƒ /api/subscription/accept
+├ ƒ /api/subscription/offer
+├ ƒ /api/subscription/payment
+├ ƒ /api/subscription/reminders/confirm-billing-email
+├ ƒ /api/subscription/reminders/resolve
+├ ƒ /api/subscription/request
+├ ○ /apple-icon.png
+├ ○ /icon.png
+├ ƒ /p/[publicCode]
+├ ƒ /p/[publicCode]/documents/[attachmentId]
+├ ○ /robots.txt
+└ ○ /sitemap.xml
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand

@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "2c877f05dfcecd2694139cc1d8f504f912ff3d7d",
+  "canonicalOrigin": "https://staging.passvero.eu",
+  "buildsApproved": 1,
+  "testsRepeated": false,
+  "environmentKeys": [
+    "PATH",
+    "LANG",
+    "NODE_ENV",
+    "BETTER_AUTH_URL",
+    "PASSVERO_RUNTIME_ENV",
+    "NEXT_PUBLIC_TURNSTILE_SITE_KEY"
+  ]
+}

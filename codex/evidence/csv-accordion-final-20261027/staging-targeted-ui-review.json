@@ -1,0 +1,42 @@
+{
+  "result": "PASS_TARGETED_STAGING_VISUAL",
+  "buildId": "YNJg-e6igvm0cUQHZ1S3I",
+  "session": "USER_MANUAL_LOGIN_EXISTING_CHROME",
+  "desktop": "1506 CSS px wide native Chrome",
+  "mobile": "390x685 CSS px Chrome responsive mode",
+  "checks": {
+    "openClosed": "PASS_BOTH_VIEWPORTS",
+    "keyboard": "Tab/Shift+Tab focus and Return reopen PASS_BOTH_VIEWPORTS",
+    "focus": "Existing blue outline clearly visible; no clipping on summary",
+    "border": "Light slate border aligns with surrounding CSV surfaces",
+    "overflow": "Affected summary and opened card fit mobile viewport"
+  },
+  "screenshots": [
+    {
+      "path": "/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/desktop-closed-focus.png",
+      "sha256": "cb375ecaaace51ee2c92a03da6f6df1a39756e8b7d70a9c7f0597d29f341d6ba"
+    },
+    {
+      "path": "/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/desktop-open-focus.png",
+      "sha256": "a5f349e46a611e79ee06bdf6a9f8bebb2ce64dbacc0e65b5fed55dc05932c796"
+    },
+    {
+      "path": "/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/desktop-open.png",
+      "sha256": "caf7598507346dc4d33b32154db376b388a3c861483a0727ab4254e01e8ffdbc"
+    },
+    {
+      "path": "/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/mobile-closed-focus.png",
+      "sha256": "ea5ac216b1318168d4e321be54996dec07ae30e2db937928f6a34c9157f2a071"
+    },
+    {
+      "path": "/tmp/passvero-csv-border-release-20261027/screenshots/review-crops/mobile-open-focus.png",
+      "sha256": "e487562c3d616aeec13deb5a2673bdfddb628dbb2f1ce009a1846d7b86e261f4"
+    }
+  ],
+  "screenshotsCommitted": false,
+  "businessWrites": 0,
+  "fileUploads": 0,
+  "importsExportsTriggered": 0,
+  "testsRepeated": false,
+  "userFinalStagingConfirmation": "PENDING"
+}

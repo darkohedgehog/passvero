@@ -1,0 +1,23 @@
+{
+  "task": "CSV_ACCORDION_BORDER_FINAL_UI_ALIGNMENT",
+  "baseCommit": "c1af7934401efe616ac50ee500e9076b86b523be",
+  "files": [
+    {
+      "path": "app/[locale]/dashboard/products/page.tsx",
+      "beforeSha256": "bee0eaa55606db1726dd53bcf931afc0483fa3ec976c010a2d89e5b578ccf31a",
+      "afterSha256": "5a8293cf7fffbc8f327e8176153f0f04debdc8775eab09aa86bf9394e00512e1"
+    }
+  ],
+  "delta": "Add border-slate-200 only on catalog import outer summary; existing global focus-visible preserved",
+  "globalFocus": "app/globals.css :focus-visible remains3px blue outline with3px offset; unchanged",
+  "businessBehaviorChanged": false,
+  "spacingTextInnerFormsChanged": false,
+  "preserved": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "b452d6572833975027d33644ecc02876b26dad30adb9dc54812c563daf13ad3a",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "testsRun": false,
+  "stagingOrigin": "https://staging.passvero.eu",
+  "buildSettingsEvidence": "codex/evidence/dashboard-ui-final-20261027/operator-baseline-pass.json plus successful o881 deployment/closure and public HTTPS metadata readback from preceding task",
+  "buildsAuthorized": 1
+}

@@ -1,0 +1,92 @@
+{
+  "kind": "DOCUMENTATION_ONLY",
+  "sourceCommit": "2c877f05dfcecd2694139cc1d8f504f912ff3d7d",
+  "files": [
+    {
+      "path": "codex/CUSTOMER_DASHBOARD_UI_STAGING_DEPLOY.md",
+      "sha256": "44f909c4f62ec49868db4714dcf895f80c95e188f554c46c002d6ecbf3c6f8ad"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/VPS-TERMINAL-DEPLOY.sh",
+      "sha256": "d16725fe74f9aac744555b1a96f04297cc135d7702621dec11dd45052dbfeaf0"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/VPS-TERMINAL-PACKAGE-PREFLIGHT.sh",
+      "sha256": "68d2538a255f00d555e907d31dc792a26aea9752639a10409c787770d72aabad"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/VPS-TERMINAL-ROLLBACK.sh",
+      "sha256": "889287147a91f3da1b6aa718fc3a73089847dacd98538694d0561e88de14cf68"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/artifact-manifest.json",
+      "sha256": "b2692d78b68363cf1b1073a495029fcd0f66836d740695ca57be9b918e4e6412"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/deploy-reviewed.py",
+      "sha256": "2780cb73c060515b025178cc3259619966fe87281c76f957337d650f70ec76d7"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/launch-reviewed.py",
+      "sha256": "22be6288a160edbf691649c1cec0cff6e05badaeae5c5a4e763a518dd9e59b50"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/operator-deploy-closure-pass.json",
+      "sha256": "da7bc63ee618fd9db992c20f06e5ad6dc5b6c177ec97df2b65c13efabac8533d"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/operator-fresh-window-pass.json",
+      "sha256": "c0fb5283bbeee61543807cc942aab68136a6d41ca13655c4fac0d28d7a36772d"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/operator-package-preflight-pass.json",
+      "sha256": "a196f435a3eb97d0ba3a4a193a93773d0f9d2909f6a2a3bb2307c0eb591d7b79"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/operator-window-stop.json",
+      "sha256": "9bd67e9b26907d78e3acb043513f17258bfba9a6650b9151135444b9b6572a79"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/package-preflight-v2.py",
+      "sha256": "6c17e100ebf5e8308ec739b2145e64fe93e32ccca7589d29d898d7c79e27f59f"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/public-https-build-readback.json",
+      "sha256": "a8a7c37483022278d62b248afd8f2641c510bf74b477964ead40d1d115b1f291"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/release-manifest.json",
+      "sha256": "37aeb9c5d74e71b1c94fec247a14e32bc949ef418d1b7a9faaf02878e1c134e4"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/release-summary.json",
+      "sha256": "b2f0f10ed80e1c765db6be97f15d98270d77245963c250da5b85076bf25d6440"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/source-manifest.json",
+      "sha256": "c7bffabe5b6a2c03390b1b53d8ee1622cd38c6898984af5cce0178bbf6520756"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/staging-build-attempt.json",
+      "sha256": "dd87a4007f07e6ec3aab4142e207305f874e90f7fa6c33467412fb137aea9f6e"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/staging-build-url-audit.json",
+      "sha256": "0456a86feaecf82692b5e786e850c1bae07f9f86f488562529be1144673dcebf"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/staging-build.log",
+      "sha256": "f5d4f446cfd1cfcceca4c19d1e0d8e9f91db21525396824c026a8d843e0195fb"
+    },
+    {
+      "path": "codex/evidence/csv-accordion-final-20261027/staging-targeted-ui-review.json",
+      "sha256": "292c2ee608d4ace1f4758a13b9cf28cf367e2eff9e1c4be62972280b1788ff4f"
+    }
+  ],
+  "selfExcluded": true,
+  "preserved": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "b452d6572833975027d33644ecc02876b26dad30adb9dc54812c563daf13ad3a",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "buildDeployRepinRepeated": false
+}
