@@ -1,0 +1,120 @@
+✔ billing form labels, required fields, autocomplete and leading zeros in all locales (92.465875ms)
+✔ hr: shared authenticated header exposes a labelled native selector with six languages (13.357083ms)
+✔ en: shared authenticated header exposes a labelled native selector with six languages (3.497ms)
+✔ de: shared authenticated header exposes a labelled native selector with six languages (2.497792ms)
+✔ sr: shared authenticated header exposes a labelled native selector with six languages (2.323542ms)
+✔ sl: shared authenticated header exposes a labelled native selector with six languages (3.751708ms)
+✔ pl: shared authenticated header exposes a labelled native selector with six languages (4.431208ms)
+✔ locale navigation preserves /dashboard in en (0.074125ms)
+✔ locale navigation preserves /dashboard/products in de (0.035625ms)
+✔ locale navigation preserves /dashboard/products/00000000-0000-4000-8000-000000000001 in hr (0.048208ms)
+✔ locale navigation preserves /dashboard/products/new in sl (0.116042ms)
+✔ locale navigation preserves /dashboard/products/00000000-0000-4000-8000-000000000001/edit in pl (0.057166ms)
+✔ locale navigation preserves /dashboard/products/00000000-0000-4000-8000-000000000001/content/edit in hr (0.087708ms)
+✔ hr to en keeps route identity and only updates the locale cookie (1.270959ms)
+✔ en to de keeps route identity and only updates the locale cookie (0.3115ms)
+✔ de to hr keeps route identity and only updates the locale cookie (0.426083ms)
+✔ sr to sl keeps route identity and only updates the locale cookie (1.144708ms)
+✔ sl to pl keeps route identity and only updates the locale cookie (0.702667ms)
+✔ pl to hr keeps route identity and only updates the locale cookie (0.6415ms)
+✔ locale navigation preserves only the valid list cursor and drops sensitive query values (16.231125ms)
+✔ other dashboard routes never carry query credentials or list cursor (0.096417ms)
+✔ invalid or ambiguous cursor is dropped rather than forwarded (0.2165ms)
+✔ DPP page cursor and catalog search survive language changes without other parameters (0.08875ms)
+✔ published and Viewer attachments do not expose an unchecked download or attachment mutation controls (9.997584ms)
+✖ editor sees bounded draft management with honest public-intent wording (6.655958ms)
+✔ six locales complete and dashboard language leaves HR document locale intact (22.544667ms)
+✖ new attachment form has explicit unchecked public intent and all labeled inputs (19.170292ms)
+✔ six-locale billing list preserves read-only links, status meaning and long values (50.69575ms)
+✔ sent-email badge is neutral and carries text without an inbox-success icon (0.337708ms)
+✔ renders the allowlisted product identity and semantic back navigation (45.793125ms)
+✔ renders current draft and published summaries from the pointed projection (20.208833ms)
+✔ renders draft-null and published-null states without controls (10.474792ms)
+✔ keeps publicCode in collapsed technical details and links through server-derived public URL (26.578292ms)
+✔ renders exactly one Edit action only when the server supplies an authorized href (47.459417ms)
+✔ keeps the purpose-specific Materials section inside the Product Detail workspace (7.735375ms)
+✔ QR section remains visible without an editable draft (8.228625ms)
+✔ published-only renders published source CN and materials read-only without false draft warnings (7.4535ms)
+✔ draft and published sections never mix their content or collections (9.148333ms)
+✔ never-published draft and withdrawn states do not offer public-content navigation (10.899959ms)
+✔ VIEWER retains existing draft controls only when a current editable draft exists (10.510791ms)
+✔ ADMIN retains existing draft controls only when a current editable draft exists (1.673209ms)
+✔ archived snapshot has no edit controls even if stale action props are supplied (0.847916ms)
+✔ hr renders localized publication status and public action without placeholder labels (1.449917ms)
+✔ en renders localized publication status and public action without placeholder labels (0.788ms)
+✔ de renders localized publication status and public action without placeholder labels (0.744291ms)
+✔ sr renders localized publication status and public action without placeholder labels (0.715ms)
+✔ sl renders localized publication status and public action without placeholder labels (0.73475ms)
+✔ pl renders localized publication status and public action without placeholder labels (0.756167ms)
+✔ published-only creation slot appears only on active published Product without draft (2.20425ms)
+✔ hr UI labels preserve Croatian draft/published content and the public target (1.532834ms)
+✔ en UI labels preserve Croatian draft/published content and the public target (1.069875ms)
+✔ de UI labels preserve Croatian draft/published content and the public target (1.124333ms)
+✔ sr UI labels preserve Croatian draft/published content and the public target (1.29025ms)
+✔ sl UI labels preserve Croatian draft/published content and the public target (1.11575ms)
+✔ pl UI labels preserve Croatian draft/published content and the public target (1.032292ms)
+✔ renders one bounded publish control without exposing evidence (6.953666ms)
+✔ all six locales provide the publication message contract (5.329958ms)
+✔ allowlists publication evidence from a broader caller-owned UI object (25.124625ms)
+✔ posts only publication evidence and accepts bounded results (0.638417ms)
+✔ collapses malformed responses (0.158083ms)
+✔ never retries and rejects a success payload carried by a failed response (0.251875ms)
+✔ accepts only bounded publication readiness reasons (0.989167ms)
+✔ six localized subscription views distinguish occupied slots, enforcement and read-only permissions (24.057167ms)
+✔ owner sees period totals and explicit replacement; administrator cannot accept (7.445833ms)
+✔ offer acceptance displays immutable billing and all commercial terms, with expiry hiding acceptance (31.914959ms)
+✔ billing operator simulation is explicit, readonly operator has no forms and expired offers cannot be paid (10.812792ms)
+✔ production view omits simulation and displays occupied quota denominator with binary storage (5.576416ms)
+✔ external offer issuance is explicit Zagreb local time and long references wrap (4.461542ms)
+✔ all six offer views distinguish agreed expiry policy from enforcement available in this release (14.865791ms)
+✔ downgrade consequences and excess limits appear before acceptance (8.781ms)
+✔ expired blocked receipt retains replacement recovery independently of current denial reasons (10.879958ms)
+✔ customer staging exception is never labelled as an active paid period (1.448916ms)
+ℹ tests 72
+ℹ suites 0
+ℹ pass 70
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 810.486709
+
+✖ failing tests:
+
+test at tests/application/document-attachments-presentation.test.ts:26:1
+✖ editor sees bounded draft management with honest public-intent wording (6.655958ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Public downloads are not enabled yet/. Input:
+
+  '<section class="mt-6 min-w-0 rounded-xl border border-slate-200 bg-white p-4"><h4 class="text-lg font-bold">Draft documents and certificates</h4><p class="mt-2 text-sm text-slate-600">Private documents and drafts are available only to authorized users. Marking a document public does not by itself enable downloading: publication and successful checks are required.</p><ul class="mt-4 space-y-3"><li class="min-w-0 rounded-lg border border-slate-200 p-3"><p class="break-words font-semibold">Untitled document</p><p class="mt-1 text-sm">User Manual · HR · PDF</p><p class="mt-2 whitespace-pre-wrap break-words text-sm">&lt;script&gt;literal&lt;/script&gt;</p><p class="mt-2 text-sm">Intended for the future public DPP</p><div class="mt-3 space-y-2"><p role="status" class="text-sm font-medium">Loading status…</p><div class="flex flex-wrap gap-2"><span class="text-sm">Download is unavailable until the document passes the checks.</span><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50">Refresh status</button></div></div><div class="mt-3 flex flex-wrap gap-2"><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"></path></svg>Edit</button><button type="button" class="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold whitespace-normal [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-red-300 bg-red-50 text-red-800 hover:border-red-700 hover:bg-red-100 focus-visible:ring-red-700"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"></path></svg>Remove</button></div></li></ul><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50 mt-4"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M12 5v14M5 12h14"></path></svg>Add document</button></section>'
+
+      at TestContext.<anonymous> (/Users/darkozivic/Desktop/Programiranje/passvero/tests/application/document-attachments-presentation.test.ts:27:131)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<section class="mt-6 min-w-0 rounded-xl border border-slate-200 bg-white p-4"><h4 class="text-lg font-bold">Draft documents and certificates</h4><p class="mt-2 text-sm text-slate-600">Private documents and drafts are available only to authorized users. Marking a document public does not by itself enable downloading: publication and successful checks are required.</p><ul class="mt-4 space-y-3"><li class="min-w-0 rounded-lg border border-slate-200 p-3"><p class="break-words font-semibold">Untitled document</p><p class="mt-1 text-sm">User Manual · HR · PDF</p><p class="mt-2 whitespace-pre-wrap break-words text-sm">&lt;script&gt;literal&lt;/script&gt;</p><p class="mt-2 text-sm">Intended for the future public DPP</p><div class="mt-3 space-y-2"><p role="status" class="text-sm font-medium">Loading status…</p><div class="flex flex-wrap gap-2"><span class="text-sm">Download is unavailable until the document passes the checks.</span><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50">Refresh status</button></div></div><div class="mt-3 flex flex-wrap gap-2"><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"></path></svg>Edit</button><button type="button" class="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold whitespace-normal [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-red-300 bg-red-50 text-red-800 hover:border-red-700 hover:bg-red-100 focus-visible:ring-red-700"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"></path></svg>Remove</button></div></li></ul><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50 mt-4"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M12 5v14M5 12h14"></path></svg>Add document</button></section>',
+    expected: /Public downloads are not enabled yet/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/application/document-attachments-presentation.test.ts:38:1
+✖ new attachment form has explicit unchecked public intent and all labeled inputs (19.170292ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Public downloads are not enabled yet/. Input:
+
+  '<form class="mt-5 min-w-0 rounded-lg bg-slate-50 p-4"><fieldset class="min-w-0 space-y-4"><legend class="font-semibold">Add document</legend><div class="min-w-0 space-y-2"><label for="_R_0_" class="block text-sm">PDF file</label><input id="_R_0_" type="file" accept="application/pdf,.pdf" required="" aria-describedby="_R_0_-hint" class="peer sr-only" name="file"/><div class="flex min-w-0 flex-col items-start gap-3 rounded-lg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-teal-700 sm:flex-row sm:items-center"><button type="button" class="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold whitespace-normal [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-teal-700 bg-teal-700 text-white shadow-sm hover:bg-teal-800 focus-visible:ring-teal-700" aria-describedby="_R_0_-hint"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5"></path></svg>Choose PDF</button><span role="status" class="min-w-0 break-all text-sm text-slate-700">No file selected</span></div><p id="_R_0_-hint" class="text-sm font-normal text-slate-600">PDF, up to 10 MiB.</p></div><label class="block text-sm">Document type<select name="category" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"><option value="CERTIFICATE">Certificate</option><option value="DECLARATION">Declaration of Conformity</option><option value="MANUAL">User Manual</option><option value="OTHER" selected="">Other</option></select></label><label class="block text-sm">Display label<input required="" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600" name="displayLabel" value=""/></label><label class="block text-sm">Document language<select name="locale" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"><option value="" selected="">Language neutral</option><option value="hr">Hrvatski</option><option value="en">English</option><option value="de">Deutsch</option><option value="sr">Srpski</option><option value="sl">Slovenščina</option><option value="pl">Polski</option></select></label><label class="block text-sm">Description (optional)<textarea name="description" rows="3" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"></textarea></label><label class="flex items-start gap-2 text-sm"><input type="checkbox" class="mt-1" name="isPublic"/>Display on public DPP after publication</label><p class="text-sm text-slate-600">Private documents and drafts are available only to authorized users. Marking a document public does not by itself enable downloading: publication and successful checks are required.</p><div class="flex flex-wrap gap-2"><button type="submit" class="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold whitespace-normal [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-teal-700 bg-teal-700 text-white shadow-sm hover:bg-teal-800 focus-visible:ring-teal-700"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5"></path></svg>Save</button><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50">Cancel</button></div></fieldset></form>'
+
+      at TestContext.<anonymous> (/Users/darkozivic/Desktop/Programiranje/passvero/tests/application/document-attachments-presentation.test.ts:44:66)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<form class="mt-5 min-w-0 rounded-lg bg-slate-50 p-4"><fieldset class="min-w-0 space-y-4"><legend class="font-semibold">Add document</legend><div class="min-w-0 space-y-2"><label for="_R_0_" class="block text-sm">PDF file</label><input id="_R_0_" type="file" accept="application/pdf,.pdf" required="" aria-describedby="_R_0_-hint" class="peer sr-only" name="file"/><div class="flex min-w-0 flex-col items-start gap-3 rounded-lg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-teal-700 sm:flex-row sm:items-center"><button type="button" class="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold whitespace-normal [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-teal-700 bg-teal-700 text-white shadow-sm hover:bg-teal-800 focus-visible:ring-teal-700" aria-describedby="_R_0_-hint"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5"></path></svg>Choose PDF</button><span role="status" class="min-w-0 break-all text-sm text-slate-700">No file selected</span></div><p id="_R_0_-hint" class="text-sm font-normal text-slate-600">PDF, up to 10 MiB.</p></div><label class="block text-sm">Document type<select name="category" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"><option value="CERTIFICATE">Certificate</option><option value="DECLARATION">Declaration of Conformity</option><option value="MANUAL">User Manual</option><option value="OTHER" selected="">Other</option></select></label><label class="block text-sm">Display label<input required="" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600" name="displayLabel" value=""/></label><label class="block text-sm">Document language<select name="locale" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"><option value="" selected="">Language neutral</option><option value="hr">Hrvatski</option><option value="en">English</option><option value="de">Deutsch</option><option value="sr">Srpski</option><option value="sl">Slovenščina</option><option value="pl">Polski</option></select></label><label class="block text-sm">Description (optional)<textarea name="description" rows="3" class="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white p-2 text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-600"></textarea></label><label class="flex items-start gap-2 text-sm"><input type="checkbox" class="mt-1" name="isPublic"/>Display on public DPP after publication</label><p class="text-sm text-slate-600">Private documents and drafts are available only to authorized users. Marking a document public does not by itself enable downloading: publication and successful checks are required.</p><div class="flex flex-wrap gap-2"><button type="submit" class="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold whitespace-normal [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-teal-700 bg-teal-700 text-white shadow-sm hover:bg-teal-800 focus-visible:ring-teal-700"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="size-4 shrink-0" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5"></path></svg>Save</button><button type="button" class="inline-flex min-h-11 max-w-full gap-2 whitespace-normal [overflow-wrap:anywhere] items-center justify-center rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50">Cancel</button></div></fieldset></form>',
+    expected: /Public downloads are not enabled yet/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -1,0 +1,6 @@
+{
+  "result": "STOP",
+  "CHECK_ID": "EXACT_CANDIDATE_PINS",
+  "reason": "RETAINED_PUBLIC_INVENTORY_CHANGED",
+  "automaticRetry": false
+}

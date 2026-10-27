@@ -1,0 +1,446 @@
+{
+  "task": "CUSTOMER_DASHBOARD_FORMS_AND_WORKSPACE_UI_POLISH",
+  "date": "2026-10-27",
+  "scope": "LOCAL_CUSTOMER_UI_ONLY",
+  "head": "4f2b3df68f2736318d5ca7b30bf8cc9b8875461c",
+  "branch": "main",
+  "index": "EMPTY",
+  "filesModified": [
+    {
+      "path": "app/[locale]/dashboard/layout.tsx",
+      "beforeSha256": "d2ed70d723d1ace0d7fa5bac95cff74e81f6d376d2b8582d07823d3f5b6337e0",
+      "afterSha256": "1dcf74c59f4487f9389c98692287d2b060dbf6f870a100ec21cbdd353afeb2d0"
+    },
+    {
+      "path": "app/globals.css",
+      "beforeSha256": "60a3cd9da10c846472a28595de39f831759d25094c6abf3032b80f111670dd90",
+      "afterSha256": "d27a2ebadb5b391d8c850b7b61ed7b2e06c1e4c53e9433f670a01ac76ec8e24b"
+    },
+    {
+      "path": "messages/de.json",
+      "beforeSha256": "61c997b490139dc26568005554b03ef331cd1242a3879e8aab5dd8e34199ae8c",
+      "afterSha256": "ddc3801110fd1908ae4a4aaae907929b080f55328cfd9a7d85e49f2074ceacb9"
+    },
+    {
+      "path": "messages/en.json",
+      "beforeSha256": "a8c6a5d29683d07d262d29a886ab8fa5e803c8b1b89b07acbaccbea06f42470b",
+      "afterSha256": "b6a5ce0d09874d006d3c7f10c2836538c96893aa9b513c8fcc1137059e3e83b7"
+    },
+    {
+      "path": "messages/hr.json",
+      "beforeSha256": "1aa0b997a78532c0ed53a8542522c37eb86989ff6e9b3ae875a3382260e1a1b1",
+      "afterSha256": "106d8687c35fd67b4990277bc8bde8b22aa56dee4cae6e673a618520076b7a75"
+    },
+    {
+      "path": "messages/pl.json",
+      "beforeSha256": "48f47ee7f94e658e788e1bfa380c65c771b8265c1d5ca6062f92d4e7bbad7c9f",
+      "afterSha256": "499e01c97348803f52a681ed450cbae7b6fce71351622339c88caeb96804ad2c"
+    },
+    {
+      "path": "messages/sl.json",
+      "beforeSha256": "432f84559d7bcf60459a8068ef0f7fcaccf75eeefa8efbf6d1cf7b45016780c0",
+      "afterSha256": "cd2109388dfa79e655a470efcfa4db98a1b5469e78121fa12e5678d319560565"
+    },
+    {
+      "path": "messages/sr.json",
+      "beforeSha256": "1a24d42d60cca6387b1223d00f8a8fa5746fb29dfb464967605ae6841de2c41f",
+      "afterSha256": "78d5503d67864c554c1b4074952b86bc662d1adb392b0e88311df465f660a6d6"
+    },
+    {
+      "path": "src/components/application/billing/billing-profile-form.tsx",
+      "beforeSha256": "3c08763247d270a0964eb1276994859d337aa8ccd6b365aba422739744b8d518",
+      "afterSha256": "063cef3c6a952729089182b66f991a47bb35a9e8ab4e738f536fd36c0fc6fd7b"
+    },
+    {
+      "path": "src/components/application/dashboard/sign-out-button.tsx",
+      "beforeSha256": "59da4d0a96c5553975aea8f3c362e03da044a1b5cd5ce005b00a6d1d422ea635",
+      "afterSha256": "728d9298cb3c0ae88b8afee5d0d785271f94c411c534502e7f40895651f8a271"
+    },
+    {
+      "path": "src/components/application/products/catalog-export-action.tsx",
+      "beforeSha256": "dc3421c8d44914c80a8ca99c59796c4ba17ed95e08aace81f9c043d013b3959c",
+      "afterSha256": "745d6c5783659958b524a110268dab2b996bec70bd63858e2df3efa24bfc727e"
+    },
+    {
+      "path": "src/components/application/products/catalog-import.tsx",
+      "beforeSha256": "976eea1ebe4af59fb97d6172599d91c82d4f6db3f30ecabbf983e7c2678e973a",
+      "afterSha256": "0a807c74f884cb3dd9142f3a103230b2a76fc7106e4c56e83b199cbe6eabbfcc"
+    },
+    {
+      "path": "src/components/application/products/create-product-form.tsx",
+      "beforeSha256": "4354d9d89965bad36f8c223af6c0f9dc90ad551b10fa010b1cb4261fb94d8d6c",
+      "afterSha256": "1c5e8331347e75be4c7e45f6cf87b0a6ec8b6222e4f09844ff7dad56403e2fe2"
+    },
+    {
+      "path": "src/components/application/products/edit-product-draft-form.tsx",
+      "beforeSha256": "9fb02756db33a8acb5680b767cd88439476c52257b14e11429be5b65791651e0",
+      "afterSha256": "dc564295997fc835e6f73c8776411092626cbf44461741aa1d27bee29ec0bcd0"
+    },
+    {
+      "path": "src/components/application/products/product-detail-presentation.tsx",
+      "beforeSha256": "534e03ba243b5412c2d87c069bb8a3a2a1fb58a9797808d13de48b1c6cced9e1",
+      "afterSha256": "edae89900c154202715fd1ac3778835f50ae63ee51bf8490087a7dc1bb406fcd"
+    },
+    {
+      "path": "src/components/application/products/product-documents-section.tsx",
+      "beforeSha256": "bb06fd845202e3dc4efc5ad79f598ab11e880a0734ac8258300c8b1d9f4bf0ff",
+      "afterSha256": "027ec6af03314cc0e92e351bc003c7e4fa32e7caf0f34f8de8a5a83a1d637d4c"
+    },
+    {
+      "path": "src/components/application/products/publish-product-section.tsx",
+      "beforeSha256": "dcb9739594f350ea0c6f421ad810762e18ffb5e1c3a0a404641d086a6ed120f7",
+      "afterSha256": "f986c1fd0ec4e20586d82f7e4621f46b46d134c54e286c332902b0ff27f1765e"
+    },
+    {
+      "path": "src/components/application/subscriptions/commercial-overview.tsx",
+      "beforeSha256": "a50522be8ed21600c14a525c30d4c014b4c1e40cc4d836727cd1fe8fde4f443f",
+      "afterSha256": "9cb7641b3346464c6b6c2ffd9f935c1c4ccfe98b3a94e74f324326097136a133"
+    },
+    {
+      "path": "src/components/language-switcher.tsx",
+      "beforeSha256": "18aaec2b28f9b359676869c8ee114b059e0f1d2bd36c43a79c3e1ff189c19e13",
+      "afterSha256": "6a6a6288b6a4b4203c527831a856f02a73b4fa1ea814ef8a8a279ce6212e7902"
+    },
+    {
+      "path": "tests/application/dashboard-language-selector.test.ts",
+      "beforeSha256": "0d628d95297723c82ec89c3ef2a0cc084c08b583a0d39d475aca1a7849eac221",
+      "afterSha256": "3edd2a95a20f07f768e935b92f33d36d69d1dc30668578ab605e5b47b8a48c01"
+    },
+    {
+      "path": "tests/application/document-attachments-presentation.test.ts",
+      "beforeSha256": "287667a38f6b6f31e3fa6c3f748a4915281c461f56f4a6d0e720ffcc3dee91d2",
+      "afterSha256": "43764a4b029553f517ebf57347fb5b517f1af9ae7abac02c37fa624360810b2e"
+    },
+    {
+      "path": "tests/application/subscription-presentation.test.ts",
+      "beforeSha256": "603fd8e8bc9d59f8d9c9642308e7ed067297e9f4a57738c10be64fe6227b6eea",
+      "afterSha256": "60c93ba87fd6aa37209c99a27fa6cadc5fbfa6eafa6205e6ad0bf97b9f815a46"
+    }
+  ],
+  "filesCreatedInRepository": [],
+  "applicationAndTranslationsFiles": 19,
+  "focusedTestFiles": 3,
+  "preservedPreexistingHashes": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "b452d6572833975027d33644ecc02876b26dad30adb9dc54812c563daf13ad3a",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "translationDelta": "ProductDocuments.choosePdf, ProductDocuments.noFile, Subscription.stagingException only in six locales",
+  "sourceBoundaries": "No API/domain/infrastructure/schema/dependency/assets/marketing-section/public-DPP/platform-page source changes. Shared language component marketing branch retains its previous rendered behavior.",
+  "build": {
+    "id": "7Px-7MMCaXTkzsEYhcT7Z",
+    "command": "BETTER_AUTH_URL=https://passvero-preview.invalid npm run build -- --webpack",
+    "result": "PASS",
+    "purpose": "LOCAL_PREVIEW_ONLY_NOT_A_STAGING_DEPLOY_PACKAGE",
+    "canonicalOrigin": "https://passvero-preview.invalid",
+    "buildIdFileSha256": "e4294d7b31b828665ee3893b857bf50ada9ac8378c23811c275dccb2a3174aab",
+    "buildManifestSha256": "76590d2fa282d4541cfada5a47dafb85d02d8ef02b33686322047a8a8f9357b8",
+    "finalBuildLogSha256": "982a954233923a6b66d8a79142b806db78a2d3a82130a92cc4c00f031d235680",
+    "successfulBuildsIncludingFinal": 4,
+    "failedAttempts": 1,
+    "failedCause": "Initial process-only HTTP origin rejected by existing ORIGIN_SCHEME guard",
+    "correctiveRebuildReason": "CSS specificity, progress appearance and measured header label margin found during visual review; all attempts retained"
+  },
+  "checks": {
+    "lint": "PASS_RELEVANT_CHANGED_TS_TSX",
+    "typescript": "PASS_TSC_NO_EMIT_INCREMENTAL_FALSE_AND_FINAL_BUILD",
+    "focusedTests": {
+      "initial": {
+        "total": 72,
+        "pass": 70,
+        "fail": 2,
+        "cause": "Two preexisting stale PDF-copy assertions"
+      },
+      "onlyPdfFileRecheck": {
+        "total": 4,
+        "pass": 4,
+        "fail": 0
+      },
+      "uniqueCasesNowPassed": 72,
+      "broadSuitesRepeated": false
+    },
+    "visual": "PASS_60_SYNTHETIC_VIEWS_WITH_TARGETED_CORRECTION_READBACK",
+    "localeMatrix": [
+      "hr",
+      "sr",
+      "en",
+      "de",
+      "sl",
+      "pl"
+    ],
+    "viewportWidths": [
+      1440,
+      375
+    ],
+    "flows": [
+      "native PDF file chooser with Enter, filename only",
+      "shared publish pending/one mocked request/error focus",
+      "CSV synthetic headers/mapping/preview, no confirm/execute",
+      "form label focus, readonly/disabled/error styles",
+      "scope isolation and header alignment"
+    ],
+    "realApiCalls": 0,
+    "businessWrites": 0,
+    "dbStorageMutations": 0,
+    "authLoginHarness": false,
+    "gitDiffCheck": "PASS"
+  },
+  "limitations": [
+    "No reference screenshots attached; implemented written specification",
+    "Synthetic browser harness stubs navigation/Next image boundary; not a real authenticated session",
+    "Preview/fallback font rendering; final compiled source CSS readback verified",
+    "Real authorized uploads/publication/import/paid actions require later staging user confirmation",
+    "Expected mocked publish403 classified separately; no unexplained app errors",
+    "Corrective builds exceeded requested single build; no broad test or acceptance loop"
+  ],
+  "statuses": {
+    "CUSTOMER_DASHBOARD_UI_LOCAL": "COMPLETE",
+    "USER_VISUAL_REVIEW": "PENDING",
+    "STAGING_DEPLOY_PERFORMED": "NO",
+    "BUSINESS_RULES_CHANGED": "NO",
+    "PRODUCTION_CHANGES": "NONE"
+  },
+  "gitMutations": "NONE_NO_COMMIT_NO_PUSH",
+  "vpsServicesScannerBackupAcceptanceCalls": 0,
+  "evidence": {
+    "product-hr-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/product-hr-1440.png",
+      "sha256": "d09ff9d8223c55b8c4697adb5769482e460fd07f6780f246eda21ee3131397f2"
+    },
+    "csv-screenshots.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-screenshots.cjs",
+      "sha256": "7e20a93f7ac19e3ad8ff32755615aafbe51fbf77a1c7acda5bd52ccff902946c"
+    },
+    "pdf-focused-recheck.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/pdf-focused-recheck.log",
+      "sha256": "78e5ea9ca2cbd50943ff8d5ed96fb2b14195c38b0b02ff9f718d969ba0b760b5"
+    },
+    "nav.tsx": {
+      "path": "/tmp/passvero-customer-ui-20261027/nav.tsx",
+      "sha256": "2ad4196455b390257d1d706084aed3470881534ce7c56ffc7b9ff574fcab9282"
+    },
+    "probe.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/probe.cjs",
+      "sha256": "7f0a54253e2530d2f6edd48cf8a07aa34aaf50e5b49027a86c7ebcdfa15844ad"
+    },
+    "typescript.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/typescript.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "product-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/product-1440.png",
+      "sha256": "c5d7c577b4c4b675f331d0bbcf580b9f90a345ce7b09176b514ccf15fd12d1fb"
+    },
+    "product-hr-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/product-hr-375.png",
+      "sha256": "f5cbc0c3b761428b3578d3336949faf396a59c4544cfaa02873608c50a219e03"
+    },
+    "focused-tests.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/focused-tests.log",
+      "sha256": "4678298925105336dad159e17f936d61a8d599770f87303504d94a032de809fc"
+    },
+    "csv-final-screenshots.json": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-final-screenshots.json",
+      "sha256": "93c8e3990feff0c4c516b90410489ba765071ad9b0a2ec7ee30f3ea12ac24e61"
+    },
+    "product-de-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/product-de-375.png",
+      "sha256": "78e2367ba00631fa06e71c98ce3d78d4534acf54094de58ef5de07ffb8b5ca19"
+    },
+    "csv-hr-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-hr-1440.png",
+      "sha256": "560e535994badbe4aa0965f74f3c8b2feee945dca123c06d1dd4b74576f58a76"
+    },
+    "lint.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "publish-bottom-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/publish-bottom-375.png",
+      "sha256": "db776b7cf7dabddb92ac53254a2b35ea58da07fa8e71786a2884a8c3bb3b0707"
+    },
+    "csv-preview-mobile.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-preview-mobile.png",
+      "sha256": "d4e0ae1d84b13c429c74aab21e80967d6bc8401004c0400e4ae42b6e20f0888d"
+    },
+    "billing-hr-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/billing-hr-375.png",
+      "sha256": "46398ad3bc838ee5892c8750fa5fac54b6b3c8c69083d40bc1181eb54fb87670"
+    },
+    "billing-de-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/billing-de-375.png",
+      "sha256": "82aae0655f8f0ef1967904bdb669f38eb4c19c9757e33f0692a3d1edf1ca9c67"
+    },
+    "forms-hr-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/forms-hr-1440.png",
+      "sha256": "1ce329cbc3fb28752a355fce0abf42f3d45e72e9878dea3c5b52eb8c0d3bd68f"
+    },
+    "css.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/css.cjs",
+      "sha256": "374e97fc8fc395248f1ad9303f23dc52b6d56da5a4b02dae1519fe21e38c212e"
+    },
+    "pdf-selected.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/pdf-selected.png",
+      "sha256": "6447fc70e12c069f1d6b5f76cc6db49fdcc04b392e10acabda477cf534ad4b4c"
+    },
+    "billing-hr-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/billing-hr-1440.png",
+      "sha256": "47cce9b2b7e24e8ef5268a9f06d3a81cf25ea3d0b3c2701e24f608b84dc4b694"
+    },
+    "pdf-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/pdf-1440.png",
+      "sha256": "d86723ea867ee6275a4312706d1dbbc9a7c45277890c7b1fa62d6514e0127c4f"
+    },
+    "build-origin-scheme-failure.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/build-origin-scheme-failure.log",
+      "sha256": "ee57636461622141bb647ae008096feca2c4e702b356ccf1f45dc3c5bfd83cd7"
+    },
+    "subscription-de-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/subscription-de-1440.png",
+      "sha256": "94a31484e8cb8438fcfccb7c02f91e710378e91d2f93c8192e1593060c43bfcd"
+    },
+    "final-build-css-readback.json": {
+      "path": "/tmp/passvero-customer-ui-20261027/final-build-css-readback.json",
+      "sha256": "fa062bc39c7ad13256aef2730095b9c9e367364b3c41b8f523761c5828006e8b"
+    },
+    "csv-preview-desktop.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-preview-desktop.png",
+      "sha256": "69cd25211d50284a55557991ae898196b83306d8e8d34300fa28fa4436a09022"
+    },
+    "fixture.tsx": {
+      "path": "/tmp/passvero-customer-ui-20261027/fixture.tsx",
+      "sha256": "e532a15ef8daff183f985ba2a17762cee996200205f9b12b355b7af8a0ed5ae5"
+    },
+    "forms-de-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/forms-de-375.png",
+      "sha256": "a9c108c86f5acf9974800a0e948591ea1e41ef12a8b9f0e7e19d5f40131316fe"
+    },
+    "review-initial.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/review-initial.cjs",
+      "sha256": "d3247db12a4bb9900854185a9aaed24bf5b79e7da4aacbe3171f293392a6a1a6"
+    },
+    "probe.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/probe.png",
+      "sha256": "cf191479ea8c79b9d01621b43f69cf0f45c923c7be4c27ab04aab15f1316d098"
+    },
+    "prebuild-alignment-readback.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/prebuild-alignment-readback.cjs",
+      "sha256": "011892fd2ee64f7c4ba92e7f27c2fd5001c0ece1c625b7733314bedb16b013a8"
+    },
+    "build-before-visual-css-fix.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/build-before-visual-css-fix.log",
+      "sha256": "c6d1dfdbd31a3c01a57792b6f4211d5846a357e8d40a18e496816e7ce640d200"
+    },
+    "forms-hr-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/forms-hr-375.png",
+      "sha256": "20c3a35ea03d4d53573d4fcf5533c89d24d5688cf9f5c51d28358190507d9d3d"
+    },
+    "forms-de-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/forms-de-1440.png",
+      "sha256": "3015be3eba5dfd1d2a20e36e55f185a5dec5107e5dffce0d03cf8da1297c4250"
+    },
+    "server.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/server.cjs",
+      "sha256": "cd26677d471bf6a67242d0919e77a854303372c072a974d821f984d933fc4df7"
+    },
+    "alignment-diagnose.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/alignment-diagnose.cjs",
+      "sha256": "a850da643b4fd3914ae07e88c10525bc709b10891498c2a17ab559d1c3dc3a16"
+    },
+    "build-before-label-margin-fix.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/build-before-label-margin-fix.log",
+      "sha256": "d7c33730815d354a15f041095c9d7bb173c7a65b68493c4de2d716b55e81bd78"
+    },
+    "billing-de-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/billing-de-1440.png",
+      "sha256": "dec513c460f5f0f2bbf8c6d516ba90c78bcec242b67aba3a4237522e193a0ffc"
+    },
+    "final-readback.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/final-readback.cjs",
+      "sha256": "79433c901c56753038a391355070a92939900236e40cf00d5ac449939af1e89a"
+    },
+    "subscription-hr-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/subscription-hr-1440.png",
+      "sha256": "f1ac3d4584ba79e33a2a821f918421fa6c0d02fe0f4c153ad25de11c7ca26dfa"
+    },
+    "review.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/review.cjs",
+      "sha256": "7fa22f838ee0690d5f2b6234ace87cf353ad9172f1e845b2e30f9d279cfef402"
+    },
+    "csv-de-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-de-375.png",
+      "sha256": "d22b6b4c7e096beebff46e47e423cd89630f975e3962c17e9d08128a3a9330a3"
+    },
+    "product-de-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/product-de-1440.png",
+      "sha256": "7d4aa7460c5e5b53c8fa17a0fdd39e62fbc0096ead746a02671bbf701714e677"
+    },
+    "dpp-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/dpp-375.png",
+      "sha256": "078d4df8f11fa0fb03199776aa9416c9d55667a8e63616289907bb62562ba9fb"
+    },
+    "REVIEW.md": {
+      "path": "/tmp/passvero-customer-ui-20261027/REVIEW.md",
+      "sha256": "e030b99f4b42867feea31393979b840ae0d6b685c9e95fe94e1de4bd687a1da1"
+    },
+    "product-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/product-375.png",
+      "sha256": "6c491fa4ffc11229ed7adcb09e8d69ccf84bfc56ac94ea046e7822d036bffdd1"
+    },
+    "image.tsx": {
+      "path": "/tmp/passvero-customer-ui-20261027/image.tsx",
+      "sha256": "51f12681b751f3b127f39a6a1cdc2b845b0f4cf381cb3a7613f26b5ab4cdfe2e"
+    },
+    "csv-mapping-mobile.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-mapping-mobile.png",
+      "sha256": "ee057f4d7f3e2ef08a71a354d94e54e9389d99f6327af4de9708c8740d9c9095"
+    },
+    "dpp-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/dpp-1440.png",
+      "sha256": "2685cdb689614b5eddb93867d998d9a6c01e4d6445c1a120f647df17d0efc225"
+    },
+    "csv-mapping-desktop.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-mapping-desktop.png",
+      "sha256": "b7c59d1cd826c04f9f3511f9e02bae0d4c0f06d570f83faf48397b73f55074b0"
+    },
+    "csv-hr-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-hr-375.png",
+      "sha256": "eb552b41f0d80094899d94cab1c7b037db74bfd087bf9be7af158b3e73201f4b"
+    },
+    "bundle.cjs": {
+      "path": "/tmp/passvero-customer-ui-20261027/bundle.cjs",
+      "sha256": "f1bdc8aa8583e6bdf76e842f769a7791619f03d66eeb8aa79980ace5948520bc"
+    },
+    "subscription-hr-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/subscription-hr-375.png",
+      "sha256": "623059d1b9792f8a7e707694b536979514cf40517b110d4ff265cd5d85db9824"
+    },
+    "build-before-header-alignment.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/build-before-header-alignment.log",
+      "sha256": "a1564cc8500dcbc13ed6ebac04ffb0bcc611fa243e497831c87fe87d4b92414e"
+    },
+    "publish-bottom-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/publish-bottom-1440.png",
+      "sha256": "d602960ccacf48644757036a21670c99a960cd20f9f09262510faaae19c7ee32"
+    },
+    "subscription-de-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/subscription-de-375.png",
+      "sha256": "bca504261e525d0d206f397f78a53d96514f23c27c5815403df8d01d3f673448"
+    },
+    "visual-results.json": {
+      "path": "/tmp/passvero-customer-ui-20261027/visual-results.json",
+      "sha256": "bf6fb4ac15f532e8d29369c3fc08bafd6cf57329c2a4a817ad540592457e3e4c"
+    },
+    "build.log": {
+      "path": "/tmp/passvero-customer-ui-20261027/build.log",
+      "sha256": "982a954233923a6b66d8a79142b806db78a2d3a82130a92cc4c00f031d235680"
+    },
+    "pdf-375.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/pdf-375.png",
+      "sha256": "ff5bdf7e00f519084c610a949de207e63327efeb9da713df745b7030c4c4a4ff"
+    },
+    "csv-de-1440.png": {
+      "path": "/tmp/passvero-customer-ui-20261027/csv-de-1440.png",
+      "sha256": "69ab7fa2617b2a18da3fc37d4cfece09904d4012e2e97e48a7f595989b1b48fd"
+    }
+  }
+}

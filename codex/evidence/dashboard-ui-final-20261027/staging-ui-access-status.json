@@ -1,0 +1,13 @@
+{
+  "browser": "Existing native Chrome via cua_repl",
+  "requestedRoute": "https://staging.passvero.eu/dashboard",
+  "observedRoute": "https://staging.passvero.eu/login",
+  "existingSession": "ABSENT",
+  "loginSubmission": "REJECTED_BEFORE_EXECUTION_BY_AUTOMATIC_REVIEW",
+  "reviewReason": "Credential-bearing login and session creation not explicitly authorized by read-only post-deploy review scope",
+  "workaroundAttempted": false,
+  "actionTimeUserChoice": "USER_WILL_LOG_IN_MANUALLY",
+  "privateUiReview": "COMPLETED_AFTER_USER_MANUAL_LOGIN",
+  "businessWrites": 0,
+  "manualLoginObserved": true
+}

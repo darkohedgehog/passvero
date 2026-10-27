@@ -1,0 +1,94 @@
+{
+  "attempts": 17,
+  "backupStateSha256": "9bf03b98e2be0dd2700d62d8ae6d40d1845ac5a74b880defc4fac8636caa86c8",
+  "captureRestoreWorkerSmtpTelegramCalls": 0,
+  "configKeysChanged": [
+    "buildId",
+    "canonicalSha256"
+  ],
+  "currentRuntime": {
+    "cwd": "/var/www/passvero-acceptance",
+    "name": "passvero-acceptance",
+    "pid": 800418,
+    "pmId": 0,
+    "status": "online"
+  },
+  "hold": false,
+  "legalNamespaces": "UNCHANGED_FROM_DEPLOYED",
+  "mode": "CONTINUOUS",
+  "mutations": "NONE",
+  "newArtifacts": 839,
+  "newBuild": "o881QhduK5s1O2SuiT9jr",
+  "newCanonicalSha256": "44ce5b70fa98620b0c9166e1a666e2a750c881c039bbfac64a8d7c052bb9cefa",
+  "newConfigSha256": "6bec53494e9b81485c27684f981c80bd57628da6f80d677f2c4aa55ce4734c04",
+  "newRollbackLocation": "/var/lib/passvero-dashboard-ui-deploy-20261027",
+  "observedUTC": "2026-10-27T17:26:54.027963+00:00",
+  "oldBuild": "RVDJVB4UmvCtP7UnxGKi2",
+  "oldCanonicalSha256": "e8fd04e3716ca71d1f9f32e88176897718739fedd48ff29afba5c2cd0093f467",
+  "oldConfigSha256": "a85326aea9316f6bc94ee255f33956f062b8788a0f3d74cefe3075ed9f1d1e7f",
+  "preflight": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+  "publicAssets": "ALL_PREVIOUS_CANONICAL_PUBLIC_MEMBERS_RETAINED_UNCHANGED",
+  "retainedCanonicalFiles": 13,
+  "retainedCanonicalInventory": [
+    ".controlled-onboarding/review-access-requests.mjs",
+    ".onboarding-flow/onboarding-access.cjs",
+    ".onboarding-flow/review-access-requests.cjs",
+    "public/marketing/dashboard-preview-restored.png",
+    "public/marketing/flags/LICENSE",
+    "public/marketing/flags/de.svg",
+    "public/marketing/flags/gb.svg",
+    "public/marketing/flags/hr.svg",
+    "public/marketing/flags/pl.svg",
+    "public/marketing/flags/rs.svg",
+    "public/marketing/flags/si.svg",
+    "public/marketing/hero-passport-restored.png",
+    "public/marketing/passvero-logo.png"
+  ],
+  "units": {
+    "passvero-staging-backup.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "NextElapseUSecRealtime": "Wed 2026-10-28 05:30:00 CET"
+    },
+    "passvero-staging-backup.service": {
+      "ActiveState": "inactive",
+      "Id": "passvero-staging-backup.service",
+      "LoadState": "loaded",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-staging-backup-monitor.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-staging-backup-monitor.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "NextElapseUSecRealtime": "Tue 2026-10-27 19:20:00 CET"
+    },
+    "passvero-staging-backup-monitor.service": {
+      "ActiveState": "inactive",
+      "Id": "passvero-staging-backup-monitor.service",
+      "LoadState": "loaded",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-subscription-reminders.timer": {
+      "ActiveState": "active",
+      "Id": "passvero-subscription-reminders.timer",
+      "LoadState": "loaded",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "NextElapseUSecRealtime": ""
+    },
+    "passvero-subscription-reminders.service": {
+      "ActiveState": "inactive",
+      "Id": "passvero-subscription-reminders.service",
+      "LoadState": "loaded",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    }
+  }
+}

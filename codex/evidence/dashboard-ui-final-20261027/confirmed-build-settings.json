@@ -1,0 +1,40 @@
+{
+  "operatorBaseline": {
+    "runtimeNode": "v24.22.1",
+    "packageSha256": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+    "lockSha256": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+    "canonicalOrigin": "https://staging.passvero.eu",
+    "runtimeEnvironment": "staging",
+    "publicTurnstile": {
+      "present": true,
+      "sha256": "fe67e573629eb1744c18576097b2e0b56f49aab14aab694cab05227053d3b5fd"
+    },
+    "nextConfig": {
+      "basePath": "",
+      "assetPrefix": "",
+      "trailingSlash": false,
+      "output": null,
+      "distDir": ".next"
+    },
+    "explicitEnvKeys": [],
+    "diagnosticChildExcludedNodeControlKeys": [
+      "NODE_CHANNEL_FD",
+      "NODE_CHANNEL_SERIALIZATION_MODE"
+    ],
+    "dependencyVersions": {
+      "next": "16.3.4",
+      "react": "19.2.4",
+      "react-dom": "19.2.4",
+      "next-intl": "4.13.2"
+    }
+  },
+  "localNode": "v24.22.1",
+  "localPackageSha256": "b8e98604501f008c052dcaf7e141c453902fb87c22770938098dc345e720efb0",
+  "localLockSha256": "4312618b27164f25b095ffe693410bcb4f84537cf6d30738732fca8192e6a7ae",
+  "dependencyReconciliation": "EXACT_PREVIOUSLY_REVIEWED_20261012_BASELINE",
+  "dependencyMetadataPinsVerified": 15,
+  "sourceCommit": "45a04f6a202b9867ade081657ca545f9f19232ea",
+  "sourceHashes": "22_MATCH",
+  "secretsOrConfigurationFilesCopied": false,
+  "archiveExtraction": "Python3.9 compatible; all trusted git archive members validated regular files/directories with relative paths before extraction"
+}

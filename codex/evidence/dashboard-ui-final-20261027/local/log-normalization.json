@@ -1,0 +1,14 @@
+{
+  "focused-tests.log": {
+    "originalPath": "/tmp/passvero-customer-ui-20261027/focused-tests.log",
+    "originalSha256": "4678298925105336dad159e17f936d61a8d599770f87303504d94a032de809fc",
+    "displaySha256": "1d1ac2ca5e37eabc4776eae3d3fbee280ce9a008b211455f08a3f5fcd834f9a5",
+    "normalization": "Line endings/trailing whitespace only; original retained, no rerun"
+  },
+  "build.log": {
+    "originalPath": "/tmp/passvero-customer-ui-20261027/build.log",
+    "originalSha256": "982a954233923a6b66d8a79142b806db78a2d3a82130a92cc4c00f031d235680",
+    "displaySha256": "8f30132e257a30cf91bd9d09bceaee0a1c6d74f66ece9c44d3a3092c58ed2899",
+    "normalization": "Line endings/trailing whitespace and blank EOF lines only; exact original retained outside Git"
+  }
+}

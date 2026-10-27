@@ -1,0 +1,21 @@
+{
+  "buildId": "o881QhduK5s1O2SuiT9jr",
+  "members": 839,
+  "archiveSha256": "450393413b0153b933edaf234e0e46bcfaf4cd6e42e3ae2362754a43ec084930",
+  "artifactManifestSha256": "e35561c0986e8c97c3b18de024634952bc1938b0de098f0917b4dd7fb55abf8a",
+  "bytes": 7413721,
+  "sourceCommit": "45a04f6a202b9867ade081657ca545f9f19232ea",
+  "publicAssetMutation": "NONE_ALL_RETAINED",
+  "canonicalMetadata": "PASS_36_SETS",
+  "generatedTextResponsesScanned": 264,
+  "bundledDependencies": {
+    "barcodeMembers": [
+      ".next/server/chunks/6074.js"
+    ],
+    "csvMembers": [
+      ".next/server/app/api/products/import/route.js"
+    ],
+    "noExternalImports": true,
+    "tracesChecked": 83
+  }
+}

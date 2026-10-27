@@ -1,0 +1,13 @@
+{
+  "format": "WHITESPACE_NORMALIZED_REVIEW_DISPLAY_NOT_EXECUTABLE_PATCH",
+  "originalPath": "/tmp/passvero-dashboard-release-20261027/package-preflight-reviewed.diff",
+  "originalSha256": "9456a810d8eecd1e12d360823ccba3c07bc7c5f155961c5be172743aece356b1",
+  "displaySha256": "450ccf20d24898b9985fa177907e2667bc8f4c2a7333fe61aa573ef51d3b5779",
+  "operationalHelperUnchanged": true,
+  "v2ReviewDisplay": {
+    "originalPath": "/tmp/passvero-dashboard-release-20261027/package-preflight-v2-reviewed.diff",
+    "originalSha256": "614a425f4590b6e6ac48533c47433c8b7b6d760a1ec57ce4c92a95fb81b66595",
+    "displaySha256": "bd5647edba4207052084eb941da3fdaad3e8ab9d0ed16b6aad01e95668ced5c0",
+    "normalization": "Trailing whitespace and blank EOF lines only; not executable patch"
+  }
+}

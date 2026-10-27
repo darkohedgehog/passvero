@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "cssSource": "Final .next/static/css served directly; no CSS interception",
+  "targetedReadback": "HR desktop/mobile representative screenshots after CSS corrections; six-locale matrix reused",
+  "disabledReadonlyError": "PASS",
+  "progressTeal": "PASS",
+  "scopeIsolation": {
+    "before": "rgb(15, 23, 42)",
+    "after": "rgb(15, 23, 42)",
+    "outsideUnaffected": true,
+    "scopedBorder": "rgb(168, 179, 191)"
+  },
+  "errors": []
+}

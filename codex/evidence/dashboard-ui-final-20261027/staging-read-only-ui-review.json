@@ -1,0 +1,209 @@
+{
+  "result": "PASS_READ_ONLY_STAGING_REVIEW_WITH_EXISTING_COSMETIC_NOTE",
+  "buildId": "o881QhduK5s1O2SuiT9jr",
+  "browser": "Existing native Chrome via cua_repl; no new harness, credential extraction or auth-cookie reuse",
+  "authentication": {
+    "initialLoginSubmission": "AUTOMATIC_REVIEW_REJECTED_BEFORE_EXECUTION",
+    "resolution": "USER_SELECTED_MANUAL_LOGIN_AND_COMPLETED_IT_IN_EXISTING_CHROME",
+    "agentLoginSubmission": false,
+    "authHarness": false
+  },
+  "environments": {
+    "desktop": "Existing Chrome window; raw screenshot3012x1786 physical pixels",
+    "mobile": "Existing Chrome DevTools responsive390x685, observed in toolbar; closed after review"
+  },
+  "views": [
+    "Dashboard header/background",
+    "Existing synthetic product detail, source DPP languageHR preserved",
+    "DPP content editor desktop/mobile without edits",
+    "Native PDF picker opened and cancelled with no selection",
+    "Top/bottom publish controls inspected, never clicked",
+    "CSV first stage and export icon inspected, no file selection/upload",
+    "Billing desktop/mobile six locales, no save",
+    "Subscription desktop/mobile with explicit staging-exception label and no current paid period",
+    "Existing Platform Admin organizations desktop/mobile and billing list desktop",
+    "Mobile menu open/Escape close, focus returned to trigger"
+  ],
+  "locales": [
+    {
+      "locale": "hr",
+      "surface": "billing/header",
+      "desktop": "RENDERED_AND_VISUALLY_REVIEWED",
+      "mobile": "RENDERED_AND_VISUALLY_REVIEWED_390x685"
+    },
+    {
+      "locale": "sr",
+      "surface": "billing/header",
+      "desktop": "RENDERED_AND_VISUALLY_REVIEWED",
+      "mobile": "RENDERED_AND_VISUALLY_REVIEWED_390x685"
+    },
+    {
+      "locale": "en",
+      "surface": "billing/header",
+      "desktop": "RENDERED_AND_VISUALLY_REVIEWED",
+      "mobile": "RENDERED_AND_VISUALLY_REVIEWED_390x685"
+    },
+    {
+      "locale": "de",
+      "surface": "billing/header",
+      "desktop": "RENDERED_AND_VISUALLY_REVIEWED",
+      "mobile": "RENDERED_AND_VISUALLY_REVIEWED_390x685"
+    },
+    {
+      "locale": "sl",
+      "surface": "billing/header",
+      "desktop": "RENDERED_AND_VISUALLY_REVIEWED",
+      "mobile": "RENDERED_AND_VISUALLY_REVIEWED_390x685"
+    },
+    {
+      "locale": "pl",
+      "surface": "billing/header",
+      "desktop": "RENDERED_AND_VISUALLY_REVIEWED",
+      "mobile": "RENDERED_AND_VISUALLY_REVIEWED_390x685"
+    }
+  ],
+  "languageControl": "All6 full-name options observed; HR toDE via actual control retained billing route; subsequent locale routes read-only",
+  "overflow": "No visual clipping/page overflow seen in inspected representative areas; accepted local numerical overflow evidence reused, not a new DOM measurement matrix",
+  "frameworkOverlay": "NONE_SEEN",
+  "console": "No visible app error; native DevTools showed existing extension informational log. Full programmatic console telemetry not collected.",
+  "csvMappingPreview": "REUSED_ACCEPTED_LOCAL_SYNTHETIC_EVIDENCE_SOURCE_HASHES_MATCH; no live CSV upload/header/preview/confirm/execute requests initiated",
+  "businessActions": {
+    "fileSelection": 0,
+    "uploads": 0,
+    "scanActions": 0,
+    "publishClicks": 0,
+    "importConfirmExecute": 0,
+    "billingSaves": 0,
+    "commercialActions": 0,
+    "emailTelegramTests": 0
+  },
+  "adminScope": "Inherited shared language/sign-out header only; dedicated Platform Admin page source unchanged, customer-only CSS isolation preserved. Existing organizations cards/table and billing list reviewed, not redesigned.",
+  "cosmeticFinding": {
+    "severity": "MINOR_EXISTING_NOT_RELEASE_BLOCKING",
+    "surface": "Catalog import outer accordion summary",
+    "observation": "Uvezi CSV outer summary retains a darker border than the polished inner cards/controls",
+    "source": "app/[locale]/dashboard/products/page.tsx",
+    "sourceChangedInThisRelease": false,
+    "action": "Recorded for user review; no new design/source/build/deploy phase opened"
+  },
+  "screenshots": {
+    "dashboard-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/dashboard-desktop.png",
+      "sha256": "9773b0195ee597e07fdb18de647fe2cb1e300f0a657635ff2e686fd2c0f58d2a",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "product-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/product-desktop.png",
+      "sha256": "80381e04040f77895f5179e0e9304468f21123b8dc22bfe56e52b85f78d09f76",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "dpp-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/dpp-desktop.png",
+      "sha256": "b6ac9aeea9b752a0cf385a24a3c2695f34750a549426ce6c0acab7b1be2a364d",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "dpp-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/dpp-mobile.png",
+      "sha256": "6492326b76b39a8837d164c9e58105ffa6aa0e94adbc4bdc6499840c94a94447",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "pdf-picker-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/pdf-picker-desktop.png",
+      "sha256": "9b05cd693ab49277c856f0ea865221553726ab8c8415180f617379941e1a8adb",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "pdf-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/pdf-mobile.png",
+      "sha256": "19b0eefeafc9cfbd4797e38d60c2ed19f0f83b4e241e3b4bf046acac3efaafae",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "publish-bottom-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/publish-bottom-desktop.png",
+      "sha256": "90e1c271b76ea8731e5a7b0bb9f45198aea515088f9c6c2a254626d3a04bd43b",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "publish-bottom-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/publish-bottom-mobile.png",
+      "sha256": "d6e0aabbd024f13def05f37a1d2325959f5d2ab3365aedccff861f1668cc0993",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "csv-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/csv-desktop.png",
+      "sha256": "89038d40ece5ad5ac75536fad88250a7e87b74154dadb773258f428268c53535",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "csv-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/csv-mobile.png",
+      "sha256": "d21492d539f2d0430f04aacc402c693b49388666c797998a129d89be987da458",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "billing-hr-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/billing-hr-desktop.png",
+      "sha256": "21056c56d34fe87ac728d2426b5d15772912d946cd895059bbb73c275c86d834",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "billing-hr-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/billing-hr-mobile.png",
+      "sha256": "ba322e7d5be322470ff50d25f4639b3747fbeaa4569bbd4cf2563a6d9d501ac8",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "six-locale-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/six-locale-mobile.png",
+      "sha256": "844f14be5800baf5e41c710048eb322f464b9388a954944ec9b4686508412a31",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "subscription-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/subscription-desktop.png",
+      "sha256": "0099f78aa037e533b183a58bd32114dd771b0403e437f79374890a6c4af8e4ab",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "subscription-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/subscription-mobile.png",
+      "sha256": "ac2587249bed64205d1d39ce1c6e32bdec0a61505f2d75cb997d9088731b62ff",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "platform-organizations-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/platform-organizations-desktop.png",
+      "sha256": "89222b1f33db653549084e0dfca3734ad961f3c22df0758f75efad93c4189bc1",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "platform-organizations-mobile.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/platform-organizations-mobile.png",
+      "sha256": "3b22dbf7faafed4da98fc54c421919752821c2785cb309ecdcdf2bd8e6a7ba2c",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "platform-billing-desktop.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/platform-billing-desktop.png",
+      "sha256": "086411c7eef2ad635295e909aae82a4d534c1c3c5f189b966e199ada0dc41f98",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    },
+    "mobile-menu.png": {
+      "localPath": "/tmp/passvero-dashboard-release-20261027/staging-screenshots/review-crops/mobile-menu.png",
+      "sha256": "1d8f9ab78c2f8912a6de968796029f613dc1c78350fcb555ed8740293c5df00a",
+      "gitIncluded": false,
+      "reason": "Authenticated UI screenshots stay local to avoid committing private tenant/browser data"
+    }
+  },
+  "userFinalUiReview": "PENDING",
+  "sourceChangedAfterAcceptedBuild": false,
+  "productionAccess": false,
+  "historicalNotProvenStatuses": "UNCHANGED"
+}

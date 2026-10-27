@@ -1,0 +1,55 @@
+{
+  "automaticRetry": false,
+  "canonical-deploy-body-pass.json": {
+    "artifacts": 852,
+    "backupStateUnchanged": true,
+    "buildId": "o881QhduK5s1O2SuiT9jr",
+    "canonicalSha256": "44ce5b70fa98620b0c9166e1a666e2a750c881c039bbfac64a8d7c052bb9cefa",
+    "captureRestoreWorkerSmtpTelegramCalls": 0,
+    "configSha256": "6bec53494e9b81485c27684f981c80bd57628da6f80d677f2c4aa55ce4734c04",
+    "deployment": "PASS",
+    "httpsTls": "200_0_CANONICAL_ROOT",
+    "publicAssets": "ALL_RETAINED_CANONICAL_MEMBERS_UNCHANGED",
+    "runtime": {
+      "cwd": "/var/www/passvero-acceptance",
+      "name": "passvero-acceptance",
+      "pid": 858670,
+      "pmId": 0,
+      "status": "online"
+    }
+  },
+  "canonical-deploy-closure-failure.json": null,
+  "canonical-deploy-closure.json": {
+    "artifactsRetained": true,
+    "automaticRetry": false,
+    "backupAndMonitor": {
+      "passvero-staging-backup-monitor.timer": {
+        "ActiveState": "active",
+        "Id": "passvero-staging-backup-monitor.timer",
+        "NextElapseUSecRealtime": "Tue 2026-10-27 19:20:00 CET",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "passvero-staging-backup.timer": {
+        "ActiveState": "active",
+        "Id": "passvero-staging-backup.timer",
+        "NextElapseUSecRealtime": "Wed 2026-10-28 05:30:00 CET",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      }
+    },
+    "backupStateUnchanged": true,
+    "release": "NEW_ALIGNED",
+    "rollback": "PREPARED_NOT_EXECUTED",
+    "writerTimerUnchanged": true
+  },
+  "canonical-deploy-first-failure.json": null,
+  "deployment": "PASS_PENDING_READ_ONLY_VISUAL",
+  "launchTimerSecondsRemaining": {
+    "passvero-staging-backup-monitor.timer": 2972.871,
+    "passvero-staging-backup.timer": 39572.884
+  },
+  "previousHistory": "RETAINED_UNCHANGED",
+  "rollbackLocation": "/var/lib/passvero-dashboard-ui-deploy-20261027",
+  "unitReturnCode": 0
+}

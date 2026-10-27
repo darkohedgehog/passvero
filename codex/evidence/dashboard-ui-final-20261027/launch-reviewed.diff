@@ -1,0 +1,33 @@
+--- accepted-marketing-launch
++++ dashboard-launch
+@@ -1,9 +1,9 @@
+ """One approved staging swap using the existing bounded unit/independent closure procedure."""
+ import hashlib,json,os,pathlib,re,stat,subprocess,time,types
+ P=pathlib.Path
+-UPLOAD=P('/tmp/passvero-marketing-ui-release-20261021')
+-ROOT=P('/var/lib/passvero-marketing-ui-deploy-20261021')
+-PINS={'deploy-reviewed.py':'3fbd9ce3c7ec17df90957772facaf1bdf156f1062c47c5df0c9aae6545e3a242','preflight-v2.py':'c24643dc7ab1663edcfb520574cddeeac1450030e0b38b21edf2ba01bc543543','artifact-manifest.json':'d8d63fb009d6c0db28ac02826e65be7dd7ff0c1c1f1008ff918c9a5d6247fe1f','application.tar.gz':'866a4ddcf930c23202dd1e041af1ce60130b42315d970d6eb6c7a29e1e33dc0c'}
++UPLOAD=P('/tmp/passvero-dashboard-ui-release-20261027')
++ROOT=P('/var/lib/passvero-dashboard-ui-deploy-20261027')
++PINS={'deploy-reviewed.py': '97a139c9892e831b251ada16eb80c13a94ff2078df3030e8ab8b7b38fffd1c87', 'package-preflight-v2.py': 'dfba16c911191e2b4f887bc05fa42079bdd0bf34b51909f10e81afda01a84f4c', 'artifact-manifest.json': 'e35561c0986e8c97c3b18de024634952bc1938b0de098f0917b4dd7fb55abf8a', 'application.tar.gz': '450393413b0153b933edaf234e0e46bcfaf4cd6e42e3ae2362754a43ec084930'}
+ CHECK='HOST_AND_EXACT_UPLOAD'
+ def main():
+  global CHECK
+@@ -18,7 +18,7 @@
+   body=p.read_bytes();assert hashlib.sha256(body).hexdigest()==pin,'EXACT_UPLOAD_HASH_CHANGED'
+   bodies[name]=body
+  # Execute verified in-memory definitions only; the upload file is never re-imported.
+- h=types.ModuleType('reviewed_ui_launch_read_only')
++ h=types.ModuleType('reviewed_dashboard_launch_read_only')
+  exec(compile(bodies['deploy-reviewed.py'],'reviewed-deploy-helper','exec'),h.__dict__)
+  CHECK='FRESH_IDLE_AND_TIMER_WINDOW'
+  h.idle()
+@@ -35,7 +35,7 @@
+    f.write(body);f.flush();os.fsync(f.fileno())
+  helper=ROOT/'deploy-reviewed.py'
+  CHECK='ONE_BOUNDED_UNIT_WITH_INDEPENDENT_CLOSURE'
+- args=['/usr/bin/systemd-run','--quiet','--wait','--unit','passvero-marketing-ui-deploy-20261021','--property=Type=exec','--property=Restart=no','--property=KillMode=control-group','--property=KillSignal=SIGKILL','--property=RuntimeMaxSec=8min','--property=TimeoutStopSec=180s','--property=StandardOutput=null','--property=StandardError=null','--property=ExecStopPost=/usr/bin/python3 -I -B '+str(helper)+' --close','/usr/bin/python3','-I','-B',str(helper),'--deploy-reviewed']
++ args=['/usr/bin/systemd-run','--quiet','--wait','--unit','passvero-dashboard-ui-deploy-20261027','--property=Type=exec','--property=Restart=no','--property=KillMode=control-group','--property=KillSignal=SIGKILL','--property=RuntimeMaxSec=8min','--property=TimeoutStopSec=180s','--property=StandardOutput=null','--property=StandardError=null','--property=ExecStopPost=/usr/bin/python3 -I -B '+str(helper)+' --close','/usr/bin/python3','-I','-B',str(helper),'--deploy-reviewed']
+  result=subprocess.run(args,capture_output=True,timeout=700)
+  output={'unitReturnCode':result.returncode,'automaticRetry':False,'previousHistory':'RETAINED_UNCHANGED','rollbackLocation':str(ROOT),'launchTimerSecondsRemaining':remaining}
+  for name in ('canonical-deploy-body-pass.json','canonical-deploy-first-failure.json','canonical-deploy-closure.json','canonical-deploy-closure-failure.json'):

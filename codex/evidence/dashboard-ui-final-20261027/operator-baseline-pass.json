@@ -1,0 +1,106 @@
+{
+  "result": "PASS_DASHBOARD_READ_ONLY_BASELINE",
+  "previousRollback": {
+    "location": "/var/lib/passvero-marketing-ui-deploy-20261021",
+    "buildId": "_tkSUOn0PCoHjpx8V7FVr",
+    "membersVerified": 759,
+    "closure": "NEW_ALIGNED_HISTORICAL_RETAINED_NOT_REEXECUTED"
+  },
+  "newRollbackLocation": "/var/lib/passvero-dashboard-ui-deploy-20261027",
+  "observedUTC": "2026-10-27T17:17:02.965790+00:00",
+  "buildId": "RVDJVB4UmvCtP7UnxGKi2",
+  "canonicalSha256": "e8fd04e3716ca71d1f9f32e88176897718739fedd48ff29afba5c2cd0093f467",
+  "backupConfigSha256": "a85326aea9316f6bc94ee255f33956f062b8788a0f3d74cefe3075ed9f1d1e7f",
+  "backupStateSha256": "9bf03b98e2be0dd2700d62d8ae6d40d1845ac5a74b880defc4fac8636caa86c8",
+  "canonicalMembersVerified": 852,
+  "canonicalOrigin": "https://staging.passvero.eu",
+  "httpsTls": "200 0",
+  "automationBaseline": {
+    "passvero-staging-backup.timer": {
+      "Id": "passvero-staging-backup.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup.service": {
+      "Id": "passvero-staging-backup.service",
+      "LoadState": "loaded",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-staging-backup-monitor.timer": {
+      "Id": "passvero-staging-backup-monitor.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-staging-backup-monitor.service": {
+      "Id": "passvero-staging-backup-monitor.service",
+      "LoadState": "loaded",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    },
+    "passvero-subscription-reminders.timer": {
+      "Id": "passvero-subscription-reminders.timer",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "passvero-subscription-reminders.service": {
+      "Id": "passvero-subscription-reminders.service",
+      "LoadState": "loaded",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    }
+  },
+  "timerSecondsRemaining": {
+    "passvero-staging-backup.timer": 40378.424,
+    "passvero-staging-backup-monitor.timer": 178.383,
+    "passvero-subscription-reminders.timer": 97.974
+  },
+  "deployWindowOver20Minutes": false,
+  "runtimeIdentity": {
+    "name": "passvero-acceptance",
+    "pid": 800418,
+    "status": "online",
+    "cwd": "/var/www/passvero-acceptance"
+  },
+  "buildTimeBaseline": {
+    "runtimeNode": "v24.22.1",
+    "packageSha256": "df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e",
+    "lockSha256": "f82a6356bd1201994d00d2032eabc7da5334de234bf36998b00c277e61f29b3c",
+    "canonicalOrigin": "https://staging.passvero.eu",
+    "runtimeEnvironment": "staging",
+    "publicTurnstile": {
+      "present": true,
+      "sha256": "fe67e573629eb1744c18576097b2e0b56f49aab14aab694cab05227053d3b5fd"
+    },
+    "nextConfig": {
+      "basePath": "",
+      "assetPrefix": "",
+      "trailingSlash": false,
+      "output": null,
+      "distDir": ".next"
+    },
+    "explicitEnvKeys": [],
+    "diagnosticChildExcludedNodeControlKeys": [
+      "NODE_CHANNEL_FD",
+      "NODE_CHANNEL_SERIALIZATION_MODE"
+    ],
+    "dependencyVersions": {
+      "next": "16.3.4",
+      "react": "19.2.4",
+      "react-dom": "19.2.4",
+      "next-intl": "4.13.2"
+    }
+  },
+  "localPackageGate": "ONE_STAGING_ORIGIN_BUILD_APPROVED_PENDING_BASELINE_MATCH",
+  "mutations": "NONE",
+  "scannerBackupRestoreWorkerSmtpTelegramCalls": 0
+}

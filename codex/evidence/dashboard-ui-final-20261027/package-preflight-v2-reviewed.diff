@@ -1,0 +1,21 @@
+--- original-package-preflight-52ebd2e0
++++ package-preflight-v2
+@@ -161,9 +161,9 @@
+     updated['files'] = {name: item for name, item in prior['files'].items() if not name.startswith(('.next/', 'messages/'))}
+     require(not any(name.startswith('public/') for name in artifact['files']), 'PUBLIC_ASSET_PACKAGE_SCOPE')
+     retained = {name: item for name,item in prior['files'].items() if not name.startswith(('.next/','messages/'))}
+-    require(len(retained)==13 and all(name.startswith('public/') for name in retained), 'RETAINED_PUBLIC_INVENTORY_CHANGED')
++    require(len(retained)==13 and not (set(retained) & set(artifact['files'])), 'RETAINED_CANONICAL_INVENTORY_CHANGED')
+     for name,item in retained.items():
+-        require(digest(regular(APP/name))==item['sha256'], 'RETAINED_PUBLIC_ASSET_DRIFT')
++        require(updated['files'].get(name)==item and digest(regular(APP/name))==item['sha256'], 'RETAINED_CANONICAL_MEMBER_DRIFT')
+     updated['files'].update(artifact['files'])
+     candidate_bytes = (json.dumps(updated, sort_keys=True, indent=2) + '\n').encode()
+     new_config = dict(config)
+@@ -180,7 +180,7 @@
+         'retainedCanonicalFiles': len(updated['files']) - 839, 'newArtifacts': 839,
+         'currentRuntime': process, 'backupStateSha256': digest(state_bytes),
+         'mode': state['mode'], 'hold': state['hold'], 'attempts': state['attempts'], 'units': units,
+-        'publicAssets': 'ALL_13_CANONICAL_PUBLIC_MEMBERS_RETAINED_UNCHANGED', 'legalNamespaces': 'UNCHANGED_FROM_DEPLOYED', 'mutations': 'NONE', 'newRollbackLocation': '/var/lib/passvero-dashboard-ui-deploy-20261027',
++        'retainedCanonicalInventory': sorted(retained), 'publicAssets': 'ALL_PREVIOUS_CANONICAL_PUBLIC_MEMBERS_RETAINED_UNCHANGED', 'legalNamespaces': 'UNCHANGED_FROM_DEPLOYED', 'mutations': 'NONE', 'newRollbackLocation': '/var/lib/passvero-dashboard-ui-deploy-20261027',
+         'captureRestoreWorkerSmtpTelegramCalls': 0}, sort_keys=True, indent=2))

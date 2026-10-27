@@ -1,0 +1,459 @@
+{
+  "result": "PASS_LOCAL_SYNTHETIC_COMPONENT_REVIEW",
+  "origin": "http://127.0.0.1:3217",
+  "browser": "Chromium via Playwright; Browser plugin absent",
+  "results": [
+    {
+      "locale": "hr",
+      "width": 1440,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 1440,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 1440,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 1440,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 1440,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 1440,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 1440,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 1440,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "hr",
+      "width": 375,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sr",
+      "width": 375,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "de",
+      "width": 375,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "sl",
+      "width": 375,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "view": "forms",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "view": "product",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "view": "csv",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "view": "billing",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    },
+    {
+      "locale": "pl",
+      "width": 375,
+      "view": "subscription",
+      "overflow": false,
+      "status": "PASS_INITIAL_COMPLETED_MATRIX"
+    }
+  ],
+  "errors": [],
+  "expectedMockConsole": [
+    "403 from deliberately rejected synthetic publish; no real API call"
+  ],
+  "matrixEvidence": "Initial script completed all60 view assertions and reached only its final expected403 console check; matrix not repeated",
+  "interactions": {
+    "pdfNativePicker": "PASS_SELECTION_ONLY",
+    "publishSharedPending": "PASS_ONE_INTERCEPTED_REQUEST_BOTH_DISABLED",
+    "publishErrorFocus": "PASS_INITIATING_BOTTOM_CONTROL",
+    "csv": "PASS_HEADERS_MAPPING_PREVIEW_ONLY",
+    "formLabelsFocus": "PASS"
+  },
+  "fixtureRequests": [
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3217/api/products/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/publish",
+      "fixtureOnly": true
+    },
+    {
+      "action": "headers",
+      "fixtureOnly": true
+    },
+    {
+      "action": "preview",
+      "fixtureOnly": true
+    }
+  ],
+  "realApiCalls": 0,
+  "businessWrites": 0,
+  "authHarness": false,
+  "dbStorageMutations": 0,
+  "userAcceptance": "PENDING"
+}

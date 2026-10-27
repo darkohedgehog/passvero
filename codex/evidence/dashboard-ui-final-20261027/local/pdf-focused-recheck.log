@@ -1,0 +1,12 @@
+✔ published and Viewer attachments do not expose an unchecked download or attachment mutation controls (10.918459ms)
+✔ editor sees bounded draft management with honest public-intent wording (6.931458ms)
+✔ six locales complete and dashboard language leaves HR document locale intact (7.310667ms)
+✔ new attachment form has explicit unchecked public intent and all labeled inputs (10.1905ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 372.21825

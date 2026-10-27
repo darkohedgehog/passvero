@@ -1,0 +1,59 @@
+{
+  "result": "PASS_PUBLIC_HTTPS_BUILD_AND_METADATA_READBACK",
+  "rows": [
+    {
+      "locale": "hr",
+      "httpsTls": "200 0",
+      "buildId": "o881QhduK5s1O2SuiT9jr",
+      "canonical": "https://staging.passvero.eu",
+      "metadataOrigin": "PASS",
+      "publicHtmlSha256": "89e01d3d95ed9f4a94f58d0b4432cc8bc0088859ed93afd5642f17e6058dea76"
+    },
+    {
+      "locale": "sr",
+      "httpsTls": "200 0",
+      "buildId": "o881QhduK5s1O2SuiT9jr",
+      "canonical": "https://staging.passvero.eu/sr",
+      "metadataOrigin": "PASS",
+      "publicHtmlSha256": "926ae741d3455d6c792d74b0431696c74097432538c7f578c75193a04a74dc97"
+    },
+    {
+      "locale": "en",
+      "httpsTls": "200 0",
+      "buildId": "o881QhduK5s1O2SuiT9jr",
+      "canonical": "https://staging.passvero.eu/en",
+      "metadataOrigin": "PASS",
+      "publicHtmlSha256": "400a25db84aed20afcbcd7d2d254fba17a97846cb0614b986a1bf537c88a6105"
+    },
+    {
+      "locale": "de",
+      "httpsTls": "200 0",
+      "buildId": "o881QhduK5s1O2SuiT9jr",
+      "canonical": "https://staging.passvero.eu/de",
+      "metadataOrigin": "PASS",
+      "publicHtmlSha256": "382081fc92adb2bb82c19a873c686a12237b366c58557106836079404c540b9f"
+    },
+    {
+      "locale": "sl",
+      "httpsTls": "200 0",
+      "buildId": "o881QhduK5s1O2SuiT9jr",
+      "canonical": "https://staging.passvero.eu/sl",
+      "metadataOrigin": "PASS",
+      "publicHtmlSha256": "3544f3d9d4b750a3d6714251a98bbc0349002799f2becb47c07a3337302d89a6"
+    },
+    {
+      "locale": "pl",
+      "httpsTls": "200 0",
+      "buildId": "o881QhduK5s1O2SuiT9jr",
+      "canonical": "https://staging.passvero.eu/pl",
+      "metadataOrigin": "PASS",
+      "publicHtmlSha256": "b20f0b4dbcf788b33b1c3b05b7c5a67238d1580f12aeb77d99a721625474401a"
+    }
+  ],
+  "logoSha256": "7562e3e4bf6a8865e4facdf50dd306ed9b7a2d938392634b9e8c8260314d19bf",
+  "routeNormalization": "Initial /sr/ request returned expected308 under trailingSlash=false; continued remaining canonical paths without trailing slash; HR response reused",
+  "authCookiesOrCredentialsUsed": false,
+  "privateUiReview": "PENDING_SESSION_ACCESS",
+  "businessWrites": 0,
+  "scannerBackupAcceptanceCalls": 0
+}

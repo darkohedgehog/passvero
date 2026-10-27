@@ -1,0 +1,347 @@
+{
+  "task": "DASHBOARD_UI_REVIEW_COMMIT_PUSH_AND_STAGING_DEPLOY",
+  "date": "2026-10-27",
+  "implementation": {
+    "head": "45a04f6a202b9867ade081657ca545f9f19232ea",
+    "originMain": "45a04f6a202b9867ade081657ca545f9f19232ea",
+    "actualRemoteMain": "45a04f6a202b9867ade081657ca545f9f19232ea",
+    "implementationMessage": "style(dashboard): unify forms uploads and subscription presentation",
+    "files": 22,
+    "nonForcePush": "PASS",
+    "index": "EMPTY",
+    "legalRoadmap": "PRESERVED",
+    "stagingBuild": "o881QhduK5s1O2SuiT9jr",
+    "testsBuildRepeatedThisTask": false
+  },
+  "reviewedSourceFiles": [
+    {
+      "path": "app/[locale]/dashboard/layout.tsx",
+      "beforeSha256": "d2ed70d723d1ace0d7fa5bac95cff74e81f6d376d2b8582d07823d3f5b6337e0",
+      "afterSha256": "1dcf74c59f4487f9389c98692287d2b060dbf6f870a100ec21cbdd353afeb2d0"
+    },
+    {
+      "path": "app/globals.css",
+      "beforeSha256": "60a3cd9da10c846472a28595de39f831759d25094c6abf3032b80f111670dd90",
+      "afterSha256": "d27a2ebadb5b391d8c850b7b61ed7b2e06c1e4c53e9433f670a01ac76ec8e24b"
+    },
+    {
+      "path": "messages/de.json",
+      "beforeSha256": "61c997b490139dc26568005554b03ef331cd1242a3879e8aab5dd8e34199ae8c",
+      "afterSha256": "ddc3801110fd1908ae4a4aaae907929b080f55328cfd9a7d85e49f2074ceacb9"
+    },
+    {
+      "path": "messages/en.json",
+      "beforeSha256": "a8c6a5d29683d07d262d29a886ab8fa5e803c8b1b89b07acbaccbea06f42470b",
+      "afterSha256": "b6a5ce0d09874d006d3c7f10c2836538c96893aa9b513c8fcc1137059e3e83b7"
+    },
+    {
+      "path": "messages/hr.json",
+      "beforeSha256": "1aa0b997a78532c0ed53a8542522c37eb86989ff6e9b3ae875a3382260e1a1b1",
+      "afterSha256": "106d8687c35fd67b4990277bc8bde8b22aa56dee4cae6e673a618520076b7a75"
+    },
+    {
+      "path": "messages/pl.json",
+      "beforeSha256": "48f47ee7f94e658e788e1bfa380c65c771b8265c1d5ca6062f92d4e7bbad7c9f",
+      "afterSha256": "499e01c97348803f52a681ed450cbae7b6fce71351622339c88caeb96804ad2c"
+    },
+    {
+      "path": "messages/sl.json",
+      "beforeSha256": "432f84559d7bcf60459a8068ef0f7fcaccf75eeefa8efbf6d1cf7b45016780c0",
+      "afterSha256": "cd2109388dfa79e655a470efcfa4db98a1b5469e78121fa12e5678d319560565"
+    },
+    {
+      "path": "messages/sr.json",
+      "beforeSha256": "1a24d42d60cca6387b1223d00f8a8fa5746fb29dfb464967605ae6841de2c41f",
+      "afterSha256": "78d5503d67864c554c1b4074952b86bc662d1adb392b0e88311df465f660a6d6"
+    },
+    {
+      "path": "src/components/application/billing/billing-profile-form.tsx",
+      "beforeSha256": "3c08763247d270a0964eb1276994859d337aa8ccd6b365aba422739744b8d518",
+      "afterSha256": "063cef3c6a952729089182b66f991a47bb35a9e8ab4e738f536fd36c0fc6fd7b"
+    },
+    {
+      "path": "src/components/application/dashboard/sign-out-button.tsx",
+      "beforeSha256": "59da4d0a96c5553975aea8f3c362e03da044a1b5cd5ce005b00a6d1d422ea635",
+      "afterSha256": "728d9298cb3c0ae88b8afee5d0d785271f94c411c534502e7f40895651f8a271"
+    },
+    {
+      "path": "src/components/application/products/catalog-export-action.tsx",
+      "beforeSha256": "dc3421c8d44914c80a8ca99c59796c4ba17ed95e08aace81f9c043d013b3959c",
+      "afterSha256": "745d6c5783659958b524a110268dab2b996bec70bd63858e2df3efa24bfc727e"
+    },
+    {
+      "path": "src/components/application/products/catalog-import.tsx",
+      "beforeSha256": "976eea1ebe4af59fb97d6172599d91c82d4f6db3f30ecabbf983e7c2678e973a",
+      "afterSha256": "0a807c74f884cb3dd9142f3a103230b2a76fc7106e4c56e83b199cbe6eabbfcc"
+    },
+    {
+      "path": "src/components/application/products/create-product-form.tsx",
+      "beforeSha256": "4354d9d89965bad36f8c223af6c0f9dc90ad551b10fa010b1cb4261fb94d8d6c",
+      "afterSha256": "1c5e8331347e75be4c7e45f6cf87b0a6ec8b6222e4f09844ff7dad56403e2fe2"
+    },
+    {
+      "path": "src/components/application/products/edit-product-draft-form.tsx",
+      "beforeSha256": "9fb02756db33a8acb5680b767cd88439476c52257b14e11429be5b65791651e0",
+      "afterSha256": "dc564295997fc835e6f73c8776411092626cbf44461741aa1d27bee29ec0bcd0"
+    },
+    {
+      "path": "src/components/application/products/product-detail-presentation.tsx",
+      "beforeSha256": "534e03ba243b5412c2d87c069bb8a3a2a1fb58a9797808d13de48b1c6cced9e1",
+      "afterSha256": "edae89900c154202715fd1ac3778835f50ae63ee51bf8490087a7dc1bb406fcd"
+    },
+    {
+      "path": "src/components/application/products/product-documents-section.tsx",
+      "beforeSha256": "bb06fd845202e3dc4efc5ad79f598ab11e880a0734ac8258300c8b1d9f4bf0ff",
+      "afterSha256": "027ec6af03314cc0e92e351bc003c7e4fa32e7caf0f34f8de8a5a83a1d637d4c"
+    },
+    {
+      "path": "src/components/application/products/publish-product-section.tsx",
+      "beforeSha256": "dcb9739594f350ea0c6f421ad810762e18ffb5e1c3a0a404641d086a6ed120f7",
+      "afterSha256": "f986c1fd0ec4e20586d82f7e4621f46b46d134c54e286c332902b0ff27f1765e"
+    },
+    {
+      "path": "src/components/application/subscriptions/commercial-overview.tsx",
+      "beforeSha256": "a50522be8ed21600c14a525c30d4c014b4c1e40cc4d836727cd1fe8fde4f443f",
+      "afterSha256": "9cb7641b3346464c6b6c2ffd9f935c1c4ccfe98b3a94e74f324326097136a133"
+    },
+    {
+      "path": "src/components/language-switcher.tsx",
+      "beforeSha256": "18aaec2b28f9b359676869c8ee114b059e0f1d2bd36c43a79c3e1ff189c19e13",
+      "afterSha256": "6a6a6288b6a4b4203c527831a856f02a73b4fa1ea814ef8a8a279ce6212e7902"
+    },
+    {
+      "path": "tests/application/dashboard-language-selector.test.ts",
+      "beforeSha256": "0d628d95297723c82ec89c3ef2a0cc084c08b583a0d39d475aca1a7849eac221",
+      "afterSha256": "3edd2a95a20f07f768e935b92f33d36d69d1dc30668578ab605e5b47b8a48c01"
+    },
+    {
+      "path": "tests/application/document-attachments-presentation.test.ts",
+      "beforeSha256": "287667a38f6b6f31e3fa6c3f748a4915281c461f56f4a6d0e720ffcc3dee91d2",
+      "afterSha256": "43764a4b029553f517ebf57347fb5b517f1af9ae7abac02c37fa624360810b2e"
+    },
+    {
+      "path": "tests/application/subscription-presentation.test.ts",
+      "beforeSha256": "603fd8e8bc9d59f8d9c9642308e7ed067297e9f4a57738c10be64fe6227b6eea",
+      "afterSha256": "60c93ba87fd6aa37209c99a27fa6cadc5fbfa6eafa6205e6ad0bf97b9f815a46"
+    }
+  ],
+  "preservedPreexistingHashes": {
+    "codex/IMPLEMENTATION_ROADMAP.md": "b452d6572833975027d33644ecc02876b26dad30adb9dc54812c563daf13ad3a",
+    "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md": "b07e0fe8f187f40326741faa9bbb54ed13a20517a8f7a31c55510da9223c94e1"
+  },
+  "localEvidence": "local/source-manifest.json",
+  "localDesign": "ACCEPTED_BY_USER",
+  "localPreviewBuild": "7Px-7MMCaXTkzsEYhcT7Z",
+  "stagingBuildAuthorization": "ONE_EXACT_SOURCE_STAGING_BUILD_AFTER_FRESH_BUILD_SETTINGS_BASELINE",
+  "stagingBaseline": {
+    "status": "PASS_DASHBOARD_READ_ONLY_BASELINE",
+    "helper": "codex/evidence/dashboard-ui-final-20261027/preflight-baseline.py",
+    "sha256": "327398d434544e9dd4a26becbb656987d92a923ef9ca689a016e72830f68c5a0",
+    "uploadedVpsPath": "/tmp/passvero-dashboard-ui-release-20261027/preflight-baseline.py",
+    "mutations": "NONE_ACTIVE_APPLICATION_OR_CONFIG",
+    "expectedCurrentBuild": "RVDJVB4UmvCtP7UnxGKi2",
+    "plannedRollbackLocation": "/var/lib/passvero-dashboard-ui-deploy-20261027",
+    "previousRollbackReadOnly": "/var/lib/passvero-marketing-ui-deploy-20261021",
+    "guardAdaptation": "Unit patterns cover both stage and staging names; process guard covers the entire existing staging-recovery namespace. Read-only; no scanner helper execution.",
+    "evidence": "operator-baseline-pass.json",
+    "currentBuildVerified": "RVDJVB4UmvCtP7UnxGKi2",
+    "canonicalMembersVerified": 852,
+    "previousRollbackMembersVerified": 759,
+    "deployWindowAtBaseline": "TOO_CLOSE_178_SECONDS_MONITOR_97_SECONDS_WRITER_NO_MUTATION"
+  },
+  "stagingDeployment": "PASS_OPERATOR_DEPLOY_AND_INDEPENDENT_CLOSURE",
+  "stagingReadOnlyUiReview": "PASS_READ_ONLY_STAGING_REVIEW_WITH_EXISTING_COSMETIC_NOTE",
+  "userFinalUiReview": "PENDING",
+  "adminScope": "Shared DashboardShell header LanguageSwitcher and SignOutButton; customer CSS only under customer-workspace; CommercialOverview operator branch preserved; no dedicated Platform Admin page redesign",
+  "businessRulesChanged": false,
+  "productionDeployPerformed": false,
+  "backupAcceptanceRepeated": false,
+  "startupFullRecoveryNotProvenStatuses": "UNCHANGED_HISTORICAL_NOT_PROMOTED",
+  "testsRepeatedThisTask": false,
+  "buildsRepeatedThisTask": 1,
+  "documentationCommit": "THIS_SINGLE_DOCUMENTATION_ONLY_CLOSURE_COMMIT_NO_REBUILD_DEPLOY_OR_REPIN",
+  "evidenceHashes": {
+    "staging-build.log": "8909061e00db6f9a299c3397cfa2d0cabb735a82acfbe001c09f19343563d3c0",
+    "VPS-TERMINAL-ROLLBACK.sh": "e35b55ef9a314c1508226171c600df00646c75e6d906dd06959caa5981f7b128",
+    "confirmed-build-settings.json": "fc5ea0f20a123a93f27bf936708572748a6777ff0730ab329528cdb002538569",
+    "precommit-review.json": "1c75bb7a754c166ea29d63b375f7931885b7f9a17ec8a969019112c483e19699",
+    "release-summary.json": "556f1c7edb2fd6805d2a339b77c6514943ab9ab351a60ae949743cb718b27e26",
+    "launch-reviewed.py": "3f9abf9f7f54f51f9b5358aeb6fcc088f3dca44579d2aedc023c07097291ac95",
+    "VPS-TERMINAL-PACKAGE-PREFLIGHT.sh": "792c89edc0fbd2983294c6a1498ef12d2a9dba202af6cf44807489e73052ed64",
+    "preflight-baseline.py": "327398d434544e9dd4a26becbb656987d92a923ef9ca689a016e72830f68c5a0",
+    "staging-build-url-audit.json": "ce167399bcc583a3e7a8a8385ebc3ff17ee0158a0f62c70c4948a081cf2abeb8",
+    "staging-build-log-preservation.json": "7a643dc0b940d139a9e37c9b9261ec4f228a43f84c006998fc56d139ccdae638",
+    "operator-package-preflight-pass.json": "ef563646c7d0704c42b2bc858efe758b924f6302505d07f1b002ed48f381584d",
+    "deploy-reviewed.py": "97a139c9892e831b251ada16eb80c13a94ff2078df3030e8ab8b7b38fffd1c87",
+    "VPS-TERMINAL-BASELINE.sh": "50c016c03782f1e1f854fcd1fcb6a14d895a0aa920267bed3fd51776976fd011",
+    "operator-baseline-pass.json": "e29bfbae95bd688d9e49a3802f51e3f6db88a5c5f5b15d1800f664f40d397586",
+    "operator-deploy-closure-pass.json": "6cbda1f8db7787a8c1dd0dc83f9fc363a5834a03a9878876a0d4a25947e382d8",
+    "staging-build-attempt.json": "aba91aaa2b6779dbada065f794fc4e7a5f60599cb38e55d463aa15a7c61602df",
+    "VPS-TERMINAL-PACKAGE-PREFLIGHT-V2.sh": "935773479d5434c1c01bdb3ad16fc6840119d6890622da1631d0a23af8d4d9f9",
+    "artifact-manifest.json": "e35561c0986e8c97c3b18de024634952bc1938b0de098f0917b4dd7fb55abf8a",
+    "launch-reviewed.diff": "fbc3e1383d939cb6e05635bc1e2c2b03b2e122111190660469e7b378964e3f69",
+    "package-preflight-reviewed.diff.metadata.json": "bf2b09ff7837bcfe6d3f880c4398ddde396aaf6a16bd53f02fe8e59cfa4a990b",
+    "git-outcome.json": "2bfc2a4ea2f3e22e1e076d5ef8791e49d5b367fa931f5466af60dd64e1c2f0ab",
+    "package-preflight.py": "52ebd2e0f191e76aeb85e189f817494f42a51b8267c3e559382f32186691f253",
+    "package-preflight-reviewed.diff": "450ccf20d24898b9985fa177907e2667bc8f4c2a7333fe61aa573ef51d3b5779",
+    "audit-package.py": "d57c3811da8ce1032fd941aaf16fe6bb7f12e653992c32c8bbdc5e2893d22632",
+    "staging-ui-access-status.json": "8e832f6eb5c47be54886a5c912acb57cd887434c25eccdd94de01e6fbfdc7889",
+    "package-preflight-v2.py": "dfba16c911191e2b4f887bc05fa42079bdd0bf34b51909f10e81afda01a84f4c",
+    "package-preflight-v2-reviewed.diff": "bd5647edba4207052084eb941da3fdaad3e8ab9d0ed16b6aad01e95668ced5c0",
+    "operator-package-preflight-stop-01.json": "3fbe173d0a9bdd38dcd3ef2a9b8074d636e7623436d35740f0f40f5c2deac1fe",
+    "public-https-build-readback.json": "7492d5bc00045386d614f4d8541d1a5f4bdd356af4cdf059b4a55683586b7881",
+    "deploy-helper-reviewed.diff": "10d52701f69797fd34c022845a32bd9ea5d930a106be4213da871d05cbea2da5",
+    "staging-read-only-ui-review.json": "3dd296a29bc9fa55696ce33511d6a100e63daa8a8abe1fd16ca7a36fd54d1228",
+    "VPS-TERMINAL-DEPLOY.sh": "289e544fdeed486bc4bab9c6a5983a2b2d81ff5c1404fb8381a82424643774ab",
+    "deploy-helper-reviewed.diff.metadata.json": "9670849580b1fd6b473f54ef86a1f72d9a9fbbabd59a3d86062e45a3e17f2c86",
+    "local/source-manifest.json": "e7721bc591ed63da8d1952454d3c054d250ddd7a6ecf7e241d353eb9b87253f6",
+    "local/pdf-focused-recheck.log": "78e5ea9ca2cbd50943ff8d5ed96fb2b14195c38b0b02ff9f718d969ba0b760b5",
+    "local/typescript.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "local/focused-tests.log": "1d1ac2ca5e37eabc4776eae3d3fbee280ce9a008b211455f08a3f5fcd834f9a5",
+    "local/csv-hr-1440.png": "560e535994badbe4aa0965f74f3c8b2feee945dca123c06d1dd4b74576f58a76",
+    "local/lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "local/publish-bottom-375.png": "db776b7cf7dabddb92ac53254a2b35ea58da07fa8e71786a2884a8c3bb3b0707",
+    "local/csv-preview-mobile.png": "d4e0ae1d84b13c429c74aab21e80967d6bc8401004c0400e4ae42b6e20f0888d",
+    "local/billing-de-375.png": "82aae0655f8f0ef1967904bdb669f38eb4c19c9757e33f0692a3d1edf1ca9c67",
+    "local/forms-hr-1440.png": "1ce329cbc3fb28752a355fce0abf42f3d45e72e9878dea3c5b52eb8c0d3bd68f",
+    "local/pdf-selected.png": "6447fc70e12c069f1d6b5f76cc6db49fdcc04b392e10acabda477cf534ad4b4c",
+    "local/billing-hr-1440.png": "47cce9b2b7e24e8ef5268a9f06d3a81cf25ea3d0b3c2701e24f608b84dc4b694",
+    "local/final-build-css-readback.json": "fa062bc39c7ad13256aef2730095b9c9e367364b3c41b8f523761c5828006e8b",
+    "local/csv-preview-desktop.png": "69cd25211d50284a55557991ae898196b83306d8e8d34300fa28fa4436a09022",
+    "local/forms-hr-375.png": "20c3a35ea03d4d53573d4fcf5533c89d24d5688cf9f5c51d28358190507d9d3d",
+    "local/subscription-hr-1440.png": "f1ac3d4584ba79e33a2a821f918421fa6c0d02fe0f4c153ad25de11c7ca26dfa",
+    "local/REVIEW.md": "e030b99f4b42867feea31393979b840ae0d6b685c9e95fe94e1de4bd687a1da1",
+    "local/dpp-1440.png": "2685cdb689614b5eddb93867d998d9a6c01e4d6445c1a120f647df17d0efc225",
+    "local/csv-mapping-desktop.png": "b7c59d1cd826c04f9f3511f9e02bae0d4c0f06d570f83faf48397b73f55074b0",
+    "local/subscription-hr-375.png": "623059d1b9792f8a7e707694b536979514cf40517b110d4ff265cd5d85db9824",
+    "local/visual-results.json": "bf6fb4ac15f532e8d29369c3fc08bafd6cf57329c2a4a817ad540592457e3e4c",
+    "local/log-normalization.json": "3f932fa87c42cba2495e08df8779c4e9515542b7546a49a9ca24f0cf5dbd62ef",
+    "local/build.log": "8f30132e257a30cf91bd9d09bceaee0a1c6d74f66ece9c44d3a3092c58ed2899"
+  },
+  "stagingBuild": {
+    "buildId": "o881QhduK5s1O2SuiT9jr",
+    "members": 839,
+    "archiveSha256": "450393413b0153b933edaf234e0e46bcfaf4cd6e42e3ae2362754a43ec084930",
+    "artifactManifestSha256": "e35561c0986e8c97c3b18de024634952bc1938b0de098f0917b4dd7fb55abf8a",
+    "bytes": 7413721,
+    "sourceCommit": "45a04f6a202b9867ade081657ca545f9f19232ea",
+    "publicAssetMutation": "NONE_ALL_RETAINED",
+    "canonicalMetadata": "PASS_36_SETS",
+    "generatedTextResponsesScanned": 264,
+    "bundledDependencies": {
+      "barcodeMembers": [
+        ".next/server/chunks/6074.js"
+      ],
+      "csvMembers": [
+        ".next/server/app/api/products/import/route.js"
+      ],
+      "noExternalImports": true,
+      "tracesChecked": 83
+    },
+    "result": "PASS",
+    "origin": "https://staging.passvero.eu",
+    "settings": "confirmed-build-settings.json",
+    "artifactManifest": "artifact-manifest.json",
+    "packagePath": "/tmp/passvero-dashboard-release-20261027/application.tar.gz",
+    "sourceHashes": "22_MATCH_COMMIT_45a04f6",
+    "legalNamespaces": "UNCHANGED_FROM_DEPLOYED_OPERATOR_VERIFIED",
+    "metadata": "PASS_NO_PREVIEW_OR_LOCALHOST_IN_RELEVANT_OUTPUTS",
+    "uploadedPackageHashesVerified": true,
+    "vpsUploadDirectory": "/tmp/passvero-dashboard-ui-release-20261027"
+  },
+  "oneStagingBuildAuthorizationConsumed": true,
+  "localPreparationCorrection": "Python3.9 archive extraction compatibility fixed before build; no failed build, source or environment change",
+  "packagePreflight": {
+    "path": "package-preflight.py",
+    "sha256": "52ebd2e0f191e76aeb85e189f817494f42a51b8267c3e559382f32186691f253",
+    "status": "HISTORICAL_STOP_SUPERSEDED_BY_V2_PASS",
+    "newPublicAssets": 0,
+    "sourceChangesSinceBuild": false,
+    "operatorCommand": "VPS-TERMINAL-PACKAGE-PREFLIGHT.sh",
+    "canonicalMembersRetained": 13
+  },
+  "packagePreflightV2": {
+    "path": "package-preflight-v2.py",
+    "sha256": "dfba16c911191e2b4f887bc05fa42079bdd0bf34b51909f10e81afda01a84f4c",
+    "scope": "Keep exact13 retained canonical entries unchanged and disjoint from new package; remove incorrect public-only classification; return actual path inventory",
+    "originalHelperRetainedSha256": "52ebd2e0f191e76aeb85e189f817494f42a51b8267c3e559382f32186691f253",
+    "originalStopEvidence": "operator-package-preflight-stop-01.json",
+    "archiveAndArtifactUnchanged": true,
+    "testsBuildRepeated": false,
+    "operatorExecuted": true,
+    "uploadedHashVerified": true,
+    "operatorCommand": "VPS-TERMINAL-PACKAGE-PREFLIGHT-V2.sh",
+    "status": "PASS_READ_ONLY_EXACT_PACKAGE_AND_RELEASE",
+    "evidence": "operator-package-preflight-pass.json"
+  },
+  "deployPlan": {
+    "oldBuild": "RVDJVB4UmvCtP7UnxGKi2",
+    "newBuild": "o881QhduK5s1O2SuiT9jr",
+    "newCanonicalSha256": "44ce5b70fa98620b0c9166e1a666e2a750c881c039bbfac64a8d7c052bb9cefa",
+    "newConfigSha256": "6bec53494e9b81485c27684f981c80bd57628da6f80d677f2c4aa55ce4734c04",
+    "configKeysChanged": [
+      "buildId",
+      "canonicalSha256"
+    ],
+    "retainedCanonicalInventory": [
+      ".controlled-onboarding/review-access-requests.mjs",
+      ".onboarding-flow/onboarding-access.cjs",
+      ".onboarding-flow/review-access-requests.cjs",
+      "public/marketing/dashboard-preview-restored.png",
+      "public/marketing/flags/LICENSE",
+      "public/marketing/flags/de.svg",
+      "public/marketing/flags/gb.svg",
+      "public/marketing/flags/hr.svg",
+      "public/marketing/flags/pl.svg",
+      "public/marketing/flags/rs.svg",
+      "public/marketing/flags/si.svg",
+      "public/marketing/hero-passport-restored.png",
+      "public/marketing/passvero-logo.png"
+    ],
+    "retainedPublicFiles": 10,
+    "retainedOnboardingFiles": 3,
+    "deployHelperSha256": "97a139c9892e831b251ada16eb80c13a94ff2078df3030e8ab8b7b38fffd1c87",
+    "launchHelperSha256": "3f9abf9f7f54f51f9b5358aeb6fcc088f3dca44579d2aedc023c07097291ac95",
+    "rollbackLocation": "/var/lib/passvero-dashboard-ui-deploy-20261027",
+    "rollbackStatus": "PREPARED_NOT_EXECUTED",
+    "publicAssetSwap": false,
+    "onboardingFilesExecutedOrModified": false,
+    "privilegedActionsExecutedByAssistant": false,
+    "launchGuard": "Fresh idle and >1200sec until backup/monitor terms before creating namespace; >900sec before swap; existing exclusive lock",
+    "closure": "Independent bounded-unit ExecStopPost; exact old artifact/config paired rollback on unsuccessful body",
+    "timers": "Only existing backup/monitor coordinated and restored; reminders unchanged; no manual worker execution"
+  },
+  "deployResult": {
+    "evidence": "operator-deploy-closure-pass.json",
+    "buildId": "o881QhduK5s1O2SuiT9jr",
+    "canonicalMembers": 852,
+    "canonicalSha256": "44ce5b70fa98620b0c9166e1a666e2a750c881c039bbfac64a8d7c052bb9cefa",
+    "configSha256": "6bec53494e9b81485c27684f981c80bd57628da6f80d677f2c4aa55ce4734c04",
+    "runtime": {
+      "cwd": "/var/www/passvero-acceptance",
+      "name": "passvero-acceptance",
+      "pid": 858670,
+      "pmId": 0,
+      "status": "online"
+    },
+    "release": "NEW_ALIGNED",
+    "backupStateUnchanged": true,
+    "backupMonitorBaselineRestored": true,
+    "writerTimerUnchanged": true,
+    "rollbackStatus": "PREPARED_NOT_EXECUTED",
+    "rollbackLocation": "/var/lib/passvero-dashboard-ui-deploy-20261027",
+    "previousHistory": "RETAINED_UNCHANGED",
+    "captureRestoreWorkerSmtpTelegramCalls": 0,
+    "unitReturnCode": 0
+  },
+  "publicReadback": "public-https-build-readback.json",
+  "uiAccess": "staging-ui-access-status.json",
+  "stagingUiEvidence": "staging-read-only-ui-review.json",
+  "statuses": {
+    "STAGING_DEPLOY": "PASS",
+    "USER_FINAL_UI_REVIEW": "PENDING",
+    "BUSINESS_RULES_CHANGED": "NO",
+    "BACKUP_ACCEPTANCE_REPEATED": "NO",
+    "PRODUCTION_DEPLOY_PERFORMED": "NO"
+  }
+}

@@ -1,0 +1,110 @@
+--- accepted-marketing-package-preflight
++++ dashboard-package-preflight
+@@ -16,16 +16,15 @@
+ CODE = P('/usr/local/libexec/passvero-staging-backup')
+ ROOT = P('/var/lib/passvero-staging-recovery')
+ CANONICAL = P('/var/lib/passvero-onboarding-deploy-2cb9d6e/application/manifest.json')
+-INPUT = P('/tmp/passvero-marketing-ui-release-20261021')
+-OLD_BUILD = '_tkSUOn0PCoHjpx8V7FVr'
+-OLD_CANONICAL = 'e30e2afa0dc470b149f94f4437d032603a7cf7cfeb66fdc1a6b39b11fe52f590'
+-OLD_CONFIG = 'a79c6c856d5bb75fe17be7f47ec2e700250a6b9f3d916eed9dc08f76b328c839'
+-NEW_BUILD = 'RVDJVB4UmvCtP7UnxGKi2'
+-ARTIFACT = 'd8d63fb009d6c0db28ac02826e65be7dd7ff0c1c1f1008ff918c9a5d6247fe1f'
+-ARCHIVE = '866a4ddcf930c23202dd1e041af1ce60130b42315d970d6eb6c7a29e1e33dc0c'
++INPUT = P('/tmp/passvero-dashboard-ui-release-20261027')
++OLD_BUILD = 'RVDJVB4UmvCtP7UnxGKi2'
++OLD_CANONICAL = 'e8fd04e3716ca71d1f9f32e88176897718739fedd48ff29afba5c2cd0093f467'
++OLD_CONFIG = 'a85326aea9316f6bc94ee255f33956f062b8788a0f3d74cefe3075ed9f1d1e7f'
++NEW_BUILD = 'o881QhduK5s1O2SuiT9jr'
++ARTIFACT = 'e35561c0986e8c97c3b18de024634952bc1938b0de098f0917b4dd7fb55abf8a'
++ARCHIVE = '450393413b0153b933edaf234e0e46bcfaf4cd6e42e3ae2362754a43ec084930'
+ CHECK_ID = 'HOST'
+-PUBLIC_ASSET_FILES = ('public/marketing/flags/LICENSE', 'public/marketing/flags/de.svg', 'public/marketing/flags/gb.svg', 'public/marketing/flags/hr.svg', 'public/marketing/flags/pl.svg', 'public/marketing/flags/rs.svg', 'public/marketing/flags/si.svg', 'public/marketing/passvero-logo.png')
+-OLD_LOGO = 'aa8ada632a5cc358731896f68d336e82cb27f318e367363c757c7c3fb713184d'
++PUBLIC_ASSET_FILES = ()
+
+
+ def require(value, reason):
+@@ -62,7 +61,7 @@
+     require(digest(artifact_bytes) == ARTIFACT, 'ARTIFACT_MANIFEST_CHANGED')
+     artifact = json.loads(artifact_bytes)
+     require(digest(regular(INPUT / 'application.tar.gz')) == ARCHIVE, 'ARCHIVE_CHANGED')
+-    require(artifact['buildId'] == NEW_BUILD and len(artifact['files']) == 847, 'NEW_RELEASE_CHANGED')
++    require(artifact['buildId'] == NEW_BUILD and len(artifact['files']) == 839, 'NEW_RELEASE_CHANGED')
+     # Exact accepted staging dependency baseline, distinct from local build inputs.
+     require(digest(regular(APP / 'package.json')) ==
+             'df4c1ac1b1d409c5db06c9614fc2a2cf8c5fe4fb4c6daa13f1ed3b88088ddd6e', 'STAGING_PACKAGE_CHANGED')
+@@ -74,7 +73,7 @@
+                 'INSTALLED_RUNTIME_DEPENDENCY_CHANGED')
+     with tarfile.open(INPUT / 'application.tar.gz') as archive:
+         members = archive.getmembers()
+-        require(len(members) == 847 and {item.name for item in members} == set(artifact['files']), 'ARCHIVE_INVENTORY')
++        require(len(members) == 839 and {item.name for item in members} == set(artifact['files']), 'ARCHIVE_INVENTORY')
+         for item in members:
+             require(item.isfile() and (item.name.startswith(('.next/', 'messages/')) or item.name in PUBLIC_ASSET_FILES)
+                     and not P(item.name).is_absolute() and '..' not in P(item.name).parts, 'ARCHIVE_PATH_SCOPE')
+@@ -99,8 +98,6 @@
+             name = 'messages/' + locale + '.json'
+             require(json.loads(archive.extractfile(name).read())['Legal'] == json.loads(regular(APP / name))['Legal'],
+                     'DEPLOYED_LEGAL_NAMESPACE_DIFFERS_STOP_REVIEW')
+-    require(digest(regular(APP / 'public/marketing/passvero-logo.png')) == OLD_LOGO, 'CURRENT_LOGO_CHANGED')
+-    require(not (APP / 'public/marketing/flags').exists() and not (APP / 'public/marketing/flags').is_symlink(), 'FLAG_TARGET_ALREADY_PRESENT')
+     CHECK_ID = 'CURRENT_RELEASE_AND_BACKUP_PINS'
+     old_bytes = regular(CANONICAL)
+     require(digest(old_bytes) == OLD_CANONICAL, 'CURRENT_CANONICAL_CHANGED')
+@@ -125,12 +122,13 @@
+     state = json.loads(state_bytes)
+     require(state['mode'] == 'CONTINUOUS' and state['hold'] is False and state['attempt']['complete'], 'BACKUP_NOT_CONTINUOUS_READY')
+     units = {name: unit(name) for name in ('passvero-staging-backup.timer', 'passvero-staging-backup-monitor.timer',
+-             'passvero-staging-backup.service', 'passvero-subscription-reminders.timer', 'passvero-subscription-reminders.service')}
++             'passvero-staging-backup.service', 'passvero-staging-backup-monitor.service', 'passvero-subscription-reminders.timer', 'passvero-subscription-reminders.service')}
+     for name in ('passvero-staging-backup.timer', 'passvero-staging-backup-monitor.timer'):
+         require(units[name]['ActiveState'] == 'active' and units[name]['UnitFileState'] == 'enabled', 'BACKUP_TIMER_BASELINE_CHANGED')
+-    require(units['passvero-staging-backup.service']['ActiveState'] in ('inactive', 'failed'), 'BACKUP_ACTIVE_STOP')
++    for name in ('passvero-staging-backup.service','passvero-staging-backup-monitor.service','passvero-subscription-reminders.service'):
++        require(units[name]['ActiveState'] == 'inactive', 'AUTOMATION_JOB_NOT_IDLE_STOP')
+     active = command(['/usr/bin/systemctl', 'list-units', '--all', '--plain', '--no-legend',
+-                      'passvero-stage*restore*.service', 'passvero-stage*capture*.service', 'passvero-stage*resume*.service'])
++                      'passvero-stag*restore*.service', 'passvero-stag*capture*.service', 'passvero-stag*resume*.service', 'passvero-stag*recovery*.service'])
+     require(not any(len(line.split()) >= 4 and line.split()[2] in ('active', 'activating', 'deactivating')
+                     for line in active.splitlines()), 'RECOVERY_UNIT_ACTIVE_STOP')
+     for entry in P('/proc').iterdir():
+@@ -140,7 +138,7 @@
+             args = (entry / 'cmdline').read_bytes().split(b'\0')
+         except (FileNotFoundError, ProcessLookupError):
+             continue
+-        require(not any(arg.startswith(str(ROOT / 'restore').encode()) or arg.startswith(str(CODE).encode())
++        require(not any(arg.startswith(str(ROOT).encode()) or arg.startswith(str(CODE).encode())
+                         or re.search(rb'/(?:capture|restore-database|verify-application)-[^/]+\.py$', arg)
+                         for arg in args), 'RECOVERY_PROCESS_ACTIVE_STOP')
+     fd = os.open(ROOT / 'recurring/job.lock', os.O_RDONLY | os.O_NOFOLLOW)
+@@ -159,12 +157,13 @@
+     CHECK_ID = 'EXACT_CANDIDATE_PINS'
+     updated = dict(prior)
+     updated['build_id'] = NEW_BUILD
+-    updated['marketing_artifact_manifest_sha256'] = ARTIFACT
++    updated['dashboard_artifact_manifest_sha256'] = ARTIFACT
+     updated['files'] = {name: item for name, item in prior['files'].items() if not name.startswith(('.next/', 'messages/'))}
+-    for name in ('public/marketing/hero-passport-restored.png', 'public/marketing/dashboard-preview-restored.png'):
+-        require(name in prior['files'] and name not in artifact['files']
+-                and updated['files'].get(name) == prior['files'][name], 'RETAINED_ILLUSTRATION_MANIFEST_CHANGED')
+-        require(digest(regular(APP / name)) == prior['files'][name]['sha256'], 'RETAINED_ILLUSTRATION_BYTES_CHANGED')
++    require(not any(name.startswith('public/') for name in artifact['files']), 'PUBLIC_ASSET_PACKAGE_SCOPE')
++    retained = {name: item for name,item in prior['files'].items() if not name.startswith(('.next/','messages/'))}
++    require(len(retained)==13 and all(name.startswith('public/') for name in retained), 'RETAINED_PUBLIC_INVENTORY_CHANGED')
++    for name,item in retained.items():
++        require(digest(regular(APP/name))==item['sha256'], 'RETAINED_PUBLIC_ASSET_DRIFT')
+     updated['files'].update(artifact['files'])
+     candidate_bytes = (json.dumps(updated, sort_keys=True, indent=2) + '\n').encode()
+     new_config = dict(config)
+@@ -178,10 +177,10 @@
+         'oldBuild': OLD_BUILD, 'newBuild': NEW_BUILD, 'oldCanonicalSha256': OLD_CANONICAL,
+         'newCanonicalSha256': digest(candidate_bytes), 'oldConfigSha256': OLD_CONFIG,
+         'newConfigSha256': digest(new_config_bytes), 'configKeysChanged': ['buildId', 'canonicalSha256'],
+-        'retainedCanonicalFiles': len(updated['files']) - 847, 'newArtifacts': 847,
++        'retainedCanonicalFiles': len(updated['files']) - 839, 'newArtifacts': 839,
+         'currentRuntime': process, 'backupStateSha256': digest(state_bytes),
+         'mode': state['mode'], 'hold': state['hold'], 'attempts': state['attempts'], 'units': units,
+-        'oldLogoSha256': OLD_LOGO, 'flagDirectory': 'ABSENT_CONFIRMED', 'legalNamespaces': 'UNCHANGED_FROM_DEPLOYED', 'mutations': 'NONE',
++        'publicAssets': 'ALL_13_CANONICAL_PUBLIC_MEMBERS_RETAINED_UNCHANGED', 'legalNamespaces': 'UNCHANGED_FROM_DEPLOYED', 'mutations': 'NONE', 'newRollbackLocation': '/var/lib/passvero-dashboard-ui-deploy-20261027',
+         'captureRestoreWorkerSmtpTelegramCalls': 0}, sort_keys=True, indent=2))
