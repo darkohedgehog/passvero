@@ -150,7 +150,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           {search ? <a href={getPathname({ locale, href: "/dashboard/products" })} className="rounded-lg border px-4 py-2 text-sm">{productsT("searchClear")}</a> : null}
         </div>
       </form>
-      {hasProductPermission(resolution.context, PRODUCT_CREATE) && hasProductPermission(resolution.context, "PRODUCT_EDIT") ? <details id="catalog-import" open={query.action === "import"} className="mb-6 scroll-mt-6"><summary className="cursor-pointer rounded-lg border px-4 py-2 text-sm">{productsT("import")}</summary><CatalogImport /></details> : null}
+      {hasProductPermission(resolution.context, PRODUCT_CREATE) && hasProductPermission(resolution.context, "PRODUCT_EDIT") ? <details id="catalog-import" open={query.action === "import"} className="mb-6 scroll-mt-6"><summary className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-sm">{productsT("import")}</summary><CatalogImport /></details> : null}
       <div id="catalog-export" className="scroll-mt-6"><CatalogExportAction search={search} labels={{ button: productsT("export.button"), pending: productsT("export.pending"), all: productsT("export.all"), filtered: productsT("export.filtered"), versionHelp: productsT("export.versionHelp"), textHelp: productsT("export.textHelp"), failure: productsT("export.failure"), limit: productsT("export.limit") }} /></div>
       <ProductListPresentation
         items={result.items}
