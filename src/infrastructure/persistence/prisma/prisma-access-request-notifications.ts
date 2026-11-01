@@ -34,8 +34,8 @@ export class PrismaAccessRequestNotifications {
       if (!settings || (!settings.enabled && !operator) || settings.recipientEmail !== row.recipientEmail)
         return { send: false as const, status: row.status };
       if (!operator) {
-        // Automatic sends are staging-only, new-request-only and never retry.
-        if (this.canonicalOrigin !== "https://staging.passvero.eu" || retry)
+        // Automatic sends require an approved origin and a new-request policy; never retry.
+        if (!["https://staging.passvero.eu", "https://passvero.eu"].includes(this.canonicalOrigin) || retry)
           return { send: false as const, status: row.status };
         const request = await tx.accessRequest.findUnique({ where: { id: requestId }, select: {
           createdAt: true, email: true, contactName: true, organizationDisplayName: true, locale: true,
