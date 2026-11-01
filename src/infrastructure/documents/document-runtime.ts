@@ -28,8 +28,11 @@ function createRuntime() {
   const prisma = getProductionPrismaClient(); // Runtime DB validator rejects mixed staging endpoints.
   const persistence = new PrismaDocumentPersistence(prisma);
   const canonicalOrigin = getCanonicalAppOrigin();
-  const enabled = () => process.env.PASSVERO_RUNTIME_ENV === "staging"
+  const stagingAcceptanceEnabled = () => process.env.PASSVERO_RUNTIME_ENV === "staging"
     && canonicalOrigin === "https://staging.passvero.eu" && process.env.DOCUMENT_SCAN_ENABLED === "true";
+  const enabled = () => stagingAcceptanceEnabled()
+    || (process.env.PASSVERO_RUNTIME_ENV === "production"
+      && canonicalOrigin === "https://passvero.eu" && process.env.DOCUMENT_SCAN_ENABLED === "true");
   let config: ReturnType<typeof parseDocumentScanConfig> | undefined;
   if (enabled()) {
     try { config = parseDocumentScanConfig(JSON.parse(process.env.DOCUMENT_SCAN_CONFIG ?? "")); }
@@ -43,7 +46,7 @@ function createRuntime() {
     health: () => { if (!health) throw new Error("SIGNATURES_UNTRUSTED"); return health; },
   });
   const recover = createDocumentScanRecovery(scanPersistence);
-  const uploadPersistence = enabled() ? withStagingUiAcceptance(persistence, new PrismaAcceptanceCleanup(prisma)) : persistence;
+  const uploadPersistence = stagingAcceptanceEnabled() ? withStagingUiAcceptance(persistence, new PrismaAcceptanceCleanup(prisma)) : persistence;
   const services = createDocumentServices({ storage, persistence: uploadPersistence, health });
   const transport = { canonicalOrigin, verifyProxy: verifyRuntimeProxy, resolveContext: resolveAuthenticatedUserContext };
   return { ...createDocumentHttpHandlers({ services, ...transport }),

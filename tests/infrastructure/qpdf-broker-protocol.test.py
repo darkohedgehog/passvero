@@ -13,9 +13,13 @@ class Protocol(unittest.TestCase):
     def test_peer_identity_not_group_or_payload_authorizes_caller(self):
         connection = Mock()
         with patch.object(broker.socket, 'SO_PEERCRED', 17, create=True):
-            for uid, expected in [(1001, True), (0, False), (999, False), (1000, False)]:
-                connection.getsockopt.return_value = struct.pack('3i', 1, uid, 1001)
-                self.assertEqual(broker.authorized(connection, 1001), expected)
+            for callers, cases in [
+                ((1001,), [(1001, True), (0, False), (999, False), (1000, False)]),
+                ((1001, 1000), [(1001, True), (1000, True), (0, False), (999, False)]),
+            ]:
+                for uid, expected in cases:
+                    connection.getsockopt.return_value = struct.pack('3i', 1, uid, 1001)
+                    self.assertEqual(broker.authorized(connection, callers), expected)
     def test_arbitrary_operation_and_size_rejected_before_filesystem_or_spawn(self):
         for header in [b'SHELLxxx', b'PVQ1'+struct.pack('!I', 0), b'PVQ1'+struct.pack('!I', broker.LIMIT+1)]:
             client, server = socket.socketpair()

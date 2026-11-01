@@ -205,9 +205,9 @@ def validate(connection, account, receipt=None):
             os._exit(70)  # No subsequent request after failed private cleanup
 
 
-def authorized(connection, caller):
+def authorized(connection, callers):
     _, uid, _ = struct.unpack('3i', connection.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))
-    return uid == caller
+    return uid in callers
 
 
 def start_ticks(pid):
@@ -248,7 +248,10 @@ def main():
     assert os.environ.get('LISTEN_PID') == str(os.getpid())
     assert os.environ.get('LISTEN_FDS') == '1'
     account = pwd.getpwnam('passvero-qpdf')
-    caller = pwd.getpwnam('passvero-staging').pw_uid
+    # Candidate: UID 1000 is the P0 production UID, pending explicit owner approval.
+    staging_uid = pwd.getpwnam('passvero-staging').pw_uid
+    assert staging_uid == 1001
+    callers = (staging_uid, 1000)
     server = socket.socket(fileno=3)
     # Single worker and finite kernel backlog; no application queue or threads.
     server.listen(1)
@@ -256,7 +259,7 @@ def main():
     while True:
         connection, _ = server.accept()
         with connection:
-            if not authorized(connection, caller):
+            if not authorized(connection, callers):
                 continue
             result = serve_request(connection, account, history)
             try:

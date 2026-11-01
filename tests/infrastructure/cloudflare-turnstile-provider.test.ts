@@ -10,6 +10,7 @@ test("lazily verifies a risk-triggered token against the fixed provider endpoint
     init?: RequestInit;
   }>> = [];
   const verifier = createLazyCloudflareTurnstileVerifier({
+    readExpectedHostname: () => "passvero.eu",
     readSecretKey() {
       secretReads += 1;
       return "test_secret_key_0123456789abcdef";
@@ -19,7 +20,7 @@ test("lazily verifies a risk-triggered token against the fixed provider endpoint
       return {
         ok: true,
         async json() {
-          return { success: true, action: "auth_sign_in" };
+          return { success: true, action: "auth_sign_in", hostname: "passvero.eu" };
         },
       };
     },
@@ -49,6 +50,7 @@ test("lazily verifies a risk-triggered token against the fixed provider endpoint
 test("fails closed before provider access for an invalid secret", async () => {
   let requests = 0;
   const verifier = createLazyCloudflareTurnstileVerifier({
+    readExpectedHostname: () => "passvero.eu",
     readSecretKey() {
       return "invalid secret";
     },
@@ -68,4 +70,17 @@ test("fails closed before provider access for an invalid secret", async () => {
       && !error.message.includes("invalid secret"),
   );
   assert.equal(requests, 0);
+});
+
+// New candidate hostname contract only; all provider I/O below is a local double.
+test("W1 production hostname admits exact response and rejects missing/mismatched hostname", async () => {
+  for (const hostname of ["passvero.eu", undefined, "staging.passvero.eu"]) {
+    const verifier = createLazyCloudflareTurnstileVerifier({
+      readSecretKey: () => "synthetic_secret_key_0123456789abcdef",
+      readExpectedHostname: () => "passvero.eu",
+      request: async () => ({ ok: true, json: async () => ({ success: true, action: "auth_sign_in", ...(hostname === undefined ? {} : { hostname }) }) }),
+    });
+    const result = await verifier.verify({ token: "synthetic-token", expectedAction: "auth_sign_in" });
+    assert.equal(result.valid, hostname === "passvero.eu");
+  }
 });

@@ -9,8 +9,11 @@ import { parseDocumentScanConfig } from "../documents/document-scan-config";
 import { createSignatureHealthProvider } from "../documents/signature-health-reader";
 
 export function publicDocumentDeliveryEnabled() {
-  return process.env.PASSVERO_RUNTIME_ENV === "staging" && process.env.DOCUMENT_SCAN_ENABLED === "true"
-    && getCanonicalAppOrigin() === "https://staging.passvero.eu";
+  return process.env.DOCUMENT_SCAN_ENABLED === "true"
+    && ((process.env.PASSVERO_RUNTIME_ENV === "staging"
+      && getCanonicalAppOrigin() === "https://staging.passvero.eu")
+      || (process.env.PASSVERO_RUNTIME_ENV === "production"
+        && getCanonicalAppOrigin() === "https://passvero.eu"));
 }
 let service: ReturnType<typeof createPublicDocumentService> | undefined;
 export function getPublicDocumentService() {

@@ -14,6 +14,7 @@ type ProviderRequest = (
 
 export function createLazyCloudflareTurnstileVerifier(input: Readonly<{
   readSecretKey(): unknown;
+  readExpectedHostname(): unknown;
   request: ProviderRequest;
 }>): TurnstileVerifier {
   let verifier: TurnstileVerifier | undefined;
@@ -28,9 +29,14 @@ export function createLazyCloudflareTurnstileVerifier(input: Readonly<{
 
 function createProviderVerifier(input: Readonly<{
   readSecretKey(): unknown;
+  readExpectedHostname(): unknown;
   request: ProviderRequest;
 }>): TurnstileVerifier {
   const secretKey = validateSecretKey(input.readSecretKey());
+  const expectedHostname = input.readExpectedHostname();
+  if (expectedHostname !== "passvero.eu" && expectedHostname !== "staging.passvero.eu") {
+    throw new Error("Turnstile verification is unavailable.");
+  }
 
   return createTurnstileVerifierAdapter({
     async verifyProvider(request) {
@@ -52,7 +58,13 @@ function createProviderVerifier(input: Readonly<{
       if (!response.ok) {
         throw new Error("Turnstile provider request failed.");
       }
-      return response.json();
+      const result: unknown = await response.json();
+      if (typeof result === "object" && result !== null
+        && "success" in result && result.success === true
+        && (!("hostname" in result) || result.hostname !== expectedHostname)) {
+        return { success: false };
+      }
+      return result;
     },
   });
 }
