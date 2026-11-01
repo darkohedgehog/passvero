@@ -1,5 +1,6 @@
 import { constants } from "node:fs";
 import { lstat, open } from "node:fs/promises";
+import { dirname } from "node:path";
 import { z } from "zod";
 import { accessRequestSchema } from "@/src/application/auth/access-request";
 
@@ -15,12 +16,15 @@ export type OnboardingNotificationPolicy = z.infer<typeof onboardingNotification
 export type OnboardingNotificationPolicyReader = () => Promise<OnboardingNotificationPolicy | null>;
 
 /** Operator-owned policy; absent/invalid policy fails closed without exposing file contents. */
-export async function readOnboardingNotificationPolicy(): Promise<OnboardingNotificationPolicy | null> {
+export async function readOnboardingNotificationPolicy(canonicalOrigin?: string): Promise<OnboardingNotificationPolicy | null> {
+  const policyPath = canonicalOrigin === "https://staging.passvero.eu" ? onboardingNotificationPolicyPath
+    : canonicalOrigin === "https://passvero.eu" ? "/var/lib/passvero-production-onboarding-notifications/policy.json" : null;
+  if (!policyPath) return null;
   let file;
   try {
-    const directory = await lstat("/var/lib/passvero-onboarding-notifications");
+    const directory = await lstat(dirname(policyPath));
     if (!directory.isDirectory() || directory.isSymbolicLink() || directory.uid !== 0 || (directory.mode & 0o022) !== 0) return null;
-    file = await open(onboardingNotificationPolicyPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+    file = await open(policyPath, constants.O_RDONLY | constants.O_NOFOLLOW);
     const info = await file.stat();
     if (!info.isFile() || info.uid !== 0 || (info.mode & 0o022) !== 0 || info.size > 8192) return null;
     return onboardingNotificationPolicySchema.parse(JSON.parse(await file.readFile("utf8")));

@@ -12,7 +12,7 @@ export async function prepareAdminNotification(tx: Prisma.TransactionClient, req
   return true;
 }
 export class PrismaAccessRequestNotifications {
-  constructor(private readonly db: PrismaClient, private readonly canonicalOrigin: string, private readonly policyReader: OnboardingNotificationPolicyReader = readOnboardingNotificationPolicy) { }
+  constructor(private readonly db: PrismaClient, private readonly canonicalOrigin: string, private readonly policyReader: OnboardingNotificationPolicyReader = () => readOnboardingNotificationPolicy(canonicalOrigin)) { }
   async prepare(requestId: string) {
     accessRequestIdSchema.parse(requestId);
     return this.db.$transaction(async (tx) => {
