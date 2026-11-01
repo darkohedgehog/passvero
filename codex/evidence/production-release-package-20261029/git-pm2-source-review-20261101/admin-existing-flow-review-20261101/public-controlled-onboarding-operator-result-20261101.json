@@ -1,0 +1,40 @@
+{
+  "provenance": "User-supplied operator output; agent did not access VPS.",
+  "date": "2026-11-01",
+  "operatorResult": {
+    "status": "PUBLIC_CONTROLLED_ONBOARDING_OPEN_PENDING_USER_UI",
+    "appStatus": "online",
+    "https": {
+      "/request-access": 200,
+      "/login": 200
+    },
+    "smtp": "EXISTING_TRANSACTIONAL_CONFIG_ENABLED",
+    "publicOnboardingRoutes": true,
+    "otherIngressRulesUnchanged": true,
+    "backupTimer": [
+      "ActiveState=active",
+      "SubState=waiting",
+      "UnitFileState=enabled"
+    ],
+    "testSubmissions": 0,
+    "messagesSentByBlock": 0,
+    "stagingChanged": false,
+    "restartPerformed": true,
+    "stateRoot": "/var/lib/passvero-public-controlled-onboarding-20261101"
+  },
+  "userOnboardingAcceptance": "USER_CONFIRMED_APPROVAL_ACTIVATION_VERIFICATION_PASSWORD_LOGIN",
+  "externalNonOperatorClientAccess": "NOT_INDEPENDENTLY_OBSERVED",
+  "existingAdminAcceptance": "UNCHANGED",
+  "acceptanceProvenance": "User confirmed real customer flow for prodaja@zivic-elektro.com in chat; no agent VPS action or new test submission.",
+  "approvalRouteCorrection": {
+    "status": "APPROVAL_ROUTE_GATE_FIXED_PENDING_MANUAL_APPROVAL",
+    "nginxReloaded": true,
+    "envChanged": false,
+    "pm2Restarted": false,
+    "databaseCalls": 0,
+    "approvalSubmitted": false,
+    "messagesSentByBlock": 0,
+    "otherIngressRulesUnchanged": true
+  },
+  "operatorReceiptScope": "Original opening receipt remains unchanged; later correction and user acceptance are appended separately."
+}

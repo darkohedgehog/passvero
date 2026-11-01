@@ -1,0 +1,42 @@
+{
+  "status": "LOCAL_SOURCE_QUALIFIED_NOT_DEPLOYED",
+  "recipient": "zivic.darko79@gmail.com",
+  "files": [
+    {
+      "path": "src/infrastructure/persistence/prisma/prisma-access-request-notifications.ts",
+      "sha256": "0204f8301f826199496d40906ae5f68844faf663b0644e430d2b1ec6e2e80f9e"
+    },
+    {
+      "path": "tests/infrastructure/production-onboarding-notifications.test.ts",
+      "sha256": "eebbd282731d05495700deff7a7a7e6036c4291bb30955752c8e7449991d66d7"
+    }
+  ],
+  "verification": {
+    "initialRegression": "Production delivery and unknown-delivery tests failed on prior staging-only guard.",
+    "focusedTests": "8 PASS; mocked persistence/sender, existing policy tests included; no PostgreSQL or SMTP proof claimed.",
+    "typescript": "PASS focused noEmit config, two roots and imports",
+    "eslint": "PASS two files"
+  },
+  "productionChangesPerformed": false,
+  "commitOrPushPerformed": false,
+  "buildPerformed": false,
+  "activationRequired": {
+    "settings": {
+      "id": 1,
+      "recipientEmail": "zivic.darko79@gmail.com",
+      "enabled": true
+    },
+    "existingPolicyPath": "/var/lib/passvero-onboarding-notifications/policy.json",
+    "policyMode": "NEW_REQUESTS",
+    "activatedAt": "Capture actual activation time during operator execution; do not backdate.",
+    "policyRecipient": "zivic.darko79@gmail.com"
+  },
+  "excluded": [
+    "old request backfill",
+    "resend",
+    "test email",
+    "new workers",
+    "schema or grant changes",
+    "staging deployment"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "status": "PENDING_USER_MANIFEST_ACCEPTANCE_NOT_STAGED",
+  "baseHead": "4223f917073c170c5706e0c9f186804e9a02cd7a",
+  "proposedCommits": [
+    {
+      "title": "fix(onboarding): allow production admin request notifications",
+      "purpose": "Only production origin admission and focused no-resend regression tests.",
+      "files": [
+        "src/infrastructure/persistence/prisma/prisma-access-request-notifications.ts",
+        "tests/infrastructure/production-onboarding-notifications.test.ts"
+      ]
+    },
+    {
+      "title": "docs(production): record accepted deployment and onboarding results",
+      "purpose": "Curated final result, selected historical receipts and exact source/commit scope; no executable deployment candidate archive.",
+      "files": [
+        "docs/superpowers/reviews/2026-11-01-production-deployment-result.md",
+        "codex/evidence/production-deployment-20261101/accepted-result.json",
+        "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-existing-build-accepted-20261101.json",
+        "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-ddl-return-accepted-20261101.json",
+        "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/admin-ui-user-acceptance-20261101.json",
+        "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/public-controlled-onboarding-operator-result-20261101.json",
+        "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/production-admin-notification-source-manifest-20261101.json",
+        "codex/evidence/production-deployment-20261101/commit-manifest.json"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/infrastructure/persistence/prisma/prisma-access-request-notifications.ts",
+      "sha256": "0204f8301f826199496d40906ae5f68844faf663b0644e430d2b1ec6e2e80f9e",
+      "bytes": 5305
+    },
+    {
+      "path": "tests/infrastructure/production-onboarding-notifications.test.ts",
+      "sha256": "eebbd282731d05495700deff7a7a7e6036c4291bb30955752c8e7449991d66d7",
+      "bytes": 5108
+    },
+    {
+      "path": "docs/superpowers/reviews/2026-11-01-production-deployment-result.md",
+      "sha256": "99597431e076d476f814eea38a9299a69065e9de473aeddb2e08c37e910cc0c1",
+      "bytes": 7846
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/accepted-result.json",
+      "sha256": "e83af0773b6279c3307597325c369dcf4463362ec334391d37cc984616166368",
+      "bytes": 2203
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-existing-build-accepted-20261101.json",
+      "sha256": "8f8a2d9f2197225bef6b39b47f013627cb5062eb825466348a46de1856be214f",
+      "bytes": 3575
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-ddl-return-accepted-20261101.json",
+      "sha256": "c41fc59c62a48b543a552d21be54fac51ae0b3735898ff179cacbc18f4089834",
+      "bytes": 1013
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/admin-ui-user-acceptance-20261101.json",
+      "sha256": "02d096fd93cdc8050a025da1d94b91c6fb3e3bd28e75595413f59da807e8808a",
+      "bytes": 2392
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/public-controlled-onboarding-operator-result-20261101.json",
+      "sha256": "e199432459986bb4f960356d04ea7309dc250f95de10de4bee580ef7ca00135f",
+      "bytes": 1520
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/production-admin-notification-source-manifest-20261101.json",
+      "sha256": "9cf43b98746e0c09749b1f55094e577faa6dbd165aa25db720d4a4c1e1a8c351",
+      "bytes": 1510
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/commit-manifest.json",
+      "sha256": null,
+      "reason": "This reviewed manifest; self hash omitted."
+    }
+  ],
+  "selfHash": "Manifest lists itself; no recursive self hash.",
+  "excludedPolicy": "Everything outside this exact allowlist is preserved and excluded. Legal, unrelated tracked documentation, mixed historical runbook, operator executables, guardian/adapters, private inputs and artifacts are not staged.",
+  "functionalProof": "Existing onboarding accepted; admin notification proof waits for next genuine request after deployment.",
+  "reviewSummary": {
+    "initialDirtyFiles": 433,
+    "selectedFiles": 10,
+    "excludedInitialFilesPreserved": 426,
+    "excludedContentOrModeChanges": 0,
+    "sourceMatchesAlreadyPassedTests": true,
+    "testsRepeated": false,
+    "indexEmpty": true,
+    "secretPatternFindings": 0,
+    "scanScope": "Only the exact selected files; regex and content review, not an assertion about all excluded material.",
+    "excludedCategories": {
+      "mixedTrackedDocumentation": 4,
+      "legalDraft": 1,
+      "mixedHistoricalRunbook": 1,
+      "operatorCandidatesAndHistoricalEvidence": 420
+    }
+  }
+}

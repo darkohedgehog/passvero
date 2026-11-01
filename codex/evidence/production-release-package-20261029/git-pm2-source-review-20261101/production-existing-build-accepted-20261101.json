@@ -1,0 +1,90 @@
+{
+  "status": "EXISTING_PRODUCTION_BUILD_CONFIRMED_BY_SUPPLEMENTAL_READ_ONLY_POSTCHECK",
+  "provenance": "User supplied operator results; no agent VPS access",
+  "release": "4223f917073c170c5706e0c9f186804e9a02cd7a",
+  "operatorResult": {
+    "buildIdValid": true,
+    "buildRepeated": false,
+    "filesWritten": 0,
+    "headMatchesRelease": true,
+    "pages": [
+      {
+        "canonicalCount": 1,
+        "htmlSha256": "6ed12fcf951aaf7357a3b8e2dc582509a32a0fb333ad7cbf7427b5b710bdcadb",
+        "locale": "hr",
+        "matchesProductionTarget": true,
+        "oldRegexCount": 1,
+        "publicCanonicalUrls": [
+          "https://passvero.eu"
+        ]
+      },
+      {
+        "canonicalCount": 1,
+        "htmlSha256": "70d7d433a018ffdd676b76d16c1f4944d85f353c398eaeba26b441b4cccf782e",
+        "locale": "sr",
+        "matchesProductionTarget": true,
+        "oldRegexCount": 1,
+        "publicCanonicalUrls": [
+          "https://passvero.eu/sr"
+        ]
+      },
+      {
+        "canonicalCount": 1,
+        "htmlSha256": "23af6ed025dee701b67dccb34dc19ceabdbf31ba434bc1e81cf07fa5a71cc0f9",
+        "locale": "en",
+        "matchesProductionTarget": true,
+        "oldRegexCount": 1,
+        "publicCanonicalUrls": [
+          "https://passvero.eu/en"
+        ]
+      },
+      {
+        "canonicalCount": 1,
+        "htmlSha256": "81d27a0e0f68cacc46b2103fa33f8ce5b98fa536c71aec6be439b1c400bb143b",
+        "locale": "de",
+        "matchesProductionTarget": true,
+        "oldRegexCount": 1,
+        "publicCanonicalUrls": [
+          "https://passvero.eu/de"
+        ]
+      },
+      {
+        "canonicalCount": 1,
+        "htmlSha256": "b5a98d69c520fb9e2d8a5c153401abc19c06e5428e709fd782d5d2feec9b4792",
+        "locale": "sl",
+        "matchesProductionTarget": true,
+        "oldRegexCount": 1,
+        "publicCanonicalUrls": [
+          "https://passvero.eu/sl"
+        ]
+      },
+      {
+        "canonicalCount": 1,
+        "htmlSha256": "05028cbf1de041cd4137c15e1a4ab2b1345230f6ec146835dc2505e36c151963",
+        "locale": "pl",
+        "matchesProductionTarget": true,
+        "oldRegexCount": 1,
+        "publicCanonicalUrls": [
+          "https://passvero.eu/pl"
+        ]
+      }
+    ],
+    "serviceActions": 0,
+    "status": "READ_ONLY_EXISTING_BUILD_CANONICALS",
+    "workingTreeClean": true
+  },
+  "causeOfPriorStop": "Operator string comparison expected https://passvero.eu/ but generated canonical is https://passvero.eu. Both designate root; correct origin/path confirmed. Other five locale paths exact. No URL origin/locale condition relaxed.",
+  "buildEvidence": "Previously submitted block reached POSTCHECKS, proving build subprocess exit0 and immediate hold/BUILD_ID checks passed. This supplemental result confirms all six canonical targets and unchanged clean release.",
+  "npmCiRepeated": false,
+  "buildRepeated": false,
+  "restartPerformed": false,
+  "serverFailureRecordRewritten": false,
+  "serverSuccessRecordWritten": false,
+  "preservedLogRoot": "/var/lib/passvero-production-build-fix-20261101",
+  "limits": [
+    "No runtime/service/UI/DB schema/ACL acceptance inferred",
+    "No runtime config/migration/validator/restart authorized by this read-only result",
+    "Current hold last directly verified before original canonical STOP; supplemental read did not recheck service/DB hold"
+  ],
+  "next": "Existing production runtime configuration through /etc/passvero/passvero-runtime.env and current POSIX wrapper, followed by reviewed migration/ACL/backup-validator sequence before any restart. No build repeat or new framework."
+}

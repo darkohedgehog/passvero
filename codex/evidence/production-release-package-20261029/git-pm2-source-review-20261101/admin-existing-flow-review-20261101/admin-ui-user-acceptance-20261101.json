@@ -1,0 +1,78 @@
+{
+  "status": "ADMIN_FLOW_COMPLETE_USER_UI_ACCEPTED_WINDOWS_CLOSED",
+  "date": "2026-11-01",
+  "provenance": "User statement and supplied screenshots; no agent VPS/browser action.",
+  "userStatement": "Sva tri prikaza se otvaraju",
+  "acceptedPaths": [
+    "/platform/organizations",
+    "/platform/access-requests",
+    "/platform/billing"
+  ],
+  "screenshotReferences": [
+    "Slika zaslona 2026-11-01 u 22.00.53.png",
+    "Slika zaslona 2026-11-01 u 22.00.59.png",
+    "Slika zaslona 2026-11-01 u 22.01.03.png"
+  ],
+  "identity": {
+    "email": "zivic.darko79@gmail.com",
+    "applicationUsers": 1,
+    "authUsers": 1,
+    "emailVerified": true,
+    "activeIdentityBound": true,
+    "activationStates": [
+      "BOUND"
+    ],
+    "memberships": 0
+  },
+  "grants": {
+    "PlatformGrant": 1,
+    "PlatformOnboardingGrant": 1,
+    "PlatformBillingGrant": 1,
+    "PlatformRegulatoryGrant": 0
+  },
+  "bootstrap": {
+    "status": "PREPARED",
+    "handoff": "PRIVATE_FILE",
+    "emailAttempts": 0,
+    "launcherAfterApprovedIoFixSha256": "16893547c5d410d6b693f4159808c572edd82a58acf634c430e8473b6fce7ab0"
+  },
+  "email": {
+    "verificationInitialAttempt": 1,
+    "evidence": "Existing flow: first window reached no credential creation (ISSUED/auth0), then one authorized activation; user confirmed received email, verification/login and no resend. No provider log queried.",
+    "grantEmailAttempts": 0,
+    "resendUserConfirmed": false
+  },
+  "lastObservedRuntime": {
+    "appStatus": "online",
+    "https": 200,
+    "smtp": "CLOSED",
+    "ingress": "CLOSED_OPERATOR_ONLY_BASELINE",
+    "backupTimer": {
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "backupTimerObservation": "Final operator systemctl output: active/waiting/enabled."
+  },
+  "pending": null,
+  "excluded": [
+    "organization/customer provisioning",
+    "membership",
+    "regulatory/superadmin grants",
+    "additional email/resend",
+    "public opening",
+    "scanner/PDF or Storage backup-byte acceptance",
+    "cleanup"
+  ],
+  "finalClosure": {
+    "provenance": "User-supplied operator output; no agent VPS action.",
+    "status": "CLOSE_ADMIN_WINDOW_COMPLETE",
+    "appStatus": "online",
+    "https": 200,
+    "smtpWindow": "CLOSED",
+    "publicIngressOpened": false,
+    "messagesSentByBlock": 0,
+    "stagingChanged": false,
+    "restartPerformed": false
+  }
+}

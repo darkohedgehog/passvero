@@ -1,0 +1,14 @@
+{
+  "provenance": "USER_SUPPLIED_OPERATOR_RESULT_NO_AGENT_VPS_ACCESS",
+  "operatorResult": {
+    "status": "SAVED_CODE_CONFIG_RETURN_STARTED_HTTPS200",
+    "head": "4f1dd4e3bf0867b90cc9ad507dd5c7e5ef704ec6",
+    "dbLedgerMatchesPreMigration": true,
+    "dbRestoredByThisBlock": false,
+    "retainedFailedCode": "/var/www/passvero.failed-release-20261101",
+    "backupTimer": "inactive; restore original active state only by separate UI acceptance/return command"
+  },
+  "assessment": "Code/config return and HTTPS200 accepted. No DB restore/migration/ACL change. Remaining authorized action is prior backup timer return plus final active-state confirmation, then STOP.",
+  "separateCandidateDefect": "Candidate assumes C/C and four INHERIT=true roles; actual production is C.UTF-8/C.UTF-8 and NOINHERIT. Production was not changed to fit candidate. Candidate alignment/impact review deferred, not authorized to continue now.",
+  "privateInputsAndEvidence": "Preserved; no new build, test or backup acceptance."
+}

@@ -1,0 +1,64 @@
+{
+  "status": "ACCEPTED_DEPLOYMENT_AND_REAL_CUSTOMER_ONBOARDING",
+  "date": "2026-11-01",
+  "provenance": "User-supplied operator results and explicit UI acceptance; no agent VPS access or fresh live query.",
+  "productionRelease": "4223f917073c170c5706e0c9f186804e9a02cd7a",
+  "app": {
+    "directory": "/var/www/passvero",
+    "pm2": "passvero",
+    "osUser": "darko",
+    "wrapper": "/etc/passvero/passvero-start",
+    "lastObservedStatus": "online",
+    "lastObservedHttps": 200
+  },
+  "schema": {
+    "migrations": 33,
+    "applicationTables": 55,
+    "tablesIncludingPrisma": 56,
+    "reviewedAdditiveGrantsCommitted": 70,
+    "collate": "C.UTF-8",
+    "ctype": "C.UTF-8",
+    "fourRuntimeRolesInherit": false,
+    "backupValidatorStatus": "PASS_LOCAL_SCHEMA_PROFILE",
+    "installedBackupSha256": "ea0d0bb99386b4bea93adbfe77bd8369a3eacf43a14409c0280deaaa14f04312"
+  },
+  "preMigrationRecovery": {
+    "recoverySet": "20261101T194430Z",
+    "snapshot": "2d8b587a04ac49ce995cf33214bfe3d899b317bdf8935ac17c44df19e6fecaa1",
+    "offsiteVerifiedByExistingJob": true,
+    "subsequentAuthCustomerWritesExist": true,
+    "losslessRestoreToThisPoint": false
+  },
+  "backupTimerLastReported": {
+    "ActiveState": "active",
+    "SubState": "waiting",
+    "UnitFileState": "enabled"
+  },
+  "onboarding": {
+    "publicUserRoutesOpened": true,
+    "approvalRouteCorrectionConfirmed": true,
+    "customerUiAcceptance": "USER_CONFIRMED",
+    "passwordSetByUserInUi": true,
+    "verificationAndLoginConfirmedByUser": true,
+    "operatorTestSubmissions": 0,
+    "operatorTestMessages": 0,
+    "smtp": "EXISTING_TRANSACTIONAL_CONFIG_ENABLED",
+    "unrelatedIngressRulesPreserved": true,
+    "stagingChanged": false
+  },
+  "pendingAdminNotifications": {
+    "source": "LOCAL_REVIEWED_NOT_COMMITTED_OR_DEPLOYED",
+    "recipient": "zivic.darko79@gmail.com",
+    "futureRequestsOnly": true,
+    "automaticResend": false,
+    "retroactiveOrTestMail": false,
+    "functionalProof": "NEXT_GENUINE_REQUEST_NOT_YET_OBSERVED"
+  },
+  "notClosed": [
+    "Scanner/PDF acceptance",
+    "production Storage backup-byte scope",
+    "legal/public-feature approvals",
+    "full host-loss recovery"
+  ],
+  "historyPreserved": true
+}
