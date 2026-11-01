@@ -1,0 +1,45 @@
+{
+  "provenance": "User-supplied sanitized operator output; no agent VPS access.",
+  "operatorResult": {
+    "status": "PRODUCTION_ADMIN_NOTIFICATIONS_ENABLED_PENDING_NEXT_REAL_REQUEST",
+    "head": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+    "appStatus": "online",
+    "https": {
+      "/request-access": 200,
+      "/login": 200
+    },
+    "recipient": "zivic.darko79@gmail.com",
+    "policy": "/var/lib/passvero-production-onboarding-notifications/policy.json",
+    "mode": "NEW_REQUESTS",
+    "cutoffUTC": "2026-11-01T21:56:46.818Z",
+    "automaticRetry": false,
+    "retroactiveDispatch": false,
+    "testSubmissions": 0,
+    "messagesSentByBlock": 0,
+    "backupTimer": [
+      "ActiveState=active",
+      "SubState=waiting",
+      "UnitFileState=enabled"
+    ],
+    "stagingPolicyUnchanged": true,
+    "runtimeEnvChanged": false,
+    "nginxChanged": false,
+    "buildRuns": 1
+  },
+  "priorBuildResult": {
+    "status": "NOTIFICATION_RELEASE_BUILT_APP_STOPPED",
+    "head": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+    "buildRuns": 1,
+    "npmCiRuns": 0,
+    "previousTree": "/var/www/passvero.before-admin-notifications-20261101",
+    "stateRoot": "/var/lib/passvero-admin-notifications-deploy-20261101",
+    "backupTimer": "active",
+    "settingsChanged": false,
+    "policyCreated": false
+  },
+  "buildIdEvidence": "Block02 verified private build-complete.json BUILD_ID equals active .next/BUILD_ID. Literal BUILD_ID not included in returned output; no value inferred.",
+  "functionalInboxAcceptance": "PENDING_NEXT_GENUINE_NEW_REQUEST",
+  "existingPublicOnboardingAndAdminAcceptance": "UNCHANGED_ACCEPTED",
+  "commitOrPushForThisResult": false,
+  "additionalChecksOrTestMessages": false
+}

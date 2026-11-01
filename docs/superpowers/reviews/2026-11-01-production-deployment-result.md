@@ -1,5 +1,27 @@
 # Production Git/PM2 deployment and onboarding — accepted result
 
+## Current accepted continuation — release 2eaa5a54770843828e0aae4c16f71bae4927c12b
+
+The later notification release is active: app online; request-access/login HTTPS200;
+exactly one production build, no npm ci or migration. BUILD_ID matched the saved private
+build record; its literal value was not included in sanitized output and is not invented.
+[Latest operator receipt](../../../codex/evidence/production-deployment-20261101/notification-policy-origin-review/production-activation-operator-result-20261101.json)
+and [current production runbook](../runbooks/passvero-production-release.md) are authoritative.
+
+Admin notices are enabled for zivic.darko79@gmail.com, NEW_REQUESTS, cutoff
+2026-11-01T21:56:46.818Z / 1.11.2026 22:56:46.818 Europe/Zagreb. Production has its own
+policy path; staging policy/recipient/cutoff were not changed. One attempt per future new
+request; no retroactive dispatch, automatic resend, test message or synthetic request.
+**ADMIN_EMAIL_INBOX_ACCEPTANCE=PENDING_USER_CONFIRMATION** at the next genuine request.
+The backup timer is active/waiting/enabled; runtime env and Nginx were unchanged by this
+last deployment. Previously accepted admin/public customer onboarding remains complete.
+Scanner/PDF, Storage-byte and legal/public-feature conditions remain open in their scope.
+
+The dated sections below describe the original transition and preparation snapshots.
+Their original hashes/releases remain historical; they are not relabeled as this release.
+In particular the earlier pending notification-source paragraph describes preparation,
+not the current enabled configuration. No live action was performed for this doc update.
+
 This is a result record, not a new deployment runbook or authority to rerun historical
 commands. Evidence comes from user-supplied operator results and the user's UI acceptance;
 the agent did not access the VPS. Public onboarding is complete and is not being reopened.

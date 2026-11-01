@@ -1,0 +1,38 @@
+--- a/codex/IMPLEMENTATION_ROADMAP.md
++++ b/codex/IMPLEMENTATION_ROADMAP.md
+@@ -1,0 +2,35 @@
++
++## PRODUCTION_GIT_PM2_AND_CONTROLLED_ONBOARDING_ACCEPTED — 1.11.2026.
++
++**Merodavni operativni ulaz:** [postojeći production runbook](../docs/superpowers/runbooks/passvero-production-release.md),
++[završni rezultat i granice dokaza](../docs/superpowers/reviews/2026-11-01-production-deployment-result.md),
++[DB ugovor](../docs/runtime-database-contract.md) i [PostgreSQL DR](../docs/superpowers/runbooks/passvero-postgresql-disaster-recovery.md).
++Ovaj zapis usklađuje prihvaćene operatorske rezultate i korisnički UI, bez novih live provjera.
++
++- Production release `2eaa5a54770843828e0aae4c16f71bae4927c12b`; app online;
++  `/request-access` i `/login` HTTP200. Put ostaje `/var/www/passvero` → odobreni Git
++  fast-forward → production build → `/etc/passvero/passvero-start` → darko PM2 `passvero`.
++  Wrapper učitava privatni runtime env pri startu; staging je odvojen.
++- Završni staging marketing/dashboard UI ostaje USER_CONFIRMED. Production prijelaz,
++  verified Gmail admin s točno Platform/Onboarding/Billing pravima i sva tri admin prikaza
++  prihvaćeni su. Javni controlled onboarding zahtjev → admin odobrenje → korisnička
++  aktivacija/verifikacija → prijava potvrđen je stvarnim korisnikom; ne otvarati ga ponovno.
++- Admin obavijesti za `zivic.darko79@gmail.com` aktivne su u `NEW_REQUESTS` modu,
++  od `2026-11-01T21:56:46.818Z` / 1.11.2026. 22:56:46.818 Europe/Zagreb.
++  Samo budući novi zahtjevi, jedan pokušaj, bez retroaktivnog slanja/automatskog resenda.
++  **ADMIN_EMAIL_INBOX_ACCEPTANCE=PENDING_USER_CONFIRMATION** pri sljedećem stvarnom zahtjevu;
++  nije poslana probna poruka i konfiguracijski PASS nije inbox PASS.
++- Posljednji notification deployment: jedan build, bez npm ci/migracija; backup timer
++  active/waiting/enabled. Staging policy, runtime env i Nginx nisu mijenjani tom dopunom.
++  Production policy ima zasebnu putanju; staging recipient/cutoff ostaju netaknuti.
++- Scanner/PDF production acceptance i production Storage backup-byte pokriće ostaju otvoreni.
++  Prihvaćeni staging PDF/scanner/recovery dokazi nisu nova production potvrda. Pravna
++  objava traži postojeći odvojeni review/odobrenje; ovaj zapis ne mijenja pravni nacrt,
++  rokove ili pravnu politiku. Širi host-loss/provider recovery nije dokazan ovim tokovima.
++- Guardian/novi supervisor/native adapter i njihovi binding/activation kandidati nisu
++  izabrani deployment put. Čuvaju se pasivno; bez novog prepare-a, aktivacije ili brisanja.
++
++**Ispod slijede datirani povijesni checkpointi i odvojeni lokalni rad.** Njihovi stari
++„current/pending/next“, „production nije odobren“ i slični navodi nisu aktualni nalog.
++Povijesni hashovi i acceptance opsezi ostaju neizmijenjeni. Dokumentacijski commit/push
++ne zahtijeva novi build, deploy ili ponavljanje prihvaćenih serija.

@@ -299,3 +299,18 @@ Their exact hashes are recorded in the targeted review evidence.
 The separate legal draft and entire pre-existing roadmap diff retain their exact
 baseline bytes and stay outside this release. Final evidence is a documentation-only
 commit; it requires no additional build, deploy or runtime repin.
+
+
+## Završna korisnička potvrda — 27.10.2026.
+
+**USER_FINAL_UI_REVIEW=USER_CONFIRMED.** Korisnik je u ulaznom zahtjevu
+`PRODUCTION_RELEASE_READINESS_PLAN_AND_DOCUMENTATION_ALIGNMENT` izričito potvrdio
+pregled staginga uživo i prihvatio trenutni marketing/dashboard dizajn. Time su
+raniji PENDING navodi u ovom izvještaju zatvoreni; povijesni manifesti i operatorski
+hashovi ostaju neizmijenjeni. Prihvaćeni staging build `YNJg-e6igvm0cUQHZ1S3I`,
+source `2c877f0`, završna dokumentacija `364f696`.
+
+Ovo je zapis korisničke potvrde, bez nove agentove live/UI provjere, testa ili builda.
+Prethodna proizvod/PDF/DPP/QR potvrda ostaje zaseban staging dokaz, ne novi checksum
+ili scan-status dokaz. Production deployment i širi host-loss/provider recovery
+nisu time potvrđeni ni odobreni. Aktualni production rezultat i postupak vodi [postojeći production runbook](../docs/superpowers/runbooks/passvero-production-release.md); gore navedeni staging hashovi ostaju povijesni.

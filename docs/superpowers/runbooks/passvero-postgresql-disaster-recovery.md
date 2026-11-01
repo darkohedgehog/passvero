@@ -1,5 +1,17 @@
 # Passvero PostgreSQL Disaster Recovery Runbook
 
+> **Application deployment reference — 1 November 2026:** use the existing
+> [production Git/build/wrapper/PM2 runbook](passvero-production-release.md).
+> Its accepted schema33/70-grant and notification deployment results do not rewrite the
+> historical snapshots, profile hashes or recovery measurements below. For a future DB
+> recovery, use the exact profile/manifest of the selected verified backup; do not replay
+> an older fixed schema/table-count checkpoint against a newer schema. The current active
+> runtime file's accepted ownership is preserved; fresh-provisioning metadata below is not
+> an instruction to chown/rotate a healthy production config. Latest notification deployment
+> required no migration or DB restore; the timer remains active. Later auth/customer writes
+> make the pre-migration snapshot a potentially lossy return point, requiring explicit
+> assessment/approval before destructive restore. No new DR/backup acceptance was run here.
+
 ## Status and scope
 
 - Status: approved under the temporary single-operator governance exception; independent review has not occurred

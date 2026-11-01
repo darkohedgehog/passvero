@@ -1,5 +1,13 @@
 # Deployment Checklist
 
+> Aktualni postupak i prihvaćeno stanje 1.11.2026. vodi [production runbook](../docs/superpowers/runbooks/passvero-production-release.md),
+> uz [DB ugovor](../docs/runtime-database-contract.md) i [postojeći DR](../docs/superpowers/runbooks/passvero-postgresql-disaster-recovery.md).
+> Release je `2eaa5a54770843828e0aae4c16f71bae4927c12b`; production/admin/controlled-onboarding
+> UI prihvaćeni su u dokumentiranom opsegu. Admin notification inbox je PENDING_USER_CONFIRMATION.
+> Ova generička lista nije tvrdnja da su sve stavke implementirane ili nalog da se ponove
+> testovi/build/backup acceptance. Scanner/PDF, Storage-byte i pravne objave ostaju odvojeni.
+> Stari pripremni plan i dodatni guardian/adapter sustav nisu važeći deployment put.
+
 ## Application
 
 - production build passes;

@@ -1,0 +1,181 @@
+{
+  "status": "DOCUMENTATION_REVIEW_ONLY_NOT_STAGED",
+  "baseHead": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+  "proposedCommits": [
+    {
+      "title": "docs(production): align accepted deployment and notification status",
+      "files": [
+        "README.md",
+        "codex/IMPLEMENTATION_ROADMAP.md",
+        "codex/DEPLOYMENT_CHECKLIST.md",
+        "codex/CUSTOMER_DASHBOARD_UI_STAGING_DEPLOY.md",
+        "docs/superpowers/runbooks/passvero-production-release.md",
+        "docs/superpowers/runbooks/passvero-postgresql-disaster-recovery.md",
+        "docs/superpowers/reviews/2026-11-01-production-deployment-result.md",
+        "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+        "codex/evidence/production-deployment-20261101/notification-policy-origin-review/production-activation-operator-result-20261101.json",
+        "codex/evidence/production-deployment-20261101/documentation-alignment/roadmap-approved-only.patch",
+        "codex/evidence/production-deployment-20261101/documentation-alignment/REVIEW.md",
+        "codex/evidence/production-deployment-20261101/documentation-alignment/manifest.json"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "category": "CURRENT_PROJECT_ENTRY",
+      "reason": "Actual accepted release, existing deployment path, authoritative links and open scope.",
+      "selection": "WHOLE_FILE",
+      "sha256": "15677d734c1a8d13acff45718a67b26e1675260be1374031de584449d0304c79",
+      "bytes": 11090
+    },
+    {
+      "path": "codex/IMPLEMENTATION_ROADMAP.md",
+      "category": "PARTIAL_OPERATIONAL_ROADMAP",
+      "reason": "Only new operational status section through the reviewed index patch; preserve prior legal/unrelated hunks.",
+      "selection": "INDEX_PATCH_ONLY",
+      "bytes": 158944,
+      "indexPatch": "codex/evidence/production-deployment-20261101/documentation-alignment/roadmap-approved-only.patch",
+      "worktreeSha256": "f5e9c1c741cedda9c567bbb5847fa8d415f797607bf54b9ac4a5a7d8082f4fe3",
+      "expectedStagedSha256": "9f304240da2d2eeb749ce2421014d20c2b24bb03bfc498079fa9e554a267751c",
+      "warning": "Do not stage the whole worktree file; only apply the approved patch to the index after separate authorization.",
+      "indexApplyArguments": [
+        "--cached",
+        "--unidiff-zero"
+      ],
+      "baseFileSha256": "abec29f6ae15be14210bb789fc9ff55f55f1e10ad20662e61b80663f69ff7616"
+    },
+    {
+      "path": "codex/DEPLOYMENT_CHECKLIST.md",
+      "category": "CURRENT_DEPLOYMENT_NAVIGATION",
+      "reason": "Replace obsolete preparation-plan authority with accepted production runbook and bounded status.",
+      "selection": "WHOLE_FILE",
+      "sha256": "a7791b37157cf79bbede7d5e115036ce6e8b7fdd82a118eea68b81d95de47211",
+      "bytes": 2674
+    },
+    {
+      "path": "codex/CUSTOMER_DASHBOARD_UI_STAGING_DEPLOY.md",
+      "category": "HISTORICAL_UI_ACCEPTANCE",
+      "reason": "Retain already accepted staging UI confirmation and its original build/source; fix current production navigation.",
+      "selection": "WHOLE_FILE",
+      "sha256": "f657cac6a0a3ae6152c3fe7ffa3cb0e76494ba72d969982f9b933b1a18ae2bf5",
+      "bytes": 20618
+    },
+    {
+      "path": "docs/superpowers/runbooks/passvero-production-release.md",
+      "category": "AUTHORITATIVE_EXISTING_RUNBOOK",
+      "reason": "Curate the same existing runbook; separate current Git/PM2 method from preserved historical commands.",
+      "selection": "WHOLE_FILE",
+      "sha256": "8b288bb4f84cec10b021e0944a87f5fe2dd7641fb6785ecca92e81f39dffb777",
+      "bytes": 11872
+    },
+    {
+      "path": "docs/superpowers/runbooks/passvero-postgresql-disaster-recovery.md",
+      "category": "RECOVERY_CONTEXT_ONLY",
+      "reason": "Add current deployment/profile boundary without changing historical DR hash/restore evidence.",
+      "selection": "WHOLE_FILE",
+      "sha256": "3dec924d5704a9cbe8ee2d4c2b5091cc8108f835fd81a91dc8ae1e85c0631120",
+      "bytes": 27770
+    },
+    {
+      "path": "docs/superpowers/reviews/2026-11-01-production-deployment-result.md",
+      "category": "CURRENT_RESULT_WITH_HISTORICAL_SNAPSHOTS",
+      "reason": "Append actual2eaa notification result and pending inbox acceptance; preserve initial transition identity.",
+      "selection": "WHOLE_FILE",
+      "sha256": "df5ea2fec5f2e0b82b2972d49c9510de79487d399809afb893f3214f0179ddd8",
+      "bytes": 9511
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+      "category": "DATED_EXECUTED_PROCEDURE_ARCHIVE",
+      "reason": "One unchanged complete successful procedure/return record; not a second current runbook or replay instruction.",
+      "selection": "WHOLE_FILE",
+      "sha256": "6a26d5fcabe6a3e797f063de97fd2d644715aab951e74e4ecf708a9ec214fabb",
+      "bytes": 37932
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/production-activation-operator-result-20261101.json",
+      "category": "SANITIZED_FINAL_OPERATOR_EVIDENCE",
+      "reason": "Unchanged raw sanitized final receipt: runtime, policy/cutoff, backup timer and staging isolation.",
+      "selection": "WHOLE_FILE",
+      "sha256": "4064a5591b23ee68d8cd4901e78c4337269ae9283321585d2f8f9f5fb55d1e8d",
+      "bytes": 1706
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/documentation-alignment/roadmap-approved-only.patch",
+      "category": "EXACT_INDEX_HUNK_SELECTION",
+      "reason": "Auditable HEAD-based roadmap patch excluding all pre-existing legal/unrelated local additions.",
+      "selection": "WHOLE_FILE",
+      "sha256": "801de00e691a4e1441ce0042f4195a7c9c2d432ac7dc039db83c35302ea4b3f9",
+      "bytes": 2930
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/documentation-alignment/REVIEW.md",
+      "category": "CLASSIFICATION_AND_ARCHIVE_REVIEW",
+      "reason": "Current inventory/category counts, hunk handling and separate future archive/cleanup proposal.",
+      "selection": "WHOLE_FILE",
+      "sha256": "79b1e02f6f207280aac29127a9f2c55a5260d0609bb508b8bd1e765d0a5211f1",
+      "bytes": 5325
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/documentation-alignment/manifest.json",
+      "category": "EXACT_GIT_MANIFEST",
+      "reason": "Allowlist, inclusion reasons, hashes and preservation checks; no recursive self hash.",
+      "selection": "WHOLE_FILE",
+      "sha256": null,
+      "selfHash": "Not recursively defined."
+    }
+  ],
+  "initialWorktree": {
+    "total": 435,
+    "trackedModifications": 4,
+    "untracked": 431,
+    "categories": {
+      "currentDocumentationOrFinalEvidence": 6,
+      "historicalRecoveryTraceability": 380,
+      "nonselectedGuardianSupervisorAdapter": 47,
+      "legalOrMixedRoadmap": 2
+    },
+    "remainingApplicationSourceChanges": 0,
+    "untrackedOperationalCodeAndProofs": 21,
+    "privateOrGeneratedIgnoredNotSelected": [
+      ".env",
+      ".next",
+      "node_modules"
+    ]
+  },
+  "historyPreserved": [
+    {
+      "localPath": "codex/evidence/production-deployment-20261101/documentation-alignment/history/passvero-production-release.md.before-alignment",
+      "sha256": "f3fd955f9dba6199371e2d0c4e375a950b6ee73e66158e2271b3a56e4a3b1a3d",
+      "proposedForGit": false,
+      "reason": "Byte-identical original history retained locally; no wholesale executable-candidate archive."
+    },
+    {
+      "localPath": "codex/evidence/production-deployment-20261101/documentation-alignment/history/PRODUCTION_RELEASE_READINESS_PLAN.md.before-alignment",
+      "sha256": "40d5c0fe53cd7ef0f56c0405b833897be74d5dfcfe01ae9bfc4c2d88bcafac2d",
+      "proposedForGit": false,
+      "reason": "Byte-identical original history retained locally; no wholesale executable-candidate archive."
+    }
+  ],
+  "excluded": "Every nonallowlisted file remains outside the proposed commit; roadmap legal/unrelated hunks excluded separately. No deletion, reset, stash or ignore changes.",
+  "checks": {
+    "state": "PASS_DOCUMENTATION_ONLY",
+    "affectedLocalLinks": 42,
+    "brokenOrUnselectedLinkTargets": 0,
+    "manifestHashConsistency": true,
+    "roadmapIndexPatchDryRun": "PASS --check --cached --unidiff-zero --whitespace=error; no index write",
+    "whitespaceFindings": 0,
+    "secretPatternFindings": 0,
+    "sensitiveFilesSelected": 0,
+    "legalDraftByteIdentical": true,
+    "preExistingRoadmapBodyByteIdentical": true,
+    "unchangedBaselineEntriesOutsideIntentionalDocEdits": 429,
+    "historicalDrAndInitialResultBodyUnchanged": true,
+    "remainingApplicationSourceChanges": 0,
+    "indexEmpty": true,
+    "currentGitStatusEntries": 443,
+    "testsBuildLiveChecksRun": false
+  },
+  "selfHash": "Manifest itself has no recursive content hash."
+}
