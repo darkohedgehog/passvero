@@ -1,0 +1,2643 @@
+{
+  "status": "FINAL_WORKTREE_DISPOSITION_PROPOSAL_NO_ACTION_APPROVED_OR_EXECUTED",
+  "baseHead": "b0000a11869bebe2f4a57f2ab0f63cd6200234c9",
+  "productionBuild": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+  "inboxAcceptance": "PENDING_USER_CONFIRMATION",
+  "scope": {
+    "normalGitStatusEntries": 390,
+    "collapsedDirectories": [
+      {
+        "path": "codex/evidence/production-deployment-20261101/documentation-alignment/history/",
+        "leafFiles": 2
+      },
+      {
+        "path": "codex/evidence/production-preflight-20261029/",
+        "leafFiles": 7
+      },
+      {
+        "path": "codex/evidence/production-readiness-20261027/",
+        "leafFiles": 1
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/history-bootstrap-sequence/",
+        "leafFiles": 1
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/history-runtime-env-reader-stop/",
+        "leafFiles": 1
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-acl-stdin-fix-20261101/",
+        "leafFiles": 2
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/",
+        "leafFiles": 12
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/",
+        "leafFiles": 10
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-retained-tree-preparation-20261101/",
+        "leafFiles": 4
+      },
+      {
+        "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/",
+        "leafFiles": 7
+      },
+      {
+        "path": "scripts/production-w1/",
+        "leafFiles": 6
+      }
+    ],
+    "expandedGitLeafPaths": 432,
+    "trackedModifiedFiles": 1,
+    "untrackedFiles": 431,
+    "distinctRegularFiles": 432,
+    "ignoredRuntimeInputOrGeneratedTrees": "Outside this432-path scope; .env/.next/node_modules are neither inspected nor cleanup targets."
+  },
+  "counts": {
+    "D": 2,
+    "B": 407,
+    "C": 5,
+    "A": 18
+  },
+  "files": [
+    {
+      "path": "codex/IMPLEMENTATION_ROADMAP.md",
+      "decision": "D",
+      "category": "MIXED_TRACKED_FILE_HUNK_RULES",
+      "reason": "Do not archive, delete, stage or restore the whole tracked file. Follow individual hunk decisions.",
+      "worktreeSha256": "f5e9c1c741cedda9c567bbb5847fa8d415f797607bf54b9ac4a5a7d8082f4fe3",
+      "hunks": [
+        {
+          "id": "H1",
+          "header": "@@ -37,0 +38,35 @@ ne zahtijeva novi build, deploy ili ponavljanje prihvaćenih serija.",
+          "oldInsertAfterLine": 37,
+          "newStartLine": 38,
+          "addedLines": 35,
+          "decision": "A",
+          "addedContentSha256": "99e5f0f00c6b7d0cf9c6855243a444876c6c678433353650d93c93b48841e8a6",
+          "reason": "Superseded 27 October preparation checkpoint; archive the exact hunk rather than reintroducing it into current roadmap.",
+          "archiveOutput": "codex/archive/production-20261101/roadmap/2026-10-27-readiness-hunk.patch"
+        },
+        {
+          "id": "H2",
+          "header": "@@ -85,0 +121,187 @@ B–D i marketing deploy ostaju odloženi; pri novom neuspehu HOLD i pregled.",
+          "oldInsertAfterLine": 85,
+          "newStartLine": 121,
+          "addedLines": 187,
+          "decision": "D",
+          "addedContentSha256": "f98ccb75f3df65fd1b17c2de9191ae74def239b0895dd976c01a2cc669fd653a",
+          "category": "REVIEW_REQUIRED_MIXED_READINESS_LEGAL_RETENTION_WORK",
+          "reviewRequired": true,
+          "reason": "Single 187-line hunk mixes old readiness summary with unresolved legal/retention work; preserve the entire hunk byte-identically. Do not archive/delete it wholesale by inference."
+        },
+        {
+          "id": "H3",
+          "header": "@@ -1304,0 +1527,38 @@ projection and user confirmation. No production change, commit or push.",
+          "oldInsertAfterLine": 1304,
+          "newStartLine": 1527,
+          "addedLines": 38,
+          "decision": "D",
+          "addedContentSha256": "ad6af8808ec0943fbc3fcd48c369cb5552dfbd6381569037e2f9f736d0d85a60",
+          "category": "OPEN_LEGAL_ROADMAP_WORK",
+          "reason": "Two legal draft/review sections are separate unfinished work; preserve byte-identically and do not stage."
+        },
+        {
+          "id": "H4",
+          "header": "@@ -1356,0 +1617 @@ slice and does not declare all production readiness or authorize deployment.",
+          "oldInsertAfterLine": 1356,
+          "newStartLine": 1617,
+          "addedLines": 1,
+          "decision": "C",
+          "addedContentSha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "reason": "One added blank line only; no unique content. HEAD preserves surrounding history. Remove only this whitespace insertion after approval."
+        }
+      ],
+      "cleanupProposal": "roadmap-cleanup-proposal.patch",
+      "afterProposedCleanupSha256": "6fcd1bfe1507cf67ab934328ccd9414f6e1069df15159cb395ac28f05880cee5",
+      "preserveLegalAndMixedOpenWorkBytes": true
+    },
+    {
+      "path": "codex/LEGAL_PRIVACY_AND_RETENTION_CONTENT_PREPARATION_SOURCE_ONLY.md",
+      "decision": "D",
+      "category": "OPEN_LEGAL_DRAFT",
+      "reason": "Separate legal source/review, not cleanup; keep byte-identical and uncommitted.",
+      "preserveBytesAndMode": true
+    },
+    {
+      "path": "codex/PRODUCTION_RELEASE_READINESS_PLAN.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/documentation-alignment/history/PRODUCTION_RELEASE_READINESS_PLAN.md.before-alignment",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/documentation-alignment/history/passvero-production-release.md.before-alignment",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/documentation-alignment/roadmap-approved-section.md",
+      "decision": "C",
+      "category": "PROVEN_REDUNDANT_CONTENT",
+      "reason": "Exact canonical published content or exact reconstruction was verified; no current authoritative document requires this standalone file. Similar name was not used as evidence.",
+      "sha256": "9920423395927e4ff430e3960c089e3204fafeea5352e7907e61cf1f07e881ed",
+      "proof": {
+        "kind": "EXACT_PUBLISHED_DOCUMENT_BLOCK",
+        "target": "codex/IMPLEMENTATION_ROADMAP.md",
+        "offset": 57,
+        "length": 2802,
+        "commit": "b0000a11869bebe2f4a57f2ab0f63cd6200234c9"
+      },
+      "referencesChecked": [],
+      "historyRetainedBy": "codex/IMPLEMENTATION_ROADMAP.md",
+      "deleteOnlyAfter": "Approval, immutable canonical Git content verification and protected pre-cleanup snapshot. Historical metadata references stay frozen and are explained in archive README."
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/REVIEW.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/VPS-01-PRESERVE-FAST-FORWARD-BUILD.sh",
+      "decision": "C",
+      "category": "PROVEN_REDUNDANT_CONTENT",
+      "reason": "Exact canonical published content or exact reconstruction was verified; no current authoritative document requires this standalone file. Similar name was not used as evidence.",
+      "sha256": "9259de940d0ba12f85b7ab22fe26d09e388295200d06b37c72a56d75a264db01",
+      "proof": {
+        "kind": "EXACT_PUBLISHED_DOCUMENT_BLOCK",
+        "target": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+        "offset": 6773,
+        "length": 12319,
+        "commit": "b0000a11869bebe2f4a57f2ab0f63cd6200234c9"
+      },
+      "referencesChecked": [
+        {
+          "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+          "role": "FROZEN_HISTORICAL_RECEIPT_SELECTED_FOR_ARCHIVE",
+          "referenceType": "FULL_PATH_OR_SAME_DIRECTORY_NAME"
+        }
+      ],
+      "historyRetainedBy": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+      "deleteOnlyAfter": "Approval, immutable canonical Git content verification and protected pre-cleanup snapshot. Historical metadata references stay frozen and are explained in archive README."
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/VPS-02-ACTIVATE-PRODUCTION-POLICY-START.sh",
+      "decision": "C",
+      "category": "PROVEN_REDUNDANT_CONTENT",
+      "reason": "Exact canonical published content or exact reconstruction was verified; no current authoritative document requires this standalone file. Similar name was not used as evidence.",
+      "sha256": "9ac713b072171fabf6ccac5358ec6a2333012657515280f32e4637a3abec6ffb",
+      "proof": {
+        "kind": "EXACT_PUBLISHED_DOCUMENT_BLOCK",
+        "target": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+        "offset": 19170,
+        "length": 9847,
+        "commit": "b0000a11869bebe2f4a57f2ab0f63cd6200234c9"
+      },
+      "referencesChecked": [
+        {
+          "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+          "role": "FROZEN_HISTORICAL_RECEIPT_SELECTED_FOR_ARCHIVE",
+          "referenceType": "FULL_PATH_OR_SAME_DIRECTORY_NAME"
+        }
+      ],
+      "historyRetainedBy": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+      "deleteOnlyAfter": "Approval, immutable canonical Git content verification and protected pre-cleanup snapshot. Historical metadata references stay frozen and are explained in archive README."
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/VPS-RETURN-PREVIOUS-RELEASE-SETTINGS.sh",
+      "decision": "C",
+      "category": "PROVEN_REDUNDANT_CONTENT",
+      "reason": "Exact canonical published content or exact reconstruction was verified; no current authoritative document requires this standalone file. Similar name was not used as evidence.",
+      "sha256": "b0d9742a5b8d6c301fffc700cc087e18da0d3301c32ba2df685721ead1b99a99",
+      "proof": {
+        "kind": "EXACT_PUBLISHED_DOCUMENT_BLOCK",
+        "target": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+        "offset": 29102,
+        "length": 8825,
+        "commit": "b0000a11869bebe2f4a57f2ab0f63cd6200234c9"
+      },
+      "referencesChecked": [
+        {
+          "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+          "role": "FROZEN_HISTORICAL_RECEIPT_SELECTED_FOR_ARCHIVE",
+          "referenceType": "FULL_PATH_OR_SAME_DIRECTORY_NAME"
+        }
+      ],
+      "historyRetainedBy": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/PRODUCTION-DEPLOYMENT.md",
+      "deleteOnlyAfter": "Approval, immutable canonical Git content verification and protected pre-cleanup snapshot. Historical metadata references stay frozen and are explained in archive README."
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Published source SHA and original operator block pins; references are historical metadata, canonical blocks already in Git.",
+      "sha256": "6e6a86d664a643226b872f712d4b5cd0c20c44ef420a6176cfccdf2a2f35ea1c",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Reviewed origin-isolation source/test hashes and focused proof; original preparation status retained.",
+      "sha256": "21e2650d6563b242825486c0ab280db28df0ec79c5726d361b08ab39ae2feb7e",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/source.diff",
+      "decision": "C",
+      "category": "PROVEN_REDUNDANT_CONTENT",
+      "reason": "Exact canonical published content or exact reconstruction was verified; no current authoritative document requires this standalone file. Similar name was not used as evidence.",
+      "sha256": "f73abc81588c6cfe7dfe710d131a09f4c6bff34aaa351d0223db49721f9c8a2b",
+      "proof": {
+        "kind": "EXACT_RECONSTRUCTED_PUBLISHED_DIFF",
+        "baseCommit": "b83caded0f3c43ca7458213aab063af7b4e26f05",
+        "tipCommit": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+        "method": "difflib.unified_diff, context3, manifest source-file order",
+        "manifest": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json"
+      },
+      "referencesChecked": [
+        {
+          "path": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json",
+          "role": "LOCAL_HISTORICAL_MANIFEST",
+          "referenceType": "FULL_PATH_OR_SAME_DIRECTORY_NAME"
+        }
+      ],
+      "historyRetainedBy": "codex/archive/production-20261101/files/codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json",
+      "deleteOnlyAfter": "Approval, immutable canonical Git content verification and protected pre-cleanup snapshot. Historical metadata references stay frozen and are explained in archive README."
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/README.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/VPS-TERMINAL-PRODUCTION-READ-ONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/operator-output-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/operator-returned-projection.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/preflight.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/preparation-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-preflight-20261029/source-inputs.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-readiness-20261027/documentation-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/BOOTSTRAP-LOCAL-PROOF.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/ENV-ACTIVATION-APPROVAL-PROPOSAL.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/F2-F5-COORDINATION.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/MAC-TERMINAL-W1-PUBLIC-BUILD-INPUT.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/MAC-TERMINAL-W1-STABLE-PUBLIC-INPUT.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/MAC-TERMINAL-W2-PINNED-BACKUP-SOURCE-FETCH.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/MIGRATIONS.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/OPERATOR-TRANSITION-FINALIZATION.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/OWNER-DECISIONS.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/PROVIDER-SETUP-PRIVATE-ENV.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/README.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/SETUP-PREPARATION-20261030.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/STORAGE-METADATA-READ-ONLY.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/STORAGE-ORGANIZATION-QUOTAS-READ-ONLY.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/U01-U05-RECONCILIATION.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-F2-F5-COORDINATION-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-F2-F5-HOLD-INPUTS-READONLY.pre-correction-20261030.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-F2-F5-HOLD-INPUTS-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-IDENTITY-TRANSITION-INPUTS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRIVATE-ENV-BINDING.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRIVATE-ENV-PREPARE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRIVATE-ENV-RESUME-TTY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRIVATE-STORAGE-KEY-CORRECTION.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-DB-SCHEMA-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-DB-URL-PRIVATE-REVIEW.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-ENTRY-D1-D5-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-PRIVATE-PROFILE-PREPARE.pre-attempt-a01-20261101.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-PRIVATE-PROFILE-PREPARE.pre-derived-url-20261101.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-PRIVATE-PROFILE-PREPARE.pre-envelope-fix-20261031.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-PRIVATE-PROFILE-PREPARE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-ROOT-CLOSURE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-ROOT-HOLD.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-ROOT-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-SOURCE-ONLY-ATTEMPT-CORRECTION.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-SOURCE-ONLY-CORRECTION.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-SOURCE-ONLY-INSTALL.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-SETUP-REMAINING-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-T4-INSTALL-PRIVATE-BINDING.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-T4-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-U01-U05-REMAINING-INPUTS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-W2-PINNED-BACKUP-SOURCE-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/acl-matrix.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/additional-owner-service.candidate.ts",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/application-pdf.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/audit-preserving-finalization-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/audit-preserving-finalization.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/automation-and-identities.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/backup-schema33-catalog.candidate.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/backup-schema33-integration-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/backup-schema33-integration.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/backup-schema33-integration.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/backup-storage-supplement.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-local-proof-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-local.proof.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-private-launcher.proof.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-proof-before-correction.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-proof-correction.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-proof-private-launcher.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-proof-storage-corrected.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/bootstrap-proof-typescript.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/configuration.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/env-binding-metadata.readonly.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-coordination-operator-returned-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-coordination-output-review-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-hold-inputs-operator-returned-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-hold-inputs-output-review-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-hold-restore-proposal-review-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-oc1-second-ssh-operator-return-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-partial-result-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-partial-result-local.proof.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-f5-readonly-correction-review-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/f2-old-release-startup-drain-retained-pair-contract.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/final-data-preconditions.readonly.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/finalization-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/LOCAL-MAC-TRANSFER-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/PRESERVATION-SCOPE.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/REVIEW.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-GIT-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-HOLD-RETURN-STATE-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-INITIALIZE-ONLY-MISSING-PRIVATE-AUTH-KEYS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-INSTALL-VALIDATED-SCHEMA33-BACKUP.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PIN-DOCUMENTED-TEST-ROLE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PREPARE-RETAINED-RELEASE-TREE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRESERVATION-MANIFEST-DIFF-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRESERVE-CURRENT-PRODUCTION-DATE-FIX.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRESERVE-CURRENT-PRODUCTION.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-ACL-STDIN.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-CONFIG-MIGRATE-ACL-VALIDATOR-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-EXACT-FIX-AND-BUILD-ONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-EXISTING-WRAPPER-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-GIT-FAST-FORWARD-SSH-ALIAS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-GIT-FAST-FORWARD.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-HOLD-RETURN-PREVIOUS-STATE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-INSTALL-AND-BUILD-FOREGROUND.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-INSTALL-AND-BUILD-SHELL-INPUT.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-INSTALL-AND-BUILD.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-ORIGIN-IDENTITY-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-POST-DDL-DB-RETURN.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-SAVED-CODE-CONFIG-RETURN.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-SSH-ALIAS-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-VALIDATE-INSTALL-SCHEMA33.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-WRITER-HOLD-AND-DB-POINT.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-READ-ONLY-BUILD-CANONICALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-RESTORE-PREVIOUS-PRODUCTION-BACKUP-TIMER.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-RETURN-TREE-BEFORE-CONFIG.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-STAGE-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-SWITCH-PREPARED-RELEASE-TREE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-VERIFY-EXISTING-PRESERVATION-DELAYED-DIRS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/WRITER-HOLD-DB-POINT-SCOPE.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/acl-stdin-access-fix-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Historical root-private SQL read failure and pinned stdin correction preparation; not a new execution authorization.",
+      "sha256": "e0b8f3b03ddf1c989b74171edae3fcbf251fdbf1f33461b7def36b0647fcfb1a",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/acl-stdin-access-fix-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/LOCAL-MAC-TRANSFER.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/REVIEW.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-ADMIN-STATUS-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-ADMIN-TARGET-READONLY.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-BOOTSTRAP-APPROVAL-AND-EXISTING-COMMAND.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-CLOSE-ADMIN-WINDOW.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-CLOSE-SMTP-KEEP-VERIFICATION.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-FIX-PUBLIC-ONBOARDING-APPROVAL-ROUTE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-INSTALL-TTY-OUTPUT-ONLY-FIX.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-OPEN-ADMIN-ACTIVATION-WINDOW.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-OPEN-PUBLIC-CONTROLLED-ONBOARDING.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-PREPARE-EXISTING-ADMIN-UI.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-PREPARE-EXISTING-BOOTSTRAP-BUNDLE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-PRIVATE-ACTIVATION-HANDOFF.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-PRIVATE-EXISTING-AUTH-INPUTS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-READ-EXISTING-ACTIVATION-METADATA.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-RESTORE-TIMER-BEFORE-ADMIN-UI.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-RETURN-PUBLIC-ONBOARDING-CONFIG.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/VPS-VERIFIED-GRANTS-EXISTING-COMMAND.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/history-bootstrap-sequence/VPS-BOOTSTRAP-APPROVAL-AND-EXISTING-COMMAND.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/history-runtime-env-reader-stop/VPS-PRIVATE-EXISTING-AUTH-INPUTS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/materials-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/operator-private-launcher.tty-output.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/private-input-source-correction.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/production-admin-notification-review-20261101.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/public-controlled-onboarding-review-20261101.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/review-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/tty-output-only-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/admin-existing-flow-review-20261101/tty-output-only.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/backup-schema33-aligned-candidate-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/build-tsconfig-diagnostic-exclusion.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/documented-test-role-operator-result-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Exact fifth-role attributes/no membership or production ownership evidence.",
+      "sha256": "7aae627212fa6f7dcc42c756c69278a587ca2bf4b4d5386c3719d29238cd4930",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/documented-test-role-operator-result-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/documented-test-role-pin-20261101.diff",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/documented-test-role-pin-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/existing-wrapper-start-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-acl-stdin-fix-20261101/VPS-PRODUCTION-CONFIG-MIGRATE-ACL-VALIDATOR-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-acl-stdin-fix-20261101/passvero-production-release.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/LOCAL-MAC-TRANSFER-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/VPS-PRODUCTION-CONFIG-MIGRATE-ACL-VALIDATOR-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/VPS-RESTORE-PREVIOUS-PRODUCTION-BACKUP-TIMER.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/VPS-STAGE-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/backup-schema33-aligned-candidate-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/backup-schema33-integration.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/passvero-production-release.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/production-aligned-materials-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/production-profile-alignment-manifest-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/production-profile-alignment-review-20261101.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-default-acl-namespace-binding-20261101/production-schema33.profile.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/LOCAL-MAC-TRANSFER-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/VPS-PRODUCTION-CONFIG-MIGRATE-ACL-VALIDATOR-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/VPS-PRODUCTION-POST-DDL-DB-RETURN.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/VPS-PRODUCTION-SAVED-CODE-CONFIG-RETURN.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/VPS-PRODUCTION-WRITER-HOLD-AND-DB-POINT.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/VPS-RESTORE-PREVIOUS-PRODUCTION-BACKUP-TIMER.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/VPS-STAGE-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/backup-schema33-integration.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/preserved-source-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-production-profile-alignment-20261101/production-schema33.profile.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-retained-tree-preparation-20261101/LOCAL-MAC-TRANSFER-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-retained-tree-preparation-20261101/VPS-PRODUCTION-HOLD-RETURN-PREVIOUS-STATE.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-retained-tree-preparation-20261101/VPS-STAGE-EXISTING-PRODUCTION-MATERIALS.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-retained-tree-preparation-20261101/passvero-production-release.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/VPS-PRODUCTION-CONFIG-MIGRATE-ACL-VALIDATOR-START.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/VPS-RESTORE-PREVIOUS-PRODUCTION-BACKUP-TIMER.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/backup-schema33-aligned-candidate-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/backup-schema33-integration.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/passvero-production-release.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/production-schema33.profile.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/history-before-test-role-pin-20261101/test_production_db_validator.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/hold-return-missing-file-operator-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/operator-git-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/preservation-date-fix-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/preservation-date-fix.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/preservation-manifest-mismatch-operator-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/preservation-parent-mtime-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/preservation-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/private-auth-keys-initialized-operator-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/private-missing-auth-key-initialization-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-aligned-materials-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-build-foreground-correction-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-build-shell-input-correction-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-build-tsconfig-correction-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-continuation-materials-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-binding-20261101.diff",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-checks-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-manifest-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-operator-result-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Observed global/public default ACL scope; protects against candidate namespace assumptions.",
+      "sha256": "d74df591b4459667f574b91c6cc7e0627497323dd07f260e5b03aeeea9c49743",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-operator-result-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-review-20261101.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-exact-fix-build-only-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-existing-path-continuation-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-fix-build-postcheck-stop-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-git-continuation-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-git-fast-forward-accepted-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-git-origin-ssh-alias.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-git-ssh-alias-correction-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-install-build-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-migrations-33.sha256",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-origin-mismatch-operator-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-ddl-return-complete-stop-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Complete old-code/config/timer return without DB restore.",
+      "sha256": "d0614cea177dc0b52a2872753ff3ed356fb5778c8146dde4a524a9b63c4c3ccd",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-ddl-return-complete-stop-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-mutation-target-stop-operator-result-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Exact production C.UTF-8/NOINHERIT mismatch and pre-mutation STOP.",
+      "sha256": "755fda2d832c7c767d22b3e3ef337acc660fce3058f0df2e18e8be764a7c283d",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-mutation-target-stop-operator-result-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-preservation-accepted-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Original preliminary disk-preservation identity and explicit non-final/non-runtime-rollback limits.",
+      "sha256": "4e039ac10edf4453536db763e56065ae1081c3278674259135f02e647f2f6254",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-preservation-accepted-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-profile-alignment-manifest-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-profile-alignment-noinherit-runtime-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-profile-alignment-review-20261101.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-profile-alignment-static-checks-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-profile-alignment.diff",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-ssh-origin-alias-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/qpdf-test-compatibility.proposed.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/retained-release-tree-preparation-20261101.md",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/retained-release-tree-preparation-manifest-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/runtime-acl-executable-review-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/runtime-acl.production-20261101.sql",
+      "decision": "A",
+      "category": "HISTORICAL_EXECUTABLE_DO_NOT_EXECUTE",
+      "reason": "Exact SHA1265f2... of the reviewed/executed70-grant SQL; frozen historical recovery reference, never replay blindly.",
+      "sha256": "1265f2eb4b95c08c1d5ff73cc5354e5c4d43edf9fcd257089489b769d1d68f95",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/runtime-acl.production-20261101.sql",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/schema33-phase-continuation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/schema33-reviewed-install-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/source-git-execution-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/source-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/source.diff",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/tsconfig-fix-git-execution-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/writer-hold-db-point-preparation-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/writer-hold-final-db-point-accepted-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/guardian-linux-runtime.Dockerfile",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/guardian-linux-vm-prepare.sh",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/guardian-linux-vm-tools.Dockerfile",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/guardian-official-debian-package-sha256.txt",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/guardian-vm-package-versions.txt",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/identity-transition-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/identity-transition.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/loader-export-order-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/loader-private-lines-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/migrations.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/missing-inputs.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/old-organization-removal.candidate.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/old-organization-retention-root.candidate.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/operator-bootstrap-launcher.candidate.ts",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/operator-bootstrap-persistence.candidate.ts",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/operator-output-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/operator-private-launcher.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/operator-returned-report.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/package-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/preparation-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-application-parsers-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-binding-operator-return.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-local.proof.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-operator-block-binding.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-proof-before-correction.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-proof-corrections.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-proof-credential-red.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-proof-invalid-corrected.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-proof-main-batch.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-proof-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-reviewed-binding-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-reviewed-binding.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-storage-key-correction-operator-return.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-storage-key-correction-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-storage-key-correction.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-transition-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-tty-fix-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-tty-fix.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/private-env-tty.proof.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-attempt-a01-install-operator-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-attempt-a01-integration-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-attempt-a01-prepare-confirmation-stop-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-attempt-a01-profile-closure-operator-result-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Unique later abandoned attempt cancellation before publication.",
+      "sha256": "d485a3532ccb3367838ae1c2f48c7e6a1cdace32247b07c9429cdfdbc21428e4",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/production-attempt-a01-profile-closure-operator-result-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-attempt-a01-transaction.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-attempt-a01.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-d1-d5-operator-output-review-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-d1-d5-operator-returned-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-schema-readonly-operator-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-schema-readonly-preparation.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-url-private-review-operator-result-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-url-private-review-operator-stop-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-url-private-review-preparation.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-validator.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-derived-db-prefix-result-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-derived-db-prefix.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-entry-install.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-entry-operational-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-entry-source-install.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-entry-source-install.pre-template-correction-20261031.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-entry.candidate.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-env-input.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-env-private-launcher.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-guardian-integration-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-install-profile-approval-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-named-participants.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-native-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-native.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-operations.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-pm2-bridge.candidate.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-private-binding.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-private-profile-closure-operator-result-20261101.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Unique original attempt cancellation/closure result; no new prepare/closure follows.",
+      "sha256": "15031ca6e1e7c7e4c4013bc370a5ba86b91fa5c89df1911872a3f33285aa27bb",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/production-private-profile-closure-operator-result-20261101.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-private-profile-metadata-operator-return-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-private-profile-prepare-db-prefix-stop-20261101.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-profile-t4-envelope.proposed.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-profile.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-root-execution-approval.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-root-launcher.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-root-profile-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-runtime-profile.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-schema17.profile.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-schema33.profile.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-source-only-correction-operator-return-20261031.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Historical installed passive entry bundle identity and scoped readback; not the selected runtime.",
+      "sha256": "10b4c7f3179b8f0ac8d7f787bc708f378049091078d85df74de069ca74db61c3",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/production-source-only-correction-operator-return-20261031.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-source-only-correction-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-source-only-correction.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-source-only-correction.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-source-profile-operator-results-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-t4-envelope-correction-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-t4-envelope-correction.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-template-replacement-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/provider-confirmations-env-smtp.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/provider-metadata.template.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/provider-private-env-finalization.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/provider-private-env-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/qpdf-peer.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/reconciliation-preparation-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/remaining-inputs.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/rollback-and-phases.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/runtime-acl-reverse.candidate.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/runtime-acl.candidate.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/scanner-access.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/setup-decisions-and-inputs.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/setup-preparation-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/setup-remaining-readonly.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/setup-source-candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/source-candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/storage-byte-validator.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/storage-organization-usage-operator-results-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/storage-project-alignment-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/storage-readonly-operator-results-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-install-private-binding.candidate.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-installation-operator-return-20261030.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Historical installed passive environment bundle identity and nonactivation evidence.",
+      "sha256": "84ee4da72eee15ff36fd00593d83cb499fed6f927dc84bd342deaa3077d3ccc0",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/t4-installation-operator-return-20261030.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-installation-output-review-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-installation-preparation-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-readonly-operator-returned-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-readonly-output-review-20261030.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/t4-source-bundle.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/transition-closure.readonly.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/transition-operator-attachment.txt",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/transition-operator-output-review.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/transition-operator-returned-report.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_OPERATOR_OR_CONFIGURATION_MATERIAL_NOT_FOR_PUBLICATION"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/transition-output-review-verification.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/transition-remaining-readonly.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/turnstile-hostname.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/u01-u05-reconciliation.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/user-deletion-fk-reference.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/user-deletion-plan.candidate.sql",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/validator-delta.candidate.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-artifact-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-build-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-cold-recovery-proof.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Unique cold recovery result retained without repeating acceptance.",
+      "sha256": "a3d551e816b03a31b54a75f5aa996ef3b649f5c103ca684095f5a3da2b04f2d3",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w1-cold-recovery-proof.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-focused-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-generated-output-check.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-linux-dependency-inventory.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-linux-dependency-preparation.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-private-input-search-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-qualification-result.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Unique accepted isolated W1 scope and artifact/dependency limitations; not production proof.",
+      "sha256": "71414aedab4cee520e98a603d03257054d3b324190085fecdbe7be7b6ebd06b4",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w1-qualification-result.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-artifact-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-attempt2-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-attempt3-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-attempt4-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-build-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-result.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-replacement-source-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-source-manifest.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-stable-public-input-preparation.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-startup-receipt.sanitized.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w1-turnstile-test-fixture.candidate.patch",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-artifact-followup.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-backup-source-operator-return-20261031.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-db-local-proof.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Concrete isolated DB migration/schema/ACL preservation evidence.",
+      "sha256": "41d4d502e1b8bb9fe20d10c53d7afc8c176015a2fb5e768d01495b0212a9ef0b",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w2-db-local-proof.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-final-review.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Final W2 correction disposition; complements the detailed result.",
+      "sha256": "6b52095b63263e29e2aed47bae3821e58896dac918a49f4b4e392b41af8215f1",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w2-final-review.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+      "decision": "A",
+      "category": "SANITIZED_FROZEN_EVIDENCE",
+      "reason": "Unique final isolated W2 migration/ACL/recovery qualification and its limits.",
+      "sha256": "b323b00c003fe2bf579b394e4ce34ef18edb06951a4deb6fb63bed76e99a082d",
+      "gitArchiveDestination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+      "executionStatus": "HISTORICAL_ONLY_DO_NOT_EXECUTE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-recovery-artifacts.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-reviewed-restore-equivalences.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-validator-local-proof.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-w1-artifact-retention.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/w2-w1-source-binding.json",
+      "decision": "B",
+      "category": "LOCAL_ONLY_UNSELECTED_HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "scripts/production-w1/build.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "scripts/production-w1/launch.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "scripts/production-w1/package.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "scripts/production-w1/profile.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "scripts/production-w1/restore.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "scripts/production-w1/runtime.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/integration/production-w2-postgresql.test.ts",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/production_guardian_integration.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/production_guardian_synthetic.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/production_root_linux_probe.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_backup_integration.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_db_validator.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_entry_delta.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_install_input.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_native_delta.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_root_profile.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_t4_binding_contract.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/operations/test_production_t4_prepare_closure.py",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/production-w1-cold.test.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/production-w1.test.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    },
+    {
+      "path": "tests/proofs/production-w2-postgresql.mjs",
+      "decision": "B",
+      "category": "LOCAL_ONLY_RETIRED_OPERATOR_SOURCE_OR_QUALIFICATION_HISTORY"
+    }
+  ],
+  "futureArchiveCommit": {
+    "title": "docs(archive): retain production recovery and retired deployment evidence",
+    "fileCount": 22,
+    "files": [
+      {
+        "source": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-deployment-20261101/notification-policy-origin-review/git-push-and-operator-preparation-result.json",
+        "sha256": "6e6a86d664a643226b872f712d4b5cd0c20c44ef420a6176cfccdf2a2f35ea1c",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-deployment-20261101/notification-policy-origin-review/manifest.json",
+        "sha256": "21e2650d6563b242825486c0ab280db28df0ec79c5726d361b08ab39ae2feb7e",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/acl-stdin-access-fix-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/acl-stdin-access-fix-20261101.json",
+        "sha256": "e0b8f3b03ddf1c989b74171edae3fcbf251fdbf1f33461b7def36b0647fcfb1a",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/documented-test-role-operator-result-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/documented-test-role-operator-result-20261101.json",
+        "sha256": "7aae627212fa6f7dcc42c756c69278a587ca2bf4b4d5386c3719d29238cd4930",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-operator-result-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-default-acl-namespace-operator-result-20261101.json",
+        "sha256": "d74df591b4459667f574b91c6cc7e0627497323dd07f260e5b03aeeea9c49743",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-ddl-return-complete-stop-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-ddl-return-complete-stop-20261101.json",
+        "sha256": "d0614cea177dc0b52a2872753ff3ed356fb5778c8146dde4a524a9b63c4c3ccd",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-mutation-target-stop-operator-result-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-pre-mutation-target-stop-operator-result-20261101.json",
+        "sha256": "755fda2d832c7c767d22b3e3ef337acc660fce3058f0df2e18e8be764a7c283d",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-preservation-accepted-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/production-preservation-accepted-20261101.json",
+        "sha256": "4e039ac10edf4453536db763e56065ae1081c3278674259135f02e647f2f6254",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/runtime-acl.production-20261101.sql",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/runtime-acl.production-20261101.sql",
+        "sha256": "1265f2eb4b95c08c1d5ff73cc5354e5c4d43edf9fcd257089489b769d1d68f95",
+        "category": "HISTORICAL_EXECUTABLE_DO_NOT_EXECUTE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/production-attempt-a01-profile-closure-operator-result-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/production-attempt-a01-profile-closure-operator-result-20261101.json",
+        "sha256": "d485a3532ccb3367838ae1c2f48c7e6a1cdace32247b07c9429cdfdbc21428e4",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/production-private-profile-closure-operator-result-20261101.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/production-private-profile-closure-operator-result-20261101.json",
+        "sha256": "15031ca6e1e7c7e4c4013bc370a5ba86b91fa5c89df1911872a3f33285aa27bb",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/production-source-only-correction-operator-return-20261031.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/production-source-only-correction-operator-return-20261031.json",
+        "sha256": "10b4c7f3179b8f0ac8d7f787bc708f378049091078d85df74de069ca74db61c3",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/t4-installation-operator-return-20261030.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/t4-installation-operator-return-20261030.json",
+        "sha256": "84ee4da72eee15ff36fd00593d83cb499fed6f927dc84bd342deaa3077d3ccc0",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/w1-cold-recovery-proof.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w1-cold-recovery-proof.json",
+        "sha256": "a3d551e816b03a31b54a75f5aa996ef3b649f5c103ca684095f5a3da2b04f2d3",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/w1-qualification-result.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w1-qualification-result.json",
+        "sha256": "71414aedab4cee520e98a603d03257054d3b324190085fecdbe7be7b6ebd06b4",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/w2-db-local-proof.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w2-db-local-proof.json",
+        "sha256": "41d4d502e1b8bb9fe20d10c53d7afc8c176015a2fb5e768d01495b0212a9ef0b",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/w2-final-review.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w2-final-review.json",
+        "sha256": "6b52095b63263e29e2aed47bae3821e58896dac918a49f4b4e392b41af8215f1",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "source": "codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+        "destination": "codex/archive/production-20261101/files/codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+        "sha256": "b323b00c003fe2bf579b394e4ce34ef18edb06951a4deb6fb63bed76e99a082d",
+        "category": "SANITIZED_FROZEN_EVIDENCE"
+      },
+      {
+        "sourceReviewArtifact": "roadmap-H1-historical-only.patch",
+        "destination": "codex/archive/production-20261101/roadmap/2026-10-27-readiness-hunk.patch",
+        "sha256": "94ff184d2325099bc9ec69cde57cc2b9ec9117663c8c69fb9028fda72b88eddf",
+        "category": "FROZEN_HUNK_DO_NOT_APPLY"
+      },
+      {
+        "sourceReviewArtifact": "ARCHIVE-README.md",
+        "destination": "codex/archive/production-20261101/README.md",
+        "category": "HISTORICAL_NONEXECUTION_AND_REFERENCE_MAP",
+        "sha256": "6f56c6838cfa6306d4b45a593cfac233c4ae4c907984cabdb1a404b2ccd628cc"
+      },
+      {
+        "sourceReviewArtifact": "manifest.json",
+        "destination": "codex/archive/production-20261101/worktree-resolution-manifest.json",
+        "category": "COMPLETE_DISPOSITION_MANIFEST_NO_RECURSIVE_SELF_HASH"
+      },
+      {
+        "sourceReviewArtifact": "current-runbook-archive-reference-proposal.patch",
+        "destination": "docs/superpowers/runbooks/passvero-production-release.md",
+        "category": "SMALL_REFERENCE_UPDATE_ONLY_NOT_EXECUTABLE_CHANGE",
+        "baseSha256": "8b288bb4f84cec10b021e0944a87f5fe2dd7641fb6785ecca92e81f39dffb777",
+        "resultSha256": "d95eeae2b82ccab40e43c98691244fbe07c63c416666e8c7224524916c04ca06"
+      }
+    ],
+    "rule": "One archive commit only, after separate approval; no staging whole-roadmap/legal/private content. Copy exact A bytes to explicit archive destinations and keep originals until verified commit/non-force push and preservation preconditions pass."
+  },
+  "privateStorage": {
+    "destinationRoot": "/Users/darkozivic/Passvero-private/worktree-archive-20261101-b0000a1",
+    "mapping": "For every B entry preserve the complete repository-relative path under destinationRoot.",
+    "localSnapshotProposal": "/Users/darkozivic/Passvero-private/preservation/worktree-20261101-b0000a1",
+    "snapshotScope": "All432 original paths, complete mixed roadmap, approved manifest and private byte/mode ledger before source removal.",
+    "offHostProtectedCopy": {
+      "status": "REVIEW_REQUIRED",
+      "reason": "No independent protected backup destination/receipt is established by this local review. A local move or second same-disk directory is not an independent backup.",
+      "requiredBefore": "Any B source removal or C deletion, including retired source that may contain private inputs/outputs.",
+      "operatorMustConfirm": "An operator-owned encrypted/protected independent copy and exact set/hash/readability verification; no database restore or backup acceptance series."
+    },
+    "privateLedger": "Review-local baseline.private.json; keep private, do not commit B digests."
+  },
+  "trackedHunkActions": {
+    "path": "codex/IMPLEMENTATION_ROADMAP.md",
+    "A": [
+      "H1"
+    ],
+    "D": [
+      "H2",
+      "H3"
+    ],
+    "C": [
+      "H4"
+    ],
+    "reviewRequired": [
+      "H2"
+    ],
+    "cleanupPatch": "roadmap-cleanup-proposal.patch",
+    "rule": "After H1 archive verification and protected preservation, remove only H1 and H4 by this reviewed narrow edit. H2/H3 and legal draft stay byte-identical. No whole-file reset/checkout/stash."
+  },
+  "futureProcedure": [
+    "Approve this complete disposition and establish the independent protected-copy destination/receipt; no source removal before that.",
+    "Create/verify the private preservation snapshot without exposing private content; copy exact18 A files plus reviewed archive companions and small runbook reference patch; commit/non-force push only approved archive paths.",
+    "Move407 B files to the stable mirrored private root after protected-copy verification; no overwriting existing destinations.",
+    "Delete only the5 proven standalone duplicates and remove only roadmap H1/H4 after their canonical history is verified; retain complete failure/return/private history in the protected set.",
+    "Leave legal draft and roadmap H2/H3 as explicit D open work; REVIEW_REQUIRED does not authorize deletion or broaden investigation. Confirm index empty and report remaining D work."
+  ],
+  "referencePolicy": "Current runbook/README do not select guardian/adapter infrastructure. Archived evidence retains old status/hash/path identities, never execution authority. Four historical C references remain frozen; canonical Git documents/source commits and this map preserve their meaning.",
+  "checks": {
+    "state": "PASS_REVIEW_COMPLETENESS_REFERENCES_AND_PROPOSED_GIT_CONTENT",
+    "all432LeafPathsCoveredExactlyOnce": true,
+    "all432SourceBytesAndModesUnchanged": true,
+    "normalStatusEntries": 390,
+    "expandedStatusEntries": 432,
+    "collapsedDirectoryCount": 11,
+    "leafFilesInCollapsedDirectories": 53,
+    "AOriginalFiles": 18,
+    "AOriginalBytes": 81234,
+    "provenStandaloneDuplicates": 5,
+    "noByteIdenticalDuplicateGroupsAmongUntrackedFiles": true,
+    "currentRequiredCReferences": 0,
+    "frozenHistoricalCReferences": 4,
+    "retiredInfrastructureNotLinkedAsCurrentProcedure": true,
+    "roadmapHunks": 4,
+    "roadmapReviewRequired": [
+      "H2"
+    ],
+    "legalDraftAndAllRoadmapBytesUnchanged": true,
+    "proposedGitSecretOrConfigFindings": 0,
+    "indexEmpty": true,
+    "stageCommitPushMoveDeleteOrIgnoreChanges": false,
+    "testsBuildLiveAccessOrAcceptanceRun": false,
+    "privateReviewArtifactsWrittenOutsideRepo": true,
+    "offHostBackupDestinationConfirmed": false
+  },
+  "selfHash": "None; no recursive final-manifest hash."
+}

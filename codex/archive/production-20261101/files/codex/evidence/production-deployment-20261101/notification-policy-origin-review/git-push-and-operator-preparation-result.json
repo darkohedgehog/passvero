@@ -1,0 +1,28 @@
+{
+  "status": "GIT_PUSH_CONFIRMED_OPERATOR_BLOCKS_PENDING_SEPARATE_APPROVAL",
+  "commit": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+  "actualRemoteMainVerified": "2eaa5a54770843828e0aae4c16f71bae4927c12b",
+  "sourceHashMatch": true,
+  "indexEmpty": true,
+  "excludedPreserved": 426,
+  "testsRepeated": false,
+  "operatorBlocksExecuted": false,
+  "productionBuildsRunByAgent": 0,
+  "reviewedBlocks": [
+    {
+      "path": "VPS-01-PRESERVE-FAST-FORWARD-BUILD.sh",
+      "sha256": "9259de940d0ba12f85b7ab22fe26d09e388295200d06b37c72a56d75a264db01"
+    },
+    {
+      "path": "VPS-02-ACTIVATE-PRODUCTION-POLICY-START.sh",
+      "sha256": "9ac713b072171fabf6ccac5358ec6a2333012657515280f32e4637a3abec6ffb"
+    },
+    {
+      "path": "VPS-RETURN-PREVIOUS-RELEASE-SETTINGS.sh",
+      "sha256": "b0d9742a5b8d6c301fffc700cc087e18da0d3301c32ba2df685721ead1b99a99"
+    }
+  ],
+  "operatorBlockVerification": "Python AST and bash -n only, no command executed",
+  "runbook": "PRODUCTION-DEPLOYMENT.md",
+  "runbookSha256": "6a26d5fcabe6a3e797f063de97fd2d644715aab951e74e4ecf708a9ec214fabb"
+}

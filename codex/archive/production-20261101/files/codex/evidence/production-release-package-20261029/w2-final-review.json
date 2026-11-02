@@ -1,0 +1,12 @@
+{
+  "status": "PASS_CORRECTION_CLOSED",
+  "scope": "Single fresh-context read-only W2 review required by executing-plans skill; no DB/test/network/private data access by reviewer.",
+  "finding": {
+    "severity": "P2",
+    "issue": "Controller recorded BLOCKED/PARTIAL but could exit0 after cleanup.",
+    "correction": "Set process.exitCode=1 when any recorded phase is not PASS.",
+    "focusedProof": "Actual reporting footer evaluated in NodeVM with fake PASS/BLOCKED results: RED[0,0], GREEN[0,1]. No DB controller import or DB/W1 tests executed.",
+    "reviewerRecheck": "CLOSED_BY_READ_ONLY_INSPECTION"
+  },
+  "otherFindings": []
+}

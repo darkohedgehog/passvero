@@ -1,0 +1,40 @@
+diff --git a/codex/IMPLEMENTATION_ROADMAP.md b/codex/IMPLEMENTATION_ROADMAP.md
+index 5ef11ef..a29f2f3 100644
+--- a/codex/IMPLEMENTATION_ROADMAP.md
++++ b/codex/IMPLEMENTATION_ROADMAP.md
+@@ -37,0 +38,35 @@ ne zahtijeva novi build, deploy ili ponavljanje prihvaćenih serija.
++## PRODUCTION_RELEASE_READINESS_PLAN_AND_DOCUMENTATION_ALIGNMENT — 27.10.2026.
++
++**Završni staging marketing/dashboard UI: USER_CONFIRMED**, prema korisničkom
++ulaznom zahtjevu ove cjeline. Source baseline `364f69660c92845864f4cd8a0d96fda12d10cf52`
++(dokumentacija), prethodni source `2c877f0`; prihvaćeni staging build
++`YNJg-e6igvm0cUQHZ1S3I`. Raniji UI PENDING checkpointi ispod su povijesni.
++Ovo nije nova live provjera. Startup19.10 PASS, scanner recovery21.10 COMPLETE,
++korisnički proizvod/PDF/DPP/QR potvrđen i recurring backup12.10 A–D COMPLETE
++ostaju prihvaćeni u svojim opsezima; ne otvarati ih ponovno.
++
++**Jedan aktualni production plan:** [release, konfiguracija, preflight, DB/ACL,
++scanner/Storage, slanje, pravni uvjeti, deploy/rollback i UI acceptance](PRODUCTION_RELEASE_READINESS_PLAN.md).
++Plan je spreman za pregled, izvršavanje nije odobreno. Puni production PDF tok ima
++konkretnu source blokadu: scan i javna isporuka staging-only, qpdf staging peer UID.
++Nije dovoljan novi env/build. Production Storage byte backup zahtijeva dokaz postojećeg
++pokrića ili najmanju dopunu prije korisničkih uploada. Javne marketing-only legal
++stranice traže stručni review/odobren usklađeni tekst; interni nacrt nije objavljen.
++
++**Nastavak:** jedan zasebno odobren objedinjeni read-only production preflight,
++zato što današnji target/pending migracije/ACL/identiteti/pinovi/coverage nisu ovdje
++live utvrđeni. Repo ima33 migracije; ne preuzimati povijesni production17 kao
++aktualni status. Nakon outputa pripremiti samo konkretne minimalne dopune i jedan
++production-origin build iz zasebno zaključenog kandidata. Staging build nije prenosiv.
++Reminder/automatic onboarding notification production enablement nije odobren;
++za prvi acceptance predložen zahtjev→admin pregled bez lažne uplate.
++
++FULL_SERVICE_RECOVERY=NOT_PROVEN ostaje šira host-loss/provider granica, bez opće
++zabrane launch-a ili nove backup/startup/scanner serije. Početni roadmap sadržaj i
++odvojeni pravni nacrt sačuvani; README ažuriran kao maintenance ulaz. Stariji
++redoslijedi/pending navodi niže nisu naredbe za novi execution.
++
++PRODUCTION_PLAN_READY=YES; PRODUCTION_CHANGES=NONE; LIVE_ACCESS_PERFORMED=NO;
++TESTS_BUILD_REPEATED=NO; BACKUP_ACCEPTANCE_REPEATED=NO; COMMIT_CREATED=NO;
++PUSH_PERFORMED=NO.
++

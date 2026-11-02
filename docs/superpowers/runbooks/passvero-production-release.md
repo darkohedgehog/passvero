@@ -127,11 +127,13 @@ procedure. There were no schema/ACL changes in the final notification deployment
 
 ## Historical failures and nonselected infrastructure
 
-The original detailed runbook and old preparation plan were preserved byte-identically
-under local `codex/evidence/production-deployment-20261101/documentation-alignment/history/`,
-outside the proposed Git set. Their original hashes and classification are recorded in
-[the documentation manifest](../../../codex/evidence/production-deployment-20261101/documentation-alignment/manifest.json).
-This is traceability, not deletion or wholesale archival of executable candidates.
+The original detailed runbook and preparation plan were captured under their original
+repository-relative paths in the frozen documentation-alignment manifest. After approved
+worktree archival, local-only history is retained under the private archive's mirrored
+source paths; [the archive inventory](../../../codex/archive/production-20261101/worktree-resolution-manifest.json)
+records that mapping. The frozen earlier manifest retains capture-time locations and
+hashes; they are not rewritten as current filesystem claims. All retired executable
+material is historical only, never an instruction to run or reactivate it.
 
 Keep the following distinctions from the accepted history:
 

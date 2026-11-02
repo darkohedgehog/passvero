@@ -1,0 +1,67 @@
+{
+  "source": "User-provided production read-only SQL output; agent did not access VPS",
+  "rows": [
+    {
+      "owner_role": "passvero_migrator",
+      "grantor_role": "passvero_migrator",
+      "scope": "GLOBAL",
+      "namespace": null,
+      "object_type": "FUNCTION",
+      "grantee_role": "passvero_migrator",
+      "privilege": "EXECUTE",
+      "is_grantable": false
+    },
+    {
+      "owner_role": "passvero_migrator",
+      "grantor_role": "passvero_migrator",
+      "scope": "GLOBAL",
+      "namespace": null,
+      "object_type": "TYPE",
+      "grantee_role": "passvero_migrator",
+      "privilege": "USAGE",
+      "is_grantable": false
+    },
+    {
+      "owner_role": "passvero_migrator",
+      "grantor_role": "passvero_migrator",
+      "scope": "SCHEMA",
+      "namespace": "public",
+      "object_type": "SEQUENCE",
+      "grantee_role": "passvero_app",
+      "privilege": "USAGE",
+      "is_grantable": false
+    },
+    {
+      "owner_role": "passvero_migrator",
+      "grantor_role": "passvero_migrator",
+      "scope": "SCHEMA",
+      "namespace": "public",
+      "object_type": "SEQUENCE",
+      "grantee_role": "passvero_backup",
+      "privilege": "SELECT",
+      "is_grantable": false
+    },
+    {
+      "owner_role": "passvero_migrator",
+      "grantor_role": "passvero_migrator",
+      "scope": "SCHEMA",
+      "namespace": "public",
+      "object_type": "TABLE",
+      "grantee_role": "passvero_backup",
+      "privilege": "SELECT",
+      "is_grantable": false
+    },
+    {
+      "owner_role": "passvero_migrator",
+      "grantor_role": "passvero_migrator",
+      "scope": "SCHEMA",
+      "namespace": "public",
+      "object_type": "TYPE",
+      "grantee_role": "passvero_app",
+      "privilege": "USAGE",
+      "is_grantable": false
+    }
+  ],
+  "rowCount": 6,
+  "productionChanges": false
+}

@@ -1,0 +1,97 @@
+{
+  "task": "APPROVED_ONE_SOURCE_ONLY_CORRECTION_OPERATOR_RETURN_REVIEW",
+  "dateRecorded": "2026-10-31",
+  "status": "ACCEPTED_OPERATOR_REPORTED_SUCCESS_SCOPED",
+  "operatorOutput": {
+    "status": "SOURCE_CORRECTION_INSTALLED_TEMPLATE_PENDING_GATES_FALSE",
+    "bundleId": "f2bde1389f66a33cd2ca42783bc1a8adce0121922f032e32780182d905096334",
+    "ledger": "/var/lib/passvero-production-entry-correction-f2bde1389f66a33c.private.json",
+    "sourceFiles": 6,
+    "templateTarget": "/var/lib/passvero-production-f2-f5-hold-20261030/production-binding.template.json",
+    "phase": "pending",
+    "approvedForExecution": false,
+    "executionHoldActivationGates": false,
+    "prepareExecuted": false,
+    "profileClosureExecuted": false,
+    "guardianStarted": false,
+    "nodeStarted": false,
+    "activeEnvWritten": false,
+    "originalApprovalsWritten": false,
+    "stagingChanged": false,
+    "messagesSent": 0
+  },
+  "provenance": {
+    "evidenceClass": "USER_OPERATOR_TERMINAL_RESULT",
+    "agentExecutedVPSCommand": false,
+    "independentLiveReadPerformed": false,
+    "observationTimestamp": "NOT_INCLUDED_IN_OPERATOR_OUTPUT",
+    "acceptanceBasis": "Success status matches reviewed pinned installer; its success branch requires exact final readbacks before printing this status."
+  },
+  "reviewedExecutedArtifact": {
+    "path": "codex/evidence/production-release-package-20261029/VPS-TERMINAL-PRODUCTION-SOURCE-ONLY-CORRECTION.sh",
+    "sha256": "926cb6b0241958b1f300a7af5a10c8a9c52f0e0d6c6900b282c9ede9a41c3883",
+    "hashAndManifestMatchAtReview": true
+  },
+  "installedReadbackContract": {
+    "sourceBundleId": "f2bde1389f66a33cd2ca42783bc1a8adce0121922f032e32780182d905096334",
+    "sourceVersion": "/usr/local/libexec/passvero-production-entry/bundle-f2bde1389f66a33cd2ca42783bc1a8adce0121922f032e32780182d905096334",
+    "sourceHashes": {
+      "production-entry.candidate.mjs": "e8569752c98e8b69f98ef650595997c34e0a3cde0915a36e338aaa5212c179d9",
+      "production-operations.candidate.py": "7032c77cdf68c26ba1d682fb223e09334b53bd237b43a8c3e8193ac1df73e1d9",
+      "production-native.candidate.py": "c244ffa10417b7638457f18780bfca27eb8d78dbd17218d22983792a7510c57c",
+      "production-pm2-bridge.candidate.mjs": "e4b9749cb36f83ad1b2619b7bc117e632f035689d3f22f48461cc3bb1a4018c0",
+      "production-profile.candidate.py": "700501a3b7a04a1b4b5b49218f660b058ffdd5372c746b18b448879c51ff68f3",
+      "production-root-launcher.candidate.py": "264d44085b63e1a3ad26983632eb38ad9dd4bcd3904f744eed08497c9edd2b03"
+    },
+    "sourceOwner": "root:root",
+    "sourceModes": "directory0555/files0444",
+    "template": {
+      "path": "/var/lib/passvero-production-f2-f5-hold-20261030/production-binding.template.json",
+      "sha256": "4a1a23fb6aae3dca4012d39a986eb273694bf1c6ba61f9fa0a919a78226cbe51",
+      "owner": "root:root",
+      "mode": "0444",
+      "phase": "pending",
+      "approvedForExecution": false,
+      "executionGates": "all6 false"
+    },
+    "privateLedger": {
+      "path": "/var/lib/passvero-production-entry-correction-f2bde1389f66a33c.private.json",
+      "owner": "root:root",
+      "mode": "0600"
+    },
+    "templateBackup": {
+      "path": "/var/lib/passvero-production-entry-template-correction-f2bde1389f66a33c/before-template.json",
+      "sha256": "b3e11c4902021f2cb2a1f59f03922ec4b78880d9f1f06f89ddc44fdf53eb47b7",
+      "directoryMode": "0700",
+      "fileMode": "0444",
+      "owner": "root:root"
+    },
+    "readbackScope": "Hash/mode/ownership assertions derive from exact successful installer readback, not separately printed raw hash metadata or an agent live query."
+  },
+  "preservedAccordingToSuccessGuards": [
+    "Previous e488 source version and closed six-source set, hashes/inodes/modes unchanged.",
+    "Active runtime env, original T4 proposal and source, original private before/after pair, env approval, root-execution approval and original installation ledger match captured private bytes/metadata baseline.",
+    "Private preparation journal/profile/binding paths remained absent at final guarded readback; no prepare or profile closure was executed. This is not historical proof that no writes ever occurred."
+  ],
+  "notPerformed": [
+    "prepare",
+    "profile closure",
+    "guardian or Node application start",
+    "PM2/Nginx/service/staging changes",
+    "DB connection/replacement/migrations/grants",
+    "provider/SMTP calls/messages",
+    "activation/deploy"
+  ],
+  "currentPrivateProfileStatus": "UNRESOLVED_NO_PRIVATE_OUTPUTS_OBSERVED",
+  "DBReplacementAndConfirmReplacementApproved": false,
+  "recoveryNow": "No recovery/cleanup indicated by successful result. Do not rerun install or invoke close routinely.",
+  "nextAction": "Separately authorize a private read-only review of the concrete existing DATABASE_URL query/fragment components and their meaning before deciding any replacement. No URL change, credential entry, DB connection or prepare follows automatically.",
+  "stop": "This installation authorization is consumed; no next mutation authorized.",
+  "boundaries": {
+    "agentVPSAccess": false,
+    "newTestsBuilds": 0,
+    "backupAcceptanceRepeated": false,
+    "commitCreated": false,
+    "pushPerformed": false
+  }
+}

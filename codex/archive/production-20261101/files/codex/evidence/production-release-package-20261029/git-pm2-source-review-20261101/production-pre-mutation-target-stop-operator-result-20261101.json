@@ -1,0 +1,61 @@
+{
+  "provenance": "USER_SUPPLIED_OPERATOR_RESULT_NO_AGENT_VPS_ACCESS",
+  "status": "PRE_MUTATION_TARGET_MISMATCH_STOP_CONFIRMED",
+  "missingExistingRuntimeKeys": [],
+  "actualNonSecretTarget": {
+    "database": {
+      "owner": "passvero_migrator",
+      "encoding": "UTF8",
+      "collate": "C.UTF-8",
+      "ctype": "C.UTF-8"
+    },
+    "roles": [
+      {
+        "name": "passvero_app",
+        "superuser": false,
+        "inherit": false,
+        "createRole": false,
+        "createDb": false,
+        "login": true,
+        "bypassRls": false
+      },
+      {
+        "name": "passvero_auth",
+        "superuser": false,
+        "inherit": false,
+        "createRole": false,
+        "createDb": false,
+        "login": true,
+        "bypassRls": false
+      },
+      {
+        "name": "passvero_backup",
+        "superuser": false,
+        "inherit": false,
+        "createRole": false,
+        "createDb": false,
+        "login": true,
+        "bypassRls": false
+      },
+      {
+        "name": "passvero_migrator",
+        "superuser": false,
+        "inherit": false,
+        "createRole": false,
+        "createDb": false,
+        "login": true,
+        "bypassRls": false
+      }
+    ]
+  },
+  "candidateExpected": "C/C, INHERIT=true for four roles",
+  "mutationStarted": false,
+  "startSubmitted": false,
+  "phase": "PRECONDITIONS",
+  "reason": "EXISTING_INPUT_OR_TARGET_PROFILE_STOP",
+  "assessment": "No active env/DDL/ACL/backup validator/Nginx/PM2 start action submitted. Initial hold and original migration ledger checks passed before this stop. Generated private supplements retained and not activated. Do not alter production locale/roles to match local candidate.",
+  "lastObservedApp": "stopped",
+  "lastObservedBackupTimer": "inactive",
+  "dbRestoreNeededForPreDDLReturn": false,
+  "next": "Existing saved-code/config return after user-requested explicit operator confirmation; no new profile development, retry, test/build/backup series."
+}

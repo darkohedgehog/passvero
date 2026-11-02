@@ -1,0 +1,392 @@
+{
+  "task": "W2_ISOLATED_SCHEMA_AUTH_ACL_DB_RECOVERY_DELTA",
+  "date": "2026-10-31",
+  "authorization": "USER_APPROVED_W2_ONLY_NO_NEW_BUILD_NO_LIVE",
+  "status": "PASS_DEFINED_LOCAL_W2_SCOPE_ARTIFACT_GAPS_CLOSED",
+  "localDatabaseStatus": "PASS",
+  "acceptance": [
+    {
+      "item": "W1 stable package retention",
+      "status": "PASS_NEW_REPLACEMENT_ARCHIVE_DEFINED_COLD_SCOPE",
+      "proof": "w1-replacement-attempt4-result.json",
+      "detail": "New BUILD_ID wGYgl_798pwEDSBYzfRAI; stable private archive/config/full manifest0700/0600 reverified; fresh image cold startup UID1000/normal bounded drain PASS. Original archive remains historically absent; no inherited new integrity."
+    },
+    {
+      "item": "Exact W2 source and pending migration sequence",
+      "status": "PASS",
+      "proof": "migrations.json plus w2-db-local-proof.json",
+      "detail": "33 immutable file hashes matched, exact16pending18..33 applied. No migration or app source changed."
+    },
+    {
+      "item": "Synthetic initial schema/data",
+      "status": "PASS",
+      "proof": "production-schema17.profile.candidate.json",
+      "detail": "30business+1ledger,17successful synthetic ledger entries; observed before numeric schema counts match. Fixture differences explicitly recorded."
+    },
+    {
+      "item": "Migration/schema/ACL/constraints and data preservation",
+      "status": "PASS",
+      "proof": "w2-db-local-proof.json",
+      "detail": "55business+1ledger,33successful entries. Exact3login-role table matrix,11column grants,only reviewed app function EXECUTE,no PUBLIC object privileges. Non-superuser positive/negative operations and real constraints enforced."
+    },
+    {
+      "item": "Auth/org-free onboarding and three grants",
+      "status": "PASS",
+      "proof": "tests/integration/production-w2-postgresql.test.ts",
+      "detail": "Actual Prisma modules/clients, separate app/auth/migrator logins; verified-identity gate,3grant/idempotent audit,transaction rollback on audit failure,platform-vs-tenant authorization,org/trial/activation/email absence. Existing bootstrap proof reused,not rerun."
+    },
+    {
+      "item": "Before and target DB recovery",
+      "status": "PASS",
+      "proof": "w2-recovery-artifacts.json",
+      "detail": "Same-source before17->migrations/ACL->paired-target33; each restored into separate clean cluster,exactdata/full ledger/schema/effectiveACL. Independent target33 fixture also preserves3grants/new audit/immutable offer. Private dumps outsideGit/tmp retained."
+    },
+    {
+      "item": "Versioned strict validator core and catalog profiles",
+      "status": "PASS",
+      "proof": "w2-validator-local-proof.json",
+      "detail": "Full catalog objects/columns/enums/constraints/index state/triggers/functions/owners/defaultACL/effective table/column/functionACL and checksums. Exact8reviewed restore hash pairs, no generic SQL normalization or broad staging exception."
+    },
+    {
+      "item": "Pinned production backup source and local integration patch",
+      "status": "PASS_LOCAL_PREPARATION_NOT_INSTALLED",
+      "proof": "backup-schema33-integration-review.json",
+      "detail": "Whole32011B source pin verified.5new focused integration cases/static syntax/patch roundtrip PASS; full candidate private stable0700/0600. Actual production profile binding and installation remain separate F5 gates."
+    },
+    {
+      "item": "W1/W2 minimum source/database binding",
+      "status": "PASS_SOURCE_CONTRACT_ONLY",
+      "proof": "w2-w1-source-binding.json",
+      "detail": "Accepted9source/schema/Prisma hashes remain unchanged in corrected source export;3historical compiler JSON restored. New archived Next public routes/cold startup verified without database. Actual new artifact against W2 DB not executed or claimed; prior W2 relational/ACL/auth proof reused."
+    }
+  ],
+  "migrations": {
+    "from": 17,
+    "to": 33,
+    "pending": 16,
+    "entries": [
+      {
+        "order": 18,
+        "name": "20260901120000_add_cn_product_identifier_schema_foundation",
+        "path": "prisma/migrations/20260901120000_add_cn_product_identifier_schema_foundation/migration.sql",
+        "sha256": "fc323840a7d8fb231e11148dbc4d30ca7de3244bd7d3ee4f8abdf87a2b9e5470",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 19,
+        "name": "20260908210000_correct_auth_abuse_last_failure_constraint",
+        "path": "prisma/migrations/20260908210000_correct_auth_abuse_last_failure_constraint/migration.sql",
+        "sha256": "dd5fa48d911a04cc6715b2824f1d87f5ddd8045f90943c5b6f77a8abb2c64120",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 20,
+        "name": "20260914120000_add_document_malware_scan_contract",
+        "path": "prisma/migrations/20260914120000_add_document_malware_scan_contract/migration.sql",
+        "sha256": "c00d297dd7917a035b1ce6f12f781571bdec7e053ad8e0b90175d3f7e4ec90a7",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 21,
+        "name": "20260917120000_add_manufacturer_snapshot",
+        "path": "prisma/migrations/20260917120000_add_manufacturer_snapshot/migration.sql",
+        "sha256": "6171b42f174061b4ffb362499ddda2cb66ff42710020a249df9a7b3637098980",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 22,
+        "name": "20260920120000_one_gtin_per_version",
+        "path": "prisma/migrations/20260920120000_one_gtin_per_version/migration.sql",
+        "sha256": "3d2c11b7a211df4fe67cc533daa09af92b7b1661489b329371a6cb5574dd41f7",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 23,
+        "name": "20260920180000_product_image_assets",
+        "path": "prisma/migrations/20260920180000_product_image_assets/migration.sql",
+        "sha256": "5b8c9def4138280becee7169da793aba3f81b5e3cae21d85450a2513676de6cf",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 24,
+        "name": "20260921120000_catalog_import_receipts",
+        "path": "prisma/migrations/20260921120000_catalog_import_receipts/migration.sql",
+        "sha256": "e86eae3af0e84d814ae292db6e3f8d8b7877a2bdde273cdf44a8ab5c7ab964a7",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 25,
+        "name": "20260922120000_controlled_access_requests",
+        "path": "prisma/migrations/20260922120000_controlled_access_requests/migration.sql",
+        "sha256": "97941e589e7cbc452bff4d4dec9eac70b848855005ae83f7651776b36db0ac97",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 26,
+        "name": "20260924120000_organization_billing_profile",
+        "path": "prisma/migrations/20260924120000_organization_billing_profile/migration.sql",
+        "sha256": "59fa89f0d4444d18d16af00b12defd23befae732f594c12f9403e74f6063375c",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 27,
+        "name": "20260929120000_platform_grant",
+        "path": "prisma/migrations/20260929120000_platform_grant/migration.sql",
+        "sha256": "dc954ed496b3b4b9a9ad00fd42541efe947ce27507e00316dd9d71ef523fa497",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 28,
+        "name": "20260930120000_manual_commercial_subscriptions",
+        "path": "prisma/migrations/20260930120000_manual_commercial_subscriptions/migration.sql",
+        "sha256": "b621f7ace78361d0f712e99fc29c6c8ed87e7447459d9b65eb47fe3733266456",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 29,
+        "name": "20260930130000_subscription_entitlements",
+        "path": "prisma/migrations/20260930130000_subscription_entitlements/migration.sql",
+        "sha256": "982165913376ac8a59c344e7d4764181a5b933389b71b781a97cec9125422057",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 30,
+        "name": "20260930140000_subscription_plan_changes",
+        "path": "prisma/migrations/20260930140000_subscription_plan_changes/migration.sql",
+        "sha256": "9c344eb614c3e639a14c94c1608a9833c63fc417800eccd1ea13710047a3f20a",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 31,
+        "name": "20260930200000_subscription_reminders",
+        "path": "prisma/migrations/20260930200000_subscription_reminders/migration.sql",
+        "sha256": "ab607548d2d08cc88854b8cb7c90318f8c12f34335e66fc571ab2f96e4a1bc61",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 32,
+        "name": "20261005120000_onboarding_notifications_and_approval",
+        "path": "prisma/migrations/20261005120000_onboarding_notifications_and_approval/migration.sql",
+        "sha256": "0081cf2d3a1cecd670e48329a265877cc4dcb39b4d0afe629b0361bcf36b3c9d",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      },
+      {
+        "order": 33,
+        "name": "20261008120000_reminder_future_enrollment",
+        "path": "prisma/migrations/20261008120000_reminder_future_enrollment/migration.sql",
+        "sha256": "067c88ed59639b7acab05f086e7db5edace4d43cba22348e65b358c0ca567bd9",
+        "locallyAppliedInW2": true,
+        "productionExecuted": false
+      }
+    ],
+    "filesModified": false,
+    "executor": "psql exact immutable SQL files preserving own transactions/enum visibility; synthetic Prisma-format ledger, not Prisma migrate deploy engine rehearsal",
+    "sourceReview": "migrations.json remains the unchanged pre-execution/live-source manifest; W2 local execution is recorded here and in real synthetic ledger proof."
+  },
+  "counts": {
+    "before": {
+      "applicationTables": 30,
+      "migrationTables": 1,
+      "migrations": 17,
+      "enums": 24,
+      "checks": 91,
+      "foreignKeys": 48,
+      "partialUniqueIndexes": 7,
+      "persistentSequences": 0,
+      "invalidIndexes": 0,
+      "triggers": 0,
+      "functions": 0
+    },
+    "target": {
+      "applicationTables": 55,
+      "migrationTables": 1,
+      "migrations": 33,
+      "enums": 25,
+      "checks": 154,
+      "foreignKeys": 90,
+      "partialUniqueIndexes": 10,
+      "persistentSequences": 0,
+      "invalidIndexes": 0,
+      "triggers": 14,
+      "functions": 14
+    }
+  },
+  "sourceChanges": [
+    {
+      "path": "tests/proofs/production-w2-postgresql.mjs",
+      "sha256": "88585d0c8be3236ef258d21b187f3f59428be95cafb3a4a982fbf4719b9e9501"
+    },
+    {
+      "path": "tests/integration/production-w2-postgresql.test.ts",
+      "sha256": "b9a65fc91aa5eeaf3b85a66873a298f853e40be647271fb1dad2c1fbaf41eb91"
+    },
+    {
+      "path": "tests/operations/test_production_db_validator.py",
+      "sha256": "fbf39e646f56ff558a1cb9f491a5e3287aec3e9815578929b0b390a5f2d2043a"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/production-db-validator.candidate.py",
+      "sha256": "ca2d05349322cf176ce250098e2b05c884e535bd6c0b3c2c0713475944e64147"
+    }
+  ],
+  "actualAppOrMigrationSourceModified": false,
+  "aclCandidateModified": false,
+  "aclProofBoundary": "Original sentinel fails closed. Only a private test copy omits unconditional RELEASE_ACL_CANDIDATE_NOT_AUTHORIZED sentinel; exact GRANT statements, target guards and source candidate remain unchanged. Non-superuser role connections used, no role/posture/admin expansion.",
+  "bootstrapProof": "bootstrap-local-proof.json accepted, no repeat",
+  "localProof": "w2-db-local-proof.json",
+  "recoveryArtifacts": "w2-recovery-artifacts.json",
+  "stableRecoveryDirectory": "/Users/darkozivic/Library/Application Support/Passvero/production-release-20261031/w2",
+  "w1StablePackage": "PASS_NEW_REPLACEMENT_STABLE_ARCHIVE_COLD_SCOPE",
+  "w1HistoricalBuild": "oGd41m55bZaGJFTphB962",
+  "w1HistoricalProofRemainsAccepted": true,
+  "w1SourceBinding": "w2-w1-source-binding.json",
+  "validatorProof": "w2-validator-local-proof.json",
+  "recoveryBoundaries": [
+    "Before dump is pre-migration recovery of synthetic state; it discards later writes and is not lossless rollback.",
+    "Paired target dump recovers forward schema and corresponding ACL from the same reconstructed source cluster.",
+    "Additional independent target fixture includes actual Prisma grant/audit/financial-reference writes; its full rows/ledger/schema/ACL were independently restored.",
+    "No old runtime compatibility or application rollback established. New replacement archive/cold profile is verified locally without DB; database recovery and live compatibility remain separate.",
+    "Native local PostgreSQL16/C locale/socket-only trust is not production OS/locale/HBA/password/DAC or live F5 validation.",
+    "Reference schema profiles are local source-derived candidates, not a license to overwrite actual production database identity/settings. Complete production source/catalog/control-flow binding remains required before live changes."
+  ],
+  "correctionBoundary": [
+    "Empty json_agg functions represented as an empty set, without SQL-definition normalization.",
+    "Use exact regulatoryClassification source field in preservation assertion.",
+    "8 individually reviewed object/source/restore hash pairs for associative AND and unsized varchar/text array casts.",
+    "Only failed pre-schema/migration/pre-restore phases repeated; successful ACL/auth/post dump not rerun. Failed target catalog comparison rerun offline against already saved restore catalog only.",
+    "A repaired before fixture was explicitly paired with its own forward migration/ACL and target dump. Passed ACL/auth/negative suites not rerun; only affected recovery setup/comparisons extended.",
+    "TypeScript nullable getuid/result-union narrowing only; business source unchanged, targeted typecheck repeated only.",
+    "Final reviewer P2 fixed only in controller exit contract; footer-only fake-result regression RED/GREEN, no DB replay."
+  ],
+  "closedAcceptedChecksRepeated": false,
+  "w1TestsBuildRepeated": false,
+  "newBuildAttempts": 0,
+  "loaderStorageBackupAcceptanceRepeated": false,
+  "vpsAccess": false,
+  "productionStagingAccess": false,
+  "providerCalls": 0,
+  "smtpCalls": 0,
+  "messagesSent": 0,
+  "productionMutations": "NONE",
+  "activeOrPrivateEnvWritten": false,
+  "privateInputReadOrModified": false,
+  "t4BindingApprovalModified": false,
+  "commitCreated": false,
+  "pushPerformed": false,
+  "w3AndLaterAuthorized": false,
+  "productionDeployReady": false,
+  "nextDecision": "LOCAL_W1_W2_ARTIFACT_SCOPE_COMPLETE_STOP; existing production profile binding, Storage-byte/scanner and F5/release/rollback/legal conditions remain open; W3/live not authorized and not started.",
+  "changedLocalFiles": [
+    "codex/PRODUCTION_RELEASE_READINESS_PLAN.md",
+    "codex/evidence/production-readiness-20261027/documentation-manifest.json",
+    "codex/evidence/production-release-package-20261029/F2-F5-COORDINATION.md",
+    "codex/evidence/production-release-package-20261029/README.md",
+    "codex/evidence/production-release-package-20261029/f2-old-release-startup-drain-retained-pair-contract.candidate.json",
+    "codex/evidence/production-release-package-20261029/package-manifest.json",
+    "codex/evidence/production-release-package-20261029/production-db-validator.candidate.py",
+    "codex/evidence/production-release-package-20261029/production-schema17.profile.candidate.json",
+    "codex/evidence/production-release-package-20261029/production-schema33.profile.candidate.json",
+    "codex/evidence/production-release-package-20261029/validator-delta.candidate.json",
+    "codex/evidence/production-release-package-20261029/w2-db-local-proof.json",
+    "codex/evidence/production-release-package-20261029/w2-final-review.json",
+    "codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+    "codex/evidence/production-release-package-20261029/w2-recovery-artifacts.json",
+    "codex/evidence/production-release-package-20261029/w2-reviewed-restore-equivalences.json",
+    "codex/evidence/production-release-package-20261029/w2-validator-local-proof.json",
+    "codex/evidence/production-release-package-20261029/w2-w1-artifact-retention.json",
+    "codex/evidence/production-release-package-20261029/w2-w1-source-binding.json",
+    "docs/superpowers/runbooks/passvero-production-release.md",
+    "tests/integration/production-w2-postgresql.test.ts",
+    "tests/operations/test_production_db_validator.py",
+    "tests/proofs/production-w2-postgresql.mjs"
+  ],
+  "staticVerification": "PASS_SCHEMA_PROFILE_SOURCE_MIGRATION_RECOVERY_MANIFEST_HASH_LINKS_AND_PRESERVATION_NO_DB_REPLAY",
+  "finalReview": "w2-final-review.json",
+  "validatorUnitCases": 6,
+  "preservationCheck": {
+    "legalDraftByteIdentical": true,
+    "unrelatedWorktreeAndAcceptedEvidenceByteIdentical": true,
+    "w1SourceAndAll33MigrationsByteIdentical": true,
+    "originalAclCandidateAndMatrixByteIdentical": true,
+    "t4SourcesAndApprovalUntouched": true,
+    "noExistingEnvFilesWritten": true,
+    "syntheticSessionTokensAbsentFromChangedFiles": true,
+    "stableRecoveryFiles0700_0600HashesMatch": true,
+    "all5DisposableClustersStopped": true,
+    "gitHeadUnchangedIndexEmpty": true,
+    "w1Archive": "ABSENT_NO_COPY_NO_REBUILD"
+  },
+  "stableRecoveryManifestSha256": "392b13e2b42b5ccebb88fab513ae27877def8e5ddc86cb6ede0ee762025ca556",
+  "artifactFollowup": {
+    "path": "w2-artifact-followup.json",
+    "w1SearchStatus": "HISTORICAL_W1_ARCHIVE_NOT_FOUND_CLOSED_BY_NEW_REPLACEMENT",
+    "w1SearchClosed": true,
+    "backupSourceStatus": "COMPLETE_PRIVATE_LOCAL_PIN_MATCH",
+    "vpsReadOnlyBlock": "VPS-TERMINAL-W2-PINNED-BACKUP-SOURCE-READONLY.sh",
+    "macPrivateTransfer": "MAC-TERMINAL-W2-PINNED-BACKUP-SOURCE-FETCH.py",
+    "newBuildApproved": false,
+    "newBuildExecuted": true,
+    "integrationPatchPrepared": true,
+    "acceptedW2ChecksRepeated": false,
+    "changedLocalFiles": [
+      "codex/PRODUCTION_RELEASE_READINESS_PLAN.md",
+      "codex/evidence/production-readiness-20261027/documentation-manifest.json",
+      "codex/evidence/production-release-package-20261029/F2-F5-COORDINATION.md",
+      "codex/evidence/production-release-package-20261029/package-manifest.json",
+      "codex/evidence/production-release-package-20261029/validator-delta.candidate.json",
+      "codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+      "codex/evidence/production-release-package-20261029/w2-artifact-followup.json",
+      "codex/evidence/production-release-package-20261029/VPS-TERMINAL-W2-PINNED-BACKUP-SOURCE-READONLY.sh",
+      "codex/evidence/production-release-package-20261029/MAC-TERMINAL-W2-PINNED-BACKUP-SOURCE-FETCH.py"
+    ],
+    "operatorReturn": "w2-backup-source-operator-return-20261031.json",
+    "nextDecision": "LOCAL_W1_W2_ARTIFACT_SCOPE_COMPLETE_STOP; existing production profile binding, Storage-byte/scanner and F5/release/rollback/legal conditions remain open; W3/live not authorized and not started.",
+    "newFocusedIntegrationChecks": 5,
+    "changedLocalFilesThisIntegration": [
+      "codex/PRODUCTION_RELEASE_READINESS_PLAN.md",
+      "codex/evidence/production-readiness-20261027/documentation-manifest.json",
+      "codex/evidence/production-release-package-20261029/F2-F5-COORDINATION.md",
+      "codex/evidence/production-release-package-20261029/README.md",
+      "codex/evidence/production-release-package-20261029/backup-schema33-catalog.candidate.sql",
+      "codex/evidence/production-release-package-20261029/backup-schema33-integration-review.json",
+      "codex/evidence/production-release-package-20261029/backup-schema33-integration.candidate.patch",
+      "codex/evidence/production-release-package-20261029/backup-schema33-integration.candidate.py",
+      "codex/evidence/production-release-package-20261029/package-manifest.json",
+      "codex/evidence/production-release-package-20261029/validator-delta.candidate.json",
+      "codex/evidence/production-release-package-20261029/w2-artifact-followup.json",
+      "codex/evidence/production-release-package-20261029/w2-backup-source-operator-return-20261031.json",
+      "codex/evidence/production-release-package-20261029/w2-qualification-result.json",
+      "docs/superpowers/runbooks/passvero-production-release.md",
+      "tests/operations/test_production_backup_integration.py"
+    ],
+    "replacementW1": {
+      "authorized": true,
+      "result": "w1-replacement-result.json",
+      "buildAttempts": 4,
+      "status": "PASS_DEFINED_REPLACEMENT_W1_ARTIFACT_SCOPE",
+      "latestAttemptResult": "w1-replacement-attempt4-result.json",
+      "dependencyPreparation": "w1-linux-dependency-preparation.json",
+      "stableArchiveGapClosed": true
+    },
+    "w1ArchiveGapClosed": true,
+    "replacementArtifact": "w1-replacement-artifact-manifest.json"
+  },
+  "backupIntegrationReview": "backup-schema33-integration-review.json",
+  "replacementBuildAttempts": 4,
+  "replacementArtifact": "w1-replacement-artifact-manifest.json"
+}

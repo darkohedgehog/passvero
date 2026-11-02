@@ -1,0 +1,39 @@
+{
+  "status": "PRE_DDL_SERVICE_RETURN_COMPLETE_STOP_NO_DEPLOYMENT_CONTINUATION",
+  "provenance": "USER_SUPPLIED_OPERATOR_RESULTS_NO_AGENT_VPS_ACCESS",
+  "returnResult": {
+    "productionHead": "4f1dd4e3bf0867b90cc9ad507dd5c7e5ef704ec6",
+    "https": 200,
+    "dbLedgerMatchesPreMigration": true,
+    "dbRestored": false,
+    "migrationsApplied": false,
+    "aclChanged": false,
+    "retainedReleasePath": "/var/www/passvero.failed-release-20261101"
+  },
+  "timerOperatorResult": {
+    "status": "PREVIOUS_BACKUP_TIMER_STATE_RESTORED",
+    "previouslyActive": true,
+    "manualBackupRuns": 0,
+    "normalJobMayRunImmediately": true
+  },
+  "timerProperties": {
+    "ActiveState": "active",
+    "SubState": "waiting",
+    "UnitFileState": "enabled"
+  },
+  "candidateDefectSeparateFromReturn": {
+    "actualProduction": {
+      "collate": "C.UTF-8",
+      "ctype": "C.UTF-8",
+      "rolesInheritance": "NOINHERIT for passvero_app, passvero_auth, passvero_backup, passvero_migrator"
+    },
+    "wrongCandidateAssumption": {
+      "collate": "C",
+      "ctype": "C",
+      "rolesInheritance": "INHERIT=true"
+    },
+    "resolution": "No production locale/role alteration and no guard removal. Candidate alignment and impact review require a later separately requested task."
+  },
+  "preservation": "Private initialized inputs, retained release/build, original copies, passive infrastructure, legal draft and existing evidence preserved. No cleanup.",
+  "stop": "No further deployment, build, tests, backup acceptance, commit/push, provider/SMTP or VPS operations authorized in this task. Only this local outcome record/runbook update."
+}

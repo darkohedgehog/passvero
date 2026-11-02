@@ -1,0 +1,368 @@
+{
+  "task": "W1_ISOLATED_NEW_BASELINE_QUALIFICATION",
+  "date": "2026-10-30",
+  "authorization": "USER_APPROVED_W1_ONLY_W2_LATER_NOT_AUTHORIZED",
+  "status": "PASS_DEFINED_W1_ISOLATED_SCOPE",
+  "blockerCode": null,
+  "blocker": null,
+  "inputAdmission": {
+    "key": "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
+    "processEnvironmentPresent": false,
+    "knownFile": ".env",
+    "assignments": 2,
+    "distinctLiteralAssignments": 2,
+    "productionWidgetValueBinding": "USER_CONFIRMED_PASSVERO_PRODUCTION_PASSVERO_EU",
+    "valuesPrinted": false,
+    "valueHashesPrinted": false,
+    "existingEnvFileWritten": false,
+    "currentHost": "Darwin",
+    "currentNode": "v24.22.1",
+    "approvedDirectBuildTarget": "QUALIFIED_ISOLATED_LINUX_AMD64_NODE24.22.2_NPM11.19.1",
+    "privateFile": "/private/tmp/passvero-w1-input-rlimalu0/public-build-input.private.json",
+    "privateFilePresent": true,
+    "fileMode": "0600",
+    "directoryMode": "0700",
+    "currentUidOwner": true,
+    "regularFileNoSymlink": true,
+    "nonemptySingleLine": true,
+    "knownTestPlaceholderRejected": true,
+    "validationBoundary": "Presence, CR/LF and known test/placeholder rejection only; not comprehensive format or Cloudflare function validation. No value or value-hash output.",
+    "priorKnownEnvSource": "Historical ambiguous.env assignments not used; file not reread for this continuation."
+  },
+  "approvedSourceInputs": {
+    "baseCommit": "364f69660c92845864f4cd8a0d96fda12d10cf52",
+    "appBrokerManifest": "source-candidate.json",
+    "appBrokerOverlaySha256": "f7ba79c5bdebaa2628966bb3341e639195f4f414ed622d7ef12ebdbacf351e5e",
+    "turnstileManifest": "setup-source-candidate.json",
+    "turnstilePatchSha256": "378cbe4a29f2a209280e598705d94f74c34a69304e022e731169b5dbb22a891e",
+    "plannedExistingCandidateFiles": [
+      {
+        "path": "src/infrastructure/documents/document-runtime.ts",
+        "beforeSha256": "624e3d975e2ab1e87420b8950133e132a5256a64e904d9ac243d34ab97486d2f",
+        "candidateSha256": "ec059d175f7c7cf73cbdd15e2ca73497c30d03b81f6eee97489791eb77017d24"
+      },
+      {
+        "path": "src/infrastructure/public-dpp/public-document-runtime.ts",
+        "beforeSha256": "9df572cc132b8a227b06f337d7ba30defd43b9c4982bff476208fe4158999055",
+        "candidateSha256": "ad952a1ebfd686381d82fee3fd24100eb95d75199e847d9fcbf8314b2efe400f"
+      },
+      {
+        "path": "scripts/document-scan-boundary/qpdf-broker.py",
+        "beforeSha256": "f551f63eaf6354be5a584c4d5d508cf340fad3fa1bc2a36567fcc82f8299e8e2",
+        "candidateSha256": "2eb20395bbe161f2dbd4b28450dea578a54958a1a534d6ed7dc2ebbf198b6820"
+      },
+      {
+        "path": "src/infrastructure/auth/cloudflare-turnstile-provider.ts",
+        "beforeSha256": "c67623f34a2a0c75bd1c4f4c391485f0822bd79fe18c04e77b152e08470a046b",
+        "candidateSha256": "45693ba32bd4af38e80d2cbdd0493b92080b93fbfa73e51f55dd5236cf41ff79"
+      },
+      {
+        "path": "src/infrastructure/auth/turnstile-provider-runtime.ts",
+        "beforeSha256": "0a5f84dfb3774f5230dee3ef26a991a3990f1d46ec2ad0232368b60a68b93c7e",
+        "candidateSha256": "93c026ef0302cba486433480a4f436b2143494af63024a478ab39983d439feea"
+      }
+    ],
+    "candidatePatchesApplied": true,
+    "newStartupEnvDrainRecoveryFilesImplemented": [
+      "scripts/production-w1/build.mjs",
+      "scripts/production-w1/launch.mjs",
+      "scripts/production-w1/package.mjs",
+      "scripts/production-w1/profile.mjs",
+      "scripts/production-w1/restore.mjs",
+      "scripts/production-w1/runtime.mjs"
+    ],
+    "candidatePatchesAppliedWhere": "ISOLATED_EXPORT_ONLY_FIVE_HASHES_MATCH"
+  },
+  "phaseResults": {
+    "sourceImplementation": "IMPLEMENTED_REVIEWABLE_LOCAL_ONLY",
+    "focusedNewTests": "PASS_9_NEW_CASES_PLUS_1_REAL_PACKAGE_COLD_RECOVERY",
+    "startupReceipt": "CREATED_NEW_MANIFEST_BUILD_PROFILE_PROCESS_BOUND_SANITIZED",
+    "drainProof": "PASS_HTTP_HANDLER_DEFERRED_AND_BOUNDED_TIMEOUT_DEFINED_SCOPE",
+    "coldRestoreProof": "PASS_SAVED_NEW_ARCHIVE_CONFIG_UID1000_ROOT_OWNED_READONLY_NO_WORKING_APP_SOURCE_MOUNT",
+    "finalBuild": "PASS",
+    "finalBuildAttempts": 1,
+    "canonicalOgHreflangGeneratedOutputCheck": "PASS_44_HTML_36_METADATA_PAGES_360_PRODUCTION_URLS_PLUS_SIX_COLD_HTTP_ROUTES",
+    "newArtifactHash": "a1e042ba717318811b81b8903bde09037eae61189171d1d934fedc8805bb5f01"
+  },
+  "builderBoundary": "PASS final build and new-archive cold recovery in official pinned Linux/amd64 Node24.22.2/npm11.19.1 image. Dependencies from exact lockfile with lifecycle scripts disabled. Portable Prisma7.8.0 TS generation used the existing cached Darwin engine offline because Linux engine absent; no DB. Initial blocked engine-artifact fetches were dependency preparation, not final build attempts or app provider calls. Final build and all Docker behavioral proofs network none.",
+  "proofBoundary": "W1 isolation profile only: explicitly constructed child environment, SMTP omitted, production origin validated, local synthetic DB URLs/auth secret; no DB started or business operations. Core active-request/deferred/timeout cases are synthetic; actual pinned Next waitUntil cleanup verified separately, and actual archived Next application started/cold-restored as uid1000, six public locale routes checked then drained. Receipts bind verified manifest/build/profile/new process metadata, not full memory or historical runtime. Deferred completion means settled cleanup, not successful business effects or SMTP idleness. No old runtime rollback, production compatibility, schema/auth/ACL, scanner/backup-byte/legal/live F5 closure claim. Font equivalence is unchanged asset bytes, axes/glyph subsets/fallback metrics, not a pixel screenshot.",
+  "existingAuthorizationStillValidForW1": true,
+  "w2AndLaterAuthorized": false,
+  "historicalS0S2Status": "CLOSED_NOT_PROVABLE_FROM_EXISTING_EVIDENCE_NOT_REOPENED",
+  "providerCalls": 0,
+  "smtpCalls": 0,
+  "messagesSent": 0,
+  "businessWrites": 0,
+  "vpsAccess": false,
+  "productionStagingAccess": false,
+  "privateCandidateApprovalT4Modified": false,
+  "existingEnvFilesModified": false,
+  "acceptedProofsRepeated": false,
+  "backupAcceptanceRepeated": false,
+  "commitCreated": false,
+  "pushPerformed": false,
+  "nextDecision": "Zasebno odluciti o odobrenju samo W2 izolovane data-preserving schema/auth/ACL i DB-recovery delte prema postojecem planu. W2-W5, live env/hold/deploy i novi build nisu ovim odobreni.",
+  "changedLocalFiles": [
+    "app/[locale]/layout.tsx",
+    "app/fonts/OFL.txt",
+    "app/fonts/fallback.css",
+    "app/fonts/geist-0.woff2",
+    "app/fonts/geist-1.woff2",
+    "app/fonts/geist-2.woff2",
+    "app/fonts/geist-3.woff2",
+    "app/fonts/geist-latin.woff2",
+    "app/fonts/geist-mono-0.woff2",
+    "app/fonts/geist-mono-1.woff2",
+    "app/fonts/geist-mono-2.woff2",
+    "app/fonts/geist-mono-3.woff2",
+    "app/fonts/geist-mono-4.woff2",
+    "app/fonts/geist-mono-latin.woff2",
+    "app/fonts/geist.ts",
+    "app/fonts/provenance.json",
+    "codex/PRODUCTION_RELEASE_READINESS_PLAN.md",
+    "codex/evidence/production-readiness-20261027/documentation-manifest.json",
+    "codex/evidence/production-release-package-20261029/F2-F5-COORDINATION.md",
+    "codex/evidence/production-release-package-20261029/README.md",
+    "codex/evidence/production-release-package-20261029/f2-old-release-startup-drain-retained-pair-contract.candidate.json",
+    "codex/evidence/production-release-package-20261029/package-manifest.json",
+    "codex/evidence/production-release-package-20261029/w1-artifact-manifest.json",
+    "codex/evidence/production-release-package-20261029/w1-build-result.json",
+    "codex/evidence/production-release-package-20261029/w1-cold-recovery-proof.json",
+    "codex/evidence/production-release-package-20261029/w1-focused-local-proof.json",
+    "codex/evidence/production-release-package-20261029/w1-generated-output-check.json",
+    "codex/evidence/production-release-package-20261029/w1-qualification-result.json",
+    "codex/evidence/production-release-package-20261029/w1-source-manifest.json",
+    "codex/evidence/production-release-package-20261029/w1-startup-receipt.sanitized.json",
+    "codex/evidence/production-release-package-20261029/w1-turnstile-test-fixture.candidate.patch",
+    "docs/superpowers/runbooks/passvero-production-release.md",
+    "scripts/production-w1/build.mjs",
+    "scripts/production-w1/launch.mjs",
+    "scripts/production-w1/package.mjs",
+    "scripts/production-w1/profile.mjs",
+    "scripts/production-w1/restore.mjs",
+    "scripts/production-w1/runtime.mjs",
+    "tests/production-w1-cold.test.mjs",
+    "tests/production-w1.test.mjs"
+  ],
+  "staticConsistency": "PASS_MANIFEST_HASH_LINKS_EXACT_SAVED_SOURCE_FONT_CANDIDATE_HASHES_AND_PRESERVATION_CHECKS_NO_ACCEPTED_TEST_RERUN",
+  "previousBlockerCode": "W1_PUBLIC_BUILD_INPUT_NOT_UNAMBIGUOUS_PRODUCTION_BOUND",
+  "userPublicInputBinding": {
+    "evidence": "USER_CONFIRMED",
+    "widget": "Passvero production",
+    "hostname": "passvero.eu",
+    "valueSource": "User private saved Site key from this widget; value not requested in chat",
+    "providerFunction": "NOT_PROVEN_NOT_API_CHECKED",
+    "secretKeyRequested": false
+  },
+  "localPublicInputStep": {
+    "path": "codex/evidence/production-release-package-20261029/MAC-TERMINAL-W1-PUBLIC-BUILD-INPUT.sh",
+    "sourceSha256": "543da0559e5fb74f632d843b6c1246797dfda4d5aaacc433bd8d5a07f3a33fa6",
+    "prepared": true,
+    "executedByAgent": false,
+    "userExecutionPending": false,
+    "python": "/usr/bin/python3 -I -S -B",
+    "destination": "/private/tmp/passvero-w1-input-<random>/public-build-input.private.json",
+    "directoryMode": "0700",
+    "fileMode": "0600",
+    "valueValidation": "Nonempty/noCRLF/published dummy Site key family and known placeholder rejection only; not Cloudflare function or comprehensive format proof",
+    "ttyPolicy": "getpass with GetPassWarning raised as error before visible fallback",
+    "argvValues": false,
+    "valueOrValueHashOutput": false,
+    "syntax": "NEW_BLOCK_BASH_N_AND_EMBEDDED_AST_VALID_NO_EXECUTION",
+    "existingEnvWrites": false,
+    "priorDocumentationChecksRepeated": false,
+    "executedByUser": true,
+    "sanitizedUserStatus": "W1_PUBLIC_INPUT_SAVED",
+    "privateInputAdmitted": true
+  },
+  "currentInputPreparationChangedFiles": [],
+  "previousInputStop": {
+    "status": "AWAITING_ONE_LOCAL_PRIVATE_PUBLIC_BUILD_INPUT",
+    "blockerCode": "AWAITING_USER_LOCAL_HIDDEN_INPUT_FILE",
+    "resolved": true,
+    "resolution": "User ran hidden local input step; agent privately admitted supplied file without value/value-hash output."
+  },
+  "builderObservation": {
+    "image": "node:24.22.2-bookworm-slim",
+    "imageId": "sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c",
+    "reportedNode": "v24.22.2",
+    "commandNetwork": "none",
+    "sourceOrInputMounted": false,
+    "dockerRegistryImageAcquisition": true,
+    "productionBuildAttempts": 1,
+    "reportedNpm": "11.19.1"
+  },
+  "offlineFontSourceEvidence": {
+    "kind": "LOCAL_STATIC_SOURCE_OBSERVED",
+    "sourceReferences": [
+      {
+        "path": "app/[locale]/layout.tsx",
+        "sha256": "288e3467540a1f8dac8a4afccac7594f97d8dad1d87c07544960c5a7b3224a7e"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "4312618b27164f25b095ffe693410bcb4f84537cf6d30738732fca8192e6a7ae"
+      },
+      {
+        "path": "node_modules/next/dist/compiled/@next/font/dist/google/fetch-css-from-google-fonts.js",
+        "sha256": "7b279a573e0d7830c009de535e9289a8040fd37f22282b78373815a7b4eed95d"
+      },
+      {
+        "path": "node_modules/next/dist/compiled/@next/font/dist/google/fetch-font-file.js",
+        "sha256": "c9476e7ff5b1baf16b07262c1891e8c22da205638ac65ab552ee978d7b925539"
+      }
+    ],
+    "nextVersion": "16.3.4",
+    "layoutImport": "next/font/google: Geist, Geist_Mono",
+    "cssFetch": "fetchCSSFromGoogleFonts uses fetchResource absent mock input",
+    "fontFetch": "fetchFontFile uses fetchResource absent mock input",
+    "noMockConfiguredOrUsed": true,
+    "noHistoricalDevFontReused": true,
+    "noProviderRequestAttempted": true,
+    "finalBuildAttempted": false,
+    "requiredScopeDelta": "Explicit local font asset/source/import change and provenance/license manifest; not included in startup/env/drain/recovery-only authorization.",
+    "resolved": true,
+    "resolution": "Approved next/font/local with 11 unchanged cached Google-generated font assets, embedded family/version/license inspection, explicit OFL notice and copied fallback metrics. No old1.401bundled substitution.",
+    "currentLayoutSha256": "793fa1b0cbab35ad12a0e40fb3f66a939cee5348a7e8adf3d1331257bcc58157",
+    "assetProvenance": "app/fonts/provenance.json"
+  },
+  "preservationCheck": {
+    "legalDraftByteIdentical": true,
+    "unrelatedSnapshotFilesUnchanged": true,
+    "priorEvidenceAndT4CandidatesUnchanged": true,
+    "existingEnvFilesWritten": false,
+    "privateProductionCandidateApprovalT4Written": false,
+    "privatePublicInputMode": "0600",
+    "privatePublicInputDirectoryMode": "0700",
+    "privateQualificationDirectoryMode": "0o700",
+    "enteredValueAbsentFromChangedFiles": true,
+    "gitIndexEmpty": true,
+    "headUnchanged": true
+  },
+  "resolvedFontStop": {
+    "previousStatus": "BLOCKED_OFFLINE_GOOGLE_FONT_SOURCE_SCOPE",
+    "previousBlockerCode": "W1_GOOGLE_FONT_FETCH_CONFLICTS_WITH_NO_PROVIDER_CALLS",
+    "resolution": "User explicitly approved only local Geist font/layout/assets extension; unchanged existing generated font bytes and metrics used. No arbitrary font downloads."
+  },
+  "sourceImplementation": {
+    "modules": [
+      {
+        "path": "scripts/production-w1/build.mjs",
+        "sha256": "294db09f64699f293a6926dbf6587698819745fa921aafdb172e6872a03f5dc3"
+      },
+      {
+        "path": "scripts/production-w1/launch.mjs",
+        "sha256": "b785f83b1e1dc1716aa214f9a5afc18e58b7f09e088025acdc7d937cbb85fcb2"
+      },
+      {
+        "path": "scripts/production-w1/package.mjs",
+        "sha256": "3eaa884f445dd1c3e828495b756272fd73303ca3bc2ffa1422b6b92a34010cae"
+      },
+      {
+        "path": "scripts/production-w1/profile.mjs",
+        "sha256": "59f293b598a206894be4aeb4c63f5e146c51df6c28ea0b04130f99cc5435f122"
+      },
+      {
+        "path": "scripts/production-w1/restore.mjs",
+        "sha256": "c637d517daceb8791c236dd6720bf2a8f5aac8861cba70c3f89f6ee0dbaa4deb"
+      },
+      {
+        "path": "scripts/production-w1/runtime.mjs",
+        "sha256": "6f8f41a500a8dc361d3d107ab0a547799176308a04245bfed413eec3fa13f42f"
+      }
+    ],
+    "layout": {
+      "path": "app/[locale]/layout.tsx",
+      "sha256": "793fa1b0cbab35ad12a0e40fb3f66a939cee5348a7e8adf3d1331257bcc58157"
+    },
+    "fontProvenance": "app/fonts/provenance.json",
+    "fontLicense": "app/fonts/OFL.txt",
+    "fontScopeApproved": true,
+    "applicationWorkingTree": "Only local font/layout source changed; five earlier reviewed application/broker/Turnstile candidate deltas applied only in isolated export. No general auth refactor or new dependency."
+  },
+  "buildIdentity": {
+    "attempts": 1,
+    "status": "PASS",
+    "exitCode": 0,
+    "signal": null,
+    "errorCode": null,
+    "node": "v24.22.2",
+    "npm": "11.19.1",
+    "network": "DOCKER_NONE",
+    "runtimeSecretsInherited": false,
+    "publicInputBinding": "USER_CONFIRMED_PASSVERO_PRODUCTION_PASSVERO_EU",
+    "valueOrValueHashReported": false,
+    "buildId": "oGd41m55bZaGJFTphB962",
+    "archiveSha256": "a1e042ba717318811b81b8903bde09037eae61189171d1d934fedc8805bb5f01",
+    "artifactManifestSha256": "2c563e1b880e99515fa93e291d1becab5a29c4b696f8a0b1caa217f4dec9cf59",
+    "sourceManifestSha256": "ea4bf866b7dc38fbd53d23c09059eb984d2daaaccb786409bb58a6bbd74ffa20"
+  },
+  "focusedProof": "w1-focused-local-proof.json",
+  "coldProof": "w1-cold-recovery-proof.json",
+  "artifactManifest": "w1-artifact-manifest.json",
+  "startupReceipt": "w1-startup-receipt.sanitized.json",
+  "generatedOutput": "w1-generated-output-check.json",
+  "startupEnvironment": {
+    "profile": "W1_ISOLATED_NO_SMTP",
+    "initialKeys": [
+      "NODE_ENV",
+      "PASSVERO_RUNTIME_ENV",
+      "BETTER_AUTH_URL",
+      "DOCUMENT_SCAN_ENABLED",
+      "NEXT_TELEMETRY_DISABLED",
+      "NEXT_MANUAL_SIG_HANDLE",
+      "DATABASE_URL",
+      "AUTH_DATABASE_URL",
+      "BETTER_AUTH_SECRET"
+    ],
+    "notInherited": [
+      "SMTP_*",
+      "AUTH_EMAIL_FROM",
+      "AUTH_EMAIL_REPLY_TO",
+      "PM2_HOME",
+      "HOME",
+      "NODE_OPTIONS",
+      "NODE_PATH",
+      "HTTP_PROXY",
+      "HTTPS_PROXY",
+      "NEXT_PUBLIC_TURNSTILE_SITE_KEY"
+    ],
+    "receiptAdditionalAfterPinnedFrameworkInit": [
+      "NEXT_DEPLOYMENT_ID",
+      "RUST_MIN_STACK",
+      "UV_USE_IO_URING"
+    ],
+    "additionalKeysBoundary": "Observed after Next/Node initialization, not passed from ambient environment. Receipt lists names only. Pinned dependency tree and no root dotenv files constrain initialization; this is not full process-memory attestation or complete future live production secret configuration."
+  },
+  "startupStopRecoveryContract": {
+    "entry": "node <saved-root>/scripts/production-w1/launch.mjs <saved-root> <private-config.json> <new-private-receipt.jsonl>",
+    "approval": "LOCAL_QUALIFICATION_ONLY_NOT_A_VPS_COMMAND",
+    "interpreter": "Pinned Node24.22.2; fork execArgv empty; no shell, npm start or PM2 environment inheritance in child",
+    "nextAdapter": "next16.3.4/dist/server/lib/start-server#getRequestHandlers; version rejected if different; internal API pinned in complete archive. app.server.close() waits Next internal waitUntil; no alternate upgrade path.",
+    "signals": [
+      "SIGTERM",
+      "SIGINT"
+    ],
+    "admission": "Close listening socket synchronously at drain start; reject new requests on existing connections with503; close newly idle connections after response finish. No upgrades.",
+    "deadline": "Private profile explicit integer20..30000ms; cold proof5000ms, synthetic timeout30ms. Launcher watchdog deadline+2000ms.",
+    "normal": "Wait HTTP server close, handler promises and Next close/deferred cleanup; DRAIN_COMPLETE only after all settle.",
+    "timeout": "DRAIN_TIMEOUT or DRAIN_FAILED, active count/deferredComplete snapshot, destroy remaining sockets and nonzero exit70; no claim about successful business effects.",
+    "receipt": "0600 exclusive new file in0700 directory; child stdout/stderr discarded; only own structured events persisted.",
+    "restore": "Verify saved archive hash before tar; require new destination; verify full exact file/type/mode/symlink/content manifest and manifest hash. Existing destination/tampering STOP. Incomplete extraction is unaccepted evidence state; no blind overwrite, atomic restore claim or old runtime fallback.",
+    "database": "Not used in W1; synthetic URLs supplied only to prove config handling. Does not qualify DB recovery or audit migration."
+  },
+  "databaseProof": "NOT_APPLICABLE_NO_DB_USED",
+  "additionalRuntimeDependenciesIntroduced": [],
+  "productionReadyForDeploy": false,
+  "replacementFollowup": {
+    "date": "2026-10-31",
+    "result": "w1-replacement-result.json",
+    "status": "PASS_DEFINED_REPLACEMENT_W1_ARTIFACT_SCOPE",
+    "buildAttempts": 4,
+    "historicalBuildAndProofUnchanged": true,
+    "latestAttemptResult": "w1-replacement-attempt4-result.json",
+    "newBuildId": "wGYgl_798pwEDSBYzfRAI",
+    "newArtifactManifest": "w1-replacement-artifact-manifest.json",
+    "stableArchiveGap": "CLOSED_NEW_REPLACEMENT"
+  }
+}

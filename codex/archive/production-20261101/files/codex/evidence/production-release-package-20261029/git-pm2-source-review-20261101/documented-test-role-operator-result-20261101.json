@@ -1,0 +1,16 @@
+{
+  "source": "User supplied saved-catalog result; no agent VPS access",
+  "role": {
+    "name": "passvero_test",
+    "superuser": false,
+    "inherit": false,
+    "createRole": false,
+    "createDb": false,
+    "login": true,
+    "bypassRls": false
+  },
+  "matchesDocumentedAttributes": true,
+  "memberships": [],
+  "productionAclEntries": [],
+  "productionOwnedObjects": []
+}

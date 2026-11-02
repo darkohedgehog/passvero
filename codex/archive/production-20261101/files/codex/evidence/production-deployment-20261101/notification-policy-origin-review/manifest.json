@@ -1,0 +1,45 @@
+{
+  "status": "LOCAL_CORRECTION_READY_FOR_GIT_REVIEW_NOT_STAGED",
+  "baseHead": "b83caded0f3c43ca7458213aab063af7b4e26f05",
+  "proposedCommit": "fix(onboarding): isolate production notification policy",
+  "sourceFiles": [
+    {
+      "path": "src/infrastructure/persistence/prisma/onboarding-notification-policy.ts",
+      "sha256": "4223593c1754665b127db22821513746882a175f5576bdfab23ba711f421f4ed",
+      "bytes": 3191
+    },
+    {
+      "path": "src/infrastructure/persistence/prisma/prisma-access-request-notifications.ts",
+      "sha256": "3a3ffb0c53af9172d8771e553b27394886d609fa2a7f71058e8a4c3107465250",
+      "bytes": 5328
+    },
+    {
+      "path": "tests/infrastructure/onboarding-notification-policy-origin.test.ts",
+      "sha256": "2ac1e7fbd0e9866d30320192fbcfb71cb94877926b84f1f636b22404e44932e6",
+      "bytes": 4948
+    }
+  ],
+  "reviewArtifactsNotAutomaticallyIncluded": [
+    "source.diff",
+    "manifest.json",
+    "REVIEW.md"
+  ],
+  "diffSha256": "f73abc81588c6cfe7dfe710d131a09f4c6bff34aaa351d0223db49721f9c8a2b",
+  "verification": {
+    "regressionBeforeFix": "4 relevant failures, staging behavior already passed; production previously read staging policy.",
+    "focusedOriginTests": "6 PASS",
+    "targetedTypeScript": "PASS; noEmit; three roots and imported dependency graph",
+    "targetedEslint": "PASS; three files",
+    "policyRecipientCutoffAttemptBodyUnchanged": true,
+    "deliveryBodyAfterConstructorUnchanged": true,
+    "previousEightTestsRepeated": false,
+    "buildOrIntegrationOrBackupSeriesRun": false,
+    "filesystemProof": "Mocked lstat/open/FileHandle only; no actual root-owned policy files, PostgreSQL or SMTP contacted."
+  },
+  "preservation": {
+    "excludedFilesUnchanged": 426,
+    "indexEmpty": true,
+    "commitsOrPushes": false,
+    "vpsActions": false
+  }
+}

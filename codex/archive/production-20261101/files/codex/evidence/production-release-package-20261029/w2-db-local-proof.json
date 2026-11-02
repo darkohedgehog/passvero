@@ -1,0 +1,229 @@
+{
+  "task": "W2_ISOLATED_SCHEMA_AUTH_ACL_DB_RECOVERY",
+  "cases": [
+    {
+      "name": "actual_role_acl_delta_and_denials",
+      "status": "PASS",
+      "detail": {
+        "tableMatrix": "EXACT_ALL_3_LOGIN_ROLES_ALL_56_TABLES",
+        "columnGrants": "EXACT_11_NO_EXTRA_DIRECT_COLUMN_PRIVILEGES",
+        "ddlOrGrantWrites": "DENIED",
+        "foreignKeyAndUnique": "ENFORCED_AS_APP",
+        "workerAndPolicy": "DENIED",
+        "candidateSentinel": "REFUSED_UNCHANGED_PRIVATE_COPY_ONLY",
+        "functionExecute": "ONLY_RECORD_REMINDER_ENROLLMENT_FOR_APP",
+        "publicAcl": "NONE_ON_APPLICATION_SCHEMA_OBJECTS"
+      }
+    },
+    {
+      "name": "org_free_auth_and_three_grants_source_persistence",
+      "status": "PASS",
+      "detail": {
+        "status": "PASS_ACTUAL_PRISMA_MODULES_WITH_SEPARATE_APP_AUTH_OPERATOR_CONNECTIONS",
+        "bootstrap": "ACCEPTED_PROOF_REUSED_NOT_RERUN",
+        "emails": "NO_TRANSPORT_OR_CAPABILITY_ISSUANCE"
+      }
+    },
+    {
+      "name": "target_catalog_dump_and_negative_validator",
+      "status": "PASS",
+      "detail": {
+        "profile": "SCHEMA33_55_APP_56_TOTAL",
+        "invalidSameCounts": "CHECKSUM_ACL_CONSTRAINT_REJECTED",
+        "dumpRole": "passvero_backup",
+        "format": "custom"
+      }
+    },
+    {
+      "name": "target_clean_restore",
+      "status": "PASS",
+      "detail": {
+        "rowsAndLedger": "EXACT_TARGET_ASSERTION_COMPLETED_BEFORE_SAVED_CATALOG",
+        "privileges": "EXACT_TARGET_EFFECTIVE_ACL",
+        "catalog": "PASS_AFTER_REVIEW_8_EXACT_CONSTRAINT_HASH_PAIRS",
+        "restoreRepeated": false
+      }
+    },
+    {
+      "name": "source_and_private_cluster",
+      "status": "PASS",
+      "detail": {
+        "applicationTables": 30,
+        "migrations": 17,
+        "transport": "PRIVATE_UNIX_SOCKET_ONLY",
+        "role": "passvero_backup dump / passvero_migrator DDL",
+        "fixture": "synthetic nonempty legacy image/document/auth/audit/subscription references"
+      }
+    },
+    {
+      "name": "migration_18_33_and_preservation",
+      "status": "PASS",
+      "detail": {
+        "applicationTables": 55,
+        "migrations": 33,
+        "oldRowsReferences": "PRESERVED_WITH_EXPLICIT_IMAGE_TRANSFORMATION",
+        "legacyRights": "UNRESOLVED_NO_AUTO_TRIAL_OR_GRANT",
+        "scan": "UNSCANNED_NOT_CLEAN",
+        "policy": "DISABLED"
+      }
+    },
+    {
+      "name": "pre_migration_clean_restore",
+      "status": "PASS",
+      "detail": {
+        "rowsAndLedger": "EXACT_BEFORE",
+        "privileges": "BEFORE_PROFILE_EXACT",
+        "lostPostMigrationWrites": "INTENTIONAL_NOT_LOSSLESS_ROLLBACK"
+      }
+    },
+    {
+      "name": "paired_before_after_target_recovery",
+      "status": "PASS",
+      "detail": {
+        "sourceCluster": "repair-main",
+        "beforeDump": "before.dump",
+        "forwardMigrations": "EXACT_16",
+        "acl": "EXACT_PRIVATE_PROOF_COPY",
+        "old17LedgerRows": "EXACT_SAME_IDS_TIMESTAMPS_CHECKSUMS",
+        "postDump": "paired-target.dump",
+        "cleanTargetRestore": "EXACT_ROWS_LEDGER_SCHEMA_ACL",
+        "additionalGrantAuditFixture": "Separate target.dump cohort; its clean restore already qualified, not rerun."
+      }
+    }
+  ],
+  "clustersStopped": true,
+  "messagesSent": 0,
+  "providerCalls": 0,
+  "productionAccess": false,
+  "backupAcceptanceRepeated": false,
+  "buildAttempts": 0,
+  "postgresVersion": "postgres (PostgreSQL) 16.10 (Homebrew)",
+  "artifacts": [
+    {
+      "name": "before.dump",
+      "sha256": "3ff06b9e06e90066cecbabf039dd8efee44a6ce5c317ca8127889e0f0961eb73",
+      "bytes": 168410
+    },
+    {
+      "name": "paired-target.dump",
+      "sha256": "85a7208c90dea3915849b4d67770e5214e5a7d1d02ea6db9fb0212e866f2220b",
+      "bytes": 298890
+    },
+    {
+      "name": "target.dump",
+      "sha256": "4a3c7c818fe88aa430f778b2f80b44f674dfe9eb7c8e7bdc68e21db0141a65b6",
+      "bytes": 299848
+    }
+  ],
+  "focusedCorrections": [
+    "Empty json_agg functions represented as an empty set, without SQL-definition normalization.",
+    "Use exact regulatoryClassification source field in preservation assertion.",
+    "8 individually reviewed object/source/restore hash pairs for associative AND and unsized varchar/text array casts.",
+    "Only failed pre-schema/migration/pre-restore phases repeated; successful ACL/auth/post dump not rerun. Failed target catalog comparison rerun offline against already saved restore catalog only."
+  ],
+  "status": "PASS_LOCAL_DATABASE_SCOPE",
+  "counts": {
+    "before": {
+      "applicationTables": 30,
+      "migrationTables": 1,
+      "migrations": 17,
+      "enums": 24,
+      "checks": 91,
+      "foreignKeys": 48,
+      "partialUniqueIndexes": 7,
+      "persistentSequences": 0,
+      "invalidIndexes": 0,
+      "triggers": 0,
+      "functions": 0
+    },
+    "target": {
+      "applicationTables": 55,
+      "migrationTables": 1,
+      "migrations": 33,
+      "enums": 25,
+      "checks": 154,
+      "foreignKeys": 90,
+      "partialUniqueIndexes": 10,
+      "persistentSequences": 0,
+      "invalidIndexes": 0,
+      "triggers": 14,
+      "functions": 14
+    }
+  },
+  "sourceBinding": [
+    {
+      "path": "src/infrastructure/platform/prisma-platform.ts",
+      "sha256": "0d3b53da8042ac9b6df9a251e6c406fa6dc3baab162b49eaa824b5b3d2828734",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/infrastructure/platform/platform-grant.ts",
+      "sha256": "cff61e5d5e10105deb0072be8cd0bd2641a0343e0c0a2d6a1e377652e20090b8",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/infrastructure/platform/onboarding-access.ts",
+      "sha256": "e109bfec3480bbcbd15fdee7c4c5e8d82ae8e9fd84e1c35ceabff4dbc42015d6",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/infrastructure/platform/onboarding-operator.ts",
+      "sha256": "7ca2c0b0ae51ebc250585d4388602166239115311bc0d7dd741780323c754a12",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/infrastructure/subscriptions/grant.ts",
+      "sha256": "a3d97535239779fd6a547acffbe1538a5f53b2a2af587d7dcd552a048f99fe42",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/infrastructure/subscriptions/prisma-commercial.ts",
+      "sha256": "b95919c674cbd249420f3857d03f258c3bb8bf8c7cefef075f39f8ed8f089415",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/infrastructure/persistence/prisma/prisma-billing-profile.ts",
+      "sha256": "0964de30aa55619bb5c9ab858039ef558d25ec9daa42c2812da6263d7d208ac5",
+      "matchesW1Source": true
+    },
+    {
+      "path": "src/generated/prisma/client.ts",
+      "sha256": "6b7e97b5a6cde0fff6c79a960d9334f0f6d8792f829a441a59df21fe20113121",
+      "matchesW1Source": true
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "be640dc492b827794e592db758bf51d8d3ea864c9107373d62ca94e9aa2cfcbc",
+      "matchesW1Source": true
+    }
+  ],
+  "baselineVsProduction": {
+    "database": "Synthetic reconstruction, never real production data",
+    "matchingObservedSchema17Counts": true,
+    "fixtureDifferences": [
+      "2 synthetic User identities vs historical1User",
+      "1 synthetic organization/product, populated translations/auth/audit/Plan/Subscription references",
+      "Nonzero synthetic document/image metadata stresses preservation though dated U03 had0 legacy bytes",
+      "No external bytes, real credentials, account activation or provider verification",
+      "Native local PostgreSQL16 locale C and socket-only trust role logins; not a production HBA/password/config proof"
+    ],
+    "migrationExecutor": "psql -X ON_ERROR_STOP file mode with real file transaction boundaries and enum visibility. Synthetic Prisma-format ledger records names/checksums/start/finish/success; not Prisma migrate deploy engine rehearsal.",
+    "schemaAclVsAuthorization": "No RLS/tenant row-isolation claim; DB rights and Prisma membership/platform authorization tested separately."
+  },
+  "cleanup": {
+    "main": true,
+    "restore-target": true,
+    "repair-main": true,
+    "restore-pre": true,
+    "restore-paired-target": true
+  },
+  "pairedRecoveryContract": {
+    "sameSourceCluster": "repair-main",
+    "before": "before.dump",
+    "forward": "16 unchanged migrations plus exact ACL proof copy",
+    "target": "paired-target.dump",
+    "additionalTargetFixture": "target.dump from independent first cohort retains three platform grants, auth/audit and immutable financial offer; independently restored.",
+    "applicationRollback": "NOT_PROVEN",
+    "preRestoreWriteLoss": "PRE_MIGRATION_RESTORE_DISCARDS_LATER_WRITES"
+  }
+}

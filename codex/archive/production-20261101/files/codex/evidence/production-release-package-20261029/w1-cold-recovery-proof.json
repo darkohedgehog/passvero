@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "archiveSha256": "a1e042ba717318811b81b8903bde09037eae61189171d1d934fedc8805bb5f01",
+  "manifestSha256": "2c563e1b880e99515fa93e291d1becab5a29c4b696f8a0b1caa217f4dec9cf59",
+  "buildId": "oGd41m55bZaGJFTphB962",
+  "workingAppSourceMounted": false,
+  "newColdLocation": true,
+  "uid": 1000,
+  "rootOwnedReadOnlyCode": true,
+  "privateConfigBytes": "MATCH_SAVED_PAIR",
+  "privateConfigValuesOrHashesReported": false,
+  "requests": [
+    {
+      "route": "/",
+      "status": 200,
+      "canonical": 1,
+      "og": 1,
+      "alternate": 7
+    },
+    {
+      "route": "/sr",
+      "status": 200,
+      "canonical": 1,
+      "og": 1,
+      "alternate": 7
+    },
+    {
+      "route": "/en",
+      "status": 200,
+      "canonical": 1,
+      "og": 1,
+      "alternate": 7
+    },
+    {
+      "route": "/de",
+      "status": 200,
+      "canonical": 1,
+      "og": 1,
+      "alternate": 7
+    },
+    {
+      "route": "/sl",
+      "status": 200,
+      "canonical": 1,
+      "og": 1,
+      "alternate": 7
+    },
+    {
+      "route": "/pl",
+      "status": 200,
+      "canonical": 1,
+      "og": 1,
+      "alternate": 7
+    }
+  ],
+  "artifactUnchangedAfterStop": true,
+  "database": "NOT_USED_NO_BUSINESS_OPERATIONS",
+  "drain": "DRAIN_COMPLETE",
+  "startupReceipt": "SELF_REPORTED_NEW_PROCESS_NOT_MEMORY_ATTESTATION",
+  "network": "DOCKER_NONE",
+  "messagesSent": 0
+}

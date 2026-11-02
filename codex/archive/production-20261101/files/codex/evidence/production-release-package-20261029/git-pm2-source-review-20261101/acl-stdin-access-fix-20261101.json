@@ -1,0 +1,25 @@
+{
+  "status": "ACL_STDIN_ACCESS_FIX_PREPARED_NOT_EXECUTED",
+  "confirmedCause": "Root0700 directory/root0600 SQL cannot be opened by postgres OS user via psql -f path.",
+  "operatorObservedMigrations": 33,
+  "operatorObservedUnfinished": 0,
+  "sqlScopeChanged": false,
+  "runtimeDirectoryPermissionsChanged": false,
+  "syntaxChecks": "PASS",
+  "testsBuildsBackupRuns": 0,
+  "productionAccess": false,
+  "files": [
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-ACL-STDIN.sh",
+      "sha256": "1f1ccad43c629019363c53f43a7cb4baa8d7d3e3881e65fb109127c410a190dc"
+    },
+    {
+      "path": "codex/evidence/production-release-package-20261029/git-pm2-source-review-20261101/VPS-PRODUCTION-CONFIG-MIGRATE-ACL-VALIDATOR-START.sh",
+      "sha256": "0768b7b893bef9963daebe52bd7af5e9f9b1bebb2e83f290df43cd613416beec"
+    },
+    {
+      "path": "docs/superpowers/runbooks/passvero-production-release.md",
+      "sha256": "591a288d3596508a7fd3bcf4c6a93e5d7f0a1ed4c0be6ab02c8aca921c9fbea4"
+    }
+  ]
+}

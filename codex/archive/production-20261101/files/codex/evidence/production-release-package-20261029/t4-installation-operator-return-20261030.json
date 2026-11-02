@@ -1,0 +1,26 @@
+{
+  "task": "T4_INSTALLATION_OPERATOR_RETURN",
+  "reportedDate": "2026-10-30",
+  "reportedTimeUTC": "NOT_PROVIDED",
+  "provenance": "OPERATOR_REPORTED_SANITIZED_TERMINAL_OUTPUT; agent did not access VPS or execute transaction",
+  "result": {
+    "status": "T4_SOURCE_INSTALLED_PRIVATE_BINDING_PROPOSAL_ONLY",
+    "bundleId": "0433ce053fa19e659d271de9bd77c7c5152025ac132bc2f67331d98903bc2b1a",
+    "sourceVersion": "/usr/local/libexec/passvero-production-env/bundle-0433ce053fa19e659d271de9bd77c7c5152025ac132bc2f67331d98903bc2b1a",
+    "sourceSha256": {
+      "production-env-input.candidate.py": "984750739f09bb36c1733ff6b03a85a165b334ce03b876c95d7f7baa87aca808",
+      "production-env-private-launcher.candidate.py": "dfbb14035d7c2e44395f248465f60e562b4497afb8512e9b96d59e5b8aa868cc"
+    },
+    "sourceReadback": "MATCH",
+    "namespaceMode": "0700",
+    "versionMode": "0500",
+    "sourceMode": "0400",
+    "privateProposal": "/var/lib/passvero-production-env-t4-20261030/transition-binding.proposal.private.json",
+    "phase": "pending",
+    "approvedForExecution": false,
+    "activeEnv": "UNCHANGED",
+    "originalApproval": "UNCHANGED",
+    "applicationStarted": false,
+    "messagesSent": 0
+  }
+}

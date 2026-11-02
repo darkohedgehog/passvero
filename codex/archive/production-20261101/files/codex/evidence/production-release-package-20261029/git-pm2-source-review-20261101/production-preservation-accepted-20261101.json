@@ -1,0 +1,44 @@
+{
+  "dateReceived": "2026-11-01",
+  "observedTimeUTC": "NOT_PROVIDED",
+  "provenance": "OPERATOR_SUPPLIED_SANITIZED_RESULT_NO_AGENT_VPS_ACCESS",
+  "operatorResult": {
+    "archiveSha256": "fb5f77f81e3dc1d302a7a7763c921a9b3c1ed0e9f2141a9de0af99ba166df581",
+    "copyRoot": "/var/lib/passvero-production-preserve-20261101-luyk0xxd",
+    "dbEvidenceAtCapture": "FRESH_CANONICAL_MARKER_AND_LOCAL_SUCCESS_RECEIPT",
+    "entries": 34097,
+    "finalPreMigrationPoint": false,
+    "fullContentMetadataMatch": true,
+    "gitHead": "4f1dd4e3bf0867b90cc9ad507dd5c7e5ef704ec6",
+    "messagesSent": 0,
+    "needsExistingBackupBeforeTransition": false,
+    "newBackup": false,
+    "parentTimestampHeadersMatched": 9,
+    "productionCopiedAgain": false,
+    "providerCalls": 0,
+    "runtimeRollbackExecuted": false,
+    "sourceManifestSha256": "1c19d1372dc93019fbafcb6b85404e0479b9392e620168f329b26f481536c5c2",
+    "startupProcessAndRuntimeToolsRechecked": true,
+    "status": "PRELIMINARY_SAVED_DISK_COPY_VERIFIED",
+    "verifiedCopy": "/var/lib/passvero-production-preserve-20261101-luyk0xxd/verified-delayed-91x8ssdz",
+    "writerHold": false
+  },
+  "assessment": "ACCEPTED_PRELIMINARY_SAVED_DISK_COPY_IN_REVIEWED_COMMAND_SCOPE",
+  "basis": "Supplied successful result from exact targeted verification: original before==after; old copy differences exactly9parent directory mtime fields; archive headers preserve those timestamps; delayed extraction full34,097-entry inventory matches original bytes/owners/modes/mtime/symlinks/xattrs; current Git/unit/process/runtime tool checks match saved state.",
+  "limits": [
+    "No historical loaded-memory provenance inferred",
+    "No runtime rollback performed",
+    "DB evidence was local canonical marker/receipt at capture, not remote B2 revalidation",
+    "needsExistingBackupBeforeTransition=false is capture-time assessment, not proof that later writes are protected",
+    "Final DB point must cover all allowed writes up to the future writer hold; no new backup now",
+    "Same-host copy, not independent off-host or full host-loss recovery"
+  ],
+  "retainedPartialRoots": [
+    "/var/lib/passvero-production-preserve-20261101-9bkpuoer",
+    "/var/lib/passvero-production-preserve-20261101-luyk0xxd"
+  ],
+  "cleanupOrRepeatRequired": false,
+  "releaseCommit": "73d55a28ed7a885b3f74d707bdbcc00121ee4627",
+  "newExecutionAuthorization": "NONE_INFERRED",
+  "agentActions": "Record local evidence and prepend status to existing runbook only; no tests/build/commit/push or VPS actions"
+}
