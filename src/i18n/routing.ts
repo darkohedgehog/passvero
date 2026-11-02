@@ -11,6 +11,7 @@ export const routing = defineRouting({
   defaultLocale: "hr",
   localePrefix: "as-needed",
   localeDetection: false,
+  localeCookie: false,
 });
 
 export type AppLocale = PassveroLocale;

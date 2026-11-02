@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -12,9 +12,15 @@ import { getCanonicalAppOrigin } from "@/src/infrastructure/config/canonical-app
 import "../globals.css";
 
 export const metadata: Metadata = {
+  applicationName: "Passvero",
+  manifest: "/manifest.webmanifest",
   verification: {
     google: "7UgejaCfY0FRiWXwHGtXauzg-KaiJQ0wsZ0miT9Khbs",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f766e",
 };
 
 type LocaleLayoutProps = Readonly<{
