@@ -36,7 +36,7 @@ export async function PricingSection() {
                 {[3, 12].map((months) => (
                   <div key={months}>
                     <dt className="text-sm text-slate-600">{t("months", { count: months })}</dt>
-                    <dd className="mt-1 text-2xl font-bold text-navy-950">{currency.format((months === 3 ? plan.quarterlyPriceCents : plan.yearlyPriceCents) / 100)}</dd>
+                    <dd aria-describedby="pricing-vat-note" className="mt-1 text-2xl font-bold text-navy-950">{currency.format((months === 3 ? plan.quarterlyPriceCents : plan.yearlyPriceCents) / 100)}<sup aria-hidden="true" className="ml-0.5 text-sm">*</sup></dd>
                   </div>
                 ))}
               </dl>
@@ -52,6 +52,7 @@ export async function PricingSection() {
             <div className="mt-auto pt-6"><MarketingButton href={accessHref} className="w-full">{t("action")}</MarketingButton></div>
           </article>
         </div>
+        <p id="pricing-vat-note" className="mx-auto mt-5 max-w-4xl text-sm leading-6 text-slate-600"><span aria-hidden="true">* </span>{t("vatNotice")}</p>
         <div className="mx-auto mt-10 max-w-4xl space-y-4 text-sm leading-6 text-slate-600">
           <p>{t("trial")}</p>
           <p>{t("payment")}</p>

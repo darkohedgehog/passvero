@@ -72,7 +72,28 @@
   "HowItWorks": {"label": "Kako funkcioniše", "title": "Od proizvoda do pasoša u 4 jednostavna koraka", "steps": {"create": {"title": "Kreirajte", "description": "Kreirajte digitalni pasoš za svoj proizvod."}, "generate": {"title": "Generišite", "description": "Generišite QR kod za vezu do javnog pasoša."}, "share": {"title": "Podelite", "description": "Povežite ga sa proizvodom ili ambalažom."}, "verify": {"title": "Pregledajte", "description": "Omogućite pristup objavljenim informacijama o proizvodu."}}},
   "DashboardPreview": {"label": "Pregled radnog prostora", "title": "Uredite. Pregledajte. Objavite.", "description": "Proizvodi, verzije i prilozi u jednom radnom prostoru, uz zaseban javni prikaz objavljenih informacija.", "features": ["Upravljanje katalogom i pretraga proizvoda", "Nacrti i objavljene verzije", "Slike i PDF prilozi po verziji", "Uvoz i izvoz kataloga u CSV formatu", "Pristup organizaciji prema ovlašćenjima"], "action": "Zatražite pristup", "visualAlt": "Passvero kontrolna tabla za upravljanje digitalnim pasošima proizvoda", "example": {"label": "Primer prikaza — ilustrativni podaci", "product": "Proizvod", "draft": "Nacrt", "published": "Objavljeno", "title": "Pregled kataloga"}},
   "Industries": {"title": "Napravljeno za proizvođače širom Evrope", "items": {"furniture": "Nameštaj", "textiles": "Tekstil", "packaging": "Ambalaža", "electronics": "Elektronika", "manufacturing": "Proizvodnja", "consumer": "Roba široke potrošnje"}},
-  "Pricing": {"label": "Cene", "title": "Paketi za vaš katalog", "description": "Izaberite obuhvat koji odgovara vašim proizvodima. Pristup se odobrava nakon pregleda zahteva.", "priceNotice": "Ukupne cene za 3 ili 12 kalendarskih meseci, u EUR bez PDV-a. Nema mesečne pretplate.", "published": "{count} objavljenih proizvoda", "months": "{count, plural, =3 {3 kalendarska meseca} other {# kalendarskih meseci}}", "limits": "Do {count} ukupno sačuvanih proizvoda, {storage} GiB prostora i {pdf} PDF priloga po verziji.", "customScope": "Obuhvat po dogovoru", "customPrice": "Cena po ponudi", "customDescription": "Broj proizvoda, prostor i ostali limiti utvrđuju se zasebnom ponudom.", "trial": "Probni period traje 6 meseci od uspešne kontrolisane aktivacije organizacije: do 3 ukupno kreirana proizvoda, uključujući uvoz, i do 3 zauzeta objavljena mesta. Jedan probni period po organizaciji; arhiviranje ne vraća mesto.", "payment": "Zahtev za pristup ne aktivira nalog niti predstavlja kupovinu ili izbor paketa. Plaćanje je B2B bankovnim prenosom po ponudi. Ovlašćeni operator aktivira plaćenu pretplatu nakon provere uplate.", "expiry": "Nakon isteka zaključavaju se sadržajne izmene i nove objave. Produženi javni prikaz važi samo za odgovarajuće dobrovoljne pasoše plaćenih paketa.", "availabilityLink": "Kako se broje mesta i koliko traje dostupnost?", "detailsTitle": "Objavljena mesta, dostupnost i čuvanje", "counting": "Proizvod sa objavljenom verzijom zauzima jedno mesto, čak i ako ima novi nacrt ili je arhiviran ili povučen. Nova verzija istog proizvoda ne troši dodatno mesto. Nacrti, objavljeni i arhivirani proizvodi ulaze u ukupni broj sačuvanih proizvoda; zadržane datoteke i istorijske verzije ulaze u kvotu prostora.", "availability": "Dobrovoljni pasoši (VOLUNTARY) nakon isteka plaćenog paketa mogu ostati javni još 6 meseci, uz zaključan sadržaj i postojeće uslove bezbednog pristupa. Probni period nema produženi javni prikaz. Obavezni (MANDATORY) i nerazjašnjeni (UNRESOLVED) slučajevi zahtevaju zaseban dogovor o dugoročnoj dostupnosti; na njih se ne primenjuje ovo automatsko gašenje.", "retention": "Privatno čuvanje traje 12 meseci nakon isteka plaćenog paketa, odnosno 3 meseca nakon probnog perioda. Tokom čuvanja ostaju dostupni privatni pregled i raspoloživi izvoz uz postojeća ovlašćenja. Ti rokovi ne pokreću automatsko trajno brisanje.", "action": "Zatraži pristup"},
+  "Pricing": {
+    "label": "Cene",
+    "title": "Paketi za vaš katalog",
+    "description": "Izaberite obuhvat koji odgovara vašim proizvodima. Pristup se odobrava nakon pregleda zahteva.",
+    "priceNotice": "Ukupne cene za 3 ili 12 kalendarskih meseci, u EUR bez PDV-a. Nema mesečne pretplate.",
+    "published": "{count} objavljenih proizvoda",
+    "months": "{count, plural, =3 {3 kalendarska meseca} other {# kalendarskih meseci}}",
+    "limits": "Do {count} ukupno sačuvanih proizvoda, {storage} GiB prostora i {pdf} PDF priloga po verziji.",
+    "customScope": "Obuhvat po dogovoru",
+    "customPrice": "Cena po ponudi",
+    "customDescription": "Broj proizvoda, prostor i ostali limiti utvrđuju se zasebnom ponudom.",
+    "trial": "Probni period traje 6 meseci od uspešne kontrolisane aktivacije organizacije: do 3 ukupno kreirana proizvoda, uključujući uvoz, i do 3 zauzeta objavljena mesta. Jedan probni period po organizaciji; arhiviranje ne vraća mesto.",
+    "payment": "Zahtev za pristup ne aktivira nalog niti predstavlja kupovinu ili izbor paketa. Plaćanje je B2B bankovnim prenosom po ponudi. Ovlašćeni operator aktivira plaćenu pretplatu nakon provere uplate.",
+    "expiry": "Nakon isteka zaključavaju se sadržajne izmene i nove objave. Produženi javni prikaz važi samo za odgovarajuće dobrovoljne pasoše plaćenih paketa.",
+    "availabilityLink": "Kako se broje mesta i koliko traje dostupnost?",
+    "detailsTitle": "Objavljena mesta, dostupnost i čuvanje",
+    "counting": "Proizvod sa objavljenom verzijom zauzima jedno mesto, čak i ako ima novi nacrt ili je arhiviran ili povučen. Nova verzija istog proizvoda ne troši dodatno mesto. Nacrti, objavljeni i arhivirani proizvodi ulaze u ukupni broj sačuvanih proizvoda; zadržane datoteke i istorijske verzije ulaze u kvotu prostora.",
+    "availability": "Dobrovoljni pasoši (VOLUNTARY) nakon isteka plaćenog paketa mogu ostati javni još 6 meseci, uz zaključan sadržaj i postojeće uslove bezbednog pristupa. Probni period nema produženi javni prikaz. Obavezni (MANDATORY) i nerazjašnjeni (UNRESOLVED) slučajevi zahtevaju zaseban dogovor o dugoročnoj dostupnosti; na njih se ne primenjuje ovo automatsko gašenje.",
+    "retention": "Privatno čuvanje traje 12 meseci nakon isteka plaćenog paketa, odnosno 3 meseca nakon probnog perioda. Tokom čuvanja ostaju dostupni privatni pregled i raspoloživi izvoz uz postojeća ovlašćenja. Ti rokovi ne pokreću automatsko trajno brisanje.",
+    "action": "Zatraži pristup",
+    "vatNotice": "Prikazane cene ne uključuju PDV. Poreski tretman i ukupan iznos navedeni su u konkretnoj ponudi."
+  },
   "Benefits": {"label": "Prednosti", "title": "Jasnije informacije. Jednostavniji rad.", "items": {"trust": {"title": "Podelite informacije", "description": "Objavite podatke koji su potrebni vašim kupcima i partnerima."}, "risk": {"title": "Pripremite dokumentaciju", "description": "Držite priloge uz odgovarajuću verziju proizvoda."}, "efficiency": {"title": "Uredite katalog", "description": "Unesite podatke ili uvezite proizvode iz CSV datoteke."}, "value": {"title": "Održavajte pregled", "description": "Pregledajte katalog, nacrte i objavljene verzije."}}},
   "CTA": {"title": "Spremni za početak?", "description": "Zatražite kontrolisani pristup i predstavite potrebe svog tima.", "primaryAction": "Zatraži pristup", "noteOne": "Zahtev nije kupovina", "noteTwo": "Aktivacija nakon odobrenja", "visualAlt": "Dekorativna ilustracija štita"},
   "Contact": {"emailLabel": "E-pošta", "earlyAccessSubject": "Zahtev za rani pristup Passveru", "generalSubject": "Opšti upit za Passvero", "privacySubject": "Upit o privatnosti za Passvero"},
@@ -93,51 +114,149 @@
     "responseNote": "Odgovorićemo u najkraćem mogućem roku."
   },
   "Legal": {
-    "Common": {"backHome": "Nazad na početnu stranicu", "lastUpdatedLabel": "Poslednje ažuriranje", "lastUpdated": "11. jul 2026."},
+    "Common": {
+      "backHome": "Nazad na početnu stranicu",
+      "lastUpdatedLabel": "Poslednje ažuriranje",
+      "lastUpdated": "3. novembra 2026.",
+      "contents": "Sadržaj",
+      "related": "Povezane pravne informacije"
+    },
     "Privacy": {
-      "metadata": {"title": "Politika privatnosti | Passvero", "description": "Informacije o tome kako Passvero obrađuje lične podatke na marketinškom sajtu."},
-      "title": "Politika privatnosti", "intro": "Ova politika opisuje trenutno postupanje sa ličnim podacima na javnom Passvero marketinškom sajtu.",
+      "metadata": {
+        "title": "Politika privatnosti | Passvero",
+        "description": "Kako Passvero obrađuje lične podatke pri zahtevu za pristup, korišćenju aplikacije i pregledu javnih digitalnih pasoša proizvoda."
+      },
+      "title": "Politika privatnosti",
+      "intro": "Ova politika objašnjava obradu ličnih podataka na javnim stranicama i u poslovnoj aplikaciji Passvero, uključujući zahteve za pristup i javne digitalne pasoše proizvoda (DPP).",
       "sections": {
-        "scope": {"title": "Obim", "body": "Ova politika se odnosi na javne stranice na passvero.eu. Trenutni sajt nema korisničke naloge, kontakt obrazac niti ugrađenu analitiku."},
-        "data": {"title": "Podaci koje možemo obrađivati", "body": "Kada nam pišete e-poštom, obrađujemo vašu adresu, sadržaj poruke i podatke koje dobrovoljno navedete. Serverska i bezbednosna infrastruktura može obrađivati tehničke zapise zahteva, poput IP adrese, vrste pregledača i vremena pristupa, radi isporuke i zaštite usluge."},
-        "use": {"title": "Svrhe obrade", "body": "Podatke koristimo za odgovore na upite i zahteve za rani pristup, održavanje bezbednosti i pouzdanosti sajta i ispunjavanje primenjivih zakonskih obaveza."},
-        "sharing": {"title": "Deljenje podataka", "body": "Ne prodajemo lične podatke. Pružaoci hostinga, infrastrukture i e-pošte mogu obrađivati podatke samo koliko je potrebno za njihove usluge ili kada zakon to zahteva."},
-        "retention": {"title": "Čuvanje podataka", "body": "Prepisku čuvamo koliko je razumno potrebno za odgovor i poslovnu evidenciju. Tehnički zapisi podležu rokovima pružalaca infrastrukture i bezbednosnim potrebama."},
-        "rights": {"title": "Vaša prava", "body": "U zavisnosti od primenjivog prava, možete tražiti pristup, ispravku, brisanje ili ograničenje obrade i uložiti prigovor na određenu obradu."},
-        "security": {"title": "Bezbednost i kontakt", "body": "Primenjujemo razumne tehničke i organizacione mere zaštite. Za pitanja ili ostvarivanje prava pišite na javnu adresu e-pošte ispod."}
+        "scope": {
+          "title": "Ko smo i naše uloge",
+          "body": "Passverom upravlja Živić-elektro j.d.o.o., 204. vukovarske brigade 39, 32000 Vukovar, Hrvatska, OIB 90344764519. Kontakt za privatnost je contact@passvero.eu. To je kontakt rukovaoca, a ne oznaka imenovanog lica za zaštitu podataka.\n\nZa sopstveni poslovni odnos, naloge, podršku i zaštitu usluge delujemo kao rukovalac. Kada organizacija određuje svrhu i sadržaj ličnih podataka u proizvodima, kontaktima, slikama ili dokumentima, ona je po pravilu rukovalac, a mi obrađujemo podatke u njeno ime. Uloge, zakonita uputstva i odgovornosti uređuju se odgovarajućim ugovorom o obradi. Organizacija koja sama deluje kao obrađivač mora imati ovlašćenje za poveravanje obrade."
+        },
+        "data": {
+          "title": "Koje podatke obrađujemo",
+          "body": "Zahtev za pristup sadrži ime kontakta, email, naziv organizacije i jezik. Čuvaju se odluka i podaci o povezanim obaveštenjima. Nalog obuhvata identitet, potvrdu emaila, heš lozinke, aktivacione i verifikacione podatke, sesije, članstva i ovlašćenja. Lozinke se ne čuvaju u čitljivom obliku.\n\nZa ponude i naplatu obrađujemo poslovni naziv, adresu, državu, dostavljene poreske i PDV identifikatore, billing email, ponude, prihvate, periode i reference plaćanja. Ne obrađujemo brojeve platnih kartica.\n\nObrađujemo unete proizvode, prevode, podatke proizvođača, slike, PDF-ove i verzije, koji mogu sadržati lične podatke. Podaci dolaze od vas ili ovlašćenih osoba vaše organizacije. Korespondencija obuhvata poruke i priloge. Nastaju i audit, bezbednosni i dostavni zapisi i tehnički podaci zahteva i sesije, poput vremena, IP adrese i podataka pregledača, zavisno od infrastrukture."
+        },
+        "use": {
+          "title": "Svrhe i pravni osnovi",
+          "body": "Podatke koristimo za obradu pristupa, naloge i ovlašćenja, pružanje usluge, upravljanje i objavu sadržaja, ponude i naplatu, podršku, bezbednost, poslovnu sledljivost i oporavak.\n\nKada ste lično ugovorna strana, neophodna obrada za pripremu i izvršenje ugovora zasniva se na ugovoru. Za komunikaciju sa predstavnicima organizacija i zaštitu usluge oslanjamo se na legitimni interes vođenja i zaštite poslovnog odnosa, uz zaštitu vaših prava. Za evidencije za koje postoji zakonska obaveza primenjuje se ta obaveza. Za sadržaj klijenta sledimo zakonita uputstva odgovarajućeg rukovaoca. Kada je osnov saglasnost, možete je povući.\n\nObavezna polja potrebna su za traženi zahtev ili funkciju; bez njih možda nisu mogući odobrenje, prijava ili usluga. Aktivacija, verifikacija, reset lozinke i druge transakcione poruke nisu newsletter. Bezbednosne provere mogu privremeno ograničiti pokušaje ili tražiti dodatnu proveru; pristup odobrava ovlašćena osoba. Ne koristimo podatke za oglašivačko profilisanje."
+        },
+        "sharing": {
+          "title": "Objava, primaoci i pružaoci",
+          "body": "Nalog, naplata i interne evidencije nisu sadržaj javnog DPP-a. Privatni pristup zavisi od ovlašćenja. Upload sam ne objavljuje datoteku. Ovlašćenom objavom odabrani podaci objavljene verzije i dozvoljene slike i PDF-ovi postaju javni, uključujući preko QR koda. Treća lica mogu preuzeti sadržaj; povlačenje na Passveru ne uklanja njihove ranije kopije.\n\nKoristimo Hostinger za hosting i email, Supabase za datoteke, Backblaze B2 za rezervne kopije i Cloudflare Turnstile za dodatnu zaštitu kada se zatraži. Banka i računovodstvo obrađuju odgovarajuće poslovne podatke. Telegram služi tehničkim alarmima operatora, ne slanju korisničkih dokumenata. Podaci se mogu otkriti i kada zakon to zahteva. Ne prodajemo lične podatke.\n\nPotvrđeno osnovno čuvanje je u Nemačkoj za VPS i Hostinger email, Irskoj za Supabase i Holandiji za B2; računovodstveni program koristi se lokalno u Hrvatskoj. To ne znači da su svi pristupi podrške i obrade ograničeni na EEP. Pojedinosti o primaocima i primenjivim međunarodnim prenosima možete zatražiti na contact@passvero.eu.\n\nSupabase ovde služi za Storage datoteke, a ne aplikacionu bazu ili autentikaciju. Javni ugovori Hostingera, Supabasea i Backblazea predviđaju standardne ugovorne klauzule za odgovarajuće prenose van EEP-a; sama lokacija čuvanja ne dokazuje odsustvo prenosa. Podaci o konkretnim primaocima, primenjivim zaštitama i načinu dobijanja njihove kopije dostupni su na contact@passvero.eu. Telegram za sopstvenu uslugu ima posebnu ulogu rukovaoca; ne opisujemo ga kao ugovornog obrađivača sadržaja klijenata.\n\nZa dostavu eRačuna korisnicima u Hrvatskoj koristimo MER, Elektronički računi d.o.o., kome se dostavljaju podaci računa i primaoca potrebni za tu uslugu. Korisnicima van Hrvatske račun u PDF formatu šalje se emailom na adresu iz podataka za naplatu, preko postojećeg Hostinger email servisa."
+        },
+        "retention": {
+          "title": "Čuvanje i rezervne kopije",
+          "body": "Politika privatnog čuvanja podataka o proizvodima predviđa 12 meseci posle isteka plaćenog paketa i 3 meseca posle probnog perioda. Javna dostupnost DPP-a zavisi od posebnih pretplatnih i regulatornih pravila. Sledeći rokovi su raspored pregleda, minimizacije i uklanjanja nepotrebnih ličnih podataka, a ne obećanje automatskog brisanja.\n\nZahtev za pristup bez odluke pregleda se posle 90 dana od prijema. Nepotrebni podaci odbijenog zahteva predviđeni su za uklanjanje posle 6 kalendarskih meseci od odluke, a redundantni podaci odobrenog zahteva posle 6 meseci od završene aktivacije. Neaktivirani zahtev pregleda se do 30 dana posle isteka aktivacije. Neophodni dokaz odluke vodi se posebno.\n\nNalog i članstva čuvaju se tokom aktivnog odnosa i ovlašćenog pristupa. Posle završenog zatvaranja cilj je ukloniti nepotrebne podatke profila i kredencijala u roku od 30 dana. Druga aktivna članstva i potrebne poslovne evidencije procenjuju se posebno. Za nepotrebne podatke sesija i tokena cilj je 30 dana od isteka ili opoziva odnosno korišćenja, prema kasnijem primenjivom završnom događaju. Aktuelni billing profil minimizira se u roku od 30 dana od završenog prestanka poslovnog odnosa ako više nije potreban.\n\nOperativni audit ima rok pregleda i minimizacije 12 kalendarskih meseci od događaja; dostavne evidencije 90 dana od konačnog ishoda posle poslednjeg pokušaja; tehnički logovi 30 dana od zapisa; evidencije zaštite od zloupotrebe 30 dana od poslednjeg pokušaja. Tehnička Telegram obaveštenja operatoru imaju cilj 90 dana od poruke. Nerazrešen ishod dostave ne pokreće automatsko ponovno slanje.\n\nKnjigovodstvene isprave obuhvaćene hrvatskim Zakonom o računovodstvu čuvaju se najmanje 11 godina od kraja relevantne poslovne godine. Posebno pravilo za fiskalizovane eRačune predviđa 6 godina od kraja godine izdavanja. Primena zavisi od vrste isprave; nije svaki PDF račun takav eRačun. Ponude, prihvati, reference plaćanja i korespondencija razvrstavaju se prema dokaznoj svrsi, računovodstvenim obavezama i primenjivim rokovima zahteva, bez jedinstvenog roka za sve poruke.\n\nNeprihvaćene ili istekle ponude bez drugog osnova čuvanja imaju rok 6 kalendarskih meseci od isteka ili izričitog odbijanja. Rutinska podrška i korespondencija imaju rok 12 kalendarskih meseci od zatvaranja predmeta; potrebne finansijske i ugovorne dokaze izdvajamo u odgovarajuću kategoriju.\n\nIzdvojeni neophodni dokaz bezbednosnog incidenta čuva se do 6 kalendarskih meseci od razrešenja. Minimalni dokaz odgovora na zahtev za ostvarivanje prava na ličnim podacima ima rok 3 godine od zaključenja predmeta: zahtev u neophodnom obimu, odluka, datumi i dokaz slanja, bez celog izvoza podataka ili rutinske kopije lične karte. To su poslovni rokovi, a ne opšti zakonski minimumi; prestanak svrhe ili ostvarivanje prava mogu zahtevati ranije uklanjanje.\n\nKonkretan spor, incident ili zakonska obaveza mogu opravdati posebno duže čuvanje neophodnog dokaza. Razlog, obim i dalja potreba pregledaju se, po pravilu svakih 30 dana. Rezervne kopije imaju poseban raspored: brisanje iz aktivnog sistema ne znači trenutno brisanje svih ranijih kopija. Za podatke o kategoriji i zahteve pišite na contact@passvero.eu."
+        },
+        "rights": {
+          "title": "Vaša prava",
+          "body": "Pod uslovima GDPR-a možete tražiti pristup, ispravku, brisanje, ograničenje i prenosivost i uložiti prigovor, naročito na obradu zasnovanu na legitimnom interesu. Saglasnost možete povući bez uticaja na zakonitost ranije obrade kada je ona osnov.\n\nPišite na contact@passvero.eu uz dovoljno podataka za pronalazak naloga ili obrade; ne šaljite lozinku. Identitet proveravamo srazmerno zahtevu. Odgovaramo bez nepotrebnog odlaganja, po pravilu u roku od jednog meseca. Pod zakonskim uslovima rok se može produžiti za još dva meseca uz obaveštenje i razloge u prvom mesecu. Za sadržaj klijenta uključujemo odgovarajućeg rukovaoca.\n\nPrava drugih i zakonske obaveze mogu ograničiti zahtev. Pritužbu možete podneti AZOP-u (azop.hr) ili drugom nadležnom nadzornom telu. CSV nije potpun izvoz svih verzija i datoteka; zahtev za lične podatke razmatra se posebno."
+        },
+        "security": {
+          "title": "Bezbednost i Turnstile",
+          "body": "Primenjujemo kontrolu pristupa, organizaciona ovlašćenja, heširanje lozinki, zaštićene sesije i provere datoteka. Mere smanjuju rizik, ali ne garantuju potpuno odsustvo incidenata.\n\nKada se aktivira Turnstile, Cloudflare obrađuje signale poput IP adrese, podataka pregledača i veze radi zaštite od automatizovanih zloupotreba. Prema svojim pravilima deluje kao obrađivač za pružanje zaštite i kao zaseban rukovalac za unapređenje detekcije. Pojedinosti su u Cloudflare Turnstile Privacy Addendumu. Naša Pravila o kolačićima opisuju sesijske tehnologije. Za bezbednosna i pitanja privatnosti pišite na contact@passvero.eu."
+        }
       }
     },
     "Cookies": {
-      "metadata": {"title": "Politika kolačića | Passvero", "description": "Informacije o trenutnoj upotrebi kolačića i skladišta pregledača na sajtu Passvero."},
-      "title": "Politika kolačića", "intro": "Ova politika opisuje trenutnu upotrebu kolačića i sličnih tehnologija na passvero.eu.",
+      "metadata": {
+        "title": "Politika kolačića | Passvero",
+        "description": "Informacije o trenutnoj upotrebi kolačića i skladišta pregledača na sajtu Passvero."
+      },
+      "title": "Politika kolačića",
+      "intro": "Ova pravila opisuju kolačiće za prijavu, izbor jezika i dodatne bezbednosne provere na javnim stranicama i u aplikaciji Passvero.",
       "sections": {
-        "overview": {"title": "Trenutno stanje", "body": "Aplikacioni kod marketinškog sajta trenutno ne postavlja kolačiće niti koristi localStorage ili sessionStorage."},
-        "necessary": {"title": "Strogo neophodne tehnologije", "body": "Passvero trenutno nema sopstvene neophodne kolačiće. Pružalac hosting ili bezbednosne infrastrukture može koristiti strogo neophodne tehničke mehanizme za isporuku, zaštitu od zloupotrebe i pouzdanost."},
-        "locale": {"title": "Izbor jezika", "body": "Jezik se određuje iz URL-a. Automatsko otkrivanje jezika je isključeno i Passvero ne postavlja kolačić za pamćenje izbora jezika."},
-        "analytics": {"title": "Analitika i oglašavanje", "body": "Trenutno ne koristimo analitičke, oglašivačke ili marketinške kolačiće, piksele ili skripte za praćenje. Zato se ne prikazuje baner za saglasnost za neobavezne kolačiće."},
-        "control": {"title": "Kontrole pregledača", "body": "Podešavanja pregledača omogućavaju pregled, blokiranje i brisanje kolačića. Blokiranje neophodnih infrastrukturnih tehnologija može uticati na dostupnost ili bezbednost sajta."},
-        "changes": {"title": "Promene i kontakt", "body": "Ako uvedemo analitiku ili druge neobavezne tehnologije, ažuriraćemo ovu politiku i po potrebi tražiti saglasnost pre njihovog učitavanja. Za pitanja nam pišite e-poštom."}
+        "overview": {
+          "title": "Svrha i obim",
+          "body": "Koristimo sesijske tehnologije potrebne za traženu prijavu i zaštitu usluge. Potreba za saglasnošću i neophodnost procenjuju se prema stvarnoj svrsi tehnologije. Ova pravila nisu opšta dozvola za buduću analitiku ili praćenje."
+        },
+        "necessary": {
+          "title": "Kolačići za prijavu i zaštitu",
+          "body": "__Secure-better-auth.session_token povezuje pregledač sa prijavljenom sesijom; __Secure-better-auth.dont_remember označava prijavu bez trajnog pamćenja. Imaju Secure, HttpOnly i SameSite=Lax i u postojećem toku nemaju trajni browser Max-Age. Serverska sesija ovog toka traje 24 sata; to nije rok čuvanja naloga.\n\nKada se zatraži dodatna zaštita, učitava se Cloudflare Turnstile, koji obrađuje tehničke signale pregledača i veze. Nije naš alat za analitiku ili oglašavanje. Dodatno čuvanje zavisi od konfiguracije widgeta; ne tvrdimo da svaki režim nema kolačiće. Više informacija daje Cloudflare Turnstile Privacy Addendum."
+        },
+        "locale": {
+          "title": "Jezik i instalacija",
+          "body": "Jezik se određuje iz URL-a, automatsko otkrivanje je isključeno i ne postavljamo NEXT_LOCALE. Instalacija preko pregledača koristi manifest i ikone; ne uvodi dodatne analitičke kolačiće, push obaveštenja ili poseban offline režim."
+        },
+        "analytics": {
+          "title": "Analitika i oglašavanje",
+          "body": "Trenutno nemamo integrisane oglašivačke ili marketinške analitičke alate ili sopstvene analitičke kolačiće. Ne prikazujemo panel za opcione kolačiće koji se ne koriste. To ne znači da spoljna bezbednosna provera ne obrađuje tehničke podatke."
+        },
+        "control": {
+          "title": "Kontrole u pregledaču",
+          "body": "Možete se odjaviti i pregledati, blokirati ili ukloniti kolačiće u pregledaču. Vraćanje ranije sesije može sačuvati sesijske kolačiće; za prekid prijave koristite odjavu. Blokiranje neophodnih sesijskih ili bezbednosnih mehanizama može onemogućiti prijavu ili traženu proveru."
+        },
+        "changes": {
+          "title": "Promene i kontakt",
+          "body": "Ako uvedemo tehnologije za koje je potrebna saglasnost, odgovarajući izbor mora prethoditi korišćenju. Za pitanja pišite na contact@passvero.eu. Ostale obrade opisane su u Pravilima privatnosti."
+        }
       }
     },
     "Terms": {
-      "metadata": {"title": "Uslovi korišćenja | Passvero", "description": "Uslovi za pristup Passvero platformi i korišćenje njenih usluga."},
+      "metadata": {
+        "title": "Uslovi korišćenja | Passvero",
+        "description": "Uslovi za pristup Passvero platformi i korišćenje njenih usluga."
+      },
       "title": "Uslovi korišćenja",
-      "intro": "Ovi uslovi opisuju pravila koja se primenjuju pri pristupu Passvero usluzi i njenom korišćenju.",
+      "intro": "Ovi uslovi opisuju poslovnu uslugu Passvero, pristup, odgovornost za sadržaj i postojeći postupak ugovaranja pretplate. Posebna prihvaćena ponuda uređuje konkretan ugovoreni obim.",
       "sections": {
-        "introduction": {"title": "1. Uvod", "body": "Ovi uslovi uređuju pristup sajtu https://passvero.eu i korišćenje Passvero usluge. Pristupanjem usluzi prihvatate ove uslove. Ako ih ne prihvatate, nemojte koristiti uslugu."},
-        "service": {"title": "2. Opis usluge", "body": "Passvero pruža alate za upravljanje, strukturiranje i objavljivanje podataka o proizvodima, uključujući radne procese za digitalne pasoše proizvoda. Passvero nije pravna sertifikacija i ne garantuje regulatornu usklađenost proizvoda ili objavljenih podataka."},
-        "eligibility": {"title": "3. Uslovi pristupa i odgovornost za nalog", "body": "Uslugu možete koristiti samo ako možete zaključiti obavezujući ugovor u svoje ime ili u ime organizacije koju predstavljate. Odgovorni ste za tačnost podataka o nalogu, poverljivost pristupnih podataka i sve aktivnosti na nalogu."},
-        "acceptableUse": {"title": "4. Prihvatljiva upotreba", "body": "Uslugu ne smete koristiti protivzakonito, za povredu tuđih prava, širenje zlonamernog sadržaja, ometanje rada ili bezbednosti usluge, neovlašćen pristup sistemima ili objavljivanje obmanjujućih podataka."},
-        "productData": {"title": "5. Podaci o proizvodima i odgovornost korisnika", "body": "Vi ostajete odgovorni za tačnost, potpunost, zakonitost i potrebna prava za sve podatke, dokumente i druge sadržaje koje unosite ili objavljujete. Pre objavljivanja morate proveriti informacije i osigurati da ispunjavaju primenjive zakonske i ugovorne obaveze."},
-        "intellectualProperty": {"title": "6. Intelektualna svojina", "body": "Passvero i povezani softver, dizajn i sadržaj usluge zaštićeni su primenjivim pravima intelektualne svojine. Ne preuzimamo vlasništvo nad vašim podacima; dajete nam samo prava potrebna za hostovanje, obradu i prikaz radi pružanja usluge."},
-        "thirdPartyServices": {"title": "7. Usluge trećih strana", "body": "Usluga se može oslanjati na pružaoce hostinga, e-pošte, skladištenja ili druge treće strane. Njihove usluge mogu podlegati posebnim uslovima i pravilima, a Passvero ne kontroliše njihovu dostupnost."},
-        "availability": {"title": "8. Dostupnost i promene usluge", "body": "Nastojimo da usluga bude dostupna i pouzdana, ali ne garantujemo neprekidan rad bez grešaka. Uslugu možemo menjati, ograničiti ili obustaviti zbog održavanja, bezbednosti, zakonskih zahteva ili razvoja proizvoda."},
-        "disclaimer": {"title": "9. Odricanje od garancija", "body": "Usluga se pruža u trenutno dostupnom stanju i, u meri dozvoljenoj primenjivim pravom, bez izričitih ili prećutnih garancija. Informacije dostupne putem usluge nisu pravni savet niti zamena za stručnu proveru."},
-        "liability": {"title": "10. Ograničenje odgovornosti", "body": "U meri dozvoljenoj primenjivim pravom, Passvero ne odgovara za posredne, slučajne, posebne ili posledične gubitke, niti za izgubljenu dobit, podatke ili poslovne prilike nastale korišćenjem usluge. Obavezna prava i odgovornosti koje se zakonom ne mogu ograničiti ostaju nepromenjeni."},
-        "termination": {"title": "11. Prestanak korišćenja", "body": "Uslugu možete prestati da koristite u bilo kom trenutku. Pristup možemo ograničiti ili ukinuti zbog bitne povrede ovih uslova, bezbednosnog rizika, protivzakonite upotrebe ili kada je to potrebno radi zaštite usluge i drugih korisnika."},
-        "governingLaw": {"title": "12. Merodavno pravo", "body": "Merodavno pravo i nadležnost određuju se prema primenjivim obaveznim pravilima i, kada je relevantno, ugovoru sa korisnikom. Ovi uslovi ne isključuju obavezna prava koja se primenjuju."},
-        "contact": {"title": "13. Kontakt", "body": "Za pitanja o ovim uslovima obratite se Passveru na contact@passvero.eu. Informacije o usluzi dostupne su na https://passvero.eu."},
-        "changes": {"title": "14. Promene uslova", "body": "Ove uslove možemo ažurirati kako se proizvod, poslovni model ili zakonski zahtevi razvijaju. Objavićemo ažuriranu verziju i datum poslednje izmene, uz dodatno obaveštenje o značajnim promenama kada je to primereno."}
+        "introduction": {
+          "title": "1. Pružalac i obim",
+          "body": "Passvero pruža Živić-elektro j.d.o.o., 204. vukovarske brigade 39, 32000 Vukovar, Hrvatska, OIB 90344764519; MBS 030125449, upis u sudski registar Trgovačkog suda u Osijeku. contact@passvero.eu. Usluga je namenjena poslovnim korisnicima. Sam poset ili zahtev za pristup ne predstavlja prihvat plaćene ponude."
+        },
+        "service": {
+          "title": "2. Usluga",
+          "body": "Passvero omogućava pripremu, upravljanje i objavu podataka o proizvodima, prevoda, proizvođača, slika i PDF-ova, verzionisanje DPP sadržaja i generisanje i preuzimanje QR koda. Nacrt i njegove izmene nisu javni do objave. QR je veza, ne potvrda tačnosti ili zvaničnog regulatornog statusa."
+        },
+        "eligibility": {
+          "title": "3. Pristup i nalog",
+          "body": "Zahtev slede odobrenje, aktivacija i verifikacija emaila. Morate biti ovlašćeni za radnje u ime organizacije i štititi pristupne podatke. Organizaciona i platform ovlašćenja određuju se posebno. Sumnju na neovlašćen pristup prijavite na contact@passvero.eu."
+        },
+        "acceptableUse": {
+          "title": "4. Prihvatljiva upotreba",
+          "body": "Zabranjeni su nezakonit ili zlonameran sadržaj, povreda tuđih prava, neovlašćen pristup i ometanje usluge. Ne unosite nepotrebne lične podatke ili sadržaj za čiju obradu nemate ovlašćenje. Ne zaobilazite ovlašćenja, kvote ili bezbednosne provere.\n\nSumnju na nezakonit sadržaj prijavite na contact@passvero.eu uz tačnu vezu ili identifikator, obrazloženje i kontakt za odgovor. Ne šaljite nepotrebne lične podatke. Mere ograničenja treba da budu srazmerne; pogođeni korisnik može tražiti obrazloženje i ljudski pregled na istom kontaktu, uz ograničenja zakona i zaštite postupka."
+        },
+        "productData": {
+          "title": "5. Sadržaj i javna objava",
+          "body": "Organizacija odgovara za tačnost, potpunost, zakonitost i prava na sadržaj i odluku o objavi, uključujući lične podatke u dokumentima i kontaktima. Objavljena verzija odvojena je od izmena nacrta. Upload nije objava; javna isporuka zahteva odgovarajuća podešavanja i bezbednosne provere. Treća lica mogu sačuvati ranije javne kopije."
+        },
+        "intellectualProperty": {
+          "title": "6. Prava na sadržaj i softver",
+          "body": "Zadržavate prava na sadržaj i dozvoljavate njegovu obradu, čuvanje i prikaz samo u obimu potrebnom za uslugu i zakonita uputstva. Ne stičete vlasništvo nad Passvero softverom, dizajnom ili oznakama. Uloge i obrada ličnih podataka dodatno se uređuju primenjivim ugovorom o obradi."
+        },
+        "thirdPartyServices": {
+          "title": "7. Infrastruktura i komunikacija",
+          "body": "Usluga koristi spoljne pružaoce hostinga, datoteka, emaila, kopija i zaštite. Njihov kvar može uticati na dostupnost. Aktivacione, verifikacione, bezbednosne i poslovne poruke deo su postupka, a ne marketinški newsletter. Obrada je opisana u Pravilima privatnosti."
+        },
+        "availability": {
+          "title": "8. Probni period i pretplata",
+          "body": "Jedan probni period po organizaciji traje šest kalendarskih meseci od uspešne aktivacije: tri ukupno kreirana proizvoda, 100 MiB i pet PDF priloga po verziji. Arhiviranje ne vraća probno mesto.\n\nPlaćeni tok obuhvata zahtev, ponudu, prihvat, bankovnu uplatu i zasebnu potvrdu aktivacije. Standardni periodi su 3 ili 12 kalendarskih meseci; ponuda važi 30 kalendarskih dana od izdavanja. Cene su u EUR bez PDV-a za ceo navedeni period. Poreski tretman, ukupan iznos i kvote određuje konkretna ponuda. Račun se izdaje posebno; nema automatske naplate ili obnove. Prihvaćenu ponudu ne menja kasniji cenovnik.\n\nKorisnici u Hrvatskoj dobijaju eRačun preko sistema MER, Elektronički računi d.o.o. Korisnici van Hrvatske dobijaju račun u PDF formatu emailom na adresu navedenu u podacima za naplatu."
+        },
+        "disclaimer": {
+          "title": "9. Granice usluge",
+          "body": "Passvero nije pravni savet, zvanična sertifikacija ili garancija regulatorne usklađenosti. Korisnik proverava zahteve za svoje proizvode. Provera PDF-a ne garantuje bezopasnost, autentičnost ili pravnu valjanost; QR ili GTIN prikaz ne potvrđuje GS1 registraciju."
+        },
+        "liability": {
+          "title": "10. Dostupnost i odgovornost",
+          "body": "Održavanje, bezbednosne intervencije i kvarovi mogu prekinuti uslugu. Bez posebnog ugovora ne obećavamo određeni SLA ili rad bez grešaka. Kopije ne zamenjuju raspoloživi korisnički izvoz. Obavezna zakonska prava i odgovornosti ostaju očuvani; obim odgovornosti procenjuje se prema pravu i konkretnom ugovoru.\n\nOvi uslovi ne isključuju niti unapred ograničavaju odgovornost za nameru ili krajnju nepažnju, niti druga prava ili odgovornosti koja se po primenjivom pravu ne mogu ograničiti. Zakonska prava zbog neispunjenja, na raskid, povrat ili naknadu štete ostaju očuvana kada su njihovi uslovi ispunjeni."
+        },
+        "termination": {
+          "title": "11. Istek i prestanak",
+          "body": "Istek ograničava uređivanje proizvoda i nove objave. Dozvoljeni privatni pregled, raspoloživi izvoz i izmene billing podataka zavise od ovlašćenja. Za dobrovoljne objave plaćeni paket ima još šest kalendarskih meseci javne dostupnosti; trial nema dodatni period. Privatna politika čuvanja podataka o proizvodima je 12 meseci posle plaćenog paketa i 3 posle triala, bez obećanja automatskog brisanja.\n\nObavezni ili nerazjašnjeni regulatorni slučajevi traže poseban pregled i dogovor, bez pretpostavke prestanka zakonskih obaveza ili neograničenog besplatnog hostinga. Za zatvaranje i raspoloživi izvoz javite se kontaktu. CSV nije potpun izvoz istorije i datoteka. Prestanak pristupa ne briše sve evidencije. Zloupotreba ili ozbiljan rizik mogu zahtevati ograničenje uz poštovanje primenjivih obaveza.\n\nOdredbe o dostupnom izvozu ne ograničavaju obavezna prava na pristup podacima, promenu pružaoca ili prenosivost kada su primenjiva. Obim i bezbedan način predaje utvrđuju se prema vrsti zahteva i primenjivim pravilima."
+        },
+        "governingLaw": {
+          "title": "12. Ugovorni odnos",
+          "body": "Primenjuju se prihvaćena ponuda, posebno dogovoreni uslovi i obavezno pravo. Ovi uslovi ne isključuju prava koja se zakonom ne mogu ograničiti. Sporovi i nadležnost rešavaju se prema primenjivim pravilima i odgovarajućem ugovoru."
+        },
+        "contact": {
+          "title": "13. Kontakt",
+          "body": "Za ugovorne upite, obnovu, promenu paketa, prestanak ili raspoloživi izvoz: contact@passvero.eu. Obnova i promena paketa traže odgovarajuću potvrdu. Smanjenje paketa ne briše sadržaj automatski radi nižih kvota; ne nastaje automatsko pravo na povrat, kredit ili produženje."
+        },
+        "changes": {
+          "title": "14. Promene uslova",
+          "body": "Objavljujemo datum nove verzije. Izmene postojećeg odnosa sprovode se odgovarajućim postupkom obaveštavanja i prihvata; sama izmena javne stranice ne prepisuje ranije prihvaćenu ponudu."
+        }
       }
     }
   },

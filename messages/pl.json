@@ -72,7 +72,28 @@
   "HowItWorks": {"label": "Jak to działa", "title": "Od produktu do paszportu w 4 prostych krokach", "steps": {"create": {"title": "Utwórz", "description": "Utwórz cyfrowy paszport swojego produktu."}, "generate": {"title": "Wygeneruj", "description": "Wygeneruj kod QR z linkiem do publicznego paszportu."}, "share": {"title": "Udostępnij", "description": "Połącz go z produktem lub opakowaniem."}, "verify": {"title": "Zobacz", "description": "Zapewnij dostęp do opublikowanych informacji o produkcie."}}},
   "DashboardPreview": {"label": "Przegląd obszaru roboczego", "title": "Edytuj. Sprawdź. Opublikuj.", "description": "Produkty, wersje i załączniki w jednym obszarze roboczym, z osobnym publicznym widokiem opublikowanych informacji.", "features": ["Zarządzanie katalogiem i wyszukiwanie produktów", "Szkice i opublikowane wersje", "Zdjęcia i załączniki PDF według wersji", "Import i eksport katalogu w formacie CSV", "Dostęp do organizacji według uprawnień"], "action": "Poproś o dostęp", "visualAlt": "Panel Passvero do zarządzania cyfrowymi paszportami produktów", "example": {"label": "Przykładowy widok — dane ilustracyjne", "product": "Produkt", "draft": "Szkic", "published": "Opublikowano", "title": "Przegląd katalogu"}},
   "Industries": {"title": "Stworzone dla producentów w całej Europie", "items": {"furniture": "Meble", "textiles": "Tekstylia", "packaging": "Opakowania", "electronics": "Elektronika", "manufacturing": "Produkcja", "consumer": "Dobra konsumpcyjne"}},
-  "Pricing": {"label": "Cennik", "title": "Pakiety dla Twojego katalogu", "description": "Wybierz zakres dopasowany do produktów. Dostęp jest zatwierdzany po rozpatrzeniu wniosku.", "priceNotice": "Ceny łączne za 3 lub 12 miesięcy kalendarzowych, w EUR bez VAT. Bez miesięcznej subskrypcji.", "published": "{count} opublikowanych produktów", "months": "{count, plural, =3 {3 miesiące kalendarzowe} other {# miesięcy kalendarzowych}}", "limits": "Do {count} zapisanych produktów łącznie, {storage} GiB przestrzeni i {pdf} załączników PDF na wersję.", "customScope": "Zakres do uzgodnienia", "customPrice": "Cena według oferty", "customDescription": "Liczba produktów, przestrzeń i pozostałe limity są określane w indywidualnej ofercie.", "trial": "Okres próbny trwa 6 miesięcy od pomyślnej kontrolowanej aktywacji organizacji: do 3 utworzonych produktów łącznie, w tym importowanych, i do 3 zajętych miejsc publikacji. Jeden okres próbny na organizację; archiwizacja nie zwalnia miejsca.", "payment": "Wniosek o dostęp nie aktywuje konta i nie oznacza zakupu ani wyboru pakietu. Płatność B2B odbywa się przelewem bankowym zgodnie z ofertą. Uprawniony operator aktywuje płatną subskrypcję po weryfikacji wpłaty.", "expiry": "Po wygaśnięciu zmiany treści i nowe publikacje są blokowane. Przedłużona publiczna dostępność dotyczy tylko kwalifikujących się dobrowolnych paszportów płatnych pakietów.", "availabilityLink": "Jak liczone są miejsca i jak długo treści są dostępne?", "detailsTitle": "Miejsca publikacji, dostępność i przechowywanie", "counting": "Produkt z opublikowaną wersją zajmuje jedno miejsce, także z nowym szkicem lub gdy jest zarchiwizowany albo wycofany. Nowa wersja tego samego produktu nie zajmuje dodatkowego miejsca. Szkice, produkty opublikowane i zarchiwizowane wliczają się do łącznej liczby zapisanych produktów; zachowane pliki i wcześniejsze wersje do limitu przestrzeni.", "availability": "Dobrowolne paszporty (VOLUNTARY) mogą pozostać publiczne przez kolejne 6 miesięcy po wygaśnięciu płatnego pakietu, z zablokowaną treścią i istniejącymi warunkami bezpiecznego dostępu. Okres próbny nie ma przedłużonej publicznej dostępności. Przypadki obowiązkowe (MANDATORY) i nierozstrzygnięte (UNRESOLVED) wymagają osobnego porozumienia o długoterminowej dostępności; to automatyczne wyłączenie ich nie dotyczy.", "retention": "Prywatne przechowywanie trwa 12 miesięcy po wygaśnięciu płatnego pakietu lub 3 miesiące po okresie próbnym. W tym czasie prywatny podgląd i dostępny eksport pozostają dostępne zgodnie z istniejącymi uprawnieniami. Te terminy nie uruchamiają automatycznego trwałego usuwania.", "action": "Poproś o dostęp"},
+  "Pricing": {
+    "label": "Cennik",
+    "title": "Pakiety dla Twojego katalogu",
+    "description": "Wybierz zakres dopasowany do produktów. Dostęp jest zatwierdzany po rozpatrzeniu wniosku.",
+    "priceNotice": "Ceny łączne za 3 lub 12 miesięcy kalendarzowych, w EUR bez VAT. Bez miesięcznej subskrypcji.",
+    "published": "{count} opublikowanych produktów",
+    "months": "{count, plural, =3 {3 miesiące kalendarzowe} other {# miesięcy kalendarzowych}}",
+    "limits": "Do {count} zapisanych produktów łącznie, {storage} GiB przestrzeni i {pdf} załączników PDF na wersję.",
+    "customScope": "Zakres do uzgodnienia",
+    "customPrice": "Cena według oferty",
+    "customDescription": "Liczba produktów, przestrzeń i pozostałe limity są określane w indywidualnej ofercie.",
+    "trial": "Okres próbny trwa 6 miesięcy od pomyślnej kontrolowanej aktywacji organizacji: do 3 utworzonych produktów łącznie, w tym importowanych, i do 3 zajętych miejsc publikacji. Jeden okres próbny na organizację; archiwizacja nie zwalnia miejsca.",
+    "payment": "Wniosek o dostęp nie aktywuje konta i nie oznacza zakupu ani wyboru pakietu. Płatność B2B odbywa się przelewem bankowym zgodnie z ofertą. Uprawniony operator aktywuje płatną subskrypcję po weryfikacji wpłaty.",
+    "expiry": "Po wygaśnięciu zmiany treści i nowe publikacje są blokowane. Przedłużona publiczna dostępność dotyczy tylko kwalifikujących się dobrowolnych paszportów płatnych pakietów.",
+    "availabilityLink": "Jak liczone są miejsca i jak długo treści są dostępne?",
+    "detailsTitle": "Miejsca publikacji, dostępność i przechowywanie",
+    "counting": "Produkt z opublikowaną wersją zajmuje jedno miejsce, także z nowym szkicem lub gdy jest zarchiwizowany albo wycofany. Nowa wersja tego samego produktu nie zajmuje dodatkowego miejsca. Szkice, produkty opublikowane i zarchiwizowane wliczają się do łącznej liczby zapisanych produktów; zachowane pliki i wcześniejsze wersje do limitu przestrzeni.",
+    "availability": "Dobrowolne paszporty (VOLUNTARY) mogą pozostać publiczne przez kolejne 6 miesięcy po wygaśnięciu płatnego pakietu, z zablokowaną treścią i istniejącymi warunkami bezpiecznego dostępu. Okres próbny nie ma przedłużonej publicznej dostępności. Przypadki obowiązkowe (MANDATORY) i nierozstrzygnięte (UNRESOLVED) wymagają osobnego porozumienia o długoterminowej dostępności; to automatyczne wyłączenie ich nie dotyczy.",
+    "retention": "Prywatne przechowywanie trwa 12 miesięcy po wygaśnięciu płatnego pakietu lub 3 miesiące po okresie próbnym. W tym czasie prywatny podgląd i dostępny eksport pozostają dostępne zgodnie z istniejącymi uprawnieniami. Te terminy nie uruchamiają automatycznego trwałego usuwania.",
+    "action": "Poproś o dostęp",
+    "vatNotice": "Podane ceny nie zawierają VAT. Zasady opodatkowania i łączna kwota są określone w indywidualnej ofercie."
+  },
   "Benefits": {"label": "Korzyści", "title": "Jaśniejsze informacje. Prostsza praca.", "items": {"trust": {"title": "Udostępniaj informacje", "description": "Publikuj dane potrzebne klientom i partnerom."}, "risk": {"title": "Przygotuj dokumentację", "description": "Przechowuj załączniki przy odpowiedniej wersji produktu."}, "efficiency": {"title": "Uporządkuj katalog", "description": "Wprowadź dane lub zaimportuj produkty z pliku CSV."}, "value": {"title": "Zachowaj przegląd", "description": "Przeglądaj katalog, szkice i opublikowane wersje."}}},
   "CTA": {"title": "Gotowi, aby zacząć?", "description": "Poproś o kontrolowany dostęp i opisz potrzeby swojego zespołu.", "primaryAction": "Poproś o dostęp", "noteOne": "Wniosek nie jest zakupem", "noteTwo": "Aktywacja po zatwierdzeniu", "visualAlt": "Dekoracyjna ilustracja tarczy"},
   "Contact": {"emailLabel": "E-mail", "earlyAccessSubject": "Prośba o wczesny dostęp do Passvero", "generalSubject": "Ogólne zapytanie dotyczące Passvero", "privacySubject": "Pytanie dotyczące prywatności w Passvero"},
@@ -93,51 +114,149 @@
     "responseNote": "Odpowiemy tak szybko, jak to możliwe."
   },
   "Legal": {
-    "Common": {"backHome": "Wróć na stronę główną", "lastUpdatedLabel": "Ostatnia aktualizacja", "lastUpdated": "11 lipca 2026 r."},
+    "Common": {
+      "backHome": "Wróć na stronę główną",
+      "lastUpdatedLabel": "Ostatnia aktualizacja",
+      "lastUpdated": "3 listopada 2026 r.",
+      "contents": "Spis treści",
+      "related": "Powiązane informacje prawne"
+    },
     "Privacy": {
-      "metadata": {"title": "Polityka prywatności | Passvero", "description": "Informacje o przetwarzaniu danych osobowych w serwisie marketingowym Passvero."},
-      "title": "Polityka prywatności", "intro": "Niniejsza polityka opisuje aktualne zasady przetwarzania danych osobowych w publicznym serwisie marketingowym Passvero.",
+      "metadata": {
+        "title": "Polityka prywatności | Passvero",
+        "description": "Jak Passvero przetwarza dane osobowe przy wnioskach o dostęp, korzystaniu z aplikacji i przeglądaniu publicznych cyfrowych paszportów produktów."
+      },
+      "title": "Polityka prywatności",
+      "intro": "Ta polityka wyjaśnia przetwarzanie danych osobowych na publicznych stronach i w aplikacji biznesowej Passvero, w tym wniosków o dostęp i publicznych cyfrowych paszportów produktów (DPP).",
       "sections": {
-        "scope": {"title": "Zakres", "body": "Polityka dotyczy publicznych stron w domenie passvero.eu. Obecny serwis nie udostępnia kont użytkowników, formularza kontaktowego ani wbudowanej analityki."},
-        "data": {"title": "Dane, które możemy przetwarzać", "body": "Gdy kontaktujesz się z nami e-mailem, przetwarzamy adres e-mail, treść wiadomości i dobrowolnie podane informacje. Infrastruktura serwerowa i bezpieczeństwa może przetwarzać techniczne dzienniki żądań, takie jak adres IP, typ przeglądarki i czas dostępu, w celu dostarczenia i ochrony usługi."},
-        "use": {"title": "Cele przetwarzania", "body": "Dane wykorzystujemy do odpowiadania na pytania i prośby o wczesny dostęp, utrzymania bezpieczeństwa i niezawodności serwisu oraz realizacji obowiązków prawnych."},
-        "sharing": {"title": "Udostępnianie danych", "body": "Nie sprzedajemy danych osobowych. Dostawcy hostingu, infrastruktury i poczty mogą je przetwarzać wyłącznie w zakresie koniecznym do świadczenia usług lub wymaganym prawem."},
-        "retention": {"title": "Okres przechowywania", "body": "Korespondencję przechowujemy przez okres rozsądnie potrzebny do udzielenia odpowiedzi i prowadzenia dokumentacji biznesowej. Dzienniki techniczne podlegają okresom dostawców infrastruktury i potrzebom bezpieczeństwa."},
-        "rights": {"title": "Twoje prawa", "body": "W zależności od właściwego prawa możesz żądać dostępu, sprostowania, usunięcia lub ograniczenia przetwarzania danych oraz wnieść sprzeciw wobec określonego przetwarzania."},
-        "security": {"title": "Bezpieczeństwo i kontakt", "body": "Stosujemy rozsądne zabezpieczenia techniczne i organizacyjne. Pytania i żądania dotyczące praw kieruj na publiczny adres e-mail podany poniżej."}
+        "scope": {
+          "title": "Kim jesteśmy i nasze role",
+          "body": "Passvero prowadzi Živić-elektro j.d.o.o., 204. vukovarske brigade 39, 32000 Vukovar, Chorwacja, OIB 90344764519. Kontakt w sprawach prywatności: contact@passvero.eu. Jest to kontakt administratora danych, nie oznaczenie powołanego inspektora ochrony danych.\n\nJesteśmy administratorem dla własnych relacji biznesowych, kont, wsparcia i ochrony usługi. Gdy organizacja określa cel i treść danych osobowych w produktach, kontaktach, obrazach lub dokumentach, co do zasady jest administratorem, a my przetwarzamy dane w jej imieniu. Role, zgodne z prawem instrukcje i obowiązki określa odpowiednia umowa powierzenia. Organizacja będąca podmiotem przetwarzającym musi być uprawniona do dalszego powierzenia."
+        },
+        "data": {
+          "title": "Jakie dane przetwarzamy",
+          "body": "Wniosek o dostęp zawiera imię i nazwisko kontaktu, email, nazwę organizacji i język. Zachowujemy decyzję i dane powiązanych powiadomień. Konto obejmuje tożsamość, potwierdzenie emaila, skrót hasła, dane aktywacyjne i weryfikacyjne, sesje, członkostwa i uprawnienia. Hasła nie są przechowywane w postaci jawnej.\n\nDla ofert i rozliczeń przetwarzamy nazwę firmy, adres, kraj, podane identyfikatory podatkowe i VAT, email rozliczeniowy, oferty, akceptacje, okresy i referencje płatności. Nie przetwarzamy numerów kart płatniczych.\n\nPrzetwarzamy wprowadzone produkty, tłumaczenia, dane producentów, obrazy, pliki PDF i wersje, które mogą zawierać dane osobowe. Dane pochodzą od Ciebie lub upoważnionych osób organizacji. Korespondencja obejmuje przesłane wiadomości i załączniki. Powstają też zapisy audytowe, bezpieczeństwa i doręczeń oraz dane techniczne żądań i sesji, np. czas, adres IP i informacje o przeglądarce, zależnie od infrastruktury."
+        },
+        "use": {
+          "title": "Cele i podstawy prawne",
+          "body": "Dane służą obsłudze dostępu, kont i uprawnień, świadczeniu usługi, zarządzaniu i publikacji treści, ofertom i rozliczeniom, wsparciu, bezpieczeństwu, rozliczalności biznesowej i odtwarzaniu danych.\n\nJeśli osobiście jesteś stroną umowy, niezbędne przetwarzanie do jej przygotowania i wykonania opiera się na umowie. Dla komunikacji biznesowej z przedstawicielami organizacji i ochrony usługi podstawą jest uzasadniony interes prowadzenia i ochrony relacji biznesowej z uwzględnieniem Twoich praw. Dla dokumentacji objętej obowiązkiem prawnym stosuje się ten obowiązek. Treści klientów przetwarzamy zgodnie z legalnymi instrukcjami właściwego administratora. Jeśli podstawą jest zgoda, możesz ją wycofać.\n\nPola obowiązkowe są potrzebne do żądanego procesu lub funkcji; bez nich zatwierdzenie, logowanie lub usługa mogą być niemożliwe. Aktywacja, weryfikacja, reset hasła i inne wiadomości transakcyjne nie są newsletterem. Kontrole bezpieczeństwa mogą czasowo ograniczać próby lub żądać dodatkowej weryfikacji; dostęp zatwierdza upoważniona osoba. Nie wykorzystujemy danych do profilowania reklamowego."
+        },
+        "sharing": {
+          "title": "Publikacja, odbiorcy i dostawcy",
+          "body": "Konto, rozliczenia i dokumentacja wewnętrzna nie są publiczną treścią DPP. Prywatny dostęp zależy od uprawnień. Samo przesłanie nie publikuje pliku. Upoważniona publikacja udostępnia wybrane dane opublikowanej wersji oraz dopuszczone obrazy/PDF-y, także przez kod QR. Inni mogą pobrać treść; wycofanie jej w Passvero nie usuwa wcześniejszych kopii u osób trzecich.\n\nKorzystamy z Hostinger do hostingu i emaila, Supabase do plików, Backblaze B2 do kopii oraz Cloudflare Turnstile do dodatkowej ochrony w razie potrzeby. Bank i księgowość przetwarzają odpowiednie dane biznesowe. Telegram służy technicznym alertom operatora, nie przesyłaniu dokumentów użytkowników. Dane mogą być ujawniane także na żądanie prawa. Nie sprzedajemy danych osobowych.\n\nPotwierdzone główne przechowywanie odbywa się w Niemczech dla VPS i poczty Hostinger, w Irlandii dla Supabase i w Holandii dla B2; program księgowy działa lokalnie w Chorwacji. Nie oznacza to, że wszystkie dostępy wsparcia i procesy są ograniczone do EOG. O szczegóły odbiorców i właściwych transferów międzynarodowych można zapytać pod contact@passvero.eu.\n\nSupabase służy tu do plików Storage, nie do bazy aplikacji lub uwierzytelniania. Publiczne umowy Hostinger, Supabase i Backblaze przewidują standardowe klauzule umowne dla odpowiednich transferów poza EOG; sama lokalizacja przechowywania nie dowodzi braku transferów. Informacje o konkretnych odbiorcach, właściwych zabezpieczeniach i sposobie uzyskania ich kopii dostępne są pod contact@passvero.eu. Telegram jest odrębnym administratorem własnej usługi; nie opisujemy go jako umownego podmiotu przetwarzającego treści klientów.\n\nDo dostarczania e-faktur klientom w Chorwacji korzystamy z MER, Elektronički računi d.o.o., przekazując dane faktury i odbiorcy niezbędne do tej usługi. Klientom spoza Chorwacji wysyłamy fakturę PDF na adres email z danych rozliczeniowych przez istniejącą usługę pocztową Hostinger."
+        },
+        "retention": {
+          "title": "Przechowywanie i kopie",
+          "body": "Polityka prywatnego przechowywania danych produktów przewiduje 12 miesięcy po wygaśnięciu płatnego pakietu i 3 miesiące po zakończeniu próby. Publiczna dostępność DPP podlega osobnym zasadom subskrypcji i regulacji. Poniższe okresy są harmonogramem przeglądu, minimalizacji i usuwania zbędnych danych osobowych, a nie obietnicą automatycznego usunięcia.\n\nWnioski o dostęp bez decyzji są przeglądane po 90 dniach od otrzymania. Zbędne dane odrzuconych wniosków są przewidziane do usunięcia po 6 miesiącach kalendarzowych od decyzji, a nadmiarowe dane zatwierdzonych wniosków po 6 miesiącach od zakończonej aktywacji. Nieaktywowane wnioski są przeglądane do 30 dni po wygaśnięciu aktywacji. Niezbędny dowód decyzji jest traktowany osobno.\n\nKonta i członkostwa są przechowywane przez czas aktywnej relacji i uprawnionego dostępu. Po zakończeniu zamknięcia celem jest usunięcie zbędnych danych profilu i uwierzytelnienia w ciągu 30 dni. Inne aktywne członkostwa i niezbędne dokumenty biznesowe ocenia się osobno. Dla zbędnych danych sesji i tokenów celem jest 30 dni od wygaśnięcia, cofnięcia lub użycia, licząc od późniejszego właściwego zdarzenia końcowego. Bieżący profil rozliczeniowy jest minimalizowany w ciągu 30 dni od całkowitego końca relacji biznesowej, jeśli nie jest już potrzebny.\n\nOperacyjne zapisy audytowe mają okres przeglądu i minimalizacji 12 miesięcy kalendarzowych od zdarzenia; zapisy dostaw 90 dni od końcowego wyniku po ostatniej próbie; logi techniczne 30 dni od wpisu; zapisy zapobiegania nadużyciom 30 dni od ostatniej próby. Techniczne alerty Telegram do operatora mają cel 90 dni od wiadomości. Nierozstrzygnięty wynik dostawy nie powoduje automatycznego ponownego wysłania.\n\nDowody księgowe objęte chorwacką ustawą o rachunkowości przechowuje się co najmniej 11 lat od końca odpowiedniego roku obrotowego. Fiskalizowane e-faktury mają szczególny okres 6 lat od końca roku wystawienia. Nie każda faktura PDF spełnia te warunki. Oferty, akceptacje, referencje płatności i korespondencję klasyfikuje się według celu dowodowego, obowiązków rachunkowych i właściwych terminów roszczeń, bez jednego okresu dla wszystkich wiadomości.\n\nNieprzyjęte lub wygasłe oferty bez innej podstawy przechowywania mają okres 6 miesięcy kalendarzowych od wygaśnięcia lub wyraźnego odrzucenia. Rutynowe wsparcie i korespondencja mają okres 12 miesięcy kalendarzowych od zamknięcia sprawy; niezbędne dowody finansowe i umowne są wydzielane do odpowiedniej kategorii.\n\nOsobno zachowane niezbędne dowody incydentu bezpieczeństwa przechowuje się do 6 miesięcy kalendarzowych od jego rozwiązania. Minimalny dowód odpowiedzi na wniosek o realizację praw dotyczących danych osobowych ma okres 3 lat od zamknięcia sprawy: niezbędny zakres wniosku, decyzja, daty i dowód wysłania, bez pełnego eksportu danych lub rutynowej kopii dokumentu tożsamości. Są to okresy polityki biznesowej, a nie ogólne ustawowe minima; ustanie celu lub realizacja praw mogą wymagać wcześniejszego usunięcia.\n\nKonkretny spór, incydent lub obowiązek prawny może uzasadniać osobne dłuższe przechowywanie niezbędnych dowodów. Powód, zakres i dalszą potrzebę przegląda się co do zasady co 30 dni. Kopie zapasowe mają osobny harmonogram: usunięcie z aktywnego systemu nie usuwa natychmiast każdej starszej kopii. Informacje i wnioski: contact@passvero.eu."
+        },
+        "rights": {
+          "title": "Twoje prawa",
+          "body": "Na warunkach RODO możesz żądać dostępu, sprostowania, usunięcia, ograniczenia i przenoszenia danych oraz wnieść sprzeciw, zwłaszcza wobec przetwarzania opartego na uzasadnionym interesie. Jeśli podstawą jest zgoda, możesz ją wycofać bez wpływu na zgodność wcześniejszego przetwarzania z prawem.\n\nNapisz na contact@passvero.eu z informacjami wystarczającymi do znalezienia konta lub przetwarzania; nie przesyłaj hasła. Tożsamość sprawdzamy proporcjonalnie do żądania. Odpowiadamy bez zbędnej zwłoki, zwykle w ciągu miesiąca. Przy spełnieniu warunków prawnych termin można przedłużyć o dwa dalsze miesiące, informując o tym i powodach w pierwszym miesiącu. Dla treści klientów angażujemy właściwego administratora.\n\nPrawa innych i obowiązki prawne mogą ograniczyć żądanie. Możesz złożyć skargę do AZOP (azop.hr) lub innego właściwego organu nadzorczego. CSV nie jest pełnym eksportem wszystkich wersji i plików; zakres żądania danych osobowych rozpatrujemy osobno."
+        },
+        "security": {
+          "title": "Bezpieczeństwo i Turnstile",
+          "body": "Stosujemy kontrole dostępu, uprawnienia organizacyjne, haszowanie haseł, chronione sesje i sprawdzanie plików. Środki ograniczają ryzyko, ale nie gwarantują całkowitego braku incydentów.\n\nPo aktywacji Turnstile Cloudflare przetwarza sygnały, np. adres IP oraz informacje o przeglądarce i połączeniu, aby chronić przed automatycznymi nadużyciami. Według swojej polityki jest podmiotem przetwarzającym przy ochronie i odrębnym administratorem przy ulepszaniu wykrywania. Szczegóły zawiera Cloudflare Turnstile Privacy Addendum. Polityka plików cookie opisuje technologie sesyjne. Pytania o bezpieczeństwo i prywatność: contact@passvero.eu."
+        }
       }
     },
     "Cookies": {
-      "metadata": {"title": "Polityka plików cookie | Passvero", "description": "Informacje o aktualnym użyciu plików cookie i pamięci przeglądarki w serwisie Passvero."},
-      "title": "Polityka plików cookie", "intro": "Niniejsza polityka opisuje aktualne użycie plików cookie i podobnych technologii w passvero.eu.",
+      "metadata": {
+        "title": "Polityka plików cookie | Passvero",
+        "description": "Informacje o aktualnym użyciu plików cookie i pamięci przeglądarki w serwisie Passvero."
+      },
+      "title": "Polityka plików cookie",
+      "intro": "Ta polityka opisuje pliki cookie logowania, wybór języka i dodatkowe kontrole bezpieczeństwa na publicznych stronach i w aplikacji Passvero.",
       "sections": {
-        "overview": {"title": "Aktualny stan", "body": "Kod aplikacji marketingowej obecnie nie ustawia plików cookie i nie używa localStorage ani sessionStorage."},
-        "necessary": {"title": "Ściśle niezbędne technologie", "body": "Passvero obecnie nie ma własnych niezbędnych plików cookie. Dostawca hostingu lub infrastruktury bezpieczeństwa może używać ściśle niezbędnych mechanizmów technicznych do dostarczania serwisu, zapobiegania nadużyciom i utrzymania niezawodności."},
-        "locale": {"title": "Wybór języka", "body": "Język jest ustalany na podstawie adresu URL. Automatyczne wykrywanie języka jest wyłączone, a Passvero nie ustawia pliku cookie zapamiętującego wybór języka."},
-        "analytics": {"title": "Analityka i reklamy", "body": "Obecnie nie używamy analitycznych, reklamowych ani marketingowych plików cookie, pikseli lub skryptów śledzących. Dlatego nie wyświetlamy banera zgody na opcjonalne pliki cookie."},
-        "control": {"title": "Ustawienia przeglądarki", "body": "W przeglądarce można przeglądać, blokować i usuwać pliki cookie. Zablokowanie niezbędnych technologii infrastruktury może wpłynąć na dostępność lub bezpieczeństwo serwisu."},
-        "changes": {"title": "Zmiany i kontakt", "body": "Jeżeli wprowadzimy analitykę lub inne opcjonalne technologie, zaktualizujemy politykę i w razie potrzeby uzyskamy zgodę przed ich załadowaniem. Pytania można przesłać e-mailem."}
+        "overview": {
+          "title": "Cel i zakres",
+          "body": "Używamy technologii sesyjnych potrzebnych do żądanego logowania i ochrony usługi. Potrzebę zgody i niezbędność ocenia się według rzeczywistego celu. Polityka nie daje ogólnego pozwolenia na przyszłą analitykę lub śledzenie."
+        },
+        "necessary": {
+          "title": "Pliki logowania i bezpieczeństwa",
+          "body": "__Secure-better-auth.session_token łączy przeglądarkę z uwierzytelnioną sesją; __Secure-better-auth.dont_remember oznacza logowanie bez trwałego zapamiętywania. Stosują Secure, HttpOnly i SameSite=Lax, bez trwałego browser Max-Age w obecnym procesie. Sesja serwera tego procesu trwa 24 godziny; nie jest to retencja konta.\n\nGdy potrzebna jest dodatkowa ochrona, ładuje się Cloudflare Turnstile i przetwarza techniczne sygnały przeglądarki/połączenia. Nie jest naszym narzędziem analityki lub reklamy. Dodatkowe przechowywanie zależy od konfiguracji widgetu; nie twierdzimy, że każdy tryb jest bez cookies. Więcej informacji zawiera Cloudflare Turnstile Privacy Addendum."
+        },
+        "locale": {
+          "title": "Język i instalacja",
+          "body": "Język wynika z URL, automatyczne wykrywanie jest wyłączone i nie ustawiamy NEXT_LOCALE. Instalacja przez przeglądarkę używa manifestu i ikon; nie wprowadza dodatkowych cookies analitycznych, powiadomień push ani odrębnego trybu offline."
+        },
+        "analytics": {
+          "title": "Analityka i reklama",
+          "body": "Obecnie nie mamy zintegrowanych narzędzi reklamowych lub analityki marketingowej ani własnych cookies analitycznych. Nie wyświetlamy panelu dla nieużywanych opcjonalnych cookies. Nie oznacza to, że zewnętrzne kontrole bezpieczeństwa nie przetwarzają danych technicznych."
+        },
+        "control": {
+          "title": "Kontrola w przeglądarce",
+          "body": "Możesz się wylogować oraz sprawdzać, blokować lub usuwać cookies w przeglądarce. Odtworzenie wcześniejszej sesji może zachować cookies sesyjne; użyj wylogowania, aby zakończyć dostęp. Blokada niezbędnych mechanizmów sesji lub bezpieczeństwa może uniemożliwić logowanie albo żądaną kontrolę."
+        },
+        "changes": {
+          "title": "Zmiany i kontakt",
+          "body": "Jeśli wprowadzimy technologie wymagające zgody, odpowiedni wybór musi nastąpić przed ich użyciem. Pytania: contact@passvero.eu. Inne procesy opisuje Polityka prywatności."
+        }
       }
     },
     "Terms": {
-      "metadata": {"title": "Warunki korzystania | Passvero", "description": "Warunki dostępu do platformy Passvero i korzystania z jej usług."},
+      "metadata": {
+        "title": "Warunki korzystania | Passvero",
+        "description": "Warunki dostępu do platformy Passvero i korzystania z jej usług."
+      },
       "title": "Warunki korzystania",
-      "intro": "Niniejsze warunki opisują zasady dostępu do usługi Passvero i korzystania z niej.",
+      "intro": "Te warunki opisują biznesową usługę Passvero, dostęp, odpowiedzialność za treści i istniejący proces zawierania subskrypcji. Indywidualnie zaakceptowana oferta określa konkretny uzgodniony zakres.",
       "sections": {
-        "introduction": {"title": "1. Wprowadzenie", "body": "Niniejsze warunki regulują dostęp do https://passvero.eu i korzystanie z usługi Passvero. Uzyskując dostęp do usługi, akceptujesz te warunki. Jeśli ich nie akceptujesz, nie korzystaj z usługi."},
-        "service": {"title": "2. Opis usługi", "body": "Passvero udostępnia narzędzia do zarządzania, porządkowania i publikowania informacji o produktach, w tym procesy dotyczące cyfrowych paszportów produktów. Passvero nie jest certyfikacją prawną i nie gwarantuje zgodności produktu ani opublikowanych danych z przepisami."},
-        "eligibility": {"title": "3. Uprawnienie i odpowiedzialność za konto", "body": "Z usługi możesz korzystać tylko wtedy, gdy możesz zawrzeć wiążącą umowę we własnym imieniu lub w imieniu reprezentowanej organizacji. Odpowiadasz za poprawność danych konta, poufność danych dostępowych i wszystkie działania na koncie."},
-        "acceptableUse": {"title": "4. Dozwolone korzystanie", "body": "Nie wolno korzystać z usługi niezgodnie z prawem, naruszać praw innych osób, rozpowszechniać złośliwych treści, zakłócać działania lub bezpieczeństwa usługi, uzyskiwać nieuprawnionego dostępu do systemów ani publikować informacji wprowadzających w błąd."},
-        "productData": {"title": "5. Dane produktów i odpowiedzialność klienta", "body": "Użytkownik pozostaje odpowiedzialny za dokładność, kompletność, legalność i wymagane prawa do wszystkich danych produktów, dokumentów i innych treści, które wprowadza lub publikuje. Przed publikacją należy zweryfikować informacje i zapewnić zgodność z obowiązującymi wymogami prawnymi i umownymi."},
-        "intellectualProperty": {"title": "6. Własność intelektualna", "body": "Passvero oraz powiązane oprogramowanie, projekt i treści usługi są chronione obowiązującymi prawami własności intelektualnej. Nie przejmujemy własności danych użytkownika; użytkownik udziela nam wyłącznie praw niezbędnych do ich przechowywania, przetwarzania i wyświetlania w celu świadczenia usługi."},
-        "thirdPartyServices": {"title": "7. Usługi podmiotów trzecich", "body": "Usługa może korzystać z dostawców hostingu, poczty elektronicznej, przechowywania danych lub innych podmiotów trzecich. Ich usługi mogą podlegać odrębnym warunkom i zasadom, a Passvero nie kontroluje ich dostępności."},
-        "availability": {"title": "8. Dostępność i zmiany usługi", "body": "Dążymy do utrzymania dostępnej i niezawodnej usługi, ale nie gwarantujemy nieprzerwanego ani bezbłędnego działania. Możemy zmieniać, ograniczać lub zawieszać usługę ze względu na konserwację, bezpieczeństwo, wymogi prawne lub rozwój produktu."},
-        "disclaimer": {"title": "9. Wyłączenie gwarancji", "body": "Usługa jest świadczona w aktualnie dostępnym stanie i, w zakresie dozwolonym przez obowiązujące prawo, bez wyraźnych ani dorozumianych gwarancji. Informacje udostępniane w usłudze nie stanowią porady prawnej ani nie zastępują profesjonalnej weryfikacji."},
-        "liability": {"title": "10. Ograniczenie odpowiedzialności", "body": "W zakresie dozwolonym przez obowiązujące prawo Passvero nie odpowiada za pośrednie, przypadkowe, szczególne ani następcze straty oraz utratę zysków, danych lub możliwości biznesowych wynikające z korzystania z usługi. Bezwzględnie obowiązujące prawa i odpowiedzialność, których nie można prawnie ograniczyć, pozostają bez zmian."},
-        "termination": {"title": "11. Zakończenie korzystania", "body": "Możesz w każdej chwili zaprzestać korzystania z usługi. Możemy ograniczyć lub zakończyć dostęp z powodu istotnego naruszenia warunków, zagrożenia bezpieczeństwa, bezprawnego użycia lub gdy jest to konieczne do ochrony usługi i innych użytkowników."},
-        "governingLaw": {"title": "12. Prawo właściwe", "body": "Prawo właściwe i jurysdykcję określają obowiązujące bezwzględnie przepisy oraz, w stosownych przypadkach, umowa z klientem. Niniejsze warunki nie wyłączają mających zastosowanie bezwzględnie obowiązujących praw."},
-        "contact": {"title": "13. Kontakt", "body": "Pytania dotyczące tych warunków można kierować do Passvero na adres contact@passvero.eu. Informacje o usłudze są dostępne na https://passvero.eu."},
-        "changes": {"title": "14. Zmiany warunków", "body": "Możemy aktualizować te warunki wraz z rozwojem produktu, modelu biznesowego lub wymogów prawnych. Opublikujemy zaktualizowaną wersję i datę ostatniej zmiany, a o istotnych zmianach poinformujemy dodatkowo, gdy będzie to uzasadnione."}
+        "introduction": {
+          "title": "1. Dostawca i zakres",
+          "body": "Passvero świadczy Živić-elektro j.d.o.o., 204. vukovarske brigade 39, 32000 Vukovar, Chorwacja, OIB 90344764519; Chorwacki numer rejestru sądowego (MBS) 030125449, Sąd Gospodarczy w Osijeku (Trgovački sud u Osijeku). contact@passvero.eu. Usługa jest przeznaczona dla użytkowników biznesowych. Sama wizyta lub wniosek o dostęp nie oznacza akceptacji płatnej oferty."
+        },
+        "service": {
+          "title": "2. Usługa",
+          "body": "Passvero umożliwia przygotowanie, zarządzanie i publikowanie danych produktów, tłumaczeń, producentów, obrazów i PDF-ów, wersjonowanie treści DPP oraz generowanie i pobieranie kodów QR. Szkice i ich zmiany nie są publiczne przed publikacją. QR jest odnośnikiem, nie potwierdzeniem poprawności lub oficjalnego statusu regulacyjnego."
+        },
+        "eligibility": {
+          "title": "3. Dostęp i konto",
+          "body": "Po wniosku następują zatwierdzenie, aktywacja i weryfikacja emaila. Musisz być upoważniony do działania za organizację i chronić dane logowania. Uprawnienia organizacyjne i platformowe przyznawane są osobno. Podejrzenie nieuprawnionego dostępu zgłoś na contact@passvero.eu."
+        },
+        "acceptableUse": {
+          "title": "4. Dozwolone korzystanie",
+          "body": "Zabronione są treści niezgodne z prawem lub złośliwe, naruszanie praw innych, nieuprawniony dostęp i zakłócanie usługi. Nie wprowadzaj zbędnych danych osobowych ani treści bez prawa do przetwarzania. Nie omijaj uprawnień, limitów ani zabezpieczeń.\n\nPodejrzenie nielegalnej treści zgłoś na contact@passvero.eu, podając dokładny link lub identyfikator, uzasadnienie i kontakt do odpowiedzi. Nie wysyłaj zbędnych danych osobowych. Ograniczenia powinny być proporcjonalne; osoba dotknięta może na tym samym adresie poprosić o uzasadnienie i ocenę przez człowieka, z uwzględnieniem ograniczeń prawnych i ochrony postępowania."
+        },
+        "productData": {
+          "title": "5. Treść i publikacja",
+          "body": "Organizacja odpowiada za poprawność, kompletność, legalność, prawa do treści i decyzje publikacyjne, w tym dane osobowe w dokumentach i kontaktach. Opublikowana wersja jest odrębna od zmian szkicu. Przesłanie pliku nie jest publikacją; publiczne udostępnianie wymaga odpowiednich ustawień i kontroli bezpieczeństwa. Inni mogą zachować wcześniejsze publiczne kopie."
+        },
+        "intellectualProperty": {
+          "title": "6. Prawa do treści i oprogramowania",
+          "body": "Zachowujesz prawa do treści i zezwalasz na przetwarzanie, przechowywanie i wyświetlanie tylko w zakresie potrzebnym dla usługi i legalnych instrukcji. Nie nabywasz własności oprogramowania, projektu lub oznaczeń Passvero. Role i przetwarzanie danych dodatkowo określa odpowiednia umowa powierzenia."
+        },
+        "thirdPartyServices": {
+          "title": "7. Infrastruktura i komunikacja",
+          "body": "Usługa korzysta z zewnętrznych dostawców hostingu, plików, emaila, kopii i bezpieczeństwa. Ich awarie mogą wpływać na dostępność. Wiadomości aktywacyjne, weryfikacyjne, bezpieczeństwa i biznesowe są częścią danego procesu, a nie newsletterem marketingowym. Szczegóły opisuje Polityka prywatności."
+        },
+        "availability": {
+          "title": "8. Okres próbny i subskrypcja",
+          "body": "Jeden okres próbny na organizację trwa sześć miesięcy kalendarzowych od udanej aktywacji: trzy produkty utworzone łącznie, 100 MiB miejsca i pięć PDF-ów na wersję. Archiwizacja nie przywraca miejsca próbnego.\n\nPłatny proces obejmuje wniosek, ofertę, akceptację, przelew i osobne potwierdzenie aktywacji. Standardowe okresy to 3 lub 12 miesięcy kalendarzowych; oferta jest ważna 30 dni kalendarzowych od wystawienia. Ceny są w EUR bez VAT za cały wskazany okres. Opodatkowanie, kwotę łączną i limity określa konkretna oferta. Faktura wystawiana jest osobno; brak automatycznego pobierania opłat i odnawiania. Późniejszy cennik nie zmienia przyjętej oferty.\n\nKlienci w Chorwacji otrzymują e-fakturę przez system MER, Elektronički računi d.o.o. Klienci spoza Chorwacji otrzymują fakturę PDF pocztą elektroniczną na adres podany w danych rozliczeniowych."
+        },
+        "disclaimer": {
+          "title": "9. Ograniczenia usługi",
+          "body": "Passvero nie jest poradą prawną, oficjalnym certyfikatem ani gwarancją zgodności regulacyjnej. Użytkownik sprawdza wymagania dla swoich produktów. Kontrola PDF nie gwarantuje bezpieczeństwa, autentyczności lub ważności prawnej; wyświetlanie QR lub GTIN nie potwierdza rejestracji GS1."
+        },
+        "liability": {
+          "title": "10. Dostępność i odpowiedzialność",
+          "body": "Konserwacja, działania bezpieczeństwa i awarie mogą przerwać usługę. Bez osobnej umowy nie obiecujemy określonego SLA lub bezbłędnej pracy. Kopie nie zastępują dostępnego eksportu użytkownika. Bezwzględnie obowiązujące prawa i odpowiedzialność pozostają zachowane; zakres odpowiedzialności wynika z prawa i konkretnej umowy.\n\nWarunki nie wyłączają ani nie ograniczają z góry odpowiedzialności za działanie umyślne lub rażące niedbalstwo ani innych praw lub odpowiedzialności, których prawo nie pozwala ograniczyć. Ustawowe prawa związane z niewykonaniem, rozwiązaniem umowy, zwrotem lub odszkodowaniem pozostają zachowane po spełnieniu ich przesłanek."
+        },
+        "termination": {
+          "title": "11. Wygaśnięcie i zakończenie",
+          "body": "Wygaśnięcie ogranicza edycję produktów i nowe publikacje. Dozwolony prywatny podgląd, dostępne eksporty i zmiany rozliczeń zależą od uprawnień. Dla dobrowolnych publikacji płatny pakiet przewiduje sześć dalszych miesięcy publicznej dostępności; próba nie ma dodatkowego okresu. Polityka prywatnej retencji danych produktów wynosi 12 miesięcy po płatnym pakiecie i 3 po próbie, bez obietnicy automatycznego usunięcia.\n\nObowiązkowe lub niewyjaśnione przypadki regulacyjne wymagają osobnej oceny i ustaleń, bez założenia końca obowiązków prawnych lub nieograniczonego bezpłatnego hostingu. W sprawie zamknięcia i dostępnego eksportu skontaktuj się z nami. CSV nie jest pełnym eksportem historii i plików. Koniec dostępu nie usuwa wszystkich zapisów. Nadużycia lub poważne ryzyko mogą wymagać ograniczeń z poszanowaniem obowiązków.\n\nZapisy o dostępnym eksporcie nie ograniczają obowiązkowych praw dostępu do danych, zmiany dostawcy lub przenoszenia, gdy mają zastosowanie. Zakres i bezpieczny sposób przekazania zależą od rodzaju wniosku i właściwych zasad."
+        },
+        "governingLaw": {
+          "title": "12. Stosunek umowny",
+          "body": "Obowiązują przyjęta oferta, indywidualne ustalenia i bezwzględnie obowiązujące prawo. Warunki nie wyłączają praw, których nie można prawnie ograniczyć. Spory i właściwość są ustalane według obowiązujących zasad i odpowiedniej umowy."
+        },
+        "contact": {
+          "title": "13. Kontakt",
+          "body": "Pytania umowne, odnowienie, zmiana pakietu, zakończenie lub dostępny eksport: contact@passvero.eu. Odnowienia i zmiany wymagają odpowiedniego potwierdzenia. Obniżenie pakietu nie usuwa automatycznie treści do niższych limitów; nie powstaje automatyczne prawo do zwrotu, kredytu lub przedłużenia."
+        },
+        "changes": {
+          "title": "14. Zmiany warunków",
+          "body": "Publikujemy datę nowej wersji. Zmiany istniejącej relacji umownej wymagają właściwego procesu powiadomienia i akceptacji; sama zmiana strony nie nadpisuje wcześniej przyjętej oferty."
+        }
       }
     }
   },
